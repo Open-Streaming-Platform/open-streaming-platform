@@ -1,5 +1,4 @@
 from flask import Flask, redirect, request, abort, render_template, url_for
-
 from flask_sqlalchemy import SQLAlchemy
 
 import datetime
@@ -12,6 +11,7 @@ db = SQLAlchemy(app)
 import model
 
 db.create_all()
+db.commit()
 
 activeStream = []
 
