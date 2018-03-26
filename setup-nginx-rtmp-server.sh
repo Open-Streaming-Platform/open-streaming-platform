@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cwd = $PWD
+cwd=$PWD
 
 # Get Dependancies
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
