@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, abort
+from flask import Flask, redirect, request, abort, render_template, url_for
 
 import datetime
 import config
@@ -13,6 +13,24 @@ def usernameToKey(userName):
     except:
         return "*Unknown User*"
     return key
+
+@app.route('/')
+def main_page():
+
+    streamList = []
+
+    for key in activeStream:
+        streamList.append(config.authKey[key])
+
+    return render_template('index.html',steamList=streamList)
+
+
+@app.route('/view/<user>/')
+def view_page(user):
+
+    streamURL = 'http://' + config.ipAddress + '/live/' + user + '/index.m3u8'
+
+    return render_template('player.html', streamURL = streamURL)
 
 @app.route('/auth-key', methods=['POST'])
 def streamkey_check():
