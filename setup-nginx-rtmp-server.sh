@@ -47,10 +47,10 @@ cd /opt/flask-nginx-rtmp-manager/
 #sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/config.py"
 
 cd $cwd/flask-nginx-rtmp-mgmt
-cp -R * /opt/flask-nginx-rtmp-manager
+sudo cp -R * /opt/flask-nginx-rtmp-manager
 
 cd $cwd/uwsgi
-cp flask-nginx-rtmp-manager.ini /opt/flask-nginx-rtmp-manager
+sudo cp flask-nginx-rtmp-manager.ini /opt/flask-nginx-rtmp-manager
 #sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/flask-nginx-rtmp-manager.ini"
 sudo ln -s /opt/flask-nginx-rtmp-manager/flask-nginx-rtmp-manager.ini /etc/uwsgi/apps-enabled/
 sudo mkdir /var/uwsgi
