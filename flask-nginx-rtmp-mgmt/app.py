@@ -22,7 +22,7 @@ def main_page():
     for key in activeStream:
         streamList.append(config.authKey[key])
 
-    return render_template('index.html',steamList=streamList)
+    return render_template('index.html',streamList=streamList)
 
 
 @app.route('/view/<user>/')
