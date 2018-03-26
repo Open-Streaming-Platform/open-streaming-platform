@@ -1,9 +1,17 @@
 from flask import Flask, redirect, request, abort, render_template, url_for
 
+from flask_sqlalchemy import SQLAlchemy
+
 import datetime
 import config
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
+db = SQLAlchemy(app)
+
+import model
+
+db.create_all()
 
 activeStream = []
 
@@ -16,20 +24,13 @@ def usernameToKey(userName):
 
 @app.route('/')
 def main_page():
-
-    streamList = []
-
-    for key in activeStream:
-        streamList.append(config.authKey[key])
-
-    return render_template('index.html',streamList=streamList)
-
+    activeStreams = model.stream.query.all()
+    return render_template('index.html',streamList=activeStreams)
 
 @app.route('/view/<user>/')
 def view_page(user):
 
     streamURL = 'http://' + config.ipAddress + '/live/' + user + '/index.m3u8'
-
     return render_template('player.html', streamURL = streamURL)
 
 @app.route('/auth-key', methods=['POST'])
@@ -38,11 +39,14 @@ def streamkey_check():
     key = request.form['name']
     ipaddress = request.form['addr']
 
-
     if config.authKey.has_key(key):
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Key Auth', 'key':str(key), 'user': str(config.authKey[key]), 'ipAddress': str(ipaddress)}
         print(returnMessage)
-        activeStream.append(key)
+
+        newStream = model.stream(key,str(config.authKey[key]))
+        db.session.add(newStream)
+        db.session.commit()
+
         return redirect('rtmp://' + config.ipAddress + '/stream-data/' + config.authKey[key], code=302)
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Key Auth', 'key':str(key), 'ipAddress': str(ipaddress)}
@@ -57,7 +61,9 @@ def user_auth_check():
 
     streamKey = usernameToKey(key)
 
-    if streamKey in activeStream:
+    authedStream = model.stream.query.filter_by(streamKey=streamKey).first()
+
+    if authedStream is not None:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful User Auth', 'key': str(streamKey), 'user': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         return 'OK'
@@ -72,8 +78,12 @@ def user_deauth_check():
     key = request.form['name']
     ipaddress = request.form['addr']
 
-    if key in activeStream:
-        activeStream.remove(key)
+    authedStream = model.stream.query.filter_by(streamKey=key).first()
+
+    if authedStream is not None:
+        db.session.delete(authedStream)
+        db.session.commit()
+
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'user': str(config.authKey[key]), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         return 'OK'
