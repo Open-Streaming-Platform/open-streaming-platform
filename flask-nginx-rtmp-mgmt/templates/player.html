@@ -1,13 +1,11 @@
+{% extends "layout.html" %}
 
-<html>
-
-  <head>
+{% block header %}
     <title>Stream - {{streamtitle}}</title>
-  </head>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+{% endblock %}
 
-  <body>
-      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
+{% block body %}
       <center>
           <h1>{{streamtitle}}</h1>
           <video height="600" id="video" controls></video>
@@ -33,6 +31,4 @@
           });
         }
       </script>
-
-  </body>
-</html>
+{% endblock %}
