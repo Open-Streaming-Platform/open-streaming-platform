@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block body %}
+{% include "security/_messages.html" %}
+<br><br>
+<div class="d-flex justify-content-center align-content-center">
+    <div class="card" style="width: 500px;">
+        <h5 class="card-header text-white bg-dark mb-3">
+            Register
+        </h5>
+        <div class="card-body">
+            <div>
+                <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+                  {{ register_user_form.hidden_tag() }}
+                    <b><i class="fas fa-user-circle"></i> Username</b><br>
+                  {{ render_field(register_user_form.username, class_="form-control") }}
+                    <b><i class="far fa-envelope"></i> Email Address</b><br>
+                  {{ render_field(register_user_form.email, class_="form-control") }}
+                    <b><i class="fas fa-key"></i> Password</b><br>
+                  {{ render_field(register_user_form.password, class_="form-control") }}
+                  {% if register_user_form.password_confirm %}
+                    <b><i class="fas fa-key"></i> Confirm Password</b><br>
+                    {{ render_field(register_user_form.password_confirm, class_="form-control") }}
+                  {% endif %}
+                  {{ render_field(register_user_form.submit, class_="form-control") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

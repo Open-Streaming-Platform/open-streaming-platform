@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+      <table class="table">
+          <thead>
+          <tr>
+              <td scope="col">Stream Name</td>
+              <td scope="col">Stream Key</td>
+              <td scope="col">Options</td>
+          </tr>
+          </thead>
+          <tbody>
+          {% for channel in channels %}
+          <tr scope="row">
+            <form action="/settings/channels" method="post">
+                <td><input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required></td>
+
+                <td>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" readonly aria-describedby="generateGUID required">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
+                        </div>
+                    </div>
+                </td>
+                <input type="hidden" id="type" name="type" value="change">
+                <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
+                <td><input type="submit" class="btn btn-success" value="&#128393;"> <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
+            </form>
+
+          </tr>
+          {% endfor %}
+          <tr scope="row">
+            <form action="/settings/channels" method="post">
+                <td><input type="text" class="form-control" name="channelName" id="channelName" value="" required> </td>
+
+                <td>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="streamKey" id="streamKey-new" value="" readonly aria-describedby="generateGUID required">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="generateGUID-new"><i class="fas fa-sync"></i></span>
+                        </div>
+                    </div>
+                </td>
+                <input type="hidden" id="type" name="type" value="new">
+                <td><input type="submit" class="btn btn-success" value="&#43;"></td>
+            </form>
+          </tr>
+          </tbody>
+      </table>
+
+<script>
+    function guid() {
+          return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+        }
+
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+
+    {% for channel in channels %}
+    document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
+      document.getElementById('streamKey-{{channel.id}}').value = guid();
+    })
+    {% endfor %}
+
+    document.getElementById('generateGUID-new').addEventListener('click', function() {
+      document.getElementById('streamKey-new').value = guid();
+    })
+</script>
+{% endblock %}
