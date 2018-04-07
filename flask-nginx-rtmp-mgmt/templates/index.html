@@ -4,10 +4,12 @@
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
         <a href="/view/{{stream.streamUser}}/">
-            <div class="stream card p-2">
-                <div class="card-img-top"></div>
-                <h5 class="card-title">{{stream.streamUser}}</h5>
-                <p class="card-text">Lorum Ipsim</p>
+            <div class="stream card p-2" style="width: 18rem;">
+                <img class="card-img-top" src="https://www.syncron.com/wp-content/uploads/2017/03/img-placeholder.png">
+                <div class="card-body">
+                    <h5 class="card-title">{{stream.streamUser}}</h5>
+                    <p class="card-text">Lorum Ipsim</p>
+                </div>
             </div>
 
         </a>
