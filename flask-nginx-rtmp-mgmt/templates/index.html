@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
 
 {% block body %}
+    <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
-        <a href="/view/{{stream.streamUser}}/">{{stream.streamUser}}</a><br>
+        <a href="/view/{{stream.streamUser}}/">
+            <div class="stream border p-2"></div>
+            {{stream.streamUser}}
+        </a>
     {% endfor %}
+    </div>
 {% endblock %}

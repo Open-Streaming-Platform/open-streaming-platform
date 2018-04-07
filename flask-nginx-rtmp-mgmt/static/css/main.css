@@ -7,3 +7,10 @@
     width: 1280px;
     text-align: left;
 }
+
+.stream{
+    width: 64px;
+    height: 64px;
+    margin: 25px;
+    background-color: #00000;
+}
