@@ -4,8 +4,12 @@
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
         <a href="/view/{{stream.streamUser}}/">
-            <div class="stream border p-2"></div>
-            {{stream.streamUser}}
+            <div class="stream card p-2">
+                <div class="card-img-top"></div>
+                <h5 class="card-title">{{stream.streamUser}}</h5>
+                <p class="card-text">Lorum Ipsim</p>
+            </div>
+
         </a>
     {% endfor %}
     </div>

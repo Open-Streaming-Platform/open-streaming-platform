@@ -9,8 +9,7 @@
 }
 
 .stream{
-    width: 64px;
-    height: 64px;
-    margin: 25px;
-    background-color: #00000;
+    width: 128px;
+    height: 128px;
+    margin: 64px;
 }
