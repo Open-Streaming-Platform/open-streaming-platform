@@ -8,8 +8,9 @@
                 <img class="card-img-top" src="/live/{{stream.streamName|normalize_url}}.png" style="width:384px;height:216px;margin:-8px;">
                 <div class="card-body">
                     <h5 class="card-title">{{stream.streamName}}</h5>
-                    <p class="card-text">Lorum Ipsim</p>
+                    <p class="card-text">{{stream.channel.owningUser}}/p>
                 </div>
+                <div class="card-footer bg-transparent"><i class="fas fa-eye"></i> {{stream.channel.views}}</div>
             </div>
 
         </a>
