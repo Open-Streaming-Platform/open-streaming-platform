@@ -3,6 +3,8 @@
 {% block head %}
     <title>Stream - {{streamtitle}}</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -13,11 +15,18 @@
           <div class="streamInfo">
               <i class="fas fa-video"></i> {{stream.streamName}} <br>
               <i class="fas fa-user-circle"></i> {{stream.channel.owningUser}} <br>
-              <i class="fas fa-eye"></i> {{stream.channel.views}} <br>
+              <i class="fas fa-users"></i> {{stream.channel.views}} <br>
+              <i class="fas fa-eye"></i> <span id="currentViewers">0</span> <br>
+
           </div>
       </center>
 
-      <script>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script>
         if(Hls.isSupported()) {
           var video = document.getElementById('video');
           var hls = new Hls();
@@ -26,15 +35,38 @@
           hls.on(Hls.Events.MANIFEST_PARSED,function() {
             video.play();
         });
-       }
-       // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
-       // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
-       // This is using the built-in support of the plain video element, without using hls.js.
+        }
+        // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
+        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
+        // This is using the built-in support of the plain video element, without using hls.js.
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
           video.src = '{{streamURL|normalize_url}}';
           video.addEventListener('canplay',function() {
             video.play();
           });
         }
-      </script>
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            socket.emit('newViewer', {data: '{{stream.streamName}}'});
+        });
+
+        socket.on("disconnect", function(){
+            socket.emit('removeViewer', {data: '{{stream.streamName}}'});
+        });
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('viewerTotalResponse', function (msg) {
+            document.getElementById("currentViewers").innerHTML = msg['data'];
+        };
+    </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getViewerTotal', {data: "{{stream.streamName}}"} );
+        },10000 );
+    </script>
 {% endblock %}
