@@ -23,12 +23,16 @@ cd $cwd/nginx
 sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Enable SystemD
-#cd /tmp
-#sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/nginx.service"
 cd $cwd/nginx
 sudo cp nginx.service /lib/systemd/system/nginx.service
 sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
+
+cd $cwd/gunicorn
+sudo cp flask-nginx-rtmp-manager.service /lib/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable flask-nginx-rtmp-manager.service
+
 
 # Create HLS directory
 cd /var/
@@ -39,8 +43,8 @@ sudo mkdir live
 sudo chown -R www-data:www-data live
 
 # Setup Python
-sudo apt-get install python2.7 python-pip uwsgi uwsgi-plugin-python -y
-sudo pip install flask flask-sqlalchemy flask-security
+sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
+sudo pip install flask flask-sqlalchemy flask-security flask-socketio eventlet
 sudo mkdir /opt/flask-nginx-rtmp-manager/
 cd /opt/flask-nginx-rtmp-manager/
 #sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/flask/app.py"
@@ -49,18 +53,10 @@ cd /opt/flask-nginx-rtmp-manager/
 cd $cwd/flask-nginx-rtmp-mgmt
 sudo cp -R * /opt/flask-nginx-rtmp-manager
 
-cd $cwd/uwsgi
-sudo cp flask-nginx-rtmp-manager.ini /opt/flask-nginx-rtmp-manager
-#sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/flask-nginx-rtmp-manager.ini"
-sudo ln -s /opt/flask-nginx-rtmp-manager/flask-nginx-rtmp-manager.ini /etc/uwsgi/apps-enabled/
-sudo mkdir /var/uwsgi
-sudo chown www-data:www-data /var/uwsgi
-sudo chown -R www-data:www-data /opt/flask-nginx-rtmp-manager
-sudo systemctl enable uwsgi
 
 sudo apt-get install ffmpeg -y
 
 # Start Nginx
 sudo systemctl start nginx.service
-sudo systemctl restart uwsgi
+sudo systemctl start flask-nginx-rtmp-manager
 
