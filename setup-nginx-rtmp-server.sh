@@ -44,7 +44,7 @@ sudo chown -R www-data:www-data live
 
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
-sudo pip install flask flask-sqlalchemy flask-security flask-socketio eventlet
+sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent
 sudo mkdir /opt/flask-nginx-rtmp-manager/
 cd /opt/flask-nginx-rtmp-manager/
 #sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/flask/app.py"
@@ -52,7 +52,6 @@ cd /opt/flask-nginx-rtmp-manager/
 
 cd $cwd/flask-nginx-rtmp-mgmt
 sudo cp -R * /opt/flask-nginx-rtmp-manager
-
 
 sudo apt-get install ffmpeg -y
 
