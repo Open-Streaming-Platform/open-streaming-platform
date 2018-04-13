@@ -65,7 +65,6 @@
 
     <script>
         socket.on('disconnect', function() {
-            socket.leave('{{stream.streamName}} ');
             socket.emit('removeViewer', {data: '{{stream.streamName}}'});
         });
     </script>
@@ -89,7 +88,7 @@
             if (code == 13) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', {msg: text, room:"{{stream.streamName}}" });
+                socket.emit('text', {msg: text, room:'{{stream.streamName}}' });
             }
         });
     </script>
