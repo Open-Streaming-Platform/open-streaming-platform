@@ -58,7 +58,6 @@
 
     <script>
         socket.on('connect', function() {
-            socket.join('{{stream.streamName}}');
             socket.emit('newViewer', {data: '{{stream.streamName}}'});
         });
     </script>
