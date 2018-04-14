@@ -74,9 +74,10 @@
 
 
     <script>
-        window.onbeforeunload = function(){
+        window.addEventListener("beforeunload", function (e) {
             socket.emit('removeViewer', {data: '{{stream.streamName}}'});
-        };
+            return null;
+        });
     </script>
 
     <script type="text/javascript" charset="utf-8">
