@@ -20,7 +20,7 @@
 
           </div>
           <br>
-          <div>
+          <div class="chatbox">
               <textarea id="chat" class="form-control" cols="80" rows="20" readonly></textarea><br><br>
               <input id="text" size="80" class="form-control" placeholder="Enter your message here"><br><br>
           </div>
@@ -99,7 +99,7 @@
           var s = today.getSeconds();
 
         socket.on('message', function(data) {
-            $('#chat').val($('#chat').val() + "<" +h + ":" + m + "> " data.msg + '\n');
+            $('#chat').val($('#chat').val() + "<" +h + ":" + m + "> " + data.msg + '\n');
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
         });
     </script>
