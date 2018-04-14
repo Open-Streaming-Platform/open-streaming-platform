@@ -22,7 +22,7 @@
           <br>
           <div class="chatbox">
               <textarea id="chat" class="form-control" cols="80" rows="20" readonly></textarea><br>
-              <input id="text" size="80" class="form-control" {% if current_user.is_authenticated=false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+              <input id="text" size="80" class="form-control" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
           </div>
       </center>
 
