@@ -29,3 +29,7 @@
 .chatbox {
   width: 1280px;
 }
+
+.chatbox textarea {
+    resize: none;
+}
