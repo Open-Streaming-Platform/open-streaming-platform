@@ -35,7 +35,7 @@
         if(Hls.isSupported()) {
           var video = document.getElementById('video');
           var hls = new Hls();
-          hls.loadSource('{{streamURL|normalize_url}}');
+          hls.loadSource('{{streamURL}}');
           hls.attachMedia(video);
           hls.on(Hls.Events.MANIFEST_PARSED,function() {
             video.play();
@@ -45,7 +45,7 @@
         // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
         // This is using the built-in support of the plain video element, without using hls.js.
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = '{{streamURL|normalize_url}}';
+          video.src = '{{streamURL}}';
           video.addEventListener('canplay',function() {
             video.play();
           });
@@ -62,20 +62,20 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('newViewer', {data: '{{stream.streamName}}'});
+            socket.emit('newViewer', {data: '{{stream.channel.channelLoc}}'});
         });
     </script>
 
     <script>
         socket.on('disconnect', function() {
-            socket.emit('removeViewer', {data: '{{stream.streamName}}'});
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
         });
     </script>
 
 
     <script>
         window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', {data: '{{stream.streamName}}'});
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
             return null;
         });
     </script>
@@ -92,7 +92,7 @@
             if (code == 13) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{stream.streamName}}' });
+                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc}}' });
             }
         });
     </script>
@@ -111,7 +111,7 @@
 
     <script>
         setInterval(function() {
-          socket.emit('getViewerTotal', {data: "{{stream.streamName}}"} );
+          socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
         },30000 );
     </script>
 {% endblock %}
