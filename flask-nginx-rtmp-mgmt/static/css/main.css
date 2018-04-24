@@ -2,10 +2,18 @@
     margin-top: 50px;
 }
 
+.videoStream {
+    width:75%
+}
+
 .streamInfo{
     margin-top: 25px;
-    width: 1280px;
+    width: 75%;
     text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .stream{
