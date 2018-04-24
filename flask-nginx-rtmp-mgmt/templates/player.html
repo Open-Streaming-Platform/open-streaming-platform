@@ -98,12 +98,12 @@
     </script>
 
     <script>
-          var today = new Date();
-          var h = today.getHours();
-          var m = today.getMinutes();
-          var s = today.getSeconds();
 
         socket.on('message', function(data) {
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
             $('#chat').val($('#chat').val() + "<" +h + ":" + m + "> " + data.msg + '\n');
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
         });
