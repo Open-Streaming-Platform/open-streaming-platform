@@ -62,20 +62,20 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('newViewer', {data: '{{stream.channel.channelLoc|normalize_uuid}}'});
+            socket.emit('newViewer', {data: '{{stream.channel.channelLoc}}'});
         });
     </script>
 
     <script>
         socket.on('disconnect', function() {
-            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc|normalize_uuid}}'});
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
         });
     </script>
 
 
     <script>
         window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc|normalize_uuid}}'});
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
             return null;
         });
     </script>
@@ -92,7 +92,7 @@
             if (code == 13) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc|normalize_uuid}}' });
+                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc}}' });
             }
         });
     </script>
