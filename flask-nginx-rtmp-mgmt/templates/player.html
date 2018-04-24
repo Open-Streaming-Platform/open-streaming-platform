@@ -10,14 +10,13 @@
 {% block body %}
       <center>
           <div class="player">
-            <video width="1280" height="720" id="video" class="shadow" controls></video>
+            <video id="video" class="shadow videoStream" controls></video>
           </div>
-          <div class="streamInfo">
-              <i class="fas fa-video"></i> {{stream.streamName}} <br>
+          <div class="streamInfo shadow">
+              <i class="fas fa-video"></i> <b>{{stream.streamName}}</b> <br>
               <i class="fas fa-user-circle"></i> {{stream.channel.owningUser}} <br>
               <i class="fas fa-users"></i> {{stream.channel.views}} <br>
               <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
-
           </div>
           <br>
           <div class="chatbox">
