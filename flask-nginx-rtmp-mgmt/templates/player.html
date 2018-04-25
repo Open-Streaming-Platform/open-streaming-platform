@@ -117,7 +117,7 @@
 
     <script>
         setInterval(function() {
-          socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc|normalize_uuid}}"} );
+          socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
         },30000 );
     </script>
 {% endblock %}
