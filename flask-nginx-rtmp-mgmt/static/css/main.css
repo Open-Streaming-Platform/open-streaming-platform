@@ -36,6 +36,7 @@
 
 .chatbox {
     margin-top: 50px;
+    height: 540px;
 }
 
 .chatbox textarea {
