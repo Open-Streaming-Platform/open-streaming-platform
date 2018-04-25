@@ -14,16 +14,7 @@
                   <div class="player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
-              </div>
-              <div class="col-2">
-                  <div class="chatbox">
-                      <textarea id="chat" class="form-control" cols="80" rows="20" readonly></textarea><br>
-                      <input id="text" size="80" class="form-control" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                  </div>
-              </div>
-          </div>
-          <div class="row">
-              <div class="col-10">
+                  <br>
                   <div class="streamInfo shadow">
                       <i class="fas fa-video"></i> <b>{{stream.streamName}}</b> <br>
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser}} <br>
@@ -31,7 +22,12 @@
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
                   </div>
               </div>
-              <div class="col-2"></div>
+              <div class="col-2">
+                  <div class="chatbox">
+                      <textarea id="chat" class="form-control" cols="80" rows="20" readonly></textarea><br>
+                      <input id="text" size="80" class="form-control" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+                  </div>
+              </div>
           </div>
       </div>
 
