@@ -3,12 +3,12 @@
 }
 
 .videoStream {
-    width:75%
+    width:100%
 }
 
 .streamInfo{
     margin-top: 25px;
-    width: 75%;
+    width: 100%;
     text-align: left;
     padding-left: 10px;
     padding-right: 10px;
