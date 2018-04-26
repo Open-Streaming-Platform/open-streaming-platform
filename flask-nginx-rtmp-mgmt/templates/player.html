@@ -108,7 +108,7 @@
         socket.on('message', function(data) {
             var today = new Date();
             var h = today.getHours();
-            var m = today.getMinutes();
+            var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
             $('#chat').val($('#chat').val() + "<" +h + ":" + m + "> " + data.msg + '\n');
             $('#chat').scrollTop($('#chat')[0].scrollHeight);
