@@ -9,6 +9,7 @@
           <thead>
           <tr>
               <td scope="col">Stream Name</td>
+              <td scope="col">Record?</td>
               <td scope="col">Stream Key</td>
               <td scope="col">Options</td>
           </tr>
@@ -24,6 +25,13 @@
                         <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                         {% endfor %}
                     </select>
+                </td>
+
+                <td>
+                    <label class="switch">
+                      <input type="checkbox" id="recordSelect" name="recordSelect" {% if chanenel.record == True %} checked {% endif %}>
+                      <span class="slider round"></span>
+                    </label>
                 </td>
 
                 <td>
@@ -51,6 +59,14 @@
                         {% endfor %}
                     </select>
                 </td>
+
+                <td>
+                    <label class="switch">
+                      <input type="checkbox" id="recordSelect" name="recordSelect">
+                      <span class="slider round"></span>
+                    </label>
+                </td>
+
                 <td>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="streamKey" id="streamKey-new" value="" readonly aria-describedby="generateGUID required">
