@@ -41,6 +41,10 @@ sudo chown -R www-data:www-data www
 cd www
 sudo mkdir live
 sudo chown -R www-data:www-data live
+sudo mkdir videos
+sudo chown -R www-data:www-data videos
+sudo mkdir live-rec
+sudo chown -R www-data:www-data live-rec
 
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
