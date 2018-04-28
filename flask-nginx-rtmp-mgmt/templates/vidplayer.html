@@ -2,7 +2,6 @@
 
 {% block head %}
     <title>video - {{video.channelName}}</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 {% endblock %}
 
@@ -11,14 +10,17 @@
           <div class="row">
               <div class="col-9">
                   <div class="player">
-                    <video id="video" class="shadow videoStream" controls></video>
+                      <video id="video" class="shadow recordedStream" autoplay controls>
+                          <source src="{{streamURL}}" type="video/mp4">
+                      </video>
                   </div>
-                  <div class="streamInfo shadow">
+                  <div class="recordedStreamInfo shadow">
                       <i class="fas fa-video"></i> <b>{{video.channelName}}</b> <br>
                       <i class="fas fa-user-circle"></i> {{video.owningUser}} <br>
                       <i class="fas fa-users"></i> {{video.views}} <br>
                   </div>
               </div>
+              <div class="col-3"></div>
           </div>
       </div>
       <br>
@@ -28,25 +30,4 @@
 {% endblock %}
 
 {% block scripts %}
-
-    <script>
-        if(Hls.isSupported()) {
-          var video = document.getElementById('video');
-          var hls = new Hls();
-          hls.loadSource('{{streamURL}}');
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED,function() {
-            video.play();
-        });
-        }
-        // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
-        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
-        // This is using the built-in support of the plain video element, without using hls.js.
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = '{{streamURL}}';
-          video.addEventListener('canplay',function() {
-            video.play();
-          });
-        }
-    </script>
 {% endblock %}
