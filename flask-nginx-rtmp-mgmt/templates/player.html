@@ -33,7 +33,7 @@
       <br>
       <div class="streamList d-flex align-content-around flex-wrap">
           {% for video in stream.channel.recordedVideo %}
-          <a href="/videos/{{video.videoLocation}}">
+          <a href="/play/{{video.id}}">
               <div class="stream shadow card p-2" style="width:386px;height:340px;">
                 <img class="stream-img card-img-top" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                 <div class="card-body">
