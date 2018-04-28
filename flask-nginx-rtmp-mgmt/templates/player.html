@@ -35,7 +35,7 @@
           {% for video in stream.channel.recordedVideo %}
           <a href="/play/{{video.id}}">
               <div class="stream shadow card p-2" style="width:386px;height:340px;">
-                <img class="stream-img card-img-top" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                 <div class="card-body">
                     <h5 class="card-title">{{video.channelName}}</h5>
                 </div>
