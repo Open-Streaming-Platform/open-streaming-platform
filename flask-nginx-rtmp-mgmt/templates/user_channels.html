@@ -37,7 +37,7 @@
 
                 <td>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" readonly aria-describedby="generateGUID required">
+                        <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
                         <div class="input-group-append">
                             <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
                         </div>
@@ -70,7 +70,7 @@
 
                 <td>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="streamKey" id="streamKey-new" value="" readonly aria-describedby="generateGUID required">
+                        <input type="text" class="form-control" name="streamKey" id="streamKey-new" value="" readonly required aria-describedby="generateGUID required">
                         <div class="input-group-append">
                             <span class="input-group-text" id="generateGUID-new"><i class="fas fa-sync"></i></span>
                         </div>
