@@ -15,8 +15,8 @@
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
                   <div class="streamInfo shadow">
-                      <i class="fas fa-video"></i> <b>{{stream.streamName}}</b> <br>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.channel.topic|get_topicName}}</b> <br>
+                      <i class="fas fa-video"></i> <b>{{stream.streamName}}</b> {% if stream.channel.owningUser == current_user.id %} <i class="fas fa-edit"></i> {% endif %} <br>
+                      <i class="fas fa-hashtag"></i> <b>{{stream.channel.topic|get_topicName}}</b> {% if stream.channel.owningUser == current_user.id %} <i class="fas fa-edit"></i> {% endif %}<br>
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{stream.channel.views}} <br>
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
