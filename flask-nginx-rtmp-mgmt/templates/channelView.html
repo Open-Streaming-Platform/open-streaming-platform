@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="streamList d-flex align-content-around flex-wrap">
+        {% for stream in openStreams %}
+            <a href="/view/{{stream.channel.channelLoc}}/">
+                <div class="stream shadow card p-2" style="width:386px;">
+                    <img class="stream-img card-img-top" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{stream.streamName}}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
+                            <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
+                    </div>
+                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                            <i class="fas fa-users"></i> {{stream.channel.views}} <i class="fas fa-eye"></i> {{stream.currentViewers}}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+
+          {% for video in recordedVids %}
+              <a href="/play/{{video.id}}">
+                  <div class="stream shadow card p-2" style="width:386px;">
+                    <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{video.channelName}}</h5><br>
+                        <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                        <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                    </div>
+                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                            <i class="fas fa-users"></i> {{video.views}}
+                    </div>
+                </div>
+              </a>
+          {% endfor %}
+
+    </div>
+{% endblock %}
+

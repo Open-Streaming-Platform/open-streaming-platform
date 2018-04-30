@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="streamList d-flex align-content-around flex-wrap">
+    {% for channel in channelList %}
+        <a href="/channel/{{channel.id}}/">
+            <div class="stream shadow card p-2" style="width:386px;">
+                <img class="stream-img card-img-top" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                <div class="card-body">
+                    <h5 class="card-title">{{channel.channelName}}</h5>
+                    <p class="card-text">
+                        <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
+                        <i class="fas fa-user-circle"></i> {{channel.owningUser|get_userName}}</p>
+                </div>
+                <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                        <i class="fas fa-users"></i> {{channel.views}}
+                </div>
+            </div>
+
+        </a>
+    {% endfor %}
+    </div>
+{% endblock %}
+
