@@ -21,7 +21,12 @@
                             <i class="fas fa-edit"></i>
                         </button>
                       {% endif %} <br>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.channel.topic|get_topicName}}</b> {% if stream.channel.owningUser == current_user.id %} <i class="fas fa-edit"></i> {% endif %}<br>
+                      <i class="fas fa-hashtag"></i> <b>{{stream.channel.topic|get_topicName}}</b>
+                      {% if stream.channel.owningUser == current_user.id %}
+                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#editModal">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                      {% endif %}<br>
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{stream.channel.views}} <br>
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
@@ -72,7 +77,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editModalTitle">Edit the Stream Name</h5>
+        <h5 class="modal-title" id="editModalTitle">Edit Stream Info</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -81,6 +86,7 @@
         <form>
             <h5>Name of the Stream:</h5>
             <input type="text" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
+            <br>
             <h5>Stream Topic:</h5>
             <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                 {% for topic in topics %}
