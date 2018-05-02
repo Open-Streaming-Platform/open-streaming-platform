@@ -66,6 +66,7 @@
       <br>
       <br>
 
+{% if stream.channel.owningUser == current_user.id %}
 <!-- Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -78,8 +79,14 @@
       </div>
       <div class="modal-body">
         <form>
-            <h5>Change the Name of the Stream:</h5>
-            <input type="text" value="{{stream.streamName}}" name="newStreamName">
+            <h5>Name of the Stream:</h5>
+            <input type="text" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
+            <h5>Stream Topic:</h5>
+            <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                {% for topic in topics %}
+                <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                {% endfor %}
+            </select>
         </form>
       </div>
       <div class="modal-footer">
@@ -89,6 +96,8 @@
     </div>
   </div>
 </div>
+
+{% endif %}
 
 
 {% endblock %}
