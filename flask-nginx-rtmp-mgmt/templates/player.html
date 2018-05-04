@@ -82,8 +82,9 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
         <form action="/view/{{stream.channel.channelLoc}}/change" method="post">
+      <div class="modal-body">
+
             <h5>Name of the Stream:</h5>
             <input type="text" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
             <br>
@@ -93,12 +94,12 @@
                 <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                 {% endfor %}
             </select>
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <input type="submit" class="btn btn-primary">Save changes</input>
       </div>
+        </form>
     </div>
   </div>
 </div>
