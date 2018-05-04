@@ -83,12 +83,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form action="/view/{{stream.channel.channelLoc}}/change" method="post">
             <h5>Name of the Stream:</h5>
             <input type="text" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
             <br>
             <h5>Stream Topic:</h5>
-            <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+            <select class="form-control" name="newChannelTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                 {% for topic in topics %}
                 <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                 {% endfor %}
