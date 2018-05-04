@@ -21,7 +21,7 @@
                             <i class="fas fa-edit"></i>
                         </button>
                       {% endif %} <br>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.channel.topic|get_topicName}}</b>
+                      <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b>
                       {% if stream.channel.owningUser == current_user.id %}
                         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#editModal">
                             <i class="fas fa-edit"></i>
