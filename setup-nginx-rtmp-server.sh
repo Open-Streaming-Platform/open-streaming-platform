@@ -57,6 +57,8 @@ cd /opt/flask-nginx-rtmp-manager/
 cd $cwd/flask-nginx-rtmp-mgmt
 sudo cp -R * /opt/flask-nginx-rtmp-manager
 
+sudo chown -R www-data:www-data /opt/flask-nginx-rtmp-manager
+
 sudo apt-get install ffmpeg -y
 
 # Start Nginx
