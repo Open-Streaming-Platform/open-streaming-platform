@@ -24,9 +24,11 @@
                   <div class="stream shadow card p-2" style="width:386px;">
                     <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                     <div class="card-body">
-                        <h5 class="card-title">{{video.channelName}}</h5><br>
-                        <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                        <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                        <h5 class="card-title">{{video.channelName}}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                        </p>
                     </div>
                     <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
                             <i class="fas fa-users"></i> {{video.views}}
