@@ -43,27 +43,29 @@
       <br>
       <br>
       {% if stream.channel.recordedVideo != [] %}
-      <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
-          <h5 class="card-header">Other Videos from this Channel</h5>
-          <div class="card-body">
-              <div class="Ash-BG streamList d-flex align-content-around flex-wrap">
-                  {% for video in stream.channel.recordedVideo %}
-                      {% if video.pending == False %}
-                          <a href="/play/{{video.id}}">
-                              <div class="stream shadow card p-2" style="width:386px;">
-                                <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{video.channelName}}</h5><br>
-                                    <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                                    <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+      <div class="Ash-BG">
+          <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
+              <h5 class="card-header">Other Videos from this Channel</h5>
+              <div class="card-body">
+                  <div class="streamList d-flex align-content-around flex-wrap">
+                      {% for video in stream.channel.recordedVideo %}
+                          {% if video.pending == False %}
+                              <a href="/play/{{video.id}}">
+                                  <div class="stream shadow card p-2" style="width:386px;">
+                                    <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{video.channelName}}</h5><br>
+                                        <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                                        <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                                    </div>
+                                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                            <i class="fas fa-users"></i> {{video.views}}
+                                    </div>
                                 </div>
-                                <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                                        <i class="fas fa-users"></i> {{video.views}}
-                                </div>
-                            </div>
-                          </a>
-                      {% endif %}
-                  {% endfor %}
+                              </a>
+                          {% endif %}
+                      {% endfor %}
+                  </div>
               </div>
           </div>
       </div>
