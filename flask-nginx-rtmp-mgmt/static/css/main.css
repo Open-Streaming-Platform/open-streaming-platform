@@ -57,6 +57,16 @@
     resize: none;
 }
 
+.White-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: white;
+}
+
 .Ash-BG {
     height: 100%;
     -webkit-background-size: cover;

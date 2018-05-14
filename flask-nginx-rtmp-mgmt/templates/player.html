@@ -8,13 +8,13 @@
 {% endblock %}
 
 {% block body %}
-      <div class="container-fluid">
+      <div class="Ash-BG container-fluid">
           <div class="row">
               <div class="col-9">
                   <div class="player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
-                  <div class="streamInfo shadow">
+                  <div class="White-BG streamInfo shadow">
                       <i class="fas fa-video"></i> <b>{{stream.streamName}}</b>
                       {% if stream.channel.owningUser == current_user.id %}
                         <button type="button" class="btn btn-link" data-toggle="modal" data-target="#editModal">
@@ -46,7 +46,7 @@
       <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
           <h5 class="card-header">Other Videos from this Channel</h5>
           <div class="card-body">
-              <div class="streamList d-flex align-content-around flex-wrap">
+              <div class="Ash-BG streamList d-flex align-content-around flex-wrap">
                   {% for video in stream.channel.recordedVideo %}
                       {% if video.pending == False %}
                           <a href="/play/{{video.id}}">
