@@ -38,18 +38,18 @@
               SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
               SMTP TLS:<br>
               <label class="switch">
-                <input type="checkbox" id="smtpTLS" name="smtpTLS">
+                <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
                 <span class="slider round"></span>
               </label>
               <hr>
               Allow Users to Register:<br>
               <label class="switch">
-                <input type="checkbox" id="registerSelect" name="registerSelect">
+                <input type="checkbox" id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
                 <span class="slider round"></span>
               </label><br>
               Allow Users to Record:<br>
               <label class="switch">
-                <input type="checkbox" id="recordSelect" name="recordSelect">
+                <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                 <span class="slider round"></span>
               </label><br>
               <div class="form-row text-center">
