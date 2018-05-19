@@ -72,14 +72,7 @@
                 </td>
                 {% endif %}
 
-                <td>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="streamKey" id="streamKey-new" value="" readonly required aria-describedby="generateGUID required">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="generateGUID-new"><i class="fas fa-sync"></i></span>
-                        </div>
-                    </div>
-                </td>
+                <td></td>
                 <input type="hidden" id="type" name="type" value="new">
                 <td><input type="submit" class="btn btn-success" value="&#43;"></td>
             </form>
@@ -105,8 +98,5 @@
     })
     {% endfor %}
 
-    document.getElementById('generateGUID-new').addEventListener('click', function() {
-      document.getElementById('streamKey-new').value = guid();
-    })
 </script>
 {% endblock %}
