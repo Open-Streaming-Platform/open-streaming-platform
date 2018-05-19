@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
-
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
 {% block body %}
     <div class="Ash-BG streamList d-flex align-content-around flex-wrap">
         {% for stream in openStreams %}
