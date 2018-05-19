@@ -10,7 +10,7 @@
           <tr>
               <td scope="col">Stream Name</td>
               <td scope="col">Type</td>
-              {% if sysSettings.allowRecorind is True %}
+              {% if sysSettings.allowRecorind == True %}
               <td scope="col">Record?</td>
               {% endif %}
               <td scope="col">Stream Key</td>
@@ -29,7 +29,7 @@
                         {% endfor %}
                     </select>
                 </td>
-                {% if sysSettings.allowRecording is True %}
+                {% if sysSettings.allowRecording == True %}
                 <td>
                     <label class="switch">
                       <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
@@ -63,7 +63,7 @@
                         {% endfor %}
                     </select>
                 </td>
-                {% if sysSettings.allowRecoding is True %}
+                {% if sysSettings.allowRecoding == True %}
                 <td>
                     <label class="switch">
                       <input type="checkbox" id="recordSelect" name="recordSelect">
