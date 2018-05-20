@@ -29,7 +29,7 @@
                         <h5 class="card-title">{{video.channelName}}</h5>
                         <p class="card-text">
                             <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                         </p>
                     </div>
                     <div class="card-footer bg-transparent" style="position:relative;top:-10px;">

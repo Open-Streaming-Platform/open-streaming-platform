@@ -18,7 +18,7 @@
                   <div class="White-BG recordedStreamInfo shadow">
                       <i class="fas fa-video"></i> <b>{{video.channelName}}</b> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                      <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
+                      <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                       <i class="fas fa-user-circle"></i> {{video.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{video.views}} <br>
                   </div>
