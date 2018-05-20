@@ -35,6 +35,13 @@
           <form action="/settings/admin/config" method="post">
               Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
               Server Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
+              <hr>
+              Background Image:
+              <select class="form-control" name="background">
+                  <option value="Ash">Ash</option>
+                  <option value="Moonlit">Moonlit</option>
+                  <option value="Terminal">Terminal</option>
+              </select>
               SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
               SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
               SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
