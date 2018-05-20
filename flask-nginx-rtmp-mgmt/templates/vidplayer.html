@@ -6,15 +6,16 @@
 {% endblock %}
 
 {% block body %}
-      <div class="Ash-BG container-fluid">
+<div class="Ash-BG">
+      <div class="container-fluid">
           <div class="row">
               <div class="col-9">
-                  <div class="player">
+                  <div class="White-BG player">
                       <video id="video" class="shadow recordedStream" autoplay controls>
                           <source src="{{streamURL}}" type="video/mp4">
                       </video>
                   </div>
-                  <div class="recordedStreamInfo shadow">
+                  <div class="White-BG recordedStreamInfo shadow">
                       <i class="fas fa-video"></i> <b>{{video.channelName}}</b> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate}}</b> <br>
@@ -27,7 +28,7 @@
       </div>
       <br>
       <br>
-
+</div>
 
 {% endblock %}
 
