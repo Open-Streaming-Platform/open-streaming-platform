@@ -29,9 +29,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 
 cd $cwd/gunicorn
-sudo cp flask-nginx-rtmp-manager.service /lib/systemd/system/
+sudo cp osp.service /lib/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable flask-nginx-rtmp-manager.service
+sudo systemctl enable osp.service
 
 
 # Create HLS directory
@@ -49,19 +49,17 @@ sudo chown -R www-data:www-data live-rec
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
 sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent
-sudo mkdir /opt/flask-nginx-rtmp-manager/
-cd /opt/flask-nginx-rtmp-manager/
-#sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/flask/app.py"
-#sudo wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/config.py"
+sudo mkdir /opt/osp/
 
-cd $cwd/flask-nginx-rtmp-mgmt
-sudo cp -R * /opt/flask-nginx-rtmp-manager
+cd $cwd/osp
+sudo cp -R * /opt/osp
 
-sudo chown -R www-data:www-data /opt/flask-nginx-rtmp-manager
+sudo chown -R www-data:www-data /opt/osp
 
+#Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
 
 # Start Nginx
 sudo systemctl start nginx.service
-sudo systemctl start flask-nginx-rtmp-manager
+sudo systemctl start osp
 

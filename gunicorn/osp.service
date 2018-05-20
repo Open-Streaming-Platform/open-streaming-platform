@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/opt/flask-nginx-rtmp-manager
+WorkingDirectory=/opt/osp
 ExecStart=/usr/bin/gunicorn app:app -k gevent -w 1 --bind 0.0.0.0:5000 --reload --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log
 
 [Install]
