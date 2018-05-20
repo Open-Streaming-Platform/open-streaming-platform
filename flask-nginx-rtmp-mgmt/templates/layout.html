@@ -18,21 +18,6 @@
 </head>
 <body>
 
-    <style>
-        html {
-            height: 100%;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            background-repeat:no-repeat;
-            background: #606c88; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #3f4c6b, #606c88); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #3f4c6b, #606c88); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-        }
-    </style>
-
-
     <div class="page-header">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="/">
@@ -88,9 +73,13 @@
         </nav>
     </div>
 
+    <div class="{{sysSettings.background}}-BG">
+
     {% block body %}
 
     {% endblock %}
+
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
