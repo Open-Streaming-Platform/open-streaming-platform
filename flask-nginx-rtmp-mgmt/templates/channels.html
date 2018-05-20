@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="Ash-BG streamList d-flex align-content-around flex-wrap">
+    <div class="{{sysSettings.background}}-BG streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
         <a href="/channel/{{channel.id}}/">
             <div class="stream shadow card p-2" style="width:386px;">
