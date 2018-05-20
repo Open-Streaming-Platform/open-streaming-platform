@@ -23,7 +23,7 @@
 
           {% for video in recordedVids %}
               <a href="/play/{{video.id}}">
-                  <div class="Ash-BG stream shadow card p-2" style="width:386px;">
+                  <div class="stream shadow card p-2" style="width:386px;">
                     <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                     <div class="card-body">
                         <h5 class="card-title">{{video.channelName}}</h5>
