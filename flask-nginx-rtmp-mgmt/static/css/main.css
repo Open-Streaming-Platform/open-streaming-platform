@@ -4,10 +4,12 @@
 
 .videoStream {
     width:100%;
+    display:block;
 }
 
 .recordedStream {
     width:100%;
+    display:block;
 }
 
 .streamInfo{
