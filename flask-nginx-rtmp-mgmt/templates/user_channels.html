@@ -23,6 +23,7 @@
               {% if sysSettings.allowRecording == True %}
               <td scope="col">Record?</td>
               {% endif %}
+              <td scope="col">Chat Enabled?</td>
               <td scope="col">Stream Key</td>
               <td scope="col">Options</td>
           </tr>
@@ -47,7 +48,12 @@
                     </label>
                 </td>
                 {% endif %}
-
+                <td>
+                    <label class="switch">
+                      <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                      <span class="slider round"></span>
+                    </label>
+                </td>
                 <td>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
@@ -81,7 +87,12 @@
                     </label>
                 </td>
                 {% endif %}
-
+                <td>
+                    <label class="switch">
+                      <input type="checkbox" id="chatSelect" name="chatSelect">
+                      <span class="slider round"></span>
+                    </label>
+                </td>
                 <td></td>
                 <input type="hidden" id="type" name="type" value="new">
                 <td><input type="submit" class="btn btn-success" value="&#43;"></td>
