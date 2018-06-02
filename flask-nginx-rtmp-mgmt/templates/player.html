@@ -15,18 +15,15 @@
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
                   <div class="White-BG streamInfo shadow">
+                      {% if stream.channel.owningUser == current_user.id %}
+                      <div class="float-right">
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                              <i class="fas fa-edit"></i>
+                          </button>
+                      </div>
+                      {% endif %}
                       <i class="fas fa-video"></i> <b>{{stream.streamName}}</b>
-                      {% if stream.channel.owningUser == current_user.id %}
-                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#editModal">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                      {% endif %} <br>
                       <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b>
-                      {% if stream.channel.owningUser == current_user.id %}
-                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#editModal">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                      {% endif %}<br>
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{stream.channel.views}} <br>
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>

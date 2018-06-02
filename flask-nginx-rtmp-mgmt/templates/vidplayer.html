@@ -16,6 +16,13 @@
                       </video>
                   </div>
                   <div class="White-BG recordedStreamInfo shadow">
+                      {% if video.owningUser == current_user.id %}
+                      <div class="float-right">
+                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#editModal">
+                              <i class="fas fa-trash-alt"></i>
+                          </button>
+                      </div>
+                      {% endif %}
                       <i class="fas fa-video"></i> <b>{{video.channelName}}</b> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
