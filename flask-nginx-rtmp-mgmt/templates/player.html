@@ -22,8 +22,8 @@
                           </button>
                       </div>
                       {% endif %}
-                      <i class="fas fa-video"></i> <b>{{stream.streamName}}</b>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b>
+                      <i class="fas fa-video"></i> <b>{{stream.streamName}}</b><br>
+                      <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b><br>
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{stream.channel.views}} <br>
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
