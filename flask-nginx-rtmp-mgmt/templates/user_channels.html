@@ -5,17 +5,18 @@
 {% endblock %}
 
 {% block body %}
-<br>
+<div class="{{sysSettings.background}}-BG container-fluid">
     {%- with messages = get_flashed_messages(with_categories=true) -%}
       {% if messages %}
+        <center>
         {% for category, message in messages %}
-            <div class="alert alert-primary">
+            <div class="alert alert-primary" style="width:600px;margin-top:10px;margin-bottom:10px;">
                 <div class="{{ category }}">{{ message }}</div>
             </div>
         {% endfor %}
       {% endif %}
+        </center>
     {%- endwith %}
-    <br>
       <table class="table">
           <thead>
           <tr>
@@ -117,7 +118,7 @@
           </tr>
           </tbody>
       </table>
-
+</div>
 <script>
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
