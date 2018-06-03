@@ -20,6 +20,7 @@
           <tr>
               <td scope="col">Stream Name</td>
               <td scope="col">Type</td>
+              <td>Channel Picture</td>
               {% if sysSettings.allowRecording == True %}
               <td scope="col">Record?</td>
               {% endif %}
@@ -32,7 +33,7 @@
           <tbody>
           {% for channel in channels %}
           <tr scope="row">
-            <form action="/settings/channels" method="post">
+            <form action="/settings/channels" enctype=multipart/form-data method="post">
                 <td><input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required></td>
                 <td>
                     <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
@@ -40,6 +41,16 @@
                         <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                         {% endfor %}
                     </select>
+                </td>
+                <td>
+                    {% if channel.imageLocation == None %}
+                    <img src="/static/img/video-placeholder.jpg" width="384px" height="216px">
+                    {% else %}
+                    <img src="{{channel.imageLocation}}" width="384px" height="216px">,;iujybnh
+                    {% endif %}
+
+                    <input type=file name=photo class="btn btn-primary" value="Upload a Photo">
+
                 </td>
                 {% if sysSettings.allowRecording == True %}
                 <td>
@@ -67,7 +78,7 @@
                 <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
                 <td><input type="submit" class="btn btn-success" value="&#128393;"></td>
                 </form>
-                <td><form method=POST enctype=multipart/form-data action="{{ url_for('upload_channel_pic') }}"><input type=file name=photo class="btn btn-primary" value="Upload a Photo"><input type="hidden" id="channelID" name="channelID" value="{{channel.id}}"></form> <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
+                <td><a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
 
 
 
