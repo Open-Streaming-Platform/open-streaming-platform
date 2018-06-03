@@ -7,6 +7,7 @@
 {% block body %}
     <div class="{{sysSettings.background}}-BG streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
+        {% if len(channel.recordedVideo) > 0 %}
         <a href="/channel/{{channel.id}}/">
             <div class="stream shadow card p-2" style="width:386px;">
                 <img class="stream-img card-img-top" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
@@ -22,6 +23,7 @@
             </div>
 
         </a>
+        {% endif %}
     {% endfor %}
     </div>
 {% endblock %}
