@@ -5,15 +5,14 @@
 {% endblock %}
 
 {% block body %}
+<br>
     {%- with messages = get_flashed_messages(with_categories=true) -%}
       {% if messages %}
-        <ul class="flashes">
         {% for category, message in messages %}
             <div class="alert alert-primary">
-                <li class="{{ category }}">{{ message }}</li>
+                <div class="{{ category }}">{{ message }}</div>
             </div>
         {% endfor %}
-        </ul>
       {% endif %}
     {%- endwith %}
     <br>
