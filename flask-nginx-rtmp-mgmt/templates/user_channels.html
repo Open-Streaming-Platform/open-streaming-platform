@@ -49,7 +49,7 @@
                     <img src="/images/{{channel.imageLocation}}" width="384px" height="216px">
                     {% endif %}
 
-                    <input type=file name=photo class="btn btn-primary" value="Upload a Photo">
+                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
 
                 </td>
                 {% if sysSettings.allowRecording == True %}
@@ -94,6 +94,7 @@
                         {% endfor %}
                     </select>
                 </td>
+                <td></td>
                 {% if sysSettings.allowRecording == True %}
                 <td>
                     <label class="switch">
