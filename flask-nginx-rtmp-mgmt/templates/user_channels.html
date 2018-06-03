@@ -6,11 +6,12 @@
 
 {% block body %}
 <div class="{{sysSettings.background}}-BG container-fluid">
+    <br>
     {%- with messages = get_flashed_messages(with_categories=true) -%}
       {% if messages %}
         <center>
         {% for category, message in messages %}
-            <div class="alert alert-primary" style="width:600px;margin-top:10px;margin-bottom:10px;">
+            <div class="alert alert-primary" style="width:600px;margin-bottom:20px;">
                 <div class="{{ category }}">{{ message }}</div>
             </div>
         {% endfor %}
@@ -19,7 +20,7 @@
     {%- endwith %}
       <table class="table">
           <thead>
-          <tr>
+          <tr style="color:white;">
               <td scope="col">Stream Name</td>
               <td scope="col">Type</td>
               <td>Channel Picture</td>
