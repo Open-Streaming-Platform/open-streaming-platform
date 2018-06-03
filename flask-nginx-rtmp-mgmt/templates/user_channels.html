@@ -25,6 +25,7 @@
               {% endif %}
               <td scope="col">Chat Enabled?</td>
               <td scope="col">Stream Key</td>
+              <td scope="col">Edit</td>
               <td scope="col">Options</td>
           </tr>
           </thead>
@@ -64,8 +65,11 @@
                 </td>
                 <input type="hidden" id="type" name="type" value="change">
                 <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
-                <td><input type="submit" class="btn btn-success" value="&#128393;"> <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
-            </form>
+                <td><input type="submit" class="btn btn-success" value="&#128393;"></td>
+                </form>
+                <td><form method=POST enctype=multipart/form-data action="{{ url_for('upload_channel_pic') }}"><input type=file name=photo class="btn btn-primary" value="Upload a Photo"><input type="hidden" id="channelID" name="channelID" value="{{channel.id}}"></form> <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
+
+
 
           </tr>
           {% endfor %}
