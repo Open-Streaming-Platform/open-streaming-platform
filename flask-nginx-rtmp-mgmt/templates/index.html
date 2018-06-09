@@ -6,7 +6,7 @@
         <a href="/view/{{stream.channel.channelLoc}}/">
             <div class="stream shadow card p-2" style="width:386px;">
                 <img class="stream-img card-img-top" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
-                <img class="blink-image shadow" src="/static/img/red.png" width="20px" height="20px" style="position:relative;left:340px;top:-20px;">
+                <img class="blink-image shadow" src="/static/img/red.png" width="20px" height="20px" style="position:relative;left:340px;top:-20px;margin-bottom:-20px;">
                 <div class="card-body">
                     <h5 class="card-title">{{stream.streamName}}</h5>
                     <p class="card-text">
