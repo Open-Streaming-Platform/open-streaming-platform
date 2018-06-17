@@ -9,10 +9,10 @@
     <div class="row h-100">
         <div class="col-1 ServQuick-BG" style="color:white;padding-left:10px;">
             <b>Settings</b><br>
-            <div><a class="link" href="#" onclick="toggleDiv(adminSettings)">Admin Settings</a></div>
+            <div><a class="link" href="#" onclick="toggleDiv('adminSettings')">Admin Settings</a></div>
             <div>Other</div><br>
             <b>Users and Roles</b><br>
-            <div><a class="link" href="#" onclick="toggleDiv(userList)">Users</a></div>
+            <div><a class="link" href="#" onclick="toggleDiv('userList')">Users</a></div>
             <div>Roles</div><br>
             <b>Channels</b><br>
             <div>Channel List</div><br>
@@ -105,7 +105,7 @@
 <script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
-        $('.settingsOption').hide(); // give all divs the same class
+        $('.settingsOption').hide();
         $(divid).show();
     }
 </script>
