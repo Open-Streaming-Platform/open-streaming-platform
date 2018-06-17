@@ -5,23 +5,23 @@
 {% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-1 ServQuick-BG" style="color:white;margin-left:10px;">
-        <b>Settings</b><br>
-        <div><a class="link" href="#" data-rel="adminSettings">Admin Settings</a></div>
-        <div>Other</div><br>
-        <b>Users and Roles</b><br>
-        <div><a class="link" href="#" data-rel="userList">Users</a></div>
-        <div>Roles</div><br>
-        <b>Channels</b><br>
-        <div>Channel List</div><br>
-        <b>Streams</b><br>
-        <div>Streams List</div>
-        <br><br>
-        <div class="dbVer">Database Version: {{appDBVer}}</div>
-    </div>
-    <div class="col-10" style="margin-bottom:20px;margin-top:10px;">
-        <div class="content-container">
+<div class="container">
+    <div class="row">
+        <div class="col-1 ServQuick-BG h-100" style="color:white;padding-left:10px;">
+            <b>Settings</b><br>
+            <div><a class="link" href="#" data-rel="adminSettings">Admin Settings</a></div>
+            <div>Other</div><br>
+            <b>Users and Roles</b><br>
+            <div><a class="link" href="#" data-rel="userList">Users</a></div>
+            <div>Roles</div><br>
+            <b>Channels</b><br>
+            <div>Channel List</div><br>
+            <b>Streams</b><br>
+            <div>Streams List</div>
+            <br><br>
+            <div class="dbVer">Database Version: {{appDBVer}}</div>
+        </div>
+        <div class="col-11" style="padding-bottom:20px;padding-top:10px;">
             <div id="adminSettings">
                 <h5>Configuration Options</h5>
                   <form action="/settings/admin" method="post">
@@ -99,7 +99,6 @@
           </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
