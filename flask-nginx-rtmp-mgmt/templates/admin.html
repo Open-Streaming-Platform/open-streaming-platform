@@ -148,7 +148,7 @@
                         <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
                         <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
                         <td>{% for chanStream in channel.stream %}
-                            <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
+                            <h5><a href="/view/{{channelLoc}}"><span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span></a></h5><br>
                             {% endfor %}
                         </td>
                         <td></td>
