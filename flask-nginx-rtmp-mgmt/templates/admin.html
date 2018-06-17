@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid">
+<div class="container-fluid" style="height:100vh;">
     <div class="row h-100">
-        <div class="col-1 ServQuick-BG h-100" style="color:white;padding-left:10px;">
+        <div class="col-1 ServQuick-BG" style="color:white;padding-left:10px;">
             <b>Settings</b><br>
             <div><a class="link" href="#" data-rel="adminSettings">Admin Settings</a></div>
             <div>Other</div><br>
@@ -22,7 +22,7 @@
             <div class="dbVer">Database Version: {{appDBVer}}</div>
         </div>
         <div class="col-11" style="padding-bottom:20px;padding-top:10px;">
-            <div id="adminSettings">
+            <div class="settingsOption" id="adminSettings">
                 <h5>Configuration Options</h5>
                   <form action="/settings/admin" method="post">
                       Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
@@ -62,7 +62,7 @@
                       </div>
                   </form>
             </div>
-            <div id="userList">
+            <div class="settingsOption" id="userList" style="display:none;">
                 <h5>User List</h5>
                 <table>
                     <thead>
@@ -102,6 +102,13 @@
 {% endblock %}
 
 {% block scripts %}
-
+<script>
+    function toggleDiv(){
+        e.preventDefault();
+        var divid = $(e.currentTarget).data('rel');
+        (".settingsOption").hide(); // give all divs the same class
+        ("#" + divid).show();
+    }
+</script>
 {% endblock %}
 
