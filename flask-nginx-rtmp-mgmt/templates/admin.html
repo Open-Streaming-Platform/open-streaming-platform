@@ -123,6 +123,7 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">Channel ID</th>
+                            <th scope="col">User</th>
                             <th scope="col">Name</th>
                             <th scope="col">Channel Location</th>
                             <th scope="col">Topic</th>
@@ -136,13 +137,14 @@
                     {% for channel in channelList %}
                     <tr>
                         <td>{{channel.id}}</td>
+                        <td>{{channel.owningUser|get_userName}}</td>
                         <td>{{channel.channelName}}</td>
                         <td>{{channel.channelLoc}}</td>
-                        <td>{{channel.topic}}</td>
+                        <td>{{channel.topic||get_topicName}}</td>
                         <td>{{channel.views}}</td>
                         <td>{{channel.record}}</td>
                         <td>{{channel.chatEnabled}}</td>
-                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;"></td>
+                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:284px;height:116px;"></td>
                         <td>{% for chanStream in stream %}
                             <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
                             {% endfor %}
