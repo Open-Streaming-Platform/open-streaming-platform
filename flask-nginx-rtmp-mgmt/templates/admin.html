@@ -132,6 +132,7 @@
                             <th scope="col">Chat Enabled</th>
                             <th scope="col">Image</th>
                             <th scope="col">Open Streams</th>
+                            <th scope="col">Disk Usage</th>
                             <th scope="col">Options</th>
                         </tr>
                     </thead>
@@ -151,6 +152,7 @@
                             <h5><a href="/view/{{channel.channelLoc}}"><span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span></a></h5><br>
                             {% endfor %}
                         </td>
+                        <td>{{channel.channelLoc|get_diskUsage}}</td>
                         <td></td>
                     </tr>
                     {% endfor %}
