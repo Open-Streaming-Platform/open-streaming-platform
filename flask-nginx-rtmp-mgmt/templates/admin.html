@@ -19,6 +19,10 @@
             <b>Streams</b><br>
             <div>Streams List</div>
             <br><br>
+
+            <div id="cpuUsage"></div>
+            <div id="memoryUsage"></div>
+            <br>
             <div class="dbVer">Database Version: {{appDBVer}}</div>
         </div>
         <div class="col-11" style="padding-bottom:20px;padding-top:10px;">
@@ -171,6 +175,23 @@
         $('.settingsOption').hide();
         $(divid).show();
     }
+</script>
+
+<script>
+    setInterval(function() {
+      socket.emit('getServerResources',{data:"0"});
+    },10000 );
+</script>
+
+<script>
+    socket.on('serverResources', function(data) {
+        var cpuUsage = data.cpuUsage;
+        var memoryUsage = data.memoryUsage;
+
+        $('#cpuUsage').html(cpuUsage);
+        $('#memoryUsage').html(memoryUsage);
+
+    });
 </script>
 {% endblock %}
 
