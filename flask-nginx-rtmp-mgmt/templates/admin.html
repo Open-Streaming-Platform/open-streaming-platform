@@ -194,12 +194,10 @@
 </script>
 
 <script>
-    socket.on('serverResources', function(data) {
-        var cpuUsage = data.cpuUsage;
-        var memoryUsage = data.memoryUsage;
+    socket.on('serverResources', function(msg) {
 
-        $('#cpuUsage').html(cpuUsage);
-        $('#memoryUsage').html(memoryUsage);
+        document.getElementById("cpuUsage").innerHTML = msg['data']['cpuUsage']
+        document.getElementById("memoryUsage").innerHTML = msg['data']['memoryUsage']
 
     });
 </script>
