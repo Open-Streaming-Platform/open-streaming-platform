@@ -59,6 +59,10 @@
     resize: none;
 }
 
+.content-container div {
+    display: none;
+}
+
 /* Firefox old*/
 @-moz-keyframes blink {
     0% {
