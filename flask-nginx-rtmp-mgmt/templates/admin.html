@@ -86,7 +86,7 @@
                         <td>{{user.active}}</td>
                         <td>{{user.confirmed_at}}</td>
                         <td>{% for role in user.roles %}
-                            {{role}}<br>
+                            {{role.name}}<br>
                             {% endfor %}
                         </td>
                         <td></td>
