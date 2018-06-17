@@ -106,8 +106,8 @@
 <script>
     $(".link").click(function(e) {
           e.preventDefault();
-          $('.content-container div').fadeOut('slow');
-          $('#' + $(this).data('rel')).fadeIn('slow');
+          $('.content-container div').hide();
+          $('#' + $(this).data('rel')).show();
     });
 </script>
 {% endblock %}
