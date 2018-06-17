@@ -122,9 +122,14 @@
                 <table class="table table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Role ID</th>
-                            <th scope="col">Role Name</th>
-                            <th scope="col">Number of Users in Role</th>
+                            <th scope="col">Channel ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Channel Location</th>
+                            <th scope="col">Topic</th>
+                            <th scope="col">Views</th>
+                            <th scope="col">Recording Enabled</th>
+                            <th scope="col">Chat Enabled</th>
+                            <th scope="col">Image</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -137,7 +142,7 @@
                         <td>{{channel.views}}</td>
                         <td>{{channel.record}}</td>
                         <td>{{channel.chatEnabled}}</td>
-                        <td>{{channel.imageLocation}}</td>
+                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;"></td>
                         <td>{% for chanStream in stream %}
                             <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
                             {% endfor %}
