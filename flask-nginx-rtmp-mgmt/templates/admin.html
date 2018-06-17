@@ -144,7 +144,7 @@
                         <td>{{channel.views}}</td>
                         <td>{{channel.record}}</td>
                         <td>{{channel.chatEnabled}}</td>
-                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:284px;height:80px;"></td>
+                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
                         <td>{% for chanStream in stream %}
                             <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
                             {% endfor %}
