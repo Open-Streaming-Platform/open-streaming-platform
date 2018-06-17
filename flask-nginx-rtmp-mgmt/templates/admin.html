@@ -15,7 +15,7 @@
             <div><a class="link" href="#" onclick="toggleDiv('userList')">Users</a></div>
             <div><a class="link" href="#" onclick="toggleDiv('rolesList')">Roles</a></div><br>
             <b>Channels</b><br>
-            <div>Channel List</div><br>
+            <div><a class="link" href="#" onclick="toggleDiv('channelsList')">Channel List</a></div><br>
             <b>Streams</b><br>
             <div>Streams List</div>
             <br><br>
@@ -111,6 +111,37 @@
                     <tr>
                         <td>{{role.id}}</td>
                         <td>{{role.name}}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="settingsOption" id="channelsList" style="display:none;">
+                <h5>Role List</h5>
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Role ID</th>
+                            <th scope="col">Role Name</th>
+                            <th scope="col">Number of Users in Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for channel in channelList %}
+                    <tr>
+                        <td>{{channel.id}}</td>
+                        <td>{{channel.channelName}}</td>
+                        <td>{{channel.channelLoc}}</td>
+                        <td>{{channel.topic}}</td>
+                        <td>{{channel.views}}</td>
+                        <td>{{channel.record}}</td>
+                        <td>{{channel.chatEnabled}}</td>
+                        <td>{{channel.imageLocation}}</td>
+                        <td>{% for chanStream in stream %}
+                            <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
+                            {% endfor %}
+                        </td>
                         <td></td>
                     </tr>
                     {% endfor %}
