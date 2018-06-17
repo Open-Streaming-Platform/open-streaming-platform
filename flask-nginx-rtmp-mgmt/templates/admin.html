@@ -144,8 +144,8 @@
                         <td>{{channel.channelLoc}}</td>
                         <td>{{channel.topic|get_topicName}}</td>
                         <td>{{channel.views}}</td>
-                        <td><span class="badge {% if channel.record == True %}} badge-success {% else %} badge-danger"> {% endif %}{{channel.record}}</span></td>
-                        <td><span class="badge {% if channel.chatEnabled == True %}} badge-success {% else %} badge-danger"> {% endif %}{{channel.chatEnabled}}</span></td>
+                        <td><span class="badge {% if channel.record == True %} badge-success {% else %} badge-danger"> {% endif %}{{channel.record}}</span></td>
+                        <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% else %} badge-danger"> {% endif %}{{channel.chatEnabled}}</span></td>
                         <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
                         <td>{% for chanStream in stream %}
                             <span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span><br>
