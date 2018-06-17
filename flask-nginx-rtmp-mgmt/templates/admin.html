@@ -64,18 +64,18 @@
             </div>
             <div class="settingsOption" id="userList" style="display:none;">
                 <h5>User List</h5>
-                <table>
-                    <thead>
-                    <tr>
-                        <td>User ID</td>
-                        <td>User Name</td>
-                        <td>Email Address</td>
-                        <td>Active?</td>
-                        <td>Confirmed On</td>
-                        <td>Roles</td>
-                        <td>Channels</td>
-                        <td>Options</td>
-                    </tr>
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">User ID</th>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Email Address</th>
+                            <th scope="col">Active?</th>
+                            <th scope="col">Confirmed On</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col">Channels</th>
+                            <th scope="col">Options</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {% for user in userList %}
