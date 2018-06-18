@@ -196,9 +196,9 @@
 
 <script>
     socket.on('serverResources', function(msg) {
-        console.log('Recieved:' + msg['data'])
-        document.getElementById("cpuUsage").innerHTML = msg['data']['cpuUsage']
-        document.getElementById("memoryUsage").innerHTML = msg['data']['memoryUsage']
+        console.log('Recieved:' + msg)
+        document.getElementById("cpuUsage").innerHTML = msg['cpuUsage']
+        document.getElementById("memoryUsage").innerHTML = msg['memoryUsage']
 
     });
 </script>
