@@ -72,7 +72,7 @@
 }
 
 .charBar-Item-Image {
-    float:left;
+    display:inline-block;
 }
 
 .chatBar-Item-Text {
@@ -80,6 +80,7 @@
     left:20px;
     color:white;
     word-wrap: break-word;
+    display:inline-block;
     width:95%;
 }
 
