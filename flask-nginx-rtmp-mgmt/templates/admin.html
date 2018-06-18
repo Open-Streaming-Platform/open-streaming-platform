@@ -199,6 +199,13 @@
 </script>
 
 <script>
+    socket.on('connect', function() {
+        socket.emit('getServerResources',{data:"0"});
+        console.log('Sent Resource Request')
+    });
+</script>
+
+<script>
     setInterval(function() {
       socket.emit('getServerResources',{data:"0"});
       console.log('Sent Resource Request')
