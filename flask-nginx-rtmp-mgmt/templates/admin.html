@@ -190,12 +190,13 @@
 <script>
     setInterval(function() {
       socket.emit('getServerResources',{data:"0"});
+      console.log('Sent Resource Request')
     },10000 );
 </script>
 
 <script>
     socket.on('serverResources', function(msg) {
-
+        console.log('Recieved:' + msg['data'])
         document.getElementById("cpuUsage").innerHTML = msg['data']['cpuUsage']
         document.getElementById("memoryUsage").innerHTML = msg['data']['memoryUsage']
 
