@@ -32,7 +32,8 @@
               <div class="col-3">
                   {% if stream.channel.chatEnabled == True %}
                   <div class="chatbox">
-                      <textarea id="chat" class="form-control shadow" cols="80" rows="20" readonly></textarea><br>
+                      <div id="chat" class="chat form-control shadow"></div><br>
+                      <!--<textarea id="chat" class="chat form-control shadow" cols="80" rows="20" readonly></textarea><br>-->
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                   </div>
                   {% endif %}
@@ -183,8 +184,7 @@
             var h = today.getHours();
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
-            $('#chat').val($('#chat').val() + "<" +h + ":" + m + "> " + data.msg + '\n');
-            $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            $('#chat').append('<div class="chatBar-Item" style="border: 0px solid black;border-radius: 4px;background: #667db6;background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);padding-top:4px;padding-left:4px;padding-bottom:4px;margin-top:5px;"><div class="charBar-Item-Image" style="float:left;"><img src="chatBubble.png" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="position:relative;left:20px;"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br><br>' + data['msg'] + '</div></div>');
         });
     </script>
 
