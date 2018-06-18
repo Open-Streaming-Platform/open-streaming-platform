@@ -52,6 +52,8 @@
 
 .chat {
     overflow-y: auto;
+    overflow-x: hidden;
+    height: 75%;
     background-color: #eeeeee;
 }
 
