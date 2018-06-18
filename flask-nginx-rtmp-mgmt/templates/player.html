@@ -184,7 +184,7 @@
             var h = today.getHours();
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
-            $('#chat').append('<div class="chatBar-Item" style="border: 0px solid black;border-radius: 4px;background: #667db6;background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);padding-top:4px;padding-left:4px;padding-bottom:4px;margin-top:5px;"><div class="charBar-Item-Image" style="float:left;"><img src="chatBubble.png" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="position:relative;left:20px;"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br><br>' + data['msg'] + '</div></div>');
+            $('#chat').append('<div class="chatBar-Item" style="border: 0px solid black;border-radius: 4px;background: #667db6;background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);padding-top:4px;padding-left:4px;padding-bottom:4px;margin-top:5px;"><div class="charBar-Item-Image" style="float:left;"><img src="/static/img/user.png" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="position:relative;left:20px;"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br><br>' + data['msg'] + '</div></div>');
             $('#chat').scrollTop(1000000);
         });
     </script>
