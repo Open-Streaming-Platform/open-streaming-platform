@@ -72,7 +72,6 @@
 }
 
 .charBar-Item-Image {
-    display:inline-block;
     float:left;
 }
 
@@ -81,8 +80,8 @@
     left:20px;
     color:white;
     word-wrap: break-word;
-    display:inline-block;
     width:95%;
+    display:inline-block;
 }
 
 .chatbox {
