@@ -21,7 +21,7 @@
             <b>Streams</b><br>
             <div>Streams List</div>
             <br><br>
-
+            <hr>
             CPU<br>
             <div class="progress">
               <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -209,13 +209,13 @@
     socket.on('serverResources', function(msg) {
         console.log('Recieved:' + msg)
 
-        $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage']);
+        $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage'] + '%');
         $('#cpuUsage').text(msg['cpuUsage'] + '%')
 
-        $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage']);
+        $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
         $('#memoryUsage').text(msg['memoryUsage'] + '%')
 
-        $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage']);
+        $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%')
 
     });
