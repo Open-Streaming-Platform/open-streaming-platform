@@ -82,7 +82,7 @@
     word-wrap: break-word;
     width:95%;
     overflow:hidden;
-    float: none;
+    float: left;
 }
 
 .chatbox {
