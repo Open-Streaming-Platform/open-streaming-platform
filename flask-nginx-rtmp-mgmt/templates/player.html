@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block body %}
-      <div class="{{sysSettings.background}}-BG container-fluid">
+      <div class="{{sysSettings.background}}-BG container-fluid" style="padding-bottom:50px;">
           <div class="row">
-              <div class="col-9">
+              <div class="col">
                   <div class="White-BG player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
@@ -29,7 +29,7 @@
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
                   </div>
               </div>
-              <div class="col-3">
+              <div class="col-3 chat-col">
                   {% if stream.channel.chatEnabled == True %}
                   <div class="chatbox">
                       <div id="chat" class="chat form-control shadow"></div><br>
@@ -40,36 +40,37 @@
               </div>
           </div>
       </div>
-      <div class="{{sysSettings.background}}-BG"><br><br></div>
+
       {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
-      <div class="{{sysSettings.background}}-BG">
-          <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
-              <h5 class="card-header">Other Videos from this Channel</h5>
-              <div class="card-body">
-                  <div class="streamList d-flex align-content-around flex-wrap">
-                      {% for video in stream.channel.recordedVideo %}
-                          {% if video.pending == False %}
-                              <a href="/play/{{video.id}}">
-                                  <div class="stream shadow card p-2" style="width:386px;">
-                                    <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{video.channelName}}</h5><br>
-                                        <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                                        <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+      <div class="{{sysSettings.background}}-BG row" style="padding-bottom:50px;">
+          <div class="col">
+              <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
+                  <h5 class="card-header">Other Videos from this Channel</h5>
+                  <div class="card-body">
+                      <div class="streamList d-flex align-content-around flex-wrap">
+                          {% for video in stream.channel.recordedVideo %}
+                              {% if video.pending == False %}
+                                  <a href="/play/{{video.id}}">
+                                      <div class="stream shadow card p-2" style="width:386px;">
+                                        <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{video.channelName}}</h5><br>
+                                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                                        </div>
+                                        <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                                <i class="fas fa-users"></i> {{video.views}}
+                                        </div>
                                     </div>
-                                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                                            <i class="fas fa-users"></i> {{video.views}}
-                                    </div>
-                                </div>
-                              </a>
-                          {% endif %}
-                      {% endfor %}
+                                  </a>
+                              {% endif %}
+                          {% endfor %}
+                      </div>
                   </div>
               </div>
           </div>
       </div>
       {% endif %}
-      <div class="{{sysSettings.background}}-BG"><br><br></div>
 
 {% if stream.channel.owningUser == current_user.id %}
 <!-- Modal -->
