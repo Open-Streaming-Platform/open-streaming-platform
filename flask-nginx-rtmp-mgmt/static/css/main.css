@@ -78,6 +78,7 @@
     position:relative;
     left:20px;
     color:white;
+    word-wrap: break-word;
 }
 
 .chatbox {
