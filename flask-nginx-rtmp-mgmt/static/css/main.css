@@ -63,10 +63,11 @@
     background: #667db6;
     background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
     background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
-    padding-top:4px;
-    padding-left:4px;
-    padding-bottom:4px;
-    margin-top:5px;
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-bottom: 4px;
+    margin-top: 5px;
+    min-height: 78px;
 }
 
 .charBar-Item-Image {
