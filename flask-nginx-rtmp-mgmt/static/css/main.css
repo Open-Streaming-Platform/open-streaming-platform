@@ -81,7 +81,7 @@
     color:white;
     word-wrap: break-word;
     width:95%;
-    display:inline-block;
+    display:block;
     overflow:hidden;
     float: none;
 }
