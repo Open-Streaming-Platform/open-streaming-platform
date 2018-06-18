@@ -73,6 +73,7 @@
 
 .charBar-Item-Image {
     display:inline-block;
+    float:left;
 }
 
 .chatBar-Item-Text {
