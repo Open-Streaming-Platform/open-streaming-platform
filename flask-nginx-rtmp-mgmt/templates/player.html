@@ -10,7 +10,7 @@
 {% block body %}
       <div class="{{sysSettings.background}}-BG container-fluid" style="padding-bottom:50px;">
           <div class="row">
-              <div class="col">
+              <div class="col-xl-9 col-lg-12">
                   <div class="White-BG player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
@@ -29,48 +29,47 @@
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
                   </div>
               </div>
-              <div class="col-3 chat-col">
-                  {% if stream.channel.chatEnabled == True %}
-                  <div class="chatbox">
+              {% if stream.channel.chatEnabled == True %}
+                <div class="col-xl-3 col-lg-12 .d-none .d-xl-block">
+                  <div class="chatbox" style="margin-bottom:180px;">
                       <div id="chat" class="chat form-control shadow"></div><br>
-                      <!--<textarea id="chat" class="chat form-control shadow" cols="80" rows="20" readonly></textarea><br>-->
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                   </div>
-                  {% endif %}
-              </div>
+                </div>
+              {% endif %}
           </div>
-      </div>
 
-      {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
-      <div class="{{sysSettings.background}}-BG row" style="padding-bottom:50px;">
-          <div class="col-12">
-              <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
-                  <h5 class="card-header">Other Videos from this Channel</h5>
-                  <div class="card-body">
-                      <div class="streamList d-flex align-content-around flex-wrap">
-                          {% for video in stream.channel.recordedVideo %}
-                              {% if video.pending == False %}
-                                  <a href="/play/{{video.id}}">
-                                      <div class="stream shadow card p-2" style="width:386px;">
-                                        <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{video.channelName}}</h5><br>
-                                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+          {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
+          <div class="row" style="padding-bottom:50px;">
+              <div class="col-12">
+                  <div class="card shadow" style="margin-left:15px;margin-right:15px;margin:bottom:30px;">
+                      <h5 class="card-header">Other Videos from this Channel</h5>
+                      <div class="card-body">
+                          <div class="streamList d-flex align-content-around flex-wrap">
+                              {% for video in stream.channel.recordedVideo %}
+                                  {% if video.pending == False %}
+                                      <a href="/play/{{video.id}}">
+                                          <div class="stream shadow card p-2" style="width:386px;">
+                                            <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{video.channelName}}</h5><br>
+                                                <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                                                <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                                            </div>
+                                            <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                                    <i class="fas fa-users"></i> {{video.views}}
+                                            </div>
                                         </div>
-                                        <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                                                <i class="fas fa-users"></i> {{video.views}}
-                                        </div>
-                                    </div>
-                                  </a>
-                              {% endif %}
-                          {% endfor %}
+                                      </a>
+                                  {% endif %}
+                              {% endfor %}
+                          </div>
                       </div>
                   </div>
               </div>
           </div>
-      </div>
-      {% endif %}
+          {% endif %}
+    </div>
 
 {% if stream.channel.owningUser == current_user.id %}
 <!-- Modal -->
@@ -185,7 +184,7 @@
             var h = today.getHours();
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
-            $('#chat').append('<div class="chatBar-Item"><div class="charBar-Item-Image"><img src="/static/img/user.png" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br><br>' + data['msg'] + '</div></div>');
+            $('#chat').append('<div class="chatBar-Item"><div class="charBar-Item-Image"><img src="/static/img/user.png" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             $('#chat').scrollTop(1000000);
         });
     </script>

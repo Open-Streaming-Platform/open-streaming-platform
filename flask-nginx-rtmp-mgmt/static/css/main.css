@@ -59,7 +59,7 @@
 .chat {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 740px;
+    height: 640px;
     background-color: #eeeeee;
 }
 
@@ -74,7 +74,7 @@
     padding-bottom: 4px;
     padding-right: 4px;
     margin-top: 5px;
-    min-height: 78px;
+    min-height: 60px;
 }
 
 .charBar-Item-Image {
