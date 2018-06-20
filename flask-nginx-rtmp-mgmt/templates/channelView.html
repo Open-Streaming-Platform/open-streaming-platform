@@ -8,9 +8,8 @@
             <a href="/view/{{stream.channel.channelLoc}}/">
                 <div class="stream shadow card p-2 streamcard-item">
                     <img class="stream-img card-img-top" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <img class="blink-image shadow recordDot" src="/static/img/red.png">
                     <div class="card-body">
-                        <h5 class="card-title">{{stream.streamName}}</h5>
+                        <h5 class="card-title">{{stream.streamName}} <img class="blink-image shadow recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
                         <p class="card-text">
                             <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
                             <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
