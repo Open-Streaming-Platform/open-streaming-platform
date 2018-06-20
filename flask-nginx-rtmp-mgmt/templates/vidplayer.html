@@ -21,13 +21,14 @@
                           <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
                               <i class="fas fa-trash-alt"></i>
                           </button>
-                      {% endif %}
+
                       </div>
                       <div class="float-right">
                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
                               <i class="fas fa-edit"></i>
                           </button>
                       </div>
+                      {% endif %}
                       <i class="fas fa-video"></i> <b>{{video.channelName}}</b> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
