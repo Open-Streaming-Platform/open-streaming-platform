@@ -35,13 +35,12 @@
                       <i class="fas fa-users"></i> {{video.views}} <br>
                   </div>
               </div>
-          </div>
-      </div>
+
+
       <br>
       <br>
     {% if video.channel.recordedVideo != [] %}
-          <div class="row justify-content-md-center" style="padding-bottom:50px;">
-              <div class="col-12" style="width:75%;min-width:1024px;>
+              <div class="col-12" style="width:75%;min-width:1024px;">
                   <div class="card shadow" style="margin-top:50px;margin-bottom:30px;">
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
@@ -65,8 +64,10 @@
                       </div>
                   </div>
               </div>
-          </div>
+
           {% endif %}
+          </div>
+      </div>
 </div>
 
 {% if video.owningUser == current_user.id %}
