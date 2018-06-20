@@ -9,7 +9,7 @@
     {% for channel in channelList %}
         {% if channel.recordedVideo|length > 0 %}
         <a href="/channel/{{channel.id}}/">
-            <div class="stream shadow card p-2" style="width:386px;">
+            <div class="stream shadow card p-2 streamcard-item">
                 <img class="stream-img card-img-top" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                 <div class="card-body">
                     <h5 class="card-title">{{channel.channelName}}</h5>

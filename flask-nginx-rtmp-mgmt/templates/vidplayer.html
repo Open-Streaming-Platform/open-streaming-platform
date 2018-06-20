@@ -47,7 +47,7 @@
                           <div class="streamList d-flex align-content-around flex-wrap justify-content-center">
                               {% for vid in video.channel.recordedVideo %}
                                   <a href="/play/{{vid.id}}">
-                                      <div class="stream shadow card p-2 steamcard-item">
+                                      <div class="stream shadow card p-2 streamcard-item">
                                         <img class="stream-img card-img-top" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                                         <div class="card-body">
                                             <h5 class="card-title">{{vid.channelName}}</h5><br>
