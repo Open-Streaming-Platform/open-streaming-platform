@@ -49,10 +49,6 @@
 }
 
 .recordDot {
-    position:relative;
-    left:340px;
-    top:-30px;
-    margin-bottom:-20px;
     width: 20px;
     height: 20px;
 }
