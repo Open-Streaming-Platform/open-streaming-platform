@@ -45,11 +45,11 @@
                   <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
-                          <div class="streamList d-flex align-content-around flex-wrap">
+                          <div class="streamList d-flex align-content-around flex-wrap justify-content-center">
                               {% for video in stream.channel.recordedVideo %}
                                   {% if video.pending == False %}
                                       <a href="/play/{{video.id}}">
-                                          <div class="stream shadow card p-2" style="width:386px;">
+                                          <div class="stream shadow card p-2 steamcard-item">
                                             <img class="stream-img card-img-top" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                                             <div class="card-body">
                                                 <h5 class="card-title">{{video.channelName}}</h5><br>
