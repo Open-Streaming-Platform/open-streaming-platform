@@ -40,6 +40,11 @@
     text-decoration: none;
 }
 
+.stream-img {
+    width:384px;
+    margin:-8px;
+}
+
 .streamcard-item {
     width:386px;
 }
@@ -61,6 +66,11 @@
 
     .streamcard-item {
         width:200px;
+    }
+
+    .stream-img {
+        width:200px;
+        margin:-8px;
     }
 }
 
