@@ -35,7 +35,7 @@
           </thead>
           <tbody class="White-BG">
           {% for channel in channels %}
-          <tr scope="row" style="color:white;">
+          <tr scope="row" style="color:black;">
             <form action="/settings/channels" enctype=multipart/form-data method="post">
                 <td><input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required></td>
                 <td>
