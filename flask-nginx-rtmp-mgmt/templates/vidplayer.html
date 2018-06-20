@@ -9,7 +9,7 @@
 <div class="{{sysSettings.background}}-BG">
       <div class="container-fluid">
           <div class="row justify-content-md-center">
-              <div style="width:75%;min-width:1024px;">
+              <div class="col-lg-12">
                   <div class="White-BG player">
                       <video id="video" class="shadow recordedStream" autoplay controls>
                           <source src="{{streamURL}}" type="video/mp4">
@@ -40,14 +40,14 @@
       <br>
       <br>
     {% if video.channel.recordedVideo != [] %}
-              <div style="width:75%;min-width:1024px;">
+              <div class="col-lg-12">
                   <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
                           <div class="streamList d-flex align-content-around flex-wrap justify-content-center">
                               {% for vid in video.channel.recordedVideo %}
                                   <a href="/play/{{vid.id}}">
-                                      <div class="stream shadow card p-2" style="width:386px;">
+                                      <div class="stream shadow card p-2 steamcard-item">
                                         <img class="stream-img card-img-top" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
                                         <div class="card-body">
                                             <h5 class="card-title">{{vid.channelName}}</h5><br>
