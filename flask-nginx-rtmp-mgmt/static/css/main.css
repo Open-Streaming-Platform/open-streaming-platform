@@ -82,7 +82,7 @@
     .recordDot {
         position:relative;
         top: -22px;
-        left: 20px;
+        right: -20px;
         width: 12px;
         height: 12px;
         float:right;
