@@ -39,6 +39,34 @@
       </div>
       <br>
       <br>
+    {% if video.channel.recordedVideo != [] %}
+          <div class="row" style="padding-bottom:50px;">
+              <div class="col-12">
+                  <div class="card shadow" style="margin-top:50px;margin-bottom:30px;">
+                      <h5 class="card-header">Other Videos from this Channel</h5>
+                      <div class="card-body">
+                          <div class="streamList d-flex align-content-around flex-wrap">
+                              {% for vid in video.channel.recordedVideo %}
+                                  <a href="/play/{{video.id}}">
+                                      <div class="stream shadow card p-2" style="width:386px;">
+                                        <img class="stream-img card-img-top" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:384px;height:216px;margin:-8px;">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{vid.channelName}}</h5><br>
+                                            <i class="fas fa-hashtag"></i> <b>{{vid.topic|get_topicName}}</b> <br>
+                                            <i class="fas fa-calendar-alt"></i> <b>{{vid.videoDate|normalize_date}}</b> <br>
+                                        </div>
+                                        <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                                <i class="fas fa-users"></i> {{vid.views}}
+                                        </div>
+                                    </div>
+                                  </a>
+                              {% endfor %}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endif %}
 </div>
 
 {% if video.owningUser == current_user.id %}
