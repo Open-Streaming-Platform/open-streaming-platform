@@ -75,15 +75,16 @@
 
     .streamcard-item {
         width:100%;
-        margin:10px;
+        margin-left:5px;
+        margin-right:5px;
     }
 
     .recordDot {
         position:relative;
-        left:158px;
         top: -22px;
         width: 12px;
         height: 12px;
+        float:right;
     }
 }
 
