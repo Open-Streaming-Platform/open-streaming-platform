@@ -72,6 +72,10 @@
         display: none !important;
     }
 
+    .stream{
+        margin: 10px;
+    }
+
     .streamcard-item {
         width:200px;
     }
