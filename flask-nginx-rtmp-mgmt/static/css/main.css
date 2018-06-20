@@ -41,7 +41,7 @@
 }
 
 .stream-img {
-    width:384px;
+    width:100%;
     margin:-8px;
 }
 
@@ -68,10 +68,7 @@
         width:200px;
     }
 
-    .stream-img {
-        width:200px;
-        margin:-8px;
-    }
+
 }
 
 .chat {
