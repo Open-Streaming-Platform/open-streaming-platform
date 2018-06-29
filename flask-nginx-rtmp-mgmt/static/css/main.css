@@ -74,6 +74,15 @@
         width: 12px;
         height: 12px;
     }
+
+    .streamcard-item {
+        text-align: center;
+    }
+
+    .streamcard-item > div {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .chat {
