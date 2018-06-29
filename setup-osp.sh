@@ -45,10 +45,12 @@ sudo mkdir videos
 sudo chown -R www-data:www-data videos
 sudo mkdir live-rec
 sudo chown -R www-data:www-data live-rec
+sudo mkdir images
+sudo chown -R www-data:www-data images
 
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
-sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent
+sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent flask-uploads psutil
 sudo mkdir /opt/osp/
 
 cd $cwd/osp
