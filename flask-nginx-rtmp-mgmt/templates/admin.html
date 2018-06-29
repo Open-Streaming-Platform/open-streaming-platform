@@ -9,7 +9,7 @@
 {% block body %}
 <div class="container-fluid" style="height:100vh;">
     <div class="row h-100">
-        <div class="col-1 ServQuick-BG" style="color:white;padding-left:10px;">
+        <div class="col-2 ServQuick-BG" style="color:white;padding-left:10px;">
             <b>Settings</b><br>
             <div><a class="link" href="#" onclick="toggleDiv('adminSettings')">Admin Settings</a></div>
             <div>Other</div><br>
@@ -38,7 +38,7 @@
             <br>
             <div class="dbVer">Database Version: {{appDBVer}}</div>
         </div>
-        <div class="col-11" style="padding-bottom:20px;padding-top:10px;">
+        <div class="col-10" style="padding-bottom:20px;padding-top:10px;">
             <div class="settingsOption" id="adminSettings">
                 <h5>Configuration Options</h5>
                   <form action="/settings/admin" method="post">
