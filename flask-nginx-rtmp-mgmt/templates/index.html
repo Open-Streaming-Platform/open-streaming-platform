@@ -35,8 +35,8 @@ $('#search').on('input', function(){
     $('div.streamcard-item').each(function(){
          var $this = $(this);
          if($this.text().toLowerCase().indexOf(query) === -1)
-             $this.closest('div.streamcard-item').fadeOut();
-        else $this.closest('div.streamcard-item').fadeIn();
+             $this.closest('div.streamcard-item').hide();
+        else $this.closest('div.streamcard-item').show();
     });
 });
 </script>
