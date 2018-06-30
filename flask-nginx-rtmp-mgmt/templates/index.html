@@ -29,6 +29,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
 $('#search').onkeydown(function(){
     $('.streamcard-item').hide();
     var txt = $('.card-body').val();
@@ -38,5 +39,6 @@ $('#search').onkeydown(function(){
        }
     });
 });
+</script>
 {% endblock %}
 
