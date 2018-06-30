@@ -33,7 +33,7 @@
 {% block scripts %}
 <script>
 $('#search').on('input', function(){
-    var query = $.trim($(this).prevAll('#search').val()).toLowerCase();
+    var query = document.getElementById("search").value.toLowerCase();
     $('.streamcard').each(function(){
          var $this = $(this);
          console.log($this.text());
