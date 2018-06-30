@@ -36,7 +36,7 @@ $('#search').on('input', function(){
     var query = $.trim($(this).prevAll('#search').val()).toLowerCase();
     $('.streamcard').each(function(){
          var $this = $(this);
-         console.log($(this.text()));
+         console.log($this.text());
          console.log(query);
          if($this.text().toLowerCase().indexOf(query) === -1)
              $this.closest('.streamcard').hide();
