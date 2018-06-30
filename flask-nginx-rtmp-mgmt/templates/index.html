@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
+    <input type="text" name="search" class="searchBar" placeholder="Search..">
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
         <a href="/view/{{stream.channel.channelLoc}}/">
