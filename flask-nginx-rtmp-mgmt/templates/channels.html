@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="{{sysSettings.background}}-BG streamList d-flex align-content-around flex-wrap">
+    <div class="streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
         {% if channel.recordedVideo|length > 0 %}
         <a href="/channel/{{channel.id}}/">
