@@ -10,7 +10,7 @@
 {% block body %}
       <div class="container-fluid" style="padding-bottom:50px;">
           <div class="row">
-              <div class="col-xl-9 col-lg-12">
+              <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 {% else %}col-xl-12{% endif %} col-lg-12">
                   <div class="White-BG player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
