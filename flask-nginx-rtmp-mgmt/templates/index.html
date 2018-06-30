@@ -3,7 +3,7 @@
 {% block body %}
     <div class="row justify-content-center">
         <div class="col-10">
-            <input type="text" name="search" class="searchBar" style="margin-top:15px;" placeholder="Search..">
+            <input type="text" id="search" name="search" class="searchBar" style="margin-top:15px;" placeholder="Search..">
         </div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
@@ -26,5 +26,17 @@
         </a>
     {% endfor %}
     </div>
+{% endblock %}
+
+{% block scripts %}
+$('#search').onkeydown(function(){
+    $('.streamcard-item').hide();
+    var txt = $('.card-body').val();
+    $('.streamcard-item').each(function(){
+       if($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1){
+           $(this).show();
+       }
+    });
+});
 {% endblock %}
 
