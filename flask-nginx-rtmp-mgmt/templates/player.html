@@ -9,8 +9,8 @@
 
 {% block body %}
       <div class="container-fluid" style="padding-bottom:50px;">
-          <div class="row">
-              <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 {% else %}col-xl-12{% endif %} col-lg-12">
+          <div class="row {% if stream.chat.chatEnabled == False %}justify-content-md-center{% endif %}">
+              <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-8{% endif %} col-sm-12">
                   <div class="White-BG player">
                     <video id="video" class="shadow videoStream" controls></video>
                   </div>
@@ -41,7 +41,7 @@
 
           {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
           <div class="row justify-content-center" style="padding-bottom:50px;">
-              <div class="col-12">
+              <div class="{% if stream.channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
                   <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
