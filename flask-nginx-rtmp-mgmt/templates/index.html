@@ -32,11 +32,11 @@
 <script>
 $('#search').on('input', function(){
     var query = $.trim($(this).prevAll('.searchBar').val()).toLowerCase();
-    $('div.streamcard-item').each(function(){
+    $('.streamcard-item').each(function(){
          var $this = $(this);
          if($this.text().toLowerCase().indexOf(query) === -1)
-             $this.closest('div.streamcard-item').hide();
-        else $this.closest('div.streamcard-item').show();
+             $this.closest('.streamcard-item').hide();
+        else $this.closest('.streamcard-item').show();
     });
 });
 </script>
