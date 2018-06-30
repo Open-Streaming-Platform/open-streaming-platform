@@ -30,7 +30,7 @@
 
 {% block scripts %}
 <script>
-$('#search').keydown(function(){
+$('#search').on('input', function(){
     $('.streamcard-item').hide();
     var txt = $('.card-title').val();
     $('.streamcard-item').each(function(){
