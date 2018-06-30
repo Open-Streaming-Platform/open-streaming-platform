@@ -73,6 +73,8 @@
         </nav>
     </div>
 
+    <div class="{{sysSettings.background}}-BG">
+
     {%- with messages = get_flashed_messages(with_categories=true) -%}
       {% if messages %}
         <div class="justify-content-center">
@@ -85,7 +87,6 @@
       {% endif %}
     {%- endwith %}
 
-    <div class="{{sysSettings.background}}-BG">
     {% block body %}
 
     {% endblock %}
