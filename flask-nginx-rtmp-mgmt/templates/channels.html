@@ -5,26 +5,49 @@
 {% endblock %}
 
 {% block body %}
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <input type="text" id="search" name="search" class="searchBar" style="margin-top:15px;" placeholder="Search..">
+        </div>
+    </div>
+
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
         {% if channel.recordedVideo|length > 0 %}
-        <a href="/channel/{{channel.id}}/">
-            <div class="stream shadow card p-2 streamcard-item">
-                <img class="stream-img card-img-top" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                <div class="card-body">
-                    <h5 class="card-title">{{channel.channelName}}</h5>
-                    <p class="card-text">
-                        <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
-                        <i class="fas fa-user-circle"></i> {{channel.owningUser|get_userName}}</p>
+        <div class="streamcard">
+            <a href="/channel/{{channel.id}}/">
+                <div class="stream shadow card p-2 streamcard-item">
+                    <img class="stream-img card-img-top" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-body">
+                        <h5 class="card-title">{{channel.channelName}}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
+                            <i class="fas fa-user-circle"></i> {{channel.owningUser|get_userName}}</p>
+                    </div>
+                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                            <i class="fas fa-users"></i> {{channel.views}}
+                    </div>
                 </div>
-                <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                        <i class="fas fa-users"></i> {{channel.views}}
-                </div>
-            </div>
 
-        </a>
+            </a>
+        </div>
         {% endif %}
     {% endfor %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+$('#search').on('input', function(){
+    var query = document.getElementById("search").value.toLowerCase();
+    $('.streamcard').each(function(){
+         var $this = $(this);
+         if($this.text().toLowerCase().indexOf(query) === -1)
+             $this.closest('.streamcard').hide();
+        else $this.closest('.streamcard').show();
+    });
+});
+</script>
+{% endblock %}
+
 
