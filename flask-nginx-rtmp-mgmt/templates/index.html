@@ -32,7 +32,7 @@
 <script>
 $('#search').keydown(function(){
     $('.streamcard-item').hide();
-    var txt = $('.card-body').val();
+    var txt = $('.card-title').val();
     $('.streamcard-item').each(function(){
        if($(this).text().toUpperCase().indexOf(txt.toUpperCase()) != -1){
            $(this).show();
