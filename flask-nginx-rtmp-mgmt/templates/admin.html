@@ -211,7 +211,7 @@
                             <td>{{stream.topic|get_topicName}}</td>
                             <td>{{stream.currentViewers}}</td>
                             <td>{{stream.totalViewers}}</td>
-                            <td><img width="100" height="80" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                            <td><img width="284" height="155" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
                         </tr>
                         {% endfor %}
                         </tbody>
