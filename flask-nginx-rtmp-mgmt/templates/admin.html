@@ -7,38 +7,49 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid" style="height:100vh;">
-    <div class="row h-100">
-        <div class="col-2 ServQuick-BG" style="color:white;padding-left:10px;">
-            <b>Settings</b><br>
-            <div><a class="link" href="#" onclick="toggleDiv('adminSettings')">Admin Settings</a></div>
-            <div>Other</div><br>
-            <b>Users and Roles</b><br>
-            <div><a class="link" href="#" onclick="toggleDiv('userList')">Users</a></div>
-            <div><a class="link" href="#" onclick="toggleDiv('rolesList')">Roles</a></div><br>
-            <b>Channels</b><br>
-            <div><a class="link" href="#" onclick="toggleDiv('channelsList')">Channel List</a></div><br>
-            <b>Streams</b><br>
-            <div>Streams List</div>
-            <br><br>
-            <hr>
-            CPU<br>
-            <div class="progress">
-              <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-            </div><br>
-            Memory<br>
-            <div class="progress">
-              <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-            </div><br>
-            Disk<br>
-            <div class="progress">
-              <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+<div class="container-fluid">
+    <div class="row">
+      <div class="card">
+      <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link active link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link" href="#" onclick="toggleDiv('adminSettings')">Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link" href="#" onclick="toggleDiv('userList')">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link" href="#" onclick="toggleDiv('rolesList')">Roles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link" href="#" onclick="toggleDiv('channelsList')">Channels</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
+            </li>
+          </ul>
+      </div>
+      <div class="card-body">
+        <div class="col-12" style="padding-bottom:20px;padding-top:10px;">
+            <div class="settingsOption" id="dashboard">
+                CPU<br>
+                <div class="progress">
+                  <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div><br>
+                Memory<br>
+                <div class="progress">
+                  <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div><br>
+                Disk<br>
+                <div class="progress">
+                  <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <br>
+                <div class="dbVer">Database Version: {{appDBVer}}</div>
             </div>
-
-            <br>
-            <div class="dbVer">Database Version: {{appDBVer}}</div>
-        </div>
-        <div class="col-10" style="padding-bottom:20px;padding-top:10px;">
             <div class="settingsOption" id="adminSettings">
                 <h5>Configuration Options</h5>
                   <form action="/settings/admin" method="post">
@@ -177,6 +188,7 @@
                 </table>
             </div>
           </div>
+      </div>
     </div>
 </div>
 {% endblock %}
