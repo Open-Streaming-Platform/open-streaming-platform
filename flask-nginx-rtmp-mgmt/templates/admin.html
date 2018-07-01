@@ -199,6 +199,7 @@
                                 <th scope="col">Topic</th>
                                 <th scope="col">Current Viewers</th>
                                 <th scope="col">Total Viewers</th>
+                                <th scope="col">Last Image</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -210,6 +211,7 @@
                             <td>{{stream.topic|get_topicName}}</td>
                             <td>{{stream.currentViewers}}</td>
                             <td>{{stream.totalViewers}}</td>
+                            <td><img class="stream-img card-img-top" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
                         </tr>
                         {% endfor %}
                         </tbody>
