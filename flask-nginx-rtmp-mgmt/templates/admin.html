@@ -188,6 +188,33 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="settingsOption" id="streamList" style="display:none;">
+                    <h5>Stream List</h5>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Stream ID</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Topic</th>
+                                <th scope="col">Current Viewers</th>
+                                <th scope="col">Total Viewers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for stream in streamList %}
+                        <tr>
+                            <td>{{stream.id}}</td>
+                            <td>{{stream.channel.owningUser|get_userName}}</td>
+                            <td>{{stream.streamName}}</td>
+                            <td>{{stream.topic|get_topicName}}</td>
+                            <td>{{stream.currentViewers}}</td>
+                            <td>{{stream.totalViewers}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
               </div>
           </div>
       </div>
