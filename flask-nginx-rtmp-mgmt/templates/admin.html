@@ -160,7 +160,6 @@
                                 <th scope="col">Recording Enabled</th>
                                 <th scope="col">Chat Enabled</th>
                                 <th scope="col">Image</th>
-                                <th scope="col">Open Streams</th>
                                 <th scope="col">Disk Usage</th>
                                 <th scope="col">Options</th>
                             </tr>
@@ -177,10 +176,6 @@
                             <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
                             <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
                             <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
-                            <td>{% for chanStream in channel.stream %}
-                                <h5><a href="/view/{{channel.channelLoc}}"><span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span></a></h5><br>
-                                {% endfor %}
-                            </td>
                             <td>{{channel.channelLoc|get_diskUsage}}</td>
                             <td></td>
                         </tr>
