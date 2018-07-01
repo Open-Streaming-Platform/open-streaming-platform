@@ -7,186 +7,188 @@
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row col-12 justify-content-center">
-      <div class="card" style="width:100%">
-      <div class="card-header">
-          <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item">
-                <a class="nav-link active link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link" href="#" onclick="toggleDiv('adminSettings')">Settings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link" href="#" onclick="toggleDiv('userList')">Users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link" href="#" onclick="toggleDiv('rolesList')">Roles</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link" href="#" onclick="toggleDiv('channelsList')">Channels</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
-            </li>
-          </ul>
-      </div>
-      <div class="card-body">
-        <div style="padding-bottom:20px;padding-top:10px;">
-            <div class="settingsOption" id="dashboard">
-                CPU<br>
-                <div class="progress">
-                  <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                </div><br>
-                Memory<br>
-                <div class="progress">
-                  <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                </div><br>
-                Disk<br>
-                <div class="progress">
-                  <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-10">
+          <div class="card" style="width:100%">
+          <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('adminSettings')">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('userList')">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('rolesList')">Roles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('channelsList')">Channels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
+                </li>
+              </ul>
+          </div>
+          <div class="card-body">
+            <div style="padding-bottom:20px;padding-top:10px;">
+                <div class="settingsOption" id="dashboard">
+                    CPU<br>
+                    <div class="progress">
+                      <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div><br>
+                    Memory<br>
+                    <div class="progress">
+                      <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div><br>
+                    Disk<br>
+                    <div class="progress">
+                      <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <br>
+                    <div class="dbVer">Database Version: {{appDBVer}}</div>
                 </div>
-                <br>
-                <div class="dbVer">Database Version: {{appDBVer}}</div>
-            </div>
-            <div class="settingsOption" id="adminSettings" style="display:none;">
-                <h5>Configuration Options</h5>
-                  <form action="/settings/admin" method="post">
-                      Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
-                      Server Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
-                      <hr>
-                      Background Theme:
-                      <select class="form-control" name="background">
-                          <option value="Ash" {% if sysSettings.background=="Ash" %} selected {% endif %}>Ash</option>
-                          <option value="Moonlit" {% if sysSettings.background=="Moonlit" %} selected {% endif %}>Moonlit</option>
-                          <option value="Terminal" {% if sysSettings.background=="Terminal" %} selected {% endif %}>Terminal</option>
-                          <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
-                          <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
-                      </select>
-                      SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
-                      SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
-                      SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                      SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}"required>
-                      SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
-                      SMTP TLS:<br>
-                      <label class="switch">
-                        <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
-                        <span class="slider round"></span>
-                      </label>
-                      <hr>
-                      Allow Users to Register:<br>
-                      <label class="switch">
-                        <input type="checkbox" id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
-                        <span class="slider round"></span>
-                      </label><br>
-                      Allow Users to Record:<br>
-                      <label class="switch">
-                        <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
-                        <span class="slider round"></span>
-                      </label>
-                      <div class="form-row text-center">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                      </div>
-                  </form>
-            </div>
-            <div class="settingsOption" id="userList" style="display:none;">
-                <h5>User List</h5>
-                <table class="table table-hover">
-                    <thead class="thead-dark">
+                <div class="settingsOption" id="adminSettings" style="display:none;">
+                    <h5>Configuration Options</h5>
+                      <form action="/settings/admin" method="post">
+                          Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
+                          Server Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
+                          <hr>
+                          Background Theme:
+                          <select class="form-control" name="background">
+                              <option value="Ash" {% if sysSettings.background=="Ash" %} selected {% endif %}>Ash</option>
+                              <option value="Moonlit" {% if sysSettings.background=="Moonlit" %} selected {% endif %}>Moonlit</option>
+                              <option value="Terminal" {% if sysSettings.background=="Terminal" %} selected {% endif %}>Terminal</option>
+                              <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
+                              <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
+                          </select>
+                          SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
+                          SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
+                          SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
+                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}"required>
+                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
+                          SMTP TLS:<br>
+                          <label class="switch">
+                            <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                            <span class="slider round"></span>
+                          </label>
+                          <hr>
+                          Allow Users to Register:<br>
+                          <label class="switch">
+                            <input type="checkbox" id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
+                            <span class="slider round"></span>
+                          </label><br>
+                          Allow Users to Record:<br>
+                          <label class="switch">
+                            <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
+                            <span class="slider round"></span>
+                          </label>
+                          <div class="form-row text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </div>
+                      </form>
+                </div>
+                <div class="settingsOption" id="userList" style="display:none;">
+                    <h5>User List</h5>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">User ID</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Email Address</th>
+                                <th scope="col">Active?</th>
+                                <th scope="col">Confirmed On</th>
+                                <th scope="col">Roles</th>
+                                <th scope="col">Channels</th>
+                                <th scope="col">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in userList %}
                         <tr>
-                            <th scope="col">User ID</th>
-                            <th scope="col">User Name</th>
-                            <th scope="col">Email Address</th>
-                            <th scope="col">Active?</th>
-                            <th scope="col">Confirmed On</th>
-                            <th scope="col">Roles</th>
-                            <th scope="col">Channels</th>
-                            <th scope="col">Options</th>
+                            <td>{{user.id}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.email}}</td>
+                            <td>{{user.active}}</td>
+                            <td>{{user.confirmed_at}}</td>
+                            <td>{% for role in user.roles %}
+                                {{role.name}}<br>
+                                {% endfor %}
+                            </td>
+                            <td></td>
+                            <td></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                    {% for user in userList %}
-                    <tr>
-                        <td>{{user.id}}</td>
-                        <td>{{user.username}}</td>
-                        <td>{{user.email}}</td>
-                        <td>{{user.active}}</td>
-                        <td>{{user.confirmed_at}}</td>
-                        <td>{% for role in user.roles %}
-                            {{role.name}}<br>
-                            {% endfor %}
-                        </td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="settingsOption" id="rolesList" style="display:none;">
-                <h5>Role List</h5>
-                <table class="table table-hover">
-                    <thead class="thead-dark">
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="settingsOption" id="rolesList" style="display:none;">
+                    <h5>Role List</h5>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Role ID</th>
+                                <th scope="col">Role Name</th>
+                                <th scope="col">Number of Users in Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for role in roleList %}
                         <tr>
-                            <th scope="col">Role ID</th>
-                            <th scope="col">Role Name</th>
-                            <th scope="col">Number of Users in Role</th>
+                            <td>{{role.id}}</td>
+                            <td>{{role.name}}</td>
+                            <td></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                    {% for role in roleList %}
-                    <tr>
-                        <td>{{role.id}}</td>
-                        <td>{{role.name}}</td>
-                        <td></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="settingsOption" id="channelsList" style="display:none;">
-                <h5>Channels List</h5>
-                <table class="table table-hover">
-                    <thead class="thead-dark">
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="settingsOption" id="channelsList" style="display:none;">
+                    <h5>Channels List</h5>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Channel ID</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Channel Location</th>
+                                <th scope="col">Topic</th>
+                                <th scope="col">Views</th>
+                                <th scope="col">Recording Enabled</th>
+                                <th scope="col">Chat Enabled</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Open Streams</th>
+                                <th scope="col">Disk Usage</th>
+                                <th scope="col">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for channel in channelList %}
                         <tr>
-                            <th scope="col">Channel ID</th>
-                            <th scope="col">User</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Channel Location</th>
-                            <th scope="col">Topic</th>
-                            <th scope="col">Views</th>
-                            <th scope="col">Recording Enabled</th>
-                            <th scope="col">Chat Enabled</th>
-                            <th scope="col">Image</th>
-                            <th scope="col">Open Streams</th>
-                            <th scope="col">Disk Usage</th>
-                            <th scope="col">Options</th>
+                            <td>{{channel.id}}</td>
+                            <td>{{channel.owningUser|get_userName}}</td>
+                            <td>{{channel.channelName}}</td>
+                            <td>{{channel.channelLoc}}</td>
+                            <td>{{channel.topic|get_topicName}}</td>
+                            <td>{{channel.views}}</td>
+                            <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
+                            <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                            <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
+                            <td>{% for chanStream in channel.stream %}
+                                <h5><a href="/view/{{channel.channelLoc}}"><span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span></a></h5><br>
+                                {% endfor %}
+                            </td>
+                            <td>{{channel.channelLoc|get_diskUsage}}</td>
+                            <td></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                    {% for channel in channelList %}
-                    <tr>
-                        <td>{{channel.id}}</td>
-                        <td>{{channel.owningUser|get_userName}}</td>
-                        <td>{{channel.channelName}}</td>
-                        <td>{{channel.channelLoc}}</td>
-                        <td>{{channel.topic|get_topicName}}</td>
-                        <td>{{channel.views}}</td>
-                        <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
-                        <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
-                        <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
-                        <td>{% for chanStream in channel.stream %}
-                            <h5><a href="/view/{{channel.channelLoc}}"><span class="badge badge-primary">{{chanStream.streamName}} - {{chanStream.currentViewers}} / {{chanStream.totalViewers}}</span></a></h5><br>
-                            {% endfor %}
-                        </td>
-                        <td>{{channel.channelLoc|get_diskUsage}}</td>
-                        <td></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
           </div>
       </div>
     </div>
