@@ -50,7 +50,7 @@
                                 {% if vid.id != video.id %}
                                   <a href="/play/{{vid.id}}">
                                       <div class="stream shadow card p-2 streamcard-item">
-                                        <img class="stream-img card-img-top" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                        <img class="stream-img card-img-top shadow" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                         <div class="card-body">
                                             <h5 class="card-title">{{vid.channelName}}</h5><br>
                                             <i class="fas fa-hashtag"></i> <b>{{vid.topic|get_topicName}}</b> <br>
