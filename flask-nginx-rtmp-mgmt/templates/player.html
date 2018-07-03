@@ -12,7 +12,7 @@
           <div class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
               <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-8{% endif %} col-sm-12">
                   <div class="White-BG player">
-                    <video id="video" class="shadow videoStream" controls></video>
+                    <video id="video" class="shadow videoStream" autoplay controls></video>
                   </div>
                   <div class="White-BG streamInfo shadow">
                       {% if stream.channel.owningUser == current_user.id %}
