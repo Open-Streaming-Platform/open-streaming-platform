@@ -26,6 +26,9 @@
                     <a class="nav-link link" href="#" onclick="toggleDiv('rolesList')">Roles</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('topicsList')">Topics</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('channelsList')">Channels</a>
                 </li>
                 <li class="nav-item">
@@ -86,6 +89,7 @@
                             <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                             <span class="slider round"></span>
                           </label>
+                          <input type="hidden" value="system" id="settingType" name="settingType">
                           <div class="form-row text-center">
                             <button type="submit" class="btn btn-primary">Submit</button>
                           </div>
@@ -146,6 +150,38 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="settingsOption" id="topicsList" style="display:none;">
+                    <h5>Topics List</h5>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Topic Name</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for topic in topicsList %}
+                        <tr>
+                            <form>
+                            <td>
+                                <input type="text" value="{{topic.name}}" required>
+                            </td>
+                            <td>
+                                <img width="284" height="155" src="/images/{{topic.iconClass}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <br>
+                                <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
+                                <input type="hidden" value="topics" id="settingType" name="settingType">
+                            </td>
+                            <td><input type="submit" class="btn btn-success" value="&#128393;"></td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="settingsOption" id="channelsList" style="display:none;">
                     <h5>Channels List</h5>
                     <table class="table table-hover">
