@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block head %}
+<title>{{sysSettings.siteName}} - Videos</title>
+{% endblock %}
+{% block body %}
+    <div class="row justify-content-center" style="width:100%">
+        <div class="col-10">
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+        </div>
+    </div>
+    <div class="streamList d-flex align-content-around flex-wrap">
+        {% for stream in streamsList %}
+            <div class="streamcard">
+                <a href="/view/{{stream.channel.channelLoc}}/">
+                    <div class="stream shadow card p-2 streamcard-item">
+                        <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-body">
+                            <h5 class="card-title">{{stream.streamName}} <img class="blink-image shadow recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
+                            <p class="card-text">
+                                <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
+                                <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
+                        </div>
+                        <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                <i class="fas fa-users"></i> {{stream.channel.views}} <i class="fas fa-eye"></i> {{stream.currentViewers}}
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+
+          {% for video in recordedVideoList %}
+            <div class="streamcard">
+              <a href="/play/{{video.id}}">
+                  <div class="stream shadow card p-2 streamcard-item">
+                    <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-body">
+                        <h5 class="card-title">{{video.channelName}}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                            <i class="fas fa-users"></i> {{video.views}}
+                    </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#search').on('input', function(){
+    var query = document.getElementById("search").value.toLowerCase();
+    $('.streamcard').each(function(){
+         var $this = $(this);
+         if($this.text().toLowerCase().indexOf(query) === -1)
+             $this.closest('.streamcard').hide();
+        else $this.closest('.streamcard').show();
+    });
+});
+</script>
+{% endblock %}
+
