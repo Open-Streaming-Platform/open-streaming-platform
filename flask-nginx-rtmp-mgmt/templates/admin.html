@@ -164,23 +164,38 @@
                         {% for topic in topicsList %}
                         <tr>
                             <form action="/settings/admin" enctype=multipart/form-data method="post">
-                            <td>
-                                <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
-                            </td>
-                            <td>
-                                <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                <br>
-                                <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
-                                <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
-                                <input type="hidden" value="topics" id="settingType" name="settingType">
-                            </td>
-                            <td>
-                                <input type="submit" class="btn btn-success" value="&#128393;">
-                                <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
-                            </td>
+                                <td>
+                                    <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
+                                </td>
+                                <td>
+                                    <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                    <br>
+                                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                    <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
+                                    <input type="hidden" value="topics" id="settingType" name="settingType">
+                                </td>
+                                <td>
+                                    <input type="submit" class="btn btn-success" value="&#128393;">
+                                    <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                                </td>
                             </form>
                         </tr>
                         {% endfor %}
+                        <tr>
+                            <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                <td>
+                                    <input type="text" name="name" id="name" class="form-control" required>
+                                </td>
+                                <td>
+                                    <img width="284" height="155" src="/static/img/video-placeholder.jpg">
+                                    <br>
+                                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                    <input type="hidden" value="topics" id="settingType" name="settingType">
+                                </td>
+                                <td>
+                                    <input type="submit" class="btn btn-success" value="&#43;">
+                            </td>
+                            </form>
                         </tbody>
                     </table>
                 </div>
