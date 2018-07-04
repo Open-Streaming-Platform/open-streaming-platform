@@ -231,7 +231,8 @@
 }
 
 .footer {
-   position:absolute;
+   position:fixed;
+   width:100%;
    bottom:0;
    height:33px;
    margin-top:-50px;
