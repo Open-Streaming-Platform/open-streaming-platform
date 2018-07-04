@@ -168,7 +168,7 @@
                                 <input type="text" name="name" id="name" value="{{topic.name}}" required>
                             </td>
                             <td>
-                                <img width="284" height="155" src="/images/{{topic.iconClass}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                 <br>
                                 <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
                                 <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
