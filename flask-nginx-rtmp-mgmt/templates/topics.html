@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Topics</title>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center" style="width:100%">
+        <div class="col-10">
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+        </div>
+    </div>
+
+    <div class="streamList d-flex align-content-around flex-wrap">
+    {% for topic in topicsList %}
+        <div class="streamcard">
+            <a href="/topic/{{topic.id}}/">
+                <div class="stream shadow card p-2 streamcard-item">
+                    <img class="stream-img card-img-top shadow" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-body">
+                        <h5 class="card-title">{{topic.name}}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#search').on('input', function(){
+    var query = document.getElementById("search").value.toLowerCase();
+    $('.streamcard').each(function(){
+         var $this = $(this);
+         if($this.text().toLowerCase().indexOf(query) === -1)
+             $this.closest('.streamcard').hide();
+        else $this.closest('.streamcard').show();
+    });
+});
+</script>
+{% endblock %}
+
+
