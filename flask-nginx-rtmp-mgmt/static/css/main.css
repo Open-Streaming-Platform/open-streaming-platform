@@ -231,12 +231,15 @@
 }
 
 .footer {
-   height:30px;
+   position:absolute;
+   bottom:0;
+   height:33px;
    margin-top:-50px;
    background: #232526;  /* fallback for old browsers */
    background: -webkit-linear-gradient(to bottom, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
    background: linear-gradient(to bottom, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
    text-align: right;
+   color:white;
    text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
 }
 
