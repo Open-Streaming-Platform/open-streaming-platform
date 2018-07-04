@@ -231,7 +231,7 @@
 }
 
 .footer {
-   height:50px;
+   height:30px;
    margin-top:-50px;
    background: #232526;  /* fallback for old browsers */
    background: -webkit-linear-gradient(to bottom, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */

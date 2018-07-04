@@ -73,7 +73,7 @@
         </nav>
     </div>
 
-    <div class="{{sysSettings.background}}-BG">
+    <div class="{{sysSettings.background}}-BG" style="padding-bottom:50px;">
 
     {%- with messages = get_flashed_messages(with_categories=true) -%}
       {% if messages %}
@@ -100,9 +100,10 @@
     {% block scripts %}
 
     {% endblock %}
-</body>
-
-<footer class="footer">
+<footer class="footer shadow">
     <div style="padding-right:30px;">Developed with Love by Deamos <a href="https://gitlab.com/Deamos/flask-nginx-rtmp-manager"><img src="/static/img/gitlab.png" width="32" height="32" style="margin-left:10px;"></a></div>
 </footer>
+</body>
+
+
 </html>
