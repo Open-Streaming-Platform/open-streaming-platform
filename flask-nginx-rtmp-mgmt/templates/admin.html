@@ -163,7 +163,7 @@
                         <tbody>
                         {% for topic in topicsList %}
                         <tr>
-                            <form>
+                            <form action="/settings/admin" enctype=multipart/form-data method="post">
                             <td>
                                 <input type="text" value="{{topic.name}}" required>
                             </td>
