@@ -165,7 +165,7 @@
                         <tr>
                             <form action="/settings/admin" enctype=multipart/form-data method="post">
                             <td>
-                                <input type="text" value="{{topic.name}}" required>
+                                <input type="text" name="name" id="name" value="{{topic.name}}" required>
                             </td>
                             <td>
                                 <img width="284" height="155" src="/images/{{topic.iconClass}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
