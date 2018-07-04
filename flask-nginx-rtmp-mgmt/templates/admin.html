@@ -174,7 +174,10 @@
                                 <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
                                 <input type="hidden" value="topics" id="settingType" name="settingType">
                             </td>
-                            <td><input type="submit" class="btn btn-success" value="&#128393;"></td>
+                            <td>
+                                <input type="submit" class="btn btn-success" value="&#128393;">
+                                <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                            </td>
                             </form>
                         </tr>
                         {% endfor %}
