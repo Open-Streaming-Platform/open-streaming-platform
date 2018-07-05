@@ -5,15 +5,15 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card shadow text-left" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:500px;height:350px;">
+    <div class="card shadow text-left" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:500px;height:400px;">
         <h5 class="card-header text-white bg-dark mb-3">
             Settings
         </h5>
         <div class="card-body text-left">
             <div>
-                <b>User Name</b><br>
-                <input type="text" class="form-control" value="{{current_user.username}}" disabled>
                 <form class="form-control" enctype=multipart/form-data method="post">
+                    <b>User Name</b><br>
+                    <input type="text" class="form-control" value="{{current_user.username}}" disabled>
                     <b>Email Address</b><br>
                     <input type="text" class="form-control" value="{{current_user.email}}">
                     <hr>
