@@ -42,7 +42,8 @@
                         </p>
                     </div>
                     <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                            <i class="fas fa-users"></i> {{video.views}}
+                        <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
+                        <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
                     </div>
                 </div>
               </a>
