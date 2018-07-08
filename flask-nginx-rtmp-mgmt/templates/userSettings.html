@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card shadow text-left" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:500px;height:675px;">
+    <div class="card shadow text-left" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:500px;height:690px;">
         <h5 class="card-header text-white bg-dark mb-3">
             Settings
         </h5>
@@ -27,6 +27,7 @@
                         <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     </div>
                     <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                    <hr>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
