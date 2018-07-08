@@ -13,9 +13,9 @@
             <div>
                 <form class="form-control" enctype=multipart/form-data method="post">
                     <b>User Name</b><br>
-                    <input type="text" class="form-control" value="{{current_user.username}}" disabled>
+                    <input type="text" name="emailAddress" class="form-control" value="{{current_user.username}}" disabled>
                     <b>Email Address</b><br>
-                    <input type="text" class="form-control" value="{{current_user.email}}">
+                    <input type="text" class="form-control" value="{{current_user.email}}" required>
                     <hr>
                     <b>Password</b><br>
                     <input type="password" class="form-control" name="password1">
@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-center">
                         <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     </div>
-                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                    <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                     <hr>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
