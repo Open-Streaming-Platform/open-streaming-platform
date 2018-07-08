@@ -23,7 +23,9 @@
                     <input type="password2" class="form-control" name="password2">
                     <hr>
                     <b>User Picture</b><br>
-                    <img width="284" height="155" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="d-flex justify-content-center">
+                        <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    </div>
                     <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
                 </form>
             </div>
