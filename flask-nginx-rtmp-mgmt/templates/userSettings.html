@@ -11,7 +11,7 @@
         </h5>
         <div class="card-body text-left">
             <div>
-                <form class="form-control" enctype=multipart/form-data method="post">
+                <form action="/settings/user" class="form-control" enctype=multipart/form-data method="post">
                     <b>User Name</b><br>
                     <input type="text" name="emailAddress" class="form-control" value="{{current_user.username}}" disabled>
                     <b>Email Address</b><br>
