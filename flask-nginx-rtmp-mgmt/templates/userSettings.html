@@ -13,9 +13,9 @@
             <div>
                 <form action="/settings/user" class="form-control" enctype=multipart/form-data method="post">
                     <b>User Name</b><br>
-                    <input type="text" name="emailAddress" class="form-control" value="{{current_user.username}}" disabled>
+                    <input type="text" name="userName" class="form-control" value="{{current_user.username}}" disabled>
                     <b>Email Address</b><br>
-                    <input type="text" class="form-control" value="{{current_user.email}}" required>
+                    <input type="text" name="emailAddress" class="form-control" value="{{current_user.email}}" required>
                     <hr>
                     <b>Password</b><br>
                     <input type="password" class="form-control" name="password1">
