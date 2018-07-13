@@ -93,9 +93,9 @@
 }
 
 @media screen and (min-device-width : 320px) and (max-device-width : 640px) {
-    .streamcard-item {
+    .streamcard {
         margin: auto;
-        width:80%;
+        width:280px;
     }
 }
 
