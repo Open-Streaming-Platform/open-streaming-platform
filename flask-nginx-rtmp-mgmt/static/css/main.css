@@ -74,6 +74,7 @@
     border-radius: 4px;
     font-size: 16px;
     background-color: white;
+    width:100%;
 }
 
 @media screen and (max-width: 1024px) {
