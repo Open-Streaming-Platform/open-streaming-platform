@@ -75,7 +75,6 @@
     font-size: 16px;
     background-color: white;
     width:100%;
-    margin: 0 auto;
 }
 
 @media screen and (max-width: 1024px) {
@@ -103,10 +102,6 @@
     .streamcard {
         margin:0 auto;
         width:280px;
-    }
-
-    .searchBar {
-        width: 300px;
     }
 }
 
