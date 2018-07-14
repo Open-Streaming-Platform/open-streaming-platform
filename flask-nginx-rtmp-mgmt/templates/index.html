@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <div class="justify-content-center">
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="padding-top:15px;" placeholder="Search..">
+    <div style="margin-top:15px;width:90%">
+        <div class="justify-content-center">
+                <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search..">
+        </div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
