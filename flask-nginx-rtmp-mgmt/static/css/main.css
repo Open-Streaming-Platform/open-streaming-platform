@@ -104,6 +104,10 @@
         margin:0 auto;
         width:280px;
     }
+
+    .searchBar {
+        width: 300px;
+    }
 }
 
 .chat {
