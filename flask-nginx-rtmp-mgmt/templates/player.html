@@ -48,6 +48,7 @@
                           <div class="streamList d-flex align-content-around flex-wrap">
                               {% for video in stream.channel.recordedVideo %}
                                   {% if video.pending == False %}
+                                    <div class="streamcard">
                                       <a href="/play/{{video.id}}">
                                           <div class="stream shadow card p-2 streamcard-item">
                                             <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
@@ -62,6 +63,7 @@
                                             </div>
                                         </div>
                                       </a>
+                                    </div>
                                   {% endif %}
                               {% endfor %}
                           </div>
