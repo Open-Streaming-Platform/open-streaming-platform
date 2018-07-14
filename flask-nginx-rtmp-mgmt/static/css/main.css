@@ -94,7 +94,10 @@
 
 @media screen and (max-width : 640px) {
     .stream{
-        margin: 0px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
     }
 
     .streamcard {
