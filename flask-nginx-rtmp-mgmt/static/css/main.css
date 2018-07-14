@@ -69,13 +69,14 @@
 }
 
 .searchBar {
-    width:100%;
+    width:90%;
     box-sizing: border-box;
     border: 2px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
     background-color: white;
-    margin: 12px 20px 12px 20px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 @media screen and (max-width: 1024px) {
