@@ -19,7 +19,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Subscribe to a Channel and Get Notified on When a New Stream Starts.
  - Password Protected Channels & Live Streams
 
-### Tech
+## Tech
 
 Open Streaming Platform uses a number of open source projects to work properly:
 
@@ -37,7 +37,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
-### Installation
+## Installation
 OSP has only been tested on Ubuntu 16.04 and the installation script may not work properly on other OS's.
 
 Clone the Gitlab Repo
