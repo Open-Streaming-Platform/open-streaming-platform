@@ -50,10 +50,10 @@ sudo chown -R www-data:www-data images
 
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
-sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent flask-uploads psutil
+sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent flask-uploads psutil requests
 sudo mkdir /opt/osp/
 
-cd $cwd/osp
+cd $cwd/flask-nginx-rtmp-mgmt
 sudo cp -R * /opt/osp
 
 sudo chown -R www-data:www-data /opt/osp
