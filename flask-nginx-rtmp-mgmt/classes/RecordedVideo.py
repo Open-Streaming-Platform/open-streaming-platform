@@ -2,7 +2,7 @@ import os
 import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-from ..app import db
+from app import db
 
 class RecordedVideo(db.Model):
     id = db.Column(db.Integer,primary_key=True)

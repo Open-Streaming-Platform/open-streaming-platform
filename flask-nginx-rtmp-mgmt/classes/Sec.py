@@ -3,7 +3,7 @@ from flask_security import UserMixin, RoleMixin
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-from ..app import db
+from app import db
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
