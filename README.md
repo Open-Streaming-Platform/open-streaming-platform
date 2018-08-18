@@ -90,6 +90,12 @@ A channel and stream key must be created prior to streaming.
 -- NGINX Conf Files located at /usr/local/nginx/conf/
 -- If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
 
+## Other Info
+### Chat Comands
+- /ban <username> - Bans a user from chatting in a chat room
+- /unban <username> - Unbans a user who has been banned
+- /bok - Chicken!
+
 License
 ----
 
