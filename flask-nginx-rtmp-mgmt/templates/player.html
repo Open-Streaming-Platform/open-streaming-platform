@@ -168,7 +168,7 @@
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
             var userBoxHTML = "";
-            var userList = msg['streamUserList'];
+            var userList = msg['userList'];
             var userListLength = userList;
             for (var i = 0; i < userListLength; i++) {
                 userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
