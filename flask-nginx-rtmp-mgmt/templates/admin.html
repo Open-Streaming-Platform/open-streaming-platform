@@ -119,7 +119,7 @@
                             <td>{{user.active}}</td>
                             <td>{{user.confirmed_at}}</td>
                             <td>{% for role in user.roles %}
-                                <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}}"><i class="far fa-trash-alt"></i></a></span><br>
+                                <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
                                 {% endfor %}
                             </td>
                             <td></td>
