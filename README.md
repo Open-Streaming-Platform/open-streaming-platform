@@ -84,6 +84,7 @@ http://[SERVER IP]/
 ```
 
 **A Channel and Stream key must be created prior to streaming.**
+
 Set your OBS client to stream at:
 ```
 rtsp://[serverip]/stream
