@@ -81,10 +81,12 @@ sudo systemctl restart osp
 Open a Web Browser and configure OSP
 ```
 http://[SERVER IP]/
+```
 
-Streaming to OBS will be to http(s)://<IP Address>/stream
-A channel and stream key must be created prior to streaming.
-
+**A Channel and Stream key must be created prior to streaming.**
+Set your OBS client to stream at:
+```
+rtsp://[serverip]/stream
 ```
 
 **Important Note**: 
