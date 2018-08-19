@@ -4,6 +4,7 @@
     <title>{{sysSettings.siteName}} - {{streamtitle}}</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 {% endblock %}
 
@@ -34,7 +35,7 @@
                   <div class="chatbox" style="margin-bottom:180px;">
                       <div id="chat" class="chat form-control shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                      <div id="userList"></div>
+                      <a tabindex="0" id="userList" class="btn btn-primary" role="button" data-html="true" data-toggle="popover" data-trigger="focus" title="<b>User List</b>" data-content="">User List</a>
                   </div>
                 </div>
               {% endif %}
@@ -173,8 +174,8 @@
             for (var i = 0; i < userListLength; i++) {
                 userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
             }
-
-            document.getElementById("userList").innerHTML = userBoxHTML;
+            var userListElement = document.getElementById("userList");
+            userListElement.setAttribute("data-content",userBoxHTML);
         });
     </script>
 
