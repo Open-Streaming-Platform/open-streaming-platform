@@ -34,6 +34,7 @@
                   <div class="chatbox" style="margin-bottom:180px;">
                       <div id="chat" class="chat form-control shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+                      <div id="userList"></div>
                   </div>
                 </div>
               {% endif %}
@@ -166,6 +167,14 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
+            var userBoxHTML = "";
+            var userList = msg['streamUserList'];
+            var userListLength = userList;
+            for (var i = 0; i < userListLength; i++) {
+                userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
+            }
+
+            document.getElementById("userList").innerHTML = userBoxHTML;
         });
     </script>
 
