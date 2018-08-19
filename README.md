@@ -92,8 +92,8 @@ rtsp://[serverip]/stream
 
 **Important Note**: 
 - By default, OSP uses HTTP instead of HTTPS.  It is recommend to get a TLS certificate and configure NGINX to use HTTPS prior to production use.
--- NGINX Conf Files located at /usr/local/nginx/conf/
--- If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
+- NGINX Conf Files located at /usr/local/nginx/conf/
+- If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
 
 ## Other Info
 ### Chat Comands
