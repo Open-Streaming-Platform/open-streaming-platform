@@ -203,6 +203,12 @@
     </script>
 
     <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+    <script>
         setInterval(function() {
           socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
         },30000 );
