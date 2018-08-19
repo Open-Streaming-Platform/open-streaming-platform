@@ -169,7 +169,7 @@
             document.getElementById("currentViewers").innerHTML = msg['data'];
             var userBoxHTML = "";
             var userList = msg['userList'];
-            var userListLength = userList;
+            var userListLength = userList.length;
             for (var i = 0; i < userListLength; i++) {
                 userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
             }
