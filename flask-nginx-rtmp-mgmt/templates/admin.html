@@ -119,7 +119,7 @@
                             <td>{{user.active}}</td>
                             <td>{{user.confirmed_at}}</td>
                             <td>{% for role in user.roles %}
-                                <span class="badge badge-primary">{{role.name}}<i class="far fa-trash-alt"></i></span><br>
+                                <span class="badge badge-primary">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}}"><i class="far fa-trash-alt"></i></a></span><br>
                                 {% endfor %}
                             </td>
                             <td></td>
@@ -127,9 +127,9 @@
                                 <div class="btn-group">
                                   <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">Admin</a>
-                                        <a class="dropdown-item" href="#">Streamer</a>
-                                        <a class="dropdown-item" href="#">User</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                                     </div>
                                 </div>
                                 <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
