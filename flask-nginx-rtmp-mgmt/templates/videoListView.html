@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<title>{{sysSettings.siteName}} - Videos</title>
+<title>{{sysSettings.siteName}} - {{title}}</title>
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
         <div class="col-1"></div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
-        {% for stream in streamsList %}
+        {% for stream in openStreams %}
             <div class="streamcard">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div class="stream shadow card p-2 streamcard-item">
@@ -33,7 +33,7 @@
             </div>
         {% endfor %}
 
-          {% for video in recordedVideoList %}
+          {% for video in recordedVids %}
             <div class="streamcard">
               <a href="/play/{{video.id}}">
                   <div class="stream shadow card p-2 streamcard-item">
