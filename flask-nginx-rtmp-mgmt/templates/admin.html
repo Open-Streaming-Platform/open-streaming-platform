@@ -218,7 +218,7 @@
                             <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
                             <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
                             <td>{{channel.channelLoc|get_diskUsage}}</td>
-                            <td></td>
+                            <td><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
                         </tr>
                         {% endfor %}
                         </tbody>
