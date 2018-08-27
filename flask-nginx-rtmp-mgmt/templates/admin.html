@@ -70,6 +70,11 @@
                           SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
                           SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}"required>
                           SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
+                          SMTP SSL:<br>
+                          <label class="switch">
+                            <input type="checkbox" id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                            <span class="slider round"></span>
+                          </label>
                           SMTP TLS:<br>
                           <label class="switch">
                             <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
