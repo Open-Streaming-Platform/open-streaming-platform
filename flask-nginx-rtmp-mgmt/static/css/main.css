@@ -190,6 +190,10 @@
         margin:0 auto;
     }
 
+    .streamcard-item {
+        width: 90%;
+    }
+
     .searchBar {
         position:relative;
         left:5%;
