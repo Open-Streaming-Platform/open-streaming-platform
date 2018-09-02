@@ -192,6 +192,7 @@
 
     .streamcard-item {
         width: 90%;
+        height: 375px;
     }
 
     .searchBar {
