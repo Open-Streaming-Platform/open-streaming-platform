@@ -14,7 +14,7 @@
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
         {% for stream in openStreams %}
-            <div class="streamcard">
+            <div class="streamcard flip-in-ver-right">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
@@ -34,7 +34,7 @@
         {% endfor %}
 
           {% for video in recordedVids %}
-            <div class="streamcard">
+            <div class="streamcard flip-in-ver-right">
               <a href="/play/{{video.id}}">
                   <div class="stream shadow card p-2 streamcard-item">
                     <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
