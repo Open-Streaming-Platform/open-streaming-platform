@@ -102,38 +102,6 @@
     margin: 0 auto;
 }
 
-@media screen and (max-width: 1024px) {
-
-    .stream{
-        margin: 10px;
-    }
-
-
-    .recordDot {
-        width: 12px;
-        height: 12px;
-    }
-
-}
-
-@media screen and (max-width : 640px) {
-    .stream{
-        margin-top: 10px;
-        margin-bottom: 10px;
-        margin-left: 0px;
-        margin-right: 0px;
-    }
-
-    .streamcard {
-        margin:0 auto;
-    }
-
-    .searchBar {
-        position:relative;
-        left:5%;
-    }
-}
-
 .chat {
     overflow-y: auto;
     overflow-x: hidden;
@@ -175,6 +143,57 @@
 
 .chatbox textarea {
     resize: none;
+}
+
+.footer {
+   position:fixed;
+   left: 0;
+   width:100%;
+   bottom:0;
+   height:33px;
+   margin-top:-50px;
+   background: #232526;  /* fallback for old browsers */
+   background: -webkit-linear-gradient(to bottom, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+   background: linear-gradient(to bottom, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+   text-align: right;
+   color:white;
+   text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
+}
+
+.userPhoto {
+    border: 1px;
+}
+
+@media screen and (max-width: 1024px) {
+
+    .stream{
+        margin: 10px;
+    }
+
+
+    .recordDot {
+        width: 12px;
+        height: 12px;
+    }
+
+}
+
+@media screen and (max-width : 640px) {
+    .stream{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .streamcard {
+        margin:0 auto;
+    }
+
+    .searchBar {
+        position:relative;
+        left:5%;
+    }
 }
 
 /* Firefox old*/
@@ -311,28 +330,6 @@
     opacity: 1;
   }
 }
-
-
-.footer {
-   position:fixed;
-   left: 0;
-   width:100%;
-   bottom:0;
-   height:33px;
-   margin-top:-50px;
-   background: #232526;  /* fallback for old browsers */
-   background: -webkit-linear-gradient(to bottom, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
-   background: linear-gradient(to bottom, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-   text-align: right;
-   color:white;
-   text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
-}
-
-.userPhoto {
-    border: 1px;
-}
-
-
 
 .White-BG {
     -webkit-background-size: cover;
