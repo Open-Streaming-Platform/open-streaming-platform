@@ -44,8 +44,9 @@
     width:100%;
 }
 
-.streamcard-item {
+.streamcard {
     width:280px;
+    height:365px;
 }
 
 .recordDot {
@@ -107,7 +108,6 @@
 
     .streamcard {
         margin:0 auto;
-        width:280px;
     }
 
     .searchBar {
