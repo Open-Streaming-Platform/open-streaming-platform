@@ -36,6 +36,10 @@
     margin: 12px;
 }
 
+.streamList {
+    margin-left: 60px;
+}
+
 .streamList a:hover, a:visited, a:link, a:active{
     text-decoration: none;
 }
