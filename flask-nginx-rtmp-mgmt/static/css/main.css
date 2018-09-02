@@ -49,6 +49,11 @@
     height:365px;
 }
 
+.topiccard-item {
+    width:280px;
+    height:300px;
+}
+
 .card-title {
     height:48px;
 }

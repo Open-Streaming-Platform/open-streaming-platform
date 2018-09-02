@@ -17,7 +17,7 @@
     {% for topic in topicsList %}
         <div class="streamcard">
             <a href="/topic/{{topic.id}}/">
-                <div class="stream shadow card p-2 streamcard-item">
+                <div class="stream shadow card p-2 topiccard-item">
                     <img class="topic-img card-img-top shadow" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-body">
                         <h5 class="card-title">{{topic.name}}</h5>
