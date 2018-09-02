@@ -19,7 +19,7 @@
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-body">
-                            <h5 class="card-title">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
+                            <h5 class="card-title text-shadow-close">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
                             <p class="card-text">
                                 <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
                                 <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
