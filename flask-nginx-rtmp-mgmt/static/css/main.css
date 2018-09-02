@@ -49,6 +49,10 @@
     height:365px;
 }
 
+.card-title {
+    height:48px;
+}
+
 .recordDot {
     width: 20px;
     height: 20px;
