@@ -186,12 +186,16 @@
         margin-right: 0px;
     }
 
+    .streamList {
+        margin-left: 30px;
+    }
+
     .streamcard {
         margin:0 auto;
     }
 
     .streamcard-item {
-        width: 90%;
+        width: 95%;
         height: 375px;
     }
 
