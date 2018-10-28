@@ -68,8 +68,8 @@
                           SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
                           SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
                           SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}"required>
-                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
+                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
+                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
                           SMTP SSL:<br>
                           <label class="switch">
                             <input type="checkbox" id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
