@@ -51,6 +51,7 @@ sudo chown -R www-data:www-data images
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
 sudo pip install flask flask-sqlalchemy flask-security flask-socketio gevent flask-uploads psutil requests
+sudo pip install --upgrade git+ https://github.com/mattupstate/flask-security.git@develop
 sudo mkdir /opt/osp/
 
 cd $cwd/flask-nginx-rtmp-mgmt
