@@ -1,4 +1,4 @@
-from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm
+from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm
 from flask_security import UserMixin, RoleMixin
 import os
 
@@ -9,6 +9,9 @@ class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
+    username = StringField('username', [Required()])
+
+class ExtendedForgotPasswordForm(ForgotPasswordForm):
     username = StringField('username', [Required()])
 
 roles_users = db.Table('roles_users',
