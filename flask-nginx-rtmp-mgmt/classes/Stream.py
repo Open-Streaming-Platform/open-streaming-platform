@@ -6,8 +6,8 @@ from app import db
 class Stream(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
-    streamKey = db.Column(db.String)
-    streamName = db.Column(db.String)
+    streamKey = db.Column(db.String(255))
+    streamName = db.Column(db.String(255))
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
