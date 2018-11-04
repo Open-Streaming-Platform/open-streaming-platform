@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<title>{{sysSettings.siteName}} - Videos</title>
+<title>{{sysSettings.siteName}} - {{title}}</title>
 {% endblock %}
 
 {% block body %}
@@ -13,13 +13,13 @@
         <div class="col-1"></div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
-        {% for stream in streamsList %}
-            <div class="streamcard">
+        {% for stream in openStreams %}
+            <div class="streamcard flip-in-ver-right" id="stream_{{stream.id}}">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-body">
-                            <h5 class="card-title">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
+                            <h5 class="card-title text-shadow-close">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
                             <p class="card-text">
                                 <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
                                 <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
@@ -33,13 +33,13 @@
             </div>
         {% endfor %}
 
-          {% for video in recordedVideoList %}
-            <div class="streamcard">
+          {% for video in recordedVids %}
+            <div class="streamcard flip-in-ver-right" id="video_{{video.id}}">
               <a href="/play/{{video.id}}">
                   <div class="stream shadow card p-2 streamcard-item">
                     <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-body">
-                        <h5 class="card-title">{{video.channelName}}</h5>
+                        <h5 class="card-title text-shadow-close">{{video.channelName}}</h5>
                         <p class="card-text">
                             <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                             <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>

@@ -34,6 +34,8 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
 * [Socket.io] - Real-Time Communications Engine Between Client and Server
 * [Flask Socket.io] - Interface Socket.io with Flask
+* [hls.js] - Handles the HTML5 Video Playback of HLS video streams
+* [Font Awesome] - Interface Icons and Such
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
@@ -79,16 +81,25 @@ sudo systemctl restart osp
 Open a Web Browser and configure OSP
 ```
 http://[SERVER IP]/
+```
 
-Streaming to OBS will be to http(s)://<IP Address>/stream
-A channel and stream key must be created prior to streaming.
+**A Channel and Stream key must be created prior to streaming.**
 
+Set your OBS client to stream at:
+```
+rtsp://[serverip]/stream
 ```
 
 **Important Note**: 
 - By default, OSP uses HTTP instead of HTTPS.  It is recommend to get a TLS certificate and configure NGINX to use HTTPS prior to production use.
--- NGINX Conf Files located at /usr/local/nginx/conf/
--- If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
+- NGINX Conf Files located at /usr/local/nginx/conf/
+- If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
+
+## Other Info
+### Chat Comands
+- /ban <username> - Bans a user from chatting in a chat room
+- /unban <username> - Unbans a user who has been banned
+- /bok - Chicken!
 
 License
 ----

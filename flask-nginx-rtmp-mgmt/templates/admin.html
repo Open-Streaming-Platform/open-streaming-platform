@@ -23,9 +23,6 @@
                     <a class="nav-link link" href="#" onclick="toggleDiv('userList')">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('rolesList')">Roles</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('topicsList')">Topics</a>
                 </li>
                 <li class="nav-item">
@@ -58,7 +55,7 @@
                     <h5>Configuration Options</h5>
                       <form action="/settings/admin" method="post">
                           Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
-                          Server Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
+                          Server IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
                           <hr>
                           Background Theme:
                           <select class="form-control" name="background">
@@ -71,8 +68,13 @@
                           SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
                           SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
                           SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}"required>
-                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" required>
+                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
+                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
+                          SMTP SSL:<br>
+                          <label class="switch">
+                            <input type="checkbox" id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                            <span class="slider round"></span>
+                          </label><br>
                           SMTP TLS:<br>
                           <label class="switch">
                             <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
@@ -119,37 +121,27 @@
                             <td>{{user.active}}</td>
                             <td>{{user.confirmed_at}}</td>
                             <td>{% for role in user.roles %}
-                                {{role.name}}<br>
+                                <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
                                 {% endfor %}
                             </td>
                             <td></td>
-                            <td></td>
+                            <td>
+                                <div class="btn-group">
+                                  <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                                    </div>
+                                </div>
+                                <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <div class="settingsOption" id="rolesList" style="display:none;">
-                    <h5>Role List</h5>
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Role ID</th>
-                                <th scope="col">Role Name</th>
-                                <th scope="col">Number of Users in Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for role in roleList %}
-                        <tr>
-                            <td>{{role.id}}</td>
-                            <td>{{role.name}}</td>
-                            <td></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+
                 <div class="settingsOption" id="topicsList" style="display:none;">
                     <h5>Topics List</h5>
                     <table class="table table-hover">
@@ -231,7 +223,7 @@
                             <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
                             <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
                             <td>{{channel.channelLoc|get_diskUsage}}</td>
-                            <td></td>
+                            <td><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
                         </tr>
                         {% endfor %}
                         </tbody>
