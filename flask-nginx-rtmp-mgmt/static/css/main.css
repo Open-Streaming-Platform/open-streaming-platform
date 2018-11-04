@@ -64,6 +64,14 @@
     height:365px;
 }
 
+.streamcard-topicIconText{
+    width:32px;
+    height:20px;
+    text-align:center;
+    float:left;
+    margin-right:5px;
+}
+
 .topiccard-item {
     width:280px;
     height:300px;
