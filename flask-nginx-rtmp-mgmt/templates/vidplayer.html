@@ -2,7 +2,7 @@
 
 {% block head %}
     <title>{{sysSettings.siteName}} - {{video.channelName}}</title>
-
+    <link href="https://vjs.zencdn.net/7.2.4/video-js.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -11,9 +11,16 @@
           <div class="row justify-content-md-center">
               <div class="col-xl-10 col-sm-12">
                   <div class="White-BG player">
-                      <video id="video" class="shadow recordedStream" autoplay controls>
+                      <!--<video id="video" class="shadow recordedStream" autoplay controls>
                           <source src="{{streamURL}}" type="video/mp4">
-                      </video>
+                      </video>-->
+                      <video id="video" class="shadow recordedStream video-js" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+                        <source src="{{streamURL}}" type="video/mp4">
+                        <p class="vjs-no-js">
+                          To view this video please enable JavaScript, and consider upgrading to a web browser that
+                          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
                   </div>
                   <div class="White-BG recordedStreamInfo shadow">
                       {% if video.owningUser == current_user.id %}
@@ -135,4 +142,9 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
+
+    <script>
+        videojs('video', {autoplay: true});
+    </script>
 {% endblock %}
