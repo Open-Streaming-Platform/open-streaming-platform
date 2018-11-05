@@ -125,6 +125,10 @@
 
 {% block scripts %}
     <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
+
+    <script>
+        videojs('video', {autoplay: true});
+    </script>
     <!--<script>
         if(Hls.isSupported()) {
           var video = document.getElementById('video');
