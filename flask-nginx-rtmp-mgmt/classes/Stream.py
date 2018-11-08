@@ -30,3 +30,13 @@ class Stream(db.Model):
     def remove_viewer(self):
         self.currentViewers = self.currentViewers - 1
         db.session.commit()
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'linkedChannel': self.linkedChannel,
+            'streamName': self.streamName,
+            'topic': self.topic,
+            'currentViewers': self.currentViewers,
+            'totalViewers': self.currentViewers
+        }
