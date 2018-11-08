@@ -29,3 +29,13 @@ class RecordedVideo(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'videoDate': self.videoDate,
+            'channelName': self.channelName,
+            'topic': self.topic,
+            'views': self.views,
+            'length': self.length
+        }
