@@ -34,7 +34,7 @@ class RecordedVideo(db.Model):
         return {
             'id': self.id,
             'videoDate': str(self.videoDate),
-            'channelName': self.channelName,
+            'videoName': self.channelName,
             'topic': self.topic,
             'views': self.views,
             'length': self.length
