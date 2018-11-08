@@ -33,7 +33,7 @@ class RecordedVideo(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'videoDate': self.videoDate,
+            'videoDate': str(self.videoDate),
             'channelName': self.channelName,
             'topic': self.topic,
             'views': self.views,
