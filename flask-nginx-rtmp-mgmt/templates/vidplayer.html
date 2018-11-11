@@ -41,6 +41,7 @@
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                       <i class="fas fa-user-circle"></i> {{video.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{video.views}} <br>
+                      <a href="#"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
                   </div>
               </div>
 
@@ -147,4 +148,32 @@
     <script>
         videojs('video', {autoplay: true});
     </script>
+
+    <script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
+
+        var socket = io();
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+        });
+    </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+        },30000 );
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('upvoteTotalResponse', function (msg) {
+            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+
+        });
+    </script>
+
 {% endblock %}
