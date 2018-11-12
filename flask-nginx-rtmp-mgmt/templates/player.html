@@ -211,13 +211,13 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'stream'});
+            socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
         });
     </script>
 
     <script>
         setInterval(function() {
-          socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'stream'});
+          socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
         },30000 );
     </script>
 
@@ -241,8 +241,8 @@
 
     <script>
         function changeUpvote() {
-            socket.emit('changeUpvote', {loc: '{{video.id}}', vidType: 'video'});
-            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+            socket.emit('changeUpvote', {loc: '{{stream.id}}', vidType: 'stream'});
+            socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
         }
     </script>
 {% endblock %}
