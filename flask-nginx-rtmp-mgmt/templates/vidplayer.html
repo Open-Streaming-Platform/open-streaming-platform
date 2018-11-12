@@ -172,6 +172,7 @@
 
     <script type="text/javascript" charset="utf-8">
         socket.on('upvoteTotalResponse', function (msg) {
+            console.log("Received Upvotes");
             document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
 
         });
