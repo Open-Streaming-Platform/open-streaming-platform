@@ -37,6 +37,7 @@
                       <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{stream.totalViewers}} <br>
                       <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
+                      <a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
                   </div>
               </div>
               {% if stream.channel.chatEnabled == True %}
@@ -206,5 +207,42 @@
         setInterval(function() {
           socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
         },30000 );
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'stream'});
+        });
+    </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'stream'});
+        },30000 );
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('upvoteTotalResponse', function (msg) {
+            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+            if (msg['myUpvote'] === 'True'){
+                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+                    document.getElementById("upVoteIcon").classList.remove('far');
+                    document.getElementById("upVoteIcon").classList.add('fas');
+                }
+            }
+            else if (msg['myUpvote'] === 'False'){
+                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+                    document.getElementById("upVoteIcon").classList.remove('fas');
+                    document.getElementById("upVoteIcon").classList.add('far');
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function changeUpvote() {
+            socket.emit('changeUpvote', {loc: '{{video.id}}', vidType: 'video'});
+            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+        }
     </script>
 {% endblock %}
