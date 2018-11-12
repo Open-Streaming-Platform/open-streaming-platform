@@ -173,7 +173,14 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('upvoteTotalResponse', function (msg) {
             document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
-
+            if (msg['myUpvote'] = 'True'){
+                document.getElementById("upVoteIcon").classList.remove('far');
+                document.getElementById("upVoteIcon").classList.add('fas');
+            }
+            else if (msg['myUpvote'] = 'False'){
+                document.getElementById("upVoteIcon").classList.remove('fas');
+                document.getElementById("upVoteIcon").classList.add('far');
+            }
         });
     </script>
 
