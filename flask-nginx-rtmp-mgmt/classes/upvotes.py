@@ -20,9 +20,9 @@ class streamUpvotes(db.Model):
     userID = db.Column(db.Integer)
     streamID = db.Column(db.Integer)
 
-    def __init__(self, userID, channelID):
+    def __init__(self, userID, streamID):
         self.userID = userID
-        self.channelID = channelID
+        self.streamID = streamID
 
     def __repr__(self):
         return '<id %r>' % self.id
