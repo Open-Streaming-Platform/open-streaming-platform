@@ -173,14 +173,17 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('upvoteTotalResponse', function (msg) {
             document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
-            console.log(msg['myUpvote']);
-            if (msg['myUpvote'] = 'True'){
-                document.getElementById("upVoteIcon").classList.remove('far');
-                document.getElementById("upVoteIcon").classList.add('fas');
+            if (msg['myUpvote'] === 'True'){
+                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+                    document.getElementById("upVoteIcon").classList.remove('far');
+                    document.getElementById("upVoteIcon").classList.add('fas');
+                }
             }
-            else if (msg['myUpvote'] = 'False'){
-                document.getElementById("upVoteIcon").classList.remove('fas');
-                document.getElementById("upVoteIcon").classList.add('far');
+            else if (msg['myUpvote'] === 'False'){
+                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+                    document.getElementById("upVoteIcon").classList.remove('fas');
+                    document.getElementById("upVoteIcon").classList.add('far');
+                }
             }
         });
     </script>
