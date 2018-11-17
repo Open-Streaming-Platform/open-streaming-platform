@@ -56,7 +56,7 @@
                       <div class="card-body">
                           <div class="streamList d-flex align-content-around flex-wrap">
                               {% for vid in video.channel.recordedVideo %}
-                                {% if vid.id != video.id %}
+                                {% if vid.id != video.id and vid.pending != True%}
                                 <div class="streamcard">
                                   <a href="/play/{{vid.id}}">
                                       <div class="stream shadow card p-2 streamcard-item">
@@ -68,6 +68,7 @@
                                         </div>
                                         <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
                                             <div class="float-left"><i class="fas fa-users"></i> {{vid.views}}</div>
+                                            <div class="float-left" style="position:relative;left:20px;"><i id="upVoteIcon" class="far fa-thumbs-up"></i> {{vid.id|get_Video_Upvotes}}</div>
                                             <div class="float-right"><i class="fas fa-clock"></i> {{vid.length|hms_format}}</div>
                                         </div>
                                     </div>
