@@ -27,6 +27,7 @@
                         </div>
                         <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
                             <div class="float-left"><i class="fas fa-users"></i> {{stream.totalViewers}}</div>
+                            <div class="float-left" style="position:relative;left:20px;"><i id="upVoteIcon" class="far fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</div>
                             <div class="float-right"><i class="fas fa-eye"></i> {{stream.currentViewers}}</div>
                         </div>
                     </div>
