@@ -11,6 +11,7 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
+    upvotes = db.relationship('streamUpvotes', backref='stream', lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
         self.streamKey = streamKey
@@ -22,6 +23,9 @@ class Stream(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def get_upvotes(self):
+        return self.upvotes.count()
 
     def add_viewer(self):
         self.currentViewers = self.currentViewers + 1
@@ -38,5 +42,6 @@ class Stream(db.Model):
             'streamName': self.streamName,
             'topic': self.topic,
             'currentViewers': self.currentViewers,
-            'totalViewers': self.currentViewers
+            'totalViewers': self.currentViewers,
+            'upvotes': self.get_upvotes()
         }

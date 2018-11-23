@@ -16,7 +16,7 @@ class RecordedVideo(db.Model):
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
-    #upvotes = db.relationship('videoUpvotes', backref='video', lazy="joined")
+    upvotes = db.relationship('videoUpvotes', backref='video', lazy="joined")
 
     def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
         self.videoDate = datetime.datetime.now()
@@ -31,8 +31,8 @@ class RecordedVideo(db.Model):
     def __repr__(self):
         return '<id %r>' % self.id
 
-    #def get_upvotes(self):
-    #    return self.upvotes.count()
+    def get_upvotes(self):
+        return self.upvotes.count()
 
     def serialize(self):
         return {
@@ -41,6 +41,6 @@ class RecordedVideo(db.Model):
             'videoName': self.channelName,
             'topic': self.topic,
             'views': self.views,
-            'length': self.length
-            #'upvotes': self.get_upvotes()
+            'length': self.length,
+            'upvotes': self.get_upvotes()
         }
