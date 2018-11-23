@@ -26,7 +26,7 @@ class Stream(db.Model):
         return '<id %r>' % self.id
 
     def get_upvotes(self):
-        return self.upvotes.count()
+        return len(self.upvotes)
 
     def add_viewer(self):
         self.currentViewers = self.currentViewers + 1

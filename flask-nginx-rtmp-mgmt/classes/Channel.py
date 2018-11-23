@@ -34,7 +34,7 @@ class Channel(db.Model):
         return '<id %r>' % self.id
 
     def get_upvotes(self):
-        return self.upvotes.count()
+        return len(self.upvotes)
 
     def serialize(self):
         return {
