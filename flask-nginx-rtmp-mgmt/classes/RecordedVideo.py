@@ -2,7 +2,7 @@ import os
 import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
+from app import db, get_Video_Upvotes
 
 class RecordedVideo(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -30,6 +30,9 @@ class RecordedVideo(db.Model):
     def __repr__(self):
         return '<id %r>' % self.id
 
+    def get_upvotes(self):
+        return get_Video_Upvotes(self.id)
+
     def serialize(self):
         return {
             'id': self.id,
@@ -37,5 +40,6 @@ class RecordedVideo(db.Model):
             'videoName': self.channelName,
             'topic': self.topic,
             'views': self.views,
-            'length': self.length
+            'length': self.length,
+            'upvotes': self.get_upvotes()
         }
