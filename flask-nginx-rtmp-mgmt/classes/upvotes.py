@@ -32,9 +32,9 @@ class videoUpvotes(db.Model):
     userID = db.Column(db.Integer)
     videoID = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
 
-    def __init__(self, userID, channelID):
+    def __init__(self, userID, videoID):
         self.userID = userID
-        self.channelID = channelID
+        self.videoID = videoID
 
     def __repr__(self):
         return '<id %r>' % self.id
