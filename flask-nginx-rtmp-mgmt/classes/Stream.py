@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 from app import db
 
 class Stream(db.Model):
+    __tablename__ = "Stream"
     id = db.Column(db.Integer, primary_key=True)
     linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
     streamKey = db.Column(db.String(255))
