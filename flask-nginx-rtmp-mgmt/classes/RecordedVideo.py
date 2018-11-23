@@ -2,7 +2,7 @@ import os
 import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db, get_Video_Upvotes
+from app import db
 
 class RecordedVideo(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -16,6 +16,7 @@ class RecordedVideo(db.Model):
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
+    upvotes = db.relationship('videoUpvotes', backref='video', lazy="joined")
 
     def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
         self.videoDate = datetime.datetime.now()
@@ -31,7 +32,7 @@ class RecordedVideo(db.Model):
         return '<id %r>' % self.id
 
     def get_upvotes(self):
-        return get_Video_Upvotes(self.id)
+        return self.upvotes.count()
 
     def serialize(self):
         return {
