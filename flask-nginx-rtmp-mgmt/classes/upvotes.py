@@ -30,7 +30,7 @@ class streamUpvotes(db.Model):
 class videoUpvotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer)
-    channelID = db.Column(db.Integer,db.ForeignKey('RecordedVideo.id'))
+    channelID = db.Column(db.Integer)#,db.ForeignKey('RecordedVideo.id'))
 
     def __init__(self, userID, channelID):
         self.userID = userID
