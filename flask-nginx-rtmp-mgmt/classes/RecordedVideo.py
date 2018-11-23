@@ -16,7 +16,7 @@ class RecordedVideo(db.Model):
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
-    upvotes = db.relationship('videoUpvotes', backref='video', lazy="joined")
+    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
 
     def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
         self.videoDate = datetime.datetime.now()
