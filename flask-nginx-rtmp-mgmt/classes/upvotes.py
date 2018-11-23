@@ -6,7 +6,7 @@ from app import db
 class channelUpvotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer)
-    channelID = db.Column(db.Integer)
+    channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
 
     def __init__(self, userID, channelID):
         self.userID = userID
@@ -18,7 +18,7 @@ class channelUpvotes(db.Model):
 class streamUpvotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer)
-    streamID = db.Column(db.Integer)
+    streamID = db.Column(db.Integer, db.ForeignKey('Stream.id'))
 
     def __init__(self, userID, streamID):
         self.userID = userID
@@ -30,7 +30,7 @@ class streamUpvotes(db.Model):
 class videoUpvotes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer)
-    videoID = db.Column(db.Integer)#,db.ForeignKey('RecordedVideo.id'))
+    videoID = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
 
     def __init__(self, userID, channelID):
         self.userID = userID
