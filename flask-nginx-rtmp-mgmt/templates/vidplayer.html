@@ -37,7 +37,7 @@
                           </button>
                       </div>
                       <div class="float-right">
-                          <button type="button" class="btn btn-primary" onclick="getCurrentTime()">
+                          <button type="button" class="btn btn-primary" onclick="setScreenShot()">
                               <i class="fas fa-camera"></i>
                           </button>
                       </div>
@@ -202,9 +202,10 @@
     </script>
 
     <script>
-        function getCurrentTime() {
+        function setScreenShot() {
             var whereYouAt = myPlayer.currentTime();
             console.log(whereYouAt);
+            socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
         }
     </script>
 
