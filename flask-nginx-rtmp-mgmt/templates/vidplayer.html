@@ -36,6 +36,11 @@
                               <i class="fas fa-edit"></i>
                           </button>
                       </div>
+                      <div class="float-right">
+                          <button type="button" class="btn btn-primary" onclick="getCurrentTime()">
+                              <i class="fas fa-camera"></i>
+                          </button>
+                      </div>
                       {% endif %}
                       <i class="fas fa-video"></i> <span><b>{{video.channelName}}</b></span> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
@@ -193,6 +198,13 @@
         function changeUpvote() {
             socket.emit('changeUpvote', {loc: '{{video.id}}', vidType: 'video'});
             socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+        }
+    </script>
+
+    <script>
+        function getCurrentTime() {
+            var whereYouAt = myPlayer.currentTime();
+            console.log(whereYouAt);
         }
     </script>
 
