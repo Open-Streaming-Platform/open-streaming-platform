@@ -36,9 +36,14 @@
                               <i class="fas fa-edit"></i>
                           </button>
                       </div>
-                      <div class="float-right">
+                      <div class="float-right" style="margin-left:5px;">
                           <button type="button" class="btn btn-primary" onclick="setScreenShot()">
                               <i class="fas fa-camera"></i>
+                          </button>
+                      </div>
+                      <div class="float-right">
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                              <i class="fas fa-share-alt"></i>
                           </button>
                       </div>
                       {% endif %}
@@ -145,6 +150,34 @@
   </div>
 </div>
 
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalTitle">Share a Video/Stream</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <button type="button" id="FBShareBtn" class="btn btn-success" >Share on Facebook</button><br>
+        <div class="form-group row">
+            <label for="embedURLInput" class="col-sm-2 col-form-label">Embed Code</label>
+            <div class="col-sm-10">
+                <input class="form-control" id="embedURLInput" type="text" value="{{request.url}}" readonly>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% endif %}
 
 {% endblock %}
@@ -206,6 +239,16 @@
             var whereYouAt = myPlayer.currentTime();
             console.log(whereYouAt);
             socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
+        }
+    </script>
+
+    <script>
+        document.getElementById('FBShareBtn').onclick = function() {
+          FB.ui({
+            method: 'share',
+            display: 'popup',
+            href: '{{request.url}}',
+          }, function(response){});
         }
     </script>
 
