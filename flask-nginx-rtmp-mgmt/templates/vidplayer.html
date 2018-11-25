@@ -167,13 +167,13 @@
           </div>
         <br>
         <div class="form-group row">
-            <label for="embedURLInput" class="col-sm-2 col-form-label">Embed</label>
+            <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
             <div class="col-sm-10">
                 <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly onClick="this.select();">
             </div>
         </div>
         <div class="form-group row">
-            <label for="linkShareInput" class="col-sm-2 col-form-label">Link</label>
+            <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
             <div class="col-sm-10">
                 <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
             </div>
@@ -181,7 +181,7 @@
       </div>
       <div class="modal-footer">
 
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
