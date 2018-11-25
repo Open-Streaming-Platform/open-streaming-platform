@@ -161,11 +161,17 @@
       </div>
 
       <div class="modal-body">
-        <button type="button" id="FBShareBtn" class="btn btn-success" >Share on Facebook</button><br>
+        <button type="button" id="FBShareBtn" class="btn btn-success" onclick="facebookShare()">Share on Facebook</button><br><br>
         <div class="form-group row">
-            <label for="embedURLInput" class="col-sm-2 col-form-label">Embed Code</label>
+            <label for="embedURLInput" class="col-sm-2 col-form-label">Embed</label>
             <div class="col-sm-10">
-                <input class="form-control" id="embedURLInput" type="text" value="{{request.url}}" readonly>
+                <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="linkShareInput" class="col-sm-2 col-form-label">Link</label>
+            <div class="col-sm-10">
+                <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly>
             </div>
         </div>
       </div>
@@ -243,7 +249,7 @@
     </script>
 
     <script>
-        document.getElementById('FBShareBtn').onclick = function() {
+        function facebookShare() {
           FB.ui({
             method: 'share',
             display: 'popup',
