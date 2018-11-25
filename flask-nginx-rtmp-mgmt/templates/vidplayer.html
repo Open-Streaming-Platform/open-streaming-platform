@@ -47,7 +47,6 @@
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                       <i class="fas fa-user-circle"></i> {{video.owningUser|get_userName}} <br>
                       <i class="fas fa-users"></i> {{video.views}} <br>
-                      {{ request.remote_addr }}
                       <a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
                   </div>
               </div>
