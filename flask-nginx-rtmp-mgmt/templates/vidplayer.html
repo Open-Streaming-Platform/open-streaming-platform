@@ -161,7 +161,7 @@
       </div>
 
       <div class="modal-body">
-        <a href="#" type="button" id="FBShareBtn" class="btn btn-success" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent({{request.url}}),'facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</a><br><br>
+        <a href="#" type="button" id="FBShareBtn" class="btn btn-success" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}'),'facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</a><br><br>
         <div class="form-group row">
             <label for="embedURLInput" class="col-sm-2 col-form-label">Embed</label>
             <div class="col-sm-10">
