@@ -50,7 +50,7 @@
                       <i class="fas fa-video"></i> <span><b>{{video.channelName}}</b></span> <br>
                       <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                       <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
-                      <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"> {{video.owningUser|get_userName}}
+                      <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> {{video.owningUser|get_userName}}
                       <i class="fas fa-users"></i> {{video.views}} <br>
                       <a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
                   </div>
