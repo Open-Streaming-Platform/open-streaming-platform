@@ -47,12 +47,12 @@
                           </button>
                       </div>
                       {% endif %}
-                      <i class="fas fa-video"></i> <span><b>{{video.channelName}}</b></span> <br>
-                      <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                      <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><b>{{video.channelName}}</b></div> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"> <b>{{video.topic|get_topicName}}</b></div> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-calendar-alt"></i></div> <div style="float:left;"> <b>{{video.videoDate|normalize_date}}</b></div> <br>
                       <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{video.owningUser|get_userName}}</b><br>
-                      <i class="fas fa-users"></i> {{video.views}} <br>
-                      <a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{video.views}} </div><br>
+                      <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div> <div style="float:left;"><span id="totalUpvotes"></span></div> <br>
                   </div>
               </div>
 
