@@ -21,8 +21,8 @@
                         <div class="card-body">
                             <h5 class="card-title text-shadow-close">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
                             <p class="card-text">
-                                <div class="streamcard-topicIconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
-                                <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="31" height="31"> {{stream.channel.owningUser|get_userName}}
+                                <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
+                                <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> {{stream.channel.owningUser|get_userName}}
                             </p>
                         </div>
                         <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
