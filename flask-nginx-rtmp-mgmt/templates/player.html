@@ -37,12 +37,12 @@
                           </button>
                       </div>
                       {% endif %}
-                      <i class="fas fa-video"></i> <span><b>{{stream.streamName}}</b></span><br>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b><br>
-                      <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
-                      <i class="fas fa-users"></i> {{stream.totalViewers}} <br>
-                      <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
-                      <a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a> <span id="totalUpvotes"></span> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
+                      <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b>{{stream.topic|get_topicName}}</b></div><br>
+                      <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{stream.channel.owningUser|get_userName}}</b><br>
+                      <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{stream.totalViewers}</div>} <br>
+                      <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers">{{stream.currentViewers}}</span></div> <br>
+                      <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
                   </div>
               </div>
               {% if stream.channel.chatEnabled == True %}
