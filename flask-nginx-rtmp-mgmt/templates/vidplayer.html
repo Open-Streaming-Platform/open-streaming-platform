@@ -64,7 +64,7 @@
                   <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
-                          <div class="streamList d-flex align-content-around flex-wrap" style="position:relative;left:-30px;">
+                          <div class="streamList d-flex align-content-around flex-wrap" style="position:relative;left:-15px;">
                               {% for vid in video.channel.recordedVideo %}
                                 {% if vid.id != video.id and vid.pending != True%}
                                 <div class="streamcard">
