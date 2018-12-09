@@ -34,7 +34,7 @@ RUN cd /tmp && \
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --with-http_ssl_module \
-  --add-module=../nginx-rtmp-module-master && \
+  --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX and SystemD
