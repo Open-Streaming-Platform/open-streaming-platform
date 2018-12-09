@@ -66,6 +66,9 @@ RUN pip install \
   psutil \
   requests
 
+# Upgrade PIP
+RUN pip install --upgrade pip
+
 # Install Flask-Security Fix
 RUN pip install --upgrade git+ https://github.com/mattupstate/flask-security.git@develop
 
