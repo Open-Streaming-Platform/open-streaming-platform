@@ -17,7 +17,8 @@ RUN apt-get install -y \
   libpcre3-dev \
   libssl-dev \
   unzip \
-  wget
+  wget \
+  git
 
 # Download NGINX
 RUN cd /tmp && \
