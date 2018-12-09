@@ -70,7 +70,7 @@ RUN pip install \
 RUN pip install --upgrade pip
 
 # Install Flask-Security Fix
-RUN pip install --upgrade git+ https://github.com/mattupstate/flask-security.git@develop
+RUN pip install --upgrade 'git+ https://github.com/mattupstate/flask-security.git@develop'
 
 # Make OSP Install Directory
 COPY $cwd/flask-nginx-rtmp-mgmt/ /opt/osp/
