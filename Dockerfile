@@ -80,7 +80,7 @@ RUN apt-get install ffmpeg -y
 RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 
 # Install Supervisor
-RUN apt-get update && apt-get install -y supervisor
+RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
