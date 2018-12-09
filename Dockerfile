@@ -40,7 +40,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 # Configure NGINX and SystemD
 COPY $cwd/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 COPY $cwd/nginx/nginx.service /lib/systemd/system/nginx.service
-RUN systemctl daemon-reload && enable nginx.service
+RUN systemctl daemon-reload && systemctl enable nginx.service
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
