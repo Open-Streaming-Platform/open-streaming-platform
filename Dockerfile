@@ -9,6 +9,11 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 1935/tcp
 
+VOLUME /www/
+VOLUME /usr/local/nginx/conf/
+VOLUME /opt/osp/config.py
+VOLUME /opt/osp/database.db
+
 # Get initial dependancies
 RUN apt-get update
 RUN apt-get install -y \
@@ -16,7 +21,6 @@ RUN apt-get install -y \
   libpcre3 \
   libpcre3-dev \
   libssl-dev \
-  unzip \
   wget \
   git
 
@@ -87,10 +91,5 @@ RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-VOLUME /www
-VOLUME /usr/local/nginx/conf/
-VOLUME /opt/osp/config.py
-VOLUME /opt/osp/database.db
 
 CMD ["/usr/bin/supervisord"]
