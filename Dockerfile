@@ -37,11 +37,8 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
-# Configure NGINX and SystemD
+# Configure NGINX
 COPY $cwd/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
-COPY $cwd/nginx/nginx.service /lib/systemd/system/nginx.service
-RUN sudo systemctl daemon-reload
-RUN sudo systemctl enable nginx.service
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
@@ -82,10 +79,14 @@ RUN apt-get install ffmpeg -y
 # Copy the Default Config File
 RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 
+# Install Supervisor
+RUN apt-get update && apt-get install -y supervisor
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 VOLUME /www
 VOLUME /usr/local/nginx/conf/
 VOLUME /opt/osp/config.py
 VOLUME /opt/osp/database.db
 
-# Start Nginx
-RUN systemctl start nginx.service && systemctl start osp
+CMD ["/usr/bin/supervisord"]
