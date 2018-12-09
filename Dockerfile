@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:16.04
 MAINTAINER David Lockwood
 
 ARG NGINX_VERSION=1.15.3
@@ -10,6 +10,7 @@ EXPOSE 443/tcp
 EXPOSE 1935/tcp
 
 # Get initial dependancies
+RUN apt-get update
 RUN apt-get install -y \
   build-essential \
   libpcre3 \
