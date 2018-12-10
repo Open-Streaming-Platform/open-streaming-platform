@@ -9,9 +9,10 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 1935/tcp
 
-VOLUME /www/
+VOLUME /var/www/
 VOLUME /opt/osp/config.py
 VOLUME /opt/osp/database.db
+VOLUME /usr/local/nginx/conf/
 
 # Get initial dependancies
 RUN apt-get update
@@ -43,7 +44,6 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 
 # Configure NGINX
 COPY $cwd/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
-VOLUME /usr/local/nginx/conf/
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
