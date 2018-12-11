@@ -9,11 +9,6 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 1935/tcp
 
-VOLUME /var/www/
-VOLUME /opt/osp/config.py
-VOLUME /opt/osp/database.db
-VOLUME /usr/local/nginx/conf/
-
 # Get initial dependancies
 RUN apt-get update
 RUN apt-get install -y \
@@ -86,6 +81,12 @@ RUN apt-get install ffmpeg -y
 
 # Copy the Default Config File
 RUN cp /opt/osp/config.py.dist /opt/osp/config.py
+
+VOLUME /var/www/
+VOLUME /opt/osp/
+VOLUME /opt/osp/config.py
+VOLUME /opt/osp/database.db
+VOLUME /usr/local/nginx/conf/
 
 # Install Supervisor
 RUN apt-get install -y supervisor
