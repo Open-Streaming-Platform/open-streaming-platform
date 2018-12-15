@@ -41,7 +41,8 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 COPY $cwd/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
-RUN mkdir /var/www/live && \
+RUN mkdir /var/www && \
+  mkdir /var/www/live && \
   mkdir /var/www/videos && \
   mkdir /var/www/live-rec && \
   mkdir /var/www/images  && \
