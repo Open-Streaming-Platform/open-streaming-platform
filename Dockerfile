@@ -83,15 +83,13 @@ RUN apt-get install ffmpeg -y
 # Copy the Default Config File
 RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 
-VOLUME /var/www/
-VOLUME /opt/osp/
-VOLUME /opt/osp/config.py
-VOLUME /opt/osp/database.db
-VOLUME /usr/local/nginx/conf/
+
 
 # Install Supervisor
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+VOLUME ["/var/www/","/opt/osp", "/usr/local/nginx/conf/"]
 
 CMD ["/usr/bin/supervisord"]
