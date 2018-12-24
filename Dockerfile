@@ -3,7 +3,6 @@ MAINTAINER David Lockwood
 
 ARG NGINX_VERSION=1.15.3
 ARG NGINX_RTMP_VERSION=1.2.1
-ARG cwd=$PWD
 
 EXPOSE 80/tcp
 EXPOSE 443/tcp
@@ -40,7 +39,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX
-COPY $cwd/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www/live && \
@@ -75,7 +74,7 @@ RUN pip install --upgrade pip
 RUN pip install --upgrade git+https://github.com/mattupstate/flask-security.git@develop
 
 # Make OSP Install Directory
-COPY $cwd/flask-nginx-rtmp-mgmt/ /opt/osp/
+COPY flask-nginx-rtmp-mgmt/ /opt/osp/
 RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
