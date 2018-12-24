@@ -80,17 +80,18 @@
 
     <div class="{{sysSettings.background}}-BG" style="padding-bottom:50px;">
 
-    {%- with messages = get_flashed_messages(with_categories=true) -%}
-      {% if messages %}
-        <div class="justify-content-center">
-        {% for category, message in messages %}
-            <div class="alert alert-primary" style="width:600px;margin-bottom:20px;">
-                <div class="{{ category }}">{{ message }}</div>
+        {%- with messages = get_flashed_messages(with_categories=true) -%}
+          {% if messages %}
+            <br>
+            <div class="justify-content-center" style="width:95%;margin:0 auto;">
+            {% for category, message in messages %}
+                <div class="alert alert-primary" style="width:600px;margin-bottom:20px;">
+                    <div class="{{ category }}">{{ message }}</div>
+                </div>
+            {% endfor %}
             </div>
-        {% endfor %}
-        </div>
-      {% endif %}
-    {%- endwith %}
+          {% endif %}
+        {%- endwith %}
 
     {% block body %}
 
