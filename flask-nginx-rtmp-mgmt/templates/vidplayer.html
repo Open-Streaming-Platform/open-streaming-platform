@@ -24,29 +24,31 @@
                     </video>
                   </div>
                   <div class="White-BG recordedStreamInfo shadow">
-                      {% if video.owningUser == current_user.id %}
-                      <div class="float-right" style="margin-left:5px;">
-                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
-                              <i class="fas fa-trash-alt"></i>
-                          </button>
+                      <div>
+                          {% if video.owningUser == current_user.id %}
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                                  <i class="fas fa-trash-alt"></i>
+                              </button>
 
+                          </div>
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                          </div>
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary" onclick="setScreenShot()">
+                                  <i class="fas fa-camera"></i>
+                              </button>
+                          </div>
+                          {% endif %}
+                          <div class="float-right">
+                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                                  <i class="fas fa-share-alt"></i>
+                              </button>
+                          </div>
                       </div>
-                      <div class="float-right" style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
-                              <i class="fas fa-edit"></i>
-                          </button>
-                      </div>
-                      <div class="float-right" style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary" onclick="setScreenShot()">
-                              <i class="fas fa-camera"></i>
-                          </button>
-                      </div>
-                      <div class="float-right">
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
-                              <i class="fas fa-share-alt"></i>
-                          </button>
-                      </div>
-                      {% endif %}
                       <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><b>{{video.channelName}}</b></div> <br>
                       <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"> <b>{{video.topic|get_topicName}}</b></div> <br>
                       <div class="streamcard-IconText"><i class="fas fa-calendar-alt"></i></div> <div style="float:left;"> <b>{{video.videoDate|normalize_date}}</b></div> <br>

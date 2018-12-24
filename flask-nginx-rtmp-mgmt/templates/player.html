@@ -25,18 +25,20 @@
                     </video>
                   </div>
                   <div class="White-BG streamInfo shadow">
-                      {% if stream.channel.owningUser == current_user.id %}
-                      <div class="float-right" style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
-                              <i class="fas fa-edit"></i>
-                          </button>
+                      <div>
+                          {% if stream.channel.owningUser == current_user.id %}
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                          </div>
+                          {% endif %}
+                          <div class="float-right">
+                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                                  <i class="fas fa-share-alt"></i>
+                              </button>
+                          </div>
                       </div>
-                      <div class="float-right">
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
-                              <i class="fas fa-share-alt"></i>
-                          </button>
-                      </div>
-                      {% endif %}
                       <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b>{{stream.topic|get_topicName}}</b></div><br>
                       <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{stream.channel.owningUser|get_userName}}</b><br>
