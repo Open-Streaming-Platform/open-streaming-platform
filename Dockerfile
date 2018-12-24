@@ -8,8 +8,6 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 1935/tcp
 
-VOLUME ["/var/www/","/opt/osp", "/usr/local/nginx/conf/"]
-
 # Get initial dependancies
 RUN apt-get update
 RUN apt-get install -y \
@@ -39,7 +37,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX
-COPY nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY ./nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www/live && \
@@ -74,7 +72,7 @@ RUN pip install --upgrade pip
 RUN pip install --upgrade git+https://github.com/mattupstate/flask-security.git@develop
 
 # Make OSP Install Directory
-COPY flask-nginx-rtmp-mgmt/ /opt/osp/
+COPY ./flask-nginx-rtmp-mgmt/ /opt/osp/
 RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
@@ -86,6 +84,8 @@ RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 # Install Supervisor
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+VOLUME ["/var/www/","/opt/osp", "/usr/local/nginx/conf/"]
 
 CMD ["/usr/bin/supervisord"]
