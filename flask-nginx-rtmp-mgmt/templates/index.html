@@ -20,7 +20,7 @@
                     <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
 
                     <div class="card-body">
-                        <h4 class="card-title shadow">{{stream.streamName}}</h4>
+                        <h6 class="card-title text-shadow-close">{{stream.streamName}}</h6>
                         <p class="card-text">
                             <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span>
                             <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
