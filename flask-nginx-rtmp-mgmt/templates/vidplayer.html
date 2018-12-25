@@ -25,6 +25,11 @@
                   </div>
                   <div class="video-buttons-mobile justify-content-center">
                       <div>
+                          <a href="{{streamURL}}" class="btn btn-primary shadow">
+                              <i class="fas fa-download"></i>
+                          </a>
+                      </div>
+                      <div style="margin-left:5px;">
                           <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                               <i class="fas fa-share-alt"></i>
                           </button>
@@ -68,10 +73,15 @@
                               </button>
                           </div>
                           {% endif %}
-                          <div class="float-right">
+                          <div class="float-right" style="margin-left:5px;">
                               <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                                   <i class="fas fa-share-alt"></i>
                               </button>
+                          </div>
+                          <div class="float-right">
+                              <a href="{{streamURL}}" class="btn btn-primary shadow">
+                                  <i class="fas fa-download"></i>
+                              </a>
                           </div>
                       </div>
                       <div>
