@@ -33,9 +33,10 @@
     padding-bottom: 10px;
 }
 
-video-buttons-mobile {
+.video-buttons-mobile {
     display:none;
 }
+
 
 .recordedStreamInfo {
     margin-top: 25px;
@@ -244,8 +245,14 @@ video-buttons-mobile {
 
     .video-buttons-mobile {
         display:block;
-        width:400px;
+        width:100%;
         margin: 0 auto;
+        align-items:center;
+        display:flex;
+    }
+
+    .video-buttons-mobile div {
+        float: left;
     }
 }
 
