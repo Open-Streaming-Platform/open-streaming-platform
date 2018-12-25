@@ -39,7 +39,12 @@
     </div>
     {% if streamList == [] %}
         <br><br>
-        <div class="viewerText d-flex justify-content-center" style="text-align:center;text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);"><h2>No Current Live Streams</h2></div>
+        <div class="jumbotron">
+            <div class="float-left"><i class="fas fa-video-slash"></i></div>
+            <div class="viewerText" style="text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);"><h1 class="display-4">No Current Live Streams</h1></div>
+          <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        </div>
+
     {% endif %}
 {% endblock %}
 
