@@ -23,8 +23,33 @@
                         </p>
                     </video>
                   </div>
-                  <div class="White-BG recordedStreamInfo shadow">
+                  <div class="video-buttons-lg">
                       <div>
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                              <i class="fas fa-share-alt"></i>
+                          </button>
+                      </div>
+                      {% if video.owningUser == current_user.id %}
+                      <div style="margin-left:5px;">
+                          <button type="button" class="btn btn-primary" onclick="setScreenShot()">
+                              <i class="fas fa-camera"></i>
+                          </button>
+                      </div>
+                      <div style="margin-left:5px;">
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                              <i class="fas fa-edit"></i>
+                          </button>
+                      </div>
+                      <div style="margin-left:5px;">
+                          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                              <i class="fas fa-trash-alt"></i>
+                          </button>
+                      </div>
+                      {% endif %}
+
+                  </div>
+                  <div class="White-BG recordedStreamInfo shadow">
+                      <div class="video-buttons-lg">
                           {% if video.owningUser == current_user.id %}
                           <div class="float-right" style="margin-left:5px;">
                               <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
