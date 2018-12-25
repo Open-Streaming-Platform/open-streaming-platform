@@ -64,6 +64,11 @@
     width:100%;
 }
 
+.streamcard-footer {
+    position:relative;
+    bottom: 0px;">
+}
+
 .streamcard-item {
     width:280px;
     height:365px;
