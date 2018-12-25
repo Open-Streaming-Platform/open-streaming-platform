@@ -39,7 +39,7 @@ class Stream(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'linkedChannel': self.linkedChannel,
+            'channelID': self.linkedChannel,
             'streamName': self.streamName,
             'topic': self.topic,
             'currentViewers': self.currentViewers,
