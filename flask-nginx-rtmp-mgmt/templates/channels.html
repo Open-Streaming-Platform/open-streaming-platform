@@ -5,12 +5,10 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row" style="width:100%">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search..">
         </div>
-        <div class="col-1"></div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
