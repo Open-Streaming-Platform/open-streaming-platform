@@ -6,8 +6,11 @@
 
 {% block body %}
     <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
-        <div>
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">@</div>
+            </div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
