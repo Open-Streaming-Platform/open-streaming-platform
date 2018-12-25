@@ -257,6 +257,10 @@
     .video-buttons-mobile div {
         float: left;
     }
+
+    .no-stream-jumbo {
+        display:none;
+    }
 }
 
 /* Firefox old*/
