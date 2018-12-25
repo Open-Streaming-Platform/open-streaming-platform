@@ -241,11 +241,6 @@
         height: 450px;
     }
 
-    .searchBar {
-        position:relative;
-        left:5%;
-    }
-
     .video-buttons-lg {
         display:none;
     }
