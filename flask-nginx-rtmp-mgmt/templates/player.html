@@ -26,13 +26,13 @@
                   </div>
                   <div class="video-buttons-mobile justify-content-center">
                       <div>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                        <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                             <i class="fas fa-share-alt"></i>
                         </button>
                       </div>
                       {% if stream.channel.owningUser == current_user.id %}
                           <div style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
                                   <i class="fas fa-edit"></i>
                               </button>
                           </div>
@@ -42,13 +42,13 @@
                       <div class="video-buttons-lg">
                           {% if stream.channel.owningUser == current_user.id %}
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
                                   <i class="fas fa-edit"></i>
                               </button>
                           </div>
                           {% endif %}
                           <div class="float-right">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#shareModal">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                                   <i class="fas fa-share-alt"></i>
                               </button>
                           </div>
