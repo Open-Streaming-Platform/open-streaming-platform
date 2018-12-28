@@ -14,6 +14,7 @@ RUN apk update
 RUN apk add alpine-sdk \
   pcre-dev \
   libressl2.7-libcrypto \
+  openssel-dev \
   wget \
   git
 
