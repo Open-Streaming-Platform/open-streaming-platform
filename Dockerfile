@@ -54,10 +54,10 @@ RUN mkdir /var/www && \
   chown -R www-data:www-data /var/www
 
 # Install Python, Gunicorn, and uWSGI
-RUN apk add python2.7 \
-  python-pip \
-  gunicorn \
-  uwsgi-plugin-python
+RUN apk add python2 \
+  py-pip \
+  py-gunicorn \
+  uwsgi-python
 
 # Install OSP Dependancies
 ADD requirements.txt /tmp/requirements.txt
