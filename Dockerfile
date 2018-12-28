@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM alpine:latest
 MAINTAINER David Lockwood
 
 ARG NGINX_VERSION=1.15.3
@@ -10,9 +10,8 @@ EXPOSE 1935/tcp
 
 
 # Get initial dependancies
-RUN apt-get update
-RUN apt-get install -y \
-  build-essential \
+RUN apk update
+RUN apk add build-essential \
   libpcre3 \
   libpcre3-dev \
   libssl-dev \
@@ -50,8 +49,8 @@ RUN mkdir /var/www && \
   chown -R www-data:www-data /var/www
 
 # Install Python, Gunicorn, and uWSGI
-RUN apt-get install -y \
-  python2.7 \
+RUN apk add \
+  python2.7
   python-pip \
   gunicorn \
   uwsgi-plugin-python
@@ -68,13 +67,13 @@ ADD flask-nginx-rtmp-mgmt/ /opt/osp/
 RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
-RUN apt-get install ffmpeg -y
+RUN apk add ffmpeg
 
 # Copy the Default Config File
 RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 
 # Install Supervisor
-RUN apt-get install -y supervisor
+RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
