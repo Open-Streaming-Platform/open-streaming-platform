@@ -49,8 +49,7 @@ RUN mkdir /var/www && \
   chown -R www-data:www-data /var/www
 
 # Install Python, Gunicorn, and uWSGI
-RUN apk add \
-  python2.7
+RUN apk add python2.7 \
   python-pip \
   gunicorn \
   uwsgi-plugin-python
