@@ -36,6 +36,11 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
+# Create the www-data user
+RUN set -x ; \
+  addgroup -g 82 -S www-data ; \
+  adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
+
 # Configure NGINX
 RUN cd /..
 ADD nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
