@@ -78,6 +78,6 @@ RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-VOLUME ["/var/www/","/opt/osp", "/usr/local/nginx/conf/"]
+VOLUME ["/var/www","/opt/osp", "/usr/local/nginx/conf"]
 
 CMD ["/usr/bin/supervisord"]
