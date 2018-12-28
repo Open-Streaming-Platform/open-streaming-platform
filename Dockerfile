@@ -56,7 +56,8 @@ RUN apt-get install -y \
   uwsgi-plugin-python
 
 # Install OSP Dependancies
-RUN pip install -r requirements.txt
+ADD requirements.txt /tmp/requirements.txr
+RUN pip install -r /tmp/requirements.txt
 
 # Upgrade PIP
 RUN pip install --upgrade pip
