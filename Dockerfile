@@ -13,7 +13,7 @@ EXPOSE 1935/tcp
 RUN apk update
 RUN apk add alpine-sdk \
   pcre-dev \
-  libssl-dev \
+  libressl2.7-libcrypto \
   wget \
   git
 
