@@ -37,7 +37,8 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX
-COPY ./nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+RUN cd /..
+ADD nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
@@ -55,25 +56,13 @@ RUN apt-get install -y \
   uwsgi-plugin-python
 
 # Install OSP Dependancies
-RUN pip install \
-  flask \
-  flask-sqlalchemy \
-  flask-security \
-  flask-socketio \
-  gevent \
-  flask-uploads \
-  psutil \
-  requests \
-  flask-migrate
+RUN pip install -r requirements.txt
 
 # Upgrade PIP
 RUN pip install --upgrade pip
 
-# Install Flask-Security Fix
-RUN pip install --upgrade git+https://github.com/mattupstate/flask-security.git@develop
-
 # Make OSP Install Directory
-COPY ./flask-nginx-rtmp-mgmt/ /opt/osp/
+ADD flask-nginx-rtmp-mgmt/ /opt/osp/
 RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
@@ -85,7 +74,7 @@ RUN cp /opt/osp/config.py.dist /opt/osp/config.py
 # Install Supervisor
 RUN apt-get install -y supervisor
 RUN mkdir -p /var/log/supervisor
-COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 VOLUME ["/var/www/","/opt/osp", "/usr/local/nginx/conf/"]
 
