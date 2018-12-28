@@ -11,7 +11,7 @@ EXPOSE 1935/tcp
 
 # Get initial dependancies
 RUN apk update
-RUN apk add build-essential \
+RUN apk add alpine-sdk \
   libpcre3 \
   libpcre3-dev \
   libssl-dev \
