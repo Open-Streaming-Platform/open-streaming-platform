@@ -34,17 +34,20 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
 * [Socket.io] - Real-Time Communications Engine Between Client and Server
 * [Flask Socket.io] - Interface Socket.io with Flask
-* [hls.js] - Handles the HTML5 Video Playback of HLS video streams
+* [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
+* [Emoji-CSS] - For Emoji Icons In Chat
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
 ## Installation
+
+### Standard Install
 OSP has only been tested on Ubuntu 16.04 and the installation script may not work properly on other OS's.
 
 Clone the Gitlab Repo
 ```sh
-git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git 
+git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git
 ```
 Chmod setup-osp.sh to be Executable.
 ```sh
@@ -82,6 +85,19 @@ Open a Web Browser and configure OSP
 ```
 http://[SERVER IP]/
 ```
+
+### Docker Install
+
+A Dockerfile has been provided for running OSP in a container.  However due to the way NginX, Gunicorn, Flask, and Docker work, for OSP to work properly, the Frontend must be exposed using Port 80 or 443 and the RTSP port from OBS or other streaming software must be exposed on Port 1435.
+
+This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1435 will not be proxied and must be mapped to the same port on the host.
+
+**Volumes**
+* /var/www - Storage of Images, Streams, and Stored Video Files
+* /opt/osp - Application Install Which Conains the config.py (Highly Recommended to change the secretKey and passwordSalt Variables)
+* /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
+
+### Usage
 
 **A Channel and Stream key must be created prior to streaming.**
 
