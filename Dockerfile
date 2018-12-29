@@ -54,7 +54,9 @@ RUN mkdir /var/www && \
   mkdir /var/www/videos && \
   mkdir /var/www/live-rec && \
   mkdir /var/www/images  && \
-  chown -R www-data:www-data /var/www
+  mkdir /var/log/gunicorn && \
+  chown -R www-data:www-data /var/www && \
+  chown -R www-data:www-data /var/log/gunicorn
 
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python2 \
