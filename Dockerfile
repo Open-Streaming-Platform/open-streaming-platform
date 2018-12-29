@@ -19,6 +19,8 @@ RUN apk add alpine-sdk \
   git \
   linux-headers
 
+RUN apk add --no-cache bash
+
 # Download NGINX
 RUN cd /tmp && \
   wget https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
