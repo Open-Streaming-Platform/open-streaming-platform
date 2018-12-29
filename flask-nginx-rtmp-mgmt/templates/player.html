@@ -16,7 +16,7 @@
               <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-8{% endif %} col-sm-12">
                   <div class="White-BG player">
                     <!--<video id="video" class="shadow videoStream" autoplay controls></video>-->
-                    <video id="video" class="shadow videoStream video-js vjs-big-play-centered" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+                    <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="{{stream.channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
                         <source src="{{streamURL}}" type="application/x-mpegURL">
                         <p class="vjs-no-js">
                           To view this video please enable JavaScript, and consider upgrading to a web browser that
