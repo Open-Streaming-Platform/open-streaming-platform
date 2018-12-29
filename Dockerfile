@@ -56,6 +56,7 @@ RUN mkdir /var/www && \
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python2 \
   py-pip \
+  python2-dev \
   py-gunicorn \
   uwsgi-python
 
