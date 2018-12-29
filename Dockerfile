@@ -16,7 +16,8 @@ RUN apk add alpine-sdk \
   libressl2.7-libcrypto \
   openssl-dev \
   wget \
-  git
+  git \
+  linux-headers
 
 # Download NGINX
 RUN cd /tmp && \
