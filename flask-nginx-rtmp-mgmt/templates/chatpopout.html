@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <link rel=stylesheet type=text/css href="/static/css/main.css">
+    <link rel=stylesheet type=text/css href="/static/css/slider.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+</head>
+<body>
+<div class="col-12 .d-none .d-xl-block">
+  <div class="chatbox" style="margin-bottom:210px;">
+      <div id="chat" class="chat form-control shadow"></div><br>
+      <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+<script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
+
+        var socket = io();
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('newViewer', {data: '{{stream.channel.channelLoc}}'});
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
+            return null;
+        });
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('viewerTotalResponse', function (msg) {
+            document.getElementById("currentViewers").innerHTML = msg['data'];
+            var userBoxHTML = "";
+            var userList = msg['userList'];
+            var userListLength = userList.length;
+            for (var i = 0; i < userListLength; i++) {
+                userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
+            }
+            var userListElement = document.getElementById("userList");
+            userListElement.setAttribute("data-content",userBoxHTML);
+        });
+    </script>
+
+    <script>
+        $('#text').keypress(function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc}}' });
+            }
+        });
+    </script>
+
+    <script>
+
+        socket.on('message', function(data) {
+            var today = new Date();
+            var h = today.getHours();
+            var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
+            var s = today.getSeconds();
+            $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] +'" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+            $('#chat').scrollTop(1000000);
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+</body>
+</html>
