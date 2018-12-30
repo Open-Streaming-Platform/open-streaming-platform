@@ -69,7 +69,7 @@
                       <div id="chat" class="chat form-control shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                       <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
-                      <a href="#" onClick="MyWindows=window.open('/view/{{stream.streamKey}}/?chatOnly=True','myWindow', width=600,height=800);return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
+                      <a href="#" onClick="MyWindows=window.open('/view/{{stream.channel.channelLoc}}/?chatOnly=True','myWindow', width=600,height=800);return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
                   </div>
                 </div>
               {% endif %}
