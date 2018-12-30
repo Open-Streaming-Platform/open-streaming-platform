@@ -31,6 +31,26 @@
         var socket = io();
     </script>
 
+    <script>
+        socket.on('connect', function() {
+            socket.emit('openPopup', {data: '{{stream.channel.channelLoc}}'});
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('closePopup', {data: '{{stream.channel.channelLoc}}'});
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('closePopup', {data: '{{stream.channel.channelLoc}}'});
+            return null;
+        });
+    </script>
+
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
