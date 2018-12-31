@@ -18,7 +18,7 @@ class Channel(db.Model):
     imageLocation = db.Column(db.String(255))
     stream = db.relationship('Stream', backref='channel', lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
-
+    upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled):
         self.owningUser = owningUser
@@ -32,3 +32,20 @@ class Channel(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def get_upvotes(self):
+        return len(self.upvotes)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'owningUser': self.owningUser,
+            'channelName': self.channelName,
+            'topic': self.topic,
+            'views': self.views,
+            'recordingEnabled': self.record,
+            'chatEnabled': self.chatEnabled,
+            'stream': [obj.serialize() for obj in self.stream],
+            'recordedVideoIDs': [obj.serialize() for obj in self.recordedVideo],
+            'upvotes': self.get_upvotes()
+        }

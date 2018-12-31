@@ -5,20 +5,20 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row" style="width:100%">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="input-group">
+            <div class="input-group-prepend shadow">
+                <div class="input-group-text"><i class="fas fa-search"></i></div>
+            </div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
-        <div class="col-1"></div>
     </div>
-
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for streamer in streamerList %}
         <div class="streamcard">
             <a href="/streamers/{{streamer.id}}/">
-                <div class="stream shadow card p-2 streamcard-item">
-                    <img class="streamer-img card-img-top shadow" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                <div class="stream shadow card p-2 streamercard-item">
+                    <img class="streamer-img card-img-top shadow" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                     <div class="card-body">
                         <h5 class="card-title text-shadow-close">{{streamer.username}}</h5>
                     </div>

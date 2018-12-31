@@ -14,7 +14,7 @@
           <div class="card-header">
               <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
+                    <a class="nav-link link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('adminSettings')">Settings</a>
@@ -55,7 +55,7 @@
                     <h5>Configuration Options</h5>
                       <form action="/settings/admin" method="post">
                           Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
-                          Server IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
+                          Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
                           <hr>
                           Background Theme:
                           <select class="form-control" name="background">
@@ -99,164 +99,172 @@
                 </div>
                 <div class="settingsOption" id="userList" style="display:none;">
                     <h5>User List</h5>
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">User ID</th>
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">Email Address</th>
+                                    <th scope="col">Active?</th>
+                                    <th scope="col">Confirmed On</th>
+                                    <th scope="col">Roles</th>
+                                    <th scope="col">Channels</th>
+                                    <th scope="col">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in userList %}
                             <tr>
-                                <th scope="col">User ID</th>
-                                <th scope="col">User Name</th>
-                                <th scope="col">Email Address</th>
-                                <th scope="col">Active?</th>
-                                <th scope="col">Confirmed On</th>
-                                <th scope="col">Roles</th>
-                                <th scope="col">Channels</th>
-                                <th scope="col">Options</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for user in userList %}
-                        <tr>
-                            <td>{{user.id}}</td>
-                            <td>{{user.username}}</td>
-                            <td>{{user.email}}</td>
-                            <td>{{user.active}}</td>
-                            <td>{{user.confirmed_at}}</td>
-                            <td>{% for role in user.roles %}
-                                <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
-                                {% endfor %}
-                            </td>
-                            <td></td>
-                            <td>
-                                <div class="btn-group">
-                                  <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
-                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
-                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                                <td>{{user.id}}</td>
+                                <td>{{user.username}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.active}}</td>
+                                <td>{{user.confirmed_at}}</td>
+                                <td>{% for role in user.roles %}
+                                    <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
+                                    {% endfor %}
+                                </td>
+                                <td></td>
+                                <td>
+                                    <div class="btn-group">
+                                      <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                                        </div>
                                     </div>
-                                </div>
-                                <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                                    <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="settingsOption" id="topicsList" style="display:none;">
                     <h5>Topics List</h5>
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Topic Name</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for topic in topicsList %}
                             <tr>
-                                <th scope="col">Topic Name</th>
-                                <th scope="col">Image</th>
-                                <th scope="col">Options</th>
+                                <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                    <td>
+                                        <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
+                                    </td>
+                                    <td>
+                                        <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                        <br>
+                                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                        <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
+                                        <input type="hidden" value="topics" id="settingType" name="settingType">
+                                    </td>
+                                    <td>
+                                        <input type="submit" class="btn btn-success" value="&#128393;">
+                                        <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                                    </td>
+                                </form>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {% for topic in topicsList %}
-                        <tr>
-                            <form action="/settings/admin" enctype=multipart/form-data method="post">
-                                <td>
-                                    <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
+                            {% endfor %}
+                            <tr>
+                                <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                    <td>
+                                        <input type="text" name="name" id="name" class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <img width="284" height="155" src="/static/img/video-placeholder.jpg">
+                                        <br>
+                                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                        <input type="hidden" value="topics" id="settingType" name="settingType">
+                                    </td>
+                                    <td>
+                                        <input type="submit" class="btn btn-success" value="&#43;">
                                 </td>
-                                <td>
-                                    <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                    <br>
-                                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
-                                    <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
-                                    <input type="hidden" value="topics" id="settingType" name="settingType">
-                                </td>
-                                <td>
-                                    <input type="submit" class="btn btn-success" value="&#128393;">
-                                    <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
-                                </td>
-                            </form>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <form action="/settings/admin" enctype=multipart/form-data method="post">
-                                <td>
-                                    <input type="text" name="name" id="name" class="form-control" required>
-                                </td>
-                                <td>
-                                    <img width="284" height="155" src="/static/img/video-placeholder.jpg">
-                                    <br>
-                                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
-                                    <input type="hidden" value="topics" id="settingType" name="settingType">
-                                </td>
-                                <td>
-                                    <input type="submit" class="btn btn-success" value="&#43;">
-                            </td>
-                            </form>
-                        </tbody>
-                    </table>
+                                </form>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="settingsOption" id="channelsList" style="display:none;">
                     <h5>Channels List</h5>
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Channel ID</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Channel Location</th>
+                                    <th scope="col">Topic</th>
+                                    <th scope="col">Views</th>
+                                    <th scope="col">Recording Enabled</th>
+                                    <th scope="col">Chat Enabled</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Disk Usage</th>
+                                    <th scope="col">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for channel in channelList %}
                             <tr>
-                                <th scope="col">Channel ID</th>
-                                <th scope="col">User</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Channel Location</th>
-                                <th scope="col">Topic</th>
-                                <th scope="col">Views</th>
-                                <th scope="col">Recording Enabled</th>
-                                <th scope="col">Chat Enabled</th>
-                                <th scope="col">Image</th>
-                                <th scope="col">Disk Usage</th>
-                                <th scope="col">Options</th>
+                                <td>{{channel.id}}</td>
+                                <td>{{channel.owningUser|get_userName}}</td>
+                                <td>{{channel.channelName}}</td>
+                                <td>{{channel.channelLoc}}</td>
+                                <td>{{channel.topic|get_topicName}}</td>
+                                <td>{{channel.views}}</td>
+                                <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
+                                <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                                <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
+                                <td>{{channel.channelLoc|get_diskUsage}}</td>
+                                <td><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {% for channel in channelList %}
-                        <tr>
-                            <td>{{channel.id}}</td>
-                            <td>{{channel.owningUser|get_userName}}</td>
-                            <td>{{channel.channelName}}</td>
-                            <td>{{channel.channelLoc}}</td>
-                            <td>{{channel.topic|get_topicName}}</td>
-                            <td>{{channel.views}}</td>
-                            <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
-                            <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
-                            <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
-                            <td>{{channel.channelLoc|get_diskUsage}}</td>
-                            <td><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="settingsOption" id="streamsList" style="display:none;">
                     <h5>Stream List</h5>
-                    <table class="table table-hover">
-                        <thead class="thead-dark">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Stream ID</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Topic</th>
+                                    <th scope="col">Current Viewers</th>
+                                    <th scope="col">Total Viewers</th>
+                                    <th scope="col">Last Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for stream in streamList %}
                             <tr>
-                                <th scope="col">Stream ID</th>
-                                <th scope="col">User</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Topic</th>
-                                <th scope="col">Current Viewers</th>
-                                <th scope="col">Total Viewers</th>
-                                <th scope="col">Last Image</th>
+                                <td>{{stream.id}}</td>
+                                <td>{{stream.channel.owningUser|get_userName}}</td>
+                                <td>{{stream.streamName}}</td>
+                                <td>{{stream.topic|get_topicName}}</td>
+                                <td>{{stream.currentViewers}}</td>
+                                <td>{{stream.totalViewers}}</td>
+                                <td><img width="284" height="155" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {% for stream in streamList %}
-                        <tr>
-                            <td>{{stream.id}}</td>
-                            <td>{{stream.channel.owningUser|get_userName}}</td>
-                            <td>{{stream.streamName}}</td>
-                            <td>{{stream.topic|get_topicName}}</td>
-                            <td>{{stream.currentViewers}}</td>
-                            <td>{{stream.totalViewers}}</td>
-                            <td><img width="284" height="155" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
               </div>
           </div>

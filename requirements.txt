@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+git+https://github.com/mattupstate/flask-security.git@develop
+flask-socketio
+gevent
+flask-uploads
+psutil
+requests
+flask-migrate

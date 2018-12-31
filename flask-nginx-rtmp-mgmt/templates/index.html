@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row" style="width:100%">
-        <div class="col-1"></div>
-        <div class="col-10">
-                <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="input-group">
+            <div class="input-group-prepend shadow">
+                <div class="input-group-text"><i class="fas fa-search"></i></div>
+            </div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
-        <div class="col-1"></div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for stream in streamList %}
@@ -20,10 +21,12 @@
                     <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
 
                     <div class="card-body">
-                        <h5 class="card-title">{{stream.streamName}} <img class="blink-image recordDot" src="/static/img/red.png" width="20px" height="20px"></h5>
+                        <h5 class="card-title text-shadow-close">{{stream.streamName}} <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span></h5>
                         <p class="card-text">
-                            <i class="fas fa-hashtag"></i> {{stream.topic|get_topicName}} <br>
-                            <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}}</p>
+
+                            <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
+                            <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> {{stream.channel.owningUser|get_userName}}
+                        </p>
                     </div>
                     <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
                         <div class="float-left"><i class="fas fa-users"></i> {{stream.totalViewers}}</div>
@@ -37,7 +40,43 @@
     </div>
     {% if streamList == [] %}
         <br><br>
-        <div class="viewerText d-flex justify-content-center" style="text-align:center;text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);"><h2>No Current Live Streams</h2></div>
+        <div class="container-fluid justify-content-center" style="width:85%">
+            <div class="jumbotron shadow">
+                <div class="row">
+                    <div class="col-1 no-stream-jumbo">
+                        <div style="font-size: 3em;padding-right:60px;"><i class="fas fa-video-slash"></i></div>
+                    </div>
+                    <div class="col-md-11 col-sm-12">
+                        <div class="viewerText" style="text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);"><h1 class="display-4">No Current Live Streams</h1></div>
+                        <p class="lead">Try Viewing Some of the Previously Recorded Videos Below:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="streamList d-flex align-content-around flex-wrap">
+        {% for video in randomRecorded %}
+            <div class="streamcard flip-in-ver-right" id="video_{{video.id}}">
+              <a href="/play/{{video.id}}">
+                  <div class="stream shadow card p-2 streamcard-item">
+                    <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-body">
+                        <h5 class="card-title text-shadow-close">{{video.channelName}}</h5>
+                        <p class="card-text">
+                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                        </p>
+                    </div>
+                    <div class="streamcard-footer bg-transparent">
+                        <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
+                        <div class="float-left" style="position:relative;left:20px;"><i id="upVoteIcon" class="far fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</div>
+                        <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
+                    </div>
+                </div>
+              </a>
+            </div>
+        {% endfor %}
+        </div>
+
     {% endif %}
 {% endblock %}
 

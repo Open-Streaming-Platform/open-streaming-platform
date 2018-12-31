@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 
 {% block head %}
-    <title>{{sysSettings.siteName}} - {{streamtitle}}</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>{{sysSettings.siteName}} - {{stream.streamName}}</title>
+    <!--<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>-->
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <link href="https://vjs.zencdn.net/7.2.4/video-js.css" rel="stylesheet">
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 {% endblock %}
 
@@ -13,21 +15,52 @@
           <div class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
               <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-8{% endif %} col-sm-12">
                   <div class="White-BG player">
-                    <video id="video" class="shadow videoStream" autoplay controls></video>
+                    <!--<video id="video" class="shadow videoStream" autoplay controls></video>-->
+                    <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="{{stream.channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
+                        <source src="{{streamURL}}" type="application/x-mpegURL">
+                        <p class="vjs-no-js">
+                          To view this video please enable JavaScript, and consider upgrading to a web browser that
+                          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                    </video>
+                  </div>
+                  <div class="video-buttons-mobile justify-content-center">
+                      <div>
+                        <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                      </div>
+                      {% if stream.channel.owningUser == current_user.id %}
+                          <div style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                          </div>
+                      {% endif %}
                   </div>
                   <div class="White-BG streamInfo shadow">
-                      {% if stream.channel.owningUser == current_user.id %}
-                      <div class="float-right">
-                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal">
-                              <i class="fas fa-edit"></i>
-                          </button>
+                      <div class="video-buttons-lg">
+                          {% if stream.channel.owningUser == current_user.id %}
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                          </div>
+                          {% endif %}
+                          <div class="float-right">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                                  <i class="fas fa-share-alt"></i>
+                              </button>
+                          </div>
                       </div>
-                      {% endif %}
-                      <i class="fas fa-video"></i> <span><b>{{stream.streamName}}</b></span><br>
-                      <i class="fas fa-hashtag"></i> <b>{{stream.topic|get_topicName}}</b><br>
-                      <i class="fas fa-user-circle"></i> {{stream.channel.owningUser|get_userName}} <br>
-                      <i class="fas fa-users"></i> {{stream.totalViewers}} <br>
-                      <i class="fas fa-eye"></i> <span id="currentViewers">{{stream.currentViewers}}</span> <br>
+                      <div>
+                          <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
+                          <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b>{{stream.topic|get_topicName}}</b></div><br>
+                          <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{stream.channel.owningUser|get_userName}}</b><br>
+                          <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{stream.totalViewers}}</div> <br>
+                          <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers">{{stream.currentViewers}}</span></div> <br>
+                          <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
+                      </div>
                   </div>
               </div>
               {% if stream.channel.chatEnabled == True %}
@@ -36,6 +69,7 @@
                       <div id="chat" class="chat form-control shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                       <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
+                      <a href="#" onClick="MyWindows=window.open('/view/{{stream.channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
                   </div>
                 </div>
               {% endif %}
@@ -59,7 +93,7 @@
                                                 <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
                                                 <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                                             </div>
-                                            <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
+                                            <div class="streamcard-footer bg-transparent">
                                                 <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
                                                 <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
                                             </div>
@@ -111,31 +145,52 @@
 
 {% endif %}
 
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalTitle">Share a Video/Stream</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+          <div style="margin: 0 auto;width: 99%; text-align: center;">
+            <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
+            <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;" onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Stream! - {{stream.streamName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+          </div>
+        <br>
+        <div class="form-group row">
+            <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
+            <div class="col-sm-10">
+                <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
+            <div class="col-sm-10">
+                <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
 {% block scripts %}
+    <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
 
     <script>
-        if(Hls.isSupported()) {
-          var video = document.getElementById('video');
-          var hls = new Hls();
-          hls.loadSource('{{streamURL}}');
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED,function() {
-            video.play();
-        });
-        }
-        // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
-        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
-        // This is using the built-in support of the plain video element, without using hls.js.
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = '{{streamURL}}';
-          video.addEventListener('canplay',function() {
-            video.play();
-          });
-        }
+        videojs('video', {autoplay: true});
     </script>
+
 
     <script type="text/javascript" charset="utf-8">
         var conn_options = {
@@ -212,5 +267,42 @@
         setInterval(function() {
           socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
         },30000 );
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+        });
+    </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+        },30000 );
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('upvoteTotalResponse', function (msg) {
+            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+            if (msg['myUpvote'] === 'True'){
+                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+                    document.getElementById("upVoteIcon").classList.remove('far');
+                    document.getElementById("upVoteIcon").classList.add('fas');
+                }
+            }
+            else if (msg['myUpvote'] === 'False'){
+                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+                    document.getElementById("upVoteIcon").classList.remove('fas');
+                    document.getElementById("upVoteIcon").classList.add('far');
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function changeUpvote() {
+            socket.emit('changeUpvote', {loc: '{{stream.id}}', vidType: 'stream'});
+            socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+        }
     </script>
 {% endblock %}

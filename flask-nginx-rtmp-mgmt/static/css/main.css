@@ -33,6 +33,11 @@
     padding-bottom: 10px;
 }
 
+.video-buttons-mobile {
+    display:none;
+}
+
+
 .recordedStreamInfo {
     margin-top: 25px;
     width: 99.8%;
@@ -59,9 +64,22 @@
     width:100%;
 }
 
+.streamcard-footer {
+    position:relative;
+    bottom: 0px;">
+}
+
 .streamcard-item {
     width:280px;
     height:365px;
+}
+
+.streamcard-IconText{
+    width:32px;
+    height:20px;
+    text-align:center;
+    float:left;
+    margin-right:5px;
 }
 
 .topiccard-item {
@@ -69,13 +87,22 @@
     height:300px;
 }
 
+.streamercard-item {
+    width:280px;
+    height:365px;
+}
+
+
 .card-title {
     height:48px;
 }
 
 .recordDot {
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
+    position:relative;
+    top:-2px;
+    left:-2px;
 }
 
 .topic-img {
@@ -110,7 +137,6 @@
     font-size: 16px;
     background-color: white;
     width:100%;
-    margin: 0 auto;
 }
 
 .chat {
@@ -203,7 +229,7 @@
     }
 
     .streamList {
-        margin-left: 30px;
+        margin-left: 0px;
     }
 
     .streamcard {
@@ -211,13 +237,29 @@
     }
 
     .streamcard-item {
-        width: 95%;
+        width: 375px;
         height: 450px;
     }
 
-    .searchBar {
-        position:relative;
-        left:5%;
+    .video-buttons-lg {
+        display:none;
+    }
+
+    .video-buttons-mobile {
+        padding-top:15px;
+        display:block;
+        width:100%;
+        margin: 0 auto;
+        align-items:center;
+        display:flex;
+    }
+
+    .video-buttons-mobile div {
+        float: left;
+    }
+
+    .no-stream-jumbo {
+        display:none;
     }
 }
 

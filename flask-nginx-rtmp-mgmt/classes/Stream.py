@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 from app import db
 
 class Stream(db.Model):
+    __tablename__ = "Stream"
     id = db.Column(db.Integer, primary_key=True)
     linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
     streamKey = db.Column(db.String(255))
@@ -11,6 +12,7 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
+    upvotes = db.relationship('streamUpvotes', backref='stream', lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
         self.streamKey = streamKey
@@ -23,6 +25,9 @@ class Stream(db.Model):
     def __repr__(self):
         return '<id %r>' % self.id
 
+    def get_upvotes(self):
+        return len(self.upvotes)
+
     def add_viewer(self):
         self.currentViewers = self.currentViewers + 1
         db.session.commit()
@@ -30,3 +35,14 @@ class Stream(db.Model):
     def remove_viewer(self):
         self.currentViewers = self.currentViewers - 1
         db.session.commit()
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'channelID': self.linkedChannel,
+            'streamName': self.streamName,
+            'topic': self.topic,
+            'currentViewers': self.currentViewers,
+            'totalViewers': self.currentViewers,
+            'upvotes': self.get_upvotes()
+        }

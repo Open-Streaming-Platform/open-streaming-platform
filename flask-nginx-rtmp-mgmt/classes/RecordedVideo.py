@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 from app import db
 
 class RecordedVideo(db.Model):
+    __tablename__ = "RecordedVideo"
     id = db.Column(db.Integer,primary_key=True)
     videoDate = db.Column(db.DateTime)
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
@@ -16,6 +17,7 @@ class RecordedVideo(db.Model):
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
+    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
 
     def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
         self.videoDate = datetime.datetime.now()
@@ -29,3 +31,20 @@ class RecordedVideo(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def get_upvotes(self):
+        return len(self.upvotes)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'channelID': self.channelID,
+            'videoDate': str(self.videoDate),
+            'videoName': self.channelName,
+            'topic': self.topic,
+            'views': self.views,
+            'length': self.length,
+            'upvotes': self.get_upvotes(),
+            'videoLocation': '/videos/' + self.videoLocation,
+            'thumbnailLocation': '/videos/' + self.thumbnailLocation
+        }

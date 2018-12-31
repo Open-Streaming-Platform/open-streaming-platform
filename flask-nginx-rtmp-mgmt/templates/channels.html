@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row" style="width:100%">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" style="margin-top:15px;" placeholder="Search..">
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="input-group">
+            <div class="input-group-prepend shadow">
+                <div class="input-group-text"><i class="fas fa-search"></i></div>
+            </div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
-        <div class="col-1"></div>
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
@@ -22,11 +23,12 @@
                     <div class="card-body">
                         <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
                         <p class="card-text">
-                            <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
-                            <i class="fas fa-user-circle"></i> {{channel.owningUser|get_userName}}</p>
+                            <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{channel.topic|get_topicName}}</div> <br>
+                            <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"> {{channel.owningUser|get_userName}}
+                        </p>
                     </div>
-                    <div class="card-footer bg-transparent" style="position:relative;top:-10px;">
-                            <i class="fas fa-users"></i> {{channel.views}}
+                    <div class="streamcard-footer bg-transparent">
+                        <i class="fas fa-users"></i> {{channel.views}}
                     </div>
                 </div>
 
