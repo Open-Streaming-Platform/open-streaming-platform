@@ -37,12 +37,27 @@ class Stream(db.Model):
         db.session.commit()
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'channelID': self.linkedChannel,
-            'streamName': self.streamName,
-            'topic': self.topic,
-            'currentViewers': self.currentViewers,
-            'totalViewers': self.currentViewers,
-            'upvotes': self.get_upvotes()
-        }
+        if self.channel.record == True:
+            return {
+                'id': self.id,
+                'channelID': self.linkedChannel,
+                'streamPage': '/view' + self.channel.channelLoc,
+                'streamURL': '/live-rec/' + self.channel.channelLoc + '/index.m3u8',
+                'streamName': self.streamName,
+                'topic': self.topic,
+                'currentViewers': self.currentViewers,
+                'totalViewers': self.currentViewers,
+                'upvotes': self.get_upvotes()
+            }
+        else:
+            return {
+                'id': self.id,
+                'channelID': self.linkedChannel,
+                'streamPage': '/view/' + self.channel.channelLoc,
+                'streamURL': '/live/' + self.channel.channelLoc + '/index.m3u8',
+                'streamName': self.streamName,
+                'topic': self.topic,
+                'currentViewers': self.currentViewers,
+                'totalViewers': self.currentViewers,
+                'upvotes': self.get_upvotes()
+            }
