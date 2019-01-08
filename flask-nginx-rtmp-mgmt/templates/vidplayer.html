@@ -2,8 +2,8 @@
 
 {% block head %}
     <title>{{sysSettings.siteName}} - {{video.channelName}}</title>
-    <link href="https://vjs.zencdn.net/7.2.4/video-js.css" rel="stylesheet">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+    <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -231,7 +231,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
+    <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
         var myPlayer = videojs('video', {autoplay: true});

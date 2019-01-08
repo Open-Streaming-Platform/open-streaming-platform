@@ -4,9 +4,9 @@
     <title>{{sysSettings.siteName}} - {{stream.streamName}}</title>
     <!--<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>-->
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <link href="https://vjs.zencdn.net/7.2.4/video-js.css" rel="stylesheet">
+    <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
+    <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 {% endblock %}
 
@@ -185,7 +185,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
+    <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
         videojs('video', {autoplay: true});
