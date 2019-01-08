@@ -13,7 +13,7 @@
 <body>
 <div class="col-12 .d-none .d-xl-block">
   <div class="chatbox" style="margin-bottom:210px;">
-      <div id="chat" class="chat form-control shadow"></div><br>
+      <div id="chat" class="chat shadow"></div><br>
       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
       <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
   </div>
