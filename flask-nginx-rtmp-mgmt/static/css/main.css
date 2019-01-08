@@ -144,6 +144,7 @@
     overflow-x: hidden;
     height: 640px;
     background-color: #eeeeee;
+    padding: 5px 5px 5px 5px;
 }
 
 .chatBar-Item {
