@@ -7,3 +7,4 @@ flask-uploads
 psutil
 requests
 flask-migrate
+flask-script
