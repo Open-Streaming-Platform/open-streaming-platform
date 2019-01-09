@@ -1,7 +1,4 @@
-import os
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
+from shared import db
 
 class settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)

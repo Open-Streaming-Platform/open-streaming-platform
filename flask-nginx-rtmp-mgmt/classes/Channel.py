@@ -1,8 +1,6 @@
-import os
+from shared import db
 import uuid
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
 
 class Channel(db.Model):
     __tablename__ = "Channel"

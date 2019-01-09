@@ -1,8 +1,5 @@
-import os
+from shared import db
 import datetime
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
 
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
