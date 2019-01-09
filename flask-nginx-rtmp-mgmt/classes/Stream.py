@@ -41,6 +41,7 @@ class Stream(db.Model):
             return {
                 'id': self.id,
                 'channelID': self.linkedChannel,
+                'channelEndpointID': self.channel.channelLoc,
                 'streamPage': '/view/' + self.channel.channelLoc + '/',
                 'streamURL': '/live-rec/' + self.channel.channelLoc + '/index.m3u8',
                 'streamName': self.streamName,
@@ -53,6 +54,7 @@ class Stream(db.Model):
             return {
                 'id': self.id,
                 'channelID': self.linkedChannel,
+                'channelEndpointID': self.channel.channelLoc,
                 'streamPage': '/view/' + self.channel.channelLoc +'/',
                 'streamURL': '/live/' + self.channel.channelLoc + '/index.m3u8',
                 'streamName': self.streamName,

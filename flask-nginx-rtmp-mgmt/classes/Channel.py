@@ -39,6 +39,7 @@ class Channel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
+            'channelEndpointID': self.channelLoc,
             'owningUser': self.owningUser,
             'channelName': self.channelName,
             'topic': self.topic,
