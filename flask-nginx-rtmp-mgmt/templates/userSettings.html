@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container" style="height:80%;">
+    <div class="container">
         <div class="row">
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
                 <div class="card my-5">
@@ -14,7 +14,7 @@
                     </h5>
                     <div class="card-body text-left">
                         <div class="card-text">
-                            <form action="/settings/user" class="form-control" enctype=multipart/form-data method="post">
+                            <form action="/settings/user" enctype=multipart/form-data method="post">
                                 <div class="form-group">
                                     <label for="userName"><b>User Name</b></label>
                                     <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
