@@ -8,3 +8,4 @@ psutil
 requests
 flask-migrate
 flask-script
+flask-restplus
