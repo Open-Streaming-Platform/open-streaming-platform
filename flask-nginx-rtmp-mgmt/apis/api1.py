@@ -3,10 +3,10 @@ from flask_restplus import Api, Resource
 
 import json
 
-from ..classes import Channel
-from ..classes import Stream
-from ..classes import RecordedVideo
-from ..classes import topics
+from ..app import Channel
+from ..app import Stream
+from ..app import RecordedVideo
+from ..app import topics
 
 
 blueprint = Blueprint('api', __name__)
