@@ -13,7 +13,7 @@ from classes import RecordedVideo
 from classes import topics
 
 
-blueprint = Blueprint('api', __name__, url_prefix='/api/1')
+blueprint = Blueprint('api', __name__)
 api = Api(blueprint, doc='/doc/')
 
 ### Start API Functions ###
