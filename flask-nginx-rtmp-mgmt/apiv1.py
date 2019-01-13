@@ -17,7 +17,7 @@ blueprint = Blueprint('api', __name__, url_prefix='/api/1')
 api = Api(blueprint, doc='/doc/')
 
 ### Start API Functions ###
-@api.route('/channels/')
+@api.route('/channels')
 class api_1_ListChannels(Resource):
     def get(self):
         channelList = Channel.Channel.query.all()
