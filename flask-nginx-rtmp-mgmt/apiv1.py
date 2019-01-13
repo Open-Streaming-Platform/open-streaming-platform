@@ -17,7 +17,7 @@ blueprint = Blueprint('api', __name__, url_prefix='/api/1')
 api = Api(blueprint, doc='/doc/')
 
 ### Start API Functions ###
-@api.route('/channels')
+@api.route('/channels/')
 class api_1_ListChannels(Resource):
     def get(self):
         channelList = Channel.Channel.query.all()
@@ -29,7 +29,7 @@ class api_1_ListChannel(Resource):
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
         return json.dumps({'results': [ob.serialize() for ob in channelList]})
 
-@api.route('/streams')
+@api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):
         streamList = Stream.Stream.query.all()
@@ -41,7 +41,7 @@ class api_1_ListStream(Resource):
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
         return json.dumps({'results': [ob.serialize() for ob in streamList]})
 
-@api.route('/vids')
+@api.route('/vids/')
 class api_1_ListVideos(Resource):
     def get(self):
         videoList = RecordedVideo.RecordedVideo.query.all()
@@ -53,7 +53,7 @@ class api_1_ListVideo(Resource):
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
         return json.dumps({'results': [ob.serialize() for ob in videoList]})
 
-@api.route('/topics')
+@api.route('/topics/')
 class api_1_ListTopics(Resource):
     def get(self):
         topicList = topics.topics.query.all()
