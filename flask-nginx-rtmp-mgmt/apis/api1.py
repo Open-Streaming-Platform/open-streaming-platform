@@ -1,12 +1,16 @@
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
 from flask import Blueprint
 from flask_restplus import Api, Resource
 
 import json
 
-from ..app import Channel
-from ..app import Stream
-from ..app import RecordedVideo
-from ..app import topics
+from . import Channel
+from . import Stream
+from . import RecordedVideo
+from . import topics
 
 
 blueprint = Blueprint('api', __name__)
