@@ -5,6 +5,11 @@ cwd=$PWD
 # Get Dependancies
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
 
+# Setup Python
+sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
+sudo pip install -r requirements.txt
+sudo mkdir /opt/osp/
+
 # Build Nginx with RTMP module
 cd /tmp
 sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
@@ -47,11 +52,6 @@ sudo mkdir live-rec
 sudo chown -R www-data:www-data live-rec
 sudo mkdir images
 sudo chown -R www-data:www-data images
-
-# Setup Python
-sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
-sudo pip install -r requirements.txt
-sudo mkdir /opt/osp/
 
 cd $cwd/flask-nginx-rtmp-mgmt
 sudo cp -R * /opt/osp
