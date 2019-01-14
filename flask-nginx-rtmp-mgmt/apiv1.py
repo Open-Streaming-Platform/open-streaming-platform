@@ -13,8 +13,8 @@ from classes import RecordedVideo
 from classes import topics
 
 
-blueprint = Blueprint('api', __name__, url_prefix='/api/1')
-api = Api(blueprint, doc='/doc/')
+api_v1 = Blueprint('api', __name__, url_prefix='/api/1')
+api = Api(api_v1, doc='/doc/')
 
 ### Start API Functions ###
 @api.route('/channels/')
