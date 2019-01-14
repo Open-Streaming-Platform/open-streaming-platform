@@ -13,9 +13,8 @@ from classes import RecordedVideo
 from classes import topics
 
 
-api_v1 = Blueprint('api', __name__, version='1.0', title='OSP API',
-    description='OSP API for Users, Streamers, and Admins', url_prefix='/api/1')
-api = Api(api_v1, doc='/doc/')
+api_v1 = Blueprint('api', __name__, url_prefix='/api/1')
+api = Api(api_v1, doc='/doc/', version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins')
 
 ### Start API Functions ###
 @api.route('/channels/')
