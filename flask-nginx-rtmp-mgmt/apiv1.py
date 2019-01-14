@@ -23,6 +23,7 @@ class api_1_ListChannels(Resource):
         return json.dumps({'results': [ob.serialize() for ob in channelList]})
 
 @api.route('/channels/<string:channelEndpointID>')
+@api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
