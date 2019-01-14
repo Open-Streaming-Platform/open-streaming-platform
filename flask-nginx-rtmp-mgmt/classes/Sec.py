@@ -1,9 +1,6 @@
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm
 from flask_security import UserMixin, RoleMixin
-import os
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
+from shared import db
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])

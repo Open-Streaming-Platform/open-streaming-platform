@@ -1,8 +1,6 @@
-import os
+from shared import db
 import uuid
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
 
 class Channel(db.Model):
     __tablename__ = "Channel"
@@ -39,6 +37,7 @@ class Channel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
+            'channelEndpointID': self.channelLoc,
             'owningUser': self.owningUser,
             'channelName': self.channelName,
             'topic': self.topic,

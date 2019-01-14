@@ -1,8 +1,5 @@
-import os
+from shared import db
 import datetime
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-from app import db
 
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
@@ -39,6 +36,7 @@ class RecordedVideo(db.Model):
         return {
             'id': self.id,
             'channelID': self.channelID,
+            'owningUser': self.owningUser,
             'videoDate': str(self.videoDate),
             'videoName': self.channelName,
             'topic': self.topic,

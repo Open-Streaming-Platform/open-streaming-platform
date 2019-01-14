@@ -1,6 +1,6 @@
 
 {% block head %}
-    <link href="https://vjs.zencdn.net/7.2.4/video-js.css" rel="stylesheet">
+    <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="https://vjs.zencdn.net/7.2.4/video.js"></script>
+    <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
         var myPlayer = videojs('video', {autoplay: {{isAutoPlay}}});
