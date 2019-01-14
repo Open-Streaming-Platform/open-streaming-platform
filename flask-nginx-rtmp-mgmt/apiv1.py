@@ -3,7 +3,7 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Blueprint
-from flask_restplus import Api, Resource
+from flask_restplus import Api, Resource, reqparse
 
 import json
 
@@ -16,6 +16,10 @@ api_v1 = Blueprint('api', __name__, url_prefix='/api')
 api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins')
 
 ### Start API Functions ###
+
+channelParser = reqparse.RequestParser()
+channelParser.add_argument('channelName', required=True)
+
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
     def get(self):
