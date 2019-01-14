@@ -2,7 +2,7 @@ import sys
 from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from flask import Blueprint
+from flask import Blueprint,Flask
 from flask_restplus import Api, Resource
 
 import json
@@ -11,10 +11,13 @@ from classes import Channel
 from classes import Stream
 from classes import RecordedVideo
 from classes import topics
+from classes import settings
 
+sysSettings = settings.settings.query.first()
+swaggerLocation = sysSettings.siteAddress + '/api/swagger.json'
 
-api_v1 = Blueprint('api', __name__, url_prefix='/api/v1')
-api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins')
+api_v1 = Blueprint('api', __name__, url_prefix='/api/')
+api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins',specs_url=swaggerLocation)
 
 ### Start API Functions ###
 @api.route('/channels/')
