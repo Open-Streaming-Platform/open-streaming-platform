@@ -59,6 +59,7 @@ class api_1_ListTopics(Resource):
         return json.dumps({'results': [ob.serialize() for ob in topicList]})
 
 @api.route('/topics/<int:topicID>')
+@api.doc(params={'topicID': 'Topic ID Number'})
 class api_1_ListTopic(Resource):
     def get(self, topicID):
         topicList = topics.topics.query.filter_by(id=topicID).all()
