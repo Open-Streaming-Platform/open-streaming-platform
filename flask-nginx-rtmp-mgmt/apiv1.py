@@ -13,7 +13,7 @@ from classes import RecordedVideo
 from classes import topics
 from classes import settings
 
-api_v1 = Blueprint('api', __name__, url_prefix='/api')
+api_v1 = Blueprint('api', __name__, url_prefix='/api/')
 api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins')
 
 ### Start API Functions ###
