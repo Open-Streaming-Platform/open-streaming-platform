@@ -29,11 +29,21 @@ channelParserPut = reqparse.RequestParser()
 channelParserPut.add_argument('channelName', type=str)
 channelParserPut.add_argument('topicID', type=int)
 
+channelParserPost = reqparse.RequestParser()
+channelParserPost.add_argument('channelName', type=str, required=True)
+channelParserPost.add_argument('topicID', type=int, required=True)
+
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
     def get(self):
         channelList = Channel.Channel.query.all()
         return {'results': [ob.serialize() for ob in channelList]}
+    # Channel - Create Channel
+    @api.expect(channelParserPost)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        return {'results': {'message':'Channel Created'}}, 200
 
 @api.route('/channels/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
@@ -41,8 +51,10 @@ class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
         return json.dumps({'results': [ob.serialize() for ob in channelList]})
+    # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
     @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def put(self, channelEndpointID):
         channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
         if channelQuery != None:
