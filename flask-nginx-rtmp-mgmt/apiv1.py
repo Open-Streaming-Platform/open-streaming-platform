@@ -26,13 +26,14 @@ api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users
 ### Start API Functions ###
 
 channelParserPut = reqparse.RequestParser()
-channelParserPut.add_argument('channelName', type=str, required=True)
+channelParserPut.add_argument('channelName', type=str)
+channelParserPut.add_argument('topicID', type=int)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
     def get(self):
         channelList = Channel.Channel.query.all()
-        return json.dumps({'results': [ob.serialize() for ob in channelList]})
+        return {'results': [ob.serialize() for ob in channelList]}
 
 @api.route('/channels/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
@@ -45,6 +46,10 @@ class api_1_ListChannel(Resource):
     def put(self, channelEndpointID):
         channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
         if channelQuery != None:
+            if 'channelName' in channelParserPut:
+                pass
+            if 'topicID' in channelParserPut:
+                pass
             return {'results': {'message':'Channel Updated'}}, 200
         else:
             return {'results': {'message':'Request Error'}}, 400
@@ -53,35 +58,35 @@ class api_1_ListChannel(Resource):
 class api_1_ListStreams(Resource):
     def get(self):
         streamList = Stream.Stream.query.all()
-        return json.dumps({'results': [ob.serialize() for ob in streamList]})
+        return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/streams/<int:streamID>')
 class api_1_ListStream(Resource):
     def get(self, streamID):
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
-        return json.dumps({'results': [ob.serialize() for ob in streamList]})
+        return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/vids/')
 class api_1_ListVideos(Resource):
     def get(self):
         videoList = RecordedVideo.RecordedVideo.query.all()
-        return json.dumps({'results': [ob.serialize() for ob in videoList]})
+        return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/vids/<int:videoID>')
 class api_1_ListVideo(Resource):
     def get(self, videoID):
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
-        return json.dumps({'results': [ob.serialize() for ob in videoList]})
+        return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/topics/')
 class api_1_ListTopics(Resource):
     def get(self):
         topicList = topics.topics.query.all()
-        return json.dumps({'results': [ob.serialize() for ob in topicList]})
+        return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/topics/<int:topicID>')
 @api.doc(params={'topicID': 'Topic ID Number'})
 class api_1_ListTopic(Resource):
     def get(self, topicID):
         topicList = topics.topics.query.filter_by(id=topicID).all()
-        return json.dumps({'results': [ob.serialize() for ob in topicList]})
+        return {'results': [ob.serialize() for ob in topicList]}
