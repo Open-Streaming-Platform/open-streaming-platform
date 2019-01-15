@@ -55,6 +55,9 @@ class api_1_ListChannels(Resource):
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
+        """
+            Get Info for One Channel
+        """
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
         return json.dumps({'results': [ob.serialize() for ob in channelList]})
     # Channel - Change Channel Name or Topic ID
@@ -62,6 +65,9 @@ class api_1_ListChannel(Resource):
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def put(self, channelEndpointID):
+        """
+            Change a Channel's Name or Topic
+        """
         channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
         if channelQuery != None:
             if 'channelName' in channelParserPut:
