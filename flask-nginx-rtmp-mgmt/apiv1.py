@@ -35,12 +35,6 @@ channelParserPost.add_argument('topicID', type=int, required=True)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
-    def get(self):
-        """
-            Gets a List of all Public Channels
-        """
-        channelList = Channel.Channel.query.all()
-        return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Create Channel
     @api.expect(channelParserPost)
     @api.doc(security='apikey')
@@ -50,16 +44,17 @@ class api_1_ListChannels(Resource):
             Creates a New Channel
         """
         return {'results': {'message':'Channel Created'}}, 200
+    # Channel - Get all Channels
+    def get(self):
+        """
+            Gets a List of all Public Channels
+        """
+        channelList = Channel.Channel.query.all()
+        return {'results': [ob.serialize() for ob in channelList]}
 
 @api.route('/channels/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
-    def get(self, channelEndpointID):
-        """
-            Get Info for One Channel
-        """
-        channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
-        return json.dumps({'results': [ob.serialize() for ob in channelList]})
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
     @api.doc(security='apikey')
@@ -76,7 +71,13 @@ class api_1_ListChannel(Resource):
                 pass
             return {'results': {'message':'Channel Updated'}}, 200
         else:
-            return {'results': {'message':'Request Error'}}, 400
+            return {'results': {'message':'Request Error'}},
+    def get(self, channelEndpointID):
+        """
+            Get Info for One Channel
+        """
+        channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
+        return json.dumps({'results': [ob.serialize() for ob in channelList]})
 
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
