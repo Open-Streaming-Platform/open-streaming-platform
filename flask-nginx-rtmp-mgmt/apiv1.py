@@ -36,6 +36,9 @@ channelParserPost.add_argument('topicID', type=int, required=True)
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
     def get(self):
+        """
+            Gets a List of all Public Channels
+        """
         channelList = Channel.Channel.query.all()
         return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Create Channel
@@ -43,6 +46,9 @@ class api_1_ListChannels(Resource):
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def post(self):
+        """
+            Creates a New Channel
+        """
         return {'results': {'message':'Channel Created'}}, 200
 
 @api.route('/channels/<string:channelEndpointID>')
