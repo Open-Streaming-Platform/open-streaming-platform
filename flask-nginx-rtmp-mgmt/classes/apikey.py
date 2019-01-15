@@ -1,6 +1,7 @@
 from shared import db
 from binascii import hexlify
 import os
+import datetime
 
 def generateKey(length):
     key = hexlify(os.urandom(length))
@@ -12,10 +13,23 @@ class apikey(db.Model):
     key = db.Column(db.String(255))
     type = db.Column(db.Integer)
 
-    def __init__(self, userID, keytype):
+    def __init__(self, userID, keytype, expirationDays):
         self.userID = userID
         self.key = generateKey(40)
         self.type = keytype
+        self.createdOn = datetime.datetime.now()
+
+        if expirationDays == 0:
+            self.expiration = None
+        else:
+            self.expiration = datetime.datetime.now() + datetime.timedelta(days=expirationDays)
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def isValid(self):
+        now = datetime.datetime.now()
+        if now > self.expiration:
+            return True
+        else:
+            return False

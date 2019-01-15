@@ -11,6 +11,7 @@ from classes import Channel
 from classes import Stream
 from classes import RecordedVideo
 from classes import topics
+from classes import apikey
 
 authorizations = {
     'apikey': {
