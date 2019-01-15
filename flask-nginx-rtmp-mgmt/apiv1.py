@@ -12,13 +12,21 @@ from classes import Stream
 from classes import RecordedVideo
 from classes import topics
 
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'X-API-KEY'
+    }
+}
+
 api_v1 = Blueprint('api', __name__, url_prefix='/api')
-api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins')
+api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', authorizations=authorizations)
 
 ### Start API Functions ###
 
-channelParser = reqparse.RequestParser()
-channelParser.add_argument('channelName', required=True)
+channelParserPut = reqparse.RequestParser()
+channelParserPut.add_argument('channelName', type=str, required=True)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
@@ -32,6 +40,14 @@ class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
         return json.dumps({'results': [ob.serialize() for ob in channelList]})
+    @api.expect(channelParserPut)
+    @api.doc(security='apikey')
+    def put(self, channelEndpointID):
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+        if channelQuery != None:
+            return {'results': {'message':'Channel Updated'}}, 200
+        else:
+            return {'results': {'message':'Request Error'}}, 400
 
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
