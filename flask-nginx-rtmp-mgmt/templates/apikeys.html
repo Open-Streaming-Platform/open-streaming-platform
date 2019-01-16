@@ -14,34 +14,24 @@
                     </h5>
                     <div class="card-body text-left">
                         <div class="card-text">
-                            <div class="row">
-                                <div class="col-md-12 col-lg-3">
-                                    Key Name
-                                </div>
-                                <div class="col-md-12 col-lg-3">
-                                    API Key
-                                </div>
-                                <div class="col-md-12 col-lg-2">
-                                    Created
-                                </div>
-                                <div class="col-md-12 col-lg-2">
-                                    Expires
-                                </div>
-                            </div><br>
                             {% for key in apikeys %}
                             <form>
                                 <div class="form-row">
                                     <div class="form-group col-lg-3">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="keyname-{{key.id}}"> Key Name </label>
+                                        <input type="text" name="userName" id="keyname-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-3">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="apikey-{{key.id}}"> API Key </label>
+                                        <input type="text" name="userName" id="apikey-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-2">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="created-{{key.id}}"> Created </label>
+                                        <input type="text" name="userName" id="created-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-2">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="expires-{{key.id}}"> Expires </label>
+                                        <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-1">
                                         <button type="submit" class="btn btn-primary mb-2">Add</button>
@@ -52,16 +42,20 @@
                             <form>
                                 <div class="form-row">
                                     <div class="form-group col-lg-3">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="keyname-{{key.id}}"> Key Name </label>
+                                        <input type="text" name="userName" id="keyname-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-3">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="apikey-{{key.id}}"> API Key </label>
+                                        <input type="text" name="userName" id="apikey-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-2">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="created-{{key.id}}"> Created </label>
+                                        <input type="text" name="userName" id="created-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-2">
-                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                        <label class="form-check-label" for="expires-{{key.id}}"> Expires </label>
+                                        <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{current_user.username}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-1">
                                         <button type="submit" class="btn btn-primary mb-2">Add</button>
