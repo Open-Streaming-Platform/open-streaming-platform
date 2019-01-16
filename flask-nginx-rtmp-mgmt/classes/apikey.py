@@ -9,14 +9,16 @@ def generateKey(length):
 
 class apikey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String)
     userID = db.Column(db.Integer,db.ForeignKey('user.id'))
     key = db.Column(db.String(255))
     type = db.Column(db.Integer)
 
-    def __init__(self, userID, keytype, expirationDays):
+    def __init__(self, userID, keytype, description, expirationDays):
         self.userID = userID
         self.key = generateKey(40)
         self.type = keytype
+        self.description = description
         self.createdOn = datetime.datetime.now()
 
         if expirationDays == 0:
