@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - User API Keys</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-6 mx-auto">
+                <div class="card my-5">
+                    <h5 class="card-header text-white bg-dark mb-3">
+                        API Keys
+                    </h5>
+                    <div class="card-body text-left">
+                        <div class="card-text">
+                            <div class="row">
+                                <div class="col-3">
+                                    Key Name
+                                </div>
+                                <div class="col-3">
+                                    API Key
+                                </div>
+                                <div class="col-3">
+                                    Created
+                                </div>
+                                <div class="col-3">
+                                    Expires
+                                </div>
+                            </div>
+                            {% for key in apikeys %}
+                            <form class="form-inline">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
+                                    </div>
+                                </div>
+                            </form>
+                            {% endfor %}
+                            <form>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
