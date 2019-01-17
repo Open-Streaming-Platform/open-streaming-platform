@@ -21,10 +21,10 @@ class apikey(db.Model):
         self.description = description
         self.createdOn = datetime.datetime.now()
 
-        if expirationDays == 0:
+        if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.now() + datetime.timedelta(days=expirationDays)
+            self.expiration = datetime.datetime.now() + datetime.timedelta(days=int(expirationDays))
 
     def __repr__(self):
         return '<id %r>' % self.id
