@@ -5,7 +5,6 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from flask import Blueprint, request
 from flask_restplus import Api, Resource, reqparse
 
-import json
 import uuid
 
 from classes import Channel
@@ -98,36 +97,56 @@ class api_1_ListChannel(Resource):
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):
+        """
+             Returns a List of All Active Streams
+        """
         streamList = Stream.Stream.query.all()
         return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/streams/<int:streamID>')
+@api.doc(params={'streamID': 'ID Number for the Stream'})
 class api_1_ListStream(Resource):
     def get(self, streamID):
+        """
+             Returns Info on a Single Active Streams
+        """
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
         return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/vids/')
 class api_1_ListVideos(Resource):
     def get(self):
-        videoList = RecordedVideo.RecordedVideo.query.all()
+        """
+             Returns a List of All Recorded Videos
+        """
+        videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
         return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/vids/<int:videoID>')
+@api.doc(params={'videoID': 'ID Number for the Video'})
 class api_1_ListVideo(Resource):
     def get(self, videoID):
+        """
+             Returns Info on a Single Recorded Video
+        """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
         return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/topics/')
 class api_1_ListTopics(Resource):
     def get(self):
+        """
+             Returns a List of All Topics
+        """
         topicList = topics.topics.query.all()
         return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/topics/<int:topicID>')
-@api.doc(params={'topicID': 'Topic ID Number'})
+@api.doc(params={'topicID': 'ID Number for Topic'})
 class api_1_ListTopic(Resource):
     def get(self, topicID):
+        """
+             Returns Info on a Single Topic
+        """
         topicList = topics.topics.query.filter_by(id=topicID).all()
         return {'results': [ob.serialize() for ob in topicList]}
