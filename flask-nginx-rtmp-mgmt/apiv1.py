@@ -2,7 +2,7 @@ import sys
 from os import path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_restplus import Api, Resource, reqparse
 
 import json
