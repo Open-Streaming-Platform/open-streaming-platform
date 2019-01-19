@@ -29,6 +29,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask SQL-Alchemy] - Provide the Database for OSP
 * [Flask Security] - Handle User Accounts, Login, and Registration
 * [Flask Uploads] - Manage User Uploads, such as Pictures
+* [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
