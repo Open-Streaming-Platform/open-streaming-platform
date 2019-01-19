@@ -25,8 +25,8 @@
                                         <label class="form-check-label" for="apikey-{{key.id}}"> API Key </label>
                                         <div class="input-group">
                                             <input type="text" name="userName" id="apikey-{{key.id}}" class="form-control" value="{{key.key}}" readonly>
-                                            <div>
-                                                <div class="input-group-text"><button class="btn btn-primary mb-2" onclick="CopyAPI('apikey-{{key.id}}')"><i class="fas fa-copy"></i></button></div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary mb-2" onclick="CopyAPI('apikey-{{key.id}}')"><i class="fas fa-copy"></i></button>
                                             </div>
                                         </div>
                                     </div>
