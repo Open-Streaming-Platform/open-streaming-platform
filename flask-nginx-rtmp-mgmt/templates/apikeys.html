@@ -75,8 +75,14 @@
                                         <label class="form-check-label" for="expires"> Days Key Valid </label>
                                         <input type="number" name="expiration" id="expires" class="form-control" placeholder="0 for No Expiration">
                                     </div>
-                                    <div class="col-auto align-items-bottom">
-                                      <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                                    <div class="form-group col-lg-1">
+                                        <label class="form-check-label" for="hiddenAnchorForButton-{{key.id}}"> Options </label>
+                                        <div class="input-group">
+                                            <input type="hidden" id="anchorHiddenNewKey" class="form-control">
+                                            <div>
+                                                <button type="submit" class="btn btn-primary mb-2" id="newKey">Add Key</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
