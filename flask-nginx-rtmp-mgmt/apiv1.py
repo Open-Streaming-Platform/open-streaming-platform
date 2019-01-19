@@ -39,6 +39,10 @@ channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 
+streamParserPut = reqparse.RequestParser()
+streamParserPut.add_argument('streamName', type=str)
+streamParserPut.add_argument('topicID', type=int)
+
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
     # Channel - Get all Channels
@@ -140,6 +144,33 @@ class api_1_ListStream(Resource):
         """
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
         return {'results': [ob.serialize() for ob in streamList]}
+        # Channel - Change Channel Name or Topic ID
+
+    @api.expect(channelParserPut)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def put(self, streamID):
+        """
+            Change a Streams's Name or Topic
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+                if streamQuery != None:
+                    if streamQuery.channel.owningUser == requestAPIKey.userID:
+                        args = streamParserPut.parse_args()
+                        if 'streamName' in args:
+                            if args['streamName'] is not None:
+                                streamQuery.streamName = args['streamName']
+                        if 'topicID' in args:
+                            if args['topicID'] is not None:
+                                possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                                if possibleTopics != None:
+                                    streamQuery.topic = int(args['topicID'])
+                        db.session.commit()
+                        return {'results': {'message': 'Channel Updated'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/vids/')
 class api_1_ListVideos(Resource):
