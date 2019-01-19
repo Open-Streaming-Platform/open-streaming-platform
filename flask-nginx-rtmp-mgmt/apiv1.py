@@ -57,14 +57,14 @@ class api_1_ListChannels(Resource):
             Creates a New Channel
         """
         if 'X-API-KEY' in request.headers:
-            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY'])
-            newChannel = Channel.Channel(requestAPIKey.userID,uuid.uuid4(),channelParserPost['channelName'],channelParserPost['topicID'],channelParserPost['record'],channelParserPost['chatEnabled'])
-            db.session.add(newChannel)
-            db.session.commit()
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                newChannel = Channel.Channel(requestAPIKey.userID,uuid.uuid4(),channelParserPost['channelName'],channelParserPost['topicID'],channelParserPost['record'],channelParserPost['chatEnabled'])
+                db.session.add(newChannel)
+                db.session.commit()
 
-            return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
-        else:
-            return {'results': {'message':"Request Error"}}, 400
+                return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
+        return {'results': {'message':"Request Error"}}, 400
 
 
 @api.route('/channels/<string:channelEndpointID>')
