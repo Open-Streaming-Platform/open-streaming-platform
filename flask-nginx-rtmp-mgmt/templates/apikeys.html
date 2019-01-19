@@ -36,7 +36,12 @@
                                     </div>
                                     <div class="form-group col-lg-2">
                                         <label class="form-check-label" for="expires-{{key.id}}"> Expires </label>
-                                        <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{key.expiration|normalize_date}}" readonly>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i style="color:green;" class="fas fa-check"></i></div>
+                                            </div>
+                                            <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{key.expiration|normalize_date}}" readonly>
+                                        </div>
                                     </div>
                                     <div class="form-group col-lg-1">
                                         <label class="form-check-label" for="hiddenAnchorForButton-{{key.id}}"> Options </label>
