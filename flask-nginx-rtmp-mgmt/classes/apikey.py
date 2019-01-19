@@ -33,7 +33,9 @@ class apikey(db.Model):
 
     def isValid(self):
         now = datetime.datetime.now()
-        if now > self.expiration:
+        if self.expiration is None:
+            return True
+        elif now > self.expiration:
             return True
         else:
             return False

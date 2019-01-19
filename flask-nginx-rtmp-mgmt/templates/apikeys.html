@@ -15,16 +15,16 @@
                     <div class="card-body text-left">
                         <div class="card-text">
                             {% for key in apikeys %}
-                            <form>
+                            <form action="/settings/api/delete" method="post">
                                 <div class="form-row">
                                     <div class="form-group col-lg-3">
                                         <label class="form-check-label" for="keyname-{{key.id}}"> Key Name </label>
-                                        <input type="text" name="userName" id="keyname-{{key.id}}" class="form-control" value="{{key.description}}" readonly>
+                                        <input type="text" name="name" id="keyname-{{key.id}}" class="form-control" value="{{key.description}}" readonly>
                                     </div>
                                     <div class="form-group col-lg-3">
                                         <label class="form-check-label" for="apikey-{{key.id}}"> API Key </label>
                                         <div class="input-group">
-                                            <input type="text" name="userName" id="apikey-{{key.id}}" class="form-control" value="{{key.key}}" readonly>
+                                            <input type="text" name="key" id="apikey-{{key.id}}" class="form-control" value="{{key.key}}" readonly>
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary mb-2" onclick="CopyAPI('apikey-{{key.id}}')"><i class="fas fa-copy"></i></button>
                                             </div>
@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="form-group col-lg-2">
                                         <label class="form-check-label" for="created-{{key.id}}"> Created </label>
-                                        <input type="text" name="userName" id="created-{{key.id}}" class="form-control" value="{{key.createdOn|normalize_date}}" disabled>
+                                        <input type="text" name="createdDate" id="created-{{key.id}}" class="form-control" value="{{key.createdOn|normalize_date}}" disabled>
                                     </div>
                                     <div class="form-group col-lg-2">
                                         <label class="form-check-label" for="expires-{{key.id}}"> Expires </label>
@@ -44,7 +44,7 @@
                                                     {% endif %}
                                                 </div>
                                             </div>
-                                            <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{key.expiration|normalize_date}}" disabled>
+                                            <input type="text" name="expirationDate" id="expires-{{key.id}}" class="form-control" value="{{key.expiration|normalize_date}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group col-lg-1">
