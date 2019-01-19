@@ -44,7 +44,7 @@ class Channel(db.Model):
             'views': self.views,
             'recordingEnabled': self.record,
             'chatEnabled': self.chatEnabled,
-            'stream': [obj.serialize() for obj in self.stream],
-            'recordedVideoIDs': [obj.serialize() for obj in self.recordedVideo],
+            'stream': [obj.id for obj in self.stream],
+            'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
             'upvotes': self.get_upvotes()
         }
