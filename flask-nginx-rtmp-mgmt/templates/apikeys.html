@@ -38,8 +38,14 @@
                                         <label class="form-check-label" for="expires-{{key.id}}"> Expires </label>
                                         <input type="text" name="userName" id="expires-{{key.id}}" class="form-control" value="{{key.expiration|normalize_date}}" readonly>
                                     </div>
-                                    <div class="col-lg-1 d-flex align-items-center">
-                                        <button type="submit" class="btn btn-danger mb-2" id="submit-{{key.id}}"><i class="fas fa-trash-alt"></i></button>
+                                    <div class="form-group col-lg-1">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <button type="submit" class="btn btn-danger mb-2" id="submit-{{key.id}}"><i class="fas fa-trash-alt"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
