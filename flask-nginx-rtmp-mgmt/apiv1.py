@@ -5,6 +5,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from flask import Blueprint, request
 from flask_restplus import Api, Resource, reqparse
 
+import shutil
 import uuid
 
 from classes import Channel
@@ -66,7 +67,6 @@ class api_1_ListChannels(Resource):
                 return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
         return {'results': {'message':"Request Error"}}, 400
 
-
 @api.route('/channels/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
@@ -100,8 +100,27 @@ class api_1_ListChannel(Resource):
                                 channelQuery.topic = int(args['topicID'])
                     db.session.commit()
                     return {'results': {'message':'Channel Updated'}}, 200
-        else:
-            return {'results': {'message':'Request Error'}},
+        return {'results': {'message':'Request Error'}},400
+
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def delete(self,channelEndpointID):
+        """
+            Deletes a Channel
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                if channelQuery != None:
+                    filePath = '/var/www/videos/' + channelQuery.channelLoc
+                    if filePath != '/var/www/videos/':
+                        shutil.rmtree(filePath, ignore_errors=True)
+
+                    db.session.delete(channelQuery)
+                    db.session.commit()
+                    return {'results': {'message': 'Channel Deleted'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
