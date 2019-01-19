@@ -91,11 +91,13 @@ class api_1_ListChannel(Resource):
                 if channelQuery != None:
                     args = channelParserPut.parse_args()
                     if 'channelName' in args:
-                        channelQuery.channelName = args['channelName']
+                        if args['channelName'] is not None:
+                            channelQuery.channelName = args['channelName']
                     if 'topicID' in args:
-                        possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                        if possibleTopics != None:
-                            channelQuery.topic = int(args['topicID'])
+                        if args['topicID'] is not None:
+                            possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                            if possibleTopics != None:
+                                channelQuery.topic = int(args['topicID'])
                     db.session.commit()
                     return {'results': {'message':'Channel Updated'}}, 200
         else:
