@@ -13,6 +13,8 @@ class apikey(db.Model):
     userID = db.Column(db.Integer,db.ForeignKey('user.id'))
     key = db.Column(db.String(255))
     type = db.Column(db.Integer)
+    createdOn = db.Column(db.DateTime)
+    expiration = db.Column(db.DateTime)
 
     def __init__(self, userID, keytype, description, expirationDays):
         self.userID = userID
