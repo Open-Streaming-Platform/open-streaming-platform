@@ -76,7 +76,7 @@ class api_1_ListChannel(Resource):
             Get Info for One Channel
         """
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
-        return json.dumps({'results': [ob.serialize() for ob in channelList]})
+        return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
     @api.doc(security='apikey')
