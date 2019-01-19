@@ -59,7 +59,8 @@ class api_1_ListChannels(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                newChannel = Channel.Channel(requestAPIKey.userID,uuid.uuid4(),channelParserPost['channelName'],channelParserPost['topicID'],channelParserPost['record'],channelParserPost['chatEnabled'])
+                args = channelParserPost.parse_args()
+                newChannel = Channel.Channel(requestAPIKey.userID,uuid.uuid4(),args['channelName'],args['topicID'],args['record'],args['chatEnabled'])
                 db.session.add(newChannel)
                 db.session.commit()
 
