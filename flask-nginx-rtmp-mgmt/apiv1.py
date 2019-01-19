@@ -1,5 +1,5 @@
 import sys
-from os import path
+from os import path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Blueprint, request
@@ -12,6 +12,7 @@ from classes import Channel
 from classes import Stream
 from classes import RecordedVideo
 from classes import topics
+from classes import upvotes
 from classes import apikey
 from classes.shared import db
 
@@ -42,6 +43,10 @@ channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 streamParserPut = reqparse.RequestParser()
 streamParserPut.add_argument('streamName', type=str)
 streamParserPut.add_argument('topicID', type=int)
+
+videoParserPut = reqparse.RequestParser()
+videoParserPut.add_argument('videoName', type=str)
+videoParserPut.add_argument('topicID', type=int)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
@@ -156,7 +161,7 @@ class api_1_ListStream(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+                streamQuery = Stream.Stream.query.filter_by(id=int(streamID)).first()
                 if streamQuery != None:
                     if streamQuery.channel.owningUser == requestAPIKey.userID:
                         args = streamParserPut.parse_args()
@@ -190,6 +195,59 @@ class api_1_ListVideo(Resource):
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
         return {'results': [ob.serialize() for ob in videoList]}
+    @api.expect(videoParserPut)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def put(self, videoID):
+        """
+            Change a Video's Name or Topic
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
+                if videoQuery != None:
+                    if videoQuery.owningUser == requestAPIKey.userID:
+                        args = videoParserPut.parse_args()
+                        if 'videoName' in args:
+                            if args['videoName'] is not None:
+                                videoQuery.channelName = args['videoName']
+                        if 'topicID' in args:
+                            if args['topicID'] is not None:
+                                possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                                if possibleTopics != None:
+                                    videoQuery.topic = int(args['topicID'])
+                        db.session.commit()
+                        return {'results': {'message': 'Video Updated'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def delete(self,videoID):
+        """
+            Deletes a Video
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+                if videoQuery != None:
+                    if videoQuery.owningUser == requestAPIKey.userID:
+                        filePath = '/var/www/videos/' + videoQuery.videoLocation
+                        thumbnailPath = '/var/www/videos/' + videoQuery.videoLocation[:-4] + ".png"
+
+                        if filePath != '/var/www/videos/':
+                            if path.exists(filePath) and (
+                                    videoQuery.videoLocation != None or videoQuery.videoLocation != ""):
+                                remove(filePath)
+                                if path.exists(thumbnailPath):
+                                    remove(thumbnailPath)
+                        upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
+                        for vote in upvoteQuery:
+                            db.session.delete(vote)
+                        db.session.delete(videoQuery)
+                        db.session.commit()
+                        return {'results': {'message': 'Channel Deleted'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/topics/')
 class api_1_ListTopics(Resource):
