@@ -5,8 +5,6 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from flask import Blueprint
 from flask_restplus import Api, Resource, reqparse
 
-from app import db
-
 import json
 import uuid
 
@@ -15,6 +13,8 @@ from classes import Stream
 from classes import RecordedVideo
 from classes import topics
 from classes import apikey
+from classes.shared import db
+
 
 authorizations = {
     'apikey': {
