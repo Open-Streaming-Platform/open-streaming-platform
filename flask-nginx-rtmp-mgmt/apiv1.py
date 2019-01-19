@@ -5,7 +5,10 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from flask import Blueprint
 from flask_restplus import Api, Resource, reqparse
 
+from app import db
+
 import json
+import uuid
 
 from classes import Channel
 from classes import Stream
@@ -33,6 +36,8 @@ channelParserPut.add_argument('topicID', type=int)
 channelParserPost = reqparse.RequestParser()
 channelParserPost.add_argument('channelName', type=str, required=True)
 channelParserPost.add_argument('topicID', type=int, required=True)
+channelParserPost.add_argument('recordEnabled', type=bool, required=True)
+channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
@@ -51,7 +56,15 @@ class api_1_ListChannels(Resource):
         """
             Creates a New Channel
         """
-        return {'results': {'message':'Channel Created'}}, 200
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY'])
+            newChannel = Channel.Channel(requestAPIKey.userID,uuid.uuid4(),channelParserPost['channelName'],channelParserPost['topicID'],channelParserPost['record'],channelParserPost['chatEnabled'])
+            db.session.add(newChannel)
+            db.session.commit()
+
+            return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
+        else:
+            return {'results': {'message':"Request Error"}}, 400
 
 
 @api.route('/channels/<string:channelEndpointID>')
