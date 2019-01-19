@@ -84,13 +84,20 @@ class api_1_ListChannel(Resource):
         """
             Change a Channel's Name or Topic
         """
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
-        if channelQuery != None:
-            if 'channelName' in channelParserPut:
-                pass
-            if 'topicID' in channelParserPut:
-                pass
-            return {'results': {'message':'Channel Updated'}}, 200
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                if channelQuery != None:
+                    args = channelParserPut.parse_args()
+                    if 'channelName' in args:
+                        channelQuery.channelName = args['channelName']
+                    if 'topicID' in args:
+                        possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                        if possibleTopics != None:
+                            channelQuery.topic = int(args['topicID'])
+                    db.session.commit()
+                    return {'results': {'message':'Channel Updated'}}, 200
         else:
             return {'results': {'message':'Request Error'}},
 
