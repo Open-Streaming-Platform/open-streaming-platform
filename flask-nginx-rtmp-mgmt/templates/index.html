@@ -28,8 +28,9 @@
                             <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> {{stream.channel.owningUser|get_userName}}
                         </p>
                     </div>
-                    <div class="streamcard-footer bg-transparent" style="position:relative;top:-10px;">
+                    <div class="streamcard-footer bg-transparent" style="position:relative;top:-20px;">
                         <div class="float-left"><i class="fas fa-users"></i> {{stream.totalViewers}}</div>
+                        <div class="float-left"><i id="upVoteIcon" class="far fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</div>
                         <div class="float-right"><i class="fas fa-eye"></i> {{stream.currentViewers}}</div>
                     </div>
                 </div>
