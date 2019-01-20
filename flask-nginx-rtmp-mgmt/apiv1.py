@@ -68,12 +68,13 @@ class api_1_ListChannels(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                args = channelParserPost.parse_args()
-                newChannel = Channel.Channel(int(requestAPIKey.userID),str(uuid.uuid4()),args['channelName'],int(args['topicID']),args['recordEnabled'],args['chatEnabled'])
-                db.session.add(newChannel)
-                db.session.commit()
+                if requestAPIKey.isValid():
+                    args = channelParserPost.parse_args()
+                    newChannel = Channel.Channel(int(requestAPIKey.userID),str(uuid.uuid4()),args['channelName'],int(args['topicID']),args['recordEnabled'],args['chatEnabled'])
+                    db.session.add(newChannel)
+                    db.session.commit()
 
-                return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
+                    return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
         return {'results': {'message':"Request Error"}}, 400
 
 @api.route('/channels/<string:channelEndpointID>')
@@ -96,19 +97,20 @@ class api_1_ListChannel(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                if channelQuery != None:
-                    args = channelParserPut.parse_args()
-                    if 'channelName' in args:
-                        if args['channelName'] is not None:
-                            channelQuery.channelName = args['channelName']
-                    if 'topicID' in args:
-                        if args['topicID'] is not None:
-                            possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                            if possibleTopics != None:
-                                channelQuery.topic = int(args['topicID'])
-                    db.session.commit()
-                    return {'results': {'message':'Channel Updated'}}, 200
+                if requestAPIKey.isValid():
+                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    if channelQuery != None:
+                        args = channelParserPut.parse_args()
+                        if 'channelName' in args:
+                            if args['channelName'] is not None:
+                                channelQuery.channelName = args['channelName']
+                        if 'topicID' in args:
+                            if args['topicID'] is not None:
+                                possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                                if possibleTopics != None:
+                                    channelQuery.topic = int(args['topicID'])
+                        db.session.commit()
+                        return {'results': {'message':'Channel Updated'}}, 200
         return {'results': {'message':'Request Error'}},400
 
     @api.doc(security='apikey')
@@ -120,15 +122,16 @@ class api_1_ListChannel(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                if channelQuery != None:
-                    filePath = '/var/www/videos/' + channelQuery.channelLoc
-                    if filePath != '/var/www/videos/':
-                        shutil.rmtree(filePath, ignore_errors=True)
+                if requestAPIKey.isValid():
+                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    if channelQuery != None:
+                        filePath = '/var/www/videos/' + channelQuery.channelLoc
+                        if filePath != '/var/www/videos/':
+                            shutil.rmtree(filePath, ignore_errors=True)
 
-                    db.session.delete(channelQuery)
-                    db.session.commit()
-                    return {'results': {'message': 'Channel Deleted'}}, 200
+                        db.session.delete(channelQuery)
+                        db.session.commit()
+                        return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/streams/')
@@ -161,20 +164,21 @@ class api_1_ListStream(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                streamQuery = Stream.Stream.query.filter_by(id=int(streamID)).first()
-                if streamQuery != None:
-                    if streamQuery.channel.owningUser == requestAPIKey.userID:
-                        args = streamParserPut.parse_args()
-                        if 'streamName' in args:
-                            if args['streamName'] is not None:
-                                streamQuery.streamName = args['streamName']
-                        if 'topicID' in args:
-                            if args['topicID'] is not None:
-                                possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                                if possibleTopics != None:
-                                    streamQuery.topic = int(args['topicID'])
-                        db.session.commit()
-                        return {'results': {'message': 'Channel Updated'}}, 200
+                if requestAPIKey.isValid():
+                    streamQuery = Stream.Stream.query.filter_by(id=int(streamID)).first()
+                    if streamQuery != None:
+                        if streamQuery.channel.owningUser == requestAPIKey.userID:
+                            args = streamParserPut.parse_args()
+                            if 'streamName' in args:
+                                if args['streamName'] is not None:
+                                    streamQuery.streamName = args['streamName']
+                            if 'topicID' in args:
+                                if args['topicID'] is not None:
+                                    possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                                    if possibleTopics != None:
+                                        streamQuery.topic = int(args['topicID'])
+                            db.session.commit()
+                            return {'results': {'message': 'Channel Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/vids/')
@@ -205,20 +209,21 @@ class api_1_ListVideo(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
-                if videoQuery != None:
-                    if videoQuery.owningUser == requestAPIKey.userID:
-                        args = videoParserPut.parse_args()
-                        if 'videoName' in args:
-                            if args['videoName'] is not None:
-                                videoQuery.channelName = args['videoName']
-                        if 'topicID' in args:
-                            if args['topicID'] is not None:
-                                possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                                if possibleTopics != None:
-                                    videoQuery.topic = int(args['topicID'])
-                        db.session.commit()
-                        return {'results': {'message': 'Video Updated'}}, 200
+                if requestAPIKey.isValid():
+                    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
+                    if videoQuery != None:
+                        if videoQuery.owningUser == requestAPIKey.userID:
+                            args = videoParserPut.parse_args()
+                            if 'videoName' in args:
+                                if args['videoName'] is not None:
+                                    videoQuery.channelName = args['videoName']
+                            if 'topicID' in args:
+                                if args['topicID'] is not None:
+                                    possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
+                                    if possibleTopics != None:
+                                        videoQuery.topic = int(args['topicID'])
+                            db.session.commit()
+                            return {'results': {'message': 'Video Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
@@ -229,24 +234,25 @@ class api_1_ListVideo(Resource):
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey != None:
-                videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
-                if videoQuery != None:
-                    if videoQuery.owningUser == requestAPIKey.userID:
-                        filePath = '/var/www/videos/' + videoQuery.videoLocation
-                        thumbnailPath = '/var/www/videos/' + videoQuery.videoLocation[:-4] + ".png"
+                if requestAPIKey.isValid():
+                    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+                    if videoQuery != None:
+                        if videoQuery.owningUser == requestAPIKey.userID:
+                            filePath = '/var/www/videos/' + videoQuery.videoLocation
+                            thumbnailPath = '/var/www/videos/' + videoQuery.videoLocation[:-4] + ".png"
 
-                        if filePath != '/var/www/videos/':
-                            if path.exists(filePath) and (
-                                    videoQuery.videoLocation != None or videoQuery.videoLocation != ""):
-                                remove(filePath)
-                                if path.exists(thumbnailPath):
-                                    remove(thumbnailPath)
-                        upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
-                        for vote in upvoteQuery:
-                            db.session.delete(vote)
-                        db.session.delete(videoQuery)
-                        db.session.commit()
-                        return {'results': {'message': 'Channel Deleted'}}, 200
+                            if filePath != '/var/www/videos/':
+                                if path.exists(filePath) and (
+                                        videoQuery.videoLocation != None or videoQuery.videoLocation != ""):
+                                    remove(filePath)
+                                    if path.exists(thumbnailPath):
+                                        remove(thumbnailPath)
+                            upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
+                            for vote in upvoteQuery:
+                                db.session.delete(vote)
+                            db.session.delete(videoQuery)
+                            db.session.commit()
+                            return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/topics/')
