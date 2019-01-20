@@ -29,6 +29,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask SQL-Alchemy] - Provide the Database for OSP
 * [Flask Security] - Handle User Accounts, Login, and Registration
 * [Flask Uploads] - Manage User Uploads, such as Pictures
+* [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
@@ -36,7 +37,6 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Socket.io] - Interface Socket.io with Flask
 * [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
-* [Emoji-CSS] - For Emoji Icons In Chat
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
@@ -111,11 +111,23 @@ rtsp://[serverip]/stream
 - NGINX Conf Files located at /usr/local/nginx/conf/
 - If you plan on using Lets Encrypt, please use the Cert Only method for verification, as NGINX is configured from source and can cause problems with the Certbot automated process.
 
+## API
+OSP's API can be reached at the following Endpoint:
+```
+http://[serverIP/FQDN]/apiv1/
+```
+Usage of the API required a streamer create an API key.
+
+The API is self-documenting using Swagger-UI.
+
+To use an authenticated endpoint, ensure you are adding 'X-API-KEY':'\<Your API KEY>' to the request headers.
+
+
 ## Other Info
 ### Chat Comands
 - /ban <username> - Bans a user from chatting in a chat room
 - /unban <username> - Unbans a user who has been banned
-- /bok - Chicken!
+
 
 License
 ----
