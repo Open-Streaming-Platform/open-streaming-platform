@@ -89,4 +89,4 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 VOLUME ["/var/www","/opt/osp", "/usr/local/nginx/conf"]
 
-CMD ["/usr/bin/supervisord","-c","/etc/supervisor/conf.d/supervisord.conf"]
+CMD supervisord --nodaemon --configuration /etc/supervisor/conf.d/supervisord.conf
