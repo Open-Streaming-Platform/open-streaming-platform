@@ -9,7 +9,7 @@ def generateKey(length):
 
 class apikey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String)
+    description = db.Column(db.String(255))
     userID = db.Column(db.Integer,db.ForeignKey('user.id'))
     key = db.Column(db.String(255))
     type = db.Column(db.Integer)
