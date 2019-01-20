@@ -55,6 +55,7 @@
                       </div>
                       <div>
                           <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
+                          <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b>{{stream.channel.channelName}}</b></span></div><br>
                           <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b>{{stream.topic|get_topicName}}</b></div><br>
                           <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{stream.channel.owningUser|get_userName}}</b><br>
                           <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{stream.totalViewers}}</div> <br>
