@@ -35,7 +35,7 @@ class apikey(db.Model):
         now = datetime.datetime.now()
         if self.expiration is None:
             return True
-        elif now > self.expiration:
+        elif now < self.expiration:
             return True
         else:
             return False
