@@ -80,13 +80,14 @@ RUN chown -R www-data:www-data /opt/osp
 RUN apk add ffmpeg
 
 # Copy the Default Config File
-RUN cp /opt/osp/config.py.dist /opt/osp/config.py
+RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-VOLUME ["/var/www","/opt/osp", "/usr/local/nginx/conf"]
+
+VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
 CMD supervisord --nodaemon --configuration /etc/supervisor/conf.d/supervisord.conf

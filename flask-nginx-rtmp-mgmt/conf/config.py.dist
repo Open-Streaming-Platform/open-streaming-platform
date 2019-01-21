@@ -1,3 +1,3 @@
-dbLocation = 'sqlite:///database.db'
+dbLocation = 'sqlite:///db/database.db'
 secretKey = "Super-Sekrit"
 passwordSalt = "los-salt"
