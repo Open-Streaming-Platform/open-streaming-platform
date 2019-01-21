@@ -24,16 +24,16 @@ sudo make install
 # Grab Configuration
 #cd /tmp
 #wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/nginx.conf"
-cd $cwd/nginx
+cd $cwd/setup/nginx
 sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Enable SystemD
-cd $cwd/nginx
+cd $cwd/setup/nginx
 sudo cp nginx.service /lib/systemd/system/nginx.service
 sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 
-cd $cwd/gunicorn
+cd $cwd/setup/gunicorn
 sudo cp osp.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable osp.service
@@ -53,7 +53,7 @@ sudo chown -R www-data:www-data live-rec
 sudo mkdir images
 sudo chown -R www-data:www-data images
 
-cd $cwd/flask-nginx-rtmp-mgmt
+cd $cwd
 sudo cp -R * /opt/osp
 
 sudo chown -R www-data:www-data /opt/osp

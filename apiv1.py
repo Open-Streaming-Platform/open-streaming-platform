@@ -70,7 +70,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID),str(uuid.uuid4()),args['channelName'],int(args['topicID']),args['recordEnabled'],args['chatEnabled'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'])
                     db.session.add(newChannel)
                     db.session.commit()
 
