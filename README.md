@@ -65,7 +65,7 @@ The installation script will install the files in the following location:
 
 Rename the Configuration File
 ```sh
-cd /opt/osp
+cd /opt/osp/conf
 sudo mv config.py.dist config.py
 ```
 Edit the Default Values in the Configuration File
@@ -94,8 +94,8 @@ This accomplished easily by using a reverse proxy in Docker such as Traefik.  Ho
 
 **Recommended Volumes/Mount Points**
 * /var/www - Storage of Images, Streams, and Stored Video Files
-* /opt/osp/config.py - DB configuration and Password Salt Settings
-* /opt/osp/database.db - Initial SQLite DB File
+* /opt/osp/conf/config.py - DB configuration and Password Salt Settings
+* /opt/osp/db/database.db - Initial SQLite DB File
 * /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
 
 ### Usage
