@@ -22,22 +22,19 @@ make
 sudo make install
 
 # Grab Configuration
-#cd /tmp
-#wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/nginx.conf"
-cd $cwd/setup/nginx
+cd $cwd/nginx
 sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Enable SystemD
-cd $cwd/setup/nginx
+cd $cwd/nginx
 sudo cp nginx.service /lib/systemd/system/nginx.service
 sudo systemctl daemon-reload
 sudo systemctl enable nginx.service
 
-cd $cwd/setup/gunicorn
+cd $cwd/gunicorn
 sudo cp osp.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable osp.service
-
 
 # Create HLS directory
 cd /var/
