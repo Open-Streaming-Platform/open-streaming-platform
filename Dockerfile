@@ -88,6 +88,6 @@ RUN mkdir -p /var/log/supervisor
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
-VOLUME ["/var/www", "/usr/local/nginx/conf"]
+VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
 CMD supervisord --nodaemon --configuration /etc/supervisor/conf.d/supervisord.conf
