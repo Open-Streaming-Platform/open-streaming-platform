@@ -123,6 +123,43 @@ The API is self-documenting using Swagger-UI.
 
 To use an authenticated endpoint, ensure you are adding 'X-API-KEY':'\<Your API KEY>' to the request headers.
 
+## Upgrading
+
+### Standard Upgrade
+* Backup your Database File: **If you do not make a backup, it will be overwritten by the default**
+```
+cp /opt/osp/db/database.db /opt/osp/db/database.bak
+```
+* Clone the Git Repo to a temporary location
+```
+cd /tmp
+git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git
+```
+* Rerun the setup-osp.sh script
+```
+chmod +x setup-osp.sh
+sudo ./setup-osp.sh
+```
+* Copy your backup script over the default DB
+```
+cp /opt/osp/db/database.bak /opt/osp/db/database.db
+```
+* Restart the OSP Service
+```
+sudo service osp restart
+```
+
+### Upgrading from Pre-Alpha3
+* If you are updating from pre-Alpha3 and use SQLite, save a backup copy of your database.db file and config.py files in the /opt/osp directory.
+* Follow the Standard Upgrade Instructions and then move your database.db file to /opt/osp/db and your config.py to /opt/osp/conf.
+* Edit your config.py file and change the dbLocation variable to be the following:
+```
+dbLocation = 'sqlite:///db/database.db'
+```
+* Restart the OSP Service
+```
+sudo service osp restart
+```
 
 ## Other Info
 ### Chat Comands
