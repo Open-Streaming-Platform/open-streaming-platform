@@ -92,9 +92,10 @@ A Dockerfile has been provided for running OSP in a container.  However due to t
 
 This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1435 will not be proxied and must be mapped to the same port on the host.
 
-**Volumes**
+**Recommended Volumes/Mount Points**
 * /var/www - Storage of Images, Streams, and Stored Video Files
-* /opt/osp - Application Install Which Conains the config.py (Highly Recommended to change the secretKey and passwordSalt Variables)
+* /opt/osp/config.py - DB configuration and Password Salt Settings
+* /opt/osp/database.db - Initial SQLite DB File
 * /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
 
 ### Usage
