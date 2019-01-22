@@ -142,8 +142,8 @@ sudo service osp restart
 ```
 
 ### Upgrading from Pre-Alpha3
-* If you are updating from pre-Alpha3 and use SQLite, save a backup copy of your database.db file and config.py files in the /opt/osp directory.
-* Follow the Standard Upgrade Instructions and then move your database.db file to /opt/osp/db and your config.py to /opt/osp/conf.
+* If you are updating from pre-Alpha3 and use SQLite, save a backup copy of your database.db file and config.py files in a safe location outside of /opt/osp.
+* Remove the /opt/osp directory and perform a fresh install then move your database.db file to /opt/osp/db and your config.py to /opt/osp/conf.
 * Edit your config.py file and change the dbLocation variable to be the following:
 ```
 dbLocation = 'sqlite:///db/database.db'
