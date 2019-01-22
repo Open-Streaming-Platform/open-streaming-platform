@@ -49,14 +49,11 @@ Clone the Gitlab Repo
 ```
 git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git
 ```
-Chmod setup-osp.sh to be Executable.
-```
-cd flask-nginx-rtmp-manager/setup
-chmod +x setup-osp.sh
-```
+
 Run the install script
 ```
-sudo ./setup-osp.sh
+cd flask-nginx-rtmp-manager/setup
+sudo bash setup-osp.sh
 ```
 
 The installation script will install the files in the following location:
