@@ -46,17 +46,14 @@ And OSP itself is open source with a [public repository](https://gitlab.com/Deam
 OSP has only been tested on Ubuntu 16.04 and the installation script may not work properly on other OS's.
 
 Clone the Gitlab Repo
-```sh
+```
 git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git
 ```
-Chmod setup-osp.sh to be Executable.
-```sh
-cd flask-nginx-rtmp-manager
-chmod +x setup-osp.sh
-```
+
 Run the install script
-```sh
-sudo ./setup-osp.sh
+```
+cd flask-nginx-rtmp-manager/setup
+sudo bash setup-osp.sh
 ```
 
 The installation script will install the files in the following location:
@@ -64,12 +61,12 @@ The installation script will install the files in the following location:
 * **OSP Files**: /opt/osp
 
 Rename the Configuration File
-```sh
+```
 cd /opt/osp/conf
 sudo mv config.py.dist config.py
 ```
 Edit the Default Values in the Configuration File
-```sh
+```
 vi config.py
 ```
 Change the following values from their Default:
@@ -78,7 +75,7 @@ Change the following values from their Default:
 * passwordSalt - Flask Security uses this value for Salting User Passwords, change this!
 
 Restart the OSP service
-```sh
+```
 sudo systemctl restart osp
 ```
 Open a Web Browser and configure OSP
@@ -126,23 +123,18 @@ To use an authenticated endpoint, ensure you are adding 'X-API-KEY':'\<Your API 
 ## Upgrading
 
 ### Standard Upgrade
-* Backup your Database File: **If you do not make a backup, it will be overwritten by the default**
+* Backup your Database File:
 ```
 cp /opt/osp/db/database.db /opt/osp/db/database.bak
 ```
-* Clone the Git Repo to a temporary location
+* Perform a Git Pull
 ```
-cd /tmp
-git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git
+cd /opt/osp
+sudo git pull
 ```
-* Rerun the setup-osp.sh script
+* Reset Ownership of OSP back to www-data
 ```
-chmod +x setup-osp.sh
-sudo ./setup-osp.sh
-```
-* Copy your backup script over the default DB
-```
-cp /opt/osp/db/database.bak /opt/osp/db/database.db
+sudo chown -R www-data:www-data /opt/osp
 ```
 * Restart the OSP Service
 ```
@@ -165,7 +157,6 @@ sudo service osp restart
 ### Chat Comands
 - /ban <username> - Bans a user from chatting in a chat room
 - /unban <username> - Unbans a user who has been banned
-
 
 License
 ----
