@@ -46,7 +46,7 @@ RUN set -x ; \
 
 # Configure NGINX
 RUN cd /..
-ADD nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+ADD setup/nginx /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
@@ -66,14 +66,14 @@ RUN apk add python2 \
   uwsgi-python
 
 # Install OSP Dependancies
-ADD requirements.txt /tmp/requirements.txt
+ADD setup/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 # Upgrade PIP
 RUN pip install --upgrade pip
 
 # Make OSP Install Directory
-ADD flask-nginx-rtmp-mgmt/ /opt/osp/
+ADD * /opt/osp/
 RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
@@ -85,7 +85,7 @@ RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ADD setup/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]

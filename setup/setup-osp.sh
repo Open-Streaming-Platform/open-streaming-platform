@@ -8,7 +8,10 @@ sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
 sudo pip install -r requirements.txt
-sudo mkdir /opt/osp/
+cd ..
+cd ..
+sudo cp -R flask-nginx-rtmp-manager /opt/osp
+
 
 # Build Nginx with RTMP module
 cd /tmp
@@ -22,8 +25,6 @@ make
 sudo make install
 
 # Grab Configuration
-#cd /tmp
-#wget "https://gitlab.com/Deamos/nginx-rtmp-server/raw/master/nginx.conf"
 cd $cwd/nginx
 sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
@@ -37,7 +38,6 @@ cd $cwd/gunicorn
 sudo cp osp.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable osp.service
-
 
 # Create HLS directory
 cd /var/
@@ -53,15 +53,12 @@ sudo chown -R www-data:www-data live-rec
 sudo mkdir images
 sudo chown -R www-data:www-data images
 
-cd $cwd/flask-nginx-rtmp-mgmt
-sudo cp -R * /opt/osp
-
 sudo chown -R www-data:www-data /opt/osp
 
 #Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
 
-# Start Nginx
+# Start Nginxcd o
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
