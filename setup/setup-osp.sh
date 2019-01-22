@@ -10,7 +10,7 @@ sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
 sudo pip install -r requirements.txt
 cd ..
 cd ..
-sudo cp flask-nginx-rtmp-manager /opt/osp
+sudo cp -R flask-nginx-rtmp-manager /opt/osp
 
 
 # Build Nginx with RTMP module
@@ -58,7 +58,7 @@ sudo chown -R www-data:www-data /opt/osp
 #Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
 
-# Start Nginx
+# Start Nginxcd o
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
