@@ -8,7 +8,10 @@ sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
 # Setup Python
 sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
 sudo pip install -r requirements.txt
-sudo mkdir /opt/osp/
+cd ..
+cd ..
+sudo cp flask-nginx-rtmp-manager /opt/osp
+
 
 # Build Nginx with RTMP module
 cd /tmp
@@ -49,10 +52,6 @@ sudo mkdir live-rec
 sudo chown -R www-data:www-data live-rec
 sudo mkdir images
 sudo chown -R www-data:www-data images
-
-cd $cwd
-cd ..
-sudo cp -R * /opt/osp
 
 sudo chown -R www-data:www-data /opt/osp
 
