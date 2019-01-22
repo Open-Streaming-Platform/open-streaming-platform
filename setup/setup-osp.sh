@@ -51,6 +51,7 @@ sudo mkdir images
 sudo chown -R www-data:www-data images
 
 cd $cwd
+cd ..
 sudo cp -R * /opt/osp
 
 sudo chown -R www-data:www-data /opt/osp
