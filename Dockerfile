@@ -21,6 +21,10 @@ RUN apk add alpine-sdk \
 
 RUN apk add --no-cache bash
 
+# Make OSP Install Directory
+ADD * /opt/osp/
+RUN chown -R www-data:www-data /opt/osp
+
 # Download NGINX
 RUN cd /tmp && \
   wget https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
@@ -45,8 +49,7 @@ RUN set -x ; \
   adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
 
 # Configure NGINX
-RUN cd /..
-ADD setup/nginx /usr/local/nginx/conf/nginx.conf
+RUN cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
@@ -66,15 +69,11 @@ RUN apk add python2 \
   uwsgi-python
 
 # Install OSP Dependancies
-ADD setup/requirements.txt /tmp/requirements.txt
+ADD /opt/osp/setup/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 # Upgrade PIP
 RUN pip install --upgrade pip
-
-# Make OSP Install Directory
-ADD * /opt/osp/
-RUN chown -R www-data:www-data /opt/osp
 
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
@@ -85,8 +84,7 @@ RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
-ADD setup/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+RUN cp /opt/osp/setup/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
