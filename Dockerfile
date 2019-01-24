@@ -86,8 +86,7 @@ RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
-RUN cp /opt/osp/setup/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
-CMD supervisord --nodaemon --configuration /etc/supervisor/conf.d/supervisord.conf
+CMD supervisord --nodaemon --configuration /opt/osp/setup/supervisord.conf
