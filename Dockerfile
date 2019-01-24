@@ -22,7 +22,7 @@ RUN apk add alpine-sdk \
 RUN apk add --no-cache bash
 
 # Make OSP Install Directory
-ADD * /opt/osp/
+COPY . /opt/osp/
 
 # Create the www-data user
 RUN set -x ; \
@@ -49,7 +49,6 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-http_ssl_module \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
-
 
 
 # Configure NGINX
