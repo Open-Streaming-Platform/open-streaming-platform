@@ -23,6 +23,13 @@ RUN apk add --no-cache bash
 
 # Make OSP Install Directory
 ADD * /opt/osp/
+
+# Create the www-data user
+RUN set -x ; \
+  addgroup -g 82 -S www-data ; \
+  adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
+
+# Set the OSP directory to www-data
 RUN chown -R www-data:www-data /opt/osp
 
 # Download NGINX
@@ -43,10 +50,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
-# Create the www-data user
-RUN set -x ; \
-  addgroup -g 82 -S www-data ; \
-  adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
+
 
 # Configure NGINX
 RUN cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
