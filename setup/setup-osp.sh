@@ -6,8 +6,8 @@ cwd=$PWD
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
 
 # Setup Python
-sudo apt-get install python2.7 python-pip gunicorn uwsgi-plugin-python -y
-sudo pip install -r requirements.txt
+sudo apt-get install python3.7 python3-pip gunicorn3 uwsgi-plugin-python -y
+sudo pip3 install -r requirements.txt
 cd ..
 cd ..
 sudo cp -R flask-nginx-rtmp-manager /opt/osp
