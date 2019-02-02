@@ -1,4 +1,4 @@
-from shared import db
+from .shared import db
 from binascii import hexlify
 import os
 import datetime

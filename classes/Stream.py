@@ -1,4 +1,4 @@
-from shared import db
+from .shared import db
 
 class Stream(db.Model):
     __tablename__ = "Stream"

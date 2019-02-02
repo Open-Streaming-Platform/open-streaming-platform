@@ -1,4 +1,4 @@
-from shared import db
+from .shared import db
 
 class banList(db.Model):
     id = db.Column(db.Integer,primary_key=True)
