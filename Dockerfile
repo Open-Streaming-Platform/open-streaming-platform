@@ -69,7 +69,7 @@ RUN apk add python3 \
   py3-setuptools \
   python3-dev \
   py3-gunicorn \
-  uwsgi-python
+  uwsgi-python3
 
 # Install OSP Dependancies
 RUN pip3 install -r /opt/osp/setup/requirements.txt
