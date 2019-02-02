@@ -1,4 +1,4 @@
-from shared import db
+from .shared import db
 import uuid
 
 
