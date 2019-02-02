@@ -72,7 +72,7 @@ RUN apk add python2 \
   uwsgi-python
 
 # Install OSP Dependancies
-RUN pip install -r /opt/osp/setup/requirements.txt
+RUN pip3 install -r /opt/osp/setup/requirements.txt
 
 # Upgrade PIP
 RUN pip3 install --upgrade pip
