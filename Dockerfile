@@ -66,16 +66,16 @@ RUN mkdir /var/www && \
 
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python2 \
-  py-pip \
-  python2-dev \
-  py-gunicorn \
+  py3-setuptools \
+  python3-dev \
+  py3-gunicorn \
   uwsgi-python
 
 # Install OSP Dependancies
 RUN pip install -r /opt/osp/setup/requirements.txt
 
 # Upgrade PIP
-RUN pip install --upgrade pip
+RUN pip3 install --upgrade pip
 
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
