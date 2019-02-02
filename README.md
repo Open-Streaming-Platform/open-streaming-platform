@@ -23,7 +23,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 Open Streaming Platform uses a number of open source projects to work properly:
 
-* [Python 2.7] - Because I'm too lazy to learn Python 3.
+* [Python 3]
 * [Gunicorn] - Python WSGI HTTP Server, Acts as a Reverse Proxy for Flask
 * [Flask] - Microframework for Python based on Werkzeug & Jinja 2
 * [Flask SQL-Alchemy] - Provide the Database for OSP
@@ -139,6 +139,15 @@ sudo chown -R www-data:www-data /opt/osp
 * Restart the OSP Service
 ```
 sudo service osp restart
+```
+
+### Upgrading from Alpha3 to Alpha4
+Due to the changes from Python 2 to Python 3, You need to run a script to remove Python 2.7 and its modules and replace them with Python 3
+* Perform a Git Pull
+* Run the Upgrade Script
+```
+cd /opt/osp/setup/other
+sudo bash alpha3toalpha4.sh
 ```
 
 ### Upgrading from Pre-Alpha3
