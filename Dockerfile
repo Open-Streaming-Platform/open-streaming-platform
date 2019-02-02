@@ -65,7 +65,7 @@ RUN mkdir /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
 
 # Install Python, Gunicorn, and uWSGI
-RUN apk add python2 \
+RUN apk add python3 \
   py3-setuptools \
   python3-dev \
   py3-gunicorn \
