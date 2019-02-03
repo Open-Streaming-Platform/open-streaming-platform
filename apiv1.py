@@ -178,7 +178,7 @@ class api_1_ListStream(Resource):
                                     if possibleTopics != None:
                                         streamQuery.topic = int(args['topicID'])
                             db.session.commit()
-                            return {'results': {'message': 'Channel Updated'}}, 200
+                            return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/vids/')
@@ -252,7 +252,7 @@ class api_1_ListVideo(Resource):
                                 db.session.delete(vote)
                             db.session.delete(videoQuery)
                             db.session.commit()
-                            return {'results': {'message': 'Channel Deleted'}}, 200
+                            return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/topics/')
