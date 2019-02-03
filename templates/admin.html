@@ -54,46 +54,55 @@
                 <div class="settingsOption" id="adminSettings" style="display:none;">
                     <h5>Configuration Options</h5>
                       <form action="/settings/admin" method="post">
-                          Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
-                          Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
-                          <hr>
-                          Background Theme:
-                          <select class="form-control" name="background">
-                              <option value="Ash" {% if sysSettings.background=="Ash" %} selected {% endif %}>Ash</option>
-                              <option value="Moonlit" {% if sysSettings.background=="Moonlit" %} selected {% endif %}>Moonlit</option>
-                              <option value="Terminal" {% if sysSettings.background=="Terminal" %} selected {% endif %}>Terminal</option>
-                              <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
-                              <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
-                          </select>
-                          SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
-                          SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
-                          SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                          SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
-                          SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
-                          SMTP SSL:<br>
-                          <label class="switch">
-                            <input type="checkbox" id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
-                            <span class="slider round"></span>
-                          </label><br>
-                          SMTP TLS:<br>
-                          <label class="switch">
-                            <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
-                            <span class="slider round"></span>
-                          </label>
-                          <hr>
-                          Allow Users to Register:<br>
-                          <label class="switch">
-                            <input type="checkbox" id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
-                            <span class="slider round"></span>
-                          </label><br>
-                          Allow Users to Record:<br>
-                          <label class="switch">
-                            <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
-                            <span class="slider round"></span>
-                          </label>
-                          <input type="hidden" value="system" id="settingType" name="settingType">
-                          <div class="form-row text-center">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                          <div class="row">
+                              <div class="col-6">
+                                  <h4><i class="fas fa-server"></i> Server Settings</h4>
+                                  Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
+                                  Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
+                                  <hr>
+                                  Background Theme:
+                                  <select class="form-control" name="background">
+                                      <option value="Ash" {% if sysSettings.background=="Ash" %} selected {% endif %}>Ash</option>
+                                      <option value="Moonlit" {% if sysSettings.background=="Moonlit" %} selected {% endif %}>Moonlit</option>
+                                      <option value="Terminal" {% if sysSettings.background=="Terminal" %} selected {% endif %}>Terminal</option>
+                                      <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
+                                      <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
+                                  </select>
+                                  Allow Users to Register:<br>
+                                  <label class="switch">
+                                    <input type="checkbox" id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
+                                    <span class="slider round"></span>
+                                  </label><br>
+                                  Allow Users to Record:<br>
+                                  <label class="switch">
+                                    <input type="checkbox" id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
+                                    <span class="slider round"></span>
+                                  </label>
+                              </div>
+                              <div class="col-6">
+                                  <h4><i class="fas fa-envelope"></i> Email Settings</h4>
+                                  SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
+                                  SMTP Address: <input type="text" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
+                                  SMTP Port: <input type="number" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
+                                  SMTP Username:<input type="text" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
+                                  SMTP Password<input type="password" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
+                                  SMTP SSL:<br>
+                                  <label class="switch">
+                                    <input type="checkbox" id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                                    <span class="slider round"></span>
+                                  </label><br>
+                                  SMTP TLS:<br>
+                                  <label class="switch">
+                                    <input type="checkbox" id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                                    <span class="slider round"></span>
+                                  </label>
+                              </div>
+                              <hr>
+
+                              <input type="hidden" value="system" id="settingType" name="settingType">
+                              <div class="form-row text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                              </div>
                           </div>
                       </form>
                 </div>
