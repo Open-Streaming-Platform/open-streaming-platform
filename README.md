@@ -136,9 +136,9 @@ sudo git pull
 ```
 sudo chown -R www-data:www-data /opt/osp
 ```
-* Restart the OSP Service
+* Run the DB Upgrade Script to Ensure the Database Schema is up-to-date
 ```
-sudo service osp restart
+bash dbUpgrade.sh
 ```
 
 ### Upgrading from Alpha3 to Alpha4
@@ -166,6 +166,8 @@ sudo service osp restart
 ### Chat Comands
 - /ban <username> - Bans a user from chatting in a chat room
 - /unban <username> - Unbans a user who has been banned
+- /mute - Places a Chat Channel on Mute
+- /unmute - Removes a Mute Placed on a Chat Channel
 
 License
 ----
