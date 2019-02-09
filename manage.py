@@ -14,16 +14,18 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-from classes import Stream
-from classes import Channel
-from classes import dbVersion
-from classes import RecordedVideo
-from classes import topics
-from classes import settings
-from classes import banList
-from classes import Sec
-from classes import upvotes
-from classes import apikey
+from classes import Stream.Stream
+from classes import Channel.Channel
+from classes import dbVersion.dbVersion
+from classes import RecordedVideo.RecordedVideo
+from classes import topics.topics
+from classes import settings.settings
+from classes import banList.banList
+from classes import Sec.Role
+from classes import Sec.Users
+
+from classes import upvotes.upvotes
+from classes import apikey.apikey
 
 if __name__ == '__main__':
     manager.run()
