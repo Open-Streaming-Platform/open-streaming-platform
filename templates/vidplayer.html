@@ -68,7 +68,7 @@
                               </button>
                           </div>
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" onclick="setScreenShot()">
+                              <button type="button" class="btn btn-primary shadow" onclick="newScreenShot()">
                                   <i class="fas fa-camera"></i>
                               </button>
                           </div>
@@ -190,6 +190,25 @@
   </div>
 </div>
 
+<div class="modal fade" id="newSSModal" tabindex="-1" role="dialog" aria-labelledby="newSSModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newSSModalTitle">Confirm New Video Thumbnail</h5>
+      </div>
+
+      <div class="modal-body">
+            <h5>Do you want to set the following picture as the Thumbnail for this Video?</h5>
+            <img id="newScreenShotImg" src="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <a href="#" class="btn btn-sucess">Save</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endif %}
 
 <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
@@ -284,10 +303,23 @@
     </script>
 
     <script>
-        function setScreenShot() {
+        socket.on('checkScreenShot', function(msg) {
+            document.getElementById("newScreenShotImg").src=msg['thumbnailLocation'];
+            $("#newSSModal").modal()
+        });
+    </script>
+
+    <script>
+        function newScreenShot() {
             var whereYouAt = myPlayer.currentTime();
             console.log(whereYouAt);
             socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
+        }
+    </script>
+
+    <script>
+        function setScreenShot() {
+
         }
     </script>
 
