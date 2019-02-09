@@ -313,7 +313,7 @@
         function newScreenShot() {
             var whereYouAt = myPlayer.currentTime();
             console.log(whereYouAt);
-            socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
+            socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
         }
     </script>
 
