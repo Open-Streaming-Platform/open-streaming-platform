@@ -13,9 +13,10 @@ class settings(db.Model):
     smtpSendAs = db.Column(db.String(255))
     allowRegistration = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
+    showEmptyTables = db.Column(db.Boolean)
     background = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -27,6 +28,7 @@ class settings(db.Model):
         self.smtpSendAs = smtpSendAs
         self.allowRegistration = allowRegistration
         self.allowRecording = allowRecording
+        self.showEmptyTables = showEmptyTables
         self.background = "Ash"
 
     def __repr__(self):
