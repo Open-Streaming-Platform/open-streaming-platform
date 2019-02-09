@@ -314,15 +314,15 @@
 
     <script>
         function newScreenShot() {
-            var whereYouAt = myPlayer.currentTime();
-            console.log(whereYouAt);
-            socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
+            window.whereYouAt = myPlayer.currentTime();
+            console.log(window.whereYouAt);
+            socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: window.whereYouAt});
         }
     </script>
 
     <script>
         function setScreenShot() {
-            socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: whereYouAt});
+            socket.emit('setScreenShot', {loc: '{{video.id}}', timeStamp: window.whereYouAt});
         }
     </script>
 
