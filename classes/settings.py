@@ -13,8 +13,8 @@ class settings(db.Model):
     smtpSendAs = db.Column(db.String(255))
     allowRegistration = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
-    showEmptyTables = db.Column(db.Boolean)
     background = db.Column(db.String(255))
+    showEmptyTables = db.Column(db.Boolean)
 
     def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables):
         self.siteName = siteName
