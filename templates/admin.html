@@ -81,7 +81,7 @@
                                   </label><br>
                                   Display Empty Channels, Streamers, and Topics<br>
                                   <label class="switch">
-                                    <input type="checkbox" id="showEmptyTables" name="showEmptyTables">
+                                    <input type="checkbox" id="showEmptyTables" name="showEmptyTables" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
                                     <span class="slider round"></span>
                                   </label>
                               </div>
