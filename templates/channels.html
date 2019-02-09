@@ -15,7 +15,6 @@
     </div>
     <div class="streamList d-flex align-content-around flex-wrap">
     {% for channel in channelList %}
-        {% if channel.recordedVideo|length > 0 %}
         <div class="streamcard">
             <a href="/channel/{{channel.id}}/">
                 <div class="stream shadow card p-2 streamcard-item">
@@ -34,7 +33,6 @@
 
             </a>
         </div>
-        {% endif %}
     {% endfor %}
     </div>
 {% endblock %}
