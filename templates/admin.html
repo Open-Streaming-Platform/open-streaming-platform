@@ -36,20 +36,36 @@
           <div class="card-body">
             <div style="padding-bottom:20px;padding-top:10px;">
                 <div class="settingsOption" id="dashboard">
-                    CPU<br>
-                    <div class="progress">
-                      <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div><br>
-                    Memory<br>
-                    <div class="progress">
-                      <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div><br>
-                    Disk<br>
-                    <div class="progress">
-                      <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <div>
+                                    <h1><i class="fas fa-server"></i> Server Info</h1><br>
+                                    <b>Server Version:</b> Pre-Beta 1
+                                    <b>Database Version:</b> {{appDBVer}}
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-chart-bar"></i> Resource Usage</div>
+                                    <div class="card-body">
+                                        CPU<br>
+                                        <div class="progress">
+                                          <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div><br>
+                                        Memory<br>
+                                        <div class="progress">
+                                          <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div><br>
+                                        Disk<br>
+                                        <div class="progress">
+                                          <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <br>
-                    <div class="dbVer">Database Version: {{appDBVer}}</div>
                 </div>
                 <div class="settingsOption" id="adminSettings" style="display:none;">
                     <h5>Configuration Options</h5>
