@@ -43,8 +43,9 @@
                                     <h2><i class="fas fa-server"></i> Server Info</h2><br>
                                     <b>Server Version:</b> Pre-Beta 1 <br>
                                     <b>Git Branch:</b> {{repoBranch}} <br>
-                                    <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success"><b>Update Available!</b></span> {% else %} <span class="badge badge-secondary"><b>No Update Available</b></span>{% endif %}<br>
+                                    <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
                                     <b>Database Version:</b> {{appDBVer}} <br>
+                                    {{remoteSHA}}
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-12">
