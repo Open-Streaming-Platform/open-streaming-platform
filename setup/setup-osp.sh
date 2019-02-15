@@ -54,6 +54,7 @@ sudo mkdir images
 sudo chown -R www-data:www-data images
 
 sudo chown -R www-data:www-data /opt/osp
+sudo chown -R www-data:www-data /opt/osp/.git
 
 #Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
