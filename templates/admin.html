@@ -45,6 +45,7 @@
                                     <b>Git Branch:</b> {{repoBranch}} <br>
                                     <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
                                     <b>Database Version:</b> {{appDBVer}} <br>
+                                    {{remoteSHA}}
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-12">
