@@ -253,7 +253,7 @@
             var h = today.getHours();
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
-            $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] +'" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+            $('#chat').prepend('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] +'" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> '+ h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             $('#chat').scrollTop(1000000);
         });
     </script>
