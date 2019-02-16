@@ -12,7 +12,7 @@
 
 {% block body %}
       <div class="container-fluid" style="padding-bottom:50px;">
-          <div class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
+          <div id="videoWindowRow" class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
               <div id="videoWindow" class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12" >
                   <div class="White-BG player">
                     <!--<video id="video" class="shadow videoStream" autoplay controls></video>-->
@@ -323,12 +323,15 @@
         function toggleChat() {
             var chatbox = document.getElementById("chatBlock");
             var videoWindow = document.getElementById("videoWindow");
+            var videoWindowRow = document.getElementById("videoWindowRow");
             if (chatbox.style.display === "none") {
                 chatbox.style.display = "block";
-                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12"
+                videoWindowRow.className = "";
+                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12";
             } else {
                 chatbox.style.display = "none";
-                videoWindow.className = "col-xl-10 col-sm-12 justify-content-md-center"
+                videoWindowRow.className = "justify-content-md-center";
+                videoWindow.className = "col-xl-10 col-sm-12";
             }
         }
     </script>
