@@ -26,6 +26,10 @@
                   </div>
                   <div class="video-buttons-mobile justify-content-center">
                       <div>
+                        <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                            <i class="fas fa-comment"></i>
+                        </button>
+
                         <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                             <i class="fas fa-share-alt"></i>
                         </button>
@@ -54,7 +58,7 @@
                           </div>
                           {% if stream.channel.chatEnabled == True %}
                           <div class="float-right">
-                              <button type="button" class="btn btn-primary shadow" onclick="toggleChat()">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
                                   <i class="fas fa-comment"></i>
                               </button>
                           </div>
