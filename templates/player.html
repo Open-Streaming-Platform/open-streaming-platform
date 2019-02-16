@@ -13,7 +13,7 @@
 {% block body %}
       <div class="container-fluid" style="padding-bottom:50px;">
           <div class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
-              <div class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12" >
+              <div id="videoWindow" class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12" >
                   <div class="White-BG player">
                     <!--<video id="video" class="shadow videoStream" autoplay controls></video>-->
                     <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="{{stream.channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
@@ -52,6 +52,13 @@
                                   <i class="fas fa-share-alt"></i>
                               </button>
                           </div>
+                          {% if stream.channel.chatEnabled == True %}
+                          <div class="float-right">
+                              <button type="button" class="btn btn-primary shadow" onclick="toggleChat()">
+                                  <i class="fas fa-comment"></i>
+                              </button>
+                          </div>
+                          {% endif %}
                       </div>
                       <div>
                           <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
@@ -309,6 +316,20 @@
         function changeUpvote() {
             socket.emit('changeUpvote', {loc: '{{stream.id}}', vidType: 'stream'});
             socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+        }
+    </script>
+
+    <script>
+        function toggleChat() {
+            var chatbox = document.getElementById("chatBlock");
+            var videoWindow = document.getElementById("videoWindow");
+            if (chatbox.style.display === "none") {
+                chatbox.style.display = "block";
+                videoWindow.className = "col-xl-10 col-sm-12"
+            } else {
+                chatbox.style.display = "none";
+                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12"
+            }
         }
     </script>
 {% endblock %}
