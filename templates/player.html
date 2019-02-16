@@ -255,7 +255,7 @@
             var s = today.getSeconds();
             if (data['isOwner'] === 'False') {
                 $('#chat').prepend('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
-            } elseif (data['isOwner'] === 'True') {
+            } else if (data['isOwner'] === 'True'){
                 $('#chat').prepend('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<i class="fas fa-crown"></i><br>' + data['msg'] + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 0 }, "fast");
