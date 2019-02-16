@@ -47,7 +47,7 @@
                               </button>
                           </div>
                           {% endif %}
-                          <div class="float-right">
+                          <div class="float-right" style="margin-left:5px;">
                               <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                                   <i class="fas fa-share-alt"></i>
                               </button>
@@ -325,10 +325,10 @@
             var videoWindow = document.getElementById("videoWindow");
             if (chatbox.style.display === "none") {
                 chatbox.style.display = "block";
-                videoWindow.className = "col-xl-10 col-sm-12"
+                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12"
             } else {
                 chatbox.style.display = "none";
-                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12"
+                videoWindow.className = "col-xl-10 col-sm-12 justify-content-md-center"
             }
         }
     </script>
