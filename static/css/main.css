@@ -147,6 +147,13 @@
     padding: 5px 5px 5px 5px;
 }
 
+.chatpopout {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 640px;
+    padding: 5px 5px 5px 5px;
+}
+
 .chatBar-Item {
     border: 0px solid black;
     border-radius: 4px;
