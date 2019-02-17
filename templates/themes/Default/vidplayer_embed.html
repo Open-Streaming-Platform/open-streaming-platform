@@ -1,6 +1,7 @@
 
 {% block head %}
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -27,9 +28,23 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-
+    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
     <script>
-        var myPlayer = videojs('video', {autoplay: {{isAutoPlay}}});
+        var player = videojs('video', {autoplay: {{isAutoPlay}}});
+        overlay_content = '<div class="titleOverlay"><h2>{{video.channelName}}</h2></div>';
+        player.overlay({
+        overlays: [{
+            start: 'loadstart',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }, {
+            start: 'pause',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }]
+        });
     </script>
 
 {% endblock %}

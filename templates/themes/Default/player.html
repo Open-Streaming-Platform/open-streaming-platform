@@ -6,6 +6,7 @@
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
 
 {% endblock %}
 
@@ -195,9 +196,25 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
 
     <script>
-        videojs('video', {autoplay: true});
+        var player = videojs('video', {autoplay: true});
+
+        overlay_content = '<div class="titleOverlay"><h2>{{stream.streamName}}</h2></div>';
+        player.overlay({
+        overlays: [{
+            start: 'loadstart',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }, {
+            start: 'pause',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }]
+        });
     </script>
 
 

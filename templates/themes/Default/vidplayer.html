@@ -3,6 +3,7 @@
 {% block head %}
     <title>{{sysSettings.siteName}} - {{video.channelName}}</title>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
 {% endblock %}
 
@@ -252,9 +253,24 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
 
     <script>
-        var myPlayer = videojs('video', {autoplay: true});
+        var player = videojs('video', {autoplay: true});
+        overlay_content = '<div class="titleOverlay"><h2>{{video.channelName}}</h2></div>';
+        player.overlay({
+        overlays: [{
+            start: 'loadstart',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }, {
+            start: 'pause',
+            content: overlay_content,
+            end: 'playing',
+            align: 'top'
+            }]
+        });
     </script>
 
     <script type="text/javascript" charset="utf-8">
@@ -311,7 +327,7 @@
 
     <script>
         function newScreenShot() {
-            window.whereYouAt = myPlayer.currentTime();
+            window.whereYouAt = player.currentTime();
             console.log(window.whereYouAt);
             socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: window.whereYouAt});
         }
