@@ -209,6 +209,13 @@
     border: 1px;
 }
 
+.titleOverlay {
+    width:100%;
+    background-color: rgba(0, 0, 0, .75);
+    text-align: left;
+    color:white;
+}
+
 @media screen and (max-width: 1024px) {
 
     .stream{
