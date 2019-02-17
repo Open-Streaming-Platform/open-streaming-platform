@@ -89,7 +89,7 @@
                                   Theme:
                                   <select class="form-control" name="theme">
                                       {% for theme in themeList %}
-                                      <option value="{{theme}}" {% if sysSettings.systemTheme={{theme}}" %} selected {% endif %}>{{theme}}</option>
+                                      <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
                                       {% endfor %}
                                   </select>
                                   <hr>
