@@ -212,7 +212,7 @@
 .titleOverlay {
     padding: 5px 5px 5px 5px;
     border-radius: 15px;
-    width:400px;
+    width:100%;
     background-color: rgba(0, 0, 0, .50);
     text-align: left;
     color:white;
