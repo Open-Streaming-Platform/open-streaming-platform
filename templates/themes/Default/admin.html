@@ -78,14 +78,6 @@
                                   Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
                                   Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
                                   <hr>
-                                  Background Theme:
-                                  <select class="form-control" name="background">
-                                      <option value="Ash" {% if sysSettings.background=="Ash" %} selected {% endif %}>Ash</option>
-                                      <option value="Moonlit" {% if sysSettings.background=="Moonlit" %} selected {% endif %}>Moonlit</option>
-                                      <option value="Terminal" {% if sysSettings.background=="Terminal" %} selected {% endif %}>Terminal</option>
-                                      <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
-                                      <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
-                                  </select>
                                   Theme:
                                   <select class="form-control" name="theme">
                                       {% for theme in themeList %}
