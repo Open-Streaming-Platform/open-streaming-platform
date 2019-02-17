@@ -3,7 +3,6 @@
 {% block head %}
     <title>{{sysSettings.siteName}} - {{video.channelName}}</title>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
-    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
 {% endblock %}
 
@@ -253,26 +252,18 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
+    <script src="/static/vendor/videojs-titleoverlay/js/videojs-titleoverlay.js.js"></script>
 
     <script>
         var player = videojs('video', {autoplay: true});
-        overlay_content = '<div class="titleOverlay"><div style="padding:10px;"><h4><img src="{{video.owningUser|get_pictureLocation}}" width="64" height="64"> <b>{{video.owningUser|get_userName}}</h4></b><br><br><h3>{{video.channelName}}</h3><h4>{{video.topic|get_topicName}}</h4></div></div>';
-        player.overlay({
-        overlays: [{
-            start: 'loadstart',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }, {
-            start: 'pause',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }]
-        });
+        var titleOptions = {
+            title: '{{video.channelName}}',  //Title for movie
+            floatPosition: 'left', //Float left or right (to prevent big play button overlap) (default left)
+            margin: '10px', //Margin from top/left/right (default 10px)
+            fontSize: '1.5em', //font size (default 1em)
+            debug: false, //true or false. Will output debug messages for title status
+        }
+        player.titleoverlay(titleOptions);
     </script>
 
     <script type="text/javascript" charset="utf-8">
