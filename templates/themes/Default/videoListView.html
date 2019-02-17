@@ -20,7 +20,7 @@
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="stream-img card-img-top shadow" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-body">
-                            <h5 class="card-title text-shadow-close">{{stream.streamName}} <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span></h5>
+                            <h5 class="card-title text-shadow-close">{{stream.streamName|limit_title}} <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span></h5>
                             <p class="card-text">
                                 <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"> {{stream.channel.channelName}}</div> <br>
                                 <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
@@ -43,7 +43,7 @@
                   <div class="stream shadow card p-2 streamcard-item">
                     <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-body">
-                        <h5 class="card-title text-shadow-close">{{video.channelName}}</h5>
+                        <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5>
                         <p class="card-text">
                             <i class="fas fa-tv"></i> <b>{{video.channel.channelName}}</b> <br>
                             <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
