@@ -15,8 +15,9 @@ class settings(db.Model):
     allowRecording = db.Column(db.Boolean)
     background = db.Column(db.String(255))
     showEmptyTables = db.Column(db.Boolean)
+    systemTheme = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables, systemTheme):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -30,6 +31,7 @@ class settings(db.Model):
         self.allowRecording = allowRecording
         self.showEmptyTables = showEmptyTables
         self.background = "Ash"
+        self.systemTheme = "Default"
 
     def __repr__(self):
         return '<id %r>' % self.id

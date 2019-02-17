@@ -86,6 +86,12 @@
                                       <option value="Space" {% if sysSettings.background=="Space" %} selected {% endif %}>Space</option>
                                       <option value="ClearSky" {% if sysSettings.background=="ClearSky" %} selected {% endif %}>Clear Sky</option>
                                   </select>
+                                  Theme:
+                                  <select class="form-control" name="theme">
+                                      {% for theme in themeList %}
+                                      <option value="{{theme}}" {% if sysSettings.systemTheme={{theme}}" %} selected {% endif %}>{{theme}}</option>
+                                      {% endfor %}
+                                  </select>
                                   <hr>
                                   Allow Users to Register:<br>
                                   <label class="switch">
