@@ -257,7 +257,7 @@
 
     <script>
         var player = videojs('video', {autoplay: true});
-        overlay_content = '<div class="titleOverlay"><h2>{{video.channelName}}</h2><br>{{vid.topic|get_topicName}}</div>';
+        overlay_content = '<div class="titleOverlay"><h2>{{video.channelName}}</h2><br>{{video.topic|get_topicName}}</div>';
         player.overlay({
         overlays: [{
             start: 'loadstart',
