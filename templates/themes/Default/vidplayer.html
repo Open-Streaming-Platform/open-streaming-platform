@@ -252,18 +252,9 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script src="/static/vendor/videojs-titleoverlay/js/videojs-titleoverlay.js"></script>
 
     <script>
         var player = videojs('video', {autoplay: true});
-        var titleOptions = {
-            title: '{{video.channelName}}',  //Title for movie
-            floatPosition: 'left', //Float left or right (to prevent big play button overlap) (default left)
-            margin: '10px', //Margin from top/left/right (default 10px)
-            fontSize: '1.5em', //font size (default 1em)
-            debug: false, //true or false. Will output debug messages for title status
-        }
-        player.titleoverlay(titleOptions);
     </script>
 
     <script type="text/javascript" charset="utf-8">

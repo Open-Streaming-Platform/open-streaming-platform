@@ -1,7 +1,6 @@
 {% block head %}
     <title>{{sysSettings.siteName}} - {{stream.streamName}}</title>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
-    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -28,26 +27,9 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
 
     <script>
         var player = videojs('video', {autoplay: {{isAutoPlay}}});
-        overlay_content = '<div class="titleOverlay"><img src="{{stream.channel.owningUser|get_pictureLocation}}" width="64" height="64"> <b>{{stream.channel.owningUser|get_userName}}</b><br><h3>{{stream.streamName}}</h3><br><h4>{{stream.topic|get_topicName}}</h4></div>';
-        player.overlay({
-        overlays: [{
-            start: 'loadstart',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }, {
-            start: 'pause',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }]
-        });
     </script>
 
 {% endblock %}

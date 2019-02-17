@@ -1,7 +1,6 @@
 
 {% block head %}
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
-    <link href="/static/vendor/videojs-overlay/css/videojs-overlay.css" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
@@ -28,25 +27,8 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script src="/static/vendor/videojs-overlay/js/videojs-overlay.js"></script>
     <script>
         var player = videojs('video', {autoplay: {{isAutoPlay}}});
-        overlay_content = '<div class="titleOverlay"><img src="{{video.owningUser|get_pictureLocation}}" width="64" height="64"> <b>{{video.owningUser|get_userName}}</b><br><h3>{{video.channelName}}</h3><br><h4>{{video.topic|get_topicName}}</h4></div>';
-        player.overlay({
-        overlays: [{
-            start: 'loadstart',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }, {
-            start: 'pause',
-            content: overlay_content,
-            end: 'playing',
-            align: 'top-left',
-            showBackground: false
-            }]
-        });
     </script>
 
 {% endblock %}
