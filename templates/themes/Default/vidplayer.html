@@ -257,7 +257,7 @@
 
     <script>
         var player = videojs('video', {autoplay: true});
-        overlay_content = '<div class="titleOverlay"><div style="padding:10px;"><div class="row"><div class="col-1"><img src="{{video.owningUser|get_pictureLocation}}" width="64" height="64"></div> <b><span><h4>{{video.owningUser|get_userName}}</h4></span></b></div><br><br><h3>{{video.channelName}}</h3><h4>{{video.topic|get_topicName}}</h4></div></div>';
+        overlay_content = '<div class="titleOverlay"><div style="padding:10px;"><div class="float-left"><img src="{{video.owningUser|get_pictureLocation}}" width="64" height="64"></div><b> <div style="position:relative;top:-45px;left:75px;"<h4>{{video.owningUser|get_userName}}</h4></div></b><h3>{{video.channelName}}</h3><h4>{{video.topic|get_topicName}}</h4></div></div>';
         player.overlay({
         overlays: [{
             start: 'loadstart',
