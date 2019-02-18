@@ -5,6 +5,71 @@
 {% endblock %}
 
 {% block body %}
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+                <div class="card my-5">
+                    <h5 class="card-header text-white bg-dark mb-3">
+                        Channels
+                    </h5>
+                    <div class="card-body text-left">
+                        {% for channel in channels %}
+                        <form action="/settings/channels" enctype=multipart/form-data method="post">
+                            <div class="card m-2">
+                                <div class="row">
+                                    <div class="col-1">
+                                        {% if channel.imageLocation == None %}
+                                        <img src="/static/img/video-placeholder.jpg" width="284px" height="155px">
+                                        {% else %}
+                                        <img src="/images/{{channel.imageLocation}}" width="284px" height="155px">
+                                        {% endif %}
+                                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required><br>
+                                        <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                                            {% for topic in topics %}
+                                            <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                                            {% endfor %}
+                                        </select><br>
+                                        <label class="switch">
+                                          <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                          <span class="slider round"></span>
+                                        </label>
+                                        <label class="switch">
+                                          <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                                          <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="textarea" class="form-control" name="description" id="description" value="">
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-1">
+                                        <input type="submit" class="btn btn-success" value="&#128393;">
+                                    </div>
+                                    <div class="col-1">
+                                        <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        <input type="hidden" id="type" name="type" value="change">
+                        <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
+                        </form>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<!--
 <div class="container-fluid" style="padding-bottom:20px;padding-top:10px;">
     <div class="table-responsive">
       <table class="table">
@@ -110,7 +175,7 @@
           </tbody>
       </table>
     </div>
-</div>
+</div>-->
 <script>
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
