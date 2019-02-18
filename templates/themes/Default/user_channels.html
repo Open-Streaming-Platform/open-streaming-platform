@@ -7,7 +7,7 @@
 {% block body %}
 <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-6 mx-auto">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8 mx-auto">
                 <div class="card my-2">
                     <h5 class="card-header text-white bg-dark mb-3">
                         Channels
@@ -24,7 +24,7 @@
                                             {% else %}
                                             <img src="/images/{{channel.imageLocation}}" width="100%">
                                             {% endif %}
-                                            <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                            <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                                         </div>
                                         <div class="col-xl-8 col-lg-12">
                                             <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required><br>
@@ -49,12 +49,13 @@
                                                 </label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <div class="row">
                                         <div class="col-12">
                                             <textarea class="form-control" name="description" id="description" value=""></textarea>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="input-group mb-3">
