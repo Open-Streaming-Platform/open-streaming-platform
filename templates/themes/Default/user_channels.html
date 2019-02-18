@@ -8,7 +8,7 @@
 <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
-                <div class="card my-5">
+                <div class="card my-2">
                     <h5 class="card-header text-white bg-dark mb-3">
                         Channels
                     </h5>
@@ -20,9 +20,9 @@
                                     <div class="row">
                                         <div class="col-xl-2 col-lg-12">
                                             {% if channel.imageLocation == None %}
-                                            <img src="/static/img/video-placeholder.jpg" width="284px" height="155px">
+                                            <img src="/static/img/video-placeholder.jpg" width="100%">
                                             {% else %}
-                                            <img src="/images/{{channel.imageLocation}}" width="284px" height="155px">
+                                            <img src="/images/{{channel.imageLocation}}" width="100%">
                                             {% endif %}
                                             <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
                                         </div>
