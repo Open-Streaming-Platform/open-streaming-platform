@@ -18,7 +18,7 @@
                             <div class="card m-2 shadow">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-xl-2 col-lg-12">
+                                        <div class="col-xl-8 col-lg-12">
                                             {% if channel.imageLocation == None %}
                                             <img src="/static/img/video-placeholder.jpg" width="100%">
                                             {% else %}
@@ -26,7 +26,7 @@
                                             {% endif %}
                                             <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
                                         </div>
-                                        <div class="col-xl-2 col-lg-12">
+                                        <div class="col-xl-4 col-lg-12">
                                             <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required><br>
                                             <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                                                 {% for topic in topics %}
