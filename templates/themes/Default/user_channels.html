@@ -15,7 +15,7 @@
                     <div class="card-body text-left">
                         {% for channel in channels %}
                         <form action="/settings/channels" enctype=multipart/form-data method="post">
-                            <div class="card m-2">
+                            <div class="card m-2 shadow">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-2">
@@ -34,17 +34,17 @@
                                                 {% endfor %}
                                             </select><br>
                                             <label class="switch">
-                                              <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                              <b>Record Video</b> <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
                                               <span class="slider round"></span>
                                             </label>
                                             <br>
                                             <label class="switch">
-                                              <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                                              <b>Enable Chat</b> <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                               <span class="slider round"></span>
                                             </label>
                                         </div>
-                                        <div class="col-2">
-                                            <textarea class="form-control" name="description" id="description" value="">
+                                        <div class="col-4">
+                                            <textarea class="form-control" name="description" id="description" value=""></textarea>
                                         </div>
                                         <div class="col-2">
                                             <div class="input-group mb-3">
