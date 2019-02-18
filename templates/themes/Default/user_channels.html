@@ -32,18 +32,22 @@
                                                 {% for topic in topics %}
                                                 <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                                 {% endfor %}
-                                            </select><br>
-                                            <label class="switch">
-                                              <b>Record Video</b> <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
-                                              <span class="slider round"></span>
-                                            </label>
+                                            </select>
+                                            <br>
+                                            <div class="form-group row">
+                                                <label for="recordSelect" class="col-sm-2 col-form-label"><b>Record Video</b></label>
+                                                <label class="switch col-sm-10">
+                                                   <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                                  <span class="slider round"></span>
+                                                </label>
+                                            </div>
                                             <br>
                                             <label class="switch">
                                               <b>Enable Chat</b> <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                               <span class="slider round"></span>
                                             </label>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-3">
                                             <textarea class="form-control" name="description" id="description" value=""></textarea>
                                         </div>
                                         <div class="col-2">
