@@ -17,7 +17,7 @@ class settings(db.Model):
     showEmptyTables = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables, systemTheme):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, showEmptyTables):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
