@@ -7,18 +7,20 @@
 {% block body %}
 <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8 mx-auto">
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-6 mx-auto">
                 <div class="card my-2">
                     <h5 class="card-header text-white bg-dark mb-3">
                         Channels
+                        <span class="float-right"><button class="btn btn-sm btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i></button></span>
                     </h5>
+
                     <div class="card-body text-left">
                         {% for channel in channels %}
                         <form action="/settings/channels" enctype=multipart/form-data method="post">
                             <div class="card m-2 shadow">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-xl-4 col-lg-12">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             {% if channel.imageLocation == None %}
                                             <img src="/static/img/video-placeholder.jpg" width="100%">
                                             {% else %}
@@ -26,52 +28,66 @@
                                             {% endif %}
                                             <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                                         </div>
-                                        <div class="col-xl-8 col-lg-12">
-                                            <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required><br>
-                                            <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                                                {% for topic in topics %}
-                                                <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <br>
-                                            <div class="form-group row">
-                                                <label for="recordSelect" class="col-form-label"><b>Record Video</b></label>
-                                                <label class="switch col-sm-2">
-                                                   <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
-                                                  <span class="slider round"></span>
-                                                </label>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-group">
+                                                <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
+                                                <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required>
                                             </div>
-                                            <div class="form-group row">
-                                                <label for="chatSelect" class="col-form-label"><b>Enable Chat</b></label>
-                                                <label class="switch col-sm-2">
-                                                  <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
-                                                  <span class="slider round"></span>
-                                                </label>
+                                            <div class="form-group">
+                                                <label for="channeltopic" class="col-form-label"><b>Topic</b></label>
+                                                <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                                                    {% for topic in topics %}
+                                                    <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
-                                        </div>
-                                    </div><br>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <textarea class="form-control" name="description" id="description" value=""></textarea>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
+
+                                            {% if sysSettings.allowRecording == True %}
+                                            <div class="form-group row">
+                                                <div class="col-6">
+                                                    <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+
+                                            <div class="form-group row">
+                                                <div class="col-6">
+                                                    <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
+                                                </div>
+                                                <div class="col-6">
+                                                    <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-6">
-                                            <input type="submit" class="btn btn-success" value="&#128393;">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="description" class="col-form-label"><b>Description</b></label>
+                                                <textarea class="form-control" name="description" id="description" value="">{{channel.description}}</textarea>
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <input type="submit" class="btn btn-success" value="&#128393; Edit">
+                                            <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"> Delete</i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -85,113 +101,79 @@
             </div>
         </div>
 </div>
-<!--
-<div class="container-fluid" style="padding-bottom:20px;padding-top:10px;">
-    <div class="table-responsive">
-      <table class="table">
-          <thead class="thead-dark">
-          <tr style="color:white;">
-              <th scope="col">Stream Name</th>
-              <th scope="col">Type</th>
-              <th>Channel Picture</th>
-              {% if sysSettings.allowRecording == True %}
-              <th scope="col">Record?</th>
-              {% endif %}
-              <th scope="col">Chat Enabled?</th>
-              <th scope="col">Stream Key</th>
-              <th scope="col">Edit</th>
-              <th scope="col">Options</th>
-          </tr>
-          </thead>
-          <tbody class="White-BG">
-          {% for channel in channels %}
-          <tr scope="row" style="color:black;">
+
+
+<div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newChannelModalTitle">Create New Channel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
             <form action="/settings/channels" enctype=multipart/form-data method="post">
-                <td><input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required></td>
-                <td>
-                    <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                        {% for topic in topics %}
-                        <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    {% if channel.imageLocation == None %}
-                    <img src="/static/img/video-placeholder.jpg" width="284px" height="155px">
-                    {% else %}
-                    <img src="/images/{{channel.imageLocation}}" width="284px" height="155px">
-                    {% endif %}
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12">
+                        <img src="/static/img/video-placeholder.jpg" width="100%">
+                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12">
+                        <div class="form-group">
+                            <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
+                            <input type="text" class="form-control" name="channelName" id="channelName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="channeltopic" class="col-form-label"><b>Topic</b></label>
+                            <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                                {% for topic in topics %}
+                                <option value={{topic.id}}>{{topic.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                        {% if sysSettings.allowRecording == True %}
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                            </div>
+                            <div class="col-6">
+                                <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect">
+                            </div>
+                        </div>
+                        {% endif %}
 
-                </td>
-                {% if sysSettings.allowRecording == True %}
-                <td>
-                    <label class="switch">
-                      <input type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
-                      <span class="slider round"></span>
-                    </label>
-                </td>
-                {% endif %}
-                <td>
-                    <label class="switch">
-                      <input type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
-                      <span class="slider round"></span>
-                    </label>
-                </td>
-                <td>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
-                        <div class="input-group-append">
-                            <span class="input-group-text" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></span>
+                        <div class="form-group row">
+                            <div class="col-6">
+                                <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
+                            </div>
+                            <div class="col-6">
+                                <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" >
+                            </div>
                         </div>
                     </div>
-                </td>
-                <input type="hidden" id="type" name="type" value="change">
-                <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
-                <td><input type="submit" class="btn btn-success" value="&#128393;"></td>
-                </form>
-                <td><a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
-
-
-
-          </tr>
-          {% endfor %}
-          <tr scope="row">
-            <form action="/settings/channels" method="post">
-                <td><input type="text" class="form-control" name="channelName" id="channelName" value="" required> </td>
-                <td>
-                    <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                        {% for topic in topics %}
-                        <option value={{topic.id}}>{{topic.name}}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td></td>
-                {% if sysSettings.allowRecording == True %}
-                <td>
-                    <label class="switch">
-                      <input type="checkbox" id="recordSelect" name="recordSelect">
-                      <span class="slider round"></span>
-                    </label>
-                </td>
-                {% endif %}
-                <td>
-                    <label class="switch">
-                      <input type="checkbox" id="chatSelect" name="chatSelect">
-                      <span class="slider round"></span>
-                    </label>
-                </td>
-                <td></td>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="description" class="col-form-label"><b>Description</b></label>
+                            <textarea class="form-control" name="description" id="description" value=""></textarea>
+                        </div>
+                    </div>
+                </div>
                 <input type="hidden" id="type" name="type" value="new">
-                <td><input type="submit" class="btn btn-success" value="&#43;"></td>
-                <td></td>
             </form>
-          </tr>
-          </tbody>
-      </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <input type="submit" class="btn btn-success" value="Save">
+      </div>
     </div>
-</div>-->
+  </div>
+</div>
+
+
 <script>
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
