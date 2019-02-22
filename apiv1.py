@@ -134,6 +134,13 @@ class api_1_ListChannel(Resource):
                         if filePath != '/var/www/videos/':
                             shutil.rmtree(filePath, ignore_errors=True)
 
+                        channelVid = channelQuery.recordedVideo
+                        channelUpvotes = channelQuery.upvotes
+                        channelStreams = channelQuery.stream
+
+                        db.session.delete(channelVid)
+                        db.session.delete(channelUpvotes)
+                        db.session.delete(channelStreams)
                         db.session.delete(channelQuery)
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
