@@ -138,9 +138,12 @@ class api_1_ListChannel(Resource):
                         channelUpvotes = channelQuery.upvotes
                         channelStreams = channelQuery.stream
 
-                        db.session.delete(channelVid)
-                        db.session.delete(channelUpvotes)
-                        db.session.delete(channelStreams)
+                        for entry in channelVid:
+                            db.session.delete(entry)
+                        for entry in channelUpvotes:
+                            db.session.delete(entry)
+                        for entry in channelStreams:
+                            db.session.delete(entry)
                         db.session.delete(channelQuery)
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
