@@ -32,10 +32,12 @@ api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users
 
 channelParserPut = reqparse.RequestParser()
 channelParserPut.add_argument('channelName', type=str)
+channelParserPut.add_argument('description', type=str)
 channelParserPut.add_argument('topicID', type=int)
 
 channelParserPost = reqparse.RequestParser()
 channelParserPost.add_argument('channelName', type=str, required=True)
+channelParserPost.add_argument('description', type=str, required=True)
 channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
@@ -70,7 +72,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'],args['description'])
                     db.session.add(newChannel)
                     db.session.commit()
 
@@ -104,6 +106,9 @@ class api_1_ListChannel(Resource):
                         if 'channelName' in args:
                             if args['channelName'] is not None:
                                 channelQuery.channelName = args['channelName']
+                        if 'description' in args:
+                            if args['description'] is not None:
+                                channelQuery.description = args['channelName']
                         if 'topicID' in args:
                             if args['topicID'] is not None:
                                 possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
