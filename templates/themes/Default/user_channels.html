@@ -20,11 +20,13 @@
                             <div class="card m-2 shadow">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-xl-6 col-lg-6 col-md-12" style="max-height:375px;">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
                                             {% if channel.imageLocation == None %}
                                             <img src="/static/img/video-placeholder.jpg" width="100%">
                                             {% else %}
-                                            <img src="/images/{{channel.imageLocation}}" width="100%">
+                                            <div style="max-height:315px;">
+                                                <img src="/images/{{channel.imageLocation}}" width="100%">
+                                            </div>
                                             {% endif %}
                                             <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                                         </div>
