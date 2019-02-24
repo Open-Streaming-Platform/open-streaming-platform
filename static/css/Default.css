@@ -62,7 +62,7 @@
 
 .stream-img {
     width:100%;
-    object-fit: cover;
+    object-fit: contain;
     max-height:315px;
     overflow:hidden;
 }
