@@ -32,6 +32,7 @@
         </div>
     </div>
     {% endif %}
+    <div class="justify-content-center" style="width:85%;padding-top:15px;">
     <div class="streamList d-flex align-content-around flex-wrap">
         {% for stream in openStreams %}
             <div class="streamcard flip-in-ver-right" id="stream_{{stream.id}}">
@@ -79,6 +80,7 @@
             </div>
           {% endfor %}
 
+    </div>
     </div>
 {% endblock %}
 
