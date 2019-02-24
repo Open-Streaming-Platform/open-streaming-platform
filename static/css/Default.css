@@ -249,7 +249,7 @@
     }
 
     .streamList {
-        margin-left: 0px;
+
     }
 
     .streamcard {
@@ -257,7 +257,7 @@
     }
 
     .streamcard-item {
-        width: 375px;
+        width: 100%;
         height: 450px;
     }
 
