@@ -13,27 +13,29 @@
             <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
     </div>
-    <div class="streamList d-flex align-content-around flex-wrap">
-    {% for channel in channelList %}
-        <div class="streamcard">
-            <a href="/channel/{{channel.id}}/">
-                <div class="stream shadow card p-2 streamcard-item">
-                    <img class="stream-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <div class="card-body">
-                        <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
-                        <p class="card-text">
-                        <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"><b> {{channel.topic|get_topicName}}</b></div> <br>
-                        <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b>
-                        </p>
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="streamList d-flex align-content-around flex-wrap">
+        {% for channel in channelList %}
+            <div class="streamcard">
+                <a href="/channel/{{channel.id}}/">
+                    <div class="stream shadow card p-2 streamcard-item">
+                        <img class="stream-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-body">
+                            <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
+                            <p class="card-text">
+                            <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"><b> {{channel.topic|get_topicName}}</b></div> <br>
+                            <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b>
+                            </p>
+                        </div>
+                        <div class="streamcard-footer bg-transparent">
+                            <i class="fas fa-users"></i> {{channel.views}}
+                        </div>
                     </div>
-                    <div class="streamcard-footer bg-transparent">
-                        <i class="fas fa-users"></i> {{channel.views}}
-                    </div>
-                </div>
 
-            </a>
+                </a>
+            </div>
+        {% endfor %}
         </div>
-    {% endfor %}
     </div>
 {% endblock %}
 

@@ -13,19 +13,21 @@
             <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
     </div>
-    <div class="streamList d-flex align-content-around flex-wrap">
-    {% for streamer in streamerList %}
-        <div class="streamcard">
-            <a href="/streamers/{{streamer.id}}/">
-                <div class="stream shadow card p-2 streamercard-item">
-                    <img class="streamer-img card-img-top shadow" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-                    <div class="card-body">
-                        <h5 class="card-title text-shadow-close">{{streamer.username}}</h5>
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="streamList d-flex align-content-around flex-wrap">
+        {% for streamer in streamerList %}
+            <div class="streamcard">
+                <a href="/streamers/{{streamer.id}}/">
+                    <div class="stream shadow card p-2 streamercard-item">
+                        <img class="streamer-img card-img-top shadow" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                        <div class="card-body">
+                            <h5 class="card-title text-shadow-close">{{streamer.username}}</h5>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+        {% endfor %}
         </div>
-    {% endfor %}
     </div>
 {% endblock %}
 

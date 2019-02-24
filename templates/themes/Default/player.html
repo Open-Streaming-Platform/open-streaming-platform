@@ -90,27 +90,29 @@
               <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                   <h5 class="card-header">Other Videos from this Channel</h5>
                   <div class="card-body">
-                      <div class="streamList d-flex align-content-around flex-wrap">
-                          {% for video in stream.channel.recordedVideo %}
-                              {% if video.pending == False %}
-                                <div class="streamcard">
-                                  <a href="/play/{{video.id}}">
-                                      <div class="stream shadow card p-2 streamcard-item">
-                                        <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5><br>
-                                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                      <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+                          <div class="streamList d-flex align-content-around flex-wrap">
+                              {% for video in stream.channel.recordedVideo %}
+                                  {% if video.pending == False %}
+                                    <div class="streamcard">
+                                      <a href="/play/{{video.id}}">
+                                          <div class="stream shadow card p-2 streamcard-item">
+                                            <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5><br>
+                                                <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                                                <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
+                                            </div>
+                                            <div class="streamcard-footer bg-transparent">
+                                                <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
+                                                <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
+                                            </div>
                                         </div>
-                                        <div class="streamcard-footer bg-transparent">
-                                            <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
-                                            <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
-                                        </div>
+                                      </a>
                                     </div>
-                                  </a>
-                                </div>
-                              {% endif %}
-                          {% endfor %}
+                                  {% endif %}
+                              {% endfor %}
+                          </div>
                       </div>
                   </div>
               </div>

@@ -13,19 +13,21 @@
             <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
         </div>
     </div>
-    <div class="streamList d-flex align-content-around flex-wrap">
-    {% for topic in topicsList %}
-        <div class="streamcard">
-            <a href="/topic/{{topic.id}}/">
-                <div class="stream shadow card p-2 topiccard-item">
-                    <img class="topic-img card-img-top shadow" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <div class="card-body">
-                        <h5 class="card-title text-shadow-close">{{topic.name}}</h5>
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="streamList d-flex align-content-around flex-wrap">
+        {% for topic in topicsList %}
+            <div class="streamcard">
+                <a href="/topic/{{topic.id}}/">
+                    <div class="stream shadow card p-2 topiccard-item">
+                        <img class="topic-img card-img-top shadow" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-body">
+                            <h5 class="card-title text-shadow-close">{{topic.name}}</h5>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
+        {% endfor %}
         </div>
-    {% endfor %}
     </div>
 {% endblock %}
 
