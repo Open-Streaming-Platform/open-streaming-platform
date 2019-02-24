@@ -102,7 +102,7 @@
                       <h5 class="card-header">Other Videos from this Channel</h5>
                       <div class="card-body">
                         <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
-                              <div class="streamList d-flex align-content-around flex-wrap" style="position:relative;left:-18px;">
+                              <div class="streamList d-flex justify-content-center flex-wrap">
                                   {% for vid in randomRecorded%}
                                     {% if vid.id != video.id and vid.pending != True%}
                                     <div class="streamcard">
