@@ -20,8 +20,7 @@
                           <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                         </p>
                     </video>
-              </div>
-              <div class="video-buttons-mobile justify-content-center">
+                    <div class="video-buttons-mobile justify-content-center">
                   <div>
                     <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
                         <i class="fas fa-comment"></i>
@@ -39,7 +38,7 @@
                       </div>
                   {% endif %}
               </div>
-              <div class="White-BG streamInfo shadow">
+                    <div class="White-BG streamInfo shadow">
                   <div class="video-buttons-lg">
                       {% if stream.channel.owningUser == current_user.id %}
                       <div class="float-right" style="margin-left:5px;">
@@ -71,9 +70,9 @@
                       <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
                   </div>
               </div>
-          </div>
-          {% if stream.channel.chatEnabled == True %}
-            <div class="col-xl-3 col-lg-12 d-none d-xl-block" id="chatBlock">
+              </div>
+              {% if stream.channel.chatEnabled == True %}
+                <div class="col-xl-3 col-lg-12 .d-none .d-xl-block" id="chatBlock">
                   <div class="chatbox" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
@@ -81,42 +80,42 @@
                       <a href="#" onClick="MyWindows=window.open('/view/{{stream.channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
                   </div>
                 </div>
-          {% endif %}
+              {% endif %}
           </div>
 
-          {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
-          <div class="row justify-content-center" style="padding-bottom:50px;">
-              <div class="{% if stream.channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
-                  <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
-                      <h5 class="card-header">Other Videos from this Channel</h5>
-                      <div class="card-body">
-                          <div class="streamList d-flex align-content-around flex-wrap">
-                              {% for video in stream.channel.recordedVideo %}
-                                  {% if video.pending == False %}
-                                    <div class="streamcard">
-                                      <a href="/play/{{video.id}}">
-                                          <div class="stream shadow card p-2 streamcard-item">
-                                            <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                            <div class="card-body">
-                                                <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5><br>
-                                                <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
-                                                <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
-                                            </div>
-                                            <div class="streamcard-footer bg-transparent">
-                                                <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
-                                                <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
-                                            </div>
+      {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
+      <div class="row justify-content-center" style="padding-bottom:50px;">
+          <div class="{% if stream.channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
+              <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
+                  <h5 class="card-header">Other Videos from this Channel</h5>
+                  <div class="card-body">
+                      <div class="streamList d-flex align-content-around flex-wrap">
+                          {% for video in stream.channel.recordedVideo %}
+                              {% if video.pending == False %}
+                                <div class="streamcard">
+                                  <a href="/play/{{video.id}}">
+                                      <div class="stream shadow card p-2 streamcard-item">
+                                        <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5><br>
+                                            <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
+                                            <i class="fas fa-calendar-alt"></i> <b>{{video.videoDate|normalize_date}}</b> <br>
                                         </div>
-                                      </a>
+                                        <div class="streamcard-footer bg-transparent">
+                                            <div class="float-left"><i class="fas fa-users"></i> {{video.views}}</div>
+                                            <div class="float-right"><i class="fas fa-clock"></i> {{video.length|hms_format}}</div>
+                                        </div>
                                     </div>
-                                  {% endif %}
-                              {% endfor %}
-                          </div>
+                                  </a>
+                                </div>
+                              {% endif %}
+                          {% endfor %}
                       </div>
                   </div>
               </div>
           </div>
-          {% endif %}
+      </div>
+      {% endif %}
     </div>
 
 {% if stream.channel.owningUser == current_user.id %}
