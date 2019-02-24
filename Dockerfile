@@ -17,7 +17,8 @@ RUN apk add alpine-sdk \
   openssl-dev \
   wget \
   git \
-  linux-headers
+  linux-headers \
+  zlib-dev
 
 RUN apk add --no-cache bash
 
@@ -47,7 +48,7 @@ RUN cd /tmp && \
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --with-http_ssl_module \
-  --without-http_gzip_module \
+  --with-cc-opt="-Wimplicit-fallthrough=0" \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
