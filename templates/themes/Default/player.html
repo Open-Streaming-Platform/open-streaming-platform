@@ -73,7 +73,7 @@
               </div>
               </div>
               {% if stream.channel.chatEnabled == True %}
-              <div class="col-xl-3 col-lg-12 d-none d-xl-block" id="chatBlock">
+              <div class="col-xl-3 col-lg-12 .d-none .d-xl-block" id="chatBlock">
                   <div class="chatbox" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
