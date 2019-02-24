@@ -33,7 +33,7 @@
     </div>
     {% endif %}
     <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
-    <div class="streamList d-flex flex-wrap">
+    <div class="streamList d-flex align-content-around flex-wrap">
         {% for stream in openStreams %}
             <div class="streamcard flip-in-ver-right" id="stream_{{stream.id}}">
                 <a href="/view/{{stream.channel.channelLoc}}/">
