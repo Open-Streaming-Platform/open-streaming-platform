@@ -16,7 +16,7 @@
     <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
         <div class="streamList d-flex align-content-around flex-wrap">
         {% for channel in channelList %}
-            <div class="streamcard m-2">
+            <div class="streamcard m-1">
                 <a href="/channel/{{channel.id}}/">
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="stream-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
