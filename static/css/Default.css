@@ -95,7 +95,6 @@
     height:365px;
 }
 
-
 .card-title {
     height:48px;
 }
@@ -110,12 +109,15 @@
 
 .topic-img {
     width:100%;
-    height:150px;
+    object-fit: contain;
+    max-height:315px;
+    overflow:hidden;
 }
 
 .streamer-img {
-    width:280px;
-    height:280px;
+    object-fit: contain;
+    max-height:315px;
+    overflow:hidden;
 }
 
 .shadow{
@@ -264,7 +266,7 @@
 
     .topiccard-item {
         width:100%;
-        height:450px;
+        height:400px;
     }
 
     .video-buttons-lg {
