@@ -259,6 +259,11 @@
         width:100%;
     }
 
+    .streamercard-item {
+        width: 100%;
+        height:450px;
+    }
+
     .streamcard-item {
         width: 100%;
         height: 450px;
