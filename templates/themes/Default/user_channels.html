@@ -24,8 +24,8 @@
                                             {% if channel.imageLocation == None %}
                                             <img src="/static/img/video-placeholder.jpg" width="100%">
                                             {% else %}
-                                            <div class="stream-img">
-                                                <img src="/images/{{channel.imageLocation}}" width="100%">
+                                            <div>
+                                                <img src="/images/{{channel.imageLocation}}" class="stream-img card-img-top shadow" width="100%">
                                             </div>
                                             {% endif %}
                                             <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
