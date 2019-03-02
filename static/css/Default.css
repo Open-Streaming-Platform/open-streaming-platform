@@ -65,6 +65,7 @@
     object-fit: contain;
     max-height:315px;
     overflow:hidden;
+    background-color:black;
 }
 
 .streamcard-footer {
