@@ -5,7 +5,7 @@
     <title>{{stream.streamName}} - Chat</title>
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
-    <link rel=stylesheet type=text/css href="/static/css/main.css">
+    <link rel=stylesheet type=text/css href="/static/css/{{sysSettings.systemTheme}}.css">
     <link rel=stylesheet type=text/css href="/static/css/slider.css">
     <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
@@ -85,9 +85,9 @@
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
             if (data['flags'] === 'Owner') {
-                $('#chat').prepend('<div class="chatBar-Item slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+                $('#chat').prepend('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             } else {
-                $('#chat').prepend('<div class="chatBar-Item slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+                $('#chat').prepend('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 0 }, "fast");
         });
