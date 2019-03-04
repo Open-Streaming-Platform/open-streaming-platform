@@ -31,6 +31,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
+* [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
 * [Socket.io] - Real-Time Communications Engine Between Client and Server
