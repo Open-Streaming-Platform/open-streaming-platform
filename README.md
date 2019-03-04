@@ -40,6 +40,14 @@ Open Streaming Platform uses a number of open source projects to work properly:
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
+## Git Branches
+
+OSP's Git Branches are setup in the following configuration
+* **master** - Current Release Branch
+* **release/(Version)** - Previous Official Releases
+* **development** - Current Nightly Branch for OSP vNext
+* **feature/(Name)** - In-progress Feature Builds to be merged with the Development Branch   
+
 ## Installation
 
 ### Standard Install
