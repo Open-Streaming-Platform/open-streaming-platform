@@ -139,6 +139,8 @@ class api_1_ListChannel(Resource):
                         channelStreams = channelQuery.stream
 
                         for entry in channelVid:
+                            for upvote in channelVid.upvotes:
+                                db.session.delete(upvote)
                             db.session.delete(entry)
                         for entry in channelUpvotes:
                             db.session.delete(entry)
