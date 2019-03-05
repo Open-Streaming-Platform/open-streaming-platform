@@ -95,6 +95,14 @@
     height:365px;
 }
 
+.channel-img {
+    width:100%;
+    object-fit: contain;
+    max-height:315px;
+    overflow:hidden;
+    background-color:black;
+}
+
 .card-title {
     height:48px;
 }
