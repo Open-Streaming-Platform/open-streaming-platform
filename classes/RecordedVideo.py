@@ -18,12 +18,12 @@ class RecordedVideo(db.Model):
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate):
         self.videoDate = videoDate
-        self.owningUser=owningUser
-        self.channelID=channelID
-        self.channelName=channelName
-        self.topic=topic
-        self.views=views
-        self.videoLocation=videoLocation
+        self.owningUser = owningUser
+        self.channelID = channelID
+        self.channelName = channelName
+        self.topic = topic
+        self.views = views
+        self.videoLocation = videoLocation
         self.pending = True
 
     def __repr__(self):
