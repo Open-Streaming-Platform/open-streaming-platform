@@ -1,5 +1,4 @@
 from .shared import db
-import datetime
 
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
@@ -17,8 +16,8 @@ class RecordedVideo(db.Model):
     pending = db.Column(db.Boolean)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
 
-    def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
-        self.videoDate = datetime.datetime.now()
+    def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate):
+        self.videoDate = videoDate
         self.owningUser=owningUser
         self.channelID=channelID
         self.channelName=channelName
