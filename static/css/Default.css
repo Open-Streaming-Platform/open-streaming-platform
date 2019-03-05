@@ -64,7 +64,6 @@
     width:100%;
     object-fit: contain;
     max-height:315px;
-    overflow:hidden;
     background-color:black;
 }
 
