@@ -358,6 +358,8 @@
 <script>
     var ctx = document.getElementById('viewershipChart').getContext('2d');
 
+    ctx.canvas.width = 1000;
+    ctx.canvas.height = 300;
     var chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'line',
@@ -370,6 +372,7 @@
                 fill: false,
                 borderColor: 'rgb(255, 0, 0)',
                 spanGaps: true,
+                lineTension: 0,
                 data:[
                     {% for entry in statsViewsDay['live'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
@@ -380,6 +383,7 @@
                 fill: false,
                 borderColor: 'rgb(0, 0, 255)',
                 spanGaps: true,
+                lineTension: 0,
                 data:[
                     {% for entry in statsViewsDay['recorded'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
