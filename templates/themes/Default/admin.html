@@ -372,7 +372,7 @@
                 borderColor: 'rgb(255, 99, 132)',
                 data:[
                     {% for entry in statsViewsDay['live'] %}
-                        {{entry}},
+                        {t:{{entry['t']}},x:{{entry['y']}},
                     {% endfor %}
                 ]},
                 {
@@ -381,7 +381,7 @@
                 borderColor: 'rgb(255, 99, 132)',
                 data:[
                     {% for entry in statsViewsDay['recorded'] %}
-                        {{entry}},
+                        {t:{{entry['t']}},x:{{entry['y']}},
                     {% endfor %}
                 ]
             }]
