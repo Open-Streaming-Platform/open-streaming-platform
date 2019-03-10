@@ -43,7 +43,7 @@
                                 <div>
                                     <h2><i class="fas fa-server"></i> Server Info</h2><br>
                                     <b><img src="/static/img/logo.png" width="64px" height="64px"> Open Streaming Platform</b><br>
-                                    <div style="margin-left:68px;">
+                                    <div style="margin-left:70px;">
                                         <b>Server Version:</b> Pre-Beta 1 <br>
                                         <b>Git Branch:</b> {{repoBranch}} <br>
                                         <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
@@ -73,6 +73,11 @@
                                 <div class="card">
                                     <div class="card-header"><i class="fas fa-chart-bar"></i> Viewer Stats</div>
                                     <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="callout callout-primary"><h4>Current Stream Viewers</h4><br><h2>{{currentViewers}}</h2></div>
+                                            </div>
+                                        </div>
                                         <div id="statChart">
                                             <canvas id="viewershipChart" width="400" height="400"></canvas>
                                         </div>
@@ -358,7 +363,7 @@
 <script>
     var ctx = document.getElementById('viewershipChart').getContext('2d');
     ctx.canvas.width = 1024
-    ctx.canvas.height = 370;
+    ctx.canvas.height = 380;
     var chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'line',
