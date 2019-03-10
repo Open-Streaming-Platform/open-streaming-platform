@@ -367,9 +367,9 @@
 
             datasets: [{
                 label: "Live Viewers",
-                fill: false;
+                fill: false,
                 borderColor: 'rgb(255, 0, 0)',
-                spanGaps: true;
+                spanGaps: true,
                 data:[
                     {% for entry in statsViewsDay['live'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
@@ -379,7 +379,7 @@
                 label: "Video Viewers",
                 fill: false,
                 borderColor: 'rgb(0, 0, 255)',
-                spanGaps: true;
+                spanGaps: true,
                 data:[
                     {% for entry in statsViewsDay['recorded'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
