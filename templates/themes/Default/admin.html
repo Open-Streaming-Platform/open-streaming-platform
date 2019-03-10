@@ -370,13 +370,20 @@
                 label: "Live Viewers",
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: {{statsViewsDay['live']}},
-            },
+                data:[
+                    {% for entry in statsViewsDay['live'] %}
+                        {{entry}},
+                    {% endfor %}
+                ]},
                 {
                 label: "Video Viewers",
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: {{statsViewsDay['recorded']}},
+                data:[
+                    {% for entry in statsViewsDay['live'] %}
+                        {{entry}},
+                    {% endfor %}
+                ]
             }]
         },
 
