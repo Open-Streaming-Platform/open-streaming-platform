@@ -4,6 +4,7 @@
 <title>{{sysSettings.siteName}} - Administration Page</title>
 
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
+<script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -63,6 +64,16 @@
                                         <div class="progress">
                                           <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-chart-bar"></i> Viewer Stats</div>
+                                    <div class="card-body">
+                                        <canvas id="viewershipChart" width="100%" height="100%"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -339,6 +350,33 @@
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%')
 
+    });
+</script>
+<script>
+    var ctx = document.getElementById('viewershipChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [{
+                label: "Live Viewers",
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [0, 10, 5, 2, 20, 30, 45],
+            },
+                {
+                label: "Video Viewers",
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [0, 10, 5, 2, 20, 30, 45],
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
     });
 </script>
 {% endblock %}
