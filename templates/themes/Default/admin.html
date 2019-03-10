@@ -372,16 +372,16 @@
                 borderColor: 'rgb(255, 99, 132)',
                 data:[
                     {% for entry in statsViewsDay['live'] %}
-                        {t:{{entry['t']}},y:{{entry['y']}}},
+                        {x:{{entry['t']}},y:{{entry['y']}}},
                     {% endfor %}
                 ]},
                 {
                 label: "Video Viewers",
-                backgroundColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(255, 0, 132)',
                 borderColor: 'rgb(255, 99, 132)',
                 data:[
                     {% for entry in statsViewsDay['recorded'] %}
-                        {t:{{entry['t']}},y:{{entry['y']}}},
+                        {x:{{entry['t']}},y:{{entry['y']}}},
                     {% endfor %}
                 ]
             }]
@@ -392,6 +392,10 @@
             scales: {
                 xAxes: [{
                     type: 'time',
+                    time: {
+                        parser: 'YYYY-MM-DD',
+                        unit: 'day'
+                    }
                 }],
             }
         }
