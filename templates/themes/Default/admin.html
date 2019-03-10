@@ -365,23 +365,32 @@
 
         // The data for our dataset
         data: {
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
+
             datasets: [{
                 label: "Live Viewers",
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: [0, 10, 5, 2, 20, 30, 45],
+                data: statsViewsDay['live'],
             },
                 {
                 label: "Video Viewers",
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: [0, 10, 5, 2, 20, 30, 45],
+                data: statsViewsDay['recorded'],
             }]
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }]
+            }
+        }
     });
 </script>
 {% endblock %}
