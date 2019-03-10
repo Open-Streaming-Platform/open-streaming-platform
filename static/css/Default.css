@@ -235,7 +235,6 @@
     padding: 20px;
     margin: 20px 0;
     border: 1px solid #eee;
-    border-left-width: 5px;
     border-radius: 3px;
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
@@ -259,6 +258,9 @@
 }
 .callout-success{
     background-color:#5cb85c;
+}
+.callout-danger{
+    background-color:#ff253a;
 }
 
 @media screen and (max-width: 1024px) {
