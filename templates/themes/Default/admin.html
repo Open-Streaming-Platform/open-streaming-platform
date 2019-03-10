@@ -77,7 +77,6 @@
                                         <div id="statChart">
                                             <canvas id="viewershipChart" width="400" height="400"></canvas>
                                         </div>
-                                        {{statsViewsDay}}
                                     </div>
                                 </div>
                             </div>
@@ -368,8 +367,9 @@
 
             datasets: [{
                 label: "Live Viewers",
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                fill: false;
+                borderColor: 'rgb(255, 0, 0)',
+                spanGaps: true;
                 data:[
                     {% for entry in statsViewsDay['live'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
@@ -377,8 +377,9 @@
                 ]},
                 {
                 label: "Video Viewers",
-                backgroundColor: 'rgb(255, 0, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                fill: false,
+                borderColor: 'rgb(0, 0, 255)',
+                spanGaps: true;
                 data:[
                     {% for entry in statsViewsDay['recorded'] %}
                         {x:'{{entry['t']}}',y:{{entry['y']}}},
