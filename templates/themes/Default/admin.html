@@ -328,6 +328,8 @@
 <script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
+        var searchbar = document.getElementById("search").value
+        searchbar = ''
         $('.settingsOption').hide();
         $(divid).show();
     }
