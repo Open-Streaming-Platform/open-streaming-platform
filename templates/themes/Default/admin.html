@@ -242,6 +242,7 @@
 
                 <div class="settingsOption" id="channelsList" style="display:none;">
                     <h5>Channels List</h5>
+                    <br>
                     <div class="container-fluid">
                         {% for channel in channelList %}
                         <div class="row">
@@ -253,7 +254,7 @@
                                   </div>
                                   <div class="card-body">
                                     <div class="row">
-                                      <div class="col-xl-3"><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></div>
+                                      <div class="col-xl-3 channel-img"><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></div>
                                       <div class="col-xl-3">
                                         <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
                                         <i class="fas fa-user"></i> {{channel.owningUser|get_userName}} <br>
