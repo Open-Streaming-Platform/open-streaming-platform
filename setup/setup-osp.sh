@@ -62,3 +62,7 @@ sudo apt-get install ffmpeg -y
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
+# Fix Gunicorn Log Permissions
+sudo chown -R www-data:www-data /var/log/gunicorn
+sudo systemctl restart osp
+
