@@ -242,42 +242,6 @@
 
                 <div class="settingsOption" id="channelsList" style="display:none;">
                     <h5>Channels List</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">Channel ID</th>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Channel Location</th>
-                                    <th scope="col">Topic</th>
-                                    <th scope="col">Views</th>
-                                    <th scope="col">Recording Enabled</th>
-                                    <th scope="col">Chat Enabled</th>
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Disk Usage</th>
-                                    <th scope="col">Options</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for channel in channelList %}
-                            <tr>
-                                <td>{{channel.id}}</td>
-                                <td>{{channel.owningUser|get_userName}}</td>
-                                <td>{{channel.channelName}}</td>
-                                <td>{{channel.channelLoc}}</td>
-                                <td>{{channel.topic|get_topicName}}</td>
-                                <td>{{channel.views}}</td>
-                                <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}} </span></td>
-                                <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
-                                <td><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></td>
-                                <td>{{channel.channelLoc|get_diskUsage}}</td>
-                                <td><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a></td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
                     <div class="container-fluid">
                         {% for channel in channelList %}
                         <div class="row">
@@ -290,14 +254,14 @@
                                   <div class="card-body">
                                     <div class="row">
                                       <div class="col-2"><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></div>
-                                      <div class="col-2">
+                                      <div class="col-3">
                                         <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
                                         <i class="fas fa-user"></i> {{channel.owningUser|get_userName}} <br>
                                         <i class="fas fa-terminal"></i> {{channel.channelLoc}} <br>
                                         <i class="fas fa-eye"></i> {{channel.views}} <br>
                                         <i class="fas fa-hdd"></i> {{channel.channelLoc|get_diskUsage}} <br>
                                       </div>
-                                      <div class="col-3">
+                                      <div class="col-4">
                                         <i class="fas fa-paragraph"></i> {{channel.description}}<br>
                                       </div>
                                       <div class="col-3">
@@ -309,6 +273,7 @@
                                 </div>
                             </div>
                         </div>
+                        <br>
                         {% endfor %}
                     </div>
                 </div>
