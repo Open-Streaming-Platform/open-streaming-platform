@@ -278,6 +278,39 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="container-fluid">
+                        {% for channel in channelList %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow">
+                                  <div class="card-header">
+                                    <b>{{channel.channelName}}</b>
+                                    <div class="float-right"><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a></button></div>
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-2"><img src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:234px;height:116px;"></div>
+                                      <div class="col-2">
+                                        <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
+                                        <i class="fas fa-user"></i> {{channel.owningUser|get_userName}} <br>
+                                        <i class="fas fa-terminal"></i> {{channel.channelLoc}} <br>
+                                        <i class="fas fa-eye"></i> {{channel.views}} <br>
+                                        <i class="fas fa-hdd"></i> {{channel.channelLoc|get_diskUsage}} <br>
+                                      </div>
+                                      <div class="col-3">
+                                        <i class="fas fa-paragraph"></i> {{channel.description}}<br>
+                                      </div>
+                                      <div class="col-3">
+                                        <i class="fas fa-comment"></i> <span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span> <br>
+                                          <i class="fas fa-save"></i> <span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span>  <br>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="settingsOption" id="streamsList" style="display:none;">
                     <h5>Stream List</h5>
