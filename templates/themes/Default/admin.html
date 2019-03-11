@@ -243,11 +243,19 @@
                 <div class="settingsOption" id="channelsList" style="display:none;">
                     <h5>Channels List</h5>
                     <br>
+                    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+                        <div class="input-group">
+                            <div class="input-group-prepend shadow">
+                                <div class="input-group-text"><i class="fas fa-search"></i></div>
+                            </div>
+                            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
+                        </div>
+                    </div>
                     <div class="container-fluid">
                         {% for channel in channelList %}
                         <div class="row">
                             <div class="col-12">
-                                <div class="card shadow">
+                                <div class="card shadow searchable">
                                   <div class="card-header">
                                       <b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b>
                                     <div class="float-right"><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a></button></div>
@@ -412,5 +420,18 @@
         }
     });
 </script>
+
+<script>
+$('#search').on('input', function(){
+    var query = document.getElementById("search").value.toLowerCase();
+    $('.searchable').each(function(){
+         var $this = $(this);
+         if($this.text().toLowerCase().indexOf(query) === -1)
+             $this.closest('.searchable').hide();
+        else $this.closest('.searchable').show();
+    });
+});
+</script>
+
 {% endblock %}
 
