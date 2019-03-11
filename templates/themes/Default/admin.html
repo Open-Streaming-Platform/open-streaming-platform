@@ -376,15 +376,16 @@
     ctx.canvas.height = 380;
     var chart = new Chart(ctx, {
         // The type of chart we want to create
-        type: 'line',
+        type: 'bar',
 
         // The data for our dataset
         data: {
 
             datasets: [{
                 label: "Live Viewers",
-                fill: false,
+                fill: true,
                 borderColor: 'rgb(255, 0, 0)',
+                backgroundColor: 'rgb(255, 0, 0)',
                 spanGaps: true,
                 lineTension: 0,
                 data:[
@@ -394,8 +395,9 @@
                 ]},
                 {
                 label: "Video Viewers",
-                fill: false,
+                fill: true,
                 borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
                 spanGaps: true,
                 lineTension: 0,
                 data:[
