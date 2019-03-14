@@ -58,11 +58,11 @@ sudo chown -R www-data:www-data /opt/osp
 #Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
 
-# Start Nginxcd o
-sudo systemctl start nginx.service
-sudo systemctl start osp
-
+# Create Gunicorn Log Directory
+mkdir -p /var/log/gunicorn
 # Fix Gunicorn Log Permissions
 sudo chown -R www-data:www-data /var/log/gunicorn
-sudo systemctl restart osp
 
+# Start Nginx
+sudo systemctl start nginx.service
+sudo systemctl start osp
