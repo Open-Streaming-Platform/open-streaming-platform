@@ -96,7 +96,7 @@ http://[SERVER IP]/
 
 A Dockerfile has been provided for running OSP in a container.  However due to the way NginX, Gunicorn, Flask, and Docker work, for OSP to work properly, the Frontend must be exposed using Port 80 or 443 and the RTSP port from OBS or other streaming software must be exposed on Port 1935.
 
-This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1435 will not be proxied and must be mapped to the same port on the host.
+This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 
 **Recommended Volumes/Mount Points**
 * /var/www - Storage of Images, Streams, and Stored Video Files
