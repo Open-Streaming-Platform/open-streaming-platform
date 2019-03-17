@@ -195,54 +195,71 @@
                 </div>
 
                 <div class="settingsOption" id="topicsList" style="display:none;">
-                    <h5>Topics List</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">Topic Name</th>
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Options</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for topic in topicsList %}
-                            <tr>
+                    <h5>Topics List <button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5>
+                    <div class="container-fluid">
+                        {% for topic in topicsList %}
+                        <div class="row">
+                            <div class="col-12">
                                 <form action="/settings/admin" enctype=multipart/form-data method="post">
-                                    <td>
+                                <div class="card shadow">
+                                  <div class="card-header">
+                                    <div class="row">
+                                      <div class="col-4">
                                         <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
-                                    </td>
-                                    <td>
-                                        <img width="284" height="155" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                        <br>
-                                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
-                                        <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
-                                        <input type="hidden" value="topics" id="settingType" name="settingType">
-                                    </td>
-                                    <td>
-                                        <input type="submit" class="btn btn-success" value="&#128393;">
-                                        <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
-                                    </td>
+                                      </div>
+                                      <div class="col-8">
+                                          <div class="float-right">
+                                            <button type="submit" class="btn btn-success shadow"><i class="fas fa-edit"></i></button>
+                                            <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger shadow"><i class="far fa-trash-alt"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  <div class="card-body">
+                                    <img width="284px" height="155px" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                    <br>
+                                    <div class="custom-file">
+                                      <input type="file" class="custom-file-input" name=photo id="photo">
+                                      <label class="custom-file-label" for="photo">Upload a Photo</label>
+                                    </div>
+                                    <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
+                                    <input type="hidden" value="topics" id="settingType" name="settingType">
+                                  </div>
+                                </div>
                                 </form>
-                            </tr>
+                                <br>
                             {% endfor %}
-                            <tr>
-                                <form action="/settings/admin" enctype=multipart/form-data method="post">
-                                    <td>
-                                        <input type="text" name="name" id="name" class="form-control" required>
-                                    </td>
-                                    <td>
-                                        <img width="284" height="155" src="/static/img/video-placeholder.jpg">
-                                        <br>
-                                        <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
-                                        <input type="hidden" value="topics" id="settingType" name="settingType">
-                                    </td>
-                                    <td>
-                                        <input type="submit" class="btn btn-success" value="&#43;">
-                                </td>
-                                </form>
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newTopicModal" tabindex="-1" role="dialog" aria-labelledby="newTopicModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" enctype=multipart/form-data method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newTopicModalTitle">Create New Topic</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                                <input type="text" name="name" id="name" class="form-control" required>
+                            </div>
+                              <div class="row">
+                                  <img width="284" height="155" src="/static/img/video-placeholder.jpg">
+                                  <br>
+                                  <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                              </div>
+                              <input type="hidden" value="topics" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Create">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                 </div>
 
