@@ -196,22 +196,12 @@
 
                 <div class="settingsOption" id="topicsList" style="display:none;">
                     <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
-
-                    <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
-                        <div class="input-group">
-                            <div class="input-group-prepend shadow">
-                                <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            </div>
-                            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
-                        </div>
-                    </div>
-
                     <div class="container-fluid">
                         {% for topic in topicsList %}
                         <div class="row">
                             <div class="col-12">
                                 <form action="/settings/admin" enctype=multipart/form-data method="post">
-                                <div class="card shadow searchable">
+                                <div class="card shadow">
                                   <div class="card-header">
                                     <div class="row">
                                       <div class="col-4">
