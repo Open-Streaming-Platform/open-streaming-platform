@@ -148,7 +148,7 @@
                             <div class="card-header {% if user.active == True %}bg-success{% else %}bg-secondary{% endif %} text-white">
                                 <b>{{user.username}}</b>
                                 <div class="float-right">
-                                    <a href="/settings/admin?action=disable&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas fa-user-slash"></i></a>
+                                    <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas fa-user-slash"></i></a>
                                     <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow"><i class="far fa-trash-alt"></i></a>
                                 </div>
                             </div>
