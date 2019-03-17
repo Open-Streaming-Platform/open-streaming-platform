@@ -243,13 +243,25 @@
                             </button>
                           </div>
                           <div class="modal-body">
-                            <div class="row">
-                                <input type="text" name="name" id="name" class="form-control" required>
-                            </div>
-                              <div class="row">
-                                  <img width="284" height="155" src="/static/img/video-placeholder.jpg">
-                                  <br>
-                                  <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" name="name" id="name" class="form-control" required>
+                                    </div>
+                                </div>
+                                  <div class="row">
+                                      <div class="col-12">
+                                        <img width="284" height="155" src="/static/img/video-placeholder.jpg">
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-12">
+                                          <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name=photo id="photo">
+                                            <label class="custom-file-label" for="photo">Upload a Photo</label>
+                                          </div>
+                                      </div>
+                                  </div>
                               </div>
                               <input type="hidden" value="topics" id="settingType" name="settingType">
                           </div>
