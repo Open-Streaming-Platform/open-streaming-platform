@@ -115,6 +115,9 @@
                                   <br>
                                   Display Empty Channels, Streamers, and Topics<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="showEmptyTables" name="showEmptyTables" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
+                                  <br>
+                                  Globally Allow Comments (Can be Disabled on a Per Video Basis)<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="allowComments" name="allowComments" {% if sysSettings.allowComments == True %} checked {% endif %}>
                               </div>
                               <div class="col-sm-12 col-md-6">
                                   <h4><i class="fas fa-envelope"></i> Email Settings</h4>
