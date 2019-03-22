@@ -149,15 +149,22 @@
         <form action="/play/{{video.id}}/change" method="post">
       <div class="modal-body">
 
-            <h5>Name of the Stream:</h5>
-            <input type="text" class="form-control" value="{{video.channelName}}" name="newStreamName" required>
-            <br>
-            <h5>Stream Topic:</h5>
-            <select class="form-control" name="newStreamTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                {% for topic in topics %}
-                <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
-                {% endfor %}
-            </select>
+        <h5>Name of the Stream:</h5>
+        <input type="text" class="form-control" value="{{video.channelName}}" name="newStreamName" required>
+        <br>
+        <h5>Stream Topic:</h5>
+        <select class="form-control" name="newStreamTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+            {% for topic in topics %}
+            <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{channel.description}}</textarea>
+        </div>
+
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
