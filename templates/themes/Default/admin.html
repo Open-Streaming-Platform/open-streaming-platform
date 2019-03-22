@@ -340,7 +340,7 @@
                       <div class="card-body">
                         <div class="row">
                           <div class="col-xl-3 col-sm-12">
-                            <img width="284" height="155" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            <img width="100%" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"><br>
                           </div>
                           <div class="col-xl-3 col-sm-12">
                             <i class="fas fa-user"></i> {{stream.channel.owningUser|get_userName}} <br>
