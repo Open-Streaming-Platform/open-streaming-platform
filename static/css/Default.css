@@ -231,6 +231,10 @@
     color:white;
 }
 
+.comment {
+  padding:8px 5px 8px 10px;
+}
+
 .callout {
     padding: 20px;
     margin: 20px 0;
