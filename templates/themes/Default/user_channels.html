@@ -98,14 +98,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr>
+                            <div id="statChart-{{channel.id}}">
+                                <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
+                            </div>
                         </div>
                     <input type="hidden" id="type" name="type" value="change">
                     <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
                     </form>
-                    <hr>
-                    <div id="statChart-{{channel.id}}">
-                        <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
-                    </div>
                     {% endfor %}
                 </div>
             </div>
