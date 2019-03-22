@@ -150,10 +150,10 @@
       <div class="modal-body">
 
         <h5>Name of the Stream:</h5>
-        <input type="text" class="form-control" value="{{video.channelName}}" name="newStreamName" required>
+        <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
         <br>
         <h5>Stream Topic:</h5>
-        <select class="form-control" name="newStreamTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+        <select class="form-control" name="newVidTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
             {% for topic in topics %}
             <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
             {% endfor %}
@@ -161,7 +161,7 @@
         <br>
         <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>
-            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{channel.description}}</textarea>
+            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
         </div>
 
 
