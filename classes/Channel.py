@@ -15,11 +15,12 @@ class Channel(db.Model):
     chatEnabled = db.Column(db.Boolean)
     imageLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
+    allowComments = db.Column(db.Boolean)
     stream = db.relationship('Stream', backref='channel', lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")
 
-    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, description):
+    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
         self.streamKey = streamKey
         self.channelName = channelName
@@ -27,6 +28,7 @@ class Channel(db.Model):
         self.topic = topic
         self.channelLoc = str(uuid.uuid4())
         self.record = record
+        self.allowComments = allowComments
         self.chatEnabled = chatEnabled
         self.views = 0
 
