@@ -232,7 +232,7 @@
 }
 
 .comments-box {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 400px;
 }
 
