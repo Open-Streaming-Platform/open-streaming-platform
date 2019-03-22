@@ -339,10 +339,10 @@
                       <div class="card-header"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></div>
                       <div class="card-body">
                         <div class="row">
-                          <div class="col-3">
+                          <div class="col-xl-3 col-sm-12">
                             <img width="284" height="155" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                           </div>
-                          <div class="col-3">
+                          <div class="col-xl-3 col-sm-12">
                             <i class="fas fa-user"></i> {{stream.channel.owningUser|get_userName}} <br>
                             <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
                             <i class="fas fa-eye"></i> {{stream.currentViewers}} <br>
