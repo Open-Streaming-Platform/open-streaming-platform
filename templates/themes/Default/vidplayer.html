@@ -168,6 +168,14 @@
             <label for="description" class="col-form-label"><b>Description</b></label>
             <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
         </div>
+        <div class="form-group row">
+            <div class="col-6">
+                <label for="chatSelect" class="col-form-label"><b>Allow Comments on This Video</b></label>
+            </div>
+            <div class="col-6">
+                <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
+            </div>
+        </div>
 
 
       </div>
