@@ -233,7 +233,7 @@
                 spanGaps: true,
                 lineTension: 0,
                 data:[
-                    {% for entry in viewStats[{{chan}}]['recorded'] %}
+                    {% for entry in viewStats[chan]['recorded'] %}
                         {x:{{entry['t']}},y:{{entry['y']}}},
                     {% endfor %}
                 ]
