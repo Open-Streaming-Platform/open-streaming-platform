@@ -27,6 +27,11 @@
                           </a>
                       </div>
                       <div style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled {% endif %}>
+                                  <i class="fas fa-comment"></i>
+                              </button>
+                      </div>
+                      <div style="margin-left:5px;">
                           <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                               <i class="fas fa-share-alt"></i>
                           </button>
@@ -73,6 +78,11 @@
                           <div class="float-right" style="margin-left:5px;">
                               <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
                                   <i class="fas fa-share-alt"></i>
+                              </button>
+                          </div>
+                          <div class="float-right" style="margin-left:5px;">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled {% endif %}>
+                                  <i class="fas fa-comment"></i>
                               </button>
                           </div>
                           <div class="float-right">
