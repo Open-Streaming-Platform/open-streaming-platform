@@ -98,7 +98,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
+                            <br>
                             <div id="statChart-{{channel.id}}">
                                 <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
                             </div>
@@ -107,7 +107,6 @@
                     <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
                     </form>
                     {% endfor %}
-                    {{viewStats}}
                 </div>
             </div>
         </div>
@@ -225,6 +224,18 @@
         data: {
 
             datasets: [{
+                label: "Live Viewers",
+                fill: true,
+                borderColor: 'rgb(255, 0, 0)',
+                backgroundColor: 'rgb(255, 0, 0)',
+                spanGaps: true,
+                lineTension: 0,
+                data:[
+                    {% for entry in viewsStats[chan]['live'] %}
+                        {x:'{{entry['t']}}',y:{{entry['y']}}},
+                    {% endfor %}
+                ]},
+                {
                 label: "Video Viewers",
                 fill: true,
                 borderColor: 'rgb(0, 0, 255)',
