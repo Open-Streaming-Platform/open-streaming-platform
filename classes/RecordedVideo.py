@@ -39,6 +39,7 @@ class RecordedVideo(db.Model):
             'owningUser': self.owningUser,
             'videoDate': str(self.videoDate),
             'videoName': self.channelName,
+            'description': self.description,
             'topic': self.topic,
             'views': self.views,
             'length': self.length,
