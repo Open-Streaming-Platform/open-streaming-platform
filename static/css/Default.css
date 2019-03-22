@@ -231,6 +231,11 @@
     color:white;
 }
 
+.comments-box {
+    overflow-y: scroll;
+    height: 400px;
+}
+
 .comment {
   padding:8px 5px 8px 10px;
 }
