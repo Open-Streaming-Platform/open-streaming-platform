@@ -334,6 +334,7 @@
                         </div>
                     </div>
                     <br>
+                    {% for stream in streamList %}
                     <div class="card shadow searchable">
                       <div class="card-header"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></div>
                       <div class="card-body">
@@ -350,6 +351,7 @@
                         </div>
                       </div>
                     </div>
+                    {% endfor %}
                 </div>
               </div>
           </div>
