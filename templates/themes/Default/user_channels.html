@@ -2,6 +2,8 @@
 
 {% block head %}
 <title>{{sysSettings.siteName}} - User Channels Page</title>
+
+<script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -101,6 +103,10 @@
                         <input type="hidden" id="type" name="type" value="change">
                         <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
                         </form>
+                        <hr>
+                        <div id="statChart-{{channel.id}}">
+                            <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -206,4 +212,47 @@
     {% endfor %}
 
 </script>
+
+{% for chan in viewStats %}}
+<script>
+    var ctx = document.getElementById('viewershipChart-{{chan}}').getContext('2d');
+    ctx.canvas.width = 1024
+    ctx.canvas.height = 380;
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+
+            datasets: [{
+                label: "Video Viewers",
+                fill: true,
+                borderColor: 'rgb(0, 0, 255)',
+                backgroundColor: 'rgb(0, 0, 255)',
+                spanGaps: true,
+                lineTension: 0,
+                data:[
+                    {% for entry in statsViewsDay[{{chan}}]['recorded'] %}
+                        {x:'{{entry['t']}}',y:{{entry['y']}}},
+                    {% endfor %}
+                ]
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        parser: 'YYYY-MM-DD',
+                        unit: 'day'
+                    }
+                }],
+            }
+        }
+    });
+</script>
+{% endfor %}
 {% endblock %}
