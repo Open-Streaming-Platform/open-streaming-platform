@@ -233,7 +233,7 @@
 
 .comments-box {
     overflow-y: auto;
-    height: 400px;
+    max-height: 800px;
 }
 
 .comment {

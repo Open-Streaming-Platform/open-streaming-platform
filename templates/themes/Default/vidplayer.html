@@ -115,11 +115,11 @@
                         <div class="comment shadow">
                           <div class="row">
                             <div class="col-lg-2 col-md-2">
-                                {{comment.userID|get_userName}}<br>
-                              <img src="{{comment.userID|get_pictureLocation}}" width="82px" height="82px">
+                                <b>{{comment.userID|get_userName}}</b><br>
+                              <img src="{{comment.userID|get_pictureLocation}}" width="64px" height="64px">
                             </div>
                             <div class="col-lg-8 col-md-8">
-                                {{comment.timestamp|normalize_date}}<br>
+                                <b>{{comment.timestamp|normalize_date}}</b><br>
                                 {{comment.comment}}
                             </div>
                             <div class="col-lg-2 col-md-2">
