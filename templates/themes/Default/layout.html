@@ -93,7 +93,10 @@
               {% for category, message in messages %}
                   <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">
                       <div class="toast-header">
-                        <strong class="mr-auto">{{category}}</strong>
+                        <strong class="mr-auto">
+                            <span class="toast-box {% if category == 'message' %}gray {% elif category == 'error'%}red {% elif category == 'success' %}green {% endif %}"></span>
+                            {{category|upper}}
+                        </strong>
                         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>

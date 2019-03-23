@@ -9,6 +9,29 @@
     height:500px;
 }
 
+.toast-box {
+    float:left;
+    height:20px;
+    width:20px;
+}
+
+.red {
+    background-color:red;
+}
+.green {
+    background-color:green;
+}
+.blue {
+    background-color:blue;
+}
+.orange {
+    background-color:orange;
+}
+
+.gray {
+  background-color:gray;
+}
+
 .player {
     margin-top: 50px;
 }
