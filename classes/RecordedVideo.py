@@ -16,6 +16,7 @@ class RecordedVideo(db.Model):
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
+    comments = db.relationship('videoComments', backref='recordedVideo', lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
         self.videoDate = videoDate
