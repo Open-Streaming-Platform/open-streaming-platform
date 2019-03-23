@@ -124,8 +124,6 @@
                             </div>
                             <div class="col-lg-2 col-md-2">
                               <div class="float-right">
-                                <button class="btn btn-success shadow" disabled><i class="fas fa-thumbs-up"></i></button>
-                                <button class="btn btn-warning shadow" disabled><i class="fas fa-thumbs-down"></i></button>
                                 {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
                                     <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
                                 {% endif %}
