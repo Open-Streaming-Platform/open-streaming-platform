@@ -87,11 +87,11 @@
     </div>
 
     <div class="Ash-BG" style="padding-bottom:50px;">
-      <div style="position: absolute; top: 60px; right: -125px;" id="toastDiv">
+      <div style="position: absolute; top: 60px; right: 125px;" id="toastDiv">
         {%- with messages = get_flashed_messages(with_categories=true) -%}
           {% if messages %}
               {% for category, message in messages %}
-                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:100px;">
+                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:200px;">
                       <div class="toast-header">
                         <strong class="mr-auto">{{category}}</strong>
                         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
