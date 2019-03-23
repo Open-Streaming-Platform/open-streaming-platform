@@ -107,7 +107,7 @@
                       </div>
                   </div>
                   <br>
-                  {% if video.comments != [] %}
+                  {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
                   <div class="card shadow">
                       <div class="card-header"><b>Comments</b></div>
                       <div class="card-body comments-box">
