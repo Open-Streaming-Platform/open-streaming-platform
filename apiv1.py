@@ -14,6 +14,7 @@ from classes import RecordedVideo
 from classes import topics
 from classes import upvotes
 from classes import apikey
+from classes import views
 from classes.shared import db
 
 
@@ -139,8 +140,14 @@ class api_1_ListChannel(Resource):
                         channelStreams = channelQuery.stream
 
                         for entry in channelVid:
-                            for upvote in channelVid.upvotes:
+                            for upvote in entry.upvotes:
                                 db.session.delete(upvote)
+                            vidComments = entry.comments
+                            for comment in vidComments:
+                                db.session.delete(comment)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=entry.id)
+                            for view in vidViews:
+                                db.session.delete(view)
                             db.session.delete(entry)
                         for entry in channelUpvotes:
                             db.session.delete(entry)
@@ -267,6 +274,12 @@ class api_1_ListVideo(Resource):
                             upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
                             for vote in upvoteQuery:
                                 db.session.delete(vote)
+                            vidComments = videoQuery.comments
+                            for comment in vidComments:
+                                db.session.delete(comment)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id)
+                            for view in vidViews:
+                                db.session.delete(view)
                             db.session.delete(videoQuery)
                             db.session.commit()
                             return {'results': {'message': 'Video Deleted'}}, 200
