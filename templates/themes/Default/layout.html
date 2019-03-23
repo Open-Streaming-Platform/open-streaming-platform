@@ -87,13 +87,11 @@
     </div>
 
     <div class="Ash-BG" style="padding-bottom:50px;">
-        <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
-          <div style="position: absolute; top: 0; right: 0;" id="toastDiv">
-
+      <div style="position: absolute; top: 50px; right: 0px;" id="toastDiv">
         {%- with messages = get_flashed_messages(with_categories=true) -%}
           {% if messages %}
               {% for category, message in messages %}
-                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000">
                       <div class="toast-header">
                         <strong class="mr-auto">{{category}}</strong>
                         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -107,8 +105,7 @@
               {% endfor %}
           {% endif %}
         {%- endwith %}
-          </div>
-        </div>
+      </div>
 
     {% block body %}
 
