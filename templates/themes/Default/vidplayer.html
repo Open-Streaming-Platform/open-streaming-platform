@@ -127,7 +127,7 @@
                                 <button class="btn btn-success shadow" disabled><i class="fas fa-thumbs-up"></i></button>
                                 <button class="btn btn-warning shadow" disabled><i class="fas fa-thumbs-down"></i></button>
                                 {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
-                                    <button class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></button>
+                                    <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
                                 {% endif %}
                               </div>
                             </div>
