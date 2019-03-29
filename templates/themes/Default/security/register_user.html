@@ -1,6 +1,6 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
-{% from "Default/custom_macros.html" import fields_errors %}
+{% from "themes/" + sysSettings.systemTheme + "/custom_macros.html" import fields_errors %}
 
 {% block head %}
 <title>{{sysSettings.siteName}} - Register</title>
