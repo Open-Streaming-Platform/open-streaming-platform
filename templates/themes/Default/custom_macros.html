@@ -3,6 +3,9 @@
     {% if field.errors %}
         {% for error in field.errors %}
             <div class="alert alert-danger">{{error}}</div>
+            {% if error == "Email requires confirmation." %}
+                <div><a href="/confirm"><b>Confirm Your Account</b></a></div><br>
+            {% endif %}
         {% endfor %}
     {% endif %}
   {% endfor %}
