@@ -27,7 +27,6 @@
                           {% endif %}
                         {%- endwith %}
 
-                            {{fields_errors(login_user_form.email,login_user_form.password)}}
                             <h1>{{ _('Resend confirmation instructions') }}</h1>
                             <form action="{{ url_for_security('send_confirmation') }}" method="POST" name="send_confirmation_form">
                               {{ send_confirmation_form.hidden_tag() }}
