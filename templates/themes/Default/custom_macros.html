@@ -12,14 +12,3 @@
     {% endif %}
   {% endfor %}
 {% endmacro %}
-
-{% macro chat_messages(chatStyle) %}
-    {% if chatStyle == "Standard" %}
-        if (data['flags'] === 'Owner') {
-            $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
-        } else {
-            $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
-        }
-    {% endif %}
-{% macro %}
-
