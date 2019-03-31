@@ -66,6 +66,38 @@
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-6">
+                                                <label for="chatBG" class="col-form-label"><b>Chat Background Theme </b></label>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="chatBG" name="chatBG" class="form-control">
+                                                    {% for background in channelChatBGOptions %}
+                                                    <option value="{{background['value']}}" {% if channel.chatBG=="{{background['value']}}" %} selected {% endif %}>{{background['name']}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-6">
+                                                <label for="chatAnimation" class="col-form-label"><b>Chat Background Theme </b></label>
+                                            </div>
+                                            <div class="col-6">
+                                                <select id="chatAnimation" name="chatAnimation" class="form-control">
+                                                    {% for anim in channelChatAnimationOptions %}
+                                                    <option value="{{anim['value']}}" {% if channel.chatAnimation=="{{anim['value']}}" %} selected {% endif %}>{{anim['name']}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-6">
+                                                <label for="chatTextColor" class="col-form-label"><b>Chat Text Color </b></label>
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="color" id="chatTextColor" name="chatTextColor" value="#{{channel.chatTextColor}}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-6">
                                                 <label for="chatSelect" class="col-form-label"><b>Allow Comments on Recorded Videos</b></label>
                                             </div>
                                             <div class="col-6">
