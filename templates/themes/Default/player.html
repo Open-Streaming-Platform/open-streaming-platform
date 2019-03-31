@@ -1,4 +1,5 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% from "themes/" + sysSettings.systemTheme + "/custom_macros.html" import chat_messages with context %}
 
 {% block head %}
     <title>{{sysSettings.siteName}} - {{stream.streamName}}</title>
@@ -263,11 +264,7 @@
             var h = today.getHours();
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
-            if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
-            } else {
-                $('#chat').append('<div class="chatBar-Item shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
-            }
+            {{chat_messages('Standard')}
 
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
