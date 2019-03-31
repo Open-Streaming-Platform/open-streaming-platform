@@ -85,9 +85,9 @@
             var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
             var s = today.getSeconds();
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-Standard shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} shadow {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-Standard shadow slide-in-left"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} shadow {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + data['msg'] + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
