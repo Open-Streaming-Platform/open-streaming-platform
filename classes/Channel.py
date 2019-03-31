@@ -13,6 +13,9 @@ class Channel(db.Model):
     views = db.Column(db.Integer)
     record = db.Column(db.Boolean)
     chatEnabled = db.Column(db.Boolean)
+    chatBG = db.Column(db.String(255))
+    chatTextColor = db.Column(db.String(10))
+    chatAnimation = db.Column(db.String(255))
     imageLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     allowComments = db.Column(db.Boolean)
@@ -30,6 +33,9 @@ class Channel(db.Model):
         self.record = record
         self.allowComments = allowComments
         self.chatEnabled = chatEnabled
+        self.chatBG = "Standard"
+        self.chatTextColor = "#FFFFFF"
+        self.chatAnimation = "slide-in-left"
         self.views = 0
 
     def __repr__(self):
