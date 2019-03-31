@@ -4,6 +4,7 @@ from .shared import db
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
+    email = StringField('email', [Required()])
 
     def validate(self):
         success = True
@@ -11,6 +12,9 @@ class ExtendedRegisterForm(RegisterForm):
             success = False
         if db.session.query(User).filter(User.username == self.username.data.strip()).first():
             self.username.errors.append("Username already taken")
+            success = False
+        if db.session.query(User).filter(User.email == self.email.data.strip()).first():
+            self.email.errors.append("Email address already taken")
             success = False
         return success
 
