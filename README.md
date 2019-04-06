@@ -14,6 +14,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/4RV5IXH.jpg)](https://i.imgur.com/4RV5IXH.jpg)
  - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/c598KLa.jpg)](https://i.imgur.com/c598KLa.jpg)
  - Real-Time Chat Moderation by Channel Owners (Banning/Unbanning)
+ - Admin Controlled Adaptive Streaming
 
 ## Planned Features:
  - Subscribe to a Channel and Get Notified on When a New Stream Starts.
