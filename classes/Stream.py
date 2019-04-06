@@ -1,4 +1,5 @@
 from .shared import db
+from .settings import settings
 
 class Stream(db.Model):
     __tablename__ = "Stream"
@@ -36,13 +37,21 @@ class Stream(db.Model):
         db.session.commit()
 
     def serialize(self):
+        sysSettings = settings.query.first()
+        streamURL = ''
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/streams/' + self.channel.channelLoc + 'm3u8'
+        elif self.channel.record is True:
+            streamURL = '/live-rec/' + self.channel.channelLoc + '/index.m3u8'
+        else:
+            streamURL = '/live/' + self.channel.channelLoc + '/index.m3u8'
         return {
             'id': self.id,
             'channelID': self.linkedChannel,
             'channelEndpointID': self.channel.channelLoc,
             'owningUser': self.channel.owningUser,
             'streamPage': '/view/' + self.channel.channelLoc + '/',
-            'streamURL': '/show/' + self.channel.channelLoc + '.m3u8',
+            'streamURL': streamURL,
             'streamName': self.streamName,
             'topic': self.topic,
             'currentViewers': self.currentViewers,
