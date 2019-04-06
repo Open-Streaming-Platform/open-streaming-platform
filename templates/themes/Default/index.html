@@ -19,7 +19,7 @@
             <div class="streamcard">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div class="stream shadow card p-2 streamcard-item">
-                        <img class="stream-img card-img-top shadow" src="/live-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="stream-img card-img-top shadow" src="/streams/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-body">
                             <h5 class="card-title text-shadow-close">{{stream.streamName|limit_title}} <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span></h5>
                             <p class="card-text">
