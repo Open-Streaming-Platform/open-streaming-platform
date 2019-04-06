@@ -40,7 +40,7 @@ class Stream(db.Model):
         sysSettings = settings.query.first()
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
-            streamURL = '/streams/' + self.channel.channelLoc + 'm3u8'
+            streamURL = '/streams/' + self.channel.channelLoc + '.m3u8'
         elif self.channel.record is True:
             streamURL = '/live-rec/' + self.channel.channelLoc + '/index.m3u8'
         else:
