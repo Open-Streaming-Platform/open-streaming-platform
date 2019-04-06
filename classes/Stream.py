@@ -36,31 +36,16 @@ class Stream(db.Model):
         db.session.commit()
 
     def serialize(self):
-        if self.channel.record == True:
-            return {
-                'id': self.id,
-                'channelID': self.linkedChannel,
-                'channelEndpointID': self.channel.channelLoc,
-                'owningUser': self.channel.owningUser,
-                'streamPage': '/view/' + self.channel.channelLoc + '/',
-                'streamURL': '/live-rec/' + self.channel.channelLoc + '/index.m3u8',
-                'streamName': self.streamName,
-                'topic': self.topic,
-                'currentViewers': self.currentViewers,
-                'totalViewers': self.currentViewers,
-                'upvotes': self.get_upvotes()
-            }
-        else:
-            return {
-                'id': self.id,
-                'channelID': self.linkedChannel,
-                'channelEndpointID': self.channel.channelLoc,
-                'owningUser': self.channel.owningUser,
-                'streamPage': '/view/' + self.channel.channelLoc +'/',
-                'streamURL': '/live/' + self.channel.channelLoc + '/index.m3u8',
-                'streamName': self.streamName,
-                'topic': self.topic,
-                'currentViewers': self.currentViewers,
-                'totalViewers': self.currentViewers,
-                'upvotes': self.get_upvotes()
-            }
+        return {
+            'id': self.id,
+            'channelID': self.linkedChannel,
+            'channelEndpointID': self.channel.channelLoc,
+            'owningUser': self.channel.owningUser,
+            'streamPage': '/view/' + self.channel.channelLoc + '/',
+            'streamURL': '/show/' + self.channel.channelLoc + '.m3u8',
+            'streamName': self.streamName,
+            'topic': self.topic,
+            'currentViewers': self.currentViewers,
+            'totalViewers': self.currentViewers,
+            'upvotes': self.get_upvotes()
+        }
