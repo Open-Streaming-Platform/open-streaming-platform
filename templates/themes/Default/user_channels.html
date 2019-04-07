@@ -81,7 +81,7 @@
                                             <div class="col-6">
                                                 <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
                                                     {% for background in channelChatBGOptions %}
-                                                    <option value="{{background['value']}}" {% if channel.chatBG=="{{background['value']}}" %} selected {% endif %}>{{background['name']}}</option>
+                                                    <option value="{{background['value']}}" {% if channel.chatBG==background['value']" %} selected {% endif %}>{{background['name']}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -93,7 +93,7 @@
                                             <div class="col-6">
                                                 <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
                                                     {% for anim in channelChatAnimationOptions %}
-                                                    <option value="{{anim['value']}}" {% if channel.chatAnimation=="{{anim['value']}}" %} selected {% endif %}>{{anim['name']}}</option>
+                                                    <option value="{{anim['value']}}" {% if channel.chatAnimation==anim['value'] %} selected {% endif %}>{{anim['name']}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
