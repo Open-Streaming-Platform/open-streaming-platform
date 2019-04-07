@@ -79,7 +79,7 @@
                                                 <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
                                             </div>
                                             <div class="col-6">
-                                                <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onChange="updateChatPreview({{channel.id}})">
+                                                <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
                                                     {% for background in channelChatBGOptions %}
                                                     <option value="{{background['value']}}" {% if channel.chatBG=="{{background['value']}}" %} selected {% endif %}>{{background['name']}}</option>
                                                     {% endfor %}
@@ -91,7 +91,7 @@
                                                 <label for="chatAnimation-{{channel.id}}" class="col-form-label"><b>Chat Animation </b></label>
                                             </div>
                                             <div class="col-6">
-                                                <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onChange="updateChatPreview({{channel.id}})">
+                                                <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
                                                     {% for anim in channelChatAnimationOptions %}
                                                     <option value="{{anim['value']}}" {% if channel.chatAnimation=="{{anim['value']}}" %} selected {% endif %}>{{anim['name']}}</option>
                                                     {% endfor %}
@@ -103,16 +103,16 @@
                                                 <label for="chatTextColor-{{channel.id}}" class="col-form-label"><b>Chat Text Color </b></label>
                                             </div>
                                             <div class="col-6">
-                                                <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onChange="updateChatPreview({{channel.id}})">
+                                                <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" oninput="updateChatPreview({{channel.id}})">
                                             </div>
                                         </div>
 
                                         <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} shadow {{channel.chatAnimation}}">
                                             <div class="charBar-Item-Image">
-                                                <img src="{{current_user.pictureLocation}}" width="52px" height="52px">
+                                                <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px">
                                             </div>
                                             <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
-                                                <b>{{current_user.username}}}</b> 12:00
+                                                <b>{{current_user.username}}</b> 12:00
                                                 <br>This is just a test
                                             </div>
                                         </div>
@@ -331,7 +331,7 @@
 
 <script>
 function updateChatPreview(channelID) {
-    var chatBG = document.getElementById("chatBG-").value;
+    var chatBG = document.getElementById("chatBG-".concat(channelID)).value;
     var chatAnimation = document.getElementByID("chatAnimation-".concat(channelID)).value;
     var chatTextColor = document.getElementByID("chatTextColor-".concat(channelID)).value;
 
