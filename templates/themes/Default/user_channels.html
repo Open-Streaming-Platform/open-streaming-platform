@@ -338,7 +338,7 @@ function updateChatPreview(channelID) {
     var chatPreviewBox = document.getElementById("chatPreviewBox-".concat(channelID));
     var chatPreviewText = document.getElementById("chatPreviewText-".concat(channelID));
 
-    chatPreviewBox.removeClass();
+    chatPreviewBox.className = '';
     chatPreviewBox.classList.add('chatBar-Item');
     chatPreviewBox.classList.add('shadow');
     chatPreviewBox.classList.add(chatBG);
