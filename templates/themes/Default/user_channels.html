@@ -341,7 +341,9 @@ function updateChatPreview(channelID) {
     var chatPreviewBox = document.getElementById("chatPreviewBox-".concat(channelID));
     var chatPreviewText = document.getElementById("chatPreviewText-".concat(channelID));
 
-    chatPreviewBox.offsetWidth = chatPreviewBox.offsetWidth;
+    chatPreviewBox.style.animation = 'none';
+    chatPreviewBox.offsetHeight; /* trigger reflow */
+    chatPreviewBox.style.animation = null;
 
     chatPreviewBox.style.display = "none";
 
