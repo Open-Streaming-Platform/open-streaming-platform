@@ -341,15 +341,17 @@ function updateChatPreview(channelID) {
     var chatPreviewBox = document.getElementById("chatPreviewBox-".concat(channelID));
     var chatPreviewText = document.getElementById("chatPreviewText-".concat(channelID));
 
+    chatPreviewBox.style.display = "none";
+
     chatPreviewBox.className = '';
     chatPreviewBox.classList.add('chatBar-Item');
     chatPreviewBox.classList.add('shadow');
-    chatPreviewBox.classList.add(chatBG);
+    chatPreviewBox.classList.add('chat-'.concat(chatBG));
     chatPreviewBox.classList.add(chatAnimation);
-    console.log(chatBG);
-    console.log(chatAnimation);
 
     chatPreviewText.style.color=chatTextColor;
+
+    chatPreviewBox.style.display = "block";
 }
 </script>
 {% endblock %}
