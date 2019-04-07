@@ -107,7 +107,7 @@
                                             </div>
                                         </div>
 
-                                        <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} shadow {{channel.chatAnimation}}">
+                                        <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
                                             <div class="charBar-Item-Image">
                                                 <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px">
                                             </div>
@@ -349,7 +349,6 @@ function updateChatPreview(channelID) {
 
     chatPreviewBox.className = '';
     chatPreviewBox.classList.add('chatBar-Item');
-    chatPreviewBox.classList.add('shadow');
     chatPreviewBox.classList.add('chat-'.concat(chatBG));
     chatPreviewBox.classList.add(chatAnimation);
 
