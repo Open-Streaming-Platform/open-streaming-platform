@@ -39,6 +39,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Socket.io] - Interface Socket.io with Flask
 * [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
+* [[Animista](http://animista.net/)] - Awesome CSS Animation Generator
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
