@@ -46,7 +46,7 @@
                                             </select>
                                         </div>
                                         <hr>
-                                        <h4>Recording Options</h4>
+                                        <h4><b>Recording Options</b></h4>
                                         {% if sysSettings.allowRecording == True %}
                                         <div class="form-group row">
                                             <div class="col-6">
@@ -67,7 +67,7 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <h4>Chat Options</h4>
+                                        <h4><b>Chat Options</b></h4>
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
@@ -108,7 +108,7 @@
                                                 <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
                                             </div>
                                         </div>
-                                        <h4>Chat Preview</h4>
+                                        <h5>Chat Preview</h5>
                                         <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
                                             <div class="charBar-Item-Image">
                                                 <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
