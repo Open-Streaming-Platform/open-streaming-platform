@@ -45,7 +45,8 @@
                                                 {% endfor %}
                                             </select>
                                         </div>
-
+                                        <hr>
+                                        <h4>Recording Options</h4>
                                         {% if sysSettings.allowRecording == True %}
                                         <div class="form-group row">
                                             <div class="col-6">
@@ -65,7 +66,8 @@
                                                 <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
                                             </div>
                                         </div>
-
+                                        <hr>
+                                        <h4>Chat Options</h4>
                                         <div class="form-group row">
                                             <div class="col-6">
                                                 <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
@@ -106,10 +108,10 @@
                                                 <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
                                             </div>
                                         </div>
-
+                                        <h4>Chat Preview</h4>
                                         <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
                                             <div class="charBar-Item-Image">
-                                                <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px">
+                                                <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
                                             </div>
                                             <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
                                                 <b>{{current_user.username}}</b> 12:00
@@ -119,6 +121,7 @@
 
                                     </div>
                                 </div>
+                                <hr>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
