@@ -331,9 +331,12 @@
 
 <script>
 function updateChatPreview(channelID) {
-    var chatBG = document.getElementById("chatBG-".concat(channelID)).value;
-    var chatAnimation = document.getElementById("chatAnimation-".concat(channelID)).value;
+    var chatBG = document.getElementById("chatBG-".concat(channelID));
+    var chatAnimation = document.getElementById("chatAnimation-".concat(channelID));
     var chatTextColor = document.getElementById("chatTextColor-".concat(channelID)).value;
+
+    chatBG = chatBG.options[chatBG.selectedIndex].value;
+    chatAnimation = chatAnimation.options[chatAnimation.selectedIndex].value;
 
     var chatPreviewBox = document.getElementById("chatPreviewBox-".concat(channelID));
     var chatPreviewText = document.getElementById("chatPreviewText-".concat(channelID));
