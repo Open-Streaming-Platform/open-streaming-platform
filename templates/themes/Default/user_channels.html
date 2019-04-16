@@ -155,12 +155,11 @@
                                 </div>
                             </div>
                             <hr>
-                            <a href="#" onclick="toggleDiv('channelProtection-{{channel.id}}')"><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h4></a>
+                            <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h4></a>
                             <div id="channelProtection-{{channel.id}}" style="display:none;">
 
                             </div>
-                            <hr>
-                            <a href="#" onclick="toggleDiv('statChart-{{channel.id}}')"><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h4></a>
+                            <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h4></a>
                             <div id="statChart-{{channel.id}}" style="display:none;">
                                 <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
                             </div>
