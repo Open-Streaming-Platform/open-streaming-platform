@@ -1168,7 +1168,7 @@ def settings_channels_page():
         protection = False
 
         if 'channelProtection' in request.form:
-            channelProtection = True
+            protection = True
 
         if type == 'new':
 
