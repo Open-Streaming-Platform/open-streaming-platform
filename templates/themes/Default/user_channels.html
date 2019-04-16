@@ -153,8 +153,8 @@
                                             <div class="col-8">
                                                 <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h5></a>
                                             </div>
-                                            <div class="col-4 float-right">
-                                                <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protection == True %} checked {% endif %}>
+                                            <div class="col-4">
+                                                <input type="checkbox" class="float-right" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protection == True %} checked {% endif %}>
                                             </div>
                                         </div>
                                         <div id="channelProtection-{{channel.id}}" style="display:none;">
