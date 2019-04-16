@@ -1165,6 +1165,11 @@ def settings_channels_page():
         if 'allowComments' in request.form:
             allowComments = True
 
+        protection = False
+
+        if 'channelProtection' in request.form:
+            channelProtection = True
+
         if type == 'new':
 
             newUUID = str(uuid.uuid4())
@@ -1202,6 +1207,7 @@ def settings_channels_page():
                 requestedChannel.chatBG = chatBG
                 requestedChannel.chatAnimation = chatAnimation
                 requestedChannel.chatTextColor = chatTextColor
+                requestedChannel.protection = protection
 
                 if 'photo' in request.files:
                     oldImage = None
