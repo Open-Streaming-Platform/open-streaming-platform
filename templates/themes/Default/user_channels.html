@@ -155,8 +155,12 @@
                                 </div>
                             </div>
                             <hr>
-                            <h4 style="margin-left:10px;"><b>Viewer Statistics</b></h4>
-                            <div id="statChart-{{channel.id}}">
+                            <a href="#" onclick="toggleDiv("channelProtection-{{channel.id}}")"></a><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h4>
+                            <div id="channelProtection-{{channel.id}}" style="display:none;">
+
+                            </div>
+                            <a href="#" onclick="toggleDiv("statChart-{{channel.id}}")"></a><h4 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h4>
+                            <div id="statChart-{{channel.id}}" style="display:none;">
                                 <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
                             </div>
                         </div>
@@ -359,6 +363,16 @@ function updateChatPreview(channelID) {
     chatPreviewText.style.color=chatTextColor;
 
     chatPreviewBox.style.display = "block";
+}
+</script>
+<script>
+function toggleDiv(divID) {
+  var x = document.getElementById(divID);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
 }
 </script>
 {% endblock %}

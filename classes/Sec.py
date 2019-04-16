@@ -39,3 +39,4 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     pictureLocation = db.Column(db.String(255))
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    invites = db.relationship('invitedViewer', backref='user', lazy="joined")

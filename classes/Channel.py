@@ -19,9 +19,12 @@ class Channel(db.Model):
     imageLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     allowComments = db.Column(db.Boolean)
+    protected = db.Column(db.Boolean)
     stream = db.relationship('Stream', backref='channel', lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")
+    inviteCodes = db.relationship('inviteCode', backref='channel', lazy="joined")
+    invitedViewers = db.relationship('invitedViewer', backref='channel', lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
@@ -37,6 +40,7 @@ class Channel(db.Model):
         self.chatTextColor = "#FFFFFF"
         self.chatAnimation = "slide-in-left"
         self.views = 0
+        self.protected = False
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -57,5 +61,6 @@ class Channel(db.Model):
             'chatEnabled': self.chatEnabled,
             'stream': [obj.id for obj in self.stream],
             'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
-            'upvotes': self.get_upvotes()
+            'upvotes': self.get_upvotes(),
+            'protected': self.protected
         }
