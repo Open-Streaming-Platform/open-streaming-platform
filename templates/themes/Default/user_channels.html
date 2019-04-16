@@ -155,7 +155,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <hr>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h5></a>
+                                        <div id="statChart-{{channel.id}}" style="display:none;">
+                                            <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
                                 <div class="row">
                                     <div class="col-12">
                                         <input type="submit" class="btn btn-success" value="&#128393; Edit">
@@ -164,10 +173,7 @@
                                 </div>
                             </div>
                             <hr>
-                            <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h5 style="margin-left:10px;"><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h5></a>
-                            <div id="statChart-{{channel.id}}" style="display:none;">
-                                <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
-                            </div>
+
                         </div>
                     <input type="hidden" id="type" name="type" value="change">
                     <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
