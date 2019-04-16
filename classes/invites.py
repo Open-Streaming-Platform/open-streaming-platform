@@ -2,6 +2,7 @@ from .shared import db
 import datetime
 
 class invitedViewer(db.Model):
+    __tablename__ = 'invitedViewer'
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
@@ -33,8 +34,8 @@ class invitedViewer(db.Model):
         else:
             return False
 
-
 class inviteCode(db.Model):
+    __tablename__ = 'inviteCode'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255), unique=True)
     expiration = db.Column(db.DateTime)
