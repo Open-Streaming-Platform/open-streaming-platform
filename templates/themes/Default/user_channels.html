@@ -158,7 +158,21 @@
                                             </div>
                                         </div>
                                         <div id="channelProtection-{{channel.id}}" style="display:none;">
-
+                                            {% if channel.protection == True %}
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h6>Invite Codes</h6><br>
+                                                    <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
+                                                    <input id="newInviteCode" type="number" class="form-input" min="0" placeholder="Set to 0 to not expire" required>
+                                                    <button class="btn btn-primary">Create New</button>
+                                                    <div id="inviteCodes">
+                                                        {$ for code in channel.inviteCodes %}
+                                                        {% endfor %}
+                                                    </div>
+                                                    <h6>Invited Users</h6>
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
