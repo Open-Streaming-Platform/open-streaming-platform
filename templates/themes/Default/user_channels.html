@@ -166,7 +166,7 @@
                                                     <input id="newInviteCode" type="number" class="form-input" min="0" placeholder="Set to 0 to not expire" required>
                                                     <button class="btn btn-primary">Create New</button>
                                                     <div id="inviteCodes">
-                                                        {$ for code in channel.inviteCodes %}
+                                                        {% for code in channel.inviteCodes %}
                                                         {% endfor %}
                                                     </div>
                                                     <h6>Invited Users</h6>
