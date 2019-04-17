@@ -11,4 +11,3 @@ flask-script
 flask-restplus
 pymysql
 gitpython
-binascii
