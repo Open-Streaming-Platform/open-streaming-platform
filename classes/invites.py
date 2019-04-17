@@ -1,5 +1,11 @@
 from .shared import db
 import datetime
+from binascii import hexlify
+import os
+
+def generateKey(length):
+    key = hexlify(os.urandom(length))
+    return key.decode()
 
 class invitedViewer(db.Model):
     __tablename__ = 'invitedViewer'
@@ -43,9 +49,10 @@ class inviteCode(db.Model):
     uses = db.Column(db.Integer)
     viewers = db.relationship('invitedViewer', backref='usedCode', lazy="joined")
 
-    def __init__(self, code, expirationDays, channelID):
-        self.code = code
+    def __init__(self, expirationDays, channelID):
+        self.code = generateKey(12)
         self.channelID = channelID
+        self.uses = 0
 
         if int(expirationDays) <= 0:
             self.expiration = None
