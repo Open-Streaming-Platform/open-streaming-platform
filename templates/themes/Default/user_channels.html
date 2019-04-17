@@ -162,9 +162,13 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h6><b>Invite Codes</b></h6>
-                                                    <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
-                                                    <input id="newInviteCode" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
-                                                    <button class="btn btn-primary">Create New</button><br>
+                                                    <div class="input-group mb-3">
+                                                        <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
+                                                        <input id="newInviteCode" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-primary"><i class="fas fa-plus"></i></button>
+                                                        </div>
+                                                    </div>
                                                     <div id="inviteCodes">
                                                         {% for code in channel.inviteCodes %}
                                                         {{code.code}} {{code.expiration}} {{code.uses}} <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></button>
