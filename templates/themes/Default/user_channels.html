@@ -164,9 +164,9 @@
                                                     <h6><b>Invite Codes</b></h6>
                                                     <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
                                                     <div class="input-group mb-3">
-                                                        <input id="newInviteCode" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
+                                                        <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-primary"><i class="fas fa-plus"></i></button>
+                                                            <button class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
                                                         </div>
                                                     </div>
                                                     <div id="inviteCodes">
@@ -409,5 +409,24 @@ function toggleDiv(divID) {
     x.style.display = "none";
   }
 }
+</script>
+
+<script>
+    function generateInviteCode(channelID) {
+        var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
+        var daysToExpire = newInviteElementInput.value;
+
+        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('newInviteCode', function (msg) {
+        var code = msg['code']
+        var expiration = msg['expiration']
+        var channelID = msg['channelID']
+
+        console.log(code + ":" + expiration + ":" + channelID)
+    });
 </script>
 {% endblock %}

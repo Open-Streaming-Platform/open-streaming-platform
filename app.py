@@ -1853,6 +1853,20 @@ def get_resource_usage(message):
 
     emit('serverResources', {'cpuUsage':cpuUsage,'memoryUsage':memoryUsage, 'diskUsage':diskUsage})
 
+@socketio.on('generateInviteCode')
+def generateInviteCode(message):
+    daysToExpire = int(message['daysToExpire'])
+    channelID = int(message['chanID'])
+
+    channelQuery = Channel.Channel.query.filter_by(id=channelID, owningUser=current_user.id).first()
+
+    if channelQuery is not None:
+        newInviteCode = invites.inviteCode(daysToExpire, channelID)
+        db.session.add(newInviteCode)
+        db.session.commit()
+
+        emit('newInviteCode', {'code': newInviteCode.code, 'expiration': newInviteCode.expiration, 'channelID': newInviteCode.channelID}, broadcast=False)
+
 try:
     init_db_values()
 except Exception as e:
