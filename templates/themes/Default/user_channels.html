@@ -172,7 +172,7 @@
                                                         </div>
                                                     </div>
                                                     <div id="inviteCodes">
-                                                        <table id="inviteCodesTable-{{channel.id}}">
+                                                        <table id="inviteCodeTable-{{channel.id}}">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Invite Code</th>
@@ -449,12 +449,11 @@ function toggleDiv(divID) {
 
 <script type="text/javascript" charset="utf-8">
     socket.on('newInviteCode', function (msg) {
-        var code = msg['code']
-        var expiration = msg['expiration']
-        var channelID = msg['channelID']
+        var code = msg['code'];
+        var expiration = msg['expiration'];
+        var channelID = msg['channelID'];
 
-        console.log(code + ":" + expiration + ":" + channelID)
-        var tableRef = document.getElementById('newInviteCodeTable-' + channelID).getElementsByTagName('tbody')[0];
+        var tableRef = document.getElementById('inviteCodeTable-' + channelID).getElementsByTagName('tbody')[0];
 
         var newRow = tableRef.insertRow(tableRef.rows.length);
 
