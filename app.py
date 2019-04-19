@@ -1867,7 +1867,8 @@ def generateInviteCode(message):
 
         emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
     else:
-        emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
+        #emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
+        pass
 
 try:
     init_db_values()

@@ -172,9 +172,26 @@
                                                         </div>
                                                     </div>
                                                     <div id="inviteCodes">
-                                                        {% for code in channel.inviteCodes %}
-                                                        {{code.code}} {{code.expiration}} {{code.uses}} <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
-                                                        {% endfor %}
+                                                        <table id="inviteCodesTable-{{channel.id}}">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Invite Code</th>
+                                                                    <th>Expiration Date</th>
+                                                                    <th>Uses</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for code in channel.inviteCodes %}
+                                                            <tr>
+                                                                <td>{{code.code}}</td>
+                                                                <td>{{code.expiration}}</td>
+                                                                <td>{{code.uses}}</td>
+                                                                <td><button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button></td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                     <h6><b>Invited Users</b></h6>
                                                 </div>
@@ -437,6 +454,19 @@ function toggleDiv(divID) {
         var channelID = msg['channelID']
 
         console.log(code + ":" + expiration + ":" + channelID)
+        var tableRef = document.getElementById('newInviteCodeTable-' + channelID).getElementsByTagName('tbody')[0];
+
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+
+        var codeCell = newRow.insertCell(0);
+        var expirationCell = newRow.insertCell(1);
+        var usesCell = newRow.insertCell(2);
+        var buttonCell = newRow.insertCell(3);
+
+        codeCell.appendChild(document.createTextNode(code));
+        expirationCell.appendChild(document.createTextNode(expiration));
+        usesCell.appendChild(document.createTextNode('0'));
+        buttonCell.appendChild(document.createTextNode(''));
     });
 </script>
 {% endblock %}
