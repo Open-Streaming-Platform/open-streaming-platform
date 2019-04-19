@@ -1865,7 +1865,7 @@ def generateInviteCode(message):
         db.session.add(newInviteCode)
         db.session.commit()
 
-        emit('newInviteCode', {'code': newInviteCode.code, 'expiration': newInviteCode.expiration, 'channelID': newInviteCode.channelID}, broadcast=False)
+        emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
     else:
         emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
 
