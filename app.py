@@ -1866,6 +1866,8 @@ def generateInviteCode(message):
         db.session.commit()
 
         emit('newInviteCode', {'code': newInviteCode.code, 'expiration': newInviteCode.expiration, 'channelID': newInviteCode.channelID}, broadcast=False)
+    else:
+        emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
 
 try:
     init_db_values()
