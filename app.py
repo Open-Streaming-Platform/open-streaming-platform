@@ -1870,6 +1870,22 @@ def generateInviteCode(message):
         #emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
         pass
 
+@socketio.on('deleteInviteCode')
+def deleteInviteCode(msg):
+    code = msg['code']
+    codeQuery = invites.inviteCode.query.filter_by(code=code).first()
+
+    if codeQuery is not None:
+        if (codeQuery.channel.owningUser is current_user.id) or current_user.has_role('Admin'):
+            channelID = codeQuery.channel.id
+            code = codeQuery.code
+
+            db.session.delete(codeQuery)
+            db.session.commit()
+            emit('inviteCodeDeleteAck', {'code': str(code), 'channelID': str(channelID)}, broadcast=False)
+
+
+
 try:
     init_db_values()
 except Exception as e:
