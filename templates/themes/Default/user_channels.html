@@ -4,6 +4,8 @@
 <title>{{sysSettings.siteName}} - User Channels Page</title>
 
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -166,7 +168,7 @@
                                                     <div class="input-group mb-3">
                                                         <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                            <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
                                                         </div>
                                                     </div>
                                                     <div id="inviteCodes">
@@ -409,6 +411,14 @@ function toggleDiv(divID) {
     x.style.display = "none";
   }
 }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    var conn_options = {
+        'sync disconnect on unload':true
+    };
+
+    var socket = io();
 </script>
 
 <script>
