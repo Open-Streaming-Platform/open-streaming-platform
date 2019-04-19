@@ -426,7 +426,8 @@ function toggleDiv(divID) {
         var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
         var daysToExpire = newInviteElementInput.value;
 
-        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
+        var results = socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
+        console.log(results);
     }
 </script>
 
