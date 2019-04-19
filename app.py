@@ -1855,7 +1855,7 @@ def get_resource_usage(message):
 
 @socketio.on('generateInviteCode')
 def generateInviteCode(message):
-    daysToExpire = int(message['daysToExpire'])
+    daysToExpire = int(message['daysToExpiration'])
     channelID = int(message['chanID'])
 
     channelQuery = Channel.Channel.query.filter_by(id=channelID, owningUser=current_user.id).first()

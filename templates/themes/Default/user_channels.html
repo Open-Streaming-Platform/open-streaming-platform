@@ -173,7 +173,7 @@
                                                     </div>
                                                     <div id="inviteCodes">
                                                         {% for code in channel.inviteCodes %}
-                                                        {{code.code}} {{code.expiration}} {{code.uses}} <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></button>
+                                                        {{code.code}} {{code.expiration}} {{code.uses}} <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
                                                         {% endfor %}
                                                     </div>
                                                     <h6><b>Invited Users</b></h6>
@@ -426,6 +426,8 @@ function toggleDiv(divID) {
         var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
         var daysToExpire = newInviteElementInput.value;
 
+        console.log(channelID);
+        console.log(daysToExpire);
         var results = socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
         console.log(results);
     }
