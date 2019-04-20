@@ -204,7 +204,9 @@
                                                           <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="text" class="form-control">
                                                         </div>
                                                         <div class="form-group col-md-2">
-                                                            <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                            <div class="input-group-append">
+                                                                <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div id="invitedUsers">
