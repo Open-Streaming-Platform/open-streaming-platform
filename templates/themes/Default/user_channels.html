@@ -464,6 +464,7 @@ function toggleDiv(divID) {
         var tableRef = document.getElementById('inviteCodeTable-' + channelID).getElementsByTagName('tbody')[0];
 
         var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.id = 'inviteCodeRow-' + code;
 
         var codeCell = newRow.insertCell(0);
         var expirationCell = newRow.insertCell(1);
