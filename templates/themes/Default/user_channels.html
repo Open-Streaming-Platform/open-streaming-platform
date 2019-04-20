@@ -185,7 +185,7 @@
                                                             {% for code in channel.inviteCodes %}
                                                             <tr id="inviteCodeRow-{{code.code}}">
                                                                 <td>{{code.code}}</td>
-                                                                <td>{{code.expiration}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
                                                                 <td>{{code.uses}}</td>
                                                                 <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
                                                             </tr>
