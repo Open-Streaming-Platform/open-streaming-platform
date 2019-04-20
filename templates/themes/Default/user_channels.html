@@ -202,13 +202,21 @@
                                                         </div>
                                                     </div>
                                                     <div id="invitedUsers">
-                                                        <table>
-                                                            {% for user in channel.invitedViewers %}
+                                                        <table id="incitedUsersTable-{{channel.id}}" class="table table-responsive">
                                                             <tr>
+                                                                <th>User</th>
+                                                                <th>Date Added</th>
+                                                                <th>Expires</th>
+                                                                <th>Used Code</th>
+                                                                <th></th>
+                                                            </tr>
+                                                            {% for user in channel.invitedViewers %}
+                                                            <tr id="invitedUserRow-{{user.id}}">
                                                                 <td>{{user.userID}}</td>
                                                                 <td>{{user.addedDate|normalize_date}}</td>
-                                                                <td>{{user.expiration}}</td>
+                                                                <td>{{user.expiration|normalize_date}}</td>
                                                                 <td>{{user.usedCode.code}}</td>
+                                                                <td><<button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </table>
