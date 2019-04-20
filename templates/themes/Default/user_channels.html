@@ -183,7 +183,7 @@
                                                             </thead>
                                                             <tbody>
                                                             {% for code in channel.inviteCodes %}
-                                                            <tr>
+                                                            <tr id="inviteCodeRow-{{code.code}}">
                                                                 <td>{{code.code}}</td>
                                                                 <td>{{code.expiration}}</td>
                                                                 <td>{{code.uses}}</td>
@@ -450,6 +450,8 @@ function toggleDiv(divID) {
 <script>
     function deleteInviteCode(code) {
         socket.emit('deleteInviteCode', {code: code});
+        var inviteCodeRow = document.getElementById('inviteCodeRow-' + code);
+        inviteCodeRow.parentNode.removeChild(inviteCodeRow);
     }
 </script>
 
@@ -477,10 +479,4 @@ function toggleDiv(divID) {
     });
 </script>
 
-<script>
-    socket.on('inviteCodeDeleteFail',function (msg) {
-        var code = msg['code'];
-        console.log(code);
-    });
-</script>
 {% endblock %}
