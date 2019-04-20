@@ -212,11 +212,11 @@
                                                             </tr>
                                                             {% for user in channel.invitedViewers %}
                                                             <tr id="invitedUserRow-{{user.id}}">
-                                                                <td>{{user.userID}}</td>
+                                                                <td>{{user.userID|get_userName}}</td>
                                                                 <td>{{user.addedDate|normalize_date}}</td>
                                                                 <td>{{user.expiration|normalize_date}}</td>
                                                                 <td>{{user.usedCode.code}}</td>
-                                                                <td><<button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                             </tr>
                                                             {% endfor %}
                                                         </table>
