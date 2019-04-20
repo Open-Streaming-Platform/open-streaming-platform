@@ -1871,8 +1871,8 @@ def generateInviteCode(message):
         pass
 
 @socketio.on('deleteInviteCode')
-def deleteInviteCode(msg):
-    code = msg['code']
+def deleteInviteCode(message):
+    code = message['code']
     codeQuery = invites.inviteCode.query.filter_by(code=code).first()
     channelQuery = Channel.Channel.query.filter_by(id=codeQuery.channelID).first()
     if codeQuery is not None:
@@ -1883,6 +1883,10 @@ def deleteInviteCode(msg):
             db.session.delete(codeQuery)
             db.session.commit()
             emit('inviteCodeDeleteAck', {'code': str(code), 'channelID': str(channelID)}, broadcast=False)
+        else:
+            emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
+    else:
+        emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
 
 
 

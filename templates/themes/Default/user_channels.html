@@ -476,4 +476,11 @@ function toggleDiv(divID) {
         buttonCell.appendChild(document.createTextNode(buttonText));
     });
 </script>
+
+<script>
+    socket.on('inviteCodeDeleteFail',function (msg) {
+        var code = msg['code'];
+        console.log(code);
+    });
+</script>
 {% endblock %}
