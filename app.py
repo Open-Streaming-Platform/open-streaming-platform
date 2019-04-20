@@ -1910,7 +1910,16 @@ def deleteInviteCode(message):
     else:
         emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
 
-
+@socketio.on('deleteInvitedUser')
+def deleteInvitedUser(message):
+    inviteID = int(message['inviteID'])
+    inviteIDQuery = invites.invitedViewer.query.filter_by(id=inviteID).first()
+    channelQuery = Channel.Channel.query.filter_by(id=inviteIDQuery.channelID).first()
+    if inviteIDQuery != None:
+        if (channelQuery.owningUser is current_user.id) or (current_user.has_role('Admin')):
+            db.session.delete(inviteIDQuery)
+            db.session.commit()
+            emit('invitedUserDeleteAck', {'inviteID': str(inviteID)}, broadcast=False)
 
 try:
     init_db_values()

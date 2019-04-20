@@ -482,6 +482,14 @@ function toggleDiv(divID) {
     }
 </script>
 
+<script>
+    function deleteInvitedUser(inviteID) {
+        socket.emit('deleteInvitedUser', {inviteID: inviteID});
+        var inviteUserRow = document.getElementById('invitedUserRow-' + inviteID);
+        inviteUserRow.parentNode.removeChild(inviteUserRow);
+    }
+</script>
+
 <script type="text/javascript" charset="utf-8">
     socket.on('newInviteCode', function (msg) {
         var code = msg['code'];
