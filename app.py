@@ -241,7 +241,7 @@ def get_Stream_Upvotes(videoID):
 def check_isValidChannelViewer(channelID):
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
     isAuthorized = False
-    if channelQuery is not None:
+    if channelQuery is not None and current_user.is_authenticated:
         for viewer in channelQuery.invitedViewers:
             if viewer.userID is current_user.id:
                 isAuthorized = True
