@@ -213,7 +213,7 @@
                                                         </div>
                                                     </div>
                                                     <div id="invitedUsers">
-                                                        <table id="incitedUsersTable-{{channel.id}}" class="table table-responsive">
+                                                        <table id="invitedUsersTable-{{channel.id}}" class="table table-responsive">
                                                             <tr>
                                                                 <th>User</th>
                                                                 <th>Date Added</th>
@@ -221,15 +221,17 @@
                                                                 <th>Used Code</th>
                                                                 <th></th>
                                                             </tr>
-                                                            {% for user in channel.invitedViewers %}
-                                                            <tr id="invitedUserRow-{{user.id}}">
-                                                                <td>{{user.userID|get_userName}}</td>
-                                                                <td>{{user.addedDate|normalize_date}}</td>
-                                                                <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
-                                                                <td>{{user.usedCode.code}}</td>
-                                                                <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                            </tr>
-                                                            {% endfor %}
+                                                            <tbody>
+                                                                {% for user in channel.invitedViewers %}
+                                                                <tr id="invitedUserRow-{{user.id}}">
+                                                                    <td>{{user.userID|get_userName}}</td>
+                                                                    <td>{{user.addedDate|normalize_date}}</td>
+                                                                    <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                    <td>{{user.usedCode.code}}</td>
+                                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -536,6 +538,35 @@ function toggleDiv(divID) {
         usesCell.appendChild(document.createTextNode('0'));
         buttonCell.innerHTML = buttonText;
     });
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('invitedUserAck', function (msg) {
+        var username = msg['username'];
+        var addedDate = msg['added'];
+        var expiration = msg['expiration'];
+        var channelID = msg['channelID'];
+        var inviteID = msg['id'];
+
+        var tableRef = document.getElementById('invitedUsersTable-' + channelID).getElementsByTagName('tbody')[0];
+
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.id = 'invitedUserRow-' + inviteID;
+
+        var usernameCell = newRow.insertCell(0);
+        var addedDateCell = newRow.insertCell(1);
+        var expirationDateCell = newRow.insertCell(2);
+        var usedCodeCell = newRow.insertCell(3);
+        var buttonCell = newRow.insertCell(4);
+
+        var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser(\'' + inviteID + '\')"><i class="far fa-trash-alt"></i></button>';
+
+        usernameCell.appendChild(document.createTextNode(username));
+        addedDateCell.appendChild(document.createTextNode(addedDate));
+        expirationDateCell.appendChild(document.createTextNode(expiration));
+        buttonCell.innerHTML = buttonText;
+    });
+
 </script>
 
 
