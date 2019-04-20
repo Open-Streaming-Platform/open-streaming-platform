@@ -163,7 +163,7 @@
                                             {% if channel.protected == True %}
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <h6><b>Invite Codes</b></h6>
+                                                    <h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6>
                                                     <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
                                                     <div class="input-group mb-3">
                                                         <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
@@ -193,14 +193,18 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                    <h6><b>Invited Users</b></h6>
-                                                    <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
-                                                    <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
-                                                    <div class="input-group mb-3">
-                                                        <input name="nullField" id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
-                                                        <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="text" class="form-control">
-                                                        <div class="input-group-append">
+                                                    <h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                          <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
+                                                          <input name="nullField" id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                          <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
+                                                          <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="text" class="form-control">
+                                                          <div class="input-group-append">
                                                             <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                          </div>
                                                         </div>
                                                     </div>
                                                     <div id="invitedUsers">
