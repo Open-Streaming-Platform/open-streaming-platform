@@ -1874,10 +1874,10 @@ def generateInviteCode(message):
 def deleteInviteCode(msg):
     code = msg['code']
     codeQuery = invites.inviteCode.query.filter_by(code=code).first()
-
+    channelQuery = Channel.Channel.query.filter_by(id=codeQuery.channelID).first()
     if codeQuery is not None:
-        if (codeQuery.channel.owningUser is current_user.id) or current_user.has_role('Admin'):
-            channelID = codeQuery.channel.id
+        if (channelQuery.owningUser is current_user.id) or (current_user.has_role('Admin')):
+            channelID = channelQuery.id
             code = codeQuery.code
 
             db.session.delete(codeQuery)
