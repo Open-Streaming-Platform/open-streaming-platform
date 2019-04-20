@@ -1940,7 +1940,7 @@ def addUserChannelInvite(message):
             db.session.add(newUserInvite)
             db.session.commit()
 
-            emit('invitedUserAck', {'username': username, 'added': newUserInvite.addedDate, 'expiration': newUserInvite.expiration, 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
+            emit('invitedUserAck', {'username': username, 'added': str(newUserInvite.addedDate), 'expiration': str(newUserInvite.expiration), 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
 
 
 @socketio.on('deleteInvitedUser')

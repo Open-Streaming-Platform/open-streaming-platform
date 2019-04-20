@@ -544,12 +544,13 @@ function toggleDiv(divID) {
 
 <script type="text/javascript" charset="utf-8">
     socket.on('invitedUserAck', function (msg) {
+        console.log(msg);
+
         var username = msg['username'];
         var addedDate = msg['added'];
         var expiration = msg['expiration'];
         var channelID = msg['channelID'];
         var inviteID = msg['id'];
-        console.log(msg);
 
         var tableRef = document.getElementById('invitedUsersTable-' + channelID).getElementsByTagName('tbody')[0];
 
