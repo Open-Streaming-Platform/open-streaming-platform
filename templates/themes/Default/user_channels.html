@@ -449,7 +449,7 @@ function toggleDiv(divID) {
 
 <script>
     function deleteInviteCode(code) {
-        socket.emit('deleteInviteCode', {msg: code});
+        socket.emit('deleteInviteCode', {code: code});
     }
 </script>
 

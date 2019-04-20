@@ -1878,7 +1878,6 @@ def deleteInviteCode(message):
     if codeQuery is not None:
         if (channelQuery.owningUser is current_user.id) or (current_user.has_role('Admin')):
             channelID = channelQuery.id
-
             db.session.delete(codeQuery)
             db.session.commit()
             emit('inviteCodeDeleteAck', {'code': str(code), 'channelID': str(channelID)}, broadcast=False)
