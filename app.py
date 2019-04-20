@@ -1935,11 +1935,12 @@ def addUserChannelInvite(message):
     if channelQuery != None:
         invitedUserQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(username)).first()
         if invitedUserQuery is not None:
+            # TODO Add Check for Multiple Invites for a User
             newUserInvite = invites.invitedViewer(invitedUserQuery.id, channelID, daysToExpire)
             db.session.add(newUserInvite)
             db.session.commit()
 
-            emit('invitedUserAck', {'username': username, 'added': newUserInvite.addedDate, 'expiration': newUserInvite.expiration, 'channelID': str(channelID), 'id':str(newUserInvite.id)}, broadcast=False)
+            emit('invitedUserAck', {'username': username, 'added': newUserInvite.addedDate, 'expiration': newUserInvite.expiration, 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
 
 
 @socketio.on('deleteInvitedUser')

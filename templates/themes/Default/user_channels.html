@@ -214,13 +214,15 @@
                                                     </div>
                                                     <div id="invitedUsers">
                                                         <table id="invitedUsersTable-{{channel.id}}" class="table table-responsive">
-                                                            <tr>
-                                                                <th>User</th>
-                                                                <th>Date Added</th>
-                                                                <th>Expiration Date</th>
-                                                                <th>Used Code</th>
-                                                                <th></th>
-                                                            </tr>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>User</th>
+                                                                    <th>Date Added</th>
+                                                                    <th>Expiration Date</th>
+                                                                    <th>Used Code</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
                                                             <tbody>
                                                                 {% for user in channel.invitedViewers %}
                                                                 <tr id="invitedUserRow-{{user.id}}">
