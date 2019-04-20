@@ -194,6 +194,25 @@
                                                         </table>
                                                     </div>
                                                     <h6><b>Invited Users</b></h6>
+                                                    <label for="newInvitedUser" class="col-form-label"><b>Invited Username</b></label>
+                                                    <div class="input-group mb-3">
+                                                        <input name="nullField" id="newInviteUser-{{channel.id}}" type="text" class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <div id="invitedUsers">
+                                                        <table>
+                                                            {% for user in channel.invitedViewers %}
+                                                            <tr>
+                                                                <td>{{user.userID}}</td>
+                                                                <td>{{user.addedDate|normalize_date}}</td>
+                                                                <td>{{user.expiration}}</td>
+                                                                <td>{{user.usedCode.code}}</td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                             {% endif %}
