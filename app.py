@@ -772,6 +772,7 @@ def user_addInviteCode():
             if inviteCodeQuery.isValid():
                 remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
                 newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.code)
+                inviteCodeQuery.uses = inviteCodeQuery.uses + 1
                 db.session.add(newInvitedUser)
                 db.session.commit()
                 flash("Added Invite Code to Channel", "success")
