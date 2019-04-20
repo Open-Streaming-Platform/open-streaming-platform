@@ -533,7 +533,7 @@ function toggleDiv(divID) {
         var usesCell = newRow.insertCell(2);
         var buttonCell = newRow.insertCell(3);
 
-        var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode(\''+ code + '\')"><i class="far fa-trash-alt"></i></button>'
+        var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode(\''+ code + '\')"><i class="far fa-trash-alt"></i></button>';
 
         codeCell.appendChild(document.createTextNode(code));
         expirationCell.appendChild(document.createTextNode(expiration));
@@ -549,6 +549,7 @@ function toggleDiv(divID) {
         var expiration = msg['expiration'];
         var channelID = msg['channelID'];
         var inviteID = msg['id'];
+        console.log(msg);
 
         var tableRef = document.getElementById('invitedUsersTable-' + channelID).getElementsByTagName('tbody')[0];
 
