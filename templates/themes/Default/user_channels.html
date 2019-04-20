@@ -206,7 +206,7 @@
                                                             <tr>
                                                                 <th>User</th>
                                                                 <th>Date Added</th>
-                                                                <th>Expires</th>
+                                                                <th>Expiration Date</th>
                                                                 <th>Used Code</th>
                                                                 <th></th>
                                                             </tr>
@@ -214,7 +214,7 @@
                                                             <tr id="invitedUserRow-{{user.id}}">
                                                                 <td>{{user.userID|get_userName}}</td>
                                                                 <td>{{user.addedDate|normalize_date}}</td>
-                                                                <td>{{user.expiration|normalize_date}}</td>
+                                                                <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
                                                                 <td>{{user.usedCode.code}}</td>
                                                                 <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                             </tr>
