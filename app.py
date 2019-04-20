@@ -1207,7 +1207,7 @@ def settings_channels_page():
                 requestedChannel.chatBG = chatBG
                 requestedChannel.chatAnimation = chatAnimation
                 requestedChannel.chatTextColor = chatTextColor
-                requestedChannel.protection = protection
+                requestedChannel.protected = protection
 
                 if 'photo' in request.files:
                     oldImage = None
