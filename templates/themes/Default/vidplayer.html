@@ -151,7 +151,20 @@
                                     <div class="streamcard">
                                       <a href="/play/{{vid.id}}">
                                           <div class="stream shadow card p-2 streamcard-item">
-                                            <img class="stream-img card-img-top shadow" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                            <div>
+                                                <img class="stream-img card-img-top shadow" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                                {% if vid.channel.protected %}
+                                                <div class="streamcard-overlay">
+                                                    <div class="quarter-circle-top-left">
+                                                        {% if check_isValidChannelViewer(vid.channel.id) %}
+                                                            <i class="stream-image-overlay-text fas fa-lock-open"></i>
+                                                        {% else %}
+                                                            <i class="stream-image-overlay-text fas fa-lock"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
                                             <div class="card-body">
                                                 <h5 class="card-title text-shadow-close">{{vid.channelName|limit_title}}</h5><br>
                                                 <i class="fas fa-hashtag"></i> <b>{{vid.topic|get_topicName}}</b> <br>
