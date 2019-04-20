@@ -770,12 +770,16 @@ def user_addInviteCode():
         inviteCodeQuery = invites.inviteCode.query.filter_by(code=inviteCode).first()
         if inviteCodeQuery is not None:
             if inviteCodeQuery.isValid():
-                remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
-                newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.id)
-                inviteCodeQuery.uses = inviteCodeQuery.uses + 1
-                db.session.add(newInvitedUser)
-                db.session.commit()
-                flash("Added Invite Code to Channel", "success")
+                existingInviteQuery = invites.invitedViewer.query.filter_by(inviteCode=inviteCodeQuery.id, userID=current_user.id).first()
+                if existingInviteQuery is None:
+                    remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                    newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.id)
+                    inviteCodeQuery.uses = inviteCodeQuery.uses + 1
+                    db.session.add(newInvitedUser)
+                    db.session.commit()
+                    flash("Added Invite Code to Channel", "success")
+                else:
+                    flash("Invite Code Already Applied", "error")
             else:
                 flash("Invite Code Expired", "error")
         else:
