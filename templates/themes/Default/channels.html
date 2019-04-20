@@ -21,7 +21,7 @@
                     <div class="stream shadow card p-2 streamcard-item">
                         <img class="channel-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-body">
-                            <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
+                            <h5 class="card-title text-shadow-close">{% if channel.protected %}{% if check_isValidChannelViewer(channel.id) %}<i class="fas fa-lock-open"></i>{% else %}<i class="fas fa-lock"></i>{% endif %} {% endif %}{{channel.channelName}}</h5>
                             <p class="card-text">
                             <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"><b> {{channel.topic|get_topicName}}</b></div> <br>
                             <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b>

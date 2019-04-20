@@ -238,6 +238,18 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
+def check_isValidChannelViewer(channelID):
+    channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+    isAuthorized = False
+    if channelQuery is not None:
+        for viewer in channelQuery.invitedViewers:
+            if viewer.userID is current_user.id:
+                isAuthorized = True
+    return isAuthorized
+
+
+app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
+
 @app.context_processor
 def inject_user_info():
     return dict(user=current_user)
