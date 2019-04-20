@@ -762,6 +762,25 @@ def user_page():
 
     return redirect(url_for('user_page'))
 
+@app.route('/settings/user/addInviteCode')
+@login_required
+def user_addInviteCode():
+    if 'inviteCode' in request.args:
+        inviteCode = request.args.get("inviteCode")
+        inviteCodeQuery = invites.inviteCode.query.filter_by(code=inviteCode).first()
+        if inviteCodeQuery is not None:
+            if inviteCodeQuery.isValid():
+                remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.code)
+                db.session.add(newInvitedUser)
+                db.session.commit()
+                flash("Added Invite Code to Channel", "success")
+            else:
+                flash("Invite Code Expired", "error")
+        else:
+            flash("Invalid Invite Code", "error")
+    return redirect(url_for('main_page'))
+
 
 @app.route('/settings/admin', methods=['POST','GET'])
 @login_required
