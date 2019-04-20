@@ -1924,6 +1924,24 @@ def deleteInviteCode(message):
     else:
         emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
 
+@socketio.on('addUserChannelInvite')
+def addUserChannelInvite(message):
+    channelID = int(message['chanID'])
+    username = message['username']
+    daysToExpire = message['daysToExpiration']
+
+    channelQuery = Channel.Channel.query.filter_by(id=channelID, owningUser=current_user.id).first()
+
+    if channelQuery != None:
+        invitedUserQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(username)).first()
+        if invitedUserQuery is not None:
+            newUserInvite = invites.invitedViewer(invitedUserQuery.id, channelID, daysToExpire)
+            db.session.add(newUserInvite)
+            db.session.commit()
+
+            emit('invitedUserAck', {'username': username, 'added': newUserInvite.addedDate, 'expiration': newUserInvite.expiration}, broadcast=False)
+
+
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
     inviteID = int(message['inviteID'])

@@ -486,6 +486,18 @@ function toggleDiv(divID) {
 </script>
 
 <script>
+    function addInvitedUser(channelID) {
+        var invitedUsernameDiv = document.getElementById('newInvitedUsername-' + channelID);
+        var invitedUsername = invitedUsernameDiv.value;
+
+        var daystoExpireDiv = document.getElementById('newInvitedUserDays-' + channelID);
+        var daystoExpire = daystoExpireDiv.value;
+
+        socket.emit('addUserChannelInvite', {chanID: channelID, username: invitedUsername, daysToExpiration: daystoExpire});
+    }
+</script>
+
+<script>
     function deleteInviteCode(code) {
         socket.emit('deleteInviteCode', {code: code});
         var inviteCodeRow = document.getElementById('inviteCodeRow-' + code);
@@ -525,5 +537,6 @@ function toggleDiv(divID) {
         buttonCell.innerHTML = buttonText;
     });
 </script>
+
 
 {% endblock %}
