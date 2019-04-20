@@ -458,11 +458,11 @@
     -moz-border-radius: 0 0 100px 0;
     -webkit-border-radius: 0 0 100px 0;
 }
-.overlay {
+.streamcard-overlay {
   position:absolute;
-  top: 0;
+  top: -1px;
   right: 0;
-  left: 0;
+  left: -1px;
   bottom: 0;
 }
 
