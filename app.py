@@ -245,6 +245,8 @@ def check_isValidChannelViewer(channelID):
         for viewer in channelQuery.invitedViewers:
             if viewer.userID is current_user.id:
                 isAuthorized = True
+        if channelQuery.owningUser is current_user.id:
+            isAuthorized = True
     return isAuthorized
 
 
