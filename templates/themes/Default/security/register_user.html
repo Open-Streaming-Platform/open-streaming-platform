@@ -4,6 +4,8 @@
 
 {% block head %}
 <title>{{sysSettings.siteName}} - Register</title>
+
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -38,4 +40,38 @@
         </div>
     </div>
 
+<script type="text/javascript" charset="utf-8">
+    var conn_options = {
+        'sync disconnect on unload':true
+    };
+
+    var socket = io();
+</script>
+
+<script>
+    function checkUniqueUsername() {
+        var usernameDiv = document.getElementById('username');
+        username = usernameDiv.value;
+
+        socket.emit('checkUniqueUsername', {username: username});
+    }
+</script>
+
+<script>
+    $('#username').change(function() {
+    checkUniqueUsername();
+});
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('checkUniqueUsernameAck', function (msg) {
+        var checkResults = msg['results'];
+        var usernameDiv = document.getElementById('username');
+        if (checkResults == '0') {
+            usernameDiv.setCustomValidity('Invalid User');
+        } else {
+            usernameDiv.setCustomValidity('');
+        }
+    });
+</script>
 {% endblock %}

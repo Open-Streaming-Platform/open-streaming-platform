@@ -2015,6 +2015,15 @@ def deleteInvitedUser(message):
             db.session.commit()
             emit('invitedUserDeleteAck', {'inviteID': str(inviteID)}, broadcast=False)
 
+@socketio.on('checkUniqueUsername')
+def deleteInvitedUser(message):
+    newUsername = message['username']
+    userQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(newUsername)).first()
+    if userQuery is None:
+        emit('checkUniqueUsernameAck', {'results': str(1)}, broadcast=False)
+    else:
+        emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
+
 try:
     init_db_values()
 except Exception as e:
