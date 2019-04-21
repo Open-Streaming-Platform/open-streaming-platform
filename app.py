@@ -588,44 +588,54 @@ def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
-    if recordedVid != None:
-        recordedVid.views = recordedVid.views + 1
-        recordedVid.channel.views = recordedVid.channel.views + 1
 
-        if recordedVid.length == None:
-            fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
-            duration = getVidLength(fullVidPath)
-            recordedVid.length = duration
-        db.session.commit()
+    viewable = True
 
-        topicList = topics.topics.query.all()
+    if recordedVid.channel.protected:
+        if not check_isValidChannelViewer(recordedVid.channel.id):
+            viewable = False
 
-        streamURL = '/videos/' + recordedVid.videoLocation
+    if viewable is True:
+        if recordedVid != None:
+            recordedVid.views = recordedVid.views + 1
+            recordedVid.channel.views = recordedVid.channel.views + 1
 
-        isEmbedded = request.args.get("embedded")
+            if recordedVid.length == None:
+                fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
+                duration = getVidLength(fullVidPath)
+                recordedVid.length = duration
+            db.session.commit()
 
-        newView = views.views(1, recordedVid.id)
-        db.session.add(newView)
-        db.session.commit()
+            topicList = topics.topics.query.all()
 
-        if isEmbedded == None or isEmbedded == "False":
+            streamURL = '/videos/' + recordedVid.videoLocation
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+            isEmbedded = request.args.get("embedded")
 
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
-        else:
-            isAutoPlay = request.args.get("autoplay")
-            if isAutoPlay == None:
-                isAutoPlay = False
-            elif isAutoPlay.lower() == 'true':
-                isAutoPlay = True
+            newView = views.views(1, recordedVid.id)
+            db.session.add(newView)
+            db.session.commit()
+
+            if isEmbedded == None or isEmbedded == "False":
+
+                randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+
+                return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
             else:
-                isAutoPlay = False
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+                isAutoPlay = request.args.get("autoplay")
+                if isAutoPlay == None:
+                    isAutoPlay = False
+                elif isAutoPlay.lower() == 'true':
+                    isAutoPlay = True
+                else:
+                    isAutoPlay = False
+                return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+        else:
+            flash("No Such Video at URL","error")
+            return redirect(url_for("main_page"))
     else:
-        flash("No Such Video at URL","error")
+        flash("Unauthorized","error")
         return redirect(url_for("main_page"))
-
 
 @app.route('/play/<loc>/change', methods=['POST'])
 @login_required
