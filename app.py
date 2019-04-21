@@ -1440,10 +1440,13 @@ def initialSetup():
 @app.route('/videos/<string:channelID>/<path:filename>')
 def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if check_isValidChannelViewer(channelQuery.id):
-        return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+        else:
+            return None
     else:
-        return None
+        return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
