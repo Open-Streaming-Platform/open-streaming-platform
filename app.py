@@ -1472,7 +1472,7 @@ def live_thumb_sender(filename):
 
 @app.route('/live-adapt/<path:filename>')
 def live_adapt_stream_image_sender(filename):
-    channelID = str(filename)[:-4]
+    channelID = str(filename)[:-5]
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
