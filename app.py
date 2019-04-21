@@ -589,52 +589,46 @@ def view_vid_page(videoID):
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
-    viewable = True
-
     if recordedVid.channel.protected:
         if not check_isValidChannelViewer(recordedVid.channel.id):
-            viewable = False
+            return redirect(url_for("user_addInviteCode"))
 
-    if viewable is True:
-        if recordedVid != None:
-            recordedVid.views = recordedVid.views + 1
-            recordedVid.channel.views = recordedVid.channel.views + 1
+    if recordedVid != None:
+        recordedVid.views = recordedVid.views + 1
+        recordedVid.channel.views = recordedVid.channel.views + 1
 
-            if recordedVid.length == None:
-                fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
-                duration = getVidLength(fullVidPath)
-                recordedVid.length = duration
-            db.session.commit()
+        if recordedVid.length == None:
+            fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
+            duration = getVidLength(fullVidPath)
+            recordedVid.length = duration
+        db.session.commit()
 
-            topicList = topics.topics.query.all()
+        topicList = topics.topics.query.all()
 
-            streamURL = '/videos/' + recordedVid.videoLocation
+        streamURL = '/videos/' + recordedVid.videoLocation
 
-            isEmbedded = request.args.get("embedded")
+        isEmbedded = request.args.get("embedded")
 
-            newView = views.views(1, recordedVid.id)
-            db.session.add(newView)
-            db.session.commit()
+        newView = views.views(1, recordedVid.id)
+        db.session.add(newView)
+        db.session.commit()
 
-            if isEmbedded == None or isEmbedded == "False":
+        if isEmbedded == None or isEmbedded == "False":
 
-                randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
 
-                return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
-            else:
-                isAutoPlay = request.args.get("autoplay")
-                if isAutoPlay == None:
-                    isAutoPlay = False
-                elif isAutoPlay.lower() == 'true':
-                    isAutoPlay = True
-                else:
-                    isAutoPlay = False
-                return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
         else:
-            flash("No Such Video at URL","error")
-            return redirect(url_for("main_page"))
+            isAutoPlay = request.args.get("autoplay")
+            if isAutoPlay == None:
+                isAutoPlay = False
+            elif isAutoPlay.lower() == 'true':
+                isAutoPlay = True
+            else:
+                isAutoPlay = False
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
     else:
-        flash("Unauthorized","error")
+        flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
 
 @app.route('/play/<loc>/change', methods=['POST'])
@@ -803,7 +797,7 @@ def user_addInviteCode():
                     db.session.commit()
                     flash("Added Invite Code to Channel", "success")
                     if 'redirectURL' in request.args:
-                        redirect(request.args.get("redirectURL"))
+                        return redirect(request.args.get("redirectURL"))
                 else:
                     flash("Invite Code Already Applied", "error")
             else:
