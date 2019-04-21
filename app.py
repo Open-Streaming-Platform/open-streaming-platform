@@ -1460,7 +1460,15 @@ def video_sender(channelID, filename):
 
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
-    return send_from_directory('/var/www/stream-thumb', filename)
+    channelID = str(filename)[:-4]
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory('/var/www/stream-thumb', filename)
+        else:
+            return None
+    else:
+        return send_from_directory('/var/www/stream-thumb', filename)
 
 @app.route('/live-adapt/<path:filename>')
 def live_adapt_stream_image_sender(filename):
@@ -1470,21 +1478,33 @@ def live_adapt_stream_image_sender(filename):
 def live_adapt_stream_directory_sender(channelID, filename):
     return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
 
-@app.route('/live/<path:filename>')
-def live_stream_sender(filename):
-    return send_from_directory('/var/www/live', filename)
+#@app.route('/live/<path:filename>')
+#def live_stream_sender(filename):
+#    return send_from_directory('/var/www/live', filename)
 
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
-    return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+        else:
+            return None
+    else:
+        return send_from_directory(os.path.join('/var/www/live', channelID), filename)
 
-@app.route('/live-rec/<path:filename>')
-def live_rec_stream_sender(filename):
-    return send_from_directory('/var/www/live-rec', filename)
+#@app.route('/live-rec/<path:filename>')
+#def live_rec_stream_sender(filename):
+#    return send_from_directory('/var/www/live-rec', filename)
 
 @app.route('/live-rec/<string:channelID>/<path:filename>')
 def live_rec_stream_directory_sender(channelID, filename):
-    return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
+    else:
+        return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
 
 ### Start NGINX-RTMP Authentication Functions
 
