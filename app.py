@@ -1455,16 +1455,16 @@ def live_adapt_stream_directory_sender(channelID, filename):
 
 @app.route('/live/<path:filename>')
 def live_stream_sender(filename):
-    channelLoc = str(filename)[:-4]
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    if check_isValidChannelViewer(channelQuery.id):
-        return send_from_directory('/var/www/live', filename)
-    else:
-        return None
+    return send_from_directory('/var/www/live', filename)
+
 
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
-    return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if check_isValidChannelViewer(channelQuery.id):
+        return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+    else:
+        return None
 
 @app.route('/live-rec/<path:filename>')
 def live_rec_stream_sender(filename):
