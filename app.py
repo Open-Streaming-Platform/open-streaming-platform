@@ -1472,11 +1472,26 @@ def live_thumb_sender(filename):
 
 @app.route('/live-adapt/<path:filename>')
 def live_adapt_stream_image_sender(filename):
-    return send_from_directory('/var/www/live-adapt', filename)
+    channelID = str(filename)[:-4]
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory('/var/www/live-adapt', filename)
+        else:
+            return None
+    else:
+        return send_from_directory('/var/www/live-adapt', filename)
 
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
 def live_adapt_stream_directory_sender(channelID, filename):
-    return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID[:-4]).first()
+    if channelQuery.protected:
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
+        else:
+            return None
+    else:
+        return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
 
 #@app.route('/live/<path:filename>')
 #def live_stream_sender(filename):
