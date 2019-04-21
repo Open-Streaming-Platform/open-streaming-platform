@@ -802,6 +802,8 @@ def user_addInviteCode():
                     db.session.add(newInvitedUser)
                     db.session.commit()
                     flash("Added Invite Code to Channel", "success")
+                    if 'redirectURL' in request.args:
+                        redirect(request.args.get("redirectURL"))
                 else:
                     flash("Invite Code Already Applied", "error")
             else:
