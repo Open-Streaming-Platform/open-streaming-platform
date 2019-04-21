@@ -1439,7 +1439,11 @@ def initialSetup():
 
 @app.route('/videos/<string:channelID>/<path:filename>')
 def video_sender(channelID, filename):
-    return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+    if check_isValidChannelViewer(channelQuery.id):
+        return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+    else:
+        return None
 
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
@@ -1457,14 +1461,9 @@ def live_adapt_stream_directory_sender(channelID, filename):
 def live_stream_sender(filename):
     return send_from_directory('/var/www/live', filename)
 
-
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if check_isValidChannelViewer(channelQuery.id):
-        return send_from_directory(os.path.join('/var/www/live', channelID), filename)
-    else:
-        return None
+    return send_from_directory(os.path.join('/var/www/live', channelID), filename)
 
 @app.route('/live-rec/<path:filename>')
 def live_rec_stream_sender(filename):
