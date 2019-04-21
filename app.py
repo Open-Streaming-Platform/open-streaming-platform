@@ -510,6 +510,10 @@ def view_page(loc):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
+    if requestedChannel.protected:
+        if not check_isValidChannelViewer(requestedChannel.id):
+            return render_template('themes/' + sysSettings.systemTheme + '/channelProtectionAuth.html')
+
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     if streamData is not None:
