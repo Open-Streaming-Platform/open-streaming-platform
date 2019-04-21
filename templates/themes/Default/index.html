@@ -89,7 +89,7 @@
                             {% endif %}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title text-shadow-close">{% if video.channel.protected %}{% if check_isValidChannelViewer(video.channel.id) %}<i class="fas fa-lock-open"></i>{% else %}<i class="fas fa-lock"></i>{% endif %} {% endif %}{{video.channelName|limit_title}}</h5>
+                            <h5 class="card-title text-shadow-close">{{video.channelName|limit_title}}</h5>
                             <p class="card-text">
                                 <i class="fas fa-tv"></i> <b>{{video.channel.channelName}}</b> <br>
                                 <i class="fas fa-hashtag"></i> <b>{{video.topic|get_topicName}}</b> <br>
