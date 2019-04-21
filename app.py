@@ -591,7 +591,7 @@ def view_vid_page(videoID):
 
     if recordedVid.channel.protected:
         if not check_isValidChannelViewer(recordedVid.channel.id):
-            return redirect(url_for("user_addInviteCode"))
+            return render_template('themes/' + sysSettings.systemTheme + '/channelProtectionAuth.html')
 
     if recordedVid != None:
         recordedVid.views = recordedVid.views + 1
