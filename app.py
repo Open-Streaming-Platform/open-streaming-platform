@@ -244,7 +244,11 @@ def check_isValidChannelViewer(channelID):
     if channelQuery is not None and current_user.is_authenticated:
         for viewer in channelQuery.invitedViewers:
             if viewer.userID is current_user.id:
-                isAuthorized = True
+                if viewer.isValid():
+                    isAuthorized = True
+                else:
+                    db.session.delete(viewer)
+                    db.session.commit()
         if channelQuery.owningUser is current_user.id:
             isAuthorized = True
     return isAuthorized
