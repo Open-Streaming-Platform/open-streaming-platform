@@ -17,10 +17,10 @@
                         <form action="/settings/user/addInviteCode" method="get">
                             <label for="inviteCode" class="col-form-label"><b>Enter your invitation Code</b></label>
                             <div class="input-group mb-3">
-                                <input name="inviteCode" id="inviteCode" type="text" class="form-control">
+                                <input name="inviteCode" id="inviteCode" type="text" class="form-control" required>
                             </div>
                             <input type="hidden" name="redirectURL" value="{{request.url}}">
-                            <button type="submit">Submit</button>
+                            <button class="btn btn-primary" type="submit">Submit</button>
                         </form>
                     </div>
                 </div>
