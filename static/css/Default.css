@@ -458,6 +458,18 @@
     -moz-border-radius: 0 0 100px 0;
     -webkit-border-radius: 0 0 100px 0;
 }
+
+.quarter-circle-top-right{
+    width: 50px;
+    height: 50px;
+    background: #ED213A;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #93291E, #ED213A);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #93291E, #ED213A); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 0 0 0 100px;
+    -moz-border-radius: 0 0 0 100px;
+    -webkit-border-radius: 0 0 0 100px;
+}
+
 .streamcard-overlay {
   position:absolute;
   top: -1px;
@@ -468,6 +480,19 @@
 
 .stream-image-overlay-text{
     margin-left:10px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
+
+.streamcard-overlay-right {
+  position:absolute;
+  top: 0;
+  right: 0;
+}
+
+.stream-image-overylay-text{
+    margin-left:20px;
     margin-top:10px;
     text-shadow: 1px 1px 2px #000000;
     color:white;

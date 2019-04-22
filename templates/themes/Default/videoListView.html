@@ -51,9 +51,14 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                <div class="streamcard-overlay-right">
+                                    <div class="quarter-circle-top-right">
+                                        <i class="stream-image-overylay-text fas fa-video"></i>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title text-shadow-close">{{stream.streamName|limit_title}} <span class="badge badge-dark shadow"><img class="blink-image recordDot" src="/static/img/red.png" width="15px" height="15px">Live</span></h5>
+                                <h5 class="card-title text-shadow-close">{{stream.streamName|limit_title}}</h5>
                                 <p class="card-text">
                                     <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"> {{stream.channel.channelName}}</div> <br>
                                     <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"> {{stream.topic|get_topicName}}</div> <br>
