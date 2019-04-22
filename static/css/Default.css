@@ -487,8 +487,8 @@
 
 .streamcard-overlay-right {
   position:absolute;
-  top: 0;
-  right: 0;
+  top: -1px;
+  right: -1px;
 }
 
 .stream-image-overylay-text{
