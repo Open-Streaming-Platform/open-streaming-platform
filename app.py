@@ -95,6 +95,7 @@ from classes import apikey
 from classes import views
 from classes import comments
 from classes import invites
+from classes import webhook
 
 sysSettings = None
 

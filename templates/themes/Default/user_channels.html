@@ -244,6 +244,53 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <a href="javascript:void(0)" onclick="toggleDiv('webhooks-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
+                                        <div id="webhook-{{channel.id}}" style="display:none;">
+                                             <div class="row">
+                                                <div class="col-12">
+                                                    <h6><b><i class="fas fa-globe"></i> Active Webhooks</b></h6>
+                                                    {% for webhook in channel.webhooks %}
+                                                    {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.request.type}}
+                                                    {% endfor %}
+                                                </div>
+                                             </div>
+                                             <div class="row">
+                                                 <div class="col-12">
+                                                     <b>Create a new Webhook</b>
+                                                     <div class="form-row">
+                                                        <div class="form-group col-md-2">
+                                                            <label for="webhookName-{{channel.id}}">Name</label>
+                                                            <input id="webhookName-{{channel.id}}" class="form-control">
+                                                        </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="webhookEndpoint-{{channel.id}}">Endpoint URL</label>
+                                                            <input id="webhookEndpoint-{{channel.id}}" class="form-control">
+                                                        </div>
+                                                        <div class="form-group col-md-3">
+                                                            <label for="webhookHeader-{{channel.id}}">Request Header</label>
+                                                            <textarea id="webhookHeader-{{channel.id}}" class="form-control"></textarea>
+                                                        </div>
+                                                        <div class="form-group col-md-3">
+                                                            <label for="webhookPayload-{{channel.id}}">Payload</label>
+                                                            <textarea class="form-control"></textarea>
+                                                        </div>
+                                                        <div class="form-group col-md-2">
+                                                            <label for="webhookReqType-{{channel.id}}">Payload</label>
+                                                            <select id="webhookReqType-{{channel.id}}" class="form-control">
+                                                                 <option value=0 selected>POST</option>
+                                                                 <option value=1>GET</option>
+                                                                 <option value=2>PUT</option>
+                                                                 <option value=3>DELETE</option>
+                                                            </select>
+                                                        </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
                                         <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h5></a>
                                         <div id="statChart-{{channel.id}}" style="display:none;">
                                             <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
