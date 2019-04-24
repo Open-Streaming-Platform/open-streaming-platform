@@ -275,7 +275,7 @@
                                                             <textarea class="form-control"></textarea>
                                                         </div>
                                                         <div class="form-group col-md-1">
-                                                            <label for="webhookReqType-{{channel.id}}">Payload</label>
+                                                            <label for="webhookReqType-{{channel.id}}">Type</label>
                                                             <select id="webhookReqType-{{channel.id}}" class="form-control">
                                                                  <option value=0 selected>POST</option>
                                                                  <option value=1>GET</option>
@@ -285,7 +285,7 @@
                                                         </div>
                                                         <div class="form-group col-md-1">
                                                             <label for="webhookSubmit"> </label>
-                                                            <button type="button" class="btn btn-sm btn-primary" onclick="submitNewWebhook('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                            <button id="webhookSubmit" type="button" class="btn btn-sm btn-primary" onclick="submitNewWebhook('{{channel.id}}')"><i class="fas fa-plus"></i></button>
                                                         </div>
                                                      </div>
                                                  </div>
