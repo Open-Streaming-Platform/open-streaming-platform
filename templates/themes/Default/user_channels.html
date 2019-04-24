@@ -274,7 +274,7 @@
                                                             <label for="webhookPayload-{{channel.id}}">Payload</label>
                                                             <textarea class="form-control"></textarea>
                                                         </div>
-                                                        <div class="form-group col-md-2">
+                                                        <div class="form-group col-md-1">
                                                             <label for="webhookReqType-{{channel.id}}">Payload</label>
                                                             <select id="webhookReqType-{{channel.id}}" class="form-control">
                                                                  <option value=0 selected>POST</option>
@@ -282,6 +282,10 @@
                                                                  <option value=2>PUT</option>
                                                                  <option value=3>DELETE</option>
                                                             </select>
+                                                        </div>
+                                                        <div class="form-group col-md-1">
+                                                            <label for="webhookSubmit"> </label>
+                                                            <button type="button" class="btn btn-sm btn-primary" onclick="submitNewWebhook('{{channel.id}}')"><i class="fas fa-plus"></i></button>
                                                         </div>
                                                      </div>
                                                  </div>
