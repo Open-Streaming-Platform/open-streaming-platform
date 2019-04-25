@@ -49,6 +49,8 @@ from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
+app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = dict(encoding='utf8mb4')
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
 app.config['SECURITY_PASSWORD_SALT'] = config.passwordSalt
