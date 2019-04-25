@@ -271,11 +271,11 @@
                                                             <label for="webhookHeader-{{channel.id}}">Request Header</label>
                                                             <textarea id="webhookHeader-{{channel.id}}" class="form-control"></textarea>
                                                         </div>
-                                                        <div class="form-group col-md-3">
+                                                        <div class="form-group col-md-12">
                                                             <label for="webhookPayload-{{channel.id}}">Payload</label>
                                                             <textarea class="form-control"></textarea>
                                                         </div>
-                                                        <div class="form-group col-md-1">
+                                                        <div class="form-group col-md-2">
                                                             <label for="webhookReqType-{{channel.id}}">Type</label>
                                                             <select id="webhookReqType-{{channel.id}}" class="form-control">
                                                                  <option value=0 selected>POST</option>
@@ -284,12 +284,9 @@
                                                                  <option value=3>DELETE</option>
                                                             </select>
                                                         </div>
-                                                        <div class="form-group col-md-1">
-                                                            <label for="hiddenwebhookSubmit"> </label>
-                                                            <input id="hiddenwebhookSubmit" type="hidden" class="form-control">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn btn-primary" onclick="submitNewWebhook('{{channel.id}}')"><i class="fas fa-plus"></i></button>
-                                                            </div>
+                                                        <div class="col-md-10"></div>
+                                                        <div class="col-md-3">
+                                                            <button type="button" class="btn btn btn-primary" onclick="submitNewWebhook('{{channel.id}}')"><i class="fas fa-plus"> Create</i></button>
                                                         </div>
                                                      </div>
                                                  </div>
