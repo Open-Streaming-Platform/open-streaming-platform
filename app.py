@@ -48,7 +48,7 @@ app = Flask(__name__)
 from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation + '?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding':'utf8mb4'}
 app.config['SECRET_KEY'] = config.secretKey
@@ -190,7 +190,7 @@ def init_db_values():
 
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
-        ## Begin DB UTF8MB4 Fixes
+        ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
         dbEngine = db.engine
         dbConnection = dbEngine.connect()
         dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
@@ -202,6 +202,7 @@ def init_db_values():
             sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
             db.Connection.execute(sql)
         db.close()
+        ## End DB UT8MB4 Fixes
 
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
