@@ -423,7 +423,7 @@
 <script>
     function CopyInviteCode(divVal) {
         var copyText = document.getElementById(divVal).value;
-        copyText = '{{sysSettings.siteaddress}}/settings/user/addInviteCode?inviteCode=' + copyText
+        copyText = '{{sysSettings.siteAddress}}/settings/user/addInviteCode?inviteCode=' + copyText
 
         var dummy = document.createElement("input");
         document.body.appendChild(dummy);
