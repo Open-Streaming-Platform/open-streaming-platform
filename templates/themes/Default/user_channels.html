@@ -184,7 +184,14 @@
                                                             <tbody>
                                                             {% for code in channel.inviteCodes %}
                                                             <tr id="inviteCodeRow-{{code.code}}">
-                                                                <td>{{code.code}}</td>
+                                                                <td>
+                                                                    <div class="input-group mb-3">
+                                                                        <div class="input-group-prepend">
+                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}')"><i class="fas fa-copy"></i></button>
+                                                                        </div>
+                                                                        <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
+                                                                    </div>
+                                                                </td>
                                                                 <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
                                                                 <td>{{code.uses}}</td>
                                                                 <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
@@ -410,6 +417,20 @@
       var copyText = document.getElementById(divVal);
       copyText.select();
       document.execCommand("copy");
+    }
+</script>
+
+<script>
+    function CopyInviteCode(divVal) {
+        var copyText = document.getElementById(divVal).value;
+        copyText = '{{sysSettings.siteaddress}}/settings/user/addInviteCode?inviteCode=' + copyText
+
+        var dummy = document.createElement("input");
+        document.body.appendChild(dummy);
+        dummy.setAttribute('value', copyText);
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
     }
 </script>
 
