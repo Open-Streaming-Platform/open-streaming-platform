@@ -48,7 +48,7 @@ app = Flask(__name__)
 from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
+app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation + '?charset=utf8mb4'
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding':'utf8mb4'}
 app.config['SECRET_KEY'] = config.secretKey
