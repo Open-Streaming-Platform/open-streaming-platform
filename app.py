@@ -190,7 +190,18 @@ def init_db_values():
 
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
+        ## Begin DB UTF8MB4 Fixes
+        dbEngine = db.engine
+        dbConnection = dbEngine.connect()
+        dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
 
+        sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
+
+        results = dbConnection.execute(sql)
+        for row in results:
+            sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
+            db.Connection.execute(sql)
+        db.close()
 
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
