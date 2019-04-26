@@ -813,7 +813,10 @@ def user_addInviteCode():
             if inviteCodeQuery.isValid():
                 existingInviteQuery = invites.invitedViewer.query.filter_by(inviteCode=inviteCodeQuery.id, userID=current_user.id).first()
                 if existingInviteQuery is None:
-                    remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                    if inviteCodeQuery.expiration != None:
+                        remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                    else:
+                        remainingDays = 0
                     newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.id)
                     inviteCodeQuery.uses = inviteCodeQuery.uses + 1
                     db.session.add(newInvitedUser)
