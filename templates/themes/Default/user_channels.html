@@ -160,6 +160,7 @@
                                             </div>
                                         </div>
                                         <div id="channelProtection-{{channel.id}}" style="display:none;">
+                                            <hr>
                                             {% if channel.protected == True %}
                                             <div class="row">
                                                 <div class="col-12">
@@ -259,6 +260,7 @@
                                                 </div>
                                             </div>
                                             {% endif %}
+                                            <hr>
                                         </div>
                                     </div>
                                 </div>
@@ -266,6 +268,7 @@
                                     <div class="col-12">
                                         <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
                                         <div id="webhook-{{channel.id}}" style="display:none;">
+                                             <hr>
                                              <div class="row">
                                                 <div class="col-12">
                                                     <h6><b><i class="fas fa-globe"></i> Active Webhooks</b></h6>
@@ -321,6 +324,7 @@
                                     <div class="col-12">
                                         <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h5></a>
                                         <div id="statChart-{{channel.id}}" style="display:none;">
+                                            <hr>
                                             <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
                                         </div>
                                     </div>
