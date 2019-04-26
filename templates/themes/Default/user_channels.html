@@ -152,11 +152,11 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="row">
-                                            <div class="col-10">
+                                            <div class="col-4">
                                                 <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h5></a>
                                             </div>
                                             <div class="col-2">
-                                                <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %}>
+                                                <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small">
                                             </div>
                                         </div>
                                         <div id="channelProtection-{{channel.id}}" style="display:none;">
@@ -174,7 +174,7 @@
                                                                 </div>
                                                             </div>
                                                             <div id="inviteCodes">
-                                                                <table id="inviteCodeTable-{{channel.id}}" class="table table-responsive">
+                                                                <table id="inviteCodeTable-{{channel.id}}" class="table table-responsive table-borderless" width="100%">
                                                                     <thead>
                                                                         <tr>
                                                                             <th>Invite Code</th>
@@ -190,7 +190,7 @@
                                                                             <div class="input-group mb-3">
                                                                                 <div class="input-group-prepend">
                                                                                     <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
-                                                                                    <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
+                                                                                    <button type="button" class="btn btn-success" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
                                                                                 </div>
                                                                                 <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
                                                                             </div>
@@ -206,47 +206,51 @@
                                                         </div>
                                                     </div>
                                                     <hr>
-                                                    <h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6>
-                                                    <div class="form-row">
-                                                        <div class="form-group col-md-6">
-                                                          <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
-                                                          <input name="nullField" id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
-                                                        </div>
-                                                        <div class="form-group col-md-4">
-                                                          <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
-                                                          <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                        </div>
-                                                        <div class="form-group col-md-2">
-                                                            <label for="hiddenAnchorForButton" class="col-form-label"> </label>
-                                                            <input type="hidden" id="hiddenAnchorForButton" class="form-control">
-                                                            <div class="input-group-append">
-                                                                <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                    <div class="card">
+                                                        <div class="card-header"><h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6></div>
+                                                        <div class="card-body">
+                                                            <div class="form-row">
+                                                                <div class="form-group col-md-6">
+                                                                  <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
+                                                                  <input name="nullField" id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
+                                                                </div>
+                                                                <div class="form-group col-md-4">
+                                                                  <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
+                                                                  <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                                </div>
+                                                                <div class="form-group col-md-2">
+                                                                    <label for="hiddenAnchorForButton" class="col-form-label"> </label>
+                                                                    <input type="hidden" id="hiddenAnchorForButton" class="form-control">
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="invitedUsers">
+                                                                <table id="invitedUsersTable-{{channel.id}}" class="table table-responsive table-borderless" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>User</th>
+                                                                            <th>Date Added</th>
+                                                                            <th>Expiration Date</th>
+                                                                            <th>Used Code</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for user in channel.invitedViewers %}
+                                                                        <tr id="invitedUserRow-{{user.id}}">
+                                                                            <td>{{user.userID|get_userName}}</td>
+                                                                            <td>{{user.addedDate|normalize_date}}</td>
+                                                                            <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                            <td>{{user.usedCode.code}}</td>
+                                                                            <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div id="invitedUsers">
-                                                        <table id="invitedUsersTable-{{channel.id}}" class="table table-responsive">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>User</th>
-                                                                    <th>Date Added</th>
-                                                                    <th>Expiration Date</th>
-                                                                    <th>Used Code</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {% for user in channel.invitedViewers %}
-                                                                <tr id="invitedUserRow-{{user.id}}">
-                                                                    <td>{{user.userID|get_userName}}</td>
-                                                                    <td>{{user.addedDate|normalize_date}}</td>
-                                                                    <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
-                                                                    <td>{{user.usedCode.code}}</td>
-                                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                                </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
