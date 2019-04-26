@@ -163,43 +163,47 @@
                                             {% if channel.protected == True %}
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6>
-                                                    <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
-                                                    <div class="input-group mb-3">
-                                                        <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                        <div class="input-group-append">
-                                                            <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                    <div class="card">
+                                                        <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
+                                                        <div class="card-body">
+                                                            <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
+                                                            <div class="input-group mb-3">
+                                                                <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                                <div class="input-group-append">
+                                                                    <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                            <div id="inviteCodes">
+                                                                <table id="inviteCodeTable-{{channel.id}}" class="table table-responsive">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Invite Code</th>
+                                                                            <th>Expiration Date</th>
+                                                                            <th>Uses</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {% for code in channel.inviteCodes %}
+                                                                    <tr id="inviteCodeRow-{{code.code}}">
+                                                                        <td>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-prepend">
+                                                                                    <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
+                                                                                    <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
+                                                                                </div>
+                                                                                <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                        <td>{{code.uses}}</td>
+                                                                        <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div id="inviteCodes">
-                                                        <table id="inviteCodeTable-{{channel.id}}" class="table table-responsive">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Invite Code</th>
-                                                                    <th>Expiration Date</th>
-                                                                    <th>Uses</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for code in channel.inviteCodes %}
-                                                            <tr id="inviteCodeRow-{{code.code}}">
-                                                                <td>
-                                                                    <div class="input-group mb-3">
-                                                                        <div class="input-group-prepend">
-                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
-                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
-                                                                        </div>
-                                                                        <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
-                                                                    </div>
-                                                                </td>
-                                                                <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
-                                                                <td>{{code.uses}}</td>
-                                                                <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                            </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
                                                     </div>
                                                     <hr>
                                                     <h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6>
