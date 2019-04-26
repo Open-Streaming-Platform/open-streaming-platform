@@ -187,7 +187,8 @@
                                                                 <td>
                                                                     <div class="input-group mb-3">
                                                                         <div class="input-group-prepend">
-                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}')"><i class="fas fa-copy"></i></button>
+                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
+                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
                                                                         </div>
                                                                         <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
                                                                     </div>
@@ -421,9 +422,11 @@
 </script>
 
 <script>
-    function CopyInviteCode(divVal) {
+    function CopyInviteCode(divVal, type) {
         var copyText = document.getElementById(divVal).value;
-        copyText = '{{sysSettings.siteAddress}}/settings/user/addInviteCode?inviteCode=' + copyText
+        if (type == 'link') {
+            copyText = '{{sysSettings.siteAddress}}/settings/user/addInviteCode?inviteCode=' + copyText;
+        }
 
         var dummy = document.createElement("input");
         document.body.appendChild(dummy);
