@@ -271,10 +271,40 @@
                                          <hr>
                                          <div class="row">
                                             <div class="col-12">
-                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></h6>
-                                                {% for webhook in channel.webhooks %}
-                                                {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.requestType}}
-                                                {% endfor %}
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div id="webhookList">
+                                                            <div class="table-responsive">
+                                                                <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Webhook Name</th>
+                                                                            <th>Endpoint URL</th>
+                                                                            <th>Type</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for webhook in channel.webhooks %}
+                                                                        <tr id="webhookTableRow-{{webhook.id}}">
+                                                                            <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}}</td>
+                                                                            <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
+                                                                            <td id="webhookRowType-{{webhook.id}}">{{webhook.requestType}}</td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                          </div>
                                          <hr>
