@@ -691,6 +691,7 @@ function toggleDiv(divID) {
     $('#newWebhookModal').on('show.bs.modal', function(e) {
         var webhookChannelID = $(e.relatedTarget).data('channelID');
         $(e.currentTarget).find('input[id="webhookChannelID"]').val(webhookChannelID);
+        console.log(webhookChannelID);
     });
 </script>
 
