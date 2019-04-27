@@ -687,14 +687,13 @@ function toggleDiv(divID) {
 
 </script>
 
-<script>
-
+<script type="text/javascript">
     $('#newWebhookModal').on('show.bs.modal', function (event) {
-        var webhookChannelIDval = $(event.relatedTarget).data('channel-id');
+        var button = $(event.relatedTarget);
+        var webhookChannelIDval = button.data('channel-id');
         console.log(webhookChannelIDval);
         $(this).find("#webhookChannelID").val(webhookChannelIDval);
     });
-
 </script>
 
 <script>
