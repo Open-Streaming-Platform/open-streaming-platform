@@ -2058,6 +2058,7 @@ def addChangeWebhook(message):
             newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType)
             db.session.add(newWebHook)
             db.session.commit()
+            emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
         else:
             existingWebhookQuery.name = webhookName
             existingWebhookQuery.endpointURL = webhookEndpoint
@@ -2066,6 +2067,7 @@ def addChangeWebhook(message):
             existingWebhookQuery.requestType = webhookReqType
 
             db.session.commit()
+
 
 # Start App Initiation
 try:

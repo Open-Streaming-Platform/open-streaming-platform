@@ -285,7 +285,6 @@
                                                                         <tr>
                                                                             <th>Webhook Name</th>
                                                                             <th>Endpoint URL</th>
-                                                                            <th>Type</th>
                                                                             <th></th>
                                                                         </tr>
                                                                     </thead>
@@ -294,7 +293,9 @@
                                                                         <tr id="webhookTableRow-{{webhook.id}}">
                                                                             <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                             <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
-                                                                            <td id="webhookRowType-{{webhook.id}}">{{webhook.requestType}}</td>
+                                                                            <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                                            <td id="webhookRowHeader" style="display:none;">{{webhook.requestHeader}}</td>
+                                                                            <td id="webhookRowPayload" style="display:none;">{{webhook.requestPayload}}</td>
                                                                             <td>
                                                                                 <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
                                                                                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
@@ -696,7 +697,6 @@ function toggleDiv(divID) {
 
 <script type="text/javascript" charset="utf-8">
     socket.on('invitedUserAck', function (msg) {
-        console.log(msg);
 
         var username = msg['username'];
         var addedDate = msg['added'];
@@ -725,8 +725,6 @@ function toggleDiv(divID) {
 
 </script>
 
-
-
 <script>
 	function submitWebhook() {
         var webhookName = document.getElementById('webhookName').value;
@@ -737,9 +735,47 @@ function toggleDiv(divID) {
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
         var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
 
-        var debug = socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
+        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
 	}
 </script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('newWebhookAck', function (msg) {
+        var webhookName = msg['webhookName'];
+        var webhookURL = msg['requestURL'];
+        var webhookHeader = msg['requestHeader'];
+        var webhookPayload = msg['requestPayload'];
+        var webhookRequestType = msg['requestType'];
+        var webhookID = msg['requestID'];
+        var channelID = msg['channelID'];
+
+        var tableRef = document.getElementById('webhookTable-' + channelID).getElementsByTagName('tbody')[0];
+
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.id = 'webhookTableRow-' + webhookID;
+
+        var webhookNameCell = newRow.insertCell(0);
+        var endpointURLCell = newRow.insertCell(1);
+        var requestTypeCell = newRow.insertCell(2);
+        var requestHeaderCell = newRow.insertCell(3);
+        var requestPayloadCell = newRow.insertCell(4);
+        var buttonCell = newRow.insertCell(5);
+
+        requestTypeCell.style.display = 'none';
+        requestHeaderCell.style.display = 'none';
+        requestPayload.style.display = 'none';
+
+        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
+
+        webhookNameCell.appendChild(document.createTextNode(webhookName));
+        endpointURLCell.appendChild(document.createTextNode(webhookURL));
+        requestTypeCell.appendChild(document.createTextNode(webhookRequestType));
+        requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
+        requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
+        buttonCell.innerHTML = buttonText;
+
+    });
+    </script>
 
 
 {% endblock %}
