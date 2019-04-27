@@ -698,13 +698,13 @@ function toggleDiv(divID) {
 
 <script>
 	function submitWebhook() {
-        var webhookName = document.getElementsById('webhookName').value;
-        var webhookEndpoint = document.getElementsById('webhookEndpoint').value;
-        var webhookHeader = document.getElementsById('webhookHeader').value;
-        var webhookPayload = document.getElementsById('webhookPayload').value;
-        var webhookReqTypeElement = (document.getElementsById('webhookReqType'));
+        var webhookName = document.getElementById('webhookName').value;
+        var webhookEndpoint = document.getElementById('webhookEndpoint').value;
+        var webhookHeader = document.getElementById('webhookHeader').value;
+        var webhookPayload = document.getElementById('webhookPayload').value;
+        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;;
-        var webhookChannelID = document.getElementsById('webhookChannelID').value;
+        var webhookChannelID = document.getElementById('webhookChannelID').value;
 
         var debug = socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
         console.log(debug)
