@@ -271,7 +271,7 @@
                                          <hr>
                                          <div class="row">
                                             <div class="col-12">
-                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" id="createWebhook-{{channel.id}}" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></h6>
+                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('1');"><i class="fas fa-plus"></i></button></h6>
                                                 {% for webhook in channel.webhooks %}
                                                 {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.request.type}}
                                                 {% endfor %}
@@ -626,6 +626,12 @@ function toggleDiv(divID) {
     }
 </script>
 
+<script>
+    function openNewWebhookModal(chanID) {
+        console.log(chanID);
+    }
+</script>
+
 <script type="text/javascript" charset="utf-8">
     socket.on('newInviteCode', function (msg) {
         var code = msg['code'];
@@ -685,12 +691,7 @@ function toggleDiv(divID) {
 
 </script>
 
-<script type="text/javascript">
-    function openNewWebhookModal(chanID) {
-        console.log(chanID);
-    }
 
-</script>
 
 <script>
 	function submitWebhook() {
