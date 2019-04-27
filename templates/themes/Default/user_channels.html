@@ -688,7 +688,7 @@ function toggleDiv(divID) {
 <script type="text/javascript">
     function openNewWebhookModal(callingButton) {
         $('#newWebhookModal').modal('show');
-        console.log('call test');
+        console.log($(callingButton).attr('id'));
         var webhookChannelIDval = callingButton.data('channel-id');
         console.log(webhookChannelIDval);
         $(this).find("#webhookChannelID").val(webhookChannelIDval);
