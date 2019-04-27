@@ -271,7 +271,7 @@
                                          <hr>
                                          <div class="row">
                                             <div class="col-12">
-                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newWebhookModal" data-channelID="{{channel.id}}"><i class="fas fa-plus"></i></button></h6>
+                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newWebhookModal" data-channel-id="{{channel.id}}"><i class="fas fa-plus"></i></button></h6>
                                                 {% for webhook in channel.webhooks %}
                                                 {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.request.type}}
                                                 {% endfor %}
@@ -690,7 +690,8 @@ function toggleDiv(divID) {
 <script>
 
     $('#newWebhookModal').on('show.bs.modal', function (event) {
-        var webhookChannelIDval = $(event.relatedTarget).data('channelid');
+        var webhookChannelIDval = $(event.relatedTarget).data('channel-id');
+        console.log(webhookChannelIDval);
         $(this).find("#webhookChannelID").val(webhookChannelIDval);
     });
 
