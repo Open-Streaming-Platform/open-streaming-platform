@@ -273,7 +273,7 @@
                                             <div class="col-12">
                                                 <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></h6>
                                                 {% for webhook in channel.webhooks %}
-                                                {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.request.type}}
+                                                {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.requestType}}
                                                 {% endfor %}
                                             </div>
                                          </div>
@@ -628,10 +628,8 @@ function toggleDiv(divID) {
 
 <script>
     function openNewWebhookModal(chanID) {
-        console.log(chanID);
         $('#newWebhookModal').modal('show');
         var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
-        console.log(chanID);
         webHookChannelIDInput.value = chanID;
     }
 </script>
