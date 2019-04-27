@@ -2041,7 +2041,7 @@ def deleteInvitedUser(message):
     else:
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
 
-@socketio.ion('submitWebhook')
+@socketio.on('submitWebhook')
 def addChangeWebhook(message):
     channelID = int(message['webhookChannelID'])
 
