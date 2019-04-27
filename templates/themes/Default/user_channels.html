@@ -350,7 +350,7 @@
                              <option value=3>DELETE</option>
                         </select>
                     </div>
-                    <input id="webhookChannelID" type="hidden">
+                    <input id="webhookChannelID" type="text">
                  </div>
              </div>
          </div>
@@ -689,10 +689,8 @@ function toggleDiv(divID) {
 
 <script>
     $('#newWebhookModal').on('show.bs.modal', function(e) {
-
-        var webHookChannelID = $(e.relatedTarget).data('channelID');
-
-        $(e.currentTarget).find('input[id="webhookChannelID"]').val(webHookChannelID);
+        var webhookChannelID = $(e.relatedTarget).data('channelID');
+        $(e.currentTarget).find('input[id="webhookChannelID"]').val(webhookChannelID);
     });
 </script>
 
@@ -703,7 +701,7 @@ function toggleDiv(divID) {
         var webhookHeader = document.getElementById('webhookHeader').value;
         var webhookPayload = document.getElementById('webhookPayload').value;
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
-        var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;;
+        var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
         var webhookChannelID = document.getElementById('webhookChannelID').value;
 
         var debug = socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
