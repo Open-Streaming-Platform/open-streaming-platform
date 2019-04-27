@@ -271,7 +271,7 @@
                                          <hr>
                                          <div class="row">
                                             <div class="col-12">
-                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" id="createWebhook-{{channel.id}}" type="button" onclick="openNewWebhookModal(this);" data-channel-id="{{channel.id}}"><i class="fas fa-plus"></i></button></h6>
+                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b> <button class="btn btn-sm btn-success shadow" id="createWebhook-{{channel.id}}" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></h6>
                                                 {% for webhook in channel.webhooks %}
                                                 {{webhook.name}} {{webhook.endpointURL}} {{webhook.requestHeader}} {{webhook.requestPayload}} {{webhook.request.type}}
                                                 {% endfor %}
@@ -349,7 +349,7 @@
                              <option value=3>DELETE</option>
                         </select>
                     </div>
-                    <input id="webhookChannelID" type="text">
+                    <input id="webhookChannelIDInput" type="hidden">
                  </div>
              </div>
          </div>
@@ -686,12 +686,10 @@ function toggleDiv(divID) {
 </script>
 
 <script type="text/javascript">
-    function openNewWebhookModal(callingButton) {
+    function openNewWebhookModal(chanID) {
         $('#newWebhookModal').modal('show');
-        console.log(callingButton.id);
-        var webhookChannelIDval = callingButton.data('channel-id');
-        console.log(webhookChannelIDval);
-        $(this).find("#webhookChannelID").val(webhookChannelIDval);
+        var webHookChannelIDInput = document.getElementById(webhookChannelIDInput);
+        webHookChannelIDInput.value = chanID;
     }
 
 </script>
