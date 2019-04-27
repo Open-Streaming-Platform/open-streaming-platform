@@ -671,6 +671,19 @@ function toggleDiv(divID) {
     function openNewWebhookModal(chanID) {
         $('#newWebhookModal').modal('show');
         var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
+
+        var webhookName = document.getElementById('webhookName');
+        var webhookEndpoint = document.getElementById('webhookEndpoint');
+        var webhookHeader = document.getElementById('webhookHeader');
+        var webhookPayload = document.getElementById('webhookPayload');
+        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+
+        webhookName.value = "";
+        webhookEndpoint.value = "";
+        webhookHeader.value = "";
+        webhookPayload.value = "";
+        webhookReqTypeElement.value = 0;
+
         webHookChannelIDInput.value = chanID;
     }
 </script>
