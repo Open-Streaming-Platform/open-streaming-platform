@@ -690,9 +690,8 @@ function toggleDiv(divID) {
 <script>
 
     $('#newWebhookModal').on('show.bs.modal', function (event) {
-        var webhookChannelIDval = $(event.relatedTarget).data('channelID');
+        var webhookChannelIDval = $(event.relatedTarget).data('channelid');
         $(this).find("#webhookChannelID").val(webhookChannelIDval);
-        console.log(webhookChannelID);
     });
 
 </script>
@@ -708,7 +707,6 @@ function toggleDiv(divID) {
         var webhookChannelID = document.getElementById('webhookChannelID').value;
 
         var debug = socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
-        console.log(debug)
 	}
 </script>
 
