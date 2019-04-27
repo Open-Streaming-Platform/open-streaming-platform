@@ -705,7 +705,7 @@ function toggleDiv(divID) {
         var webhookPayload = document.getElementById('webhookPayload').value;
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
-        var webhookChannelID = document.getElementById('webhookChannelID').value;
+        var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
 
         var debug = socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
 	}
