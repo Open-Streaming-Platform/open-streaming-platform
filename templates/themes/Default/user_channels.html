@@ -294,8 +294,8 @@
                                                                             <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                             <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
                                                                             <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
-                                                                            <td id="webhookRowHeader" style="display:none;">{{webhook.requestHeader}}</td>
-                                                                            <td id="webhookRowPayload" style="display:none;">{{webhook.requestPayload}}</td>
+                                                                            <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                                            <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                                             <td>
                                                                                 <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
                                                                                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
@@ -660,6 +660,14 @@ function toggleDiv(divID) {
 </script>
 
 <script>
+    function deleteWebhook(webhookID) {
+        socket.emit('deleteWebhook', {webhookID: webhookID});
+        var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
+        webhookTableRow.parentNode.removeChild(webhookTableRow);
+    }
+</script>
+
+<script>
     function openNewWebhookModal(chanID) {
         $('#newWebhookModal').modal('show');
         var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
@@ -760,6 +768,12 @@ function toggleDiv(divID) {
         var requestHeaderCell = newRow.insertCell(3);
         var requestPayloadCell = newRow.insertCell(4);
         var buttonCell = newRow.insertCell(5);
+
+        webhookNameCell.id = "webhookRowName-" + webhookID;
+        endpointURLCell.id = "webhookRowEndpoint-" + webhookID;
+        requestTypeCell.id = "webhookRowType-" + webhookID;
+        requestHeaderCell.id = "webhookRowHeader-" + webhookID;
+        requestPayloadCell.id = "webhookRowPayload-" + webhookID;
 
         requestTypeCell.style.display = 'none';
         requestHeaderCell.style.display = 'none';
