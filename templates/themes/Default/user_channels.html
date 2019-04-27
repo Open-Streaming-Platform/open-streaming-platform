@@ -629,6 +629,10 @@ function toggleDiv(divID) {
 <script>
     function openNewWebhookModal(chanID) {
         console.log(chanID);
+        $('#newWebhookModal').modal('show');
+        var webHookChannelIDInput = document.getElementById(webhookChannelIDInput);
+        console.log(chanID);
+        webHookChannelIDInput.value = chanID;
     }
 </script>
 
