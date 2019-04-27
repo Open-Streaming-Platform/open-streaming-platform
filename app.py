@@ -2021,7 +2021,6 @@ def addUserChannelInvite(message):
 
                 emit('invitedUserAck', {'username': username, 'added': str(newUserInvite.addedDate), 'expiration': str(newUserInvite.expiration), 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
 
-
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
     inviteID = int(message['inviteID'])
@@ -2042,6 +2041,33 @@ def deleteInvitedUser(message):
     else:
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
 
+@socketio.ion('submitWebhook')
+def addChangeWebhook(message):
+    channelID = int(message['webhookChannelID'])
+
+    channelQuery = Channel.Channel.query.filter_by(id=channelID, owningUser=current_user.id).first()
+    if channelQuery is not None:
+        webhookName = message['webhookName']
+        webhookEndpoint = message['webhookEndpoint']
+        webhookHeader = message['webhookHeader']
+        webhookPayload = message['webhookPayload']
+        webhookReqType = int(message['webhookReqType'])
+
+        existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, name=webhookName).first()
+        if existingWebhookQuery is None:
+            newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType)
+            db.session.add(newWebHook)
+            db.session.commit()
+        else:
+            existingWebhookQuery.name = webhookName
+            existingWebhookQuery.endpointURL = webhookEndpoint
+            existingWebhookQuery.requestHeader = webhookHeader
+            existingWebhookQuery.requestPayload = webhookPayload
+            existingWebhookQuery.requestType = webhookReqType
+
+            db.session.commit()
+
+# Start App Initiation
 try:
     init_db_values()
 except Exception as e:
