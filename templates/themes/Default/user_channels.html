@@ -807,29 +807,32 @@ function toggleDiv(divID) {
           case 'Stream Start':
             triggerVal = 0;
             break;
-          case 'Stream Viewer Join':
+          case 'Stream End':
             triggerVal = 1;
             break;
-          case 'Stream Viewer Upvote':
+          case 'Stream Viewer Join':
             triggerVal = 2;
             break;
-          case 'Stream Name Change':
+          case 'Stream Viewer Upvote':
             triggerVal = 3;
             break;
-          case 'Chat Message':
+          case 'Stream Name Change':
             triggerVal = 4;
             break;
-          case 'New Video':
+          case 'Chat Message':
             triggerVal = 5;
             break;
-          case 'Video Comment':
+          case 'New Video':
             triggerVal = 6;
             break;
-          case 'Video Upvote':
+          case 'Video Comment':
             triggerVal = 7;
             break;
-          case 'Video Name Change':
+          case 'Video Upvote':
             triggerVal = 8;
+            break;
+          case 'Video Name Change':
+            triggerVal = 9;
             break;
           default:
             triggerVal = 0;
@@ -892,27 +895,30 @@ function toggleDiv(divID) {
             triggerVal = 'Stream Start';
             break;
           case 1:
-            triggerVal = 'Stream Viewer Join';
+            triggerVal = 'Stream End';
             break;
           case 2:
-            triggerVal = 'Stream Viewer Upvote';
+            triggerVal = 'Stream Viewer Join';
             break;
           case 3:
-            triggerVal = 'Stream Name Change';
+            triggerVal = 'Stream Viewer Upvote';
             break;
           case 4:
-            triggerVal = 'Chat Message';
+            triggerVal = 'Stream Name Change';
             break;
           case 5:
-            triggerVal = 'New Video';
+            triggerVal = 'Chat Message';
             break;
           case 6:
-            triggerVal = 'Video Comment';
+            triggerVal = 'New Video';
             break;
           case 7:
-            triggerVal = 'Video Upvote';
+            triggerVal = 'Video Comment';
             break;
           case 8:
+            triggerVal = 'Video Upvote';
+            break;
+          case 9:
             triggerVal = 'Video Name Change';
             break;
           default:
