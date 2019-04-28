@@ -879,6 +879,8 @@ function toggleDiv(divID) {
 
         var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
 
+        var triggerVal = 'Unknown';
+
         switch(webhookTrigger) {
           case 1:
             triggerVal = 'Stream Start';
@@ -920,6 +922,67 @@ function toggleDiv(divID) {
         requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
         buttonCell.innerHTML = buttonText;
 
+    });
+    </script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('changeWebhookAck', function (msg) {
+        var webhookName = msg['webhookName'];
+        var webhookURL = msg['requestURL'];
+        var webhookHeader = msg['requestHeader'];
+        var webhookPayload = msg['requestPayload'];
+        var webhookRequestType = msg['requestType'];
+        var webhookTrigger = msg['requestTrigger'];
+        var webhookID = msg['requestID'];
+
+        webhookNameCell = document.getElementById('webhookRowName-' + webhookID);
+        endpointURLCell = document.getElementById('webhookRowEndpoint-' + webhookID);
+        requestTriggerCell = document.getElementById('webhookRowTrigger-' + webhookID);
+        requestTypeCell = document.getElementById('webhookRowType-' + webhookID);
+        requestHeaderCell = document.getElementById('webhookRowHeader-' + webhookID);
+        requestPayloadCell = document.getElementById('webhookRowPayload-' + webhookID);
+
+        var triggerVal = 'Unknown';
+
+        switch(webhookTrigger) {
+          case 1:
+            triggerVal = 'Stream Start';
+            break;
+          case 2:
+            triggerVal = 'Stream Viewer Join';
+            break;
+          case 3:
+            triggerVal = 'Stream Viewer Upvote';
+            break;
+          case 4:
+            triggerVal = 'Stream Name Change';
+            break;
+          case 5:
+            triggerVal = 'Chat Message';
+            break;
+          case 6:
+            triggerVal = 'New Video';
+            break;
+          case 7:
+            triggerVal = 'Video Comment';
+            break;
+          case 8:
+            triggerVal = 'Video Upvote';
+            break;
+          case 9:
+            triggerVal = 'Video Name Change';
+            break;
+          default:
+            triggerVal = 'Unknown';
+        }
+
+
+        webhookNameCell.innerText = webhookName;
+        endpointURLCell.innerText = webhookURL;
+        requestTriggerCell.innerText = triggerVal;
+        requestTypeCell.innerText = webhookRequestType;
+        requestHeaderCell.innerText = webhookHeader;
+        requestPayloadCell.innnerText = webhookPayload;
     });
     </script>
 

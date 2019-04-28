@@ -2086,6 +2086,7 @@ def addChangeWebhook(message):
             existingWebhookQuery.requestTrigger = webhookTrigger
 
             db.session.commit()
+            emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
 
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
