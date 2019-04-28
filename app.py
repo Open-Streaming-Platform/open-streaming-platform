@@ -282,6 +282,7 @@ def check_isValidChannelViewer(channelID):
             isAuthorized = True
     return isAuthorized
 
+@asynch
 def runWebhook(channelID, triggerType):
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).first()
 
