@@ -31,6 +31,7 @@ import ipaddress
 import requests
 from threading import Thread
 from functools import wraps
+import json
 
 #Import Paths
 cwp = sys.path[0]
@@ -286,8 +287,8 @@ def runWebhook(channelID, triggerType):
 
     if webhookQuery is not None:
         url = webhookQuery.endpointURL
-        payload = webhookQuery.requestPayload
-        header = webhookQuery.requestHeader
+        payload = json.loads(webhookQuery.requestPayload)
+        header = json.loads(webhookQuery.requestHeader)
         requestType = webhookQuery.requestType
         try:
             if requestType == 0:
