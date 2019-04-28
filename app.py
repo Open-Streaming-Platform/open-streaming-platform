@@ -361,15 +361,15 @@ def get_webhookTrigger(webhookTrigger):
 
     webhookTrigger = str(webhookTrigger)
     webhookNames = {
-        '1': 'Stream Start',
-        '2': 'Stream Viewer Join',
-        '3': 'Stream Viewer Upvote',
-        '4': 'Stream Name Change',
-        '5': 'Chat Message',
-        '6': 'New Video',
-        '7': 'Video Comment',
-        '8': 'Video Upvote',
-        '9': 'Video Name Change'
+        '0': 'Stream Start',
+        '1': 'Stream Viewer Join',
+        '2': 'Stream Viewer Upvote',
+        '3': 'Stream Name Change',
+        '4': 'Chat Message',
+        '5': 'New Video',
+        '6': 'Video Comment',
+        '7': 'Video Upvote',
+        '8': 'Video Name Change'
     }
     return webhookNames[webhookTrigger]
 
