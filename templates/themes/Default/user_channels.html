@@ -294,7 +294,7 @@
                                                                         <tr id="webhookTableRow-{{webhook.id}}">
                                                                             <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                             <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
-                                                                            <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger}}</td>
+                                                                            <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
                                                                             <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
                                                                             <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
                                                                             <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
@@ -879,9 +879,42 @@ function toggleDiv(divID) {
 
         var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
 
+        switch(webhookTrigger) {
+          case 1:
+            triggerVal = 'Stream Start';
+            break;
+          case 2:
+            triggerVal = 'Stream Viewer Join';
+            break;
+          case 3:
+            triggerVal = 'Stream Viewer Upvote';
+            break;
+          case 4:
+            triggerVal = 'Stream Name Change';
+            break;
+          case 5:
+            triggerVal = 'Chat Message';
+            break;
+          case 6:
+            triggerVal = 'New Video';
+            break;
+          case 7:
+            triggerVal = 'Video Comment';
+            break;
+          case 8:
+            triggerVal = 'Video Upvote';
+            break;
+          case 9:
+            triggerVal = 'Video Name Change';
+            break;
+          default:
+            triggerVal = 'Unknown';
+        }
+
+
         webhookNameCell.appendChild(document.createTextNode(webhookName));
         endpointURLCell.appendChild(document.createTextNode(webhookURL));
-        requestTriggerCell.appendChild(document.createTextNode(webhookTrigger));
+        requestTriggerCell.appendChild(document.createTextNode(triggerVal));
         requestTypeCell.appendChild(document.createTextNode(webhookRequestType));
         requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
         requestPayloadCell.appendChild(document.createTextNode(webhookPayload));

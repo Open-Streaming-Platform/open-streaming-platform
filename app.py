@@ -356,6 +356,22 @@ def get_diskUsage(channelLocation):
             total_size += os.path.getsize(fp)
     return "{:,}".format(total_size)
 
+@app.template_filter('get_webhookTrigger')
+def get_webhookTrigger(webhookTrigger):
+
+    webhookNames = {
+        '1': 'Stream Start',
+        '2': 'Stream Viewer Join',
+        '3': 'Stream Viewer Upvote',
+        '4': 'Stream Name Change',
+        '5': 'Chat Message',
+        '6': 'New Video',
+        '7': 'Video Comment',
+        '8': 'Video Upvote',
+        '9': 'Video Name Change'
+    }
+    return webhookNames[webhookTrigger]
+
 
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
