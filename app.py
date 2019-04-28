@@ -2049,7 +2049,7 @@ def addChangeWebhook(message):
     if channelQuery is not None:
         webhookName = message['webhookName']
         webhookEndpoint = message['webhookEndpoint']
-        webhookTrigger = message['webhookTrigger']
+        webhookTrigger = int(message['webhookTrigger'])
         webhookHeader = message['webhookHeader']
         webhookPayload = message['webhookPayload']
         webhookReqType = int(message['webhookReqType'])

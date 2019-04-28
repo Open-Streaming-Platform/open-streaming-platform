@@ -770,7 +770,7 @@ function toggleDiv(divID) {
         var webhookHeader = document.getElementById('webhookHeader').value;
         var webhookPayload = document.getElementById('webhookPayload').value;
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
-        var webhookTriggerElement = (document.getElementById('webhookTrigger'));
+        var webhookTriggerElement = document.getElementById('webhookTrigger');
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
         var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
         var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
@@ -800,7 +800,7 @@ function toggleDiv(divID) {
         var requestTriggerCell = newRow.insertCell(2);
         var requestTypeCell = newRow.insertCell(3);
         var requestHeaderCell = newRow.insertCell(4);
-        var requestPayloadCell = newRow.insertCell(45;
+        var requestPayloadCell = newRow.insertCell(5);
         var buttonCell = newRow.insertCell(6);
 
         webhookNameCell.id = "webhookRowName-" + webhookID;
