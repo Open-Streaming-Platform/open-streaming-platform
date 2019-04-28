@@ -2072,23 +2072,26 @@ def addChangeWebhook(message):
         webhookPayload = message['webhookPayload']
         webhookReqType = int(message['webhookReqType'])
         webhookInputAction = message['inputAction']
+        webhookInputID = message['webhookInputID']
 
-        existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, name=webhookName).first()
+
         if webhookInputAction == 'new':
             newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
             db.session.add(newWebHook)
             db.session.commit()
             emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestTrigger':webhookTrigger, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
         elif webhookInputAction == 'edit':
-            existingWebhookQuery.name = webhookName
-            existingWebhookQuery.endpointURL = webhookEndpoint
-            existingWebhookQuery.requestHeader = webhookHeader
-            existingWebhookQuery.requestPayload = webhookPayload
-            existingWebhookQuery.requestType = webhookReqType
-            existingWebhookQuery.requestTrigger = webhookTrigger
+            existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, id=int(webhookInputID)).first()
+            if existingWebhookQuery is not None:
+                existingWebhookQuery.name = webhookName
+                existingWebhookQuery.endpointURL = webhookEndpoint
+                existingWebhookQuery.requestHeader = webhookHeader
+                existingWebhookQuery.requestPayload = webhookPayload
+                existingWebhookQuery.requestType = webhookReqType
+                existingWebhookQuery.requestTrigger = webhookTrigger
 
-            db.session.commit()
-            emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
+                db.session.commit()
+                emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
 
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
