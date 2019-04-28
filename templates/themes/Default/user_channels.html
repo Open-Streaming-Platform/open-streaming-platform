@@ -299,7 +299,7 @@
                                                                             <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
                                                                             <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                                             <td>
-                                                                                <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                                                <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
                                                                                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                                                                             </td>
                                                                         </tr>
@@ -396,7 +396,7 @@
                              <option value=6>New Video</option>
                              <option value=7>Video Comment</option>
                              <option value=8>Video Upvote</option>
-                             <option value=8>Video Name Change</option>
+                             <option value=9>Video Name Change</option>
                         </select>
                     </div>
                     <input id="webhookChannelIDInput" type="hidden">
@@ -775,8 +775,79 @@ function toggleDiv(divID) {
         var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
         var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
 
+        if (webhookName == '') {
+            (document.getElementById('webhookName')).setCustomValidity('Name is Required');
+        }
+        if (webhookEndpoint == '') {
+            (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
+        }
+
         socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, webhookChannelID:webhookChannelID});
 	}
+</script>
+
+<script>
+    function editWebhook(webhookID, chanID) {
+        var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
+        var webhookTrigger = document.getElementById('webhookTrigger');
+        var webhookName = document.getElementById('webhookName');
+        var webhookEndpoint = document.getElementById('webhookEndpoint');
+        var webhookHeader = document.getElementById('webhookHeader');
+        var webhookPayload = document.getElementById('webhookPayload');
+        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+
+        var triggerVal = document.getElementById('webhookRowTrigger' + webhookID).value;
+
+        switch(triggerVal) {
+          case 'Stream Start':
+            triggerVal = 1;
+            break;
+          case 'Stream Viewer Join':
+            // code block
+            triggerVal = 2;
+            break;
+          case 'Stream Viewer Upvote':
+            // code block
+            triggerVal = 3;
+            break;
+          case 'Stream Name Change':
+            // code block
+            triggerVal = 4;
+            break;
+          case 'Chat Message':
+            // code block
+            triggerVal = 5;
+            break;
+          case 'New Video':
+            // code block
+            triggerVal = 6;
+            break;
+          case 'Video Comment':
+            // code block
+            triggerVal = 7;
+            break;
+          case 'Video Upvote':
+            // code block
+            triggerVal = 8;
+            break;
+          case 'Video Name Change':
+            // code block
+            triggerVal = 9;
+            break;
+          default:
+            triggerVal = 0;
+        }
+
+        webhookName.value = document.getElementById('webhookRowName-' + webhookID).value;
+        webhookEndpoint.value = document.getElementById('webhookRowEndpoint-' + webhookID).value;
+        webhookHeader.value = document.getElementById('webhookRowHeader' + webhookID).value;
+        webhookPayload.value = document.getElementById('webhookRowPayload' + webhookID).value;
+        webhookReqTypeElement.value = document.getElementById('webhookRowType' + webhookID).value;
+        webhookTrigger.value = triggerVal;
+        webHookChannelIDInput.value = chanID;
+
+        $('#newWebhookModal').modal('show');
+    }
 </script>
 
 <script type="text/javascript" charset="utf-8">
@@ -814,7 +885,7 @@ function toggleDiv(divID) {
         requestHeaderCell.style.display = 'none';
         requestPayloadCell.style.display = 'none';
 
-        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
+        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
 
         webhookNameCell.appendChild(document.createTextNode(webhookName));
         endpointURLCell.appendChild(document.createTextNode(webhookURL));
