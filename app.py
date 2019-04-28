@@ -289,8 +289,7 @@ def runWebhook(channelID, triggerType, **kwargs):
     if webhookQuery != []:
         for hook in webhookQuery:
             url = hook.endpointURL
-            #payload = processWebhookVariables(hook.requestPayload, **kwargs)
-            payload = hook.requestPayload
+            payload = processWebhookVariables(hook.requestPayload, **kwargs)
             header = json.loads(hook.requestHeader)
             requestType = hook.requestType
             try:
@@ -1682,9 +1681,9 @@ def user_auth_check():
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         streamUserList[authedStream.id] = []
-        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=sysSettings.siteAddress + "/channel/" + str(requestedChannel.id), channeltopic=requestedChannel.topic,
-                   channelimage=sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation, streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
-                   streamname=authedStream.streamName, streamurl=sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc, streamtopic=authedStream.topic, streamimage=sysSettings.siteAddress + "/view"/ + requestedChannel.channelLoc)
+        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
+                   channelimage=(sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation), streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
+                   streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=authedStream.topic, streamimage=(sysSettings.siteAddress + "/view"/ + requestedChannel.channelLoc))
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
