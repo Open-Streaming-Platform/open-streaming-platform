@@ -400,6 +400,7 @@
                         </select>
                     </div>
                     <input id="webhookChannelIDInput" type="hidden">
+                    <input id="webhookInputAction" type="hidden">
                  </div>
              </div>
          </div>
@@ -694,6 +695,7 @@ function toggleDiv(divID) {
         var webhookHeader = document.getElementById('webhookHeader');
         var webhookPayload = document.getElementById('webhookPayload');
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookInputAction = document.getElementById('webhookInputAction');
 
         webhookName.value = "";
         webhookEndpoint.value = "";
@@ -702,6 +704,7 @@ function toggleDiv(divID) {
         webhookReqTypeElement.value = 0;
         webhookTrigger.value = 0;
         webHookChannelIDInput.value = chanID;
+        webhookInputAction.value = 'new';
     }
 </script>
 
@@ -774,6 +777,7 @@ function toggleDiv(divID) {
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
         var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
         var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
+        var webhookInputAction = document.getElementById('webhookInputAction').value;
 
         if (webhookName == '') {
             (document.getElementById('webhookName')).setCustomValidity('Name is Required');
@@ -782,7 +786,7 @@ function toggleDiv(divID) {
             (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
         }
 
-        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, webhookChannelID:webhookChannelID});
+        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, webhookChannelID:webhookChannelID, inputAction:webhookInputAction});
 	}
 </script>
 
@@ -795,6 +799,7 @@ function toggleDiv(divID) {
         var webhookHeader = document.getElementById('webhookHeader');
         var webhookPayload = document.getElementById('webhookPayload');
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookInputAction = document.getElementById('webhookInputAction');
 
         var triggerVal = document.getElementById('webhookRowTrigger-' + webhookID).innerText;
 
@@ -837,6 +842,7 @@ function toggleDiv(divID) {
         webhookReqTypeElement.value = document.getElementById('webhookRowType-' + webhookID).innerText;
         webhookTrigger.value = triggerVal;
         webHookChannelIDInput.value = chanID;
+        webhookInputAction.value = 'edit';
 
         $('#newWebhookModal').modal('show');
     }
@@ -975,7 +981,6 @@ function toggleDiv(divID) {
           default:
             triggerVal = 'Unknown';
         }
-
 
         webhookNameCell.innerText = webhookName;
         endpointURLCell.innerText = webhookURL;
