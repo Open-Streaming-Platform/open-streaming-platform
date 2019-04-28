@@ -964,8 +964,11 @@ function toggleDiv(divID) {
         var triggerVal = 'Unknown';
 
         switch(webhookTrigger) {
-          case 1:
+          case 0:
             triggerVal = 'Stream Start';
+            break;
+          case 1:
+            triggerVal = 'Stream End';
             break;
           case 2:
             triggerVal = 'Stream Viewer Join';
