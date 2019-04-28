@@ -289,7 +289,8 @@ def runWebhook(channelID, triggerType, **kwargs):
     if webhookQuery != []:
         for hook in webhookQuery:
             url = hook.endpointURL
-            payload = processWebhookVariables(hook.requestPayload, **kwargs)
+            #payload = processWebhookVariables(hook.requestPayload, **kwargs)
+            payload = hook.requestPayload
             header = json.loads(hook.requestHeader)
             requestType = hook.requestType
             try:
