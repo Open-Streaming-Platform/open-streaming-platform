@@ -291,13 +291,13 @@ def runWebhook(channelID, triggerType):
         requestType = webhookQuery.requestType
         try:
             if requestType == 0:
-                r = requests.post(url, headers=header, parms=payload)
+                r = requests.post(url, headers=header, data=payload)
             elif requestType == 1:
-                r = requests.get(url, headers=header, parms=payload)
+                r = requests.get(url, headers=header, data=payload)
             elif requestType == 2:
-                r = requests.put(url, headers=header, parms=payload)
+                r = requests.put(url, headers=header, data=payload)
             elif requestType == 3:
-                r = requests.delete(url, headers=header, parms=payload)
+                r = requests.delete(url, headers=header, data=payload)
         except:
             pass
 
