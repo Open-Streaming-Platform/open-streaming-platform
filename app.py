@@ -28,6 +28,9 @@ import time
 import sys
 import random
 import ipaddress
+import requests
+from inspect import getmodule
+from multiprocessing import Pool
 
 #Import Paths
 cwp = sys.path[0]
@@ -228,6 +231,33 @@ def strip_html(html):
     s.feed(html)
     return s.get_data()
 
+def asynch(decorated):
+    r'''Wraps a top-level function around an asynchronous dispatcher.
+
+        when the decorated function is called, a task is submitted to a
+        process pool, and a future object is returned, providing access to an
+        eventual return value.
+
+        The future object has a blocking get() method to access the task
+        result: it will return immediately if the job is already done, or block
+        until it completes.
+
+        This decorator won't work on methods, due to limitations in Python's
+        pickling machinery (in principle methods could be made pickleable, but
+        good luck on that).
+    '''
+    # Keeps the original function visible from the module global namespace,
+    # under a name consistent to its __name__ attribute. This is necessary for
+    # the multiprocessing pickling machinery to work properly.
+    module = getmodule(decorated)
+    decorated.__name__ += '_original'
+    setattr(module, decorated.__name__, decorated)
+
+    def send(*args, **opts):
+        return async.pool.apply_async(decorated, args, opts)
+
+    return send
+
 def formatSiteAddress(systemAddress):
     try:
         ipaddress.ip_address(systemAddress)
@@ -268,8 +298,31 @@ def check_isValidChannelViewer(channelID):
             isAuthorized = True
     return isAuthorized
 
+@asynch
+def runWebhook(channelID,triggerType):
+    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID,requestTrigger=triggerType).first()
+
+    if webhookQuery is not None:
+        try:
+            url = webhookQuery.endpointURL
+            payload = webhookQuery.requestPaylod
+            header = webhookQuery.requestHead
+            requestType = webhookQuery.requestType
+            if requestType == 0:
+                r = requests.post(url, headers=header, parms=payload)
+            elif requestType == 1:
+                r = requests.get(url, headers=header, parms=payload)
+            elif requestType == 2:
+                r = requests.put(url, headers=header, parms=payload)
+            elif requestType == 3:
+                r = requests.delete(url, headers=header, parms=payload)
+        except:
+            pass
+
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
+
+### Start Jinja2 Filters
 
 @app.context_processor
 def inject_user_info():
@@ -1638,6 +1691,7 @@ def user_auth_check():
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         streamUserList[authedStream.id] = []
+        runWebhook(requestedChannel.id,0)
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
