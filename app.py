@@ -2049,22 +2049,24 @@ def addChangeWebhook(message):
     if channelQuery is not None:
         webhookName = message['webhookName']
         webhookEndpoint = message['webhookEndpoint']
+        webhookTrigger = message['webhookTrigger']
         webhookHeader = message['webhookHeader']
         webhookPayload = message['webhookPayload']
         webhookReqType = int(message['webhookReqType'])
 
         existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, name=webhookName).first()
         if existingWebhookQuery is None:
-            newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType)
+            newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
             db.session.add(newWebHook)
             db.session.commit()
-            emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
+            emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestTrigger':webhookTrigger, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
         else:
             existingWebhookQuery.name = webhookName
             existingWebhookQuery.endpointURL = webhookEndpoint
             existingWebhookQuery.requestHeader = webhookHeader
             existingWebhookQuery.requestPayload = webhookPayload
             existingWebhookQuery.requestType = webhookReqType
+            existingWebhookQuery.requestTrigger = webhookTrigger
 
             db.session.commit()
 

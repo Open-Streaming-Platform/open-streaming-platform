@@ -285,6 +285,7 @@
                                                                         <tr>
                                                                             <th>Webhook Name</th>
                                                                             <th>Endpoint URL</th>
+                                                                            <th>Trigger</th>
                                                                             <th></th>
                                                                         </tr>
                                                                     </thead>
@@ -293,6 +294,7 @@
                                                                         <tr id="webhookTableRow-{{webhook.id}}">
                                                                             <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                             <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
+                                                                            <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger}}</td>
                                                                             <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
                                                                             <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
                                                                             <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
@@ -380,6 +382,21 @@
                              <option value=1>GET</option>
                              <option value=2>PUT</option>
                              <option value=3>DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="webhookTrigger">Trigger Event</label>
+                        <select id="webhookTrigger" class="form-control">
+                             <option value=0 selected>Stream Start</option>
+                             <option value=1>Stream End</option>
+                             <option value=2>Stream Viewer Join</option>
+                             <option value=3>Stream Upvote</option>
+                             <option value=4>Stream Name Change</option>
+                             <option value=5>Chat Message</option>
+                             <option value=6>New Video</option>
+                             <option value=7>Video Comment</option>
+                             <option value=8>Video Upvote</option>
+                             <option value=8>Video Name Change</option>
                         </select>
                     </div>
                     <input id="webhookChannelIDInput" type="hidden">
@@ -671,7 +688,7 @@ function toggleDiv(divID) {
     function openNewWebhookModal(chanID) {
         $('#newWebhookModal').modal('show');
         var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
-
+        var webhookTrigger = document.getElementById('webhookTrigger');
         var webhookName = document.getElementById('webhookName');
         var webhookEndpoint = document.getElementById('webhookEndpoint');
         var webhookHeader = document.getElementById('webhookHeader');
@@ -683,7 +700,7 @@ function toggleDiv(divID) {
         webhookHeader.value = "";
         webhookPayload.value = "";
         webhookReqTypeElement.value = 0;
-
+        webhookTrigger.value = 0;
         webHookChannelIDInput.value = chanID;
     }
 </script>
@@ -753,10 +770,12 @@ function toggleDiv(divID) {
         var webhookHeader = document.getElementById('webhookHeader').value;
         var webhookPayload = document.getElementById('webhookPayload').value;
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookTriggerElement = (document.getElementById('webhookTrigger'));
         var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
+        var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
         var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
 
-        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookChannelID:webhookChannelID});
+        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, webhookChannelID:webhookChannelID});
 	}
 </script>
 
@@ -767,6 +786,7 @@ function toggleDiv(divID) {
         var webhookHeader = msg['requestHeader'];
         var webhookPayload = msg['requestPayload'];
         var webhookRequestType = msg['requestType'];
+        var webhookTrigger = msg['requestTrigger'];
         var webhookID = msg['requestID'];
         var channelID = msg['channelID'];
 
@@ -777,13 +797,15 @@ function toggleDiv(divID) {
 
         var webhookNameCell = newRow.insertCell(0);
         var endpointURLCell = newRow.insertCell(1);
-        var requestTypeCell = newRow.insertCell(2);
-        var requestHeaderCell = newRow.insertCell(3);
-        var requestPayloadCell = newRow.insertCell(4);
-        var buttonCell = newRow.insertCell(5);
+        var requestTriggerCell = newRow.insertCell(2);
+        var requestTypeCell = newRow.insertCell(3);
+        var requestHeaderCell = newRow.insertCell(4);
+        var requestPayloadCell = newRow.insertCell(45;
+        var buttonCell = newRow.insertCell(6);
 
         webhookNameCell.id = "webhookRowName-" + webhookID;
         endpointURLCell.id = "webhookRowEndpoint-" + webhookID;
+        requestTriggerCell.id = "webhookRowTrigger-" + webhookID;
         requestTypeCell.id = "webhookRowType-" + webhookID;
         requestHeaderCell.id = "webhookRowHeader-" + webhookID;
         requestPayloadCell.id = "webhookRowPayload-" + webhookID;
@@ -796,6 +818,7 @@ function toggleDiv(divID) {
 
         webhookNameCell.appendChild(document.createTextNode(webhookName));
         endpointURLCell.appendChild(document.createTextNode(webhookURL));
+        requestTriggerCell.appendChild(document.createTextNode(webhookTrigger));
         requestTypeCell.appendChild(document.createTextNode(webhookRequestType));
         requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
         requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
