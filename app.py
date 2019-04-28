@@ -2073,12 +2073,12 @@ def addChangeWebhook(message):
         webhookInputAction = message['inputAction']
 
         existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, name=webhookName).first()
-        if webhookInputAction is 'new':
+        if webhookInputAction == 'new':
             newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
             db.session.add(newWebHook)
             db.session.commit()
             emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestTrigger':webhookTrigger, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
-        elif webhookInputAction is 'edit':
+        elif webhookInputAction == 'edit':
             existingWebhookQuery.name = webhookName
             existingWebhookQuery.endpointURL = webhookEndpoint
             existingWebhookQuery.requestHeader = webhookHeader
