@@ -796,7 +796,7 @@ function toggleDiv(divID) {
         var webhookPayload = document.getElementById('webhookPayload');
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
 
-        var triggerVal = document.getElementById('webhookRowTrigger' + webhookID).value;
+        var triggerVal = document.getElementById('webhookRowTrigger-' + webhookID).value;
 
         switch(triggerVal) {
           case 'Stream Start':
@@ -840,9 +840,9 @@ function toggleDiv(divID) {
 
         webhookName.value = document.getElementById('webhookRowName-' + webhookID).value;
         webhookEndpoint.value = document.getElementById('webhookRowEndpoint-' + webhookID).value;
-        webhookHeader.value = document.getElementById('webhookRowHeader' + webhookID).value;
-        webhookPayload.value = document.getElementById('webhookRowPayload' + webhookID).value;
-        webhookReqTypeElement.value = document.getElementById('webhookRowType' + webhookID).value;
+        webhookHeader.value = document.getElementById('webhookRowHeader-' + webhookID).value;
+        webhookPayload.value = document.getElementById('webhookRowPayload-' + webhookID).value;
+        webhookReqTypeElement.value = document.getElementById('webhookRowType-' + webhookID).value;
         webhookTrigger.value = triggerVal;
         webHookChannelIDInput.value = chanID;
 
