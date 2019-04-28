@@ -283,26 +283,31 @@ def check_isValidChannelViewer(channelID):
     return isAuthorized
 
 @asynch
-def runWebhook(channelID, triggerType):
-    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).first()
+def runWebhook(channelID, triggerType, **kwargs):
+    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
 
-    if webhookQuery is not None:
-        url = webhookQuery.endpointURL
-        payload = webhookQuery.requestPayload
-        header = json.loads(webhookQuery.requestHeader)
-        requestType = webhookQuery.requestType
-        try:
-            if requestType == 0:
-                r = requests.post(url, headers=header, data=payload)
-            elif requestType == 1:
-                r = requests.get(url, headers=header, data=payload)
-            elif requestType == 2:
-                r = requests.put(url, headers=header, data=payload)
-            elif requestType == 3:
-                r = requests.delete(url, headers=header, data=payload)
-        except:
-            pass
+    if webhookQuery != []:
+        for hook in webhookQuery:
+            url = hook.endpointURL
+            payload = processWebhookVariables(hook.requestPayload, **kwargs)
+            header = json.loads(hook.requestHeader)
+            requestType = hook.requestType
+            try:
+                if requestType == 0:
+                    r = requests.post(url, headers=header, data=payload)
+                elif requestType == 1:
+                    r = requests.get(url, headers=header, data=payload)
+                elif requestType == 2:
+                    r = requests.put(url, headers=header, data=payload)
+                elif requestType == 3:
+                    r = requests.delete(url, headers=header, data=payload)
+            except:
+                pass
 
+def processWebhookVariables(payload, **kwargs):
+    for key, value in kwargs.items():
+        payload = payload.replace("%" + key + "%", value)
+    return payload
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 
@@ -1663,6 +1668,7 @@ def streamkey_check():
 
 @app.route('/auth-user', methods=['POST'])
 def user_auth_check():
+    sysSettings = settings.settings.query.first()
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -1675,7 +1681,9 @@ def user_auth_check():
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         streamUserList[authedStream.id] = []
-        runWebhook(requestedChannel.id, 0)
+        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=sysSettings.siteAddress + "/channel/" + str(requestedChannel.id), channeltopic=requestedChannel.topic,
+                   channelimage=sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation, streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
+                   streamname=authedStream.streamName, streamurl=sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc, streamtopic=authedStream.topic, streamimage=sysSettings.siteAddress + "/view"/ + requestedChannel.channelLoc)
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
