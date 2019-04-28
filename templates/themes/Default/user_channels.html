@@ -689,15 +689,15 @@ function toggleDiv(divID) {
 <script>
     function openNewWebhookModal(chanID) {
         $('#newWebhookModal').modal('show');
-        var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
-        var webhookTrigger = document.getElementById('webhookTrigger');
         var webhookName = document.getElementById('webhookName');
         var webhookEndpoint = document.getElementById('webhookEndpoint');
         var webhookHeader = document.getElementById('webhookHeader');
         var webhookPayload = document.getElementById('webhookPayload');
         var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookTriggerElement = document.getElementById('webhookTrigger');
+        var webhookChannelID = (document.getElementById('webhookChannelIDInput'));
         var webhookInputAction = document.getElementById('webhookInputAction');
-        var webhookInputID = document.getElementById('webhookInputID');
+        var webhookInputID = document.getElementById('webhookID');
 
         webhookInputID.value = 'New';
 
@@ -706,8 +706,8 @@ function toggleDiv(divID) {
         webhookHeader.value = "";
         webhookPayload.value = "";
         webhookReqTypeElement.value = 0;
-        webhookTrigger.value = 0;
-        webHookChannelIDInput.value = chanID;
+        webhookTriggerElement.value = 0;
+        webhookChannelID.value = chanID;
         webhookInputAction.value = 'new';
     }
 </script>
