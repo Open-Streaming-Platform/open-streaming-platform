@@ -289,6 +289,7 @@ def runWebhook(channelID, triggerType):
         payload = webhookQuery.requestPaylod
         header = webhookQuery.requestHead
         requestType = webhookQuery.requestType
+        try:
             if requestType == 0:
                 r = requests.post(url, headers=header, parms=payload)
             elif requestType == 1:
