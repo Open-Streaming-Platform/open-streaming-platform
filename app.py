@@ -359,6 +359,7 @@ def get_diskUsage(channelLocation):
 @app.template_filter('get_webhookTrigger')
 def get_webhookTrigger(webhookTrigger):
 
+    webhookTrigger = str(webhookTrigger)
     webhookNames = {
         '1': 'Stream Start',
         '2': 'Stream Viewer Join',
