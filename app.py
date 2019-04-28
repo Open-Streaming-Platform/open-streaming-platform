@@ -281,26 +281,24 @@ def check_isValidChannelViewer(channelID):
             isAuthorized = True
     return isAuthorized
 
-@asynch
 def runWebhook(channelID, triggerType):
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).first()
 
     if webhookQuery is not None:
-        #try:
         url = webhookQuery.endpointURL
         payload = webhookQuery.requestPaylod
         header = webhookQuery.requestHead
         requestType = webhookQuery.requestType
-        if requestType == 0:
-            r = requests.post(url, headers=header, parms=payload)
-        elif requestType == 1:
-            r = requests.get(url, headers=header, parms=payload)
-        elif requestType == 2:
-            r = requests.put(url, headers=header, parms=payload)
-        elif requestType == 3:
-            r = requests.delete(url, headers=header, parms=payload)
-        #except:
-        #    pass
+            if requestType == 0:
+                r = requests.post(url, headers=header, parms=payload)
+            elif requestType == 1:
+                r = requests.get(url, headers=header, parms=payload)
+            elif requestType == 2:
+                r = requests.put(url, headers=header, parms=payload)
+            elif requestType == 3:
+                r = requests.delete(url, headers=header, parms=payload)
+        except:
+            pass
 
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
