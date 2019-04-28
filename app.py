@@ -287,7 +287,7 @@ def runWebhook(channelID, triggerType):
 
     if webhookQuery is not None:
         url = webhookQuery.endpointURL
-        payload = json.loads(webhookQuery.requestPayload)
+        payload = webhookQuery.requestPayload
         header = json.loads(webhookQuery.requestHeader)
         requestType = webhookQuery.requestType
         try:
