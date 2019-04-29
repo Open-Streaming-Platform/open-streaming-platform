@@ -290,11 +290,7 @@ def runWebhook(channelID, triggerType, **kwargs):
     if webhookQuery != []:
         for hook in webhookQuery:
             url = hook.endpointURL
-            f.write('Starting variable process' +"\n")
-
             payload = processWebhookVariables(hook.requestPayload, **kwargs)
-            f.write('Replacement Complete' +"\n")
-            f.close()
             header = json.loads(hook.requestHeader)
             requestType = hook.requestType
             try:
@@ -310,14 +306,9 @@ def runWebhook(channelID, triggerType, **kwargs):
                 pass
 
 def processWebhookVariables(payload, **kwargs):
-    f = open('/opt/osp/log2.txt', 'w')
     for key, value in kwargs.items():
-        f.write('Checking Arg ' + key +"\n")
         replacementValue = ("%" + key + "%")
-        f.write('Replacing ' + replacementValue +"\n")
         payload = payload.replace(replacementValue, str(value))
-        f.write(payload + "\n")
-    f.close()
     return payload
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
