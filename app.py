@@ -313,7 +313,7 @@ def processWebhookVariables(payload, **kwargs):
         f.write('Checking Arg ' + key)
         replacementValue = ("%" + key + "%")
         f.write('Replacing ' + replacementValue)
-        payload = payload.replace(replacementValue, value)
+        payload = payload.replace(replacementValue, str(value))
         f.write(payload)
     f.close()
     return payload
