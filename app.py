@@ -1683,8 +1683,14 @@ def user_auth_check():
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         streamUserList[authedStream.id] = []
+
+        if requestedChannel.imageLocation is None:
+            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        else:
+            channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
         runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
-                   channelimage=(sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation), streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
+                   channelimage=channelImage, streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
                    streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=authedStream.topic, streamimage=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc))
         return 'OK'
     else:
