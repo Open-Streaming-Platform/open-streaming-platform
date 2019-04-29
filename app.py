@@ -284,11 +284,14 @@ def check_isValidChannelViewer(channelID):
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
+    f = open('/opt/osp/log.txt', 'w')
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
 
     if webhookQuery != []:
         for hook in webhookQuery:
             url = hook.endpointURL
+            f.write('Starting variable process')
+            f.close()
             payload = processWebhookVariables(hook.requestPayload, **kwargs)
             header = json.loads(hook.requestHeader)
             requestType = hook.requestType
@@ -305,8 +308,13 @@ def runWebhook(channelID, triggerType, **kwargs):
                 pass
 
 def processWebhookVariables(payload, **kwargs):
+    f = open('/opt/osp/log2.txt', 'w')
     for key, value in kwargs.items():
-        payload = payload.replace("%" + key + "%", value)
+        f.write('Checking Arg ' + key)
+        replacementValue = ("%" + key + "%")
+        payload = payload.replace(replacementValue, value)
+        f.write(payload)
+    f.close()
     return payload
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
