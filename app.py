@@ -1683,7 +1683,7 @@ def user_auth_check():
         streamUserList[authedStream.id] = []
         runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
                    channelimage=(sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation), streamer=requestedChannel.owningUser, channeldescription=requestedChannel.description,
-                   streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=authedStream.topic, streamimage=(sysSettings.siteAddress + "/view"/ + requestedChannel.channelLoc))
+                   streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=authedStream.topic, streamimage=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc))
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
