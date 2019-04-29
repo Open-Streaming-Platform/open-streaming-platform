@@ -290,9 +290,11 @@ def runWebhook(channelID, triggerType, **kwargs):
     if webhookQuery != []:
         for hook in webhookQuery:
             url = hook.endpointURL
-            f.write('Starting variable process')
-            f.close()
+            f.write('Starting variable process' +"\n")
+
             payload = processWebhookVariables(hook.requestPayload, **kwargs)
+            f.write('Replacement Complete' +"\n")
+            f.close()
             header = json.loads(hook.requestHeader)
             requestType = hook.requestType
             try:
@@ -310,11 +312,11 @@ def runWebhook(channelID, triggerType, **kwargs):
 def processWebhookVariables(payload, **kwargs):
     f = open('/opt/osp/log2.txt', 'w')
     for key, value in kwargs.items():
-        f.write('Checking Arg ' + key)
+        f.write('Checking Arg ' + key +"\n")
         replacementValue = ("%" + key + "%")
-        f.write('Replacing ' + replacementValue)
+        f.write('Replacing ' + replacementValue +"\n")
         payload = payload.replace(replacementValue, str(value))
-        f.write(payload)
+        f.write(payload + "\n")
     f.close()
     return payload
 
