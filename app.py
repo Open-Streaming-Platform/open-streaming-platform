@@ -647,6 +647,7 @@ def view_page(loc):
 @app.route('/view/<loc>/change', methods=['POST'])
 @login_required
 def view_change_page(loc):
+    sysSettings = settings.settings.query.first()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc, owningUser=current_user.id).first()
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
