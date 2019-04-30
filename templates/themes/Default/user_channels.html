@@ -855,6 +855,8 @@ function toggleDiv(divID) {
         webhookInputID.value = webhookID;
 
         $('#newWebhookModal').modal('show');
+        webhookHeader.value = JSON.stringify(webhookHeader.value, undefined, 2);
+        webhookPayload.value = JSON.stringify(webhookPayload.value, undefined, 2);
     }
 </script>
 
