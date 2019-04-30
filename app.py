@@ -275,7 +275,7 @@ def check_isValidChannelViewer(channelID):
             if channelQuery.owningUser is current_user.id:
                 isAuthorized = True
             else:
-                inviteQuery = invites.invitedViewer(userID=current_user.id, channelID=channelID).all()
+                inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
                 for invite in inviteQuery:
                     if invite.isValid():
                         isAuthorized = True
