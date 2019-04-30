@@ -93,15 +93,15 @@
                       </div>
                       <div>
                           <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><b>{{video.channelName}}</b></div> <br>
-                          <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><b>{{video.channel.channelName}}</b></div> <br>
-                          <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"> <b>{{video.topic|get_topicName}}</b></div> <br><br>
+                          <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div> <br>
+                          <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"> <b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div> <br><br>
                           <div><b>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</b></div>
                       </div>
                   </div>
                   <div class="White-BG recordedStreamInfo shadow">
                       <div>
                           <div class="streamcard-IconText"><i class="fas fa-calendar-alt"></i></div> <div style="float:left;"> <b>{{video.videoDate|normalize_date}}</b></div> <br>
-                          <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> <b>{{video.owningUser|get_userName}}</b><br>
+                          <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{video.owningUser}}/">{{video.owningUser|get_userName}}</a></b><br>
                           <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{video.views}} </div><br>
                           <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div> <div style="float:left;"><span id="totalUpvotes"></span></div> <br>
                       </div>
