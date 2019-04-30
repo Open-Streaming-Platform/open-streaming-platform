@@ -2098,9 +2098,7 @@ def text(message):
                            streamname=streamQuery.streamName,
                            streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamQuery.topic),
-                           streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
-                           user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation),
-                           message=msg)
+                           streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
 
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
