@@ -673,7 +673,7 @@ def view_change_page(loc):
                        channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                        channeldescription=requestedChannel.description,
                        streamname=streamData.streamName,
-                       streamurl=(streamData.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                        streamtopic=get_topicName(streamData.topic),
                        streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
