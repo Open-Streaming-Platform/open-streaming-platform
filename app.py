@@ -2095,7 +2095,8 @@ def text(message):
                            channeldescription=channelQuery.description,
                            streamname=streamQuery.streamName,
                            streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamQuery.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
+                           streamtopic=get_topicName(streamQuery.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                           user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation, message=msg)
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
 
             else:
