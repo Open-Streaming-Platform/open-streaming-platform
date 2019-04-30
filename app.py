@@ -284,7 +284,6 @@ def check_isValidChannelViewer(channelID):
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
-    f = open('/opt/osp/log.txt', 'w')
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
 
     if webhookQuery != []:
@@ -302,11 +301,8 @@ def runWebhook(channelID, triggerType, **kwargs):
                     r = requests.put(url, headers=header, data=payload)
                 elif requestType == 3:
                     r = requests.delete(url, headers=header, data=payload)
-                str(f.write(r))
             except:
                 pass
-
-    f.close()
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
@@ -2092,15 +2088,7 @@ def text(message):
                 else:
                     channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
-                runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
-                           channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                           channeltopic=get_topicName(channelQuery.topic),
-                           channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                           channeldescription=channelQuery.description,
-                           streamname=streamQuery.streamName,
-                           streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamQuery.topic),
-                           streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
+                runWebhook(channelQuery.id, 5)
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
 
             else:
