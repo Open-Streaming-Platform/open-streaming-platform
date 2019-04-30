@@ -303,11 +303,11 @@ def runWebhook(channelID, triggerType, **kwargs):
                         r = requests.put(url, headers=header, data=payload)
                     elif requestType == 3:
                         r = requests.delete(url, headers=header, data=payload)
-                    f.write(r)
+                    str(f.write(r))
                 except:
                     pass
     except Exception as ex:
-        f.write(ex)
+        f.write(str(ex))
     f.close()
 
 def processWebhookVariables(payload, **kwargs):
