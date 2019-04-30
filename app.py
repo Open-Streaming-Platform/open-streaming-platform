@@ -287,23 +287,28 @@ def runWebhook(channelID, triggerType, **kwargs):
     f = open('/opt/osp/log.txt', 'w')
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
 
-    if webhookQuery != []:
-        for hook in webhookQuery:
-            url = hook.endpointURL
-            payload = processWebhookVariables(hook.requestPayload, **kwargs)
-            header = json.loads(hook.requestHeader)
-            requestType = hook.requestType
-            try:
-                if requestType == 0:
-                    r = requests.post(url, headers=header, data=payload)
-                elif requestType == 1:
-                    r = requests.get(url, headers=header, data=payload)
-                elif requestType == 2:
-                    r = requests.put(url, headers=header, data=payload)
-                elif requestType == 3:
-                    r = requests.delete(url, headers=header, data=payload)
-            except:
-                pass
+    try:
+        if webhookQuery != []:
+            for hook in webhookQuery:
+                url = hook.endpointURL
+                payload = processWebhookVariables(hook.requestPayload, **kwargs)
+                header = json.loads(hook.requestHeader)
+                requestType = hook.requestType
+                try:
+                    if requestType == 0:
+                        r = requests.post(url, headers=header, data=payload)
+                    elif requestType == 1:
+                        r = requests.get(url, headers=header, data=payload)
+                    elif requestType == 2:
+                        r = requests.put(url, headers=header, data=payload)
+                    elif requestType == 3:
+                        r = requests.delete(url, headers=header, data=payload)
+                    f.write(r)
+                except:
+                    pass
+    except Exception as ex:
+        f.write(ex)
+    f.close()
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
