@@ -2092,7 +2092,7 @@ def text(message):
 
                 runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
                            channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                           channeltopic=channelQuery.topic,
+                           channeltopic=str(channelQuery.topic),
                            channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                            channeldescription=channelQuery.description,
                            streamname=streamQuery.streamName,
