@@ -1701,6 +1701,7 @@ def user_auth_check():
 
 @app.route('/deauth-user', methods=['POST'])
 def user_deauth_check():
+    sysSettings = settings.settings.query.first()
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -1732,6 +1733,21 @@ def user_deauth_check():
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
             streamUserList[stream.id] = []
             print(returnMessage)
+
+            if channelRequest.imageLocation is None:
+                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
+
+            runWebhook(channelRequest.id, 1, channelname=channelRequest.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
+                       channeltopic=channelRequest.topic,
+                       channelimage=channelImage, streamer=get_userName(channelRequest.owningUser),
+                       channeldescription=channelRequest.description,
+                       streamname=stream.streamName,
+                       streamurl=(sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
+                       streamtopic=get_topicName(stream.topic),
+                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelRequest.channelLoc + ".png"))
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closure Failure - No Such Stream', 'key': str(key), 'ipAddress': str(ipaddress)}
@@ -1777,12 +1793,20 @@ def rec_Complete_handler():
 def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
+    sysSettings = settings.settings.query.first()
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     viewedStream = Stream.Stream.query.filter_by(streamName=stream.streamName).first()
     viewedStream.currentViewers = viewedStream.currentViewers + 1
     db.session.commit()
+
+    if requestedChannel.imageLocation is None:
+        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+    else:
+        channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
     join_room(streamData['data'])
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
@@ -1794,8 +1818,28 @@ def handle_new_viewer(streamData):
         if current_user.username not in streamUserList[stream.id]:
             streamUserList[stream.id].append(current_user.username)
         emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
+        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                   channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                   channeltopic=requestedChannel.topic,
+                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeldescription=requestedChannel.description,
+                   streamname=stream.streamName,
+                   streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                   streamtopic=get_topicName(stream.topic),
+                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   viewer=current_user.username, viewerpicture=(sysSettings.siteAddress + pictureLocation))
     else:
         emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                   channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                   channeltopic=requestedChannel.topic,
+                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeldescription=requestedChannel.description,
+                   streamname=stream.streamName,
+                   streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                   streamtopic=get_topicName(stream.topic),
+                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   viewer="Guest", viewerpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
