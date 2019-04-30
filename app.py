@@ -2010,6 +2010,8 @@ def text(message):
     room = message['room']
     msg = strip_html(message['msg'])
 
+    sysSettings = settings.settings.query.first()
+
     channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
     streamQuery = channelQuery.stream[0]
 
@@ -2094,7 +2096,7 @@ def text(message):
                                channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                                channeldescription=channelQuery.description,
                                streamname=streamQuery.streamName,
-                               streamurl=(streamQuery.siteAddress + "/view/" + channelQuery.channelLoc),
+                               streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                                streamtopic=get_topicName(streamQuery.topic),
                                streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                                user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation),
