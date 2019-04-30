@@ -1842,7 +1842,7 @@ def handle_new_viewer(streamData):
                    streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                    streamtopic=get_topicName(stream.topic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                   viewer=current_user.username, viewerpicture=(sysSettings.siteAddress + pictureLocation))
+                   user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
     else:
         emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
         runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
@@ -1854,7 +1854,7 @@ def handle_new_viewer(streamData):
                    streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                    streamtopic=get_topicName(stream.topic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                   viewer="Guest", viewerpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
+                   user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
@@ -2072,6 +2072,32 @@ def text(message):
                                 db.session.commit()
 
                                 msg = '<b>*** ' + target + ' has been unbanned ***</b>'
+            else:
+                banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
+                if streamQuery.channelMuted is not False or not banQuery:
+
+                    if channelQuery.imageLocation is None:
+                        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                    else:
+                        channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+
+                    pictureLocation = current_user.pictureLocation
+                    if current_user.pictureLocation == None:
+                        pictureLocation = '/static/img/user2.png'
+                    else:
+                        pictureLocation = '/images/' + pictureLocation
+
+                    runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
+                               channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                               channeltopic=channelQuery.topic,
+                               channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                               channeldescription=channelQuery.description,
+                               streamname=streamQuery.streamName,
+                               streamurl=(streamQuery.siteAddress + "/view/" + channelQuery.channelLoc),
+                               streamtopic=get_topicName(streamQuery.topic),
+                               streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                               user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation),
+                               message=msg)
         banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
 
         if banQuery == None:
