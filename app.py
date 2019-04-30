@@ -2075,24 +2075,7 @@ def text(message):
                                 db.session.commit()
 
                                 msg = '<b>*** ' + target + ' has been unbanned ***</b>'
-            else:
-                banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
-                if not streamQuery.channelMuted or not banQuery:
 
-                    if channelQuery.imageLocation is None:
-                        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-                    else:
-                        channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
-
-                    runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
-                               channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                               channeltopic=channelQuery.topic,
-                               channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                               channeldescription=channelQuery.description,
-                               streamname=streamQuery.streamName,
-                               streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                               streamtopic=get_topicName(streamQuery.topic),
-                               streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
 
         if banQuery == None:
@@ -2101,6 +2084,24 @@ def text(message):
                 if current_user.id == channelQuery.owningUser:
                     flags = "Owner"
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
+
+                if channelQuery.imageLocation is None:
+                    channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                else:
+                    channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+
+                runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
+                           channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                           channeltopic=channelQuery.topic,
+                           channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                           channeldescription=channelQuery.description,
+                           streamname=streamQuery.streamName,
+                           streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                           streamtopic=get_topicName(streamQuery.topic),
+                           streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                           user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation),
+                           message=msg)
+
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
