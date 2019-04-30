@@ -2085,20 +2085,25 @@ def text(message):
                     flags = "Owner"
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
 
-                if channelQuery.imageLocation is None:
-                    channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-                else:
-                    channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+                try:
+                    if channelQuery.imageLocation is None:
+                        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                    else:
+                        channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
-                runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
-                           channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                           channeltopic=str(channelQuery.topic),
-                           channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                           channeldescription=channelQuery.description,
-                           streamname=streamQuery.streamName,
-                           streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamQuery.topic),
-                           streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
+                    runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
+                               channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                               channeltopic=get_topicName(channelQuery.topic),
+                               channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                               channeldescription=channelQuery.description,
+                               streamname=streamQuery.streamName,
+                               streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                               streamtopic=get_topicName(streamQuery.topic),
+                               streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
+                except Exception as ex:
+                    f = open("/opt/osp/error.txt", "a")
+                    f.write(ex)
+                    f.close()
 
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
