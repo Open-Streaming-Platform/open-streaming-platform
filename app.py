@@ -661,6 +661,21 @@ def view_change_page(loc):
             streamData.topic = newStreamTopic
             db.session.commit()
 
+            if requestedChannel.imageLocation is None:
+                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
+            runWebhook(requestedChannel.id, 4, channelname=requestedChannel.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channeltopic=requestedChannel.topic,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                       channeldescription=requestedChannel.description,
+                       streamname=streamData.streamName,
+                       streamurl=(streamData.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamtopic=get_topicName(streamData.topic),
+                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
+
 
         return redirect(url_for('view_page', loc=loc))
     else:
