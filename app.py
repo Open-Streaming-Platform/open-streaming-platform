@@ -2077,18 +2077,12 @@ def text(message):
                                 msg = '<b>*** ' + target + ' has been unbanned ***</b>'
             else:
                 banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
-                if streamQuery.channelMuted is not False or not banQuery:
+                if not streamQuery.channelMuted or not banQuery:
 
                     if channelQuery.imageLocation is None:
                         channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
                     else:
                         channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
-
-                    pictureLocation = current_user.pictureLocation
-                    if current_user.pictureLocation == None:
-                        pictureLocation = '/static/img/user2.png'
-                    else:
-                        pictureLocation = '/images/' + pictureLocation
 
                     runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
@@ -2098,9 +2092,7 @@ def text(message):
                                streamname=streamQuery.streamName,
                                streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                                streamtopic=get_topicName(streamQuery.topic),
-                               streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
-                               user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation),
-                               message=msg)
+                               streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
 
         if banQuery == None:
