@@ -629,7 +629,7 @@ def view_page(loc):
         db.session.commit()
 
         if isEmbedded == None or isEmbedded == "False":
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(12)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
             return render_template('themes/' + sysSettings.systemTheme + '/player.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
         else:
             isAutoPlay = request.args.get("autoplay")
