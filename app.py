@@ -1808,7 +1808,7 @@ def rec_Complete_handler():
                channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
                videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=pendingVideo.topic,
                videourl=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),\
-               videothumbnail=(sysSettings.siteAddress + '/videos'/ +pendingVideo.thumbnailLocation))
+               videothumbnail=(sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
     while not os.path.exists(fullVidPath):
         time.sleep(1)
