@@ -84,7 +84,7 @@
               {% endif %}
           </div>
 
-      {% if stream.channel.recordedVideo != [] and stream.channel.recordedVideo[0].pending == False %}
+      {% if randomRecorded != [] and randomRecorded != None %}
       <div class="row justify-content-center" style="padding-bottom:50px;">
           <div class="{% if stream.channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
               <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
@@ -92,7 +92,7 @@
                   <div class="card-body">
                       <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                           <div class="streamList d-flex justify-content-center flex-wrap">
-                              {% for video in stream.channel.recordedVideo %}
+                              {% for video in randomRecorded %}
                                   {% if video.pending == False %}
                                     <div class="streamcard">
                                       <a href="/play/{{video.id}}">
