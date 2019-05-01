@@ -1548,7 +1548,7 @@ def initialSetup():
     return redirect(url_for('main_page'))
 
 ### Start Video / Stream Handler Routes
-@asynch
+
 @app.route('/videos/<string:channelID>/<path:filename>')
 def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
@@ -1559,7 +1559,7 @@ def video_sender(channelID, filename):
             return None
     else:
         return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
-@asynch
+
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
     channelID = str(filename)[:-4]
@@ -1571,7 +1571,7 @@ def live_thumb_sender(filename):
             return None
     else:
         return send_from_directory('/var/www/stream-thumb', filename)
-@asynch
+
 @app.route('/live-adapt/<path:filename>')
 def live_adapt_stream_image_sender(filename):
     channelID = str(filename)[:-5]
@@ -1583,7 +1583,7 @@ def live_adapt_stream_image_sender(filename):
             return None
     else:
         return send_from_directory('/var/www/live-adapt', filename)
-@asynch
+
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
 def live_adapt_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID[:-4]).first()
@@ -1598,7 +1598,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
 #@app.route('/live/<path:filename>')
 #def live_stream_sender(filename):
 #    return send_from_directory('/var/www/live', filename)
-@asynch
+
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
@@ -1613,7 +1613,7 @@ def live_stream_directory_sender(channelID, filename):
 #@app.route('/live-rec/<path:filename>')
 #def live_rec_stream_sender(filename):
 #    return send_from_directory('/var/www/live-rec', filename)
-@asynch
+
 @app.route('/live-rec/<string:channelID>/<path:filename>')
 def live_rec_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
