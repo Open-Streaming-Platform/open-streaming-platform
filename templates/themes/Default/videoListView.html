@@ -43,11 +43,7 @@
                                 {% if stream.channel.protected %}
                                     <div class="streamcard-overlay">
                                         <div class="quarter-circle-top-left">
-                                            {% if check_isValidChannelViewer(stream.channel.id) %}
-                                                <i class="stream-image-overlay-text fas fa-lock-open"></i>
-                                            {% else %}
-                                                <i class="stream-image-overlay-text fas fa-lock"></i>
-                                            {% endif %}
+                                            <i class="stream-image-overlay-text fas fa-lock"></i>
                                         </div>
                                     </div>
                                 {% endif %}
