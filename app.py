@@ -1803,11 +1803,11 @@ def rec_Complete_handler():
 
     runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
                channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-               channeltopic=requestedChannel.topic,
+               channeltopic=get_topicName(requestedChannel.topic),
                channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
-               videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=pendingVideo.topic,
-               videourl=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),\
+               videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=get_topicName(pendingVideo.topic),
+               videourl=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),
                videothumbnail=(sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
     while not os.path.exists(fullVidPath):
