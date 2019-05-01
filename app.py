@@ -1778,6 +1778,8 @@ def rec_Complete_handler():
     key = request.form['name']
     path = request.form['path']
 
+    sysSettings = settings.settings.query.first()
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=key).first()
 
     pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
@@ -1793,6 +1795,20 @@ def rec_Complete_handler():
 
     pendingVideo.pending = False
     db.session.commit()
+
+    if requestedChannel.imageLocation is None:
+        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+    else:
+        channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
+    runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
+               channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+               channeltopic=requestedChannel.topic,
+               channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+               channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
+               videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=pendingVideo.topic,
+               videolocation=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),\
+               videothumbnail=(sysSettings.siteAddress + '/videos'/ +pendingVideo.thumbnailLocation))
 
     while not os.path.exists(fullVidPath):
         time.sleep(1)
