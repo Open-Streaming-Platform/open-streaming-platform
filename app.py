@@ -809,6 +809,7 @@ def delete_vid_page(videoID):
 @app.route('/play/<videoID>/comment', methods=['GET','POST'])
 @login_required
 def comments_vid_page(videoID):
+    sysSettings = settings.settings.query.first()
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
@@ -822,6 +823,28 @@ def comments_vid_page(videoID):
             newComment = comments.videoComments(currentUser,comment,recordedVid.id)
             db.session.add(newComment)
             db.session.commit()
+
+            if recordedVid.channel.imageLocation is None:
+                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteAddress + "/images/" + recordedVid.channel.imageLocation)
+
+            pictureLocation = ""
+            if current_user.pictureLocation == None:
+                pictureLocation = '/static/img/user2.png'
+            else:
+                pictureLocation = '/images/' + pictureLocation
+
+            runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
+                       channeltopic=get_topicName(recordedVid.channel.topic),
+                       channelimage=channelImage, streamer=get_userName(recordedVid.channel.owningUser),
+                       channeldescription=recordedVid.channel.description, videoname=recordedVid.channelName,
+                       videodate=recordedVid.videoDate, videodescription=recordedVid.description,
+                       videotopic=get_topicName(recordedVid.topic),
+                       videourl=(sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
+                       videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
+                       user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation), comment=comment)
             flash('Comment Added', "success")
 
         elif request.method == 'GET':
