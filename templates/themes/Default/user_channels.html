@@ -293,7 +293,7 @@
                                                                         {% for webhook in channel.webhooks %}
                                                                         <tr id="webhookTableRow-{{webhook.id}}">
                                                                             <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
-                                                                            <td id="webhookRowEndpoint-{{webhook.id}}">{{webhook.endpointURL}}</td>
+                                                                            <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
                                                                             <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
                                                                             <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
                                                                             <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
@@ -891,6 +891,7 @@ function toggleDiv(divID) {
         requestHeaderCell.id = "webhookRowHeader-" + webhookID;
         requestPayloadCell.id = "webhookRowPayload-" + webhookID;
 
+        endpointURLCell.style=display = 'none';
         requestTypeCell.style.display = 'none';
         requestHeaderCell.style.display = 'none';
         requestPayloadCell.style.display = 'none';
