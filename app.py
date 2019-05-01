@@ -1807,7 +1807,7 @@ def rec_Complete_handler():
                channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
                videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=pendingVideo.topic,
-               videolocation=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),\
+               videourl=(sysSettings.siteAddress + '/videos/' + pendingVideo.videoLocation),\
                videothumbnail=(sysSettings.siteAddress + '/videos'/ +pendingVideo.thumbnailLocation))
 
     while not os.path.exists(fullVidPath):
