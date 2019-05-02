@@ -755,6 +755,21 @@ def vid_change_page(loc):
             recordedVidQuery.topic = newVidTopic
             recordedVidQuery.description = strip_html(description)
             recordedVidQuery.allowComments = allowComments
+
+            if recordedVidQuery.channel.imageLocation is None:
+                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
+
+            runWebhook(recordedVidQuery.channel.id, 7, channelname=recordedVidQuery.channel.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
+                       channeltopic=get_topicName(recordedVidQuery.channel.topic),
+                       channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
+                       channeldescription=recordedVidQuery.channel.description, videoname=recordedVidQuery.channelName,
+                       videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
+                       videotopic=get_topicName(recordedVidQuery.topic),
+                       videourl=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
+                       videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
             db.session.commit()
 
         return redirect(url_for('view_vid_page', videoID=loc))
