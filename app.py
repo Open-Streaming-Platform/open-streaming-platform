@@ -51,6 +51,7 @@ app = Flask(__name__)
 
 from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
+app.jinja_env.cache = {}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
