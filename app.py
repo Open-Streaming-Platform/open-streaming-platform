@@ -52,8 +52,6 @@ app = Flask(__name__)
 from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
-socket.socket.settimeout(0)
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
@@ -270,6 +268,7 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
+@asynch
 def check_isValidChannelViewer(channelID):
     isAuthorized = False
     if current_user.is_authenticated:
