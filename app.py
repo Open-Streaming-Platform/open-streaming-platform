@@ -270,21 +270,17 @@ def get_Stream_Upvotes(videoID):
     return result
 
 def check_isValidChannelViewer(channelID):
-    isAuthorized = False
     if current_user.is_authenticated:
-        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
-        if channelQuery is not None:
-            if channelQuery.owningUser is current_user.id:
-                isAuthorized = True
+        inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
+        for invite in inviteQuery:
+            if invite.isValid():
+                return True
             else:
-                inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
-                for invite in inviteQuery:
-                    if invite.isValid():
-                        isAuthorized = True
-                    else:
-                        db.session.delete(invite)
-                        db.session.commit()
-    return isAuthorized
+                db.session.delete(invite)
+                db.session.commit()
+            if invite.channel.owningUser is current_user.id:
+                return True
+    return False
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
