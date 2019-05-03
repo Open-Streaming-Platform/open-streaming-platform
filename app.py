@@ -269,7 +269,6 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
-@asynch
 def check_isValidChannelViewer(channelID):
     isAuthorized = False
     if current_user.is_authenticated:
