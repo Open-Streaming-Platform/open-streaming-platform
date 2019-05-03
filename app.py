@@ -1592,7 +1592,7 @@ def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+            return send_from_directory(os.path.join('/var/www/videos', channelID), filename, cache_timeout=3600)
         else:
             return abort(401)
     else:
@@ -1604,7 +1604,7 @@ def live_thumb_sender(filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory('/var/www/stream-thumb', filename)
+            return send_from_directory('/var/www/stream-thumb', filename, cache_timeout=3600)
         else:
             return abort(401)
     else:
