@@ -1594,7 +1594,7 @@ def video_sender(channelID, filename):
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
         else:
-            return None
+            return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
@@ -1606,7 +1606,7 @@ def live_thumb_sender(filename):
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory('/var/www/stream-thumb', filename)
         else:
-            return None
+            return abort(401)
     else:
         return send_from_directory('/var/www/stream-thumb', filename)
 
@@ -1618,7 +1618,7 @@ def live_adapt_stream_image_sender(filename):
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory('/var/www/live-adapt', filename)
         else:
-            return None
+            return abort(401)
     else:
         return send_from_directory('/var/www/live-adapt', filename)
 
@@ -1629,7 +1629,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
         else:
-            return None
+            return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
 
@@ -1644,7 +1644,7 @@ def live_stream_directory_sender(channelID, filename):
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory(os.path.join('/var/www/live', channelID), filename)
         else:
-            return None
+            return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/live', channelID), filename)
 
@@ -1658,6 +1658,8 @@ def live_rec_stream_directory_sender(channelID, filename):
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
             return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
+        else:
+            abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
 
