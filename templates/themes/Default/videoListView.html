@@ -77,7 +77,7 @@
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
 
-                                <img class="stream-img card-img-top shadow" src="'/static/img/placeholder.jpg'" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
 
                             {% if video.channel.protected %}
                             <div class="streamcard-overlay">
@@ -122,6 +122,10 @@ $('#search').on('input', function(){
 });
 </script>
 
-<script>lazyload();</script>
+<script>
+    var lazyLoadInstance = new LazyLoad({
+    elements_selector: ".lazy"
+});
+</script>
 {% endblock %}
 
