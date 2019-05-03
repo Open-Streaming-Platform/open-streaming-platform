@@ -1,7 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
-
 {% block head %}
 <title>{{sysSettings.siteName}} - {{title}}</title>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.0.0/dist/lazyload.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -76,9 +76,9 @@
                   <a href="/play/{{video.id}}">
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
-                            <div class="card-img-top stream-img shadow" style="background-image: url('/static/img/placeholder.jpg');background-color:black;">
-                                <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                            </div>
+
+                                <img class="stream-img card-img-top shadow" src="'/static/img/placeholder.jpg'" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+
                             {% if video.channel.protected %}
                             <div class="streamcard-overlay">
                                 <div class="quarter-circle-top-left">
@@ -121,5 +121,7 @@ $('#search').on('input', function(){
     });
 });
 </script>
+
+<script>lazyload();</script>
 {% endblock %}
 
