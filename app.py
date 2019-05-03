@@ -1591,10 +1591,12 @@ def initialSetup():
 def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/videos', channelID), filename, cache_timeout=3600)
-        else:
-            return abort(401)
+        #if check_isValidChannelViewer(channelQuery.id):
+        for invite in current_user.invites:
+            if invite.isValid():
+                return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+            #else:
+                #return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
@@ -1604,7 +1606,7 @@ def live_thumb_sender(filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory('/var/www/stream-thumb', filename, cache_timeout=3600)
+            return send_from_directory('/var/www/stream-thumb', filename)
         else:
             return abort(401)
     else:
