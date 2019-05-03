@@ -77,7 +77,7 @@
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
                             <div class="card-img-top stream-img shadow" style="background-color:black;height:150px;">
-                                <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <img class="stream-img card-img-top shadow fade-in-fwd" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                             </div>
                             {% if video.channel.protected %}
                             <div class="streamcard-overlay">
