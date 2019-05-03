@@ -1,7 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 {% block head %}
 <title>{{sysSettings.siteName}} - {{title}}</title>
-<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@12.0.0/dist/lazyload.min.js"></script>
+
 {% endblock %}
 
 {% block body %}
@@ -39,7 +39,7 @@
                     <a href="/view/{{stream.channel.channelLoc}}/">
                         <div class="stream shadow card p-2 streamcard-item">
                             <div>
-                                <img class="stream-img card-img-top shadow" src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                                 {% if stream.channel.protected %}
                                     <div class="streamcard-overlay">
                                         <div class="quarter-circle-top-left">
@@ -77,7 +77,7 @@
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
 
-                                <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
 
                             {% if video.channel.protected %}
                             <div class="streamcard-overlay">
@@ -119,12 +119,6 @@ $('#search').on('input', function(){
              $this.closest('.streamcard').hide();
         else $this.closest('.streamcard').show();
     });
-});
-</script>
-
-<script>
-    var lazyLoadInstance = new LazyLoad({
-    elements_selector: ".lazy"
 });
 </script>
 {% endblock %}

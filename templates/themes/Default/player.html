@@ -98,7 +98,7 @@
                                       <a href="/play/{{video.id}}">
                                           <div class="stream shadow card p-2 streamcard-item">
                                             <div>
-                                                <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                                <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                                 {% if video.channel.protected %}
                                                 <div class="streamcard-overlay">
                                                     <div class="quarter-circle-top-left">

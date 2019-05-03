@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
     <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
-
+    <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
 
     {% block head %}
 
@@ -141,6 +141,12 @@
 <script>
 $(document).ready(function(){
   $('.toast').toast('show');
+});
+</script>
+
+<script>
+    var lazyLoadInstance = new LazyLoad({
+    elements_selector: ".lazy"
 });
 </script>
 
