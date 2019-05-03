@@ -52,6 +52,7 @@ app = Flask(__name__)
 from werkzeug.contrib.fixers import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
+app.use_x_sendfile = True
 
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
@@ -1591,12 +1592,10 @@ def initialSetup():
 def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
-        #if check_isValidChannelViewer(channelQuery.id):
-        for invite in current_user.invites:
-            if invite.isValid() and channelQuery.id == invite.channelID:
-                return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
-            else:
-                return abort(401)
+        if check_isValidChannelViewer(channelQuery.id):
+            return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+        else:
+            return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
