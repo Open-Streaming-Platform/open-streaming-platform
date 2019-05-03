@@ -76,7 +76,7 @@
                   <a href="/play/{{video.id}}">
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
-                            <div class="card-img-top stream-img shadow" style="background-color:black;height:145px;">
+                            <div class="card-img-top stream-img shadow" style="background-image: url('/static/img/placeholder.jpg');background-color:black;">
                                 <img class="stream-img card-img-top shadow" src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                             </div>
                             {% if video.channel.protected %}
