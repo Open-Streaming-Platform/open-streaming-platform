@@ -1593,7 +1593,7 @@ def video_sender(channelID, filename):
     if channelQuery.protected:
         #if check_isValidChannelViewer(channelQuery.id):
         for invite in current_user.invites:
-            if invite.isValid():
+            if invite.isValid() and channelQuery.id == invite.channelID:
                 return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
             #else:
                 #return abort(401)
