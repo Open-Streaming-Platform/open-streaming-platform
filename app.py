@@ -271,15 +271,17 @@ def get_Stream_Upvotes(videoID):
 
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
-        inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
-        for invite in inviteQuery:
-            if invite.isValid():
-                return True
-            else:
-                db.session.delete(invite)
-                db.session.commit()
-            if invite.channel.owningUser is current_user.id:
-                return True
+        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        if channelQuery.owningUser is current_user.id:
+            return True
+        else:
+            inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
+            for invite in inviteQuery:
+                if invite.isValid():
+                    return True
+                else:
+                    db.session.delete(invite)
+                    db.session.commit()
     return False
 
 @asynch
