@@ -356,14 +356,16 @@ function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
 
+    videoWindowState = document.getElementsByTagName('video');
+
     //todo: Change to channel Location, not ID to allow for checking for restart
     $.getJSON('/apiv1/channels/{{stream.channel.channelLoc}}', function(data) {
         var channelList = data['results'][0];
         var streamIDList = channelList['stream'];
-        console.log(channelList);
-        console.log(streamIDList);
 
         if (streamIDList.length > 0) {
+            var currentStreamID = streamIDList[0];
+
             if (currentReadyState == 2) {
                 videoJSObj.pause();
                 videoJSObj.currentTime(0);
