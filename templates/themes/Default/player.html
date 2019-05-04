@@ -14,7 +14,7 @@
           <div id="videoWindowRow" class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
               <div id="videoWindow" class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12">
                   <br><br>
-                    <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{stream.channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
+                    <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
                         <source src="{{streamURL}}" type="application/x-mpegURL">
                         <p class="vjs-no-js">
                           To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -63,9 +63,9 @@
                   </div>
                   <div>
                       <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
-                      <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{stream.channel.id}}/">{{stream.channel.channelName}}</a></b></span></div><br>
+                      <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b><a href="/topic/{{stream.topic}}/">{{stream.topic|get_topicName}}</a></b></div><br>
-                      <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{stream.channel.owningUser}}/">{{stream.channel.owningUser|get_userName}}</a></b><br>
+                      <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{stream.channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
                       <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{stream.totalViewers}}</div> <br>
                       <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers">{{stream.currentViewers}}</span></div> <br>
                       <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
@@ -130,7 +130,7 @@
       {% endif %}
     </div>
 
-{% if stream.channel.owningUser == current_user.id %}
+{% if channel.owningUser == current_user.id %}
 <!-- Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -141,7 +141,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-        <form action="/view/{{stream.channel.channelLoc}}/change" method="post">
+        <form action="/view/{{channel.channelLoc}}/change" method="post">
       <div class="modal-body">
 
             <h5>Name of the Stream:</h5>
@@ -222,20 +222,20 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('newViewer', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
         });
     </script>
 
     <script>
         socket.on('disconnect', function() {
-            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
         });
     </script>
 
 
     <script>
         window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
             return null;
         });
     </script>
@@ -260,7 +260,7 @@
             if (code == 13) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc}}' });
+                socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
             }
         });
     </script>
@@ -274,9 +274,9 @@
             var s = today.getSeconds();
             var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
@@ -290,7 +290,7 @@
 
     <script>
         setInterval(function() {
-          socket.emit('getViewerTotal', {data: "{{stream.channel.channelLoc}}"} );
+          socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
         },30000 );
     </script>
 

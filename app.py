@@ -598,18 +598,19 @@ def view_page(loc):
 
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    if streamData is not None:
+    if requestedChannel is not None:
 
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
-            streamURL = '/live-adapt/' + streamData.channel.channelLoc + '.m3u8'
+            streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
         elif streamData.channel.record is True:
-            streamURL = '/live-rec/' + streamData.channel.channelLoc + '/index.m3u8'
+            streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
         elif streamData.channel.record is False:
-            streamURL = '/live/' + streamData.channel.channelLoc + '/index.m3u8'
+            streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
 
-        streamData.channel.views = streamData.channel.views + 1
-        streamData.totalViewers = streamData.totalViewers + 1
+        requestedChannel.views = requestedChannel.views + 1
+        if streamData is not None:
+            streamData.totalViewers = streamData.totalViewers + 1
         db.session.commit()
 
         topicList = topics.topics.query.all()
@@ -617,8 +618,8 @@ def view_page(loc):
         chatOnly = request.args.get("chatOnly")
 
         if chatOnly == "True" or chatOnly == "true":
-            if streamData.channel.chatEnabled == True:
-                return render_template('themes/' + sysSettings.systemTheme + '/chatpopout.html', stream=streamData, streamURL=streamURL, sysSettings=sysSettings)
+            if requestedChannel.chatEnabled == True:
+                return render_template('themes/' + sysSettings.systemTheme + '/chatpopout.html', stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -630,7 +631,7 @@ def view_page(loc):
 
         if isEmbedded == None or isEmbedded == "False":
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template('themes/' + sysSettings.systemTheme + '/player.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
+            return render_template('themes/' + sysSettings.systemTheme + '/player.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
