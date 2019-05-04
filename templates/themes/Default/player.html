@@ -356,7 +356,8 @@ function monitor_vid(){
     if (currentReadyState == 2) {
         var jsonData = $.getJSON('/apiv1/streams/' + {{stream.id}});
         console.log(jsonData);
-        if (jsonData['responseJSON']['results'].length == 0) {
+        var jsonResponse = jsonData['responseJSON'];
+        if ((jsonResponse['results']).length == 0) {
             videoJSObj.pause()
         } else {
             videoJSObj.pause();
