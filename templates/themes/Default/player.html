@@ -351,29 +351,30 @@
 <script>
 //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
 function monitor_vid(){
+
+
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
 
     var jsonResults = "";
     $.getJSON('/apiv1/streams/{{stream.id}}', function(data) {
         jsonResults = data;
+        console.log(jsonResults);
+        console.log(jsonResults.response);
+
+        if (currentReadyState == 2) {
+
+            var streamData = jsonResults.response;
+            if (streamData.length == 0) {
+                videoJSObj.pause()
+            } else {
+                videoJSObj.pause();
+                videoJSObj.currentTime(0);
+                videoJSObj.play();
+                currentReadyState = videoJSObj.readyState();
+            }
+        };
     });
-
-    console.log(jsonResults);
-    console.log(jsonResults['response']);
-
-    if (currentReadyState == 2) {
-
-        var streamData = jsonResults['response'];
-        if (streamData.length == 0) {
-            videoJSObj.pause()
-        } else {
-            videoJSObj.pause();
-            videoJSObj.currentTime(0);
-            videoJSObj.play();
-            currentReadyState = videoJSObj.readyState();
-        }
-    };
 }
 
 setInterval(function() {
