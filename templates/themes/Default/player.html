@@ -354,7 +354,7 @@ function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
 
-    var jsonResults = $.getJSON('/apiv1/streams/{{stream.id}}/');
+    var jsonResults = $.getJSON('/apiv1/streams/{{stream.id}}');
 
     console.log(jsonResults);
     console.log(jsonResults['jsonResponse']);
