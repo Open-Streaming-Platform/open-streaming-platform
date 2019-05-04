@@ -358,7 +358,7 @@ function monitor_vid(){
 
     //todo: Change to channel Location, not ID to allow for checking for restart
     $.getJSON('/apiv1/channels/{{stream.channel.channelLoc}}', function(data) {
-        var channelList = data['results'];
+        var channelList = data['results'][0];
         var streamIDList = channelList['stream'];
         console.log(channelList);
         console.log(streamIDList);
