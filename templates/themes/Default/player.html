@@ -353,11 +353,12 @@
 function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
-    var jsonResults = "";
-    $.get(('/apiv1/streams/' + {{stream.id}}), function( data ) {
-        jsonResults = JSON.parse(data);
-    });
-    console.log(streamData);
+
+    var jsonResults = $.getJSON('/apiv1/streams{{stream.id}}/');
+
+    console.log(jsonResults);
+    console.log(jsonResults['jsonResponse']);
+    console.log(jsonResults['response']);
 
     if (currentReadyState == 2) {
 
