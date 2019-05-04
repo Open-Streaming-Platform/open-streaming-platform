@@ -354,17 +354,17 @@ function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
     if (currentReadyState == 2) {
-        var jsonData = $.getJSON('/apiv1/streams/' + {{stream.id}});
-        console.log(jsonData);
-        var jsonResponse = jsonData['responseJSON'];
-        if ((jsonResponse['results']).length == 0) {
-            videoJSObj.pause()
-        } else {
-            videoJSObj.pause();
-            videoJSObj.currentTime(0);
-            videoJSObj.play();
-            currentReadyState = videoJSObj.readyState();
-        }
+        $.getJSON( '/apiv1/streams/' + {{stream.id}}, function( data ) {
+            var jsonResponse = data['response'];
+            if (jsonResponse.length == 0) {
+                videoJSObj.pause()
+            } else {
+                videoJSObj.pause();
+                videoJSObj.currentTime(0);
+                videoJSObj.play();
+                currentReadyState = videoJSObj.readyState();
+            }
+        });
     }
 }
 
