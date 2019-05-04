@@ -353,10 +353,11 @@
 function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
-    while ((currentReadyState == 2) || (currentReadyState == 1)){
+    while (currentReadyState == 2) {
         $.getJSON('/apiv1/streams/' + {{stream.id}}, function(data) {
             console.log(data);
-            if (streamData['results'].length == 0) {
+            console.log(data['results']);
+            if (data['results'].length == 0) {
                 videoJSObj.pause()
             } else {
                 videoJSObj.pause();
@@ -364,7 +365,7 @@ function monitor_vid(){
                 videoJSObj.play();
                 currentReadyState = videoJSObj.readyState();
             }
-        })
+        });
     }
 }
 
