@@ -354,7 +354,10 @@ function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
 
-    var jsonResults = $.getJSON('/apiv1/streams/{{stream.id}}');
+    var jsonResults = "";
+    $.getJSON('/apiv1/streams/{{stream.id}}', function(data) {
+        jsonResults = data;
+    });
 
     console.log(jsonResults);
     console.log(jsonResults.responseJSON());
