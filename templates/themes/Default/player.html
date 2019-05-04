@@ -357,7 +357,6 @@ function monitor_vid(){
     var jsonResults = $.getJSON('/apiv1/streams/{{stream.id}}');
 
     console.log(jsonResults);
-    console.log(jsonResults.responseJSON['results']);
     console.log(jsonResults.responseJSON);
 
     if (currentReadyState == 2) {
