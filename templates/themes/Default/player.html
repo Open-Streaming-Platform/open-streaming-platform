@@ -11,8 +11,8 @@
 
 {% block body %}
       <div class="container-fluid" style="padding-bottom:50px;">
-          <div id="videoWindowRow" class="row {% if stream.channel.chatEnabled == False %}justify-content-md-center{% endif %}">
-              <div id="videoWindow" class="{% if stream.channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12">
+          <div id="videoWindowRow" class="row {% if channel.chatEnabled == False %}justify-content-md-center{% endif %}">
+              <div id="videoWindow" class="{% if channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12">
                   <br><br>
                     <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
                         <source src="{{streamURL}}" type="application/x-mpegURL">
@@ -31,7 +31,7 @@
                         <i class="fas fa-share-alt"></i>
                     </button>
                   </div>
-                  {% if stream.channel.owningUser == current_user.id %}
+                  {% if channel.owningUser == current_user.id %}
                       <div style="margin-left:5px;">
                           <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
                               <i class="fas fa-edit"></i>
@@ -41,7 +41,7 @@
               </div>
                     <div class="White-BG streamInfo shadow">
                   <div class="video-buttons-lg">
-                      {% if stream.channel.owningUser == current_user.id %}
+                      {% if channel.owningUser == current_user.id %}
                       <div class="float-right" style="margin-left:5px;">
                           <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
                               <i class="fas fa-edit"></i>
@@ -53,7 +53,7 @@
                               <i class="fas fa-share-alt"></i>
                           </button>
                       </div>
-                      {% if stream.channel.chatEnabled == True %}
+                      {% if channel.chatEnabled == True %}
                       <div class="float-right">
                           <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
                               <i class="fas fa-comment"></i>
@@ -65,20 +65,20 @@
                       <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{{stream.streamName}}</b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b><a href="/topic/{{stream.topic}}/">{{stream.topic|get_topicName}}</a></b></div><br>
-                      <img src="{{stream.channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{stream.channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
+                      <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
                       <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{stream.totalViewers}}</div> <br>
                       <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers">{{stream.currentViewers}}</span></div> <br>
                       <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
                   </div>
               </div>
               </div>
-              {% if stream.channel.chatEnabled == True %}
+              {% if channel.chatEnabled == True %}
               <div class="col-xl-3 col-lg-12 .d-none .d-xl-block" id="chatBlock">
                   <div class="chatbox" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                       <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
-                      <a href="#" onClick="MyWindows=window.open('/view/{{stream.channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
+                      <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
                   </div>
                 </div>
               {% endif %}
@@ -86,7 +86,7 @@
 
       {% if randomRecorded != [] and randomRecorded != None %}
       <div class="row justify-content-center" style="padding-bottom:50px;">
-          <div class="{% if stream.channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
+          <div class="{% if channel.chatEnabled == True %} col-12 {% else %} col-xl-8{% endif %}">
               <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
                   <h5 class="card-header">Other Videos from this Channel</h5>
                   <div class="card-body">
@@ -274,9 +274,9 @@
             var s = today.getSeconds();
             var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
@@ -359,7 +359,7 @@ function monitor_vid(){
     videoWindowState = document.getElementsByTagName('video');
 
     //todo: Change to channel Location, not ID to allow for checking for restart
-    $.getJSON('/apiv1/channels/{{stream.channel.channelLoc}}', function(data) {
+    $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
         var channelList = data['results'][0];
         var streamIDList = channelList['stream'];
 
