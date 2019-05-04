@@ -360,11 +360,12 @@ function monitor_vid(){
     $.getJSON('/apiv1/streams/{{stream.id}}', function(data) {
         jsonResults = data;
         console.log(jsonResults);
-        console.log(jsonResults['response']);
+        console.log(jsonResults['results']);
+        console.log(jsonResults.results);
 
         if (currentReadyState == 2) {
 
-            var streamData = jsonResults['response'];
+            var streamData = jsonResults['results'];
             if (streamData.length == 0) {
                 videoJSObj.pause()
             } else {
