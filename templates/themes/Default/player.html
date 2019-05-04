@@ -357,11 +357,9 @@ function monitor_vid(){
     currentReadyState = videoJSObj.readyState();
 
     var jsonResults = "";
+    //todo: Change to channel Location, not ID to allow for checking for restart
     $.getJSON('/apiv1/streams/{{stream.id}}', function(data) {
         jsonResults = data;
-        console.log(jsonResults);
-        console.log(jsonResults['results']);
-        console.log(jsonResults.results);
 
         if (currentReadyState == 2) {
 
