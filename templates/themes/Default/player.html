@@ -145,10 +145,10 @@
       <div class="modal-body">
 
             <h5>Name of the Stream:</h5>
-            <input type="text" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
+            <input type="text" id="editStreamNameInput" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
             <br>
             <h5>Stream Topic:</h5>
-            <select class="form-control" name="newStreamTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+            <select class="form-control" name="newStreamTopic" id="editChannelTopicInput" style="font-family: FontAwesome, sans-serif;" required >
                 {% for topic in topics %}
                 <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                 {% endfor %}
