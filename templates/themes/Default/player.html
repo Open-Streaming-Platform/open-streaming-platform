@@ -353,14 +353,19 @@
 function monitor_vid(){
     videoJSObj = videojs('video');
     currentReadyState = videoJSObj.readyState();
-    while (currentReadyState == 2){
-        $.getJSON('https://osptest.divby0.net/apiv1/streams/' + {{stream.id}}, function(data) {
-            console.log(data);//data is the JSON string
-        });
-        videoJSObj.pause();
-        videoJSObj.currentTime(0);
-        videoJSObj.play();
-        currentReadyState = videoJSObj.readyState();
+    while ((currentReadyState == 2) || (currentReadyState == 1)){
+        $.getJSON('/apiv1/streams/' + {{stream.id}}, function(data) {
+            var streamData = JSON.parse(data);
+            console.log(streamData);
+            if (streamData.length == 0) {
+                videoJSObj.pause()
+            } else {
+                videoJSObj.pause();
+                videoJSObj.currentTime(0);
+                videoJSObj.play();
+                currentReadyState = videoJSObj.readyState();
+            }
+        })
     }
 }
 
