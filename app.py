@@ -1896,6 +1896,8 @@ def handle_new_viewer(streamData):
                    streamtopic=get_topicName(streamTopic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
+        db.session.commit()
+        db.session.close()
     else:
         emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
         runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
@@ -1908,6 +1910,8 @@ def handle_new_viewer(streamData):
                    streamtopic=get_topicName(streamTopic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
+        db.session.commit()
+        db.session.close()
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
@@ -1944,8 +1948,12 @@ def handle_leaving_viewer(streamData):
         if current_user.username in streamUserList[channelLoc]:
             streamUserList[channelLoc].remove(current_user.username)
         emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
+        db.session.commit()
+        db.session.close()
     else:
         emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+        db.session.commit()
+        db.session.close()
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
@@ -1961,6 +1969,7 @@ def handle_viewer_total_request(streamData):
     viewers = requestedChannel.currentViewers
 
     db.session.commit()
+    db.session.close()
     emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList[channelLoc]})
 
 @socketio.on('getUpvoteTotal')
@@ -1995,6 +2004,7 @@ def handle_upvote_total_request(streamData):
         myUpvote = True
 
     db.session.commit()
+    db.session.close()
     emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote)})
 
 @socketio.on('changeUpvote')
@@ -2073,7 +2083,8 @@ def updateStreamData(message):
                    streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                    streamtopic=get_topicName(stream.topic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
-
+        db.session.commit()
+        db.session.close()
 @socketio.on('newScreenShot')
 def newScreenShot(message):
     video = message['loc']
@@ -2145,7 +2156,6 @@ def text(message):
                             newBan = banList.banList(room, userQuery.id)
                             db.session.add(newBan)
                             db.session.commit()
-
                             msg = '<b>*** ' + target + ' has been banned ***</b>'
             elif msg.startswith('/unban '):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
@@ -2201,12 +2211,14 @@ def text(message):
 
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
-                db.session.commit()
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
+                db.session.commit()
+                db.session.close()
         elif banQuery:
             msg = '<b>*** You have been banned and can not send messages ***</b>'
-            db.session.commit()
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
+            db.session.commit()
+            db.session.close()
 
 
 @socketio.on('getServerResources')
