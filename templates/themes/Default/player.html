@@ -14,6 +14,7 @@
           <div id="videoWindowRow" class="row {% if channel.chatEnabled == False %}justify-content-md-center{% endif %}">
               <div id="videoWindow" class="{% if channel.chatEnabled == True %}col-xl-9 col-lg-12{% else %} col-xl-10{% endif %} col-sm-12">
                   <br><br>
+                  <div id="videoDiv">
                     <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
                         <source src="{{streamURL}}" type="application/x-mpegURL">
                         <p class="vjs-no-js">
@@ -21,6 +22,8 @@
                           <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                         </p>
                     </video>
+                    <img id="offlineImage" class="videoStream shadow" src="/static/img/video-placeholder.jpg" style="display:none;">
+                  </div>
                     <div class="video-buttons-mobile justify-content-center">
                   <div>
                     <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
@@ -367,6 +370,7 @@
         currentReadyState = videoJSObj.readyState();
 
         videoWindowState = document.getElementsByTagName('video');
+        offlineWindow = document.getElementById('offlineImage');
 
         $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
             var channelList = data['results'][0];
@@ -374,6 +378,9 @@
 
             if (streamIDList.length > 0) {
                 var currentStreamID = streamIDList[0];
+
+                videoWindowState.style.display = "block";
+                offlineWindow.style.display = "none";
 
                 if (currentReadyState == 2) {
                     try {
@@ -421,6 +428,8 @@
                 try {
                     videoJSObj.pause();
                     videoJSObj.reset();
+                    videoWindowState.style.display = "none";
+                    offlineWindow.style.display = "block";
                 } catch(e) {
                     console.log("OSP tried restarting the stream but had an issue:" + e)
                 }
