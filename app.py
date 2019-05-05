@@ -604,6 +604,11 @@ def view_page(loc):
         if not check_isValidChannelViewer(requestedChannel.id):
             return render_template('themes/' + sysSettings.systemTheme + '/channelProtectionAuth.html')
 
+    global streamUserList
+
+    if requestedChannel.channelLoc not in streamUserList:
+        streamUserList[requestedChannel.channelLoc] = []
+
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     if requestedChannel is not None:
