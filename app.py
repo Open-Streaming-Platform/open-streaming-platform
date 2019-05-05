@@ -174,6 +174,10 @@ def init_db_values():
             chan.chatTextColor = "#FFFFFF"
             chan.chatAnimation = "slide-in-left"
             db.session.commit()
+        channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
+        for chan in channelQuery:
+            chan.channelMuted = False
+            db.session.commit()
 
 
         app.config['SERVER_NAME'] = None
