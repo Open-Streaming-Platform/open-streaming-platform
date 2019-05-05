@@ -2032,6 +2032,8 @@ def setScreenShot(message):
 def updateStreamData(message):
     channelLoc = message['channel']
 
+    sysSettings = settings.settings.query.first()
+
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
 
     if channelQuery != None:
