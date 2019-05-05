@@ -34,20 +34,20 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('openPopup', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('openPopup', {data: '{{channel.channelLoc}}'});
         });
     </script>
 
     <script>
         socket.on('disconnect', function() {
-            socket.emit('closePopup', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('closePopup', {data: '{{channel.channelLoc}}'});
         });
     </script>
 
 
     <script>
         window.addEventListener("beforeunload", function (e) {
-            socket.emit('closePopup', {data: '{{stream.channel.channelLoc}}'});
+            socket.emit('closePopup', {data: '{{channel.channelLoc}}'});
             return null;
         });
     </script>
@@ -72,7 +72,7 @@
             if (code == 13) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{stream.channel.channelLoc}}' });
+                socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
             }
         });
     </script>
@@ -86,9 +86,9 @@
             var s = today.getSeconds();
             var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{stream.channel.chatBG}} {{stream.channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{stream.channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
