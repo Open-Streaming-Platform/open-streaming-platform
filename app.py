@@ -1938,11 +1938,11 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    viewedStream = Stream.Stream.query.filter_by(streamName=stream.streamName).first()
-    viewedStream.currentViewers = viewedStream.currentViewers - 1
-    if viewedStream.currentViewers < 0:
-        viewedStream.currentViewers = 0
-    db.session.commit()
+    if stream is not None:
+        stream.currentViewers = stream.currentViewers - 1
+        if stream.currentViewers < 0:
+            stream.currentViewers = 0
+        db.session.commit()
     leave_room(streamData['data'])
     if current_user.is_authenticated:
 
@@ -1968,8 +1968,11 @@ def handle_viewer_total_request(streamData):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    viewers = 0
+    if stream is not None:
+        viewers = stream.currentViewers
 
-    emit('viewerTotalResponse', {'data': str(stream.currentViewers), 'userList': streamUserList[channelLoc]})
+    emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList[channelLoc]})
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
@@ -2081,7 +2084,6 @@ def text(message):
     sysSettings = settings.settings.query.first()
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
-    streamQuery = channelQuery.stream[0]
 
     if channelQuery != None:
 
@@ -2100,14 +2102,14 @@ def text(message):
                     msg = 'Test Received - Success: ' + command + ":" + target
             elif msg.startswith('/mute'):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
-                    streamQuery.channelMuted = True
+                    channelQuery.channelMuted = True
                     db.session.commit()
                     msg = "<b> *** " + current_user.username + " has muted the chat channel ***"
                     emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, room=room)
                     return
             elif msg.startswith('/unmute'):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
-                    streamQuery.channelMuted = False
+                    channelQuery.channelMuted = False
                     db.session.commit()
                     msg = "<b> *** " + current_user.username + " has unmuted the chat channel ***"
                     emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, room=room)
@@ -2147,7 +2149,7 @@ def text(message):
         banQuery = banList.banList.query.filter_by(userID=current_user.id, channelLoc=room).first()
 
         if banQuery == None:
-            if streamQuery.channelMuted == False or channelQuery.owningUser == current_user.id:
+            if channelQuery.channelMuted == False or channelQuery.owningUser == current_user.id:
                 flags = ""
                 if current_user.id == channelQuery.owningUser:
                     flags = "Owner"
@@ -2157,14 +2159,24 @@ def text(message):
                 else:
                     channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
+                streamName = None
+                streamTopic = None
+
+                if channelQuery.stream != []:
+                    streamName = channelQuery.stream[0].streamName
+                    streamTopic = channelQuery.stream[0].topic
+                else:
+                    streamName = channelQuery.channelName
+                    streamTopic = channelQuery.topic
+
                 runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
                            channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                            channeltopic=get_topicName(channelQuery.topic),
                            channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                            channeldescription=channelQuery.description,
-                           streamname=streamQuery.streamName,
+                           streamname=streamName,
                            streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamQuery.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                           streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation, message=msg)
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
 
