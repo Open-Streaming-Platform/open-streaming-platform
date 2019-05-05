@@ -62,12 +62,12 @@
                       {% endif %}
                   </div>
                   <div>
-                      <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><span><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span></div><br>
+                      <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div id="streamMetadataName" style="float:left;"><span><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
-                      <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div><br>
+                      <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div id="streamMetadataTopic" style="float:left;"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div><br>
                       <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
                       <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{% if stream != None %} {{stream.totalViewers}} {% endif %}</div> <br>
-                      <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers">{% if stream != None %} {{stream.currentViewers}} {% endif %}</span></div> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers"> {{channel.currentViewers}}</span></div> <br>
                       <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
                   </div>
               </div>
@@ -141,7 +141,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-        <form action="/view/{{channel.channelLoc}}/change" method="post">
+        <form>
       <div class="modal-body">
 
             <h5>Name of the Stream:</h5>
@@ -155,8 +155,8 @@
             </select>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Save Changes">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" onClick="submitStreamChanges()">Save Changes</button>
       </div>
         </form>
     </div>
@@ -348,58 +348,83 @@
         }
     </script>
 
-<script>
-//Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
-function monitor_vid(){
+    <script>
+        function submitStreamChanges(){
+            var newStreamNameDiv = document.getElementById("editStreamNameInput");
+            var newStreamTopicDiv = document.getElementById("editChannelTopicInput");
+
+            socket.emit('updateStreamData', {name: newStreamNameDiv.value, topic: newStreamTopicDiv.value, channel:"{{channel.channelLoc}}"});
+        }
+    </script>
 
 
-    videoJSObj = videojs('video');
-    currentReadyState = videoJSObj.readyState();
+    <script>
+    //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
+    function monitor_vid(){
 
-    videoWindowState = document.getElementsByTagName('video');
 
-    //todo: Change to channel Location, not ID to allow for checking for restart
-    $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
-        var channelList = data['results'][0];
-        var streamIDList = channelList['stream'];
+        videoJSObj = videojs('video');
+        currentReadyState = videoJSObj.readyState();
 
-        if (streamIDList.length > 0) {
-            var currentStreamID = streamIDList[0];
+        videoWindowState = document.getElementsByTagName('video');
 
-            if (currentReadyState == 2) {
+        $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
+            var channelList = data['results'][0];
+            var streamIDList = channelList['stream'];
+
+            if (streamIDList.length > 0) {
+                var currentStreamID = streamIDList[0];
+
+                if (currentReadyState == 2) {
+                    try {
+                        videoJSObj.pause();
+                        videoJSObj.currentTime(0);
+                        videoJSObj.play();
+                        currentReadyState = videoJSObj.readyState();
+                    } catch(e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
+                } else if (currentReadyState == 0) {
+                    try {
+                        videoJSObj.reset();
+                        videoJSObj.src('{{streamURL}}');
+                        videoJSObj.pause().trigger('loadstart');
+                        videoJSObj.play();
+                    } catch(e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
+                }
+
+                $.getJSON('/apiv1/streams/' + currentStreamID, function(data) {
+                    var streamData = data['results'][0];
+                    var currentStreamTopic = streamData['topic'];
+                    var currentStreamName = streamData['streamName'];
+
+                    var topicDiv = document.getElementById('streamMetadataTopic');
+                    var nameDiv = document.getElementById('streamMetadataName');
+
+                    var nameDivHTML = '<span><b> ' + currentStreamName +  '</b></span>';
+                    var topicDivHTML = '<a href="/topics/' + currentStreamTopic + '>"<span><b>' + currentStreamTopic +  '</b></span></a>';
+
+                    nameDiv.innerHTML = nameDivHTML;
+                    topicDiv.innerHTML = topicDivHTML;
+
+                });
+
+            } else {
                 try {
                     videoJSObj.pause();
-                    videoJSObj.currentTime(0);
-                    videoJSObj.play();
-                    currentReadyState = videoJSObj.readyState();
-                } catch(e) {
-                    console.log("OSP tried restarting the stream but had an issue:" + e)
-                }
-            } else if (currentReadyState == 0) {
-                try {
                     videoJSObj.reset();
-                    videoJSObj.src('{{streamURL}}');
-                    videoJSObj.pause().trigger('loadstart');
-                    videoJSObj.play();
                 } catch(e) {
                     console.log("OSP tried restarting the stream but had an issue:" + e)
                 }
             }
+        });
+        var lastVideoState = currentReadyState;
+    }
 
-        } else {
-            try {
-                videoJSObj.pause();
-                videoJSObj.reset();
-            } catch(e) {
-                console.log("OSP tried restarting the stream but had an issue:" + e)
-            }
-        }
-    });
-    var lastVideoState = currentReadyState;
-}
-
-setInterval(function() {
-    monitor_vid();
-}, 10000);
-</script>
+    setInterval(function() {
+        monitor_vid();
+    }, 10000);
+    </script>
 {% endblock %}

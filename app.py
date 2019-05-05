@@ -651,46 +651,6 @@ def view_page(loc):
         return redirect(url_for("main_page"))
 
 
-@app.route('/view/<loc>/change', methods=['POST'])
-@login_required
-def view_change_page(loc):
-    sysSettings = settings.settings.query.first()
-
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc, owningUser=current_user.id).first()
-    streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
-
-    if streamData != None:
-
-        newStreamName = strip_html(request.form['newStreamName'])
-        newStreamTopic = request.form['newStreamTopic']
-
-        if streamData is not None:
-            streamData.streamName = strip_html(newStreamName)
-            streamData.topic = newStreamTopic
-            db.session.commit()
-
-            if requestedChannel.imageLocation is None:
-                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-            else:
-                channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
-
-            runWebhook(requestedChannel.id, 4, channelname=requestedChannel.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                       channeltopic=requestedChannel.topic,
-                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                       channeldescription=requestedChannel.description,
-                       streamname=streamData.streamName,
-                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                       streamtopic=get_topicName(streamData.topic),
-                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
-
-
-        return redirect(url_for('view_page', loc=loc))
-    else:
-        flash("Error Changing Stream Data","error")
-        return redirect(url_for("main_page"))
-
-
 @app.route('/play/<videoID>')
 def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
@@ -1883,6 +1843,7 @@ def handle_new_viewer(streamData):
     streamName = ""
     streamTopic = 0
 
+    requestedChannel.currentViewers = requestedChannel.currentViewers + 1
 
     if stream is not None:
         stream.currentViewers = stream.currentViewers + 1
@@ -1946,6 +1907,11 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
+    requestedChannel.currentViewers = requestedChannel.currentViewers - 1
+    if requestedChannel.currentViewers < 0:
+        requestedChannel.currentViewers = 0
+    db.session.commit()
+
     if stream is not None:
         stream.currentViewers = stream.currentViewers - 1
         if stream.currentViewers < 0:
@@ -1976,10 +1942,8 @@ def handle_viewer_total_request(streamData):
     global streamUserList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
-    viewers = 0
-    if stream is not None:
-        viewers = stream.currentViewers
+
+    viewers = requestedChannel.currentViewers
 
     emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList[channelLoc]})
 
@@ -2064,6 +2028,32 @@ def setScreenShot(message):
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
 
+@socketio.on('updateStreamData')
+def updateStreamData(message):
+    channelLoc = message['channel']
+
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
+
+    if channelQuery != None:
+        stream = channelQuery.stream[0]
+        stream.streamName = strip_html(message['name'])
+        stream.topic = int(message['topic'])
+        db.session.commit()
+
+        if channelQuery.imageLocation is None:
+            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        else:
+            channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+
+        runWebhook(channelQuery.id, 4, channelname=channelQuery.channelName,
+                   channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                   channeltopic=channelQuery.topic,
+                   channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                   channeldescription=channelQuery.description,
+                   streamname=stream.streamName,
+                   streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                   streamtopic=get_topicName(stream.topic),
+                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):

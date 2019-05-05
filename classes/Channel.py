@@ -11,6 +11,7 @@ class Channel(db.Model):
     channelLoc = db.Column(db.String(255), unique=True)
     topic = db.Column(db.Integer)
     views = db.Column(db.Integer)
+    currentViewers = db.Column(db.Integer)
     record = db.Column(db.Boolean)
     chatEnabled = db.Column(db.Boolean)
     chatBG = db.Column(db.String(255))
@@ -42,6 +43,7 @@ class Channel(db.Model):
         self.chatTextColor = "#FFFFFF"
         self.chatAnimation = "slide-in-left"
         self.views = 0
+        self.currentViewers = 0
         self.protected = False
         self.channelMuted = False
 
@@ -60,6 +62,7 @@ class Channel(db.Model):
             'description': self.description,
             'topic': self.topic,
             'views': self.views,
+            'currentViews': self.currentViewers,
             'recordingEnabled': self.record,
             'chatEnabled': self.chatEnabled,
             'stream': [obj.id for obj in self.stream],
