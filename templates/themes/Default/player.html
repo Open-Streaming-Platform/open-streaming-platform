@@ -373,7 +373,7 @@ function monitor_vid(){
                 currentReadyState = videoJSObj.readyState();
             } else if (currentReadyState == 0) {
                 videoJSObj.reset();
-                videoJSObj.src('{{streamURL');
+                videoJSObj.src('{{streamURL}}');
                 videoJSObj.pause().trigger('loadstart');
                 videoJSObj.play();
             }
