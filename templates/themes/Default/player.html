@@ -379,7 +379,8 @@ function monitor_vid(){
             }
 
         } else {
-            videoJSObj.pause()
+            videoJSObj.pause();
+            videoJSObj.reset();
         }
     });
     var lastVideoState = currentReadyState;
