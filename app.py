@@ -446,6 +446,11 @@ def page_not_found(e):
     sysSettings = settings.settings.query.first()
     return render_template('themes/' + sysSettings.systemTheme + '/500.html', sysSetting=sysSettings, error=e), 500
 
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
+
 ### Start Flask Routes ###
 
 @app.route('/')
@@ -713,6 +718,7 @@ def view_vid_page(videoID):
 def vid_change_page(loc):
 
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc, owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
 
     if recordedVidQuery != None:
 
