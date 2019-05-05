@@ -218,12 +218,6 @@ def init_db_values():
         db.close()
         ## End DB UT8MB4 Fixes
 
-        # Fixes to Reset the Viewership after a System Restart
-        channelQuery = Channel.Channel.query.all()
-        for channel in channelQuery:
-            channel.currentViewers = 0
-        db.session.commit()
-
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
 
@@ -2337,6 +2331,13 @@ def deleteWebhook(message):
 # Start App Initiation
 try:
     init_db_values()
+
+    # Fixes to Reset the Viewership after a System Restart
+    channelQuery = Channel.Channel.query.all()
+    for channel in channelQuery:
+        channel.currentViewers = 0
+    db.session.commit()
+
 except Exception as e:
     print(e)
 mail = Mail(app)

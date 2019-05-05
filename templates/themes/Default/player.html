@@ -384,7 +384,7 @@
                     } catch(e) {
                         console.log("OSP tried restarting the stream but had an issue:" + e)
                     }
-                } else if ((currentReadyState == 0) || (currentReadyState == 1)) {
+                } else if (currentReadyState == 0) {
                     try {
                         videoJSObj.reset();
                         videoJSObj.src('{{streamURL}}');
