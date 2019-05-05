@@ -26,7 +26,8 @@
                         <h1 class="display-4">{{channelData.channelName}}</h1>
                         <h2 class="display-5"><img src="{{channelData.owningUser|get_pictureLocation}}" width="64px" height="64px"> {{channelData.owningUser|get_userName}}</h2>
                     </div>
-                    <p class="lead">{{channelData.description}}</p>
+                    <p class="lead">{{channelData.description}}</p><br>
+                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View the Live Channel</a>
                 </div>
             </div>
         </div>
