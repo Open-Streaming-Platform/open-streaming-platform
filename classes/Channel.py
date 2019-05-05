@@ -20,6 +20,7 @@ class Channel(db.Model):
     description = db.Column(db.String(2048))
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
+    channelMuted = db.Column(db.Boolean)
     stream = db.relationship('Stream', backref='channel', lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")
@@ -42,6 +43,7 @@ class Channel(db.Model):
         self.chatAnimation = "slide-in-left"
         self.views = 0
         self.protected = False
+        self.channelMuted = False
 
     def __repr__(self):
         return '<id %r>' % self.id
