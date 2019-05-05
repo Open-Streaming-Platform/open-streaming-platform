@@ -1790,7 +1790,7 @@ def user_deauth_check():
             db.session.commit()
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
-            streamUserList[stream.id] = []
+            streamUserList[channelRequest.channelLoc] = []
             print(returnMessage)
 
             if channelRequest.imageLocation is None:
@@ -1873,9 +1873,18 @@ def handle_new_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    viewedStream = Stream.Stream.query.filter_by(streamName=stream.streamName).first()
-    viewedStream.currentViewers = viewedStream.currentViewers + 1
-    db.session.commit()
+    streamName = None
+    streamTopic = None
+
+
+    if stream is not None:
+        stream.currentViewers = stream.currentViewers + 1
+        db.session.commit()
+        streamName = stream.streamName
+        streamTopic = stream.topic
+    else:
+        streamName = requestedChannel.channelName
+        streamTopic = requestedChannel.topic
 
     if requestedChannel.imageLocation is None:
         channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
@@ -1883,6 +1892,8 @@ def handle_new_viewer(streamData):
         channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     join_room(streamData['data'])
+
+
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation == None:
@@ -1890,17 +1901,17 @@ def handle_new_viewer(streamData):
         else:
             pictureLocation = '/images/' + pictureLocation
 
-        if current_user.username not in streamUserList[stream.id]:
-            streamUserList[stream.id].append(current_user.username)
+        if current_user.username not in streamUserList[channelLoc]:
+            streamUserList[channelLoc].append(current_user.username)
         emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
         runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=requestedChannel.topic,
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                    channeldescription=requestedChannel.description,
-                   streamname=stream.streamName,
+                   streamname=streamName,
                    streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(stream.topic),
+                   streamtopic=get_topicName(streamTopic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
     else:
@@ -1910,9 +1921,9 @@ def handle_new_viewer(streamData):
                    channeltopic=requestedChannel.topic,
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                    channeldescription=requestedChannel.description,
-                   streamname=stream.streamName,
+                   streamname=streamName,
                    streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(stream.topic),
+                   streamtopic=get_topicName(streamTopic),
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
 
@@ -1941,8 +1952,8 @@ def handle_leaving_viewer(streamData):
         else:
             pictureLocation = '/images/' + pictureLocation
 
-        if current_user.username in streamUserList[stream.id]:
-            streamUserList[stream.id].remove(current_user.username)
+        if current_user.username in streamUserList[channelLoc]:
+            streamUserList[channelLoc].remove(current_user.username)
         emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
     else:
         emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
@@ -1958,9 +1969,7 @@ def handle_viewer_total_request(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    requestedStream = Stream.Stream.query.filter_by(streamName=stream.streamName).first()
-
-    emit('viewerTotalResponse', {'data': str(requestedStream.currentViewers), 'userList': streamUserList[requestedStream.id]})
+    emit('viewerTotalResponse', {'data': str(stream.currentViewers), 'userList': streamUserList[channelLoc]})
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
