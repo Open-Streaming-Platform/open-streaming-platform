@@ -2332,13 +2332,6 @@ def deleteWebhook(message):
 try:
     init_db_values()
 
-    # Fixes to Reset the Viewership after a System Restart
-    channelQuery = Channel.Channel.query.all()
-    for channel in channelQuery:
-        if channel.currentViewers > 0:
-            channel.currentViewers = 0
-            db.session.commit()
-
 except Exception as e:
     print(e)
 mail = Mail(app)
