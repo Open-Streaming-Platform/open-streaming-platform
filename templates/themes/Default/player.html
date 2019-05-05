@@ -403,8 +403,14 @@
                     var topicDiv = document.getElementById('streamMetadataTopic');
                     var nameDiv = document.getElementById('streamMetadataName');
 
+                    var topicJSList = [];
+                    {% for x in topics %}
+                    topicJSList["{{x.id}}"] =  "{{x.name}}";
+                    {% endfor %}
+
+
                     var nameDivHTML = '<span><b> ' + currentStreamName +  '</b></span>';
-                    var topicDivHTML = '<a href="/topics/' + currentStreamTopic + '>"<span><b>' + currentStreamTopic +  '</b></span></a>';
+                    var topicDivHTML = '<a href="/topics/' + currentStreamTopic + '">"<span><b>' + topicJSList[currentStreamTopic] +  '</b></span></a>';
 
                     nameDiv.innerHTML = nameDivHTML;
                     topicDiv.innerHTML = topicDivHTML;
