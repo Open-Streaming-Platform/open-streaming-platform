@@ -2335,8 +2335,9 @@ try:
     # Fixes to Reset the Viewership after a System Restart
     channelQuery = Channel.Channel.query.all()
     for channel in channelQuery:
-        channel.currentViewers = 0
-    db.session.commit()
+        if channel.currentViewers > 0:
+            channel.currentViewers = 0
+            db.session.commit()
 
 except Exception as e:
     print(e)
