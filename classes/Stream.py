@@ -10,7 +10,6 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
-    channelMuted = db.Column(db.Boolean)
     upvotes = db.relationship('streamUpvotes', backref='stream', lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
