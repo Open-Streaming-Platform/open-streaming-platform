@@ -178,6 +178,10 @@ def init_db_values():
         for chan in channelQuery:
             chan.channelMuted = False
             db.session.commit()
+        channelQuery = Channel.Channel.query.filter_by(currentViewers=None).all()
+        for chan in channelQuery:
+            chan.currentViewers = 0
+            db.session.commit()
 
 
         app.config['SERVER_NAME'] = None
