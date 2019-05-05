@@ -66,7 +66,7 @@
                       <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
                       <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div id="streamMetadataTopic" style="float:left;"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div><br>
                       <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
-                      <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;"> {{views.totalViewers}}</div> <br>
+                      <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;"> {{channel.views}}</div> <br>
                       <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers"> {{channel.currentViewers}}</span></div> <br>
                       <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
                   </div>
