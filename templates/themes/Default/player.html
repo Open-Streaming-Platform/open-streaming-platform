@@ -371,11 +371,18 @@ function monitor_vid(){
                 videoJSObj.currentTime(0);
                 videoJSObj.play();
                 currentReadyState = videoJSObj.readyState();
+            } else if (currentReadyState == 0) {
+                videoJSObj.reset();
+                videoJSObj.src('{{streamURL');
+                videoJSObj.pause().trigger('loadstart');
+                videoJSObj.play();
             }
+
         } else {
             videoJSObj.pause()
         }
     });
+    var lastVideoState = currentReadyState;
 }
 
 setInterval(function() {
