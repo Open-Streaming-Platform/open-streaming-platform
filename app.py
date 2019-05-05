@@ -1954,6 +1954,7 @@ def handle_viewer_total_request(streamData):
 
     viewers = requestedChannel.currentViewers
 
+    db.session.commit()
     emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList[channelLoc]})
 
 @socketio.on('getUpvoteTotal')
@@ -1987,6 +1988,7 @@ def handle_upvote_total_request(streamData):
     if myVoteQuery != None:
         myUpvote = True
 
+    db.session.commit()
     emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote)})
 
 @socketio.on('changeUpvote')
@@ -2340,4 +2342,3 @@ if __name__ == '__main__':
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     socketio.run(app)
-

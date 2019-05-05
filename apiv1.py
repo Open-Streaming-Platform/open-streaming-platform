@@ -59,6 +59,7 @@ class api_1_ListChannels(Resource):
             Gets a List of all Public Channels
         """
         channelList = Channel.Channel.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Create Channel
     @api.expect(channelParserPost)
@@ -88,6 +89,7 @@ class api_1_ListChannel(Resource):
             Get Info for One Channel
         """
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
@@ -165,6 +167,7 @@ class api_1_ListStreams(Resource):
              Returns a List of All Active Streams
         """
         streamList = Stream.Stream.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/streams/<int:streamID>')
@@ -175,6 +178,7 @@ class api_1_ListStream(Resource):
              Returns Info on a Single Active Streams
         """
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
         # Channel - Change Channel Name or Topic ID
 
@@ -212,6 +216,7 @@ class api_1_ListVideos(Resource):
              Returns a List of All Recorded Videos
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/vids/<int:videoID>')
@@ -222,6 +227,7 @@ class api_1_ListVideo(Resource):
              Returns Info on a Single Recorded Video
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
     @api.expect(videoParserPut)
     @api.doc(security='apikey')
@@ -292,6 +298,7 @@ class api_1_ListTopics(Resource):
              Returns a List of All Topics
         """
         topicList = topics.topics.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/topics/<int:topicID>')
@@ -302,4 +309,5 @@ class api_1_ListTopic(Resource):
              Returns Info on a Single Topic
         """
         topicList = topics.topics.query.filter_by(id=topicID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
