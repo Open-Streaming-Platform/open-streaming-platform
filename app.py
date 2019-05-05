@@ -1734,6 +1734,7 @@ def streamkey_check():
 @app.route('/auth-user', methods=['POST'])
 def user_auth_check():
     sysSettings = settings.settings.query.first()
+    global streamUserList
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -1765,6 +1766,7 @@ def user_auth_check():
 @app.route('/deauth-user', methods=['POST'])
 def user_deauth_check():
     sysSettings = settings.settings.query.first()
+    global streamUserList
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -1873,12 +1875,13 @@ def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
     sysSettings = settings.settings.query.first()
+    global streamUserList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    streamName = None
-    streamTopic = None
+    streamName = ""
+    streamTopic = 0
 
 
     if stream is not None:
@@ -1896,7 +1899,6 @@ def handle_new_viewer(streamData):
         channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     join_room(streamData['data'])
-
 
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
@@ -1939,6 +1941,8 @@ def handle_new_popup_viewer(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
+    global streamUserList
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
@@ -1969,6 +1973,7 @@ def handle_leaving_popup_viewer(streamData):
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
+    global streamUserList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
