@@ -2196,13 +2196,16 @@ def text(message):
                            streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation, message=msg)
+                db.session.commit()
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
 
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
+                db.session.commit()
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
         elif banQuery:
             msg = '<b>*** You have been banned and can not send messages ***</b>'
+            db.session.commit()
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
 
 
