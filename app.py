@@ -57,7 +57,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding':'utf8mb4'}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass":"NullPool","poolsize":0,"pool_recycle":1600,"pool_timeout":3200}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass":"NullPool","poolsize":"0","pool_recycle":"1600","pool_timeout":"3200","max_overflow":"-1"}
 
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
