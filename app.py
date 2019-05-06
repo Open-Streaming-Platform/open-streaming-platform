@@ -317,6 +317,8 @@ def runWebhook(channelID, triggerType, **kwargs):
                     r = requests.delete(url, headers=header, data=payload)
             except:
                 pass
+    db.session.commit()
+    db.session.close()
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
@@ -2210,14 +2212,16 @@ def text(message):
                            streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation, message=msg)
-                db.session.commit()
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
+                db.session.commit()
+                db.session.close()
 
             else:
                 msg = '<b>*** Chat Channel has been muted and you can not send messages ***</b>'
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
                 db.session.commit()
                 db.session.close()
+
         elif banQuery:
             msg = '<b>*** You have been banned and can not send messages ***</b>'
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
@@ -2288,6 +2292,8 @@ def addUserChannelInvite(message):
                 db.session.commit()
 
                 emit('invitedUserAck', {'username': username, 'added': str(newUserInvite.addedDate), 'expiration': str(newUserInvite.expiration), 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
+                db.session.commit()
+                db.session.close()
 
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
@@ -2308,6 +2314,9 @@ def deleteInvitedUser(message):
         emit('checkUniqueUsernameAck', {'results': str(1)}, broadcast=False)
     else:
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
+    db.session.commit()
+    db.session.close()
+
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
@@ -2340,8 +2349,10 @@ def addChangeWebhook(message):
                 existingWebhookQuery.requestType = webhookReqType
                 existingWebhookQuery.requestTrigger = webhookTrigger
 
-                db.session.commit()
+
                 emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
+    db.session.commit()
+    db.session.close()
 
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
