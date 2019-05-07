@@ -2008,7 +2008,7 @@ def handle_upvote_total_request(streamData):
 
     if vidType == 'stream':
         loc = str(loc)
-        channelQuery = Channel.Channel.query.filter_by(channelLoca=loc).first()
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
         if channelQuery.stream != []:
             stream = channelQuery.stream[0]
             totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
