@@ -2042,7 +2042,7 @@ def handle_upvoteChange(streamData):
 
     if vidType == 'stream':
         loc = str(loc)
-        channelQuery = Channel.Channel.query.filter_by(channelLoca=loc).first()
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
         if channelQuery.stream != []:
             stream = channelQuery.stream[0]
             myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
