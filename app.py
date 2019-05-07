@@ -2064,6 +2064,7 @@ def handle_upvoteChange(streamData):
         else:
             db.session.delete(myVoteQuery)
         db.session.commit()
+    db.session.close()
 
 
 
