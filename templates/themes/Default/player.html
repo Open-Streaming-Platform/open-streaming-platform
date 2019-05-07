@@ -303,13 +303,13 @@
 
     <script>
         socket.on('connect', function() {
-            socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+            socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
         });
     </script>
 
     <script>
         setInterval(function() {
-          socket.emit('getUpvoteTotal', {loc: '{{stream.id}}', vidType: 'stream'});
+          socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
         },30000 );
     </script>
 

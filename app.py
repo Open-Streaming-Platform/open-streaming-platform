@@ -1997,7 +1997,7 @@ def handle_viewer_total_request(streamData):
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
-    loc = int(streamData['loc'])
+    loc = streamData['loc']
     vidType = str(streamData['vidType'])
 
     myUpvote = False
@@ -2007,13 +2007,18 @@ def handle_upvote_total_request(streamData):
     myVoteQuery = None
 
     if vidType == 'stream':
-        totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=loc).all()
-        try:
-            myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=loc).first()
-        except:
-            pass
+        loc = str(loc)
+        channelQuery = Channel.Channel.query.filter_by(channelLoca=loc).first()
+        if channelQuery.stream != []:
+            stream = channelQuery.stream[0]
+            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
+            try:
+                myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
+            except:
+                pass
 
     elif vidType == 'video':
+        loc = int(loc)
         totalQuery = upvotes.videoUpvotes.query.filter_by(videoID=loc).all()
         try:
             myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
@@ -2032,20 +2037,25 @@ def handle_upvote_total_request(streamData):
 
 @socketio.on('changeUpvote')
 def handle_upvoteChange(streamData):
-    loc = int(streamData['loc'])
+    loc = streamData['loc']
     vidType = str(streamData['vidType'])
 
     if vidType == 'stream':
-        myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=loc).first()
+        loc = str(loc)
+        channelQuery = Channel.Channel.query.filter_by(channelLoca=loc).first()
+        if channelQuery.stream != []:
+            stream = channelQuery.stream[0]
+            myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
 
-        if myVoteQuery == None:
-            newUpvote = upvotes.streamUpvotes(current_user.id, loc)
-            db.session.add(newUpvote)
-        else:
-            db.session.delete(myVoteQuery)
-        db.session.commit()
+            if myVoteQuery == None:
+                newUpvote = upvotes.streamUpvotes(current_user.id, stream.id)
+                db.session.add(newUpvote)
+            else:
+                db.session.delete(myVoteQuery)
+            db.session.commit()
 
     elif vidType == 'video':
+        loc = int(loc)
         myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
 
         if myVoteQuery == None:
