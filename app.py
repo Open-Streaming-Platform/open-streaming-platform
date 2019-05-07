@@ -1398,6 +1398,22 @@ def settings_channels_page():
                             os.remove(oldImage)
                         except OSError:
                             pass
+
+                if 'offlinephoto' in request.files:
+                    oldImage = None
+
+                    if requestedChannel.offlineImageLocation != None:
+                        oldImage = requestedChannel.offlineImageLocation
+
+                    filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
+                    requestedChannel.offlineImageLocation = filename
+
+                    if oldImage != None:
+                        try:
+                            os.remove(oldImage)
+                        except OSError:
+                            pass
+
                 flash("Channel Edited")
                 db.session.commit()
             else:

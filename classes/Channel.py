@@ -18,6 +18,7 @@ class Channel(db.Model):
     chatTextColor = db.Column(db.String(10))
     chatAnimation = db.Column(db.String(255))
     imageLocation = db.Column(db.String(255))
+    offlineImageLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
@@ -60,6 +61,8 @@ class Channel(db.Model):
             'owningUser': self.owningUser,
             'channelName': self.channelName,
             'description': self.description,
+            'channelImage': "/images/" + self.imageLocation,
+            'offlineImageLocation': "/images/" + self.offlineImageLocation,
             'topic': self.topic,
             'views': self.views,
             'currentViews': self.currentViewers,
