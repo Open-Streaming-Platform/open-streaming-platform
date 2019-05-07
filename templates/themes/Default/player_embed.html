@@ -19,7 +19,7 @@
                         </video>
                       </div>
                       <div id="offlineImage" style="display:none;">
-                        <img class="videoStream shadow" src="/static/img/video-placeholder.jpg">
+                        <img class="videoStream shadow" src="{% if stream.channel.offlineImageLocaton != None %}/images/{{channel.offlineImageLocaton}}{% else %}/static/img/video-placeholder.jpg{% endif %}}">
                       </div>
                   </div>
               </div>
