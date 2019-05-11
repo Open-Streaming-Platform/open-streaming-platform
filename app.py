@@ -656,7 +656,7 @@ def view_page(loc):
 
         if isEmbedded == None or isEmbedded == "False":
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template('themes/' + sysSettings.systemTheme + '/player.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
+            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
