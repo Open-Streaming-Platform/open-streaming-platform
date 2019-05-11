@@ -62,7 +62,7 @@ class Channel(db.Model):
             'channelName': self.channelName,
             'description': self.description,
             'channelImage': "/images/" + self.imageLocation,
-            'offlineImageLocation': "/images/" + self.offlineImageLocation,
+            'offlineImageLocation': "/images/" + str(self.offlineImageLocation),
             'topic': self.topic,
             'views': self.views,
             'currentViews': self.currentViewers,
