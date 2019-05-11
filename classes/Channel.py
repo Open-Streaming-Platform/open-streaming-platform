@@ -61,7 +61,7 @@ class Channel(db.Model):
             'owningUser': self.owningUser,
             'channelName': self.channelName,
             'description': self.description,
-            'channelImage': "/images/" + self.imageLocation,
+            'channelImage': "/images/" + str(self.imageLocation),
             'offlineImageLocation': "/images/" + str(self.offlineImageLocation),
             'topic': self.topic,
             'views': self.views,
