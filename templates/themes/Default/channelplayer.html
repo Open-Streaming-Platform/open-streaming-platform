@@ -278,6 +278,10 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        window.onload = monitor_vid;
+    </script>
+
     <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
