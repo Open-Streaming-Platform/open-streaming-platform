@@ -163,7 +163,8 @@
         <br>
         <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
             <div class="streamList d-flex align-content-around flex-wrap">
-            {% for video in channel.recordedVideo %}
+            {% for video in channel.recordedVideo|sort(attribute='videoDate', reverse=True)%}
+                {% if video.pending == False %}
                 <div class="streamcard streamcard-vids flip-in-ver-right" id="video_{{video.id}}">
                   <a href="/play/{{video.id}}">
                       <div class="stream shadow card p-2 streamcard-item">
@@ -195,6 +196,7 @@
                     </div>
                   </a>
                 </div>
+                {% endif %}
               {% endfor %}
             </div>
         </div>
