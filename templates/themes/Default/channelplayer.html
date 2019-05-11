@@ -164,7 +164,7 @@
         <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
             <div class="streamList d-flex align-content-around flex-wrap">
             {% for video in channel.recordedVideo %}
-                <div class="streamcard flip-in-ver-right" id="video_{{video.id}}">
+                <div class="streamcard streamcard-vids flip-in-ver-right" id="video_{{video.id}}">
                   <a href="/play/{{video.id}}">
                       <div class="stream shadow card p-2 streamcard-item">
                         <div>
@@ -515,7 +515,7 @@
     <script>
         $('#search').on('input', function(){
             var query = document.getElementById("search").value.toLowerCase();
-            $('.streamcard').each(function(){
+            $('.streamcard-vids').each(function(){
                  var $this = $(this);
                  if($this.text().toLowerCase().indexOf(query) === -1)
                      $this.closest('.streamcard').hide();
