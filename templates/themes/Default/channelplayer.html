@@ -279,7 +279,9 @@
 
 {% block scripts %}
     <script>
-        window.onload = monitor_vid;
+    $(document).ready( function () {
+        monitor_vid();
+    });
     </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
