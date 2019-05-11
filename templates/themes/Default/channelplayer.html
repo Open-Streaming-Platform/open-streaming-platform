@@ -11,14 +11,16 @@
 
 {% block body %}
 <br>
-<ul class="nav nav-tabs shadow justify-content-center" style="width:85%;background-color:white;">
-    <li class="nav-item">
-        <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
-    </li>
-</ul>
+<div style="width:85%" class="mx-auto">
+    <ul class="nav nav-tabs shadow" style="background-color:white;">
+        <li class="nav-item">
+            <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
+        </li>
+    </ul>
+</div>
 
 <div class="tab-content" id="tabList">
     <div class="tab-pane fade show active" id="livechannel" role="tabpanel" aria-labelledby="channel-tab">
