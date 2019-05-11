@@ -11,13 +11,13 @@
 
 {% block body %}
 <br>
-<div style="width:85%" class="mx-auto">
+<div style="width:100%" class="mx-auto">
   <div class="shadow p-2" style="background-color:white;">
     <div class="row">
       <div class="col-10">
         <img src="{{channel.owningUser|get_pictureLocation}}" width="46px" height="46px" style="float:left;">
         <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
-        <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b><br>
+        <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b>
       </div>
       <div class="col-sm-12 col-md-2">
       <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;"> {{channel.views}}</div> <br>
