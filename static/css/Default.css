@@ -293,6 +293,10 @@
     background-color:#ff253a;
 }
 
+#channelPlayerMenu {
+    float: right;
+}
+
 .chat-Standard{
     background: #667db6;
     background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
@@ -394,6 +398,10 @@
 
     .no-stream-jumbo {
         display:none;
+    }
+
+    #channelPlayerMenu {
+        float: left;
     }
 }
 
