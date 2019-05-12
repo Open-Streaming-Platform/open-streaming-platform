@@ -18,8 +18,8 @@
         <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
         <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b>
       </div>
-      <div id="channelPlayerMenu" class="col-md-3 col-sm-12">
-          <ul class="nav nav-pills p-1">
+      <div class="col-md-3 col-sm-12">
+          <ul id="channelPlayerMenu" class="nav nav-pills p-1">
             <li class="nav-item">
                 <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
             </li>
