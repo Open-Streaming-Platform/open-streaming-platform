@@ -12,22 +12,24 @@
 {% block body %}
 <div style="width:100%">
   <div class="shadow p-2" style="background-color:white;">
-    <div class="row">
-      <div class="col-9">
-        <img src="{{channel.owningUser|get_pictureLocation}}" width="46px" height="46px" style="float:left;">
-        <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
-        <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b>
-      </div>
-      <div class="col-md-3 col-sm-12">
-          <ul id="channelPlayerMenu" style="position:relative;left:-10px;"class="nav nav-pills">
-            <li class="nav-item">
-                <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
-            </li>
-          </ul>
-      </div>
+    <div class="container-fluid">
+          <div class="row">
+              <div class="col-9">
+                <img src="{{channel.owningUser|get_pictureLocation}}" width="46px" height="46px" style="float:left;">
+                <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
+                <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b>
+              </div>
+              <div class="col-md-3 col-sm-12">
+                  <ul id="channelPlayerMenu" class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
+                    </li>
+                  </ul>
+              </div>
+        </div>
     </div>
 
   </div>
