@@ -1388,6 +1388,7 @@ def settings_channels_page():
                 if 'photo' in request.files:
                     file = request.files['photo']
                     if file.filename != '':
+                        print(file.filename)
                         oldImage = None
 
                         if requestedChannel.imageLocation != None:
