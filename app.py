@@ -2,7 +2,7 @@
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered
@@ -1601,11 +1601,19 @@ def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+            redirect_path = "/ospvideos" + "/" + str(channelID) + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
+            #return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
         else:
             return abort(401)
     else:
-        return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
+        redirect_path = "/ospvideos" + "/" + str(channelID) + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
+        #return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
@@ -1642,9 +1650,6 @@ def live_adapt_stream_directory_sender(channelID, filename):
     else:
         return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
 
-#@app.route('/live/<path:filename>')
-#def live_stream_sender(filename):
-#    return send_from_directory('/var/www/live', filename)
 
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
@@ -1656,10 +1661,6 @@ def live_stream_directory_sender(channelID, filename):
             return abort(401)
     else:
         return send_from_directory(os.path.join('/var/www/live', channelID), filename)
-
-#@app.route('/live-rec/<path:filename>')
-#def live_rec_stream_sender(filename):
-#    return send_from_directory('/var/www/live-rec', filename)
 
 @app.route('/live-rec/<string:channelID>/<path:filename>')
 def live_rec_stream_directory_sender(channelID, filename):
