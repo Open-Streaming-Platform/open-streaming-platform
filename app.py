@@ -54,12 +54,12 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
-app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding':'utf8mb4'}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
+    app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4'}
     #app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass":"NullPool","poolsize":0,"pool_recycle":1600,"pool_timeout":3200,"max_overflow":-1}
 
 app.config['SECRET_KEY'] = config.secretKey
@@ -210,17 +210,18 @@ def init_db_values():
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
         ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
-        dbEngine = db.engine
-        dbConnection = dbEngine.connect()
-        dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
+        if config.dbLocation[:6] != "sqlite":
+            dbEngine = db.engine
+            dbConnection = dbEngine.connect()
+            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
 
-        sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
+            sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
 
-        results = dbConnection.execute(sql)
-        for row in results:
-            sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
-            db.Connection.execute(sql)
-        db.close()
+            results = dbConnection.execute(sql)
+            for row in results:
+                sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
+                db.Connection.execute(sql)
+            db.close()
         ## End DB UT8MB4 Fixes
 
 def check_existing_users():
