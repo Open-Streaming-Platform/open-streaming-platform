@@ -59,8 +59,9 @@ if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
     app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4'}
-    #app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass":"NullPool","poolsize":0,"pool_recycle":1600,"pool_timeout":3200,"max_overflow":-1}
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4', 'pool_use_lifo': 'True', 'pool_size': '20'}
+else:
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_use_lifo': 'True', 'pool_size': '20'}
 
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
