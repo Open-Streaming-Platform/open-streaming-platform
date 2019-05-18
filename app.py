@@ -1386,17 +1386,15 @@ def settings_channels_page():
                 requestedChannel.protected = protection
 
                 if 'photo' in request.files:
-                    if request.files['photo'] != None:
+                    file = request.files['photo']
+                    if file.filename != '':
                         oldImage = None
 
                         if requestedChannel.imageLocation != None:
                             oldImage = requestedChannel.imageLocation
 
-                        try:
-                            filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-                            requestedChannel.imageLocation = filename
-                        except:
-                            pass
+                        filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                        requestedChannel.imageLocation = filename
 
                         if oldImage != None:
                             try:
@@ -1405,17 +1403,16 @@ def settings_channels_page():
                                 pass
 
                 if 'offlinephoto' in request.files:
-                    if request.files['offlinephoto'] != None:
+                    file = request.files['offlinephoto']
+                    if file.filename != '':
                         oldImage = None
 
                         if requestedChannel.offlineImageLocation != None:
                             oldImage = requestedChannel.offlineImageLocation
 
-                        try:
-                            filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
-                            requestedChannel.offlineImageLocation = filename
-                        except:
-                            pass
+                        filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
+                        requestedChannel.offlineImageLocation = filename
+
                         if oldImage != None:
                             try:
                                 os.remove(oldImage)
