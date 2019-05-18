@@ -1601,14 +1601,14 @@ def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-videos" + "/" + str(channelID) + "/" + filename
+            redirect_path = "/osp-videos" + "/" + str(channelQuery.channelLoc) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
             return response
         else:
             return abort(401)
     else:
-        redirect_path = "/osp-videos" + "/" + str(channelID) + "/" + filename
+        redirect_path = "/osp-videos" + "/" + str(channelQuery.channelLoc) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
         return response
