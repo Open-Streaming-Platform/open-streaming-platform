@@ -369,7 +369,7 @@ body.vjs-full-window {
 .video-js .vjs-big-play-button {
   font-size: 3em;
   line-height: 1.5em;
-  height: 1.5em;
+  height: 1.63332em;
   width: 3em;
   display: block;
   position: absolute;
@@ -387,7 +387,7 @@ body.vjs-full-window {
 .vjs-big-play-centered .vjs-big-play-button {
   top: 50%;
   left: 50%;
-  margin-top: -0.75em;
+  margin-top: -0.81666em;
   margin-left: -1.5em; }
 
 .video-js:hover .vjs-big-play-button,
@@ -517,6 +517,21 @@ body.vjs-full-window {
   width: 100%;
   bottom: 1.5em;
   max-height: 15em; }
+
+.vjs-layout-tiny .vjs-menu-button-popup .vjs-menu .vjs-menu-content,
+.vjs-layout-x-small .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  max-height: 5em; }
+
+.vjs-layout-small .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  max-height: 10em; }
+
+.vjs-layout-medium .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  max-height: 14em; }
+
+.vjs-layout-large .vjs-menu-button-popup .vjs-menu .vjs-menu-content,
+.vjs-layout-x-large .vjs-menu-button-popup .vjs-menu .vjs-menu-content,
+.vjs-layout-huge .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+  max-height: 25em; }
 
 .vjs-workinghover .vjs-menu-button-popup:hover .vjs-menu,
 .vjs-menu-button-popup .vjs-menu.vjs-lock-showing {
@@ -1209,32 +1224,60 @@ video::-webkit-media-text-track-display {
   font-size: 1.5em;
   line-height: inherit; }
 
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-custom-control-spacer {
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-current-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-time-divider,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-duration,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-remaining-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-playback-rate,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-chapters-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-descriptions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-captions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-subtitles-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-audio-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-volume-control, .video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-current-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-time-divider,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-duration,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-remaining-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-playback-rate,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-chapters-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-descriptions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-captions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-subtitles-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-audio-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-volume-control, .video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-current-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-time-divider,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-duration,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-remaining-time,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-playback-rate,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-chapters-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-descriptions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-captions-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-subtitles-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-audio-button,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-volume-control {
+  display: none; }
+
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-volume-panel.vjs-volume-panel-horizontal:hover,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-volume-panel.vjs-volume-panel-horizontal:active,
+.video-js:not(.vjs-fullscreen).vjs-layout-small .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active, .video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-volume-panel.vjs-volume-panel-horizontal:hover,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-volume-panel.vjs-volume-panel-horizontal:active,
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active, .video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-volume-panel.vjs-volume-panel-horizontal:hover,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-volume-panel.vjs-volume-panel-horizontal:active,
+.video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active {
+  width: auto;
+  width: initial; }
+
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small:not(.vjs-liveui) .vjs-subs-caps-button, .video-js:not(.vjs-fullscreen).vjs-layout-x-small:not(.vjs-live) .vjs-subs-caps-button, .video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-subs-caps-button {
+  display: none; }
+
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small.vjs-liveui .vjs-custom-control-spacer, .video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-custom-control-spacer {
   flex: auto;
   display: block; }
 
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen).vjs-no-flex .vjs-custom-control-spacer {
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small.vjs-liveui.vjs-no-flex .vjs-custom-control-spacer, .video-js:not(.vjs-fullscreen).vjs-layout-tiny.vjs-no-flex .vjs-custom-control-spacer {
   width: auto; }
 
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-remaining-time,
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-playback-rate, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-progress-control,
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-volume-panel,
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-descriptions-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-captions-button,
-.video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-subtitles-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-subs-caps-button, .video-js.vjs-layout-tiny:not(.vjs-fullscreen) .vjs-audio-button {
-  display: none; }
-
-.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-remaining-time,
-.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-playback-rate,
-.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-volume-panel,
-.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-descriptions-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-captions-button,
-.video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-subtitles-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-subs-caps-button, .video-js.vjs-layout-x-small:not(.vjs-fullscreen) .vjs-audio-button {
-  display: none; }
-
-.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-current-time, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-time-divider, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-duration, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-remaining-time,
-.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-playback-rate,
-.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-mute-control, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-volume-control, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-volume-panel,
-.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-chapters-button, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-descriptions-button, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-captions-button,
-.video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-subtitles-button, .video-js.vjs-layout-small:not(.vjs-fullscreen) .vjs-audio-button {
+.video-js:not(.vjs-fullscreen).vjs-layout-x-small.vjs-liveui .vjs-progress-control, .video-js:not(.vjs-fullscreen).vjs-layout-tiny .vjs-progress-control {
   display: none; }
 
 .vjs-modal-dialog.vjs-text-track-settings {
