@@ -1392,8 +1392,11 @@ def settings_channels_page():
                         if requestedChannel.imageLocation != None:
                             oldImage = requestedChannel.imageLocation
 
-                        filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-                        requestedChannel.imageLocation = filename
+                        try:
+                            filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                            requestedChannel.imageLocation = filename
+                        except:
+                            pass
 
                         if oldImage != None:
                             try:
@@ -1408,9 +1411,11 @@ def settings_channels_page():
                         if requestedChannel.offlineImageLocation != None:
                             oldImage = requestedChannel.offlineImageLocation
 
-                        filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
-                        requestedChannel.offlineImageLocation = filename
-
+                        try:
+                            filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
+                            requestedChannel.offlineImageLocation = filename
+                        except:
+                            pass
                         if oldImage != None:
                             try:
                                 os.remove(oldImage)
