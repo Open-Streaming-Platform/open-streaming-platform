@@ -1601,19 +1601,17 @@ def video_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/ospvideos" + "/" + str(channelID) + "/" + filename
+            redirect_path = "/osp-videos" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
             return response
-            #return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
         else:
             return abort(401)
     else:
-        redirect_path = "/ospvideos" + "/" + str(channelID) + "/" + filename
+        redirect_path = "/osp-videos" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
         return response
-        #return send_from_directory(os.path.join('/var/www/videos', channelID), filename)
 
 @app.route('/stream-thumb/<path:filename>')
 def live_thumb_sender(filename):
@@ -1621,11 +1619,17 @@ def live_thumb_sender(filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory('/var/www/stream-thumb', filename)
+            redirect_path = "/osp-streamthumbs" + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
         else:
             return abort(401)
     else:
-        return send_from_directory('/var/www/stream-thumb', filename)
+        redirect_path = "/osp-streamthumbs" + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
 
 @app.route('/live-adapt/<path:filename>')
 def live_adapt_stream_image_sender(filename):
@@ -1633,45 +1637,69 @@ def live_adapt_stream_image_sender(filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory('/var/www/live-adapt', filename)
+            redirect_path = "/osp-liveadapt" + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
         else:
             return abort(401)
     else:
-        return send_from_directory('/var/www/live-adapt', filename)
+        redirect_path = "/osp-liveadapt" + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
 
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
 def live_adapt_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID[:-4]).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
+            redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
         else:
             return abort(401)
     else:
-        return send_from_directory(os.path.join('/var/www/live-adapt', channelID), filename)
-
+        redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
 
 @app.route('/live/<string:channelID>/<path:filename>')
 def live_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+            redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
+
         else:
             return abort(401)
     else:
-        return send_from_directory(os.path.join('/var/www/live', channelID), filename)
+        redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
 
 @app.route('/live-rec/<string:channelID>/<path:filename>')
 def live_rec_stream_directory_sender(channelID, filename):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
-            return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
+            redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
+            response = make_response("")
+            response.headers["X-Accel-Redirect"] = redirect_path
+            return response
         else:
             abort(401)
     else:
-        return send_from_directory(os.path.join('/var/www/live-rec', channelID), filename)
+        redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        return response
 
 ### Start NGINX-RTMP Authentication Functions
 
