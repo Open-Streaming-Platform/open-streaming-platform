@@ -91,7 +91,7 @@ RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 
-RUN bash /opt/osp/dbUpgrade.sh
+ENTRYPOINT "cd /opt/osp && bash /opt/osp/dbUpgrade.sh"
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
