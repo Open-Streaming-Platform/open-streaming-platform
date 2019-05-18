@@ -93,7 +93,7 @@ RUN mkdir -p /var/log/supervisor
 
 RUN cp /opt/osp/setup/docker/docker-entrypoint.sh /
 
-
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ['/docker-entrypoint.sh']
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
