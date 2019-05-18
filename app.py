@@ -1386,34 +1386,36 @@ def settings_channels_page():
                 requestedChannel.protected = protection
 
                 if 'photo' in request.files:
-                    oldImage = None
+                    if request.files['photo'] != None:
+                        oldImage = None
 
-                    if requestedChannel.imageLocation != None:
-                        oldImage = requestedChannel.imageLocation
+                        if requestedChannel.imageLocation != None:
+                            oldImage = requestedChannel.imageLocation
 
-                    filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-                    requestedChannel.imageLocation = filename
+                        filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                        requestedChannel.imageLocation = filename
 
-                    if oldImage != None:
-                        try:
-                            os.remove(oldImage)
-                        except OSError:
-                            pass
+                        if oldImage != None:
+                            try:
+                                os.remove(oldImage)
+                            except OSError:
+                                pass
 
                 if 'offlinephoto' in request.files:
-                    oldImage = None
+                    if request.files['offlinephoto'] != None:
+                        oldImage = None
 
-                    if requestedChannel.offlineImageLocation != None:
-                        oldImage = requestedChannel.offlineImageLocation
+                        if requestedChannel.offlineImageLocation != None:
+                            oldImage = requestedChannel.offlineImageLocation
 
-                    filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
-                    requestedChannel.offlineImageLocation = filename
+                        filename = photos.save(request.files['offlinephoto'], name=str(uuid.uuid4()) + '.')
+                        requestedChannel.offlineImageLocation = filename
 
-                    if oldImage != None:
-                        try:
-                            os.remove(oldImage)
-                        except OSError:
-                            pass
+                        if oldImage != None:
+                            try:
+                                os.remove(oldImage)
+                            except OSError:
+                                pass
 
                 flash("Channel Edited")
                 db.session.commit()
