@@ -1,0 +1,777 @@
+.login-box {
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    margin:auto;
+    width:500px;
+    height:500px;
+}
+
+.toast-box {
+    float:left;
+    height:20px;
+    width:20px;
+}
+
+.red {
+    background-color:red;
+}
+.green {
+    background-color:green;
+}
+.blue {
+    background-color:blue;
+}
+.orange {
+    background-color:orange;
+}
+
+.gray {
+  background-color:gray;
+}
+
+.player {
+    margin-top: 50px;
+}
+
+.videoStream {
+    width:100%;
+    display:block;
+}
+
+.recordedStream {
+    width:100%;
+    display:block;
+}
+
+.streamInfo{
+    margin-top: 25px;
+    width: 100%;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.video-buttons-mobile {
+    display:none;
+}
+
+
+.recordedStreamInfo {
+    margin-top: 25px;
+    width: 99.8%;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.stream{
+    margin: 12px;
+}
+
+.streamList {
+
+}
+
+.streamList a:hover, a:visited, a:link, a:active{
+    text-decoration: none;
+}
+
+.stream-img {
+    width:100%;
+    object-fit: contain;
+    max-height:315px;
+    background-color:black;
+}
+
+.streamcard-footer {
+    position:relative;
+    bottom: 0px;">
+}
+
+.streamcard-item {
+    width:280px;
+    height:365px;
+}
+
+.streamcard-IconText{
+    width:32px;
+    height:20px;
+    text-align:center;
+    float:left;
+    margin-right:5px;
+}
+
+.topiccard-item {
+    width:280px;
+    height:300px;
+}
+
+.streamercard-item {
+    width:280px;
+    height:365px;
+}
+
+.channel-img {
+    width:100%;
+    object-fit: contain;
+    max-height:150px;
+    overflow:hidden;
+    background-color:black;
+}
+
+.card-title {
+    height:48px;
+}
+
+.recordDot {
+    width: 15px;
+    height: 15px;
+    position:relative;
+    top:-2px;
+    left:-2px;
+}
+
+.topic-img {
+    width:100%;
+    object-fit: contain;
+    max-height:315px;
+    overflow:hidden;
+}
+
+.streamer-img {
+    object-fit: contain;
+    max-height:315px;
+    overflow:hidden;
+}
+
+.shadow{
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+
+}
+
+.shadowhover a:hover {
+    transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+
+.text-shadow-close {
+
+    text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.searchBar {
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    width:100%;
+}
+
+.chat {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 640px;
+    background-color: #eeeeee;
+    padding: 5px 5px 5px 5px;
+}
+
+.chatpopout {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 640px;
+    padding: 5px 5px 5px 5px;
+}
+
+.chatBar-Item {
+    border: 0px solid black;
+    border-radius: 4px;
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-bottom: 4px;
+    padding-right: 4px;
+    margin-top: 5px;
+    min-height: 60px;
+}
+
+.charBar-Item-Image {
+    float:left;
+}
+
+.chatBar-Item-Text {
+    position:relative;
+    left:20px;
+    color:white;
+    word-wrap: break-word;
+    width:82%;
+    display:inline-block;
+}
+
+.chatbox {
+    margin-top: 50px;
+    height: 540px;
+}
+
+.chatbox textarea {
+    resize: none;
+}
+
+.footer {
+   position:fixed;
+   left: 0;
+   width:100%;
+   bottom:0;
+   height:33px;
+   margin-top:-50px;
+   background: #232526;  /* fallback for old browsers */
+   background: -webkit-linear-gradient(to bottom, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+   background: linear-gradient(to bottom, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+   text-align: right;
+   color:white;
+   text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
+}
+
+.userPhoto {
+    border: 1px;
+}
+
+.titleOverlay {
+    padding: 5px 5px 5px 5px;
+    border-radius: 15px;
+    width:100%;
+    background-color: rgba(0, 0, 0, .50);
+    text-align: left;
+    color:white;
+}
+
+.comments-box {
+    overflow-y: auto;
+    max-height: 800px;
+}
+
+.comment {
+  padding:8px 5px 8px 10px;
+  margin-bottom:10px;
+}
+
+.callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    color: white;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+}
+
+.callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.callout p:last-child {
+    margin-bottom: 0;
+}
+
+.callout code {
+    border-radius: 3px;
+}
+
+.callout-primary{
+    background-color:#428bca;
+}
+.callout-success{
+    background-color:#5cb85c;
+}
+.callout-danger{
+    background-color:#ff253a;
+}
+
+#channelPlayerMenu {
+    float: right;
+}
+
+.chat-Standard{
+    background: #667db6;
+    background: -webkit-linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
+    background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.chat-DeepSpace{
+    background: #000000;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #434343, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #434343, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.chat-BloodRed {
+    background: #f85032;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #e73827, #f85032);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #e73827, #f85032); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.chat-Terminal {
+    background-color: black;
+    background-image: radial-gradient(rgba(0, 150, 0, 0.75), black 120%);
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+@media screen and (max-width: 1024px) {
+
+    .stream{
+        margin: 10px;
+    }
+
+
+    .recordDot {
+        width: 12px;
+        height: 12px;
+    }
+
+}
+
+@media screen and (max-width : 640px) {
+    .login-box {
+        width: 100%;
+        height: 100%;
+    }
+
+    .channel-img {
+        max-height:230px;
+    }
+
+    .stream{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .streamList {
+
+    }
+
+    .streamcard {
+        margin:0 auto;
+        width:100%;
+    }
+
+    .streamercard-item {
+        width: 100%;
+        height:450px;
+    }
+
+    .streamcard-item {
+        width: 100%;
+        height: 450px;
+    }
+
+    .topiccard-item {
+        width:100%;
+        height:400px;
+    }
+
+    .video-buttons-lg {
+        display:none;
+    }
+
+    .video-buttons-mobile {
+        padding-top:15px;
+        display:block;
+        width:100%;
+        margin: 0 auto;
+        align-items:center;
+        display:flex;
+    }
+
+    .video-buttons-mobile div {
+        float: left;
+    }
+
+    .no-stream-jumbo {
+        display:none;
+    }
+
+    #channelPlayerMenu {
+        float: left;
+    }
+}
+
+/* Firefox old*/
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+/* IE */
+@-ms-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+/* Opera and prob css3 final iteration */
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+.blink-image {
+    -moz-animation: blink normal 1s infinite ease-in-out; /* Firefox */
+    -webkit-animation: blink normal 1s infinite ease-in-out; /* Webkit */
+    -ms-animation: blink normal 1s infinite ease-in-out; /* IE */
+    animation: blink normal 1s infinite ease-in-out; /* Opera and prob css3 final iteration */
+}
+
+.quarter-circle-top-left{
+    width: 50px;
+    height: 50px;
+    background: #1e3c72;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2a5298, #1e3c72);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2a5298, #1e3c72); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 0 0 100px 0;
+    -moz-border-radius: 0 0 100px 0;
+    -webkit-border-radius: 0 0 100px 0;
+}
+
+.quarter-circle-top-right{
+    width: 50px;
+    height: 50px;
+    background: #ED213A;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #93291E, #ED213A);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #93291E, #ED213A); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 0 0 0 100px;
+    -moz-border-radius: 0 0 0 100px;
+    -webkit-border-radius: 0 0 0 100px;
+}
+
+.streamcard-overlay {
+  position:absolute;
+  top: -1px;
+  right: 0;
+  left: -1px;
+  bottom: 0;
+}
+
+.stream-image-overlay-text{
+    margin-left:10px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
+
+.streamcard-overlay-right {
+  position:absolute;
+  top: -1px;
+  right: -1px;
+}
+
+.stream-image-overylay-text{
+    margin-left:20px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
+
+.blur {
+  /* Add the blur effect */
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+
+  /* Full height */
+  height: 100%;
+}
+
+
+.slide-in-left {
+	-webkit-animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	        animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2018-7-2 19:58:5
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation slide-in-left
+ * ----------------------------------------
+ */
+@-webkit-keyframes slide-in-left {
+  0% {
+    -webkit-transform: translateX(-1000px);
+            transform: translateX(-1000px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-in-left {
+  0% {
+    -webkit-transform: translateX(-1000px);
+            transform: translateX(-1000px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2018-9-1 20:11:10
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+.flip-in-ver-right {
+	-webkit-animation: flip-in-ver-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+	        animation: flip-in-ver-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+/**
+ * ----------------------------------------
+ * animation flip-in-ver-right
+ * ----------------------------------------
+ */
+@-webkit-keyframes flip-in-ver-right {
+  0% {
+    -webkit-transform: rotateY(-80deg);
+            transform: rotateY(-80deg);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+    opacity: 1;
+  }
+}
+@keyframes flip-in-ver-right {
+  0% {
+    -webkit-transform: rotateY(-80deg);
+            transform: rotateY(-80deg);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateY(0);
+            transform: rotateY(0);
+    opacity: 1;
+  }
+}
+
+.fade-in-fwd {
+	-webkit-animation: fade-in-fwd 1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: fade-in-fwd 1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2019-3-31 12:45:52
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation fade-in-fwd
+ * ----------------------------------------
+ */
+@-webkit-keyframes fade-in-fwd {
+  0% {
+    -webkit-transform: translateZ(-80px);
+            transform: translateZ(-80px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+    opacity: 1;
+  }
+}
+@keyframes fade-in-fwd {
+  0% {
+    -webkit-transform: translateZ(-80px);
+            transform: translateZ(-80px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-blurred-left {
+	-webkit-animation: slide-in-blurred-left 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+	        animation: slide-in-blurred-left 0.5s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+}
+
+/* ----------------------------------------------
+ * Generated by Animista on 2019-4-7 13:4:48
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation slide-in-blurred-left
+ * ----------------------------------------
+ */
+@-webkit-keyframes slide-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);
+            transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);
+    -webkit-transform-origin: 100% 50%;
+            transform-origin: 100% 50%;
+    -webkit-filter: blur(40px);
+            filter: blur(40px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) scaleY(1) scaleX(1);
+            transform: translateX(0) scaleY(1) scaleX(1);
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-in-blurred-left {
+  0% {
+    -webkit-transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);
+            transform: translateX(-1000px) scaleX(2.5) scaleY(0.2);
+    -webkit-transform-origin: 100% 50%;
+            transform-origin: 100% 50%;
+    -webkit-filter: blur(40px);
+            filter: blur(40px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateX(0) scaleY(1) scaleX(1);
+            transform: translateX(0) scaleY(1) scaleX(1);
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-filter: blur(0);
+            filter: blur(0);
+    opacity: 1;
+  }
+}
+
+.White-BG {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: white;
+}
+
+.Ash-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #606c88; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #3f4c6b, #606c88); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #3f4c6b, #606c88); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.Moonlit-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #0F2027;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2C5364, #203A43, #0F2027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.Terminal-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #000000;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #0f9b0f, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #0f9b0f, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.Space-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #000000;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #434343, #000000);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #434343, #000000); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.ClearSky-BG {
+    height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #005C97;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #363795, #005C97);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #363795, #005C97); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.ServQuick-BG {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat:no-repeat;
+    background: #485563;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #29323c, #485563);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #29323c, #485563); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}

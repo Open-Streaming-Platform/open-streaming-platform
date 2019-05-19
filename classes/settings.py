@@ -13,9 +13,13 @@ class settings(db.Model):
     smtpSendAs = db.Column(db.String(255))
     allowRegistration = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
+    adaptiveStreaming = db.Column(db.Boolean)
     background = db.Column(db.String(255))
+    showEmptyTables = db.Column(db.Boolean)
+    allowComments = db.Column(db.Boolean)
+    systemTheme = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, adaptiveStreaming, showEmptyTables, allowComments):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -27,7 +31,11 @@ class settings(db.Model):
         self.smtpSendAs = smtpSendAs
         self.allowRegistration = allowRegistration
         self.allowRecording = allowRecording
+        self.adaptiveStreaming = adaptiveStreaming
+        self.showEmptyTables = showEmptyTables
+        self.allowComments = allowComments
         self.background = "Ash"
+        self.systemTheme = "Default"
 
     def __repr__(self):
         return '<id %r>' % self.id

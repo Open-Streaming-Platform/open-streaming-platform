@@ -1,0 +1,69 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="input-group">
+            <div class="input-group-prepend shadow">
+                <div class="input-group-text"><i class="fas fa-search"></i></div>
+            </div>
+            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
+        </div>
+    </div>
+    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
+        <div class="streamList d-flex align-content-around flex-wrap">
+        {% for channel in channelList %}
+            <div class="streamcard">
+                <a href="/channel/{{channel.id}}/">
+                    <div class="stream shadow card p-2 streamcard-item">
+                        <div>
+                            <img class="channel-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            {% if channel.protected %}
+                            <div class="streamcard-overlay">
+                                <div class="quarter-circle-top-left">
+                                    {% if check_isValidChannelViewer(channel.id) %}
+                                        <i class="stream-image-overlay-text fas fa-lock-open"></i>
+                                    {% else %}
+                                        <i class="stream-image-overlay-text fas fa-lock"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
+                            <p class="card-text">
+                            <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"><b> {{channel.topic|get_topicName}}</b></div> <br>
+                            <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b>
+                            </p>
+                        </div>
+                        <div class="streamcard-footer bg-transparent">
+                            <i class="fas fa-users"></i> {{channel.views}}
+                        </div>
+                    </div>
+
+                </a>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#search').on('input', function(){
+    var query = document.getElementById("search").value.toLowerCase();
+    $('.streamcard').each(function(){
+         var $this = $(this);
+         if($this.text().toLowerCase().indexOf(query) === -1)
+             $this.closest('.streamcard').hide();
+        else $this.closest('.streamcard').show();
+    });
+});
+</script>
+{% endblock %}
+
+

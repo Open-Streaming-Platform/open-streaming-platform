@@ -6,7 +6,7 @@
 
 OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.tv, and Youtube Live.
 
-**OSP is still considered Alpha and is not complete**
+**OSP is still considered Beta and is not complete**
 
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
@@ -14,10 +14,15 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/4RV5IXH.jpg)](https://i.imgur.com/4RV5IXH.jpg)
  - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/c598KLa.jpg)](https://i.imgur.com/c598KLa.jpg)
  - Real-Time Chat Moderation by Channel Owners (Banning/Unbanning)
+ - Admin Controlled Adaptive Streaming
+ - Protected Streams to allow access only to the audience you want.
+ - Live Channels - Keep chatting and hang out when a stream isn't on
+ - Webhooks - Connect OSP to other services via fully customizable HTTP requests which will pass information
+ - Embed your stream or video directly into another web page easily
+ - Share channels or videos via Facebook or Twitter quickly
 
 ## Planned Features:
  - Subscribe to a Channel and Get Notified on When a New Stream Starts.
- - Password Protected Channels & Live Streams
 
 ## Tech
 
@@ -31,14 +36,24 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
+* [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
 * [NGINX-RTMP-Module] - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
 * [Socket.io] - Real-Time Communications Engine Between Client and Server
 * [Flask Socket.io] - Interface Socket.io with Flask
 * [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
+* [[Animista](http://animista.net/)] - Awesome CSS Animation Generator
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
+
+## Git Branches
+
+OSP's Git Branches are setup in the following configuration
+* **master** - Current Release Branch
+* **release/(Version)** - Previous Official Releases
+* **development** - Current Nightly Branch for OSP vNext
+* **feature/(Name)** - In-progress Feature Builds to be merged with the Development Branch   
 
 ## Installation
 
@@ -136,10 +151,18 @@ sudo git pull
 ```
 sudo chown -R www-data:www-data /opt/osp
 ```
-* Restart the OSP Service
+* Run the DB Upgrade Script to Ensure the Database Schema is up-to-date
 ```
-sudo service osp restart
+bash dbUpgrade.sh
 ```
+
+### Upgrading from Alpha4 to Beta1
+With the move to Beta1, to support channel protections it is recommended to replace your nginx.conf file with the new configuration to support this feature. To do so, run the beta1upgrade.sh script to ensure all settings and directories are created.
+```
+cd /opt/osp/setup/other
+sudo bash alpha4tobeta1.sh
+``` 
+After completion, your original nginx.conf file will be renamed to nginx.conf.old and you make adjustments to the new file.
 
 ### Upgrading from Alpha3 to Alpha4
 Due to the changes from Python 2 to Python 3, You need to run a script to remove Python 2.7 and its modules and replace them with Python 3
@@ -166,6 +189,127 @@ sudo service osp restart
 ### Chat Comands
 - /ban <username> - Bans a user from chatting in a chat room
 - /unban <username> - Unbans a user who has been banned
+- /mute - Places a Chat Channel on Mute
+- /unmute - Removes a Mute Placed on a Chat Channel
+
+### Webhooks
+Webhooks allow you to send a notification out to other services using a GET/POST/PUT/DELETE request which can be defined on a per channel basis depending on various triggers.
+
+OSP currently supports the following triggers:
+- At the Start of a Live Stream
+- At the End of a Live Stream
+- On a New Viewer Joining a Live Stream
+- On a Stream Upvote
+- On a Stream Metadata Change (Name/Topic)
+- On a Stream Chat Message
+- On Posting of a New Video to a Channel
+- On a New Video Comment
+- On a Video Upvote
+- On a Video Metadata Change (Name/Topic)
+
+When defining your webhook payload, you can use variables which will be replaced with live data at the time the webhook is run.  Webhook variables are defined as the following:
+- %channelname%
+- %channelurl%
+- %channeltopic%
+- %channelimage%
+- %streamer%
+- %channeldescription%
+- %streamname%
+- %streamurl%
+- %streamtopic%
+- %streamimage%
+- %user%
+- %userpicture%
+- %videoname%
+- %videodate%
+- %videodescription%
+- %videotopic%
+- %videourl%
+- %videothumbnail%
+- %comment%
+
+Example Webhook for Discord:
+
+- Type: **POST**
+- Trigger Event: **Stream Start**
+
+Header
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+Payload
+```json
+{
+  "content": "%channelname% went live on OSP Test",
+  "username": "OSP Bot",
+  "embeds": [
+    {
+      "title": "%streamurl%",
+      "url": "https://%streamurl%",
+      "color": 6570404,
+      "image": {
+        "url": "https://%channelimage%"
+      },
+      "author": {
+        "name": "%streamer% is now streaming"
+      },
+      "fields": [
+        {
+          "name": "Channel",
+          "value": "%channelname%",
+          "inline": true
+        },
+        {
+          "name": "Topic",
+          "value": "%streamtopic%",
+          "inline": true
+        },
+        {
+          "name": "Stream Name",
+          "value": "%streamname%",
+          "inline": true
+        },
+        {
+          "name": "Description",
+          "value": "%channeldescription%",
+          "inline": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Adaptive Streaming
+While OSP now supports the ability to transcode to an adaptive stream for lower bandwidth users, this feature will use considerable CPU processing poweer and may slow down your OSP instance.  It is recommended only to use this feature when there is either few streams occurring or if your server has sufficient resources to handle the ability to transcode multiple streams.
+
+By default, NGINX-RTMP has only been configured to transcode 1080p, 720p, 480p, & 360p. You can optimize how streams are transcoded by editing the /usr/local/nginx/conf/nginx.conf file and following the instructions at https://licson.net/post/setting-up-adaptive-streaming-with-nginx/
+
+### Theming
+OSP Supports Custom HTML and CSS theming via creation of another directory under the /opt/osp/templates/themes directory.
+
+Custom CSS can be created under the /opt/osp/static/css directory under the name $ThemeName.css.
+
+When theming, all html files must be used.  Use the Default Theme as a template to build your own theme.
+
+Themes also must contain a theme.json file to work properly with OSP.
+
+theme.json: 
+```json
+{
+  "Name": "Example",
+  "Maintainer": "Some User",
+  "Version": "1.0",
+  "Description": "Description of Theme"
+}
+```
+
+Thanks
+----
+Special thanks to the folks of the [OSP Discord channel](https://discord.gg/Jp5rzbD) for their testing and suggestions!
 
 License
 ----

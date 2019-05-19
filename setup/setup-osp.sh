@@ -52,16 +52,24 @@ sudo mkdir live-rec
 sudo chown -R www-data:www-data live-rec
 sudo mkdir images
 sudo chown -R www-data:www-data images
+sudo mkdir live-adapt
+sudo chown -R www-data:www-data live-adapt
+sudo mkdir stream-thumb
+sudo chown -R www-data:www-data stream-thumb
 
 sudo chown -R www-data:www-data /opt/osp
+sudo chown -R www-data:www-data /opt/osp/.git
 
 #Setup FFMPEG for recordings and Thumbnails
 sudo apt-get install ffmpeg -y
 
-# Create Gunicorn Log Directory
-mkdir -p /var/log/gunicorn
-# Fix Gunicorn Log Permissions
+# Fix for Gunicorn Logs
+sudo mkdir -p /var/log/gunicorn
 sudo chown -R www-data:www-data /var/log/gunicorn
+
+# Start Nginxcd o
+sudo systemctl start nginx.service
+sudo systemctl start osp
 
 # Start Nginx
 sudo systemctl start nginx.service

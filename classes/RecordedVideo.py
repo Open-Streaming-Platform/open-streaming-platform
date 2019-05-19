@@ -1,5 +1,4 @@
 from .shared import db
-import datetime
 
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
@@ -8,23 +7,27 @@ class RecordedVideo(db.Model):
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
     channelName = db.Column(db.String(255))
     channelID = db.Column(db.Integer,db.ForeignKey('Channel.id'))
+    description = db.Column(db.String(2048))
     topic = db.Column(db.Integer)
     views = db.Column(db.Integer)
     length = db.Column(db.Float)
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
+    allowComments = db.Column(db.Boolean)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
+    comments = db.relationship('videoComments', backref='recordedVideo', lazy="joined")
 
-    def __init__(self,owningUser,channelID,channelName,topic,views,videoLocation):
-        self.videoDate = datetime.datetime.now()
-        self.owningUser=owningUser
-        self.channelID=channelID
-        self.channelName=channelName
-        self.topic=topic
-        self.views=views
-        self.videoLocation=videoLocation
+    def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
+        self.videoDate = videoDate
+        self.owningUser = owningUser
+        self.channelID = channelID
+        self.channelName = channelName
+        self.topic = topic
+        self.views = views
+        self.videoLocation = videoLocation
         self.pending = True
+        self.allowComments = allowComments
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -39,6 +42,7 @@ class RecordedVideo(db.Model):
             'owningUser': self.owningUser,
             'videoDate': str(self.videoDate),
             'videoName': self.channelName,
+            'description': self.description,
             'topic': self.topic,
             'views': self.views,
             'length': self.length,

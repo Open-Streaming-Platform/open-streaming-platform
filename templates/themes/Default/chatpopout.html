@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{stream.streamName}} - Chat</title>
+    <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
+    <link rel=stylesheet type=text/css href="/static/css/{{sysSettings.systemTheme}}.css">
+    <link rel=stylesheet type=text/css href="/static/css/slider.css">
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
+
+</head>
+<body>
+<div class="col-12 .d-none .d-xl-block">
+  <div class="chatbox" style="margin-bottom:210px;">
+      <div id="chat" class="chatpopout"></div><br>
+      <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
+  </div>
+</div>
+
+<script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+<script src="/static/vendor/popper/js/popper.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
+
+        var socket = io();
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('openPopup', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('closePopup', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('closePopup', {data: '{{channel.channelLoc}}'});
+            return null;
+        });
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('viewerTotalResponse', function (msg) {
+            document.getElementById("currentViewers").innerHTML = msg['data'];
+            var userBoxHTML = "";
+            var userList = msg['userList'];
+            var userListLength = userList.length;
+            for (var i = 0; i < userListLength; i++) {
+                userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
+            }
+            var userListElement = document.getElementById("userList");
+            userListElement.setAttribute("data-content",userBoxHTML);
+        });
+    </script>
+
+    <script>
+        $('#text').keypress(function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
+            }
+        });
+    </script>
+
+    <script>
+
+        socket.on('message', function(data) {
+            var today = new Date();
+            var h = today.getHours();
+            var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
+            var s = today.getSeconds();
+            var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
+            if (data['flags'] === 'Owner') {
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+            } else {
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+            }
+            $('#chat').animate({ scrollTop: 1000000 }, "fast");
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+</body>
+</html>

@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel=stylesheet type=text/css href="/static/css/main.css">
+    <link rel=stylesheet type=text/css href="/static/css/Default.css">
     <link rel=stylesheet type=text/css href="/static/css/slider.css">
     <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
 
-    <title>Title</title>
+    <title>OSP First Run</title>
 
     <style>
         html {
@@ -29,7 +29,7 @@
 <body>
 
 <div>
-    <div class="card shadow" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:800px;height:1100px;">
+    <div class="card shadow" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:800px;height:1200px;">
       <h5 class="card-header">Open Streaming Platform</h5>
       <div class="card-body">
         <h5 class="card-title"><i class="fas fa-cogs"></i> Initial Setup Wizard</h5>
@@ -58,6 +58,21 @@
                   Allow Users to Record:<br>
                   <label class="switch">
                     <input type="checkbox" id="recordSelect" name="recordSelect">
+                    <span class="slider round"></span>
+                  </label><br>
+                  Enable Adaptive Streaming (Can Cause Significant CPU Usage Per Stream):<br>
+                  <label class="switch">
+                    <input type="checkbox" id="adaptiveStreaming" name="adaptiveStreaming">
+                    <span class="slider round"></span>
+                  </label><br>
+                  Display Empty Channels, Streamers, and Topics<br>
+                  <label class="switch">
+                    <input type="checkbox" id="showEmptyTables" name="showEmptyTables">
+                    <span class="slider round"></span>
+                  </label><br>
+                  Globally Allow Comments (Can be Disabled on a Per Video Basis)<br>
+                  <label class="switch">
+                    <input type="checkbox" id="allowComments" name="allowComments">
                     <span class="slider round"></span>
                   </label><br>
                 </div>
