@@ -1731,6 +1731,12 @@ def streamkey_check():
                 validAddress = formatSiteAddress(sysSettings.siteAddress)
 
                 externalIP = socket.gethostbyname(validAddress)
+                existingStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).all()
+                if existingStreamQuery != []:
+                    for stream in existingStreamQuery:
+                        db.session.delete(stream)
+                    db.session.commit()
+
                 newStream = Stream.Stream(key, normalize_date(str(currentTime)), int(channelRequest.id), channelRequest.topic)
                 db.session.add(newStream)
                 db.session.commit()
@@ -1743,6 +1749,11 @@ def streamkey_check():
                 elif channelRequest.record is True:
 
                     userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
+                    existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
+                    if existingRecordingQuery != []:
+                        for recording in existingRecordingQuery:
+                            db.session.delete(recording)
+                            db.session.commit()
 
                     newRecording = RecordedVideo.RecordedVideo(userCheck.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments)
                     db.session.add(newRecording)
@@ -1754,14 +1765,17 @@ def streamkey_check():
             else:
                 returnMessage = {'time': str(currentTime), 'status': 'Unauthorized User - Missing Streamer Role', 'key': str(key), 'ipAddress': str(ipaddress)}
                 print(returnMessage)
+                db.session.close()
                 return abort(400)
         else:
             returnMessage = {'time': str(currentTime), 'status': 'Unauthorized User - No Such User', 'key': str(key), 'ipAddress': str(ipaddress)}
             print(returnMessage)
+            db.session.close()
             return abort(400)
     else:
         returnMessage = {'time': str(currentTime), 'status': 'Failed Key Auth', 'key':str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
+        db.session.close()
         return abort(400)
 
 
@@ -1794,6 +1808,7 @@ def user_auth_check():
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
+        db.session.close()
         return abort(400)
 
 
@@ -1851,6 +1866,7 @@ def user_deauth_check():
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closure Failure - No Such Stream', 'key': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
+        db.session.close()
         return abort(400)
 
 
@@ -1898,6 +1914,7 @@ def rec_Complete_handler():
         pendingVideo.length = getVidLength(fullVidPath)
         db.session.commit()
 
+    db.session.close()
     return 'OK'
 
 
@@ -2119,6 +2136,7 @@ def setScreenShot(message):
         if videoQuery != None and videoQuery.owningUser == current_user.id:
             videoLocation = '/var/www/videos/' + videoQuery.videoLocation
             thumbnailLocation = '/var/www/videos/' + videoQuery.thumbnailLocation
+            db.session.close()
             try:
                 os.remove(thumbnailLocation)
             except OSError:
@@ -2172,6 +2190,7 @@ def newScreenShot(message):
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
             tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
             emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
+            db.session.close()
 
 @socketio.on('text')
 def text(message):
@@ -2314,9 +2333,11 @@ def generateInviteCode(message):
         db.session.commit()
 
         emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
+
     else:
         #emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
         pass
+    db.session.close()
 
 @socketio.on('deleteInviteCode')
 def deleteInviteCode(message):
@@ -2333,6 +2354,8 @@ def deleteInviteCode(message):
             emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
     else:
         emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
+
+    db.session.close()
 
 @socketio.on('addUserChannelInvite')
 def addUserChannelInvite(message):
@@ -2358,6 +2381,7 @@ def addUserChannelInvite(message):
                 emit('invitedUserAck', {'username': username, 'added': str(newUserInvite.addedDate), 'expiration': str(newUserInvite.expiration), 'channelID': str(channelID), 'id': str(newUserInvite.id)}, broadcast=False)
                 db.session.commit()
                 db.session.close()
+    db.session.close()
 
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
@@ -2369,6 +2393,7 @@ def deleteInvitedUser(message):
             db.session.delete(inviteIDQuery)
             db.session.commit()
             emit('invitedUserDeleteAck', {'inviteID': str(inviteID)}, broadcast=False)
+    db.session.close()
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -2429,6 +2454,7 @@ def deleteWebhook(message):
             if channelQuery.owningUser is current_user.id:
                 db.session.delete(webhookQuery)
                 db.session.commit()
+    db.session.close()
 
 # Start App Initiation
 try:
