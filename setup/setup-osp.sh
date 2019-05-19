@@ -71,3 +71,6 @@ sudo chown -R www-data:www-data /var/log/gunicorn
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
+# Start Nginx
+sudo systemctl start nginx.service
+sudo systemctl start osp
