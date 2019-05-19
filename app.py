@@ -88,7 +88,7 @@ logger = logging.getLogger('gunicorn.error').handlers
 
 socketio = SocketIO(app,logger=True)
 
-appDBVersion = 0.40
+appDBVersion = 0.45
 
 from classes.shared import db
 
