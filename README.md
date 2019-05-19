@@ -15,10 +15,14 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/c598KLa.jpg)](https://i.imgur.com/c598KLa.jpg)
  - Real-Time Chat Moderation by Channel Owners (Banning/Unbanning)
  - Admin Controlled Adaptive Streaming
+ - Protected Streams to allow access only to the audience you want.
+ - Live Channels - Keep chatting and hang out when a stream isn't on
+ - Webhooks - Connect OSP to other services via fully customizable HTTP requests which will pass information
+ - Embed your stream or video directly into another web page easily
+ - Share channels or videos via Facebook or Twitter quickly
 
 ## Planned Features:
  - Subscribe to a Channel and Get Notified on When a New Stream Starts.
- - Password Protected Channels & Live Streams
 
 ## Tech
 
@@ -302,6 +306,10 @@ theme.json:
   "Description": "Description of Theme"
 }
 ```
+
+Thanks
+----
+Special thanks to the folks of the [OSP Discord channel](https://discord.gg/Jp5rzbD) for their testing and suggestions!
 
 License
 ----
