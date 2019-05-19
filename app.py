@@ -61,7 +61,7 @@ if config.dbLocation[:6] != "sqlite":
     app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4', 'pool_use_lifo': 'True', 'pool_size': '20'}
 else:
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_use_lifo': 'True', 'pool_size': '20'}
+    pass
 
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
