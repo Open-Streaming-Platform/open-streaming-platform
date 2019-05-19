@@ -156,7 +156,7 @@ bash dbUpgrade.sh
 With the move to Beta1, to support channel protections it is recommended to replace your nginx.conf file with the new configuration to support this feature. To do so, run the beta1upgrade.sh script to ensure all settings and directories are created.
 ```
 cd /opt/osp/setup/other
-sudo bash beta1upgrade.sh
+sudo bash alpha4tobeta1.sh
 ``` 
 After completion, your original nginx.conf file will be renamed to nginx.conf.old and you make adjustments to the new file.
 
@@ -283,6 +283,25 @@ Payload
 While OSP now supports the ability to transcode to an adaptive stream for lower bandwidth users, this feature will use considerable CPU processing poweer and may slow down your OSP instance.  It is recommended only to use this feature when there is either few streams occurring or if your server has sufficient resources to handle the ability to transcode multiple streams.
 
 By default, NGINX-RTMP has only been configured to transcode 1080p, 720p, 480p, & 360p. You can optimize how streams are transcoded by editing the /usr/local/nginx/conf/nginx.conf file and following the instructions at https://licson.net/post/setting-up-adaptive-streaming-with-nginx/
+
+### Theming
+OSP Supports Custom HTML and CSS theming via creation of another directory under the /opt/osp/templates/themes directory.
+
+Custom CSS can be created under the /opt/osp/static/css directory under the name $ThemeName.css.
+
+When theming, all html files must be used.  Use the Default Theme as a template to build your own theme.
+
+Themes also must contain a theme.json file to work properly with OSP.
+
+theme.json: 
+```json
+{
+  "Name": "Example",
+  "Maintainer": "Some User",
+  "Version": "1.0",
+  "Description": "Description of Theme"
+}
+```
 
 License
 ----
