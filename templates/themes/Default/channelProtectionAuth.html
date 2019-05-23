@@ -1,0 +1,31 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Invite Code</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card my-5 shadow text-left">
+                    <h5 class="card-header text-white bg-dark mb-3">
+                        Enter Invitation Code
+                    </h5>
+                    <div class="card-body text-left">
+                        The requested channel is protected and requires an invite or invitation code to view.
+                        <form action="/settings/user/addInviteCode" method="get">
+                            <label for="inviteCode" class="col-form-label"><b>Enter your invitation Code</b></label>
+                            <div class="input-group mb-3">
+                                <input name="inviteCode" id="inviteCode" type="text" class="form-control" required>
+                            </div>
+                            <input type="hidden" name="redirectURL" value="{{request.url}}">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

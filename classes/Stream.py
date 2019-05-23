@@ -1,4 +1,5 @@
 from .shared import db
+from .settings import settings
 
 class Stream(db.Model):
     __tablename__ = "Stream"
@@ -18,6 +19,7 @@ class Stream(db.Model):
         self.currentViewers = 0
         self.totalViewers = 0
         self.topic = topic
+        self.channelMuted = False
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -34,31 +36,24 @@ class Stream(db.Model):
         db.session.commit()
 
     def serialize(self):
-        if self.channel.record == True:
-            return {
-                'id': self.id,
-                'channelID': self.linkedChannel,
-                'channelEndpointID': self.channel.channelLoc,
-                'owningUser': self.channel.owningUser,
-                'streamPage': '/view/' + self.channel.channelLoc + '/',
-                'streamURL': '/live-rec/' + self.channel.channelLoc + '/index.m3u8',
-                'streamName': self.streamName,
-                'topic': self.topic,
-                'currentViewers': self.currentViewers,
-                'totalViewers': self.currentViewers,
-                'upvotes': self.get_upvotes()
-            }
+        sysSettings = settings.query.first()
+        streamURL = ''
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/streams/' + self.channel.channelLoc + '.m3u8'
+        elif self.channel.record is True:
+            streamURL = '/live-rec/' + self.channel.channelLoc + '/index.m3u8'
         else:
-            return {
-                'id': self.id,
-                'channelID': self.linkedChannel,
-                'channelEndpointID': self.channel.channelLoc,
-                'owningUser': self.channel.owningUser,
-                'streamPage': '/view/' + self.channel.channelLoc +'/',
-                'streamURL': '/live/' + self.channel.channelLoc + '/index.m3u8',
-                'streamName': self.streamName,
-                'topic': self.topic,
-                'currentViewers': self.currentViewers,
-                'totalViewers': self.currentViewers,
-                'upvotes': self.get_upvotes()
-            }
+            streamURL = '/live/' + self.channel.channelLoc + '/index.m3u8'
+        return {
+            'id': self.id,
+            'channelID': self.linkedChannel,
+            'channelEndpointID': self.channel.channelLoc,
+            'owningUser': self.channel.owningUser,
+            'streamPage': '/view/' + self.channel.channelLoc + '/',
+            'streamURL': streamURL,
+            'streamName': self.streamName,
+            'topic': self.topic,
+            'currentViewers': self.currentViewers,
+            'totalViewers': self.currentViewers,
+            'upvotes': self.get_upvotes()
+        }

@@ -10,3 +10,5 @@ flask-migrate
 flask-script
 flask-restplus
 pymysql
+gitpython
+requests

@@ -61,6 +61,8 @@ RUN mkdir /var/www && \
   mkdir /var/www/live && \
   mkdir /var/www/videos && \
   mkdir /var/www/live-rec && \
+  mkdir /var/www/live-adapt && \
+  mkdir /var/www/stream-thumb && \
   mkdir /var/www/images  && \
   mkdir /var/log/gunicorn && \
   chown -R www-data:www-data /var/www && \

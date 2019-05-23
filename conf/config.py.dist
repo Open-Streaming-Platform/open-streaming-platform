@@ -1,3 +1,3 @@
-dbLocation = 'sqlite:///db/database.db'
+dbLocation = 'sqlite:///db/database.db' # For MySQL Connections add ?charset=utf8mb4 for full Unicode Support
 secretKey = "Super-Sekrit"
 passwordSalt = "los-salt"

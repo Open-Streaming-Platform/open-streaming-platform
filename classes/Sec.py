@@ -4,6 +4,19 @@ from .shared import db
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
+    email = StringField('email', [Required()])
+
+    def validate(self):
+        success = True
+        if not super(ExtendedRegisterForm, self).validate():
+            success = False
+        if db.session.query(User).filter(User.username == self.username.data.strip()).first():
+            self.username.errors.append("Username already taken")
+            success = False
+        if db.session.query(User).filter(User.email == self.email.data.strip()).first():
+            self.email.errors.append("Email address already taken")
+            success = False
+        return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     username = StringField('username', [Required()])
@@ -25,5 +38,5 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     pictureLocation = db.Column(db.String(255))
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('users', lazy='dynamic'))
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    invites = db.relationship('invitedViewer', backref='user', lazy="joined")

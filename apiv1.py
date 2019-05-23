@@ -14,6 +14,7 @@ from classes import RecordedVideo
 from classes import topics
 from classes import upvotes
 from classes import apikey
+from classes import views
 from classes.shared import db
 
 
@@ -32,10 +33,12 @@ api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users
 
 channelParserPut = reqparse.RequestParser()
 channelParserPut.add_argument('channelName', type=str)
+channelParserPut.add_argument('description', type=str)
 channelParserPut.add_argument('topicID', type=int)
 
 channelParserPost = reqparse.RequestParser()
 channelParserPost.add_argument('channelName', type=str, required=True)
+channelParserPost.add_argument('description', type=str, required=True)
 channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
@@ -56,6 +59,7 @@ class api_1_ListChannels(Resource):
             Gets a List of all Public Channels
         """
         channelList = Channel.Channel.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Create Channel
     @api.expect(channelParserPost)
@@ -70,7 +74,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'],args['description'])
                     db.session.add(newChannel)
                     db.session.commit()
 
@@ -85,6 +89,7 @@ class api_1_ListChannel(Resource):
             Get Info for One Channel
         """
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
@@ -104,6 +109,9 @@ class api_1_ListChannel(Resource):
                         if 'channelName' in args:
                             if args['channelName'] is not None:
                                 channelQuery.channelName = args['channelName']
+                        if 'description' in args:
+                            if args['description'] is not None:
+                                channelQuery.description = args['channelName']
                         if 'topicID' in args:
                             if args['topicID'] is not None:
                                 possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
@@ -129,6 +137,24 @@ class api_1_ListChannel(Resource):
                         if filePath != '/var/www/videos/':
                             shutil.rmtree(filePath, ignore_errors=True)
 
+                        channelVid = channelQuery.recordedVideo
+                        channelUpvotes = channelQuery.upvotes
+                        channelStreams = channelQuery.stream
+
+                        for entry in channelVid:
+                            for upvote in entry.upvotes:
+                                db.session.delete(upvote)
+                            vidComments = entry.comments
+                            for comment in vidComments:
+                                db.session.delete(comment)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=entry.id)
+                            for view in vidViews:
+                                db.session.delete(view)
+                            db.session.delete(entry)
+                        for entry in channelUpvotes:
+                            db.session.delete(entry)
+                        for entry in channelStreams:
+                            db.session.delete(entry)
                         db.session.delete(channelQuery)
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
@@ -141,6 +167,7 @@ class api_1_ListStreams(Resource):
              Returns a List of All Active Streams
         """
         streamList = Stream.Stream.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
 
 @api.route('/streams/<int:streamID>')
@@ -151,6 +178,7 @@ class api_1_ListStream(Resource):
              Returns Info on a Single Active Streams
         """
         streamList = Stream.Stream.query.filter_by(id=streamID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
         # Channel - Change Channel Name or Topic ID
 
@@ -178,7 +206,7 @@ class api_1_ListStream(Resource):
                                     if possibleTopics != None:
                                         streamQuery.topic = int(args['topicID'])
                             db.session.commit()
-                            return {'results': {'message': 'Channel Updated'}}, 200
+                            return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/vids/')
@@ -188,6 +216,7 @@ class api_1_ListVideos(Resource):
              Returns a List of All Recorded Videos
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
 @api.route('/vids/<int:videoID>')
@@ -198,6 +227,7 @@ class api_1_ListVideo(Resource):
              Returns Info on a Single Recorded Video
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
     @api.expect(videoParserPut)
     @api.doc(security='apikey')
@@ -250,9 +280,15 @@ class api_1_ListVideo(Resource):
                             upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
                             for vote in upvoteQuery:
                                 db.session.delete(vote)
+                            vidComments = videoQuery.comments
+                            for comment in vidComments:
+                                db.session.delete(comment)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id)
+                            for view in vidViews:
+                                db.session.delete(view)
                             db.session.delete(videoQuery)
                             db.session.commit()
-                            return {'results': {'message': 'Channel Deleted'}}, 200
+                            return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/topics/')
@@ -262,6 +298,7 @@ class api_1_ListTopics(Resource):
              Returns a List of All Topics
         """
         topicList = topics.topics.query.all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/topics/<int:topicID>')
@@ -272,4 +309,5 @@ class api_1_ListTopic(Resource):
              Returns Info on a Single Topic
         """
         topicList = topics.topics.query.filter_by(id=topicID).all()
+        db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
