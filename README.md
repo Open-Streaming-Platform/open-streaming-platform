@@ -58,7 +58,7 @@ OSP's Git Branches are setup in the following configuration
 ## Installation
 
 ### Standard Install
-OSP has only been tested on Ubuntu 16.04 and the installation script may not work properly on other OS's.
+OSP has only been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
 
 Clone the Gitlab Repo
 ```
@@ -109,6 +109,85 @@ This accomplished easily by using a reverse proxy in Docker such as Traefik.  Ho
 * /opt/osp/conf/config.py - DB configuration and Password Salt Settings
 * /opt/osp/db/database.db - Initial SQLite DB File
 * /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
+
+### Manual Install
+
+1: Clone the Repo
+```
+cd /opt
+git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git /opt/osp
+```
+2: Install Python 3 if not installed
+```
+sudo apt-get install python3 python3-pip
+```
+3: Install NGINX and NGINX-RTMP Dependencies
+```
+sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev
+```
+4: Install Python Dependencies
+```
+pip3 install -r /opt/osp/setup/requirements.txt
+```
+5: Install Gunicorn and the uWSGI plugins
+```
+apt-get install gunicorn3 uwsgi-plugin-python
+```
+6: Download and Build NGINX and NGINX-RTMP
+```
+cd /tmp
+wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
+wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
+tar xvfz nginx-1.13.10.tar.gz
+unzip master.zip
+cd nginx-1.13.10
+./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
+make
+make install
+```
+7: Copy the NGINX conf file to the configuration directory
+```
+cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+```
+8: Copy the Gunicorn and NGINX SystemD files
+```
+cp /opt/osp/setup/nginx/nginx.service /lib/systemd/system/nginx.service
+cp /opt/osp/setup/gunicorn/osp.service /lib/systemd/system/osp.service
+```
+9: Reload SystemD
+```
+systemctl daemon-reload
+systemctl enable nginx.service
+systemctl enable osp.service
+```
+10: Make the Required OSP Directories and Set Ownership
+```
+mkdir /var/www
+mkdir /var/www/live
+mkdir /var/www/videos
+mkdir /var/www/live-rec
+mkdir /var/www/images
+mkdir /var/www/live-adapt
+mkdir /var/stream-thumb
+mkdir /var/log/gunicorn
+chown -R www-data:www-data /var/www
+chown -R www-data:www-data /opt/osp
+chown -R www-data:www-data /opt/osp/.git
+chown -R www-data:www-data /var/log/gunicorn
+```
+11: Install FFMPEG
+```
+apt-get install ffmpeg
+```
+12: Start NGINX and OSP
+```
+systemctl start nginx.service
+systemctl start osp.service
+```
+13: Open the site in a browser and run through the First Time Setup
+```
+http://<ip or host>/
+```
 
 ### Usage
 
