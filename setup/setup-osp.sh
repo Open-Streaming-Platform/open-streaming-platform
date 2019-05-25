@@ -8,54 +8,77 @@ sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
 # Setup Python
 sudo apt-get install python3 python3-pip gunicorn3 uwsgi-plugin-python -y
 sudo pip3 install -r requirements.txt
-cd ..
-cd ..
-sudo cp -R flask-nginx-rtmp-manager /opt/osp
 
+# Setup OSP Directory
+mkdir -p /opt/osp
+if cd ..
+then
+        sudo cp -rf -R * /opt/osp
+else
+        echo "Unable to find installer directory. Aborting!"
+        exit 1
+fi
 
 # Build Nginx with RTMP module
-cd /tmp
-sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
-sudo wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
-tar xvfz nginx-1.13.10.tar.gz
-unzip master.zip
-cd nginx-1.13.10
-./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
-make
-sudo make install
+if cd /tmp
+then
+        sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
+        sudo wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
+        tar xvfz nginx-1.13.10.tar.gz
+        unzip master.zip
+        if cd nginx-1.13.10
+        then
+                ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
+                make
+                sudo make install
+        else
+                echo "Unable to Build Nginx! Aborting."
+                exit 1
+        fi
+else
+        echo "Unable to Download Nginx due to missing /tmp! Aborting."
+        exit 1
+fi
 
 # Grab Configuration
-cd $cwd/nginx
-sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
-
+if cd $cwd/nginx
+then
+        sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
+else
+        echo "Unable to find downloaded Nginx config directory.  Aborting."
+        exit 1
+fi
 # Enable SystemD
-cd $cwd/nginx
-sudo cp nginx.service /lib/systemd/system/nginx.service
-sudo systemctl daemon-reload
-sudo systemctl enable nginx.service
+if cd $cwd/nginx
+then
+        sudo cp nginx.service /lib/systemd/system/nginx.service
+        sudo systemctl daemon-reload
+        sudo systemctl enable nginx.service
+else
+        echo "Unable to find downloaded Nginx config directory. Aborting."
+        exit 1
+fi
 
-cd $cwd/gunicorn
-sudo cp osp.service /lib/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable osp.service
+if cd $cwd/gunicorn
+then
+        sudo cp osp.service /lib/systemd/system/
+        sudo systemctl daemon-reload
+        sudo systemctl enable osp.service
+else
+        echo "Unable to find downloaded Gunicorn config directory. Aborting."
+        exit 1
+fi
 
 # Create HLS directory
-cd /var/
-sudo mkdir www
-sudo chown -R www-data:www-data www
-cd www
-sudo mkdir live
-sudo chown -R www-data:www-data live
-sudo mkdir videos
-sudo chown -R www-data:www-data videos
-sudo mkdir live-rec
-sudo chown -R www-data:www-data live-rec
-sudo mkdir images
-sudo chown -R www-data:www-data images
-sudo mkdir live-adapt
-sudo chown -R www-data:www-data live-adapt
-sudo mkdir stream-thumb
-sudo chown -R www-data:www-data stream-thumb
+sudo mkdir -p /var/www
+sudo mkdir -p /var/www/live
+sudo mkdir -p /var/www/videos
+sudo mkdir -p /var/www/live-rec
+sudo mkdir -p /var/www/images
+sudo mkdir -p /var/www/live-adapt
+sudo mkdir -p /var/stream-thumb
+
+sudo chown -R www-data:www-data /var/www
 
 sudo chown -R www-data:www-data /opt/osp
 sudo chown -R www-data:www-data /opt/osp/.git
@@ -67,7 +90,8 @@ sudo apt-get install ffmpeg -y
 sudo mkdir -p /var/log/gunicorn
 sudo chown -R www-data:www-data /var/log/gunicorn
 
-# Start Nginxcd o
+# Start Nginx
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
+echo "OSP Install Completed!"
