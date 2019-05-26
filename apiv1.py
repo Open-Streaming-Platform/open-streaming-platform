@@ -190,6 +190,7 @@ class api_1_ChannelChat(Resource):
                                 userImage = args['userImage']
                     socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
                     return {'results': {'message': 'Message Posted'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):
