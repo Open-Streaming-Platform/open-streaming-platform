@@ -188,7 +188,7 @@ class api_1_ChannelChat(Resource):
                         if 'userImage' in args:
                             if args['userImage'] is not None:
                                 userImage = args['channelName']
-                    emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': ''}, room=channelEndpointID)
+                    socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': ''}, room=channelEndpointID)
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):
