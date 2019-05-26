@@ -2,7 +2,7 @@
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, current_app
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered
@@ -13,6 +13,8 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
+from flask_plugins import PluginManager, get_enabled_plugins, get_plugin, Plugin, emit_event
+
 from apiv1 import api_v1
 
 import uuid
@@ -114,6 +116,11 @@ from classes import webhook
 
 sysSettings = None
 
+class AppPlugin(Plugin):
+    def register_blueprint(self, blueprint, **kwargs):
+        """Registers a blueprint."""
+        current_app.register_blueprint(blueprint, **kwargs)
+
 app.register_blueprint(api_v1)
 
 # Setup Flask-Security
@@ -125,11 +132,15 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
 
+# Initialize the plugin manager
+plugin_manager = PluginManager(app)
+
 # Establish Channel User List
 streamUserList = {}
 
 
 def init_db_values():
+    emit_event("before_db_init")
     db.create_all()
 
     # Logic to Check the DB Version
@@ -232,6 +243,8 @@ def init_db_values():
                 db.Connection.execute(sql)
             db.close()
         ## End DB UT8MB4 Fixes
+
+        emit_event("after_db_init")
 
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
@@ -484,6 +497,8 @@ def main_page():
 
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False).order_by(func.random()).limit(16)
 
+        emit_event("after_main_page")
+
         return render_template('themes/' + sysSettings.systemTheme + '/index.html', streamList=activeStreams, randomRecorded=randomRecorded)
 
 @app.route('/channels')
@@ -496,6 +511,7 @@ def channels_page():
         for channel in Channel.Channel.query.all():
             if len(channel.recordedVideo) > 0:
                 channelList.append(channel)
+    emit_event("after_channels_page")
     return render_template('themes/' + sysSettings.systemTheme + '/channels.html', channelList=channelList)
 
 
@@ -512,6 +528,9 @@ def channel_view_page(chanID):
 
         # Sort Video to Show Newest First
         recordedVids.sort(key=lambda x: x.videoDate, reverse=True)
+
+        emit_event("after_channel_view_page")
+
         return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, title="Channels - Videos")
     else:
         flash("No Such Channel", "error")
@@ -538,6 +557,7 @@ def topic_page():
             if topicQuery != None:
                 topicsList.append(topicQuery)
 
+    emit_event("after_topic_page")
     return render_template('themes/' + sysSettings.systemTheme + '/topics.html', topicsList=topicsList)
 
 
@@ -551,6 +571,7 @@ def topic_view_page(topicID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
+    emit_event("after_topic_view_page")
     return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streamsQuery, recordedVids=recordedVideoQuery, title="Topics - Videos")
 
 @app.route('/streamers')
@@ -577,6 +598,7 @@ def streamers_page():
         if userQuery != None:
             streamerList.append(userQuery)
 
+    emit_event("after_streamers_page")
     return render_template('themes/' + sysSettings.systemTheme + '/streamers.html', streamerList=streamerList)
 
 @app.route('/streamers/<userID>/')
@@ -598,6 +620,8 @@ def streamers_view_page(userID):
 
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
+
+    emit_event("after_streamers_view_page")
 
     return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, title=userName + " - Videos")
 
@@ -621,6 +645,8 @@ def view_page(loc):
     sysSettings = settings.settings.query.first()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+
+    emit_event("before_view_page")
 
     if requestedChannel.protected:
         if not check_isValidChannelViewer(requestedChannel.id):
@@ -654,6 +680,7 @@ def view_page(loc):
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled == True:
+                emit_event("view_page_chat_popout")
                 return render_template('themes/' + sysSettings.systemTheme + '/chatpopout.html', stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
@@ -666,6 +693,7 @@ def view_page(loc):
 
         if isEmbedded == None or isEmbedded == "False":
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
+            emit_event("after_view_page")
             return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
         else:
             isAutoPlay = request.args.get("autoplay")
@@ -685,8 +713,9 @@ def view_page(loc):
 @app.route('/play/<videoID>')
 def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
-
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+
+    emit_event("before_view_vid_page")
 
     if recordedVid.channel.protected:
         if not check_isValidChannelViewer(recordedVid.channel.id):
@@ -715,6 +744,8 @@ def view_vid_page(videoID):
         if isEmbedded == None or isEmbedded == "False":
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+
+            emit_event("after_view_vid_page")
 
             return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
         else:
@@ -758,6 +789,8 @@ def vid_change_page(loc):
             else:
                 channelImage = (sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
 
+            emit_event("vid_change_page_form_handler")
+
             runWebhook(recordedVidQuery.channel.id, 7, channelname=recordedVidQuery.channel.channelName,
                        channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                        channeltopic=get_topicName(recordedVidQuery.channel.topic),
@@ -782,6 +815,9 @@ def delete_vid_page(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
     if current_user.id == recordedVid.owningUser and recordedVid.videoLocation != None:
+
+        emit_event("delete_vid_page_handler")
+
         filePath = '/var/www/videos/' + recordedVid.videoLocation
         thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
 

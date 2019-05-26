@@ -4,6 +4,7 @@ git+https://github.com/mattupstate/flask-security.git@develop
 flask-socketio
 gevent
 flask-uploads
+flask-plugins
 psutil
 requests
 flask-migrate
