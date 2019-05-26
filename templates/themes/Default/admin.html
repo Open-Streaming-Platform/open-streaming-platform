@@ -110,6 +110,9 @@
                                   Allow Users to Register:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="registerSelect" name="registerSelect" {% if sysSettings.allowRegistration == True %} checked {% endif %}>
                                   <br>
+                                  Require Users to Confirm their Email Addresses:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="emailValidationSelect" name="emailValidationSelect" {% if sysSettings.requireConfirmedEmail == True %} checked {% endif %}>
+                                  <br>
                                   Allow Users to Record:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                                   <br>

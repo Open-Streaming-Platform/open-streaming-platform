@@ -12,6 +12,7 @@ class settings(db.Model):
     smtpPassword = db.Column(db.String(255))
     smtpSendAs = db.Column(db.String(255))
     allowRegistration = db.Column(db.Boolean)
+    requireConfirmedEmail = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
     background = db.Column(db.String(255))
@@ -19,7 +20,7 @@ class settings(db.Model):
     allowComments = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, allowRecording, adaptiveStreaming, showEmptyTables, allowComments):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, adaptiveStreaming, showEmptyTables, allowComments):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -30,6 +31,7 @@ class settings(db.Model):
         self.smtpPassword = smtpPassword
         self.smtpSendAs = smtpSendAs
         self.allowRegistration = allowRegistration
+        self.requireConfirmedEmail = requireConfirmedEmail
         self.allowRecording = allowRecording
         self.adaptiveStreaming = adaptiveStreaming
         self.showEmptyTables = showEmptyTables
