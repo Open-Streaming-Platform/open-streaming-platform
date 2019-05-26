@@ -183,7 +183,7 @@ class api_1_ChannelChat(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery != None:
-                        args = channelParserPut.parse_args()
+                        args = chatParserPost.parse_args()
                         userImage = '/static/img/user2.png'
                         if 'userImage' in args:
                             if args['userImage'] is not None:
