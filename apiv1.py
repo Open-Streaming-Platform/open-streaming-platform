@@ -4,6 +4,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Blueprint, request
 from flask_restplus import Api, Resource, reqparse
+from flask_socketio import emit
 
 import shutil
 import uuid
@@ -16,6 +17,7 @@ from classes import upvotes
 from classes import apikey
 from classes import views
 from classes.shared import db
+from classes.shared import socketio
 
 
 authorizations = {
@@ -50,6 +52,11 @@ streamParserPut.add_argument('topicID', type=int)
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
 videoParserPut.add_argument('topicID', type=int)
+
+chatParserPost = reqparse.RequestParser()
+chatParserPost.add_argument('username', type=str, required=True)
+chatParserPost.add_argument('message', type=str, required=True)
+chatParserPost.add_argument('userImage', type=str)
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
@@ -160,6 +167,28 @@ class api_1_ListChannel(Resource):
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+@api.route('/channels/chat/<string:channelEndpointID>')
+@api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
+class api_1_ChannelChat(Resource):
+    @api.expect(chatParserPost)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self, channelEndpointID):
+        """
+            Creates a New Chat Message in the Channel
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                if requestAPIKey.isValid():
+                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    if channelQuery != None:
+                        args = channelParserPut.parse_args()
+                        userImage = '/static/img/user2.png'
+                        if 'userImage' in args:
+                            if args['userImage'] is not None:
+                                userImage = args['channelName']
+                    emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': ''}, room=channelEndpointID)
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):

@@ -86,11 +86,14 @@ app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app,logger=True)
+#socketio = SocketIO(app,logger=True)
 
 appDBVersion = 0.45
 
 from classes.shared import db
+from classes.shared import socketio
+
+socketio.init_app(app)
 
 db.init_app(app)
 db.app = app
