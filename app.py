@@ -919,6 +919,7 @@ def comments_vid_page(videoID):
 def user_page():
     if request.method == 'GET':
         sysSettings = settings.settings.query.first()
+        emit_event("after_user_page_get")
         return render_template('themes/' + sysSettings.systemTheme + '/userSettings.html')
     elif request.method == 'POST':
         emailAddress = request.form['emailAddress']
@@ -950,6 +951,8 @@ def user_page():
 
         current_user.emailAddress = emailAddress
 
+        emit_event("user_page_post_handler")
+
         db.session.commit()
 
     return redirect(url_for('user_page'))
@@ -971,6 +974,9 @@ def user_addInviteCode():
                     newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays, inviteCode=inviteCodeQuery.id)
                     inviteCodeQuery.uses = inviteCodeQuery.uses + 1
                     db.session.add(newInvitedUser)
+
+                    emit_event("user_addInviteCode_handler")
+
                     db.session.commit()
                     flash("Added Invite Code to Channel", "success")
                     if 'redirectURL' in request.args:
@@ -995,6 +1001,8 @@ def admin_page():
             setting = request.args.get("setting")
 
             if action == "delete":
+                emit_event("admin_page_delete_handler")
+
                 if setting == "topics":
                     topicID = int(request.args.get("topicID"))
 
@@ -1099,6 +1107,7 @@ def admin_page():
                         flash("Invalid Role or User!")
 
             elif action == "add":
+
                 if setting == "userRole":
                     userID = int(request.args.get("userID"))
                     roleName = str(request.args.get("roleName"))
@@ -1108,6 +1117,9 @@ def admin_page():
 
                     if userQuery != None and roleQuery != None:
                         user_datastore.add_role_to_user(userQuery, roleQuery.name)
+
+                        emit_event("admin_page_role_add_handler")
+
                         db.session.commit()
                         flash("Added Role to User")
                     else:
@@ -1187,12 +1199,16 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
+        emit_event("after_admin_page")
+
         return render_template('themes/' + sysSettings.systemTheme + '/admin.html', appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
 
         if settingType == "system":
+
+            emit_event("admin_page_system_post_handler")
 
             serverName = request.form['serverName']
             serverAddress = request.form['serverAddress']
@@ -1284,6 +1300,8 @@ def admin_page():
 
         elif settingType == "topics":
 
+            emit_event("admin_page_topics_post_handler")
+
             if 'topicID' in request.form:
                 topicID = int(request.form['topicID'])
                 topicName = request.form['name']
@@ -1291,6 +1309,8 @@ def admin_page():
                 topicQuery = topics.topics.query.filter_by(id=topicID).first()
 
                 if topicQuery != None:
+
+                    emit_event("admin_page_topics_post_change_handler")
 
                     topicQuery.name = topicName
 
@@ -1309,6 +1329,9 @@ def admin_page():
                             except OSError:
                                 pass
             else:
+
+                emit_event("admin_page_topics_post_add_handler")
+
                 topicName = request.form['name']
 
                 topicImage = None
@@ -1340,6 +1363,8 @@ def settings_channels_page():
 
             if action == "delete":
                 if current_user.id == requestedChannel.owningUser:
+
+                    emit_event("settings_channels_page_delete_handler")
 
                     filePath = '/var/www/videos/' + requestedChannel.channelLoc
                     if filePath != '/var/www/videos/':
@@ -1411,6 +1436,9 @@ def settings_channels_page():
                     newChannel.imageLocation = filename
 
             db.session.add(newChannel)
+
+            emit_event("settings_channels_page_new_handler")
+
             db.session.commit()
 
         elif type == 'change':
@@ -1472,6 +1500,8 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
+                emit_event("settings_channels_page_change_handle")
+
                 flash("Channel Edited")
                 db.session.commit()
             else:
@@ -1525,6 +1555,8 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
+    emit_event("after_settings_channels_page")
+
     return render_template('themes/' + sysSettings.systemTheme + '/user_channels.html', channels=user_channels, topics=topicList, viewStats=user_channels_stats, channelChatBGOptions=channelChatBGOptions, channelChatAnimationOptions=channelChatAnimationOptions)
 
 @app.route('/settings/api', methods=['GET'])
@@ -1533,6 +1565,7 @@ def settings_channels_page():
 def settings_apikeys_page():
     sysSettings = settings.settings.query.first()
     apiKeyQuery = apikey.apikey.query.filter_by(userID=current_user.id).all()
+    emit_event("after_settings_apikeys_page")
     return render_template('themes/' + sysSettings.systemTheme + '/apikeys.html',apikeys=apiKeyQuery)
 
 @app.route('/settings/api/<string:action>', methods=['POST'])
@@ -1542,11 +1575,13 @@ def settings_apikeys_post_page(action):
     if action == "new":
         newapi = apikey.apikey(current_user.id, 1, request.form['keyName'], request.form['expiration'])
         db.session.add(newapi)
+        emit_event("settings_apikeys_post_page_new_handler")
         db.session.commit()
         flash("New API Key Added","success")
     elif action == "delete":
         apiQuery = apikey.apikey.query.filter_by(key=request.form['key']).first()
         if apiQuery.userID == current_user.id:
+            emit_event("settings_apikeys_post_page_delete_handler")
             db.session.delete(apiQuery)
             db.session.commit()
             flash("API Key Deleted","success")
