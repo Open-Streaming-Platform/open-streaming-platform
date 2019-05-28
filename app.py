@@ -758,7 +758,7 @@ def vid_change_page(loc):
             else:
                 channelImage = (sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
 
-            runWebhook(recordedVidQuery.channel.id, 7, channelname=recordedVidQuery.channel.channelName,
+            runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
                        channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                        channeltopic=get_topicName(recordedVidQuery.channel.topic),
                        channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
