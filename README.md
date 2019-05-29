@@ -138,10 +138,12 @@ apt-get install gunicorn3 uwsgi-plugin-python
 cd /tmp
 wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
 wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
+wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
 tar xvfz nginx-1.13.10.tar.gz
 unzip master.zip
+tar xvfz zlib-1.2.11.tar.gz
 cd nginx-1.13.10
-./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
+./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-zlib=../zlib-1.2.11
 make
 make install
 ```

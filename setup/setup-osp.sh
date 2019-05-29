@@ -24,11 +24,13 @@ if cd /tmp
 then
         sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
         sudo wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
-        tar xvfz nginx-1.13.10.tar.gz
-        unzip master.zip
+        sudo wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
+        sudo tar xvfz nginx-1.13.10.tar.gz
+        sudo unzip master.zip
+        sudo tar xvfz zlib-1.2.11.tar.gz
         if cd nginx-1.13.10
         then
-                ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master
+                ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-zlib=../zlib-1.2.11
                 make
                 sudo make install
         else
@@ -94,4 +96,4 @@ sudo chown -R www-data:www-data /var/log/gunicorn
 sudo systemctl start nginx.service
 sudo systemctl start osp
 
-echo "OSP Install Completed!"
+echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py and review"
