@@ -177,9 +177,11 @@ chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
 chown -R www-data:www-data /var/log/gunicorn
 ```
-11: Install FFMPEG
+11: Install FFMPEG3
 ```
-apt-get install ffmpeg
+add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+apt-get update
+apt-get install ffmpeg -y
 ```
 12: Start NGINX and OSP
 ```
