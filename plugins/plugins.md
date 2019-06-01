@@ -40,3 +40,4 @@
 * "socketio_updateStreamData" - On Update of Live Stream Metadata
 * "socketio_text_on_commands" - On Input of a user typing a "/" command in chat
 * "socketio.generateInviteCode" - On Generation of an Invite Code
+* "onAppInit" - Just before app initialization
