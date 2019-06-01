@@ -2044,6 +2044,8 @@ def handle_new_viewer(streamData):
 
     join_room(streamData['data'])
 
+    emit_event("socketio_handle_new_viewer")
+
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation == None:
@@ -2105,6 +2107,7 @@ def handle_leaving_viewer(streamData):
             stream.currentViewers = 0
         db.session.commit()
     leave_room(streamData['data'])
+    emit_event("socketio_handle_leaving_viewer")
     if current_user.is_authenticated:
 
         pictureLocation = current_user.pictureLocation
@@ -2254,6 +2257,8 @@ def updateStreamData(message):
         else:
             channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
+        emit_event("socketio_updateStreamData")
+
         runWebhook(channelQuery.id, 4, channelname=channelQuery.channelName,
                    channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                    channeltopic=channelQuery.topic,
@@ -2304,6 +2309,9 @@ def text(message):
             pictureLocation = '/images/' + pictureLocation
 
         if msg.startswith('/'):
+
+            emit_event("socketio_text_on_commands")
+
             if msg.startswith('/test '):
                 commandArray = msg.split(' ',1)
                 if len(commandArray) >= 2:
@@ -2423,6 +2431,8 @@ def generateInviteCode(message):
         newInviteCode = invites.inviteCode(daysToExpire, channelID)
         db.session.add(newInviteCode)
         db.session.commit()
+
+        emit_event("socketio.generateInviteCode")
 
         emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
 

@@ -35,3 +35,8 @@
 * "after_settings_apikeys_page" - After Accessing "/settings/api"
 * "settings_apikeys_post_page_new_handler" - Handler in "/settings/api/" for handing new API Keys
 * "settings_apikeys_post_page_delete_handler" - Handler in "/settings/api for handing deleted API Keys"
+* "socketio_handle_new_viewer" - On New Viewer Connection to a Stream
+* "socketio_handle_leaving_viewer" - On Viewer Leaving a Stream
+* "socketio_updateStreamData" - On Update of Live Stream Metadata
+* "socketio_text_on_commands" - On Input of a user typing a "/" command in chat
+* "socketio.generateInviteCode" - On Generation of an Invite Code
