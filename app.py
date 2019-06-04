@@ -1315,7 +1315,9 @@ def admin_page():
                     topicQuery.name = topicName
 
                     if 'photo' in request.files:
-                        oldImage = None
+                        file = request.files['photo']
+                        if file.filename != '':
+                            oldImage = None
 
                         if topicQuery.iconClass != None:
                             oldImage = topicQuery.iconClass
@@ -1336,8 +1338,10 @@ def admin_page():
 
                 topicImage = None
                 if 'photo' in request.files:
-                    filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-                    topicImage = filename
+                    file = request.files['photo']
+                    if file.filename != '':
+                        filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                        topicImage = filename
 
                 newTopic = topics.topics(topicName, topicImage)
                 db.session.add(newTopic)
