@@ -12,6 +12,8 @@
     <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
     <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
 
+    {{ emit_event("html_layout_header") }}
+
     {% block head %}
 
     {% endblock %}
@@ -48,6 +50,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/streamers">Streamers</a>
                     </li>
+                    {{ emit_event("html_layout_navbar_left") }}
                 </ul>
                 {% if user.is_authenticated == False %}
                 <ul class="navbar-nav">
@@ -71,11 +74,14 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                           {% if user.has_role('Admin') %}
                             <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
+                            {{ emit_event("html_layout_navbar_right_afterAdmin") }}
                           {% endif %}
                           {% if user.has_role('Streamer') %}
                           <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My Channels</a>
                           <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API Keys</a>
+                            {{ emit_event("html_layout_navbar_right_afterAPIKeys") }}
                           {% endif %}
+                            {{ emit_event("html_layout_navbar_right_beforeSettings") }}
                           <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
                           <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
                         </div>
@@ -121,6 +127,7 @@
     <script src="/static/vendor/popper/js/popper.min.js"></script>
     <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    {{ emit_event("html_layout_scripts") }}
     {% block scripts %}
 
     {% endblock %}

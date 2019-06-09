@@ -4,7 +4,6 @@
 
 * "before_db_init" - Before Initializing DB, First Start
 * "after_db_init" - After Initializing DB, First Start
-
 * "after_main_page" - After Accessing "/"
 * "after_channels_page" - After Accessing "/"
 * "after_channel_view_page" - After Accessing "/channel/<channel ID>"
@@ -41,3 +40,17 @@
 * "socketio_text_on_commands" - On Input of a user typing a "/" command in chat
 * "socketio.generateInviteCode" - On Generation of an Invite Code
 * "onAppInit" - Just before app initialization
+
+## Templates
+### layout.html
+* "html_layout_header" - In the header for all pages
+* "html_layout_navbar_left" - At the end of the left side of the Top Navbar on all Pages
+* "html_layout_navbar_right_afterAdmin" - Under the Admin Option in the Right Side of the Top Navbar on all Pages - Admin Listings
+* "html_layout_navbar_right_afterAPIKeys" - Under the Streamer Option in the Right Side of the Top Navbar on all Pages - Streamer Listings
+* "html_layout_navbar_right_beforeSettings" - Under the Authenticated User options in the Right sode of the Top Navbar on all Pages - User Listings
+* "html_layout_navbar_scripts" - Javascript Calls on all Pages
+### index.html
+* "html_index_beforeSearch" - Before the Searchbar on the root page at "/"
+* "html_index_beforeStreamList" - Before the Stream List on the root page at "/"
+* "html_index_beforeRecordedList" - Before the Recorded Video List on the root page at "/"
+* "html_index_scripts" - Javascript Calls on the index page
