@@ -32,6 +32,7 @@ import requests
 from threading import Thread
 from functools import wraps
 import json
+import hashlib
 
 #Import Paths
 cwp = sys.path[0]
@@ -305,6 +306,23 @@ def check_isValidChannelViewer(channelID):
                 else:
                     db.session.delete(invite)
                     db.session.commit()
+    return False
+
+def check_isUserValidChannelViewer(userID,channelID):
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery is not None:
+        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        if channelQuery is not None:
+            if channelQuery.owningUser is userQuery.id:
+                return True
+            else:
+                inviteQuery = invites.invitedViewer.query.filter_by(userID=userQuery.id, channelID=channelID).all()
+                for invite in inviteQuery:
+                    if invite.isValid():
+                        return True
+                    else:
+                        db.session.delete(invite)
+                        db.session.commit()
     return False
 
 @asynch
@@ -635,13 +653,22 @@ def view_page(loc):
 
     if requestedChannel is not None:
 
+        secureHash = None
+        username = None
+        if current_user.is_authenticated():
+            secureHash = hashlib.sha256(
+                current_user.username + requestedChannel.channelLoc + current_user.password).hexdigest()
+            username = current_user.username
+
+
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
             streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
         elif requestedChannel.record is True:
             streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
         elif requestedChannel.record is False:
-            streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+            #streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+            streamURL = 'rtmp://' + sysSettings.siteAddress + ":1935/stream-data/" + requestedChannel.channelLoc +"?username=" + username + "&hash=" + secureHash
 
         requestedChannel.views = requestedChannel.views + 1
         if streamData is not None:
@@ -665,8 +692,9 @@ def view_page(loc):
         db.session.commit()
 
         if isEmbedded == None or isEmbedded == "False":
+
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
+            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -1942,6 +1970,31 @@ def rec_Complete_handler():
     db.session.close()
     return 'OK'
 
+@app.route('/playbackAuth', methods=['POST'])
+def playback_auth_handler():
+    stream = request.form['name']
+    username = request.form['username']
+    secureHash = request.form['hash']
+
+    streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+
+    if streamQuery.protected is False:
+        return 'OK'
+    else:
+        if streamQuery is not None:
+            requestedUser = Sec.User.query.filter_by(username=username).first()
+            if requestedUser is not None:
+                isValid = False
+                if secureHash == hashlib.sha256(requestedUser.username + streamQuery.channelLoc + requestedUser.password).hexdigest():
+                    isValid = True
+                if isValid is True:
+                    if streamQuery.owningUser == requestedUser.id:
+                        return 'OK'
+                    else:
+                        if check_isUserValidChannelViewer(requestedUser.id,streamQuery.id):
+                            return 'OK'
+
+    return abort(400)
 
 
 ### Start Socket.IO Functions ###
