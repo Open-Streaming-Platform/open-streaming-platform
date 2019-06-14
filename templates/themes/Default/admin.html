@@ -32,6 +32,8 @@
                 <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
                 </li>
+                  {{ emit_event("html_admin_navlink") }}
+
               </ul>
           </div>
           <div class="card-body">
@@ -370,11 +372,14 @@
                         {% endfor %}
                     </div>
                 </div>
+                {{ emit_event("html_admin_extraOptions") }}
               </div>
           </div>
       </div>
     </div>
 </div>
+
+{{ emit_event("html_admin_scripts") }}
 {% endblock %}
 
 {% block scripts %}

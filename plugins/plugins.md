@@ -54,3 +54,21 @@
 * "html_index_beforeStreamList" - Before the Stream List on the root page at "/"
 * "html_index_beforeRecordedList" - Before the Recorded Video List on the root page at "/"
 * "html_index_scripts" - Javascript Calls on the index page
+### admin.html
+* "html_admin_navlink" - At the end of the Admin Navbar
+* "html_admin_extraOptions" - Location for additional Admin settingsOptions
+* "html_admin_scripts" - Javascript Calls on the Admin Page
+
+### channelplayer.html
+* "html_channelplayer_navlink" - At the end of the Channel Player Navbar
+* "html_channelplayer_mobile_buttons" - Options buttons for the Channel Live Stream - Mobile
+* "html_channelplayer_mobile_owner_buttons" - Options buttons for the Channel Live Stream Owner - Mobile
+* "html_channelplayer_desktop_buttons" - Options buttons for the Channel Live Stream
+* "html_channelplayer_desktop_owner_buttons" - Options buttons for the Channel Live Stream Owner
+* "html_channelplayer_metadataPanel" - Bottom of the Metadata Panel
+* "html_channelplayer_chatboxOptions" - After the Options buttons in the Chatbox
+* "html_channelplayer_scripts" - Javascript Calls on the Channel Player Page
+
+### user_channel.html
+* "html_userchannels_optionsPanel" - Location to add additional dropdown panel options for a channel's settings
+* "html_userchannels_scripts" - Javascript Calls on the User Channel Page

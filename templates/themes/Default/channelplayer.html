@@ -30,6 +30,7 @@
                     <li class="nav-item">
                         <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
                     </li>
+                    {{ emit_event("html_channelplayer_navlink") }}
                   </ul>
               </div>
         </div>
@@ -57,52 +58,61 @@
                             <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
                           </div>
                       </div>
-                        <div class="video-buttons-mobile justify-content-center">
-                      <div>
-                        <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
-                            <i class="fas fa-comment"></i>
-                        </button>
+                      <div class="video-buttons-mobile justify-content-center">
+                          <div>
+                            {% if channel.chatEnabled == True %}
+                            <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                                <i class="fas fa-comment"></i>
+                            </button>
+                            {% endif %}
+                            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
 
-                        <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                      </div>
-                      {% if channel.owningUser == current_user.id %}
-                          <div style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-                                  <i class="fas fa-edit"></i>
-                              </button>
+                            {{ emit_event("html_channelplayer_mobile_buttons") }}
                           </div>
-                      {% endif %}
-                  </div>
-                        <div class="White-BG streamInfo shadow">
-                      <div class="video-buttons-lg">
                           {% if channel.owningUser == current_user.id %}
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-                                  <i class="fas fa-edit"></i>
-                              </button>
-                          </div>
-                          {% endif %}
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-                                  <i class="fas fa-share-alt"></i>
-                              </button>
-                          </div>
-                          {% if channel.chatEnabled == True %}
-                          <div class="float-right">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
-                                  <i class="fas fa-comment"></i>
-                              </button>
-                          </div>
+                              <div style="margin-left:5px;">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                              </div>
+                              {{ emit_event("html_channelplayer_mobile_owner_buttons") }}
                           {% endif %}
                       </div>
+                      <div class="White-BG streamInfo shadow">
+                          <div class="video-buttons-lg">
+                              {% if channel.owningUser == current_user.id %}
+                              <div class="float-right" style="margin-left:5px;">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  {{ emit_event("html_channelplayer_desktop_owner_buttons") }}
+                              </div>
+
+                              {% endif %}
+                              <div class="float-right" style="margin-left:5px;">
+                                  {{ emit_event("html_channelplayer_desktop_buttons") }}
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                                      <i class="fas fa-share-alt"></i>
+                                  </button>
+
+                              </div>
+                              {% if channel.chatEnabled == True %}
+                              <div class="float-right">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                                      <i class="fas fa-comment"></i>
+                                  </button>
+                              </div>
+                              {% endif %}
+                          </div>
                       <div>
                           <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div id="streamMetadataName" style="float:left;"><span><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span></div><br>
                           <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div id="streamMetadataTopic" style="float:left;"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div><br>
                           <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;"> {{channel.views}}</div> <br>
                           <div class="streamcard-IconText"><i class="fas fa-eye"></i></div> <div style="float:left;"><span id="currentViewers"> {{channel.currentViewers}}</span></div> <br>
                           <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div><div style="float:left;"> <span id="totalUpvotes"></span></div> <br>
+                          {{ emit_event("html_channelplayer_metadataPanel") }}
                       </div>
                   </div>
                   </div>
@@ -114,6 +124,7 @@
                           <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
                           <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow"><i class="fas fa-external-link-alt"></i></a>
                       </div>
+                      {{ emit_event("html_channelplayer_chatboxOptions") }}
                     </div>
                   {% endif %}
               </div>
@@ -287,7 +298,7 @@
     </div>
   </div>
 </div>
-
+{{ emit_event("html_channelplayer_scripts") }}
 {% endblock %}
 
 {% block scripts %}
