@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - '1935:1935'
+      - '8585:80'
+      - '8553:443'
+#    volumes:
+#      - "./data/www:/var/www"
+#      - "./data/osp/conf/config.py:/opt/osp/conf/config.py"
+#      - "./data/osp/db/database.db:/opt/osp/db/database.db"
+#      - "./data/nginx/conf:/usr/local/nginx/conf"
+#    networks:
+#      - traefik
+#    labels:
+#      # Uncomment traefik labels for reverse proxy front end.
+#      - "traefik.port=443"
+#      - "traefik.frontend.rule=Host:osp.example.com"
+#      - "traefik.backend=osp"
+#      - "traefik.docker.network=traefik"
+#      - "traefik.expose=true"
+#networks:
+#  traefik:
