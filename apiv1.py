@@ -16,6 +16,7 @@ from classes import topics
 from classes import upvotes
 from classes import apikey
 from classes import views
+from classes import settings
 from classes.shared import db
 from classes.shared import socketio
 
@@ -57,6 +58,17 @@ chatParserPost = reqparse.RequestParser()
 chatParserPost.add_argument('username', type=str, required=True)
 chatParserPost.add_argument('message', type=str, required=True)
 chatParserPost.add_argument('userImage', type=str)
+
+@api.route('/server')
+class api_1_Server(Resource):
+    # Server - Get Basic Server Information
+    def get(self):
+        """
+            Displays a Listing of Server Settings
+        """
+        serverSettings = settings.settings.query.first()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in serverSettings]}
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):

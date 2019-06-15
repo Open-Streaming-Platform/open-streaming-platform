@@ -19,8 +19,9 @@ class settings(db.Model):
     showEmptyTables = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
+    version = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, adaptiveStreaming, showEmptyTables, allowComments):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -38,6 +39,17 @@ class settings(db.Model):
         self.allowComments = allowComments
         self.background = "Ash"
         self.systemTheme = "Default"
+        self.version = version
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def serialize(self):
+        return {
+            'siteName': self.siteName,
+            'siteAddress': self.siteAddress,
+            'allowRegistration': self.allowRegistration,
+            'allowRecording': self.allowRecording,
+            'allowComments': self.allowComments,
+            'version': self.version
+        }

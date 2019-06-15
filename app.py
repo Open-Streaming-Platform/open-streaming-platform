@@ -47,6 +47,8 @@ import datetime
 
 from conf import config
 
+version = "beta-2"
+
 app = Flask(__name__)
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -58,8 +60,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
-    app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4', 'pool_use_lifo': 'True', 'pool_size': '20'}
+    app.config['MYSQL_DATABASE_CHARSET'] = "utf8"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20}
 else:
     pass
 
@@ -165,10 +167,17 @@ def init_db_values():
 
     sysSettings = settings.settings.query.first()
 
+    if sysSettings.version != version:
+        sysSettings.version = version
+        db.session.commit()
+
     if sysSettings != None:
         # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
         if sysSettings.systemTheme == None:
             sysSettings.systemTheme = "Default"
+            db.session.commit()
+        if sysSettings.version == "None":
+            sysSettings.version = version
             db.session.commit()
         # Sets Registration to Required if None is Set - Change from Beta 1 to Beta 2
         if sysSettings.requireConfirmedEmail == None:
@@ -222,7 +231,7 @@ def init_db_values():
         if config.dbLocation[:6] != "sqlite":
             dbEngine = db.engine
             dbConnection = dbEngine.connect()
-            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
+            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'" % dbEngine.url.database)
 
             sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
 
@@ -1583,7 +1592,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user,'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
 
-            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, adaptiveStreaming, showEmptyTables, allowComments)
+            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)
             db.session.commit()
 
