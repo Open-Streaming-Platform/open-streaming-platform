@@ -66,7 +66,7 @@ class api_1_Server(Resource):
         """
             Displays a Listing of Server Settings
         """
-        serverSettings = settings.settings.query.first()
+        serverSettings = settings.settings.query.all()[0]
         db.session.commit()
         return {'results': [ob.serialize() for ob in serverSettings]}
 
