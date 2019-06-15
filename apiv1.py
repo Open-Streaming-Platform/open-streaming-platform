@@ -68,7 +68,7 @@ class api_1_Server(Resource):
         """
         serverSettings = settings.settings.query.all()[0]
         db.session.commit()
-        return {'results': [ob.serialize() for ob in serverSettings]}
+        return {'results': serverSettings.serialize() }
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
