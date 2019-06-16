@@ -317,7 +317,7 @@ def check_isValidChannelViewer(channelID):
     return False
 
 def check_isCommentUpvoted(commentID):
-    commentQuery = upvotes.commentUpvotes.query.filter_by(id=int(commentID)).first()
+    commentQuery = upvotes.commentUpvotes.query.filter_by(id=int(commentID), usedID=current_user.id).first()
     if commentQuery != None:
         return True
     else:
