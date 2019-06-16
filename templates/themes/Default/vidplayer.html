@@ -103,7 +103,7 @@
                           <div class="streamcard-IconText"><i class="fas fa-calendar-alt"></i></div> <div style="float:left;"> <b>{{video.videoDate|normalize_date}}</b></div> <br>
                           <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{video.owningUser}}/">{{video.owningUser|get_userName}}</a></b><br>
                           <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{video.views}} </div><br>
-                          <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote()"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div> <div style="float:left;"><span id="totalUpvotes"></span></div> <br>
+                          <div class="streamcard-IconText"><a href="javascript:void(0)" onclick="changeUpvote('video',{{video.id}});"><i id="upVoteIcon" class="far fa-thumbs-up"></i></a></div> <div style="float:left;"><span id="totalUpvotes"></span></div> <br>
                       </div>
                   </div>
                   <br>
@@ -118,16 +118,16 @@
                                 <b>{{comment.userID|get_userName}}</b><br>
                               <img src="{{comment.userID|get_pictureLocation}}" width="64px" height="64px" onerror="this.src='/static/img/user2.png';">
                             </div>
-                            <div class="col-lg-7 col-md-7">
+                            <div class="col-lg-8 col-md-7">
                                 <b>{{comment.timestamp|normalize_date}}</b><br>
                                 {{comment.comment}}
                             </div>
                             <div class="col-lg-2 col-md-2">
                               <div class="float-right">
-                                {% if check_isCommentUpvoted(comment.id) %}<button type="button" class="btn btn-success"> <i class="fas fa-thumbs-up"></i>
-                                {% else %} <button type="button" class="btn btn-outline-success"> <i class="far fa-thumbs-up"></i>
+                                {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvote-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="fas fa-thumbs-up"></i>
+                                {% else %} <button type="button" id="commentUpvote-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});">> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
                                 {% endif %}
-                                  {{comment.upvotes|length}}</button>
+                                      <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
                                 {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
                                     <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
                                 {% endif %}
@@ -387,26 +387,36 @@
 
     <script type="text/javascript" charset="utf-8">
         socket.on('upvoteTotalResponse', function (msg) {
-            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+
+            if (msg['type'] === 'video') {
+                upvoteDivID = 'totalUpvotes';
+                upvoteIconID = 'upVoteIcon';
+            } else if (msg['type'] === 'comment') {
+                upvoteDivID = 'upvoteTotalComments-' + msg['loc'];
+                upvoteIconID = 'commentUpvoteIcon-' + msg['loc'];
+            }
+
+            document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];
+
             if (msg['myUpvote'] === 'True'){
-                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
-                    document.getElementById("upVoteIcon").classList.remove('far');
-                    document.getElementById("upVoteIcon").classList.add('fas');
+                if ( document.getElementById(upvoteIconID).classList.contains('far') ) {
+                    document.getElementById(upvoteIconID).classList.remove('far');
+                    document.getElementById(upvoteIconID).classList.add('fas');
                 }
             }
             else if (msg['myUpvote'] === 'False'){
-                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
-                    document.getElementById("upVoteIcon").classList.remove('fas');
-                    document.getElementById("upVoteIcon").classList.add('far');
+                if ( document.getElementById(upvoteIconID).classList.contains('fas') ) {
+                    document.getElementById(upvoteIconID).classList.remove('fas');
+                    document.getElementById(upvoteIconID).classList.add('far');
                 }
             }
         });
     </script>
 
     <script>
-        function changeUpvote() {
-            socket.emit('changeUpvote', {loc: '{{video.id}}', vidType: 'video'});
-            socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+        function changeUpvote(type, id) {
+            socket.emit('changeUpvote', {loc: id, vidType: type});
+            socket.emit('getUpvoteTotal', {loc: id, vidType: type});
         }
     </script>
 

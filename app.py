@@ -2118,6 +2118,13 @@ def handle_upvote_total_request(streamData):
             myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
         except:
             pass
+    elif vidType == "comment":
+        loc = int(loc)
+        totalQuery = upvotes.commentUpvotes.query.filter_by(commentID=loc).all()
+        try:
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=loc).first()
+        except:
+            pass
 
     if totalQuery != None:
         for vote in totalQuery:
@@ -2127,7 +2134,7 @@ def handle_upvote_total_request(streamData):
 
     db.session.commit()
     db.session.close()
-    emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote)})
+    emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote), 'type': vidType, 'loc': loc})
 
 @socketio.on('changeUpvote')
 def handle_upvoteChange(streamData):
@@ -2158,6 +2165,17 @@ def handle_upvoteChange(streamData):
         else:
             db.session.delete(myVoteQuery)
         db.session.commit()
+    elif vidType == "comment":
+        loc = int(loc)
+        videoCommentQuery = comments.videoComments.query.filter_by(id=loc).first()
+        if videoCommentQuery != None:
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, id=videoCommentQuery.id).first()
+            if myVoteQuery == None:
+                newUpvote = upvotes.commentUpvotes(current_user.id, videoCommentQuery.id)
+                db.session.add(newUpvote)
+            else:
+                db.session.delete(myVoteQuery)
+            db.session.commit()
     db.session.close()
 
 
