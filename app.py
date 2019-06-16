@@ -764,6 +764,7 @@ def vid_move_page(loc):
                     coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
                     shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
 
+                db.session.commit()
                 flash("Video Moved to Another Channel", "success")
                 return redirect(url_for('view_vid_page', videoID=loc))
 
