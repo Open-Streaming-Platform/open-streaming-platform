@@ -760,9 +760,11 @@ def vid_move_page(loc):
             coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
             if os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
                 shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation, "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
+                recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
                 if (recordedVidQuery.thumbnailLocation != None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
                     coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
                     shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                    recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
 
                 db.session.commit()
                 flash("Video Moved to Another Channel", "success")
