@@ -746,6 +746,30 @@ def view_vid_page(videoID):
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
 
+@app.route('/play/<loc>/move', methods=['POST'])
+@login_required
+def vid_move_page(loc):
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc, owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+        newChannel = int(request.form['moveToChannelID'])
+        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
+        if newChannelQuery != None:
+            recordedVidQuery.channelID = newChannelQuery.id
+            coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
+            if os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
+                shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation, "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
+                if (recordedVidQuery.thumbnailLocation != None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
+                    coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
+                    shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+
+                flash("Video Moved to Another Channel", "success")
+                return redirect(url_for('view_vid_page', videoID=loc))
+
+    flash("Error Moving Video", "error")
+    return redirect(url_for("main_page"))
+
 @app.route('/play/<loc>/change', methods=['POST'])
 @login_required
 def vid_change_page(loc):
