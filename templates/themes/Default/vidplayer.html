@@ -22,8 +22,8 @@
                   </div>
                   <div class="video-buttons-mobile justify-content-center">
                       <div>
-                          <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});">
-                                  <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});">
+                              <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
                           </button>
                       </div>
                       <div style="margin-left:5px;">
@@ -90,7 +90,7 @@
                                   <i class="fas fa-comment"></i>
                               </button>
                           </div>
-                          <div class="float-right">
+                          <div class="float-right" style="margin-left:5px;">
                               <a href="{{streamURL}}" class="btn btn-primary shadow">
                                   <i class="fas fa-download"></i>
                               </a>
@@ -418,6 +418,16 @@
                     document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
                     document.getElementById(upvoteButtonID).classList.add('btn-success');
                 }
+                if (msg['type'] === 'video') {
+                    if ( document.getElementById(upvoteIconID +'Mobile').classList.contains('far') ) {
+                        document.getElementById(upvoteIconID +'Mobile').classList.remove('far');
+                        document.getElementById(upvoteIconID +'Mobile').classList.add('fas');
+                        }
+                    if (document.getElementById(upvoteButtonID +'Mobile').classList.contains('btn-outline-success')) {
+                        document.getElementById(upvoteButtonID +'Mobile').classList.remove('btn-outline-success');
+                        document.getElementById(upvoteButtonID +'Mobile').classList.add('btn-success');
+                    }
+                }
             }
             else if (msg['myUpvote'] === 'False'){
                 if ( document.getElementById(upvoteIconID).classList.contains('fas') ) {
@@ -427,6 +437,16 @@
                 if (document.getElementById(upvoteButtonID).classList.contains('btn-success')) {
                     document.getElementById(upvoteButtonID).classList.remove('btn-success');
                     document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
+                }
+                if (msg['type'] === 'video') {
+                    if ( document.getElementById(upvoteIconID +'Mobile').classList.contains('fas') ) {
+                        document.getElementById(upvoteIconID +'Mobile').classList.remove('fas');
+                        document.getElementById(upvoteIconID +'Mobile').classList.add('far');
+                    }
+                    if (document.getElementById(upvoteButtonID +'Mobile').classList.contains('btn-success')) {
+                        document.getElementById(upvoteButtonID +'Mobile').classList.remove('btn-success');
+                        document.getElementById(upvoteButtonID +'Mobile').classList.add('btn-outline-success');
+                    }
                 }
             }
         });
