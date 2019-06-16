@@ -7,6 +7,7 @@ class videoComments(db.Model):
     timestamp = db.Column(db.DateTime)
     comment = db.Column(db.String(2048))
     videoID = db.Column(db.Integer,db.ForeignKey('RecordedVideo.id'))
+    upvotes = db.relationship('commentUpvotes', backref='videoComment', lazy="joined")
 
     def __init__(self, userID, comment, videoID):
         self.userID = userID
