@@ -2,6 +2,7 @@ from .shared import db
 from datetime import datetime
 
 class videoComments(db.Model):
+    __tablename__ = "videoComments"
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer,db.ForeignKey('user.id'))
     timestamp = db.Column(db.DateTime)
