@@ -306,6 +306,7 @@
 <div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
+      <form action="/play/{{video.id}}/move" method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="moveModalTitle">Move to Another Channel</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -315,7 +316,7 @@
 
       <div class="modal-body">
             <h5>Move this Video to Channel:</h5>
-            <form action="/play/{{video.id}}/move" method="post">
+
                 <select name="moveToChannelID" class="form-control">
                     {% for chan in current_user.channels %}
                         {% if chan.id != video.channelID %}
@@ -323,12 +324,12 @@
                         {% endif %}
                     {% endfor %}
                 </select>
-            </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-warning" data-dismiss="modal">Move</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
