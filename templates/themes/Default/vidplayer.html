@@ -318,7 +318,9 @@
             <form action="/play/{{video.id}}/move" method="post">
                 <select name="moveToChannelID" class="form-control">
                     {% for chan in current_user.channels %}
-                    <option value="{{chan.id}}">chan.channelName</option>
+                        {% if chan.id != video.channelID %}
+                            <option value="{{chan.id}}">{{chan.channelName}}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </form>
