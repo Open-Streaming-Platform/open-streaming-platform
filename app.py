@@ -882,7 +882,8 @@ def comments_vid_page(videoID):
                 if commentQuery != None:
                     if current_user.has_role('Admin') or recordedVid.owningUser == current_user.id or commentQuery.userID == current_user.id:
                         upvoteQuery = upvotes.commentUpvotes.query.filter_by(commentID=commentQuery.id).all()
-                        db.session.delete(upvoteQuery)
+                        for vote in upvoteQuery:
+                            db.session.delete(vote)
                         db.session.delete(commentQuery)
                         db.session.commit()
                         flash('Comment Deleted', "success")
