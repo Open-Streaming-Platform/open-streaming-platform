@@ -316,6 +316,13 @@ def check_isValidChannelViewer(channelID):
                     db.session.commit()
     return False
 
+def check_isCommentUpvoted(commentID):
+    commentQuery = upvotes.commentUpvotes.query.filter_by(id=int(commentID)).first()
+    if commentQuery != None:
+        return True
+    else:
+        return False
+
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
     webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
@@ -347,7 +354,7 @@ def processWebhookVariables(payload, **kwargs):
     return payload
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
-
+app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 ### Start Jinja2 Filters
 
 @app.context_processor
