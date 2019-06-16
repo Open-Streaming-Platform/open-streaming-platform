@@ -391,9 +391,11 @@
             if (msg['type'] === 'video') {
                 upvoteDivID = 'totalUpvotes';
                 upvoteIconID = 'upVoteIcon';
+                upvoteButtonID = 'videoUpvoteButton';
             } else if (msg['type'] === 'comment') {
                 upvoteDivID = 'upvoteTotalComments-' + msg['loc'];
                 upvoteIconID = 'commentUpvoteIcon-' + msg['loc'];
+                upvoteButtonID = 'commentUpvoteButton-' + msg['loc'];
             }
 
             document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];
@@ -403,11 +405,19 @@
                     document.getElementById(upvoteIconID).classList.remove('far');
                     document.getElementById(upvoteIconID).classList.add('fas');
                 }
+                if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-success')) {
+                    document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
+                    document.getElementById(upvoteButtonID).classList.add('btn-success');
+                }
             }
             else if (msg['myUpvote'] === 'False'){
                 if ( document.getElementById(upvoteIconID).classList.contains('fas') ) {
                     document.getElementById(upvoteIconID).classList.remove('fas');
                     document.getElementById(upvoteIconID).classList.add('far');
+                }
+                if (document.getElementById(upvoteButtonID).classList.contains('btn-success')) {
+                    document.getElementById(upvoteButtonID).classList.remove('btn-success');
+                    document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
                 }
             }
         });
