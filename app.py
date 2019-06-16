@@ -2169,7 +2169,7 @@ def handle_upvoteChange(streamData):
         loc = int(loc)
         videoCommentQuery = comments.videoComments.query.filter_by(id=loc).first()
         if videoCommentQuery != None:
-            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, id=videoCommentQuery.id).first()
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=videoCommentQuery.id).first()
             if myVoteQuery == None:
                 newUpvote = upvotes.commentUpvotes(current_user.id, videoCommentQuery.id)
                 db.session.add(newUpvote)
