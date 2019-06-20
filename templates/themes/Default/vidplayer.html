@@ -69,46 +69,46 @@
                       <div class="video-buttons-lg">
                           {% if video.owningUser == current_user.id %}
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
+                              <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal" title="Delete Video">
                                   <i class="fas fa-trash-alt"></i>
                               </button>
 
                           </div>
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal" title="Edit Video">
                                   <i class="fas fa-edit"></i>
                               </button>
                           </div>
 
                           <div class="float-right" style="margin-left:5px;">
-                            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
+                            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal" title="Move Video">
                               <i class="fas fa-arrow-circle-right"></i>
                             </button>
                           </div>
 
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" onclick="newScreenShot()">
+                              <button type="button" class="btn btn-primary shadow" onclick="newScreenShot()" title="New Thumbnail">
                                   <i class="fas fa-camera"></i>
                               </button>
                           </div>
                           {% endif %}
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal" title="Share Video">
                                   <i class="fas fa-share-alt"></i>
                               </button>
                           </div>
                           <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments != True or sysSettings.allowComments != True %} disabled aria-disabled="true"{% endif %}>
+                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments != True or sysSettings.allowComments != True %} disabled aria-disabled="true"{% endif %} title="Comment">
                                   <i class="fas fa-comment"></i>
                               </button>
                           </div>
                           <div class="float-right" style="margin-left:5px;">
-                              <a href="{{streamURL}}" class="btn btn-primary shadow">
+                              <a href="{{streamURL}}" class="btn btn-primary shadow" title="Download Video">
                                   <i class="fas fa-download"></i>
                               </a>
                           </div>
                           <div class="float-right">
-                              <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});">
+                              <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                                   <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                               </button>
                           </div>
