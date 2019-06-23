@@ -179,6 +179,9 @@ def init_db_values():
         if sysSettings.version == "None":
             sysSettings.version = version
             db.session.commit()
+        if sysSettings.systemLogo == None:
+            sysSettings.systemLogo = "/static/img/logo.png"
+            db.session.commit()
         # Sets Registration to Required if None is Set - Change from Beta 1 to Beta 2
         if sysSettings.requireConfirmedEmail == None:
             sysSettings.requireConfirmedEmail = True
