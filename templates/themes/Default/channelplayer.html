@@ -524,6 +524,11 @@
                     videoJSObj.reset();
                     videoContainer.style.display = "none";
                     offlineWindow.style.display = "block";
+                    var currentStreamName = "No Stream";
+                    var nameDiv = document.getElementById('streamMetadataName');
+                    var nameDivHTML = '<span><b> ' + currentStreamName +  '</b></span>';
+                    nameDiv.innerHTML = nameDivHTML;
+
                 } catch(e) {
                     console.log("OSP tried restarting the stream but had an issue:" + e)
                 }
