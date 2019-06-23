@@ -1254,7 +1254,7 @@ def admin_page():
                 file = request.files['photo']
                 if file.filename != '':
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-                    systemLogo = filename
+                    systemLogo = "/images/" + filename
 
             sysSettings.siteName = serverName
             sysSettings.siteAddress = serverAddress
