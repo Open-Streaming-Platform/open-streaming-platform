@@ -50,6 +50,7 @@ class settings(db.Model):
         return {
             'siteName': self.siteName,
             'siteAddress': self.siteAddress,
+            'siteLogo': self.systemLogo,
             'allowRegistration': self.allowRegistration,
             'allowRecording': self.allowRecording,
             'allowComments': self.allowComments,
