@@ -19,6 +19,7 @@ class settings(db.Model):
     showEmptyTables = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
+    systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
 
     def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, adaptiveStreaming, showEmptyTables, allowComments, version):
@@ -40,6 +41,7 @@ class settings(db.Model):
         self.background = "Ash"
         self.systemTheme = "Default"
         self.version = version
+        self.systemLogo = "/static/img/logo.png"
 
     def __repr__(self):
         return '<id %r>' % self.id
