@@ -12,3 +12,4 @@ flask-restplus
 pymysql
 gitpython
 requests
+pywebpush
