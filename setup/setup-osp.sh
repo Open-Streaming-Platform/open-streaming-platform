@@ -82,13 +82,22 @@ sudo mkdir -p /var/stream-thumb
 
 sudo chown -R www-data:www-data /var/www
 
+# Setup Pywebpush for Push Notifications
+sudo mkdir -p /opt/osp/vapid
+sudo openssl ecparam -name prime256v1 -genkey -noout -out /opt/osp/vapid/vapid_private.pem
+sudo openssl ec -in /opt/osp/vapid/vapid_private.pem -pubout -out /opt/osp/vapid/vapid_public.pem
+sudo openssl ec -in /opt/osp/vapid/vapid_private.pem -outform DER|tail -c +8|head -c 32|base64|tr -d '=' |tr '/+' '_-' >> /opt/osp/vapid/private_key.txt
+sudo openssl ec -in /opt/osp/vapid/vapid_private.pem -pubout -outform DER|tail -c 65|base64|tr -d '=' |tr '/+' '_-' >> /opt/osp/vapid/public_key.txt
+
+# Set Ownership of OSP Directory to www-data
 sudo chown -R www-data:www-data /opt/osp
 sudo chown -R www-data:www-data /opt/osp/.git
 
-#Setup FFMPEG for recordings and Thumbnails
+# Setup FFMPEG for recordings and Thumbnails
 sudo add-apt-repository ppa:jonathonf/ffmpeg-3 -y
 sudo apt-get update
 sudo apt-get install ffmpeg -y
+
 
 # Fix for Gunicorn Logs
 sudo mkdir -p /var/log/gunicorn
