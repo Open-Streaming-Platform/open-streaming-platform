@@ -100,6 +100,9 @@
                                   Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}"required>
                                   Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" required>
                                   <hr>
+                                  System Logo:
+                                  <img src="{{sysSettings.systemLogo}}" width="32" height="32"><br>
+                                  <input type="file" name="photo" class="form-control-file" value="Upload a Logo" style="margin-top:10px;+"><br>
                                   Theme:
                                   <select class="form-control" name="theme">
                                       {% for theme in themeList %}

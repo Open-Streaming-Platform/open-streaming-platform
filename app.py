@@ -1246,6 +1246,13 @@ def admin_page():
             if 'smtpSSL' in request.form:
                 smtpSSL = True
 
+            systemLogo = None
+            if 'photo' in request.files:
+                file = request.files['photo']
+                if file.filename != '':
+                    filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                    systemLogo = filename
+
             sysSettings.siteName = serverName
             sysSettings.siteAddress = serverAddress
             sysSettings.smtpSendAs = smtpSendAs
@@ -1262,6 +1269,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.systemLogo = systemLogo
 
             db.session.commit()
 
