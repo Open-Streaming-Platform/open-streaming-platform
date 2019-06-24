@@ -137,6 +137,49 @@ $(document).ready(function(){
 });
 </script>
 
+{% if user.is_authenticated %}
+
+<script>
+function registerServiceWorker() {
+    navigator.serviceWorker
+        .register('/sw.js')
+        .then(registration => {
+            console.log(
+                "ServiceWorker registered with scope:",
+                registration.scope
+            );
+        })
+        .catch(e => console.error("ServiceWorker failed:", e));
+}
+
+function subscribeToPushNotifications(registration) {
+    return registration.pushManager
+        .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: '{{vapidpubkey}}'
+        })
+        .then(pushSubscription => {
+            console.log("Received PushSubscription:",JSON.stringify(pushSubscription));
+            return pushSubscription;
+        });
+}
+
+if (navigator && navigator.serviceWorker) {
+    registerServiceWorker();
+}
+
+const permission = Notification.requestPermission();
+
+if (permission !== 'granted') {
+    console.log("Permission Denied for Push")
+}else{
+    pushSub = subscribeToPushNotifications(registration);
+    console.log(pushSub);
+}
+
+</script>
+{% endif %}
+
 </body>
 
 
