@@ -381,6 +381,10 @@ def inject_sysSettings():
 
     return dict(sysSettings=sysSettings)
 
+@app.context_processor
+def inject_vapid_public_key():
+    return dict(vapidpubkey=VAPID_PUBLIC_KEY)
+
 
 @app.template_filter('normalize_uuid')
 def normalize_uuid(uuidstr):
@@ -1685,6 +1689,10 @@ def initialSetup():
             return redirect(url_for('main_page'))
 
     return redirect(url_for('main_page'))
+
+@app.route('/sw.js', methods=['GET'])
+def service_worker_handler():
+    return app.send_static_file('/js/sw.js')
 
 ### Start Video / Stream Handler Routes
 
