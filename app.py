@@ -134,6 +134,7 @@ patch_request_class(app)
 # Setup PyWebPush
 VAPID_PRIVATE_KEY = open('/opt/osp/vapid/vapid_private.pem', "r+").readline().strip("\n")
 VAPID_PUBLIC_KEY = open('/opt/osp/vapid/vapid_public.pem', "r+").read().strip("\n")
+VAPID_PUBLIC_KEY_B64 = open('/opt/osp/vapid/public_key.txt', "r+").read().strip("\n")
 
 # Establish Channel User List
 streamUserList = {}
@@ -381,7 +382,7 @@ def inject_sysSettings():
 
 @app.context_processor
 def inject_vapid_public_key():
-    return dict(vapidpubkey=VAPID_PUBLIC_KEY)
+    return dict(vapidpubkey=VAPID_PUBLIC_KEY_B64)
 
 
 @app.template_filter('normalize_uuid')
