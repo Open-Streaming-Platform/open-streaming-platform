@@ -116,6 +116,7 @@ from classes import views
 from classes import comments
 from classes import invites
 from classes import webhook
+from classes import subscription
 
 sysSettings = None
 
@@ -131,11 +132,8 @@ configure_uploads(app, photos)
 patch_request_class(app)
 
 # Setup PyWebPush
-DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.getenv("/opt/osp/vapid/vapid_private.pem")
-DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH = os.getenv("/opt/osp/vapid/vapid_public.pem")
-
-VAPID_PRIVATE_KEY = open(DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
-VAPID_PUBLIC_KEY = open(DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH, "r+").read().strip("\n")
+VAPID_PRIVATE_KEY = open('/opt/osp/vapid/vapid_private.pem', "r+").readline().strip("\n")
+VAPID_PUBLIC_KEY = open('/opt/osp/vapid/vapid_public.pem', "r+").read().strip("\n")
 
 # Establish Channel User List
 streamUserList = {}
