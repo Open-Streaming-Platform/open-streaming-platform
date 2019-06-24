@@ -134,7 +134,9 @@ patch_request_class(app)
 # Setup PyWebPush
 VAPID_PRIVATE_KEY = open('/opt/osp/vapid/vapid_private.pem', "r+").readline().strip("\n")
 VAPID_PUBLIC_KEY = open('/opt/osp/vapid/vapid_public.pem', "r+").read().strip("\n")
-VAPID_PUBLIC_KEY_B64 = open('/opt/osp/vapid/public_key.txt', "r+").read().strip("\n")
+
+with open('/opt/osp/vapid/public_key.txt') as temp_file:
+  VAPID_PUBLIC_KEY_B64 = [line.rstrip('\n') for line in temp_file]
 
 # Establish Channel User List
 streamUserList = {}
