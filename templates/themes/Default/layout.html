@@ -140,7 +140,7 @@ $(document).ready(function(){
 {% if user.is_authenticated %}
 
 <script>
-const vapidpublickey = {{vapidpublickey}};
+const vapidpublickey = '{{vapidpubkey}}';
 
 function registerServiceWorker() {
     navigator.serviceWorker
