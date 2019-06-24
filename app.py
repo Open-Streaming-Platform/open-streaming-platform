@@ -13,6 +13,9 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
+
+from pywebpush import webpush, WebPushException
+
 from apiv1 import api_v1
 
 import uuid
@@ -127,9 +130,15 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
 
+# Setup PyWebPush
+DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.getenv("/opt/osp/vapid/vapid_private.pem")
+DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH = os.getenv("/opt/osp/vapid/vapid_public.pem")
+
+VAPID_PRIVATE_KEY = open(DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
+VAPID_PUBLIC_KEY = open(DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH, "r+").read().strip("\n")
+
 # Establish Channel User List
 streamUserList = {}
-
 
 def init_db_values():
     db.create_all()
