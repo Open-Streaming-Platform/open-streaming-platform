@@ -84,6 +84,7 @@ sudo chown -R www-data:www-data /var/www
 
 # Setup Pywebpush for Push Notifications
 sudo mkdir -p /opt/osp/vapid
+sudo chmod -R 774 /opt/osp/vapid
 sudo openssl ecparam -name prime256v1 -genkey -noout -out /opt/osp/vapid/vapid_private.pem
 sudo openssl ec -in /opt/osp/vapid/vapid_private.pem -pubout -out /opt/osp/vapid/vapid_public.pem
 sudo openssl ec -in /opt/osp/vapid/vapid_private.pem -outform DER|tail -c +8|head -c 32|base64|tr -d '=' |tr '/+' '_-' >> /opt/osp/vapid/private_key.txt
