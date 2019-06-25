@@ -223,7 +223,7 @@ function updateSubscriptionOnServer(subscription) {
         console.log(subscriptionJSON);
 
         var xhr = new XMLHttpRequest();
-        xhr.open('/subscriptionReg', 'POST', true);
+        xhr.open('POST', '/subscriptionReg', true);
         xhr.setRequestHeader('Content-Type','application/json; charset=UTF-8');
         xhr.send(subscriptionJSON);
 
