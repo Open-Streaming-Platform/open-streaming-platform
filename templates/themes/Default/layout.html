@@ -171,11 +171,12 @@ function subscribeToPushNotifications(swRegistration) {
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     registerServiceWorker();
     Notification.requestPermission();
+    var swReg = swRegistration;
 
     if (Notification.permission !== 'granted') {
         console.log("Permission Denied for Push")
     }else{
-        pushSub = subscribeToPushNotifications(swRegistration);
+        pushSub = subscribeToPushNotifications(swReg);
         console.log(pushSub);
     }
 }
