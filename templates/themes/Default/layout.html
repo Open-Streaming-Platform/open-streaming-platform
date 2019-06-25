@@ -152,8 +152,8 @@ function registerServiceWorker() {
         .catch(e => console.error("ServiceWorker failed:", e));
 }
 
-function subscribeToPushNotifications(swRegistration) {
-    swRegistration.pushManager.subscribe(
+function subscribeToPushNotifications(swReg) {
+    swReg.pushManager.subscribe(
         {
           userVisibleOnly: true,
           applicationServerKey: vapidpublickey
@@ -166,9 +166,6 @@ function subscribeToPushNotifications(swRegistration) {
               console.log('Failed to subscribe the user: ', err);
           });
 }
-</script>
-
-<script>
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
     var swReg = registerServiceWorker();
