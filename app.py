@@ -1701,9 +1701,17 @@ def service_worker_handler():
 def get_subscription_json():
 
     subscriptionData = request.get_json()
+    endpointID = request.form['endpoint']
 
-    current_user.subscription_token = json.dumps(subscriptionData)
-    db.session.commit()
+    registrationQuery = subscription.pushRegistration.query.filter_by(endpointID=endpointID).first()
+    if registrationQuery == None:
+        newSub = subscription.pushRegistration(current_user.id, endpointID, json.dumps(subscriptionData))
+        db.session.add(newSub)
+        db.session.commit()
+    else:
+        registrationQuery.subscription_token = json.dumps(subscriptionData)
+        db.session.commit()
+
     return json.dumps({'success': True}), 200, {'ContentType':'application/json'}
 ### Start Video / Stream Handler Routes
 
