@@ -170,6 +170,7 @@ function subscribeUser() {
     console.log('User is subscribed');
     isSubscribed = true;
     console.log(subscription);
+    updateSubscriptionOnServer(subscription);
 
   })
   .catch(function(err) {
@@ -195,6 +196,13 @@ function initializeUI() {
       console.log('User is NOT subscribed.');
     }
   });
+}
+
+function updateSubscriptionOnServer(subscription) {
+    if (subscription) {
+        var subscriptionJSON = JSON.stringify(subscription);
+        console.log(subscriptionJSON);
+    }
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
