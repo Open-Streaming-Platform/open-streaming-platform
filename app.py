@@ -1699,10 +1699,11 @@ def service_worker_handler():
 
 @app.route('/subscriptionReg', methods=['POST'])
 def get_subscription_json():
-    endpoint = request.form['endpoint']
-    expirationTime = request.form['expirationTime']
-    keys = request.form['keys']
-    subscriptionData = json.dumps({'endpoint':endpoint, 'expirationTime':expirationTime, 'keys':keys})
+    subscriptionData = {}
+    for key in request.form:
+        subscriptionData[key] = request.form[key]
+
+    subscriptionData = json.dumps(subscriptionData)
 
     current_user.subscription_token = subscriptionData
     db.session.commit()
