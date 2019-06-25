@@ -1695,7 +1695,7 @@ def initialSetup():
 
 @app.route('/sw.js', methods=['GET'])
 def service_worker_handler():
-    return app.send_static_file('/js/sw.js')
+    return send_from_directory("/opt/osp/static/js", "sw.js")
 
 ### Start Video / Stream Handler Routes
 
