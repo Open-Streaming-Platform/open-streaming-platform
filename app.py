@@ -1699,13 +1699,10 @@ def service_worker_handler():
 
 @app.route('/subscriptionReg', methods=['POST'])
 def get_subscription_json():
-    subscriptionData = {}
-    for key in request.form:
-        subscriptionData[key] = request.form[key]
 
-    subscriptionData = json.dumps(subscriptionData)
+    subscriptionData = request.get_json()
 
-    current_user.subscription_token = subscriptionData
+    current_user.subscription_token = json.dumps(subscriptionData)
     db.session.commit()
     return 200
 ### Start Video / Stream Handler Routes
