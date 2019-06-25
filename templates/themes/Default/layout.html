@@ -169,6 +169,7 @@ function subscribeUser() {
   .then(function(subscription) {
     console.log('User is subscribed');
     isSubscribed = true;
+    console.log(subscription);
 
   })
   .catch(function(err) {
