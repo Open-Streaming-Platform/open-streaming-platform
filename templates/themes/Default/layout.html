@@ -172,7 +172,7 @@ if (navigator && navigator.serviceWorker) {
 
 const permission = Notification.requestPermission();
 
-if (permission !== 'granted') {
+if (permission.valueOf() !== 'granted') {
     console.log("Permission Denied for Push")
 }else{
     pushSub = subscribeToPushNotifications(registration);
