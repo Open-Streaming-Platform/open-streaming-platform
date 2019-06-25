@@ -153,30 +153,32 @@ function registerServiceWorker() {
 }
 
 function subscribeToPushNotifications(swRegistration) {
-  swRegistration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: vapidpublickey
-  })
-  .then(function(subscription) {
-    console.log('User is subscribed.');
+    swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: vapidpublickey
+    })
+        .then(function (subscription) {
+            console.log('User is subscribed.');
 
-  })
-  .catch(function(err) {
-    console.log('Failed to subscribe the user: ', err);
-  });
-
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-    swRegistration = registerServiceWorker();
+        })
+        .catch(function (err) {
+            console.log('Failed to subscribe the user: ', err);
+        });
 }
+</script>
+<script>
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        swRegistration = registerServiceWorker();
+    }
 
-const permission = Notification.requestPermission();
+    const permission = Notification.requestPermission();
 
-if (Notification.permission !== 'granted') {
-    console.log("Permission Denied for Push")
-}else{
-    pushSub = subscribeToPushNotifications(swRegistration);
-    console.log(pushSub);
-}
+    if (Notification.permission !== 'granted') {
+        console.log("Permission Denied for Push")
+    }else{
+        pushSub = subscribeToPushNotifications(swRegistration);
+        console.log(pushSub);
+    }
 
 </script>
 {% endif %}
