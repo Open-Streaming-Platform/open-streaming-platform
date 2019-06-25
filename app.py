@@ -135,8 +135,10 @@ patch_request_class(app)
 VAPID_PRIVATE_KEY = open('/opt/osp/vapid/vapid_private.pem', "r+").readline().strip("\n")
 VAPID_PUBLIC_KEY = open('/opt/osp/vapid/vapid_public.pem', "r+").read().strip("\n")
 
+VAPID_PUBLIC_KEY_B64 = ""
 with open('/opt/osp/vapid/public_key.txt') as temp_file:
-  VAPID_PUBLIC_KEY_B64 = [line.rstrip('\n') for line in temp_file]
+  for line in temp_file:
+      VAPID_PUBLIC_KEY_B64 = VAPID_PUBLIC_KEY_B64 + line
 
 # Establish Channel User List
 streamUserList = {}
