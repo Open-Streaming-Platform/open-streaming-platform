@@ -178,6 +178,25 @@ function subscribeUser() {
   });
 }
 
+function unsubscribeUser() {
+  swRegistration.pushManager.getSubscription()
+  .then(function(subscription) {
+    if (subscription) {
+      return subscription.unsubscribe();
+    }
+  })
+  .catch(function(error) {
+    console.log('Error unsubscribing', error);
+  })
+  .then(function() {
+    updateSubscriptionOnServer(null);
+
+    console.log('User is unsubscribed.');
+    isSubscribed = false;
+
+  });
+}
+
 function initializeUI() {
     if (isSubscribed) {
       // TODO: Unsubscribe user
@@ -202,6 +221,15 @@ function updateSubscriptionOnServer(subscription) {
     if (subscription) {
         var subscriptionJSON = JSON.stringify(subscription);
         console.log(subscriptionJSON);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('/subscriptionReg', 'POST', true);
+        xhr.setRequestHeader('Content-Type','application/json; charset=UTF-8');
+        xhr.send(subscriptionJSON);
+
+        xhr.onloadend = function () {
+            //done
+        };
     }
 }
 

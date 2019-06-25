@@ -1697,6 +1697,12 @@ def initialSetup():
 def service_worker_handler():
     return send_from_directory("/opt/osp/static/js", "sw.js")
 
+@app.route('/subscriptionReg', methods=['POST'])
+def get_subscription_json():
+    subscriptionData = request.form['data']
+    current_user.subscription_token = subscriptionData
+    db.session.commit()
+    return 200
 ### Start Video / Stream Handler Routes
 
 @app.route('/videos/<string:channelID>/<path:filename>')
