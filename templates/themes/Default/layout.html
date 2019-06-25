@@ -141,7 +141,6 @@ $(document).ready(function(){
 
 <script>
 const vapidpublickey = '{{vapidpubkey}}';
-var swRegistration;
 
 function registerServiceWorker() {
     navigator.serviceWorker
@@ -168,17 +167,18 @@ function subscribeToPushNotifications(swRegistration) {
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    swRegistration = registerServiceWorker();
+    var swRegistration = registerServiceWorker();
+    const permission = Notification.requestPermission();
+
+    if (Notification.permission !== 'granted') {
+        console.log("Permission Denied for Push")
+    }else{
+        pushSub = subscribeToPushNotifications(swRegistration);
+        console.log(pushSub);
+    }
 }
 
-const permission = Notification.requestPermission();
 
-if (Notification.permission !== 'granted') {
-    console.log("Permission Denied for Push")
-}else{
-    pushSub = subscribeToPushNotifications(swRegistration);
-    console.log(pushSub);
-}
 
 </script>
 {% endif %}
