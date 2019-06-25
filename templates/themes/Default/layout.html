@@ -153,7 +153,7 @@ function registerServiceWorker() {
         .catch(e => console.error("ServiceWorker failed:", e));
 }
 
-function subscribeToPushNotifications() {
+function subscribeToPushNotifications(swRegistration) {
     swRegistration.pushManager.subscribe(
         {
           userVisibleOnly: true,
@@ -175,7 +175,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
     if (Notification.permission !== 'granted') {
         console.log("Permission Denied for Push")
     }else{
-        pushSub = subscribeToPushNotifications();
+        pushSub = subscribeToPushNotifications(swRegistration);
         console.log(pushSub);
     }
 }
