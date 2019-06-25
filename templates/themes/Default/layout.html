@@ -141,20 +141,21 @@ $(document).ready(function(){
 
 <script>
 const vapidpublickey = '{{vapidpubkey}}';
+var swRegistration = null;
 
 function registerServiceWorker() {
     navigator.serviceWorker
         .register('/sw.js')
         .then(registration => {
             console.log("ServiceWorker registered with scope:",registration.scope);
-            swRegistration = registration;
-            return swRegistration;
+            swReg = registration;
+            return swReg;
         })
         .catch(e => console.error("ServiceWorker failed:", e));
 }
 
-function subscribeToPushNotifications(swRegistration) {
-    swRegistration.pushManager.subscribe(
+function subscribeToPushNotifications(swReg) {
+    swReg.pushManager.subscribe(
         {
           userVisibleOnly: true,
           applicationServerKey: vapidpublickey
@@ -169,7 +170,7 @@ function subscribeToPushNotifications(swRegistration) {
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    registerServiceWorker();
+    swRegistration = registerServiceWorker();
     Notification.requestPermission();
 
     if (Notification.permission !== 'granted') {
