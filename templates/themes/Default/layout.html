@@ -147,7 +147,8 @@ function registerServiceWorker() {
         .register('/sw.js')
         .then(registration => {
             console.log("ServiceWorker registered with scope:",registration.scope);
-            return registration;
+            swRegistration = registration;
+            return swRegistration;
         })
         .catch(e => console.error("ServiceWorker failed:", e));
 }
