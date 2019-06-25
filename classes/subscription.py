@@ -17,6 +17,7 @@ class pushRegistration(db.Model):
 
 class channelSubscription(db.Model):
     __tablename__ = 'channelSubscription'
+    id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
 
