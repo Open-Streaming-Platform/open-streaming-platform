@@ -141,14 +141,13 @@ $(document).ready(function(){
 
 <script>
 const vapidpublickey = '{{vapidpubkey}}';
-var swRegistration;
 
 function registerServiceWorker() {
     navigator.serviceWorker
         .register('/sw.js')
         .then(registration => {
             console.log("ServiceWorker registered with scope:",registration.scope);
-            swRegistration = registration;
+            return registration;
         })
         .catch(e => console.error("ServiceWorker failed:", e));
 }
@@ -166,7 +165,7 @@ function subscribeToPushNotifications(registration) {
 }
 
 if (navigator && navigator.serviceWorker) {
-    registerServiceWorker();
+    swRegistration = registerServiceWorker();
 }
 
 const permission = Notification.requestPermission();
