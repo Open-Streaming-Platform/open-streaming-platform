@@ -1701,7 +1701,7 @@ def service_worker_handler():
 def get_subscription_json():
 
     subscriptionData = request.get_json()
-    endpointID = request.form['endpoint']
+    endpointID = subscriptionData['endpoint']
 
     registrationQuery = subscription.pushRegistration.query.filter_by(endpointID=endpointID).first()
     if registrationQuery == None:
