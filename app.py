@@ -1699,7 +1699,7 @@ def service_worker_handler():
 
 @app.route('/subscriptionReg', methods=['POST'])
 def get_subscription_json():
-    subscriptionData = request.form['data']
+    subscriptionData = request.json
     current_user.subscription_token = subscriptionData
     db.session.commit()
     return 200
