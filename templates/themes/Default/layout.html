@@ -141,14 +141,13 @@ $(document).ready(function(){
 
 <script>
 const vapidpublickey = '{{vapidpubkey}}';
-var swRegistration;
 
 function registerServiceWorker() {
     navigator.serviceWorker
         .register('/sw.js')
         .then(registration => {
             console.log("ServiceWorker registered with scope:",registration.scope);
-            swRegistration = registration;
+            return registration;
         })
         .catch(e => console.error("ServiceWorker failed:", e));
 }
@@ -167,11 +166,13 @@ function subscribeToPushNotifications(swRegistration) {
               console.log('Failed to subscribe the user: ', err);
           });
 }
+</script>
+
+<script>
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    registerServiceWorker();
+    var swReg = registerServiceWorker();
     Notification.requestPermission();
-    var swReg = swRegistration;
 
     if (Notification.permission !== 'granted') {
         console.log("Permission Denied for Push")
@@ -180,8 +181,6 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
         console.log(pushSub);
     }
 }
-
-
 
 </script>
 {% endif %}
