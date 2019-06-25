@@ -140,45 +140,79 @@ $(document).ready(function(){
 {% if user.is_authenticated %}
 
 <script>
-const vapidpublickey = '{{vapidpubkey}}';
-var swRegistration = null;
+const applicationServerPublicKey = {{vapidpubkey}};
 
-function registerServiceWorker() {
-    navigator.serviceWorker
-        .register('/sw.js')
-        .then(registration => {
-            console.log("ServiceWorker registered with scope:",registration.scope);
-            swReg = registration;
-            return swReg;
-        })
-        .catch(e => console.error("ServiceWorker failed:", e));
+let isSubscribed = false;
+let swRegistration = null;
+
+function urlB64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }
 
-function subscribeToPushNotifications(swReg) {
-    swReg.pushManager.subscribe(
-        {
-          userVisibleOnly: true,
-          applicationServerKey: vapidpublickey
-        })
-          .then(function (subscription) {
-              console.log('User is subscribed.');
+function subscribeUser() {
+  const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+  swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: applicationServerKey
+  })
+  .then(function(subscription) {
+    console.log('User is subscribed');
+    isSubscribed = true;
 
-          })
-          .catch(function (err) {
-              console.log('Failed to subscribe the user: ', err);
-          });
+  })
+  .catch(function(err) {
+    console.log('Failed to subscribe the user: ', err);
+  });
+}
+
+function initializeUI() {
+    if (isSubscribed) {
+      // TODO: Unsubscribe user
+    } else {
+      subscribeUser();
+    }
+
+  // Set the initial subscription value
+  swRegistration.pushManager.getSubscription()
+  .then(function(subscription) {
+    isSubscribed = !(subscription === null);
+
+    updateSubscriptionOnServer(subscription);
+
+    if (isSubscribed) {
+      console.log('User IS subscribed.');
+    } else {
+      console.log('User is NOT subscribed.');
+    }
+  });
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    swRegistration = registerServiceWorker();
-    Notification.requestPermission();
+  console.log('Service Worker and Push is supported');
 
-    if (Notification.permission !== 'granted') {
-        console.log("Permission Denied for Push")
-    }else{
-        pushSub = subscribeToPushNotifications(swRegistration);
-        console.log(pushSub);
-    }
+  navigator.serviceWorker.register('/sw.js')
+  .then(function(swReg) {
+    console.log('Service Worker is registered', swReg);
+
+    swRegistration = swReg;
+    initializeUI();
+  })
+  .catch(function(error) {
+    console.error('Service Worker Error', error);
+  });
+} else {
+  console.warn('Push messaging is not supported');
 }
 
 </script>
