@@ -141,34 +141,36 @@ $(document).ready(function(){
 
 <script>
 const vapidpublickey = '{{vapidpubkey}}';
+var swRegistration;
 
 function registerServiceWorker() {
     navigator.serviceWorker
         .register('/sw.js')
         .then(registration => {
             console.log("ServiceWorker registered with scope:",registration.scope);
-            return registration;
+            swRegistration = registration;
         })
         .catch(e => console.error("ServiceWorker failed:", e));
 }
 
 function subscribeToPushNotifications(swRegistration) {
-    swRegistration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: vapidpublickey
-    })
-        .then(function (subscription) {
-            console.log('User is subscribed.');
-
+    swRegistration.pushManager.subscribe(
+        {
+          userVisibleOnly: true,
+          applicationServerKey: vapidpublickey
         })
-        .catch(function (err) {
-            console.log('Failed to subscribe the user: ', err);
-        });
+          .then(function (subscription) {
+              console.log('User is subscribed.');
+
+          })
+          .catch(function (err) {
+              console.log('Failed to subscribe the user: ', err);
+          });
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-    var swRegistration = registerServiceWorker();
-    const permission = Notification.requestPermission();
+    registerServiceWorker();
+    Notification.requestPermission();
 
     if (Notification.permission !== 'granted') {
         console.log("Permission Denied for Push")
