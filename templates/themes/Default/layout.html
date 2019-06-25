@@ -152,19 +152,20 @@ function registerServiceWorker() {
         .catch(e => console.error("ServiceWorker failed:", e));
 }
 
-function subscribeToPushNotifications(registration) {
-    return registration.pushManager
-        .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: vapidpublickey
-        })
-        .then(pushSubscription => {
-            console.log("Received PushSubscription:",JSON.stringify(pushSubscription));
-            return pushSubscription;
-        });
-}
+function subscribeToPushNotifications(swRegistration) {
+  swRegistration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: vapidpublickey
+  })
+  .then(function(subscription) {
+    console.log('User is subscribed.');
 
-if (navigator && navigator.serviceWorker) {
+  })
+  .catch(function(err) {
+    console.log('Failed to subscribe the user: ', err);
+  });
+
+if ('serviceWorker' in navigator && 'PushManager' in window) {
     swRegistration = registerServiceWorker();
 }
 
