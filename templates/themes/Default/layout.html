@@ -167,7 +167,6 @@ function subscribeUser() {
     applicationServerKey: applicationServerKey
   })
   .then(function(subscription) {
-    console.log('User is subscribed');
     isSubscribed = true;
     console.log(subscription);
     updateSubscriptionOnServer(subscription);
@@ -189,9 +188,7 @@ function unsubscribeUser() {
     console.log('Error unsubscribing', error);
   })
   .then(function() {
-    updateSubscriptionOnServer(null);
-
-    console.log('User is unsubscribed.');
+    updateSubscriptionOnServer({});
     isSubscribed = false;
 
   });
@@ -199,7 +196,7 @@ function unsubscribeUser() {
 
 function initializeUI() {
     if (isSubscribed) {
-      // TODO: Unsubscribe user
+      // pass
     } else {
       subscribeUser();
     }
@@ -208,19 +205,12 @@ function initializeUI() {
   swRegistration.pushManager.getSubscription()
   .then(function(subscription) {
     isSubscribed = !(subscription === null);
-
-    if (isSubscribed) {
-      console.log('User IS subscribed.');
-    } else {
-      console.log('User is NOT subscribed.');
-    }
   });
 }
 
 function updateSubscriptionOnServer(subscription) {
     if (subscription) {
         var subscriptionJSON = JSON.stringify(subscription);
-        console.log(subscriptionJSON);
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/subscriptionReg', true);
@@ -234,7 +224,6 @@ function updateSubscriptionOnServer(subscription) {
 }
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-  console.log('Service Worker and Push is supported');
 
   navigator.serviceWorker.register('/sw.js')
   .then(function(swReg) {

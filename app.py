@@ -1704,7 +1704,7 @@ def get_subscription_json():
 
     current_user.subscription_token = json.dumps(subscriptionData)
     db.session.commit()
-    return 200
+    return json.dumps({'success': True}), 200, {'ContentType':'application/json'}
 ### Start Video / Stream Handler Routes
 
 @app.route('/videos/<string:channelID>/<path:filename>')
