@@ -169,7 +169,7 @@ function subscribeUser() {
   .then(function(subscription) {
     isSubscribed = true;
     console.log(subscription);
-    updateSubscriptionOnServer(subscription);
+    updateSubscriptionOnServer(subscription, 'reg');
 
   })
   .catch(function(err) {
@@ -187,8 +187,8 @@ function unsubscribeUser() {
   .catch(function(error) {
     console.log('Error unsubscribing', error);
   })
-  .then(function() {
-    updateSubscriptionOnServer({});
+  .then(function(subscription) {
+    updateSubscriptionOnServer(subscription, 'dereg');
     isSubscribed = false;
 
   });
@@ -208,12 +208,16 @@ function initializeUI() {
   });
 }
 
-function updateSubscriptionOnServer(subscription) {
+function updateSubscriptionOnServer(subscription, type) {
     if (subscription) {
         var subscriptionJSON = JSON.stringify(subscription);
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/subscriptionReg', true);
+        if (type === 'reg') {
+            xhr.open('POST', '/subscription/register', true);
+        } else if (type === 'dereg') {
+            xhr.open('POST', '/subscription/deregister', true);
+        }
         xhr.setRequestHeader('Content-Type','application/json; charset=UTF-8');
         xhr.send(subscriptionJSON);
 

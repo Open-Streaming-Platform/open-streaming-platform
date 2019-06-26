@@ -1683,7 +1683,7 @@ def initialSetup():
                     SECURITY_LOGIN_USER_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/login_user.html',
                     SECURITY_REGISTER_USER_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/register_user.html',
                     SECURITY_RESET_PASSWORD_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/reset_password.html',
-                    SECURITY_SEND_CONFIRMATION_TEMPLATE = 'themes/'  + sysSettings.systemTheme + '/security/send_confirmation.html')
+                    SECURITY_SEND_CONFIRMATION_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
                 global mail
                 mail = Mail(app)
 
@@ -1697,8 +1697,8 @@ def initialSetup():
 def service_worker_handler():
     return send_from_directory("/opt/osp/static/js", "sw.js")
 
-@app.route('/subscriptionReg', methods=['POST'])
-def get_subscription_json():
+@app.route('/subscription/register', methods=['POST'])
+def add_subscription_token():
 
     subscriptionData = request.get_json()
     endpointID = subscriptionData['endpoint']
@@ -1712,7 +1712,22 @@ def get_subscription_json():
         registrationQuery.subscription_token = json.dumps(subscriptionData)
         db.session.commit()
 
+    db.session.close()
     return json.dumps({'success': True}), 200, {'ContentType':'application/json'}
+
+@app.route('/subscription/deregister', methods=['POST'])
+def remove_subscription_toke():
+    subscriptionData = request.get_json()
+    endpointID = subscriptionData['endpoint']
+
+    registrationQuery = subscription.pushRegistration.query.filter_by(endpointID=endpointID).first()
+    if registrationQuery != None:
+        db.session.delete(registrationQuery)
+        db.session.commit()
+
+    db.session.close()
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
 ### Start Video / Stream Handler Routes
 
 @app.route('/videos/<string:channelID>/<path:filename>')
