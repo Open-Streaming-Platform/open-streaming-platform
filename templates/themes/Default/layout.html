@@ -181,14 +181,15 @@ function unsubscribeUser() {
   swRegistration.pushManager.getSubscription()
   .then(function(subscription) {
     if (subscription) {
+      updateSubscriptionOnServer(subscription, 'dereg');
       return subscription.unsubscribe();
     }
   })
   .catch(function(error) {
     console.log('Error unsubscribing', error);
   })
-  .then(function(subscription) {
-    updateSubscriptionOnServer(subscription, 'dereg');
+  .then(function() {
+
     isSubscribed = false;
 
   });
