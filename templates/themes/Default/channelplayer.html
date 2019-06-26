@@ -17,13 +17,17 @@
   <div class="shadow p-2" style="background-color:white;">
     <div class="container-fluid">
           <div class="row">
-              <div class="col-8">
+              <div class="col-4">
                 <img src="{{channel.owningUser|get_pictureLocation}}" width="46px" height="46px" style="float:left;">
                 <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><span><b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b></span></div><br>
                 <div class="streamcard-IconText"><i class="fas fa-users"></i></div><b><a href="/streamers/{{channel.owningUser}}/">{{channel.owningUser|get_userName}}</a></b>
               </div>
+              <div class="col-md-2 col-sm-12">
+                  <button class="btn btn-outline-success" onclick="toggleSub();"><i class="far fa-star"></i> Subscribe</button>
+              </div>
+              <div class="col-2 col-sm-12"></div>
               <div class="col-md-4 col-sm-12">
-                  <button class="btn btn-outline-success"><i class="far fa-star"></i> Subscribe</button>
+
                   <ul id="channelPlayerMenu" class="nav nav-pills">
                     <li class="nav-item">
                         <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
@@ -552,5 +556,10 @@
                 else $this.closest('.streamcard').show();
             });
         });
-        </script>
+    </script>
+    <script>
+        function toggleSub(){
+            socket.emit('toggleSub', {channelID: '{{channel.id}}', vidType: 'stream'});
+        }
+    </script>
 {% endblock %}
