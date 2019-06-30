@@ -18,6 +18,17 @@
 
 </head>
 <body>
+
+<style>
+    .main-navbar {
+        font-size: 2em;
+    }
+
+    #navbar-search {
+        width: 350px;
+    }
+</style>
+
 <div class="main-navbar">
     <nav class="navbar  navbar-expand-lg navbar-light bg-white">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,9 +36,9 @@
       </button>
       <a class="navbar-brand" href="/">
         <img src="{{sysSettings.systemLogo}}" width="30" height="30" class="d-inline-block align-top" alt="">
-        {{sysSettings.siteName}}
+        <b>{{sysSettings.siteName}}</b>
       </a>
-      <div class="input-group">
+      <div id="navbar-search" class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text"><i class="fas fa-search"></i></div>
         </div>
@@ -36,13 +47,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav justify-content-end">
             <li class="nav-item">
-                <a class="nav-link" href="/channels">Channels</a>
+                <a class="nav-link" href="/channels"><b>Channels</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/topics">Topics</a>
+                <a class="nav-link" href="/topics"><b>Topics</b></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/streamers">Streamers</a>
+                <a class="nav-link" href="/streamers"><b>Streamers</b></a>
             </li>
         </ul>
       </div>
