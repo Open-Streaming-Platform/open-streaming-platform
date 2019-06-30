@@ -39,6 +39,41 @@
 .streamCard p .streamCard-footer i {
     color: blue;
 }
+
+.index-video-title {
+    font-size:1.35em;
+}
+
+.videoCard {
+    width: 575px;
+    height: 190px;
+    border: 1px solid;
+}
+
+.videoCard img {
+    width: 270px;
+    height: 152px;
+    object-fit: contain;
+    overflow: hidden;
+    color: gray;
+    float: left;
+
+}
+
+.videoCard p {
+    margin-left:20px;
+    float: left;
+    font-size:1.25em;
+}
+.videoCard p .videoCard-footer {
+    position: relative;
+    top:8px;
+    font-size:.8em;
+}
+
+.videoCard p .videoCard-footer i {
+    color: blue;
+}
 </style>
 
 <div class="container-fluid m-4" id="index-live-container">
@@ -57,11 +92,37 @@
                         {{stream.topic|get_topicName}}<br>
                         <span class="badge badge-danger">Live</span><br>
                         <span class="streamCard-footer pt-2">
-                            <span class="d-flex justify-content-between">
-                                <span><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
-                                <span><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
-                                <span><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
-                            </span>
+                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+                        </span>
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid m-4" id="index-videos-container">
+    <div class="row my-2">
+        <div class="index-video-title"><b>Videos</b></div>
+    </div>
+    <div class="row">
+        <div class="d-flex flex-wrap">
+            {% for video in randomRecorded %}
+            <a href="/play/{{video.id}}">
+                <div class="videoCard py-3 pr-3">
+                    <img class="lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <p>
+                        <b>{{video.channelName|limit_title}}</b><br>
+                        {{video.channel.channelName}}<br>
+                        {{video.topic|get_topicName}}<br>
+                        {{video.videoDate|normalize_date}}<br>
+                        <span class="videoCard-footer pt-2">
+                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{video.length|hms_format}}</span>
                         </span>
                     </p>
                 </div>
