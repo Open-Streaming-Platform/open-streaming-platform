@@ -16,8 +16,7 @@
                     <a href="/channel/{{channel.id}}/">
                     <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
-                        <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
-                        {{channel.channelName}}<br>
+                        <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                         {{channel.topic|get_topicName}}<br>
                         <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b><br>
                         <span class="displayCard-footer">
