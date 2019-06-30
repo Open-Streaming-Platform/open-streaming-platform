@@ -46,22 +46,24 @@
     <div class="row">
         <div class="d-flex flex-wrap">
             {% for stream in streamList %}
-            <div class="streamCard py-3 pr-3">
-                <img class="lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
-                <p>
-                    <b>{{stream.streamName|limit_title}}</b><br>
-                    {{stream.channel.channelName}}<br>
-                    {{stream.topic|get_topicName}}<br>
-                    <span class="badge badge-danger">Live</span><br>
-                    <span class="streamCard-footer mt-2">
-                        <span class="d-flex justify-content-between">
-                            <span><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
-                            <span><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
-                            <span><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+            <a href="/view/{{stream.channel.channelLoc}}/">
+                <div class="streamCard py-3 pr-3">
+                    <img class="lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <p>
+                        <b>{{stream.streamName|limit_title}}</b><br>
+                        {{stream.channel.channelName}}<br>
+                        {{stream.topic|get_topicName}}<br>
+                        <span class="badge badge-danger">Live</span><br>
+                        <span class="streamCard-footer pt-2">
+                            <span class="d-flex justify-content-between">
+                                <span><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
+                                <span><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
+                                <span><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+                            </span>
                         </span>
-                    </span>
-                </p>
-            </div>
+                    </p>
+                </div>
+            </a>
             {% endfor %}
         </div>
     </div>
