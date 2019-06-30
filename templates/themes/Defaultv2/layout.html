@@ -43,14 +43,18 @@
           <span class="navbar-title"><b>{{sysSettings.siteName}}</b></span>
       </a>
       <ul class="navbar-nav mr-auto"></ul>
-      <div id="navbar-search" class="input-group">
-        <div class="input-group-prepend">
-            <div class="input-group-text"><i class="fas fa-search"></i></div>
-        </div>
-        <input type="text" id="search" name="search" class="searchBar form-control " placeholder="Search">
+      <div class="flex-grow-1 d-flex">
+            <form class="form-inline flex-nowrap bg-light mx-0 mx-lg-auto rounded p-1">
+              <div id="navbar-search" class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fas fa-search"></i></div>
+                </div>
+                <input type="text" id="search" name="search" class="searchBar form-control " placeholder="Search">
+              </div>
+            </form>
       </div>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav justify-content-end">
+        <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="/channels"><b>Channels</b></a>
             </li>
@@ -62,7 +66,7 @@
             </li>
         </ul>
       </div>
-</nav>
+    </nav>
 
 </div>
 
