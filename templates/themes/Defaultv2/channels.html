@@ -20,9 +20,9 @@
                         {{channel.topic|get_topicName}}<br>
                         <b> {{channel.owningUser|get_userName}}</b><br>
                         {% if channel.stream|length > 0 %}
-                        <span class="badge badge-secondary">Offline</span>
+                            <span class="badge badge-danger">Live</span>
                         {% else %}
-                        <span class="badge badge-danger">Live</span>
+                            <span class="badge badge-secondary">Offline</span>
                         {% endif %}
                         <br>
                         <span class="displayCard-footer">
