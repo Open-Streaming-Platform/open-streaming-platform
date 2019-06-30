@@ -35,7 +35,7 @@ body {
     height: 175px;
     object-fit: contain;
     overflow: hidden;
-    color: gray;
+    background-color: black;
     float: left;
 }
 
