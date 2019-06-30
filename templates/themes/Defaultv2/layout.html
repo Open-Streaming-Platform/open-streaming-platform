@@ -21,7 +21,11 @@
 
 <style>
     .main-navbar {
-        font-size: 2em;
+        font-size: 1.5em;
+    }
+
+    .navbar-title {
+        font-size: 1.5em;
     }
 
     #navbar-search {
@@ -35,9 +39,10 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand" href="/">
-        <img src="{{sysSettings.systemLogo}}" width="30" height="30" class="d-inline-block align-top" alt="">
-        <b>{{sysSettings.siteName}}</b>
+        <img src="{{sysSettings.systemLogo}}" width="48" height="48" class="d-inline-block align-top" alt="">
+          <span class="navbar-title"><b>{{sysSettings.siteName}}</b></span>
       </a>
+      <ul class="navbar-nav mr-auto"></ul>
       <div id="navbar-search" class="input-group">
         <div class="input-group-prepend">
             <div class="input-group-text"><i class="fas fa-search"></i></div>
