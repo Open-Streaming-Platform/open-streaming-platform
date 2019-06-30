@@ -20,12 +20,12 @@
     width: 100%;
 }
 
-.streamCard {
+.displayCard {
     width: 600px;
     height: 230px;
 }
 
-.streamCard img {
+.displayCard img {
     width: 310px;
     height: 175px;
     object-fit: contain;
@@ -34,56 +34,36 @@
     float: left;
 }
 
-.streamCard .card-data {
+.displayCard .card-data {
     margin-left:20px;
     float: left;
     font-size:1.15em;
 }
-.streamCard .card-data .streamCard-footer {
+
+.displayCard .card-data .displayCard-footer {
     font-size:.8em;
     position:relative;
     left: -10px;
     top: 45px;
 }
 
-.streamCard p .streamCard-footer i {
+.displayCard p .displayCard-footer i {
     color: blue;
 }
 
-.index-video-title {
-    font-size:1.35em;
-}
+    
+@media screen and (max-width : 640px) {
+    .displayCard {
+        width: 100%;
+        height: 200px;
+    }
 
-.videoCard {
-    width: 600px;
-    height: 230px;
+    .displayCard img{
+        width: 210px;
+        height: 75px;
+    }
 }
-
-.videoCard img {
-    width: 310px;
-    height: 175px;
-    object-fit: contain;
-    overflow: hidden;
-    color: gray;
-    float: left;
-
-}
-
-.videoCard .card-data {
-    margin-left:20px;
-    float: left;
-    font-size:1.15em;
-}
-.videoCard .card-data .videoCard-footer {
-    position: relative;
-    left: -10px;
-    top: 45px;
-    font-size:.8em;
-}
-
-.videoCard p .videoCard-footer i {
-    color: blue;
-}
+    
 </style>
 
 <div class="container-fluid p-2" id="index-live-container">
@@ -93,7 +73,7 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-between">
             {% for stream in streamList %}
-                <div class="streamCard py-1 pr-2">
+                <div class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
@@ -101,7 +81,7 @@
                         {{stream.channel.channelName}}<br>
                         {{stream.topic|get_topicName}}<br>
                         <span class="badge badge-danger">Live</span><br>
-                        <span class="streamCard-footer pt-2">
+                        <span class="displayCard-footer pt-2">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
@@ -121,7 +101,7 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-between">
             {% for video in randomRecorded %}
-                <div class="videoCard py-1 pr-1">
+                <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
@@ -129,7 +109,7 @@
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
                         {{video.videoDate|normalize_date}}<br>
-                        <span class="videoCard-footer pt-2">
+                        <span class="displayCard-footer pt-2">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{video.length|hms_format}}</span>
