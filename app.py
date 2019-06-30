@@ -1272,7 +1272,8 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
-            sysSettings.systemLogo = systemLogo
+            if systemLogo != None:
+                sysSettings.systemLogo = systemLogo
 
             db.session.commit()
 
