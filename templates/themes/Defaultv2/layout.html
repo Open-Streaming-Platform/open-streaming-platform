@@ -21,15 +21,20 @@
 
 <style>
     .main-navbar {
-        font-size: 1.5em;
+            font-size: 1.5em;
     }
 
     .navbar-title {
         font-size: 1.5em;
     }
 
+    .navbar-search-container {
+        width: 100%;
+
+    }
+
     #navbar-search {
-        width: 350px;
+        width:400px;
     }
 </style>
 
@@ -43,8 +48,8 @@
           <span class="navbar-title"><b>{{sysSettings.siteName}}</b></span>
       </a>
       <ul class="navbar-nav mr-auto"></ul>
-      <div class="flex-grow-1 d-flex">
-            <form class="form-inline flex-nowrap bg-light mx-0 mx-lg-auto rounded p-1">
+      <div class="flex-grow-1 d-flex navbar-search-container">
+            <form class="form-inline flex-nowrap mx-lg-auto rounded p-1">
               <div id="navbar-search" class="input-group">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><i class="fas fa-search"></i></div>
@@ -67,7 +72,6 @@
         </ul>
       </div>
     </nav>
-
 </div>
 
     {% block body %}
