@@ -52,10 +52,6 @@ body {
     top: 45px;
 }
 
-.displayCard p .displayCard-footer i {
-    color: blue;
-}
-
 
 @media screen and (max-width : 640px) {
 

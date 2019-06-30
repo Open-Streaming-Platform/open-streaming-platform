@@ -18,7 +18,13 @@
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                         {{channel.topic|get_topicName}}<br>
-                        <b> {{channel.owningUser|get_userName}}</b><br><br>
+                        <b> {{channel.owningUser|get_userName}}</b><br>
+                        {% if channel.stream|length > 0 %}
+                        <span class="badge badge-secondary">Offline</span>
+                        {% else %}
+                        <span class="badge badge-danger">Live</span>
+                        {% endif %}
+                        <br>
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
                         </span>
