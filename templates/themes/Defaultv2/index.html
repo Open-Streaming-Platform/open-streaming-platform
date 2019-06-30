@@ -6,6 +6,13 @@
 
 {% block body %}
 <style>
+
+.card-cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .index-live-title {
     font-size:1.35em;
     width: 100%;
@@ -83,7 +90,7 @@
         <div class="d-flex flex-wrap justify-content-between">
             {% for stream in streamList %}
             <a href="/view/{{stream.channel.channelLoc}}/">
-                <div class="streamCard py-3 pr-2">
+                <div class="streamCard py-3 pr-2 card-cut-text">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <p>
                         <b>{{stream.streamName|limit_title}}</b><br>
@@ -111,7 +118,7 @@
         <div class="d-flex flex-wrap justify-content-between">
             {% for video in randomRecorded %}
             <a href="/play/{{video.id}}">
-                <div class="videoCard py-3 pr-2">
+                <div class="videoCard py-3 pr-2 card-cut-text">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <p>
                         <b>{{video.channelName|limit_title}}</b><br>
