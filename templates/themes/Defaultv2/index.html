@@ -96,8 +96,8 @@
             <a href="/view/{{stream.channel.channelLoc}}/">
                 <div class="streamCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <p class="card-cut-text">
-                        <b>{{stream.streamName|limit_title}}</b><br>
+                    <p>
+                        <span class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></span><br>
                         {{stream.channel.channelName}}<br>
                         {{stream.topic|get_topicName}}<br>
                         <span class="badge badge-danger">Live</span><br>
@@ -124,8 +124,8 @@
             <a href="/play/{{video.id}}">
                 <div class="videoCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <p class="card-cut-text">
-                        <b>{{video.channelName|limit_title}}</b><br>
+                    <p>
+                        <span class="card-cut-text"><b>{{video.channelName|limit_title}}</b></span><br>
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
                         {{video.videoDate|normalize_date}}<br>
