@@ -13,12 +13,12 @@
 
 .streamCard {
     width: 650px;
-    height: 190px;
+    height: 230px;
 }
 
 .streamCard img {
-    width: 270px;
-    height: 152px;
+    width: 310px;
+    height: 175px;
     object-fit: contain;
     overflow: hidden;
     color: gray;
@@ -33,7 +33,7 @@
 .streamCard p .streamCard-footer {
     font-size:.8em;
     position:relative;
-    top: 8px;
+    top: 18px;
 }
 
 .streamCard p .streamCard-footer i {
@@ -46,12 +46,12 @@
 
 .videoCard {
     width: 650px;
-    height: 190px;
+    height: 230px;
 }
 
 .videoCard img {
-    width: 270px;
-    height: 152px;
+    width: 310px;
+    height: 175px;
     object-fit: contain;
     overflow: hidden;
     color: gray;
@@ -66,7 +66,7 @@
 }
 .videoCard p .videoCard-footer {
     position: relative;
-    top:8px;
+    top:18px;
     font-size:.8em;
 }
 
@@ -83,7 +83,7 @@
         <div class="d-flex flex-wrap">
             {% for stream in streamList %}
             <a href="/view/{{stream.channel.channelLoc}}/">
-                <div class="streamCard py-3 pr-3">
+                <div class="streamCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <p>
                         <b>{{stream.streamName|limit_title}}</b><br>
@@ -111,7 +111,7 @@
         <div class="d-flex flex-wrap">
             {% for video in randomRecorded %}
             <a href="/play/{{video.id}}">
-                <div class="videoCard py-3 pr-3">
+                <div class="videoCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <p>
                         <b>{{video.channelName|limit_title}}</b><br>
