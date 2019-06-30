@@ -54,7 +54,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto" id="main-navbar-options">
             <div class="navbar-search-container">
-                <form class="form-inline flex-nowrap mx-lg-auto rounded p-1">
+                <form class="form-inline flex-nowrap mx-lg-auto rounded p-2">
                   <div id="navbar-search" class="input-group">
                     <div class="input-group-prepend">
                         <div class="input-group-text"><i class="fas fa-search"></i></div>
@@ -63,17 +63,17 @@
                   </div>
                 </form>
             </div>
-            <li class="nav-item">
+            <li class="nav-item px-1">
                 <a class="nav-link" href="/channels"><b>Channels</b></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item px-1">
                 <a class="nav-link" href="/topics"><b>Topics</b></a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item px-1">
                 <a class="nav-link" href="/streamers"><b>Streamers</b></a>
             </li>
             {% if user.is_authenticated == False %}
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 </li>
                 {% if sysSettings.allowRegistration == True %}
