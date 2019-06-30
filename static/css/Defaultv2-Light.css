@@ -3,6 +3,92 @@ body {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
+.card-cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 260px;
+  height: 1.35em;
+  white-space: nowrap;
+}
+
+.index-live-title {
+    font-size:1.35em;
+    width: 100%;
+}
+
+.index-video-title {
+    font-size:1.35em;
+    width: 100%;
+}
+
+.displayCard {
+    width: 600px;
+    height: 230px;
+}
+
+.displayCard a {
+    color: black;
+}
+
+.displayCard img {
+    width: 310px;
+    height: 175px;
+    object-fit: contain;
+    overflow: hidden;
+    color: gray;
+    float: left;
+}
+
+.displayCard .card-data {
+    margin-left:20px;
+    float: left;
+    font-size:1.15em;
+}
+
+.displayCard .card-data .displayCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 45px;
+}
+
+.displayCard p .displayCard-footer i {
+    color: blue;
+}
+
+
+@media screen and (max-width : 640px) {
+
+    .card-cut-text {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 360px;
+      height: 1.35em;
+      white-space: nowrap;
+    }
+
+    .displayCard {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .displayCard img{
+        width: 100%;
+        height: initial;
+    }
+
+    .displayCard .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .displayCard .card-data .displayCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+}
+
 
 .red {
     background-color:red;
@@ -48,17 +134,6 @@ body {
     background-image: radial-gradient(rgba(0, 150, 0, 0.75), black 120%);
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
-
-@media screen and (max-width: 1024px) {
-
-
-}
-
-@media screen and (max-width : 640px) {
-
-}
-
-
 
 .slide-in-left {
 	-webkit-animation: slide-in-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
