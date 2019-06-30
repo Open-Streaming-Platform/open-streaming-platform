@@ -5,51 +5,32 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
-        <div class="input-group">
-            <div class="input-group-prepend shadow">
-                <div class="input-group-text"><i class="fas fa-search"></i></div>
-            </div>
-            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
-        </div>
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Channels</b></div>
     </div>
-    <div class="container-fluid justify-content-center" style="width:85%;padding-top:15px;">
-        <div class="streamList d-flex align-content-around flex-wrap">
-        {% for channel in channelList %}
-            <div class="streamcard">
-                <a href="/channel/{{channel.id}}/">
-                    <div class="stream shadow card p-2 streamcard-item">
-                        <div>
-                            <img class="channel-img card-img-top shadow" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                            {% if channel.protected %}
-                            <div class="streamcard-overlay">
-                                <div class="quarter-circle-top-left">
-                                    {% if check_isValidChannelViewer(channel.id) %}
-                                        <i class="stream-image-overlay-text fas fa-lock-open"></i>
-                                    {% else %}
-                                        <i class="stream-image-overlay-text fas fa-lock"></i>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title text-shadow-close">{{channel.channelName}}</h5>
-                            <p class="card-text">
-                            <div class="streamcard-IconText"><i class="fas fa-hashtag"></i> </div> <div style="float:left;"><b> {{channel.topic|get_topicName}}</b></div> <br>
-                            <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b>
-                            </p>
-                        </div>
-                        <div class="streamcard-footer bg-transparent">
-                            <i class="fas fa-users"></i> {{channel.views}}
-                        </div>
+    <div class="row mx-2">
+        <div class="d-flex flex-wrap justify-content-between">
+            {% for channel in channelList %}
+                <div class="displayCard py-1 pr-1">
+                    <a href="/channel/{{channel.id}}/">
+                    <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
+                        {{channel.channelName}}<br>
+                        {{channel.topic|get_topicName}}<br>
+                        <img src="{{channel.owningUser|get_pictureLocation}}" width="32" height="32"><b> {{channel.owningUser|get_userName}}</b><br>
+                        <span class="displayCard-footer">
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
+                        </span>
                     </div>
-
-                </a>
-            </div>
-        {% endfor %}
+                    </a>
+                </div>
+            {% endfor %}
         </div>
     </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
