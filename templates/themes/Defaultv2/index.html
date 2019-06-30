@@ -10,6 +10,8 @@
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
+  width: 280px;
+  height: 1.2em;
   white-space: nowrap;
 }
 
@@ -90,9 +92,9 @@
         <div class="d-flex flex-wrap justify-content-between">
             {% for stream in streamList %}
             <a href="/view/{{stream.channel.channelLoc}}/">
-                <div class="streamCard py-3 pr-2 card-cut-text">
+                <div class="streamCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <p>
+                    <p class="card-cut-text">
                         <b>{{stream.streamName|limit_title}}</b><br>
                         {{stream.channel.channelName}}<br>
                         {{stream.topic|get_topicName}}<br>
@@ -118,9 +120,9 @@
         <div class="d-flex flex-wrap justify-content-between">
             {% for video in randomRecorded %}
             <a href="/play/{{video.id}}">
-                <div class="videoCard py-3 pr-2 card-cut-text">
+                <div class="videoCard py-3 pr-2">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <p>
+                    <p class="card-cut-text">
                         <b>{{video.channelName|limit_title}}</b><br>
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
