@@ -29,7 +29,7 @@
     }
 
     .navbar-search-container {
-        width: 100%;
+
     }
 
     #navbar-search {
@@ -51,7 +51,8 @@
           <span class="navbar-title"><b>{{sysSettings.siteName}}</b></span>
       </a>
       <ul class="navbar-nav mr-auto"></ul>
-      <div class="flex-grow-1 d-flex navbar-search-container">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto" id="main-navbar-options">
             <form class="form-inline flex-nowrap mx-lg-auto rounded p-1">
               <div id="navbar-search" class="input-group">
                 <div class="input-group-prepend">
@@ -60,9 +61,6 @@
                 <input type="text" id="search" name="search" class="searchBar form-control " placeholder="Search">
               </div>
             </form>
-      </div>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto" id="main-navbar-options">
             <li class="nav-item">
                 <a class="nav-link" href="/channels"><b>Channels</b></a>
             </li>
