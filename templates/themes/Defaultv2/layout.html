@@ -72,9 +72,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="/streamers"><b>Streamers</b></a>
             </li>
-        </ul>
-        {% if user.is_authenticated == False %}
-            <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated == False %}
                 <li class="nav-item">
                     <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 </li>
@@ -83,9 +81,7 @@
                     <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
                 </li>
                 {% endif %}
-            </ul>
-        {% else %}
-            <ul class="navbar-nav ml-auto">
+            {% else %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
