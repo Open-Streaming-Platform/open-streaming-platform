@@ -5,6 +5,40 @@
 {% endblock %}
 
 {% block body %}
+<style>
+.index-live-title {
+    font-size:1.35em;
+}
+
+.streamCard {
+    width: 575px;
+    height: 190px;
+    border: 1px solid;
+}
+
+.streamCard img {
+    width: 270px;
+    height: 152px;
+    object-fit: contain;
+    overflow: hidden;
+    color: gray;
+    float: left;
+}
+
+.streamCard p {
+    margin-left:10px;
+    float: left;
+    font-size:1.25em;
+}
+.streamCard p .streamCard-footer {
+    font-size:.8em;
+}
+
+.streamCard p .streamCard-footer i {
+    color: blue;
+}
+</style>
+
 <div class="container" id="index-live-container">
     <div class="row my-2">
         <div class="index-live-title"><b>Live Now</b></div>
