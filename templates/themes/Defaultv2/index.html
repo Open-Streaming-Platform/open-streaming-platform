@@ -86,15 +86,15 @@
 }
 </style>
 
-<div class="container-fluid m-2" id="index-live-container">
+<div class="container-fluid m-2" id="index-live-container" style="width:100%;">
     <div class="row my-2">
         <div class="index-live-title"><b>Live Now</b></div>
     </div>
     <div class="row">
         <div class="d-flex flex-wrap justify-content-between">
             {% for stream in streamList %}
-            <a href="/view/{{stream.channel.channelLoc}}/">
                 <div class="streamCard py-1 pr-2">
+                    <a href="/view/{{stream.channel.channelLoc}}/">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
@@ -107,22 +107,22 @@
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
                         </span>
                     </div>
+                    </a>
                 </div>
-            </a>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<div class="container-fluid m-4" id="index-videos-container">
+<div class="container-fluid m-2" id="index-videos-container" style="width:100%;">
     <div class="row my-2">
         <div class="index-video-title"><b>Videos</b></div>
     </div>
     <div class="row">
         <div class="d-flex flex-wrap justify-content-between">
             {% for video in randomRecorded %}
-            <a href="/play/{{video.id}}">
                 <div class="videoCard py-1 pr-1">
+                    <a href="/play/{{video.id}}">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
@@ -135,8 +135,8 @@
                             <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{video.length|hms_format}}</span>
                         </span>
                     </div>
+                    </a>
                 </div>
-            </a>
             {% endfor %}
         </div>
     </div>
