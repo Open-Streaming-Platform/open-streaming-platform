@@ -52,6 +52,17 @@ body {
     top: 45px;
 }
 
+@media screen and (min-width : 990px) and (max-width : 1920px) {
+    .displayCard-other .card-data {
+        margin-left:0px;
+        float:left;
+    }
+    .displaycard-other .card-data .displayCard-footer {
+        top: initial;
+    }
+
+}
+
 
 @media screen and (max-width : 640px) {
 
