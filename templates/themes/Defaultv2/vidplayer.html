@@ -55,7 +55,7 @@
                           <i class="fas fa-trash-alt"></i>
                       </button>
                       {% endif %}
-                       <span class="float-right">
+                      <span class="float-right">
                           <i class="fas fa-users"></i>{{video.views}}
                           <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});">
                               <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
@@ -67,6 +67,26 @@
          <div class="col-lg-4 col-sm-12">
             <div class="row">
                 <div class="index-video-title"><b>Other Videos</b></div>
+                {% for vid in randomRecorded[:5] %}
+                    {% if vid.id != video.id and vid.pending != True %}
+                        <div class="displayCard py-1 pr-1">
+                            <a href="/play/{{vid.id}}">
+                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            <div class="card-data">
+                                <div class="card-cut-text"><b>{{vid.channelName|limit_title}}</b></div>
+                                {{vid.channel.channelName}}<br>
+                                {{vid.topic|get_topicName}}<br>
+                                {{vid.videoDate|normalize_date}}<br>
+                                <span class="displayCard-footer">
+                                    <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{vid.id|get_Video_Upvotes}}</span>
+                                    <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{vid.views}}</span>
+                                    <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{vid.length|hms_format}}</span>
+                                </span>
+                            </div>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
              </div>
          </div>
      </div>
