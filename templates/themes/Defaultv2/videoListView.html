@@ -7,7 +7,7 @@
 {% block body %}
     {% if channelData is defined %}
     <div class="container-fluid justify-content-center" style="width:85%">
-        <div class="jumbotron shadow">
+        <div class="jumbotron shadow p-1">
             <div class="row">
                 <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
                     <div>
@@ -18,7 +18,7 @@
                     <div class="viewerText">
                         <h2 class="display-5"><b>{{channelData.channelName}}</b></h2>
                         <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
-                        <span>{{channelData.description}}</span>
+                        <span>{{channelData.description}}</span><br>
                         <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
                     </div>
                 </div>
