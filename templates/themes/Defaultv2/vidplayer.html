@@ -7,210 +7,65 @@
 {% endblock %}
 
 {% block body %}
-<div class="">
-      <div class="container-fluid">
-          <div class="row justify-content-md-center">
-              <div class="col-xl-10 col-sm-12">
-                  <div class="White-BG player">
-                      <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay controls preload="auto" data-setup='{"fluid": true}'>
-                        <source src="{{streamURL}}" type="video/mp4">
-                        <p class="vjs-no-js">
-                          To view this video please enable JavaScript, and consider upgrading to a web browser that
-                          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+
+ <div class="container-fluid">
+     <div class="row">
+         <div class="col-lg-8 col-sm-12">
+             <div class="row">
+                <div class="index-video-title"><b>Videos</b></div>
+             </div>
+             <div class="row">
+                 <div class="player">
+                     <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+                         <source src="{{streamURL}}" type="video/mp4">
+                         <p class="vjs-no-js">
+                            To view this video please enable JavaScript, and consider upgrading to a web browser that
+                            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                         </p>
                     </video>
-                  </div>
-                  <div class="video-buttons-mobile justify-content-center">
-                      <div>
+                 </div>
+             </div>
+             <div class="row">
+                 <div class="video-buttons-row">
+                      <a href="{{streamURL}}" class="btn btn-primary shadow">
+                          <i class="fas fa-download"></i>
+                      </a>
+                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
+                        <i class="fas fa-comment"></i>
+                      </button>
+                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                        <i class="fas fa-share-alt"></i>
+                      </button>
+                      {% if video.owningUser == current_user.id %}
+                      <button type="button" class="btn btn-primary shadow" onclick="setScreenShot()">
+                          <i class="fas fa-camera"></i>
+                      </button>
+                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
+                          <i class="fas fa-arrow-circle-right"></i>
+                      </button>
+                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                          <i class="fas fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
+                          <i class="fas fa-trash-alt"></i>
+                      </button>
+                      {% endif %}
+                       <span class="float-right">
+                          <i class="fas fa-users"></i>{{video.views}}
                           <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});">
                               <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
                           </button>
-                      </div>
-                      <div style="margin-left:5px;">
-                          <a href="{{streamURL}}" class="btn btn-primary shadow">
-                              <i class="fas fa-download"></i>
-                          </a>
-                      </div>
-                      <div style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
-                                  <i class="fas fa-comment"></i>
-                              </button>
-                      </div>
-                      <div style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-                              <i class="fas fa-share-alt"></i>
-                          </button>
-                      </div>
-                      {% if video.owningUser == current_user.id %}
-                      <div style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary shadow" onclick="setScreenShot()">
-                              <i class="fas fa-camera"></i>
-                          </button>
-                      </div>
-                      <div style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
-                              <i class="fas fa-arrow-circle-right"></i>
-                          </button>
-                      </div>
-                      <div style="margin-left:5px;">
-                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-                              <i class="fas fa-edit"></i>
-                          </button>
-                      </div>
-                      <div style="margin-left:5px;">
-                          <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
-                              <i class="fas fa-trash-alt"></i>
-                          </button>
-                      </div>
-                      {% endif %}
-
+                      </span>
                   </div>
-                  <div class="White-BG recordedStreamInfo shadow">
-                      <div class="video-buttons-lg">
-                          {% if video.owningUser == current_user.id %}
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal" title="Delete Video">
-                                  <i class="fas fa-trash-alt"></i>
-                              </button>
-
-                          </div>
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal" title="Edit Video">
-                                  <i class="fas fa-edit"></i>
-                              </button>
-                          </div>
-
-                          <div class="float-right" style="margin-left:5px;">
-                            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal" title="Move Video">
-                              <i class="fas fa-arrow-circle-right"></i>
-                            </button>
-                          </div>
-
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" onclick="newScreenShot()" title="New Thumbnail">
-                                  <i class="fas fa-camera"></i>
-                              </button>
-                          </div>
-                          {% endif %}
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal" title="Share Video">
-                                  <i class="fas fa-share-alt"></i>
-                              </button>
-                          </div>
-                          <div class="float-right" style="margin-left:5px;">
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments != True or sysSettings.allowComments != True %} disabled aria-disabled="true"{% endif %} title="Comment">
-                                  <i class="fas fa-comment"></i>
-                              </button>
-                          </div>
-                          <div class="float-right" style="margin-left:5px;">
-                              <a href="{{streamURL}}" class="btn btn-primary shadow" title="Download Video">
-                                  <i class="fas fa-download"></i>
-                              </a>
-                          </div>
-                          <div class="float-right">
-                              <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
-                                  <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-                              </button>
-                          </div>
-                      </div>
-                      <div>
-                          <div class="streamcard-IconText"><i class="fas fa-video"></i></div> <div style="float:left;"><b>{{video.channelName}}</b></div> <br>
-                          <div class="streamcard-IconText"><i class="fas fa-tv"></i></div> <div style="float:left;"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div> <br>
-                          <div class="streamcard-IconText"><i class="fas fa-hashtag"></i></div> <div style="float:left;"> <b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div> <br><br>
-                          <div><b>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</b></div>
-                      </div>
-                  </div>
-                  <div class="White-BG recordedStreamInfo shadow">
-                      <div>
-                          <div class="streamcard-IconText"><i class="fas fa-calendar-alt"></i></div> <div style="float:left;"> <b>{{video.videoDate|normalize_date}}</b></div> <br>
-                          <img src="{{video.owningUser|get_pictureLocation}}" width="32" height="32"> <b><a href="/streamers/{{video.owningUser}}/">{{video.owningUser|get_userName}}</a></b><br>
-                          <div class="streamcard-IconText"><i class="fas fa-users"></i></div> <div style="float:left;">{{video.views}} </div><br>
-                      </div>
-                  </div>
-                  <br>
-                  {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
-                  <div class="card shadow">
-                      <div class="card-header"><b>Comments</b></div>
-                      <div class="card-body comments-box">
-                        {% for comment in video.comments %}
-                        <div class="comment shadow">
-                          <div class="row">
-                            <div class="col-lg-2 col-md-2">
-                                <b>{{comment.userID|get_userName}}</b><br>
-                              <img src="{{comment.userID|get_pictureLocation}}" width="64px" height="64px" onerror="this.src='/static/img/user2.png';">
-                            </div>
-                            <div class="col-lg-8 col-md-7">
-                                <b>{{comment.timestamp|normalize_date}}</b><br>
-                                {{comment.comment}}
-                            </div>
-                            <div class="col-lg-2 col-md-2">
-                              <div class="float-right">
-                                {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="fas fa-thumbs-up"></i>
-                                {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
-                                {% endif %}
-                                      <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
-                                {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
-                                    <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
-                                {% endif %}
-                              </div>
-                            </div>
-                        </div>
-                      </div>
-                      {% endfor %}
-                    </div>
-                  </div>
-                  {% endif %}
-              </div>
-
-      <br>
-      <br>
-    {% if randomRecorded != [] and randomRecorded != None %}
-              <div class="col-xl-10 col-lg-12">
-                  <div class="card shadow" style="margin-top:30px;margin-bottom:30px;">
-                      <h5 class="card-header">Other Videos from this Channel</h5>
-                      <div class="card-body">
-                        <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
-                              <div class="streamList d-flex justify-content-center flex-wrap">
-                                  {% for vid in randomRecorded%}
-                                    {% if vid.id != video.id and vid.pending != True%}
-                                    <div class="streamcard">
-                                      <a href="/play/{{vid.id}}">
-                                          <div class="stream shadow card p-2 streamcard-item">
-                                            <div>
-                                                <img class="stream-img card-img-top shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                                {% if vid.channel.protected %}
-                                                <div class="streamcard-overlay">
-                                                    <div class="quarter-circle-top-left">
-                                                        <i class="stream-image-overlay-text fas fa-lock"></i>
-                                                    </div>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="card-body">
-                                                <h5 class="card-title text-shadow-close">{{vid.channelName|limit_title}}</h5><br>
-                                                <i class="fas fa-hashtag"></i> <b>{{vid.topic|get_topicName}}</b> <br>
-                                                <i class="fas fa-calendar-alt"></i> <b>{{vid.videoDate|normalize_date}}</b> <br>
-                                            </div>
-                                            <div class="streamcard-footer bg-transparent">
-                                                <div class="float-left"><i class="fas fa-users"></i> {{vid.views}}</div>
-                                                <div class="float-left" style="position:relative;left:20px;"><i id="upVoteIcon" class="far fa-thumbs-up"></i> {{vid.id|get_Video_Upvotes}}</div>
-                                                <div class="float-right"><i class="fas fa-clock"></i> {{vid.length|hms_format}}</div>
-                                            </div>
-                                        </div>
-                                      </a>
-                                    </div>
-                                  {% endif %}
-                                  {% endfor %}
-                              </div>
-                        </div>
-                      </div>
-                  </div>
-              </div>
-
-          {% endif %}
-          </div>
-      </div>
-</div>
+             </div>
+         </div>
+         <div class="col-lg-4 col-sm-12">
+            <div class="row">
+                <div class="index-video-title"><b>Other Videos</b></div>
+             </div>
+         </div>
+     </div>
+ </div>
 
 {% if video.owningUser == current_user.id %}
 <!-- Modal -->
@@ -317,13 +172,13 @@
       <div class="modal-body">
             <h5>Move this Video to Channel:</h5>
 
-                <select name="moveToChannelID" class="form-control">
-                    {% for chan in current_user.channels %}
-                        {% if chan.id != video.channelID %}
-                            <option value="{{chan.id}}">{{chan.channelName}}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+            <select name="moveToChannelID" class="form-control">
+                {% for chan in current_user.channels %}
+                    {% if chan.id != video.channelID %}
+                        <option value="{{chan.id}}">{{chan.channelName}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
