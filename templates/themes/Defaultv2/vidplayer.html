@@ -31,31 +31,33 @@
                 </video>
              </div>
              <div class="row m-2">
-                 <div class="video-buttons-row float-left">
-                      <a href="{{streamURL}}" class="btn btn-primary shadow">
-                          <i class="fas fa-download"></i>
-                      </a>
-                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
-                        <i class="fas fa-comment"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-                        <i class="fas fa-share-alt"></i>
-                      </button>
-                      {% if video.owningUser == current_user.id %}
-                      <button type="button" class="btn btn-primary shadow" onclick="setScreenShot()">
-                          <i class="fas fa-camera"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
-                          <i class="fas fa-arrow-circle-right"></i>
-                      </button>
-                      <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-                          <i class="fas fa-edit"></i>
-                      </button>
-                      <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
-                          <i class="fas fa-trash-alt"></i>
-                      </button>
-                      {% endif %}
-                      <div class="float-right">
+                 <div class="video-buttons-row justify-content-between">
+                     <div>
+                          <a href="{{streamURL}}" class="btn btn-primary shadow">
+                              <i class="fas fa-download"></i>
+                          </a>
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
+                            <i class="fas fa-comment"></i>
+                          </button>
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+                          {% if video.owningUser == current_user.id %}
+                          <button type="button" class="btn btn-primary shadow" onclick="setScreenShot()">
+                              <i class="fas fa-camera"></i>
+                          </button>
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
+                              <i class="fas fa-arrow-circle-right"></i>
+                          </button>
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                              <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
+                              <i class="fas fa-trash-alt"></i>
+                          </button>
+                          {% endif %}
+                     </div>
+                     <div>
                           <i class="fas fa-users"></i>{{video.views}}
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
