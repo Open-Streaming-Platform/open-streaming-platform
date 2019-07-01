@@ -69,7 +69,7 @@
                 <div class="index-video-title mb-2"><b>Other Videos</b></div>
                 {% for vid in randomRecorded[:4] %}
                     {% if vid.id != video.id and vid.pending != True %}
-                        <div class="displayCard py-1 pr-1">
+                        <div class="displayCard pb-1 pr-1">
                             <a href="/play/{{vid.id}}">
                             <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                             <div class="card-data">
