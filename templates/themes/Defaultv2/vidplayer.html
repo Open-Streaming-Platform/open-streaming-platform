@@ -66,8 +66,8 @@
          </div>
          <div class="col-lg-4 col-sm-12">
             <div class="row m-2">
-                <div class="index-video-title"><b>Other Videos</b></div>
-                {% for vid in randomRecorded[:5] %}
+                <div class="index-video-title mb-2"><b>Other Videos</b></div>
+                {% for vid in randomRecorded[:4] %}
                     {% if vid.id != video.id and vid.pending != True %}
                         <div class="displayCard py-1 pr-1">
                             <a href="/play/{{vid.id}}">
