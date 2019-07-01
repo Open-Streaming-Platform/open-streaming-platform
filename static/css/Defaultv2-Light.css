@@ -91,6 +91,7 @@ body {
     }
     .displaycard-other .card-data .displayCard-footer {
         top: initial;
+        font-size:1em;
     }
 
 }
