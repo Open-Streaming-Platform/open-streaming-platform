@@ -52,6 +52,38 @@ body {
     top: 45px;
 }
 
+.displayCard-other {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.displayCard-other a {
+    color: black;
+}
+
+.displayCard-other img {
+    width: 310px;
+    height: 175px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.displayCard-other .card-data {
+    margin-left:15px;
+    float: left;
+    font-size:1.10em;
+}
+
+.displayCard-other .card-data .displayCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 45px;
+}
+
+
 @media screen and (min-width : 990px) and (max-width : 1920px) {
     .displayCard-other .card-data {
         margin-left:0px;
@@ -91,6 +123,27 @@ body {
         font-size:1em;
     }
     .displayCard .card-data .displayCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+
+    .displayCard-other {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .displayCard-other img{
+        width: 100%;
+        height: initial;
+    }
+
+    .displayCard-other .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .displayCard-other .card-data .displayCard-footer {
         font-size:1em;
         top: initial;
     }
