@@ -23,6 +23,7 @@ body {
 
 .displayCard {
     width: 600px;
+    margin-bottom:15px;
 }
 
 .displayCard a {
