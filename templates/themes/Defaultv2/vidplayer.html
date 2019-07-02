@@ -79,6 +79,7 @@
              {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
              <div class="row m-2">
                  <div class="index-video-title mb-2"><b>Comments</b></div>
+                 {% for comment in video.comments %}
                  <div class="comment shadow">
                       <div class="row">
                         <div class="col-lg-2 col-md-2">
@@ -101,7 +102,8 @@
                           </div>
                         </div>
                     </div>
-                </div>
+                 </div>
+                 {% endfor %}
              </div>
              {% endif %}
          </div>
