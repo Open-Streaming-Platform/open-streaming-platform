@@ -76,6 +76,34 @@
              <div class="row m-2">
                  <div>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</div>
              </div>
+             {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
+             <div class="row m-2">
+                 <div class="index-video-title mb-2"><b>Comments</b></div>
+                 <div class="comment shadow">
+                      <div class="row">
+                        <div class="col-lg-2 col-md-2">
+                            <b>{{comment.userID|get_userName}}</b><br>
+                          <img src="{{comment.userID|get_pictureLocation}}" width="64px" height="64px" onerror="this.src='/static/img/user2.png';">
+                        </div>
+                        <div class="col-lg-8 col-md-7">
+                            <b>{{comment.timestamp|normalize_date}}</b><br>
+                            {{comment.comment}}
+                        </div>
+                        <div class="col-lg-2 col-md-2">
+                          <div class="float-right">
+                            {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="fas fa-thumbs-up"></i>
+                            {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
+                            {% endif %}
+                                  <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
+                            {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
+                                <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
+                            {% endif %}
+                          </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+             {% endif %}
          </div>
          <div class="col-lg-4 col-sm-12">
             <div class="row m-2">
