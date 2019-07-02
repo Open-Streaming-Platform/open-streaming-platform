@@ -72,10 +72,12 @@
                       </span>
                   </div>
              </div>
-             <div class="row m-1">
-                 <div class="col-4"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-                 <div class="col-4"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
-                 <div class="col-4"><b>{{video.videoDate|normalize_date}}</b></div>
+             <div class="container-fluid">
+                 <div class="row m-2">
+                     <div class="col-4"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                     <div class="col-4"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+                     <div class="col-4"><b>{{video.videoDate|normalize_date}}</b></div>
+                 </div>
              </div>
              <div class="row m-2">
                  <div>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</div>
