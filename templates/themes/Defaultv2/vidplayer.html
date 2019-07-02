@@ -32,7 +32,7 @@
              </div>
              <div class="row m-2">
                  <div class="video-buttons-row" style="width:100%;">
-                     <span class="d-flex justify-content-start">
+                     <span class="float-left">
                           <a href="{{streamURL}}" class="btn btn-primary shadow">
                               <i class="fas fa-download"></i>
                           </a>
@@ -57,7 +57,7 @@
                           </button>
                           {% endif %}
                      </span>
-                     <span class="d-flex justify-content-end">
+                     <span class="float-right">
                           <i class="fas fa-users"></i>{{video.views}}
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
