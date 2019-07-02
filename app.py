@@ -733,7 +733,7 @@ def view_vid_page(videoID):
 
         if isEmbedded == None or isEmbedded == "False":
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.channelID == recordedVid.channel.id, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
 
             return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
         else:
