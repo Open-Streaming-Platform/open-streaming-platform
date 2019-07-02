@@ -16,6 +16,10 @@
     .video-buttons-row {
         width: 100%;
     }
+
+    .comment {
+        width:100%;
+    }
 </style>
 
  <div class="container-fluid">
@@ -80,7 +84,7 @@
              <div class="row m-2">
                  <div class="index-video-title mb-2"><b>Comments</b></div>
                  {% for comment in video.comments %}
-                 <div class="comment shadow">
+                 <div class="comment ">
                       <div class="row">
                         <div class="col-lg-2 col-md-2">
                             <b>{{comment.userID|get_userName}}</b><br>
