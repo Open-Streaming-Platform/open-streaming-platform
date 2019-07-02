@@ -78,7 +78,7 @@
                  <div class="col-4"><b>{{video.videoDate|normalize_date}}</b></div>
              </div>
              <div class="row m-2">
-                 <div>{% if video.description != None or video.description != "None"%}{{video.description}} {% else %}No Description Available {% endif %}</div>
+                 <div>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</div>
              </div>
              {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
              <div class="row m-2">
