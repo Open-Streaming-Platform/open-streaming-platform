@@ -74,7 +74,7 @@
              </div>
              <div class="container-fluid">
                  <div class="row">
-                     <div class="ml-1 float-left"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                     <div class="ml-2 float-left"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
                      <div class="mx-auto"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
                      <div class="mx-auto"><b>{{video.videoDate|normalize_date}}</b></div>
                  </div>
@@ -121,7 +121,7 @@
                         <div class="displayCard-other pb-1 pr-1">
                             <a href="/play/{{vid.id}}">
                             <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                            <div class="card-data ml-2">
+                            <div class="card-data">
                                 <div class="card-cut-text"><b>{{vid.channelName|limit_title}}</b></div>
                                 {{vid.channel.channelName}}<br>
                                 {{vid.topic|get_topicName}}<br>
