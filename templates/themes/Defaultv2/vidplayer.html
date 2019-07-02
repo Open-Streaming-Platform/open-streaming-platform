@@ -157,7 +157,7 @@
         <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
         <br>
         <h5>Stream Topic:</h5>
-        <select class="form-control" name="newVidTopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+        <select class="form-control" name="newVidTopic" id="channeltopic" required >
             {% for topic in topics %}
             <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
             {% endfor %}
