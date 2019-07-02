@@ -3,6 +3,26 @@ body {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
+.main-navbar {
+    font-size: 1.25em;
+}
+
+.navbar-title {
+    font-size: 1.25em;
+}
+
+.navbar-search-container {
+    margin-right:20px;
+}
+
+#navbar-search {
+    width: 100%;;
+}
+
+#main-navbar-options a {
+    color:black;
+}
+
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -71,9 +91,9 @@ body {
 }
 
 .displayCard-other .card-data {
-    margin-left:15px;
+    margin-left:18px;
     float: left;
-    font-size:1.10em;
+    font-size:1em;
 }
 
 .displayCard-other .card-data .displayCard-footer {
@@ -84,7 +104,7 @@ body {
 }
 
 
-@media screen and (min-width : 990px) and (max-width : 1920px) {
+@media screen and (min-width : 990px) and (max-width : 1919px) {
     .displayCard-other .card-data {
         margin-left:0px;
         float:left;
