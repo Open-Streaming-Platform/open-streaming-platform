@@ -59,7 +59,6 @@
     }
 
     .chatbox {
-        margin-top: 50px;
         height: 540px;
     }
 
@@ -128,6 +127,7 @@
          </div>
          <div class="col-lg-4 col-sm-12" id="chatBlock">
             <div class="row m-2">
+                <div class="index-video-title"><b>Chat</b></div>
                 <div class="chatbox" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
