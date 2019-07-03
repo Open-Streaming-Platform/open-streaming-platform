@@ -126,10 +126,10 @@
              </div>
 
          </div>
-         <div class="col-lg-4 col-sm-12" id="chatBlock">
+         <div class="col-lg-4 col-sm-12" >
             <div class="row ml-2" mr-2>
                 <div class="index-video-title mb-2"><b>Chat</b></div>
-                <div class="chatbox" style="margin-bottom:210px;">
+                <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                       <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
