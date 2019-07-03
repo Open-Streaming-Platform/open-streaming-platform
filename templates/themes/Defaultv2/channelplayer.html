@@ -126,12 +126,12 @@
 
          </div>
          <div class="col-lg-4 col-sm-12" id="chatBlock">
-            <div class="row m-2">
-                <div class="index-video-title"><b>Chat</b></div>
-                <div class="chatbox" style="margin-bottom:210px;">
+            <div class="row">
+                <div class="index-video-title ml-2 mb-2 mr-2"><b>Chat</b></div>
+                <div class="chatbox m-2" style="margin-bottom:210px;">
                       <div id="chat" class="chat shadow"></div><br>
                       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
+                      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
                       <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
                   </div>
             </div>
