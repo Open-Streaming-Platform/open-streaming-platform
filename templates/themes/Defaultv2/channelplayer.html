@@ -96,7 +96,7 @@
                     <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
                  </div>
              </div>
-             <div class="row my-2 mx-1">
+             <div class="row m-2">
                  <div class="video-buttons-row">
                      <span class="float-left">
                           <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" {% if channel.chatEnabled == False %}disabled{% endif %}>
@@ -114,10 +114,10 @@
                           {% endif %}
                      </span>
                      <span class="float-right">
-                          <span><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
-                          <span><i class="fas fa-eye mr-2"></i><span id="currentViewers"> {{channel.currentViewers}}</span></span>
+                          <i class="fas fa-users mr-2"></i> {{channel.views}}
+                          <i class="fas fa-eye mr-2"></i><div id="currentViewers"> {{channel.currentViewers}}</div>
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote">
-                              <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                              <i id="upVoteIcon" class="far fa-thumbs-up"> <div id="totalUpvotes"></div></i>
                           </button>
                       </span>
                   </div>
