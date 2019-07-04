@@ -432,6 +432,8 @@
         videoContainer = document.getElementById('videoContainer');
         offlineWindow = document.getElementById('offlineImage');
 
+        onlineBadge = document.getElementById('liveIndicatorBadge');
+
         $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
             var channelList = data['results'][0];
             var streamIDList = channelList['stream'];
@@ -479,6 +481,9 @@
                     var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
                     var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
+                    onlineBadge.classname = 'float-right badge badge-danger';
+                    onlineBadge.innterHTML = 'Live';
+
                     nameDiv.innerHTML = nameDivHTML;
                     topicDiv.innerHTML = topicDivHTML;
 
@@ -488,6 +493,8 @@
                 try {
                     videoJSObj.pause();
                     videoJSObj.reset();
+                    onlineBadge.classname = 'float-right badge badge-secondary';
+                    onlineBadge.innterHTML = 'Offline';
                     videoContainer.style.display = "none";
                     offlineWindow.style.display = "block";
                     var currentStreamName = "No Stream";
