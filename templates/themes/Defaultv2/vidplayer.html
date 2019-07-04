@@ -25,7 +25,7 @@
              </div>
              <div class="row m-2">
                  <div class="video-buttons-row">
-                     <span class="float-left">
+                     <span class="float-md-left">
                           <a href="{{streamURL}}" class="btn btn-primary shadow">
                               <i class="fas fa-download"></i>
                           </a>
@@ -59,8 +59,8 @@
                   </div>
              </div>
              <div class="container-fluid">
-                 <div class="row">
-                     <div class="ml-2 float-md-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                 <div class="row ml-2">
+                     <div class="float-md-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
                      <div class="mx-auto-md"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
                      <div class="mx-auto-md"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
                  </div>
