@@ -74,7 +74,7 @@
 
 <div class="container-fluid">
      <div class="row">
-         <div class="col-lg-8 col-sm-12">
+         <div class="col-lg-8 col-xs-12 col-sm-12">
               <div class="index-video-title ml-2 my-2">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b></span>
                   <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b>Offline</b></span>
@@ -94,7 +94,7 @@
     <div class="tab-content" id="tabList">
         <div class="tab-pane fade show active" id="livechannel" role="tabpanel" aria-labelledby="channel-tab">
          <div class="row">
-            <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-12{% endif %} col-sm-12" id="videoWindow">
+            <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-12{% endif %} col-xs-12 col-sm-12" id="videoWindow">
                  <div class="player ml-2">
                      <div id="videoContainer">
                          <video id="video" class="shadow videoStream video-js vjs-big-play-centered lazy" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
@@ -136,12 +136,14 @@
                       </div>
                  </div>
                  <div class="row m-2">
-                    <span id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
-                    <span id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
+                    <div class="col-12 nopadding">
+                        <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                        <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+                    </div>
                  </div>
              </div>
 
-             <div id="chatside" class="col-lg-4 col-sm-12" >
+             <div id="chatside" class="col-lg-4 col-xs-12 col-sm-12" >
                 <div class="row ml-2 mr-5">
                     <div class="index-video-title mb-2"><b>Chat</b></div>
                     <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
@@ -401,7 +403,7 @@
             var videoWindow = document.getElementById("videoWindow");
             if (chatbox.style.display === "none") {
                 chatbox.style.display = "block";
-                videoWindow.className = "col-lg-8 col-sm-12";
+                videoWindow.className = "col-lg-8 col-xs-12 col-sm-12";
             } else {
                 chatbox.style.display = "none";
                 videoWindow.className = "col-12";
