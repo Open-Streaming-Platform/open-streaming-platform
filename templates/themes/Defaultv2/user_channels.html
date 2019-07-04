@@ -10,16 +10,14 @@
 
 {% block body %}
 <div class="container-fluid">
-    <div class="row">
+    <div class="row m-2">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
-            <div class="row m-2">
-                <span class="index-live-title"><b>Your Channels</b></span>
-                <span class="float-right"><button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
-            </div>
+            <span class="float-left index-live-title"><b>Your Channels</b></span>
+            <span class="float-right"> <button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
 
         {% for channel in channels %}
         <form action="/settings/channels" enctype=multipart/form-data method="post">
-            <div class="card m-2 shadow">
+            <div class="card shadow">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-4 col-lg-6 col-md-12">
