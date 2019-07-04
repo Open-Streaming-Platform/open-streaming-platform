@@ -96,11 +96,10 @@
                     <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
                  </div>
              </div>
-             <div class="row m-2">
+             <div class="row my-2 mx-1">
                  <div class="video-buttons-row">
                      <span class="float-left">
-                     <div>
-                          <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                          <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" {% if channel.chatEnabled == False %}disabled{% endif %}>
                             <i class="fas fa-comment"></i>
                           </button>
 
@@ -112,12 +111,11 @@
                           <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
                             <i class="fas fa-edit"></i>
                           </button>
-                      </div>
-                      {% endif %}
+                          {% endif %}
                      </span>
                      <span class="float-right">
                           <span><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
-                         <span><i class="fas fa-eye mr-2"></i><span id="currentViewers"> {{channel.currentViewers}}</span></span>
+                          <span><i class="fas fa-eye mr-2"></i><span id="currentViewers"> {{channel.currentViewers}}</span></span>
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote">
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                           </button>
@@ -462,15 +460,4 @@
         monitor_vid();
     }, 10000);
     </script>
-    <script>
-        $('#search').on('input', function(){
-            var query = document.getElementById("search").value.toLowerCase();
-            $('.streamcard-vids').each(function(){
-                 var $this = $(this);
-                 if($this.text().toLowerCase().indexOf(query) === -1)
-                     $this.closest('.streamcard').hide();
-                else $this.closest('.streamcard').show();
-            });
-        });
-        </script>
 {% endblock %}
