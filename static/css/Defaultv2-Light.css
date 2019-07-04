@@ -175,9 +175,9 @@ body {
 
 .streamcard-overlay {
   position:relative;
-  top: -1px;
+  top: 0;
   right: 0;
-  left: -1px;
+  left: 0;
   bottom: 0;
 }
 
