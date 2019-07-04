@@ -21,8 +21,7 @@
     .chat {
         overflow-y: auto;
         overflow-x: hidden;
-        height: 640px;
-        background-color: #eeeeee;
+        height: 740px;
         padding: 5px 5px 5px 5px;
         width:100%;
     }
@@ -77,11 +76,12 @@
      <div class="row">
          <div class="col-lg-8 col-sm-12">
              <div class="row m-2">
-                <div class="index-video-title" id="channelName"><b>{{channel.channelName}}</b></div>
+                <div class="index-video-title float-left" id="channelName"><b>{{channel.channelName}}</b></div>
+                <div class="index-video-title float-right" id="liveIndicator"><b><span id="liveIndicatorBadge" class="badge badge-secondary">Offline</span></b></div>
              </div>
          </div>
          <div class="col-lg-4 col-sm-12">
-            <ul id="channelPlayerMenu" class="nav nav-pills nav-justified mx-1 mb-2">
+            <ul id="channelPlayerMenu" class="nav nav-pills nav-justified mx-2 mb-2">
                 <li class="nav-item">
                     <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true"><b>View Live Channel</b></a>
                 </li>
@@ -137,8 +137,8 @@
                  </div>
                  <div class="row m-2">
                      <div class="col-lg-8 col-sm-12">
-                        <span id="streamMetadataName" class="mr-5"><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
-                        <span id="streamMetadataTopic"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
+                        <span id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
+                        <span id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
                      </div>
                  </div>
              </div>
