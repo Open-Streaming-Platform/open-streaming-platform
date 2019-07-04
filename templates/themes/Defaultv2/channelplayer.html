@@ -73,7 +73,7 @@
      <div class="row">
          <div class="col-lg-8 col-sm-12">
              <div class="row m-2">
-                <div class="index-video-title" id="streamMetadataName"><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div class="index-video-title" id="channelName"><b>{{channel.channelName}}</b></div>
              </div>
          </div>
          <div class="col-lg-4 col-sm-12">
@@ -130,6 +130,14 @@
                               </button>
                           </span>
                       </div>
+                 </div>
+                 <div class="row m-2">
+                     <div class="col-lg-8 col-sm-12">
+                         <div class="row m-2">
+                            <span id="streamMetadataName"><b>{% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
+                            <span id="streamMetadataTopic"><b><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span><
+                         </div>
+                     </div>
                  </div>
              </div>
 
