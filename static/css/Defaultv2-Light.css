@@ -103,6 +103,18 @@ body {
     top: 40px;
 }
 
+.recordedStream {
+    width:99%;
+    display:block;
+}
+.video-buttons-row {
+        width: 100%;
+}
+
+.comment {
+        width:100%;
+}
+
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
     .displayCard-other .card-data {
