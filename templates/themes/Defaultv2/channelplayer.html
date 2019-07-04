@@ -105,7 +105,7 @@
                         <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
                      </div>
                  </div>
-                 <div class="row my-2 ml-2">
+                 <div class="row m-2">
                      <div class="video-buttons-row">
                          <span class="float-left">
                               <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" {% if channel.chatEnabled == False %}disabled{% endif %}>
