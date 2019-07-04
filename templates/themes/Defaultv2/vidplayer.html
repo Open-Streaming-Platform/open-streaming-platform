@@ -10,7 +10,7 @@
 
  <div class="container-fluid">
      <div class="row">
-         <div class="col-lg-8 col-sm-12">
+         <div class="col-lg-8 col-xs-12 col-sm-12">
              <div class="row m-2">
                 <div class="index-video-title"><b>{{video.channelName}}</b></div>
              </div>
@@ -64,10 +64,10 @@
                       </button>
                  </div>
              </div>
-             <div class="row ml-1">
-                 <div class="float-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-                 <div class="mx-auto"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
-                 <div class="mx-auto"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+             <div class="row m-2">
+                 <b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b><br>
+                 <b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b><br>
+                 <b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b><
              </div>
 
              <div class="row m-2">
