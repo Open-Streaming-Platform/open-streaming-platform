@@ -60,7 +60,7 @@
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    {% if stream.channel.protected %}
+                    {% if video.channel.protected %}
                         <div class="streamcard-overlay">
                             <div class="quarter-circle-top-left">
                                 <i class="stream-image-overlay-text fas fa-lock"></i>
