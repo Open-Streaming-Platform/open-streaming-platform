@@ -82,53 +82,52 @@
      </div>
      <div class="row">
         <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-12{% endif %} col-sm-12" id="videoWindow">
-             <div id="videoWindowRow" class="row ml-2{% if channel.chatEnabled == False %}justify-content-md-center{% endif %}">
-                 <div class="player">
-                     <div id="videoContainer">
-                         <video id="video" class="shadow videoStream video-js vjs-big-play-centered lazy" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
-                            <source src="{{streamURL}}" type="application/x-mpegURL">
-                            <p class="vjs-no-js">
-                              To view this video please enable JavaScript, and consider upgrading to a web browser that
-                              <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-                            </p>
-                         </video>
-                     </div>
-                     <div id="offlineImage" style="display:none;">
-                        <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
-                     </div>
+             <div class="player ml-2">
+                 <div id="videoContainer">
+                     <video id="video" class="shadow videoStream video-js vjs-big-play-centered lazy" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
+                        <source src="{{streamURL}}" type="application/x-mpegURL">
+                        <p class="vjs-no-js">
+                          To view this video please enable JavaScript, and consider upgrading to a web browser that
+                          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                        </p>
+                     </video>
                  </div>
-                 <div class="row m-2">
-                     <div class="video-buttons-row">
-                         <span class="float-left">
-                         <div>
-                              <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
-                                <i class="fas fa-comment"></i>
-                              </button>
-
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-                                <i class="fas fa-share-alt"></i>
-                              </button>
-
-                              {% if channel.owningUser == current_user.id %}
-                              <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-                                <i class="fas fa-edit"></i>
-                              </button>
-                          </div>
-                          {% endif %}
-                         </span>
-                         <span class="float-right">
-                              <span><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
-                             <span><i class="fas fa-eye mr-2"></i><span id="currentViewers"> {{channel.currentViewers}}</span></span>
-                              <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote">
-                                  <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-                              </button>
-                          </span>
-                      </div>
+                 <div id="offlineImage" style="display:none;">
+                    <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
                  </div>
              </div>
+             <div class="row m-2">
+                 <div class="video-buttons-row">
+                     <span class="float-left">
+                     <div>
+                          <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                            <i class="fas fa-comment"></i>
+                          </button>
+
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                            <i class="fas fa-share-alt"></i>
+                          </button>
+
+                          {% if channel.owningUser == current_user.id %}
+                          <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                      </div>
+                      {% endif %}
+                     </span>
+                     <span class="float-right">
+                          <span><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
+                         <span><i class="fas fa-eye mr-2"></i><span id="currentViewers"> {{channel.currentViewers}}</span></span>
+                          <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote">
+                              <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                          </button>
+                      </span>
+                  </div>
+             </div>
+         </div>
 
          </div>
-         <div class="col-lg-4 col-sm-12" >
+         <div id="chatside" class="col-lg-4 col-sm-12" >
             <div class="row ml-2 mr-2">
                 <div class="index-video-title mb-2"><b>Chat</b></div>
                 <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
@@ -354,7 +353,7 @@
 
     <script>
         function toggleChat() {
-            var chatbox = document.getElementById("chatBlock");
+            var chatbox = document.getElementById("chatside");
             var videoWindow = document.getElementById("videoWindow");
             var videoWindowRow = document.getElementById("videoWindowRow");
             if (chatbox.style.display === "none") {
