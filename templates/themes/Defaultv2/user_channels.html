@@ -13,8 +13,7 @@
     <div class="row m-2">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
             <div>
-                <span class="float-left index-live-title"><b>Your Channels</b></span>
-                <span class="pull-right"> <button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
+                <span class="float-left index-live-title"><b>Your Channels</b> <button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i></button></span>
             </div>
         {% for channel in channels %}
         <form action="/settings/channels" enctype=multipart/form-data method="post">
