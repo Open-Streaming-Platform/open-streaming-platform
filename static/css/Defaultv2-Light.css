@@ -108,6 +108,61 @@ body {
     top: 40px;
 }
 
+.streamerCard {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.streamerCard a {
+    color: black;
+}
+
+.streamerCard img {
+    width: 310px;
+    height: 310px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.streamerCard .card-data {
+    margin-left:15px;
+    float: left;
+    font-size:1.10em;
+}
+
+.streamerCard .card-data .streamerCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 45px;
+}
+
+.streamerCard-other {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.streamerCard-other a {
+    color: black;
+}
+
+.streamerCard-other img {
+    width: 275px;
+    height: 155px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.streamerCard-other .card-data {
+    margin-left:18px;
+    float: left;
+    font-size:1em;
+}
+
 .recordedStream {
     width:99%;
     display:block;
@@ -127,6 +182,15 @@ body {
         float:left;
     }
     .displayCard-other .card-data .displayCard-footer {
+        top: initial;
+        font-size:1em;
+    }
+    
+    .streamerCard-other .card-data {
+        margin-left:0px;
+        float:left;
+    }
+    .streamerCard-other .card-data .displayCard-footer {
         top: initial;
         font-size:1em;
     }
@@ -182,6 +246,48 @@ body {
         font-size:1em;
     }
     .displayCard-other .card-data .displayCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+    
+    .streamerCard {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .streamerCard img{
+        width: 100%;
+        height: initial;
+    }
+
+    .streamerCard .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .streamerCard .card-data .streamerCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+
+    .streamerCard-other {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .streamerCard-other img{
+        width: 100%;
+        height: initial;
+    }
+
+    .streamerCard-other .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .streamerCard-other .card-data .streamerCard-footer {
         font-size:1em;
         top: initial;
     }

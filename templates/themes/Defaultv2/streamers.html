@@ -29,6 +29,26 @@
         {% endfor %}
         </div>
     </div>
+
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Streamers</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="d-flex flex-wrap justify-content-between">
+            {% for streamer in streamerList %}
+                <div class="streamerCard py-1 pr-2">
+                    <a href="/topic/{{topic.id}}/">
+                    <img class="shadow lazy" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{streamer.username}}</b></div>
+                    </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
