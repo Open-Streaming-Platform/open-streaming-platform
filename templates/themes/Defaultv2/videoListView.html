@@ -33,14 +33,16 @@
             {% for stream in openStreams %}
                 <div class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
+                    <div>
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    {% if stream.channel.protected %}
-                        <div class="streamcard-overlay">
-                            <div class="quarter-circle-top-left">
-                                <i class="stream-image-overlay-text fas fa-lock"></i>
+                        {% if stream.channel.protected %}
+                            <div class="streamcard-overlay">
+                                <div class="quarter-circle-top-left">
+                                    <i class="stream-image-overlay-text fas fa-lock"></i>
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                    </div>
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
                         {{stream.channel.channelName}}<br>
@@ -59,6 +61,7 @@
             {% for video in recordedVids %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
+                    <div>
                     <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     {% if video.channel.protected %}
                         <div class="streamcard-overlay">
@@ -67,6 +70,7 @@
                             </div>
                         </div>
                     {% endif %}
+                    </div>
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
                         {{video.channel.channelName}}<br>

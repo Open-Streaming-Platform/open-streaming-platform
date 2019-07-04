@@ -181,6 +181,13 @@ body {
   bottom: 0;
 }
 
+.stream-image-overlay-text{
+    margin-left:10px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
+
 
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
