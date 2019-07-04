@@ -144,12 +144,43 @@ body {
     display:block;
 }
 .video-buttons-row {
-        width: 100%;
+    width: 100%;
 }
 
 .comment {
-        width:100%;
+    width:100%;
 }
+
+.quarter-circle-top-left{
+    width: 50px;
+    height: 50px;
+    background: #1e3c72;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2a5298, #1e3c72);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2a5298, #1e3c72); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 0 0 100px 0;
+    -moz-border-radius: 0 0 100px 0;
+    -webkit-border-radius: 0 0 100px 0;
+}
+
+.quarter-circle-top-right{
+    width: 50px;
+    height: 50px;
+    background: #ED213A;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #93291E, #ED213A);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #93291E, #ED213A); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 0 0 0 100px;
+    -moz-border-radius: 0 0 0 100px;
+    -webkit-border-radius: 0 0 0 100px;
+}
+
+.streamcard-overlay {
+  position:absolute;
+  top: -1px;
+  right: 0;
+  left: -1px;
+  bottom: 0;
+}
+
 
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
