@@ -75,13 +75,9 @@
 <div class="container-fluid">
      <div class="row">
          <div class="col-lg-8 col-sm-12">
-             <div class="row m-2" style="width:100%;">
-                 <span class="float-left">
-                    <div class="index-video-title" id="channelName"><b>{{channel.channelName}}</b></div>
-                 </span>
-                 <span class="float-right">
-                    <span id="liveIndicatorBadge" class="index-video-title badge badge-secondary"><b>Offline</b></span>
-                 </span>
+             <div class="row m-2 d-flex justify-content-between" style="width:100%;">
+                <div class="index-video-title" id="channelName"><b>{{channel.channelName}}</b></div>
+                <span id="liveIndicatorBadge" class="index-video-title badge badge-secondary"><b>Offline</b></span>
              </div>
          </div>
          <div class="col-lg-4 col-sm-12">
@@ -139,11 +135,9 @@
                           </span>
                       </div>
                  </div>
-                 <div class="row ml-1">
-                     <div class="col-lg-8 col-sm-12">
-                        <span id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
-                        <span id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
-                     </div>
+                 <div class="row m-2">
+                    <span id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
+                    <span id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
                  </div>
              </div>
 
