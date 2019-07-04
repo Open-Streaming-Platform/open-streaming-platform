@@ -81,9 +81,9 @@
          </div>
      </div>
      <div class="row">
-        <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-lg-10{% endif %} col-sm-12" id="videoWindow">
-             <div id="videoWindowRow" class="row {% if channel.chatEnabled == False %}justify-content-md-center{% endif %}">
-                 <div class="player ml-2">
+        <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-12{% endif %} col-sm-12" id="videoWindow">
+             <div id="videoWindowRow" class="row ml-2{% if channel.chatEnabled == False %}justify-content-md-center{% endif %}">
+                 <div class="player">
                      <div id="videoContainer">
                          <video id="video" class="shadow videoStream video-js vjs-big-play-centered lazy" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
                             <source src="{{streamURL}}" type="application/x-mpegURL">
@@ -360,11 +360,11 @@
             if (chatbox.style.display === "none") {
                 chatbox.style.display = "block";
                 videoWindowRow.className = "row";
-                videoWindow.className = "col-xl-9 col-lg-12 col-sm-12";
+                videoWindow.className = "col-lg-10 col-sm-12";
             } else {
                 chatbox.style.display = "none";
                 videoWindowRow.className = "row justify-content-md-center";
-                videoWindow.className = "col-xl-10 col-sm-12";
+                videoWindow.className = "col-12";
             }
         }
     </script>
