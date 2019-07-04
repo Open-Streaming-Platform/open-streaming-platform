@@ -481,8 +481,8 @@
                     var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
                     var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
-                    onlineBadge.classname = 'float-right badge badge-danger';
-                    onlineBadge.innterHTML = 'Live';
+                    onlineBadge.className = 'float-right badge badge-danger';
+                    onlineBadge.innerHTML = 'Live';
 
                     nameDiv.innerHTML = nameDivHTML;
                     topicDiv.innerHTML = topicDivHTML;
@@ -493,8 +493,8 @@
                 try {
                     videoJSObj.pause();
                     videoJSObj.reset();
-                    onlineBadge.classname = 'float-right badge badge-secondary';
-                    onlineBadge.innterHTML = 'Offline';
+                    onlineBadge.className = 'float-right badge badge-secondary';
+                    onlineBadge.innerHTML = 'Offline';
                     videoContainer.style.display = "none";
                     offlineWindow.style.display = "block";
                     var currentStreamName = "No Stream";
