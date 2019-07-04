@@ -77,7 +77,7 @@
          <div class="col-lg-8 col-sm-12">
              <div class="row m-2" style="width:100%">
                 <span class="index-video-title float-left" id="channelName"><b>{{channel.channelName}}</b></span>
-                <span id="liveIndicatorBadge" class="index-video-title float-right badge badge-secondary"><b>Offline</b></span>
+                <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b>Offline</b></span>
              </div>
          </div>
          <div class="col-lg-4 col-sm-12">
@@ -135,7 +135,7 @@
                           </span>
                       </div>
                  </div>
-                 <div class="row m-2">
+                 <div class="row">
                      <div class="col-lg-8 col-sm-12">
                         <span id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></span>
                         <span id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></span>
@@ -479,7 +479,7 @@
 
 
                     var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
-                    var topicDivHTML = '<b><i class="fas fa-hashtag"></i><a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
+                    var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
                     nameDiv.innerHTML = nameDivHTML;
                     topicDiv.innerHTML = topicDivHTML;
