@@ -38,7 +38,7 @@
         <div class="d-flex flex-wrap justify-content-between">
             {% for streamer in streamerList %}
                 <div class="streamerCard py-1 pr-2">
-                    <a href="/topic/{{topic.id}}/">
+                    <a href="/streamers/{{streamer.id}}/">
                     <img class="shadow lazy" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{streamer.username}}</b></div>
