@@ -50,7 +50,7 @@
                           </button>
                           {% endif %}
                      </span>
-                     <span class="d-sm-none d-md-block float-right">
+                     <span class="d-none d-md-block float-right">
                           <i class="fas fa-users mr-2"></i> {{video.views}}
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
@@ -58,13 +58,13 @@
                      </span>
                   </div>
                  <div class="video-buttons-mobile d-block d-sm-block d-md-none">
-                     <i class="fas fa-users mr-2"></i> {{video.views}}<br>
+                     <i class="fas fa-users mr-2"></i> {{video.views}}
                       <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                           <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
                       </button>
                  </div>
              </div>
-             <div class="row">
+             <div class="row ml-1">
                  <div class="float-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
                  <div class="mx-auto"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
                  <div class="mx-auto"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
