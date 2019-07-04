@@ -118,8 +118,8 @@ body {
 }
 
 .streamerCard img {
-    width: 310px;
-    height: 310px;
+    width: 175px;
+    height: 175px;
     object-fit: contain;
     overflow: hidden;
     background-color: black;
@@ -137,30 +137,6 @@ body {
     position:relative;
     left: -10px;
     top: 45px;
-}
-
-.streamerCard-other {
-    width: 600px;
-    margin-bottom:15px;
-}
-
-.streamerCard-other a {
-    color: black;
-}
-
-.streamerCard-other img {
-    width: 275px;
-    height: 155px;
-    object-fit: contain;
-    overflow: hidden;
-    background-color: black;
-    float: left;
-}
-
-.streamerCard-other .card-data {
-    margin-left:18px;
-    float: left;
-    font-size:1em;
 }
 
 .recordedStream {
@@ -185,15 +161,7 @@ body {
         top: initial;
         font-size:1em;
     }
-    
-    .streamerCard-other .card-data {
-        margin-left:0px;
-        float:left;
-    }
-    .streamerCard-other .card-data .displayCard-footer {
-        top: initial;
-        font-size:1em;
-    }
+
 
 }
 
@@ -271,26 +239,6 @@ body {
         top: initial;
     }
 
-    .streamerCard-other {
-        width: 100%;
-        height: initial;
-        margin-bottom: 5px;
-    }
-
-    .streamerCard-other img{
-        width: 100%;
-        height: initial;
-    }
-
-    .streamerCard-other .card-data {
-        margin-left:0px;
-        float: left;
-        font-size:1em;
-    }
-    .streamerCard-other .card-data .streamerCard-footer {
-        font-size:1em;
-        top: initial;
-    }
 }
 
 
