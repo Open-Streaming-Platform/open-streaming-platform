@@ -126,7 +126,6 @@
              </div>
          </div>
 
-         </div>
          <div id="chatside" class="col-lg-4 col-sm-12" >
             <div class="row ml-2 mr-2">
                 <div class="index-video-title mb-2"><b>Chat</b></div>
@@ -355,14 +354,11 @@
         function toggleChat() {
             var chatbox = document.getElementById("chatside");
             var videoWindow = document.getElementById("videoWindow");
-            var videoWindowRow = document.getElementById("videoWindowRow");
             if (chatbox.style.display === "none") {
                 chatbox.style.display = "block";
-                videoWindowRow.className = "row";
                 videoWindow.className = "col-lg-10 col-sm-12";
             } else {
                 chatbox.style.display = "none";
-                videoWindowRow.className = "row justify-content-md-center";
                 videoWindow.className = "col-12";
             }
         }
