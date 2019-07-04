@@ -50,6 +50,7 @@
                           </button>
                           {% endif %}
                      </span>
+                     <div class="clearfix hidden-xs hidden-sm"> </div>
                      <span class="float-md-right">
                           <i class="fas fa-users mr-2"></i> {{video.views}}
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
@@ -59,7 +60,7 @@
                   </div>
              </div>
              <div class="container-fluid">
-                 <div class="row ml-2">
+                 <div class="row">
                      <div class="float-md-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
                      <div class="mx-auto-md"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
                      <div class="mx-auto-md"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
