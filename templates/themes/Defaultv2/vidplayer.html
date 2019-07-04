@@ -371,6 +371,7 @@
             }
 
             document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];
+            document.getElementById(upvoteDivID + 'Mobile').innerHTML = msg['totalUpvotes'];
 
             if (msg['myUpvote'] === 'True'){
                 if ( document.getElementById(upvoteIconID).classList.contains('far') ) {
