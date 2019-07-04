@@ -65,11 +65,9 @@
                  </div>
              </div>
              <div class="row m-2">
-                 <div class="col-12">
-                     <b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b><br>
-                     <b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b><br>
-                     <b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b>
-                 </div>
+                 <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                 <div><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+                 <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
              </div>
 
              <div class="row m-2">
