@@ -88,7 +88,7 @@
                             {{comment.comment}}
                         </div>
                         <div class="col-lg-2 col-md-2">
-                          <div class="float-right">
+                          <div class="float-md-right float-xs-left">
                             {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="fas fa-thumbs-up"></i>
                             {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
                             {% endif %}
