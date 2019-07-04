@@ -50,22 +50,26 @@
                           </button>
                           {% endif %}
                      </span>
-                     <div class="d-none d-sm-block d-md-none"> </div>
-                     <span class="float-md-right">
+                     <span class="d-sm-none d-md-block float-right">
                           <i class="fas fa-users mr-2"></i> {{video.views}}
                           <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                           </button>
-                      </span>
+                     </span>
                   </div>
-             </div>
-             <div class="container-fluid">
-                 <div class="row ml-1">
-                     <div class="float-md-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-                     <div class="mx-auto-md"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
-                     <div class="mx-auto-md"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+                 <div class="video-buttons-mobile d-none d-sm-block d-md-none">
+                     <i class="fas fa-users mr-2"></i> {{video.views}}<br>
+                      <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
+                          <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
+                      </button>
                  </div>
              </div>
+             <div class="row">
+                 <div class="float-left"><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                 <div class="mx-auto"><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+                 <div class="mx-auto"><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+             </div>
+
              <div class="row m-2">
                  <div>{% if video.description != None %}{{video.description}} {% else %}No Description Available {% endif %}</div>
              </div>
