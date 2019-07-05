@@ -72,16 +72,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-$('#search').on('input', function(){
-    var query = document.getElementById("search").value.toLowerCase();
-    $('.streamcard').each(function(){
-         var $this = $(this);
-         if($this.text().toLowerCase().indexOf(query) === -1)
-             $this.closest('.streamcard').hide();
-        else $this.closest('.streamcard').show();
-    });
-});
-</script>
+
 {% endblock %}
 
