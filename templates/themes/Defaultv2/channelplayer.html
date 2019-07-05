@@ -120,17 +120,15 @@
              </div>
 
              <div id="chatside" class="right-content" >
-                <div class="row ml-2 mr-5">
-                    <div class="index-video-title mb-2"><b>Chat</b></div>
-                    <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
-                          <div id="chat" class="chat"></div>
-                          <div class="right-content-bottom">
-                              <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                              <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
-                              <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=650,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
-                          </div>
+                <div class="index-video-title mb-2"><b>Chat</b></div>
+                <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
+                      <div id="chat" class="chat"></div>
+                      <div class="right-content-bottom">
+                          <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+                          <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
+                          <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=650,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
                       </div>
-                </div>
+                  </div>
              </div>
          </div>
         </div>
