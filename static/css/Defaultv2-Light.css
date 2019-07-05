@@ -190,12 +190,11 @@ body {
     left:20px;
     color:white;
     word-wrap: break-word;
-    width:82%;
+    width:100%;
     display:inline-block;
 }
 
 .chatbox {
-    height:540px;
     width:400px;
 }
 
