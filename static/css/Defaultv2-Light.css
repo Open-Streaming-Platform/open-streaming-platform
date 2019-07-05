@@ -195,8 +195,8 @@ body {
 }
 
 .chatbox {
-    height: 540px;
-    width:640px;
+    height:540px;
+    width:400px;
 }
 
 .chatbox textarea {
