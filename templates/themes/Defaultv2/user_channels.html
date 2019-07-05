@@ -15,6 +15,7 @@
             <div class="mb-2">
                 <span class="float-left index-live-title"><b>Your Channels</b> <button class="btn btn-success btn-sm shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i></button></span>
             </div>
+        <br>
         {% for channel in channels %}
         <form action="/settings/channels" enctype=multipart/form-data method="post">
             <div class="card shadow my-2">
