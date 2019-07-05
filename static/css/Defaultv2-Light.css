@@ -247,6 +247,13 @@ body {
     left:3px;
 }
 
+.channel-img {
+    width:100%;
+    object-fit: contain;
+    max-height:150px;
+    overflow:hidden;
+    background-color:black;
+}
 
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
