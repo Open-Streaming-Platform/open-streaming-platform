@@ -29,6 +29,7 @@
 
   .right-content {
     width: 400px;
+      position: fixed;
   }
 
   .right-content-bottom {
@@ -50,13 +51,13 @@
 
 <div class="container-fluid">
      <div class="flex-container">
-         <div class="left-content">
-              <div class="index-video-title ml-2 my-2">
+         <div class="left-content m-2">
+              <div class="index-video-title">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b></span>
                   <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b>Offline</b></span>
               </div>
          </div>
-         <div class="right-content">
+         <div class="right-content mx-2">
             <ul id="channelPlayerMenu" class="nav nav-pills nav-justified mx-2 mb-2">
                 <li class="nav-item">
                     <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true"><b>View Live Channel</b></a>
