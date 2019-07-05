@@ -12,7 +12,7 @@
 
 </head>
 <body>
-<div class="col-12 .d-none .d-xl-block">
+<div class="col-12 d-none d-xl-block">
   <div class="chatbox" style="margin-bottom:210px;">
       <div id="chat" class="chatpopout"></div><br>
       <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
