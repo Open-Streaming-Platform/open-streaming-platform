@@ -14,19 +14,49 @@
 
 {% block body %}
 <style>
+  .flex-container {
+    display: flex;
+    flex-flow: row;
+  }
 
+  .content {
+
+  }
+
+  .left-content {
+    flex: 1 1 auto;
+  }
+
+  .right-content {
+    width: 400px;
+  }
+
+  .right-content-bottom {
+    position: absolute;
+    bottom:0px;
+    height:500px;
+  }
+
+@media (max-width: 1020px) {
+    .flex-container {
+      flex-flow:column;
+    }
+    .right-content {
+      width: 100%;
+    }
+}
 
 </style>
 
 <div class="container-fluid">
-     <div class="row">
-         <div class="col-lg-8 col-xs-12 col-sm-12">
+     <div class="flex-container">
+         <div class="left-content">
               <div class="index-video-title ml-2 my-2">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b></span>
                   <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b>Offline</b></span>
               </div>
          </div>
-         <div class="col-lg-4 col-sm-12">
+         <div class="right-content">
             <ul id="channelPlayerMenu" class="nav nav-pills nav-justified mx-2 mb-2">
                 <li class="nav-item">
                     <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true"><b>View Live Channel</b></a>
@@ -39,8 +69,8 @@
      </div>
     <div class="tab-content" id="tabList">
         <div class="tab-pane fade show active" id="livechannel" role="tabpanel" aria-labelledby="channel-tab">
-         <div class="row">
-            <div class="{% if channel.chatEnabled == True %}col-lg-8{% else %} col-12{% endif %} col-xs-12 col-sm-12" id="videoWindow">
+         <div class="flex-container">
+            <div class="left-content" id="videoWindow">
                  <div class="player ml-2">
                      <div id="videoContainer">
                          <video id="video" class="shadow videoStream video-js vjs-big-play-centered lazy" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
@@ -89,14 +119,16 @@
                  </div>
              </div>
 
-             <div id="chatside" class="col-lg-4 col-xs-12 col-sm-12" >
+             <div id="chatside" class="right-content" >
                 <div class="row ml-2 mr-5">
                     <div class="index-video-title mb-2"><b>Chat</b></div>
                     <div class="chatbox" id="chatBlock" style="margin-bottom:210px;">
-                          <div id="chat" class="chat"></div><br>
-                          <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                          <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
-                          <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=650,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
+                          <div id="chat" class="chat"></div>
+                          <div class="right-content-bottom">
+                              <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+                              <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
+                              <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=650,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
+                          </div>
                       </div>
                 </div>
              </div>
