@@ -158,7 +158,7 @@ body {
 .chat {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 80vh;
+    height: 75vh;
     padding: 5px 5px 5px 5px;
     width:100%;
 }
