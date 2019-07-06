@@ -2566,6 +2566,6 @@ except Exception as e:
 mail = Mail(app)
 
 if __name__ == '__main__':
-    app.jinja_env.auto_reload = True
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    socketio.run(app)
+    app.jinja_env.auto_reload = False
+    app.config['TEMPLATES_AUTO_RELOAD'] = False
+    app.run()
