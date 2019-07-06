@@ -103,7 +103,7 @@
                           <div id="chat" class="chat"></div><br>
                           <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
                           <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
-                          <a href="#" onClick="MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=600,height=850');return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
+                          <a href="#" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
                       </div>
                 </div>
             </div>
@@ -358,6 +358,14 @@
             } else {
                 chatbox.style.display = "none";
             }
+        }
+    </script>
+
+    <script>
+        function popoutChat() {
+            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=850');
+            var chatbox = document.getElementById("chatside");
+            chatbox.style.display = "none";
         }
     </script>
 
