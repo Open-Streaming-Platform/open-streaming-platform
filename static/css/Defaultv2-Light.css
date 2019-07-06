@@ -179,6 +179,7 @@ body {
     padding-right: 4px;
     margin-top: 5px;
     min-height: 60px;
+    width:100%;
 }
 
 .charBar-Item-Image {
@@ -190,7 +191,7 @@ body {
     left:20px;
     color:white;
     word-wrap: break-word;
-    width:98%;
+    width:82%;
     display:inline-block;
 }
 
