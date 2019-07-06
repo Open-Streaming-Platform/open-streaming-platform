@@ -158,7 +158,6 @@ body {
 .chat {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 640px;
     padding: 5px 5px 5px 5px;
     width:100%;
 }
@@ -191,7 +190,7 @@ body {
     left:20px;
     color:white;
     word-wrap: break-word;
-    width:82%;
+    width:95%;
     display:inline-block;
 }
 
