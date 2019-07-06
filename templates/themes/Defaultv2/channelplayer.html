@@ -14,7 +14,14 @@
 
 {% block body %}
 <style>
+#videoWindow {
+    overflow-y:auto;
+}
 
+    #videoWindow::-webkit-scrollbar {
+        width: 0 !important
+    }
+    #videoWindow { overflow: -moz-scrollbars-none; }
 
 </style>
 
