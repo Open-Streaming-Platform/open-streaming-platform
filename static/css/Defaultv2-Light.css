@@ -248,6 +248,15 @@ body {
     left:3px;
 }
 
+.videoPanel{
+    overflow-y: auto;
+    max-height:90vh;
+}
+
+.videoPanel::-webkit-scrollbar {
+    width: 0 !important
+}
+
 
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
