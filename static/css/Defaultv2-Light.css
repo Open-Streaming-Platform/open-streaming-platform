@@ -152,12 +152,13 @@ body {
 }
 
 .videoStream {
-    width:100%;
-}
+        width:100%;
+    }
 
 .chat {
     overflow-y: auto;
     overflow-x: hidden;
+    height: 640px;
     padding: 5px 5px 5px 5px;
     width:100%;
 }
@@ -178,7 +179,6 @@ body {
     padding-right: 4px;
     margin-top: 5px;
     min-height: 60px;
-    width:100%;
 }
 
 .charBar-Item-Image {
@@ -190,12 +190,13 @@ body {
     left:20px;
     color:white;
     word-wrap: break-word;
-    width:95%;
+    width:82%;
     display:inline-block;
 }
 
 .chatbox {
-    width:400px;
+    height: 540px;
+    width:640px;
 }
 
 .chatbox textarea {
@@ -246,13 +247,6 @@ body {
     left:3px;
 }
 
-.channel-img {
-    width:100%;
-    object-fit: contain;
-    max-height:150px;
-    overflow:hidden;
-    background-color:black;
-}
 
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
