@@ -230,7 +230,7 @@
 
         var socket = io();
     </script>
-
+<!--
     <script>
         socket.on('connect', function() {
             socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
@@ -373,7 +373,7 @@
             socket.emit('updateStreamData', {name: newStreamNameDiv.value, topic: newStreamTopicDiv.value, channel:"{{channel.channelLoc}}"});
         }
     </script>
-
+-->
 
     <script>
     //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
