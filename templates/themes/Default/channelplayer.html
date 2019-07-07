@@ -291,6 +291,7 @@
 {% endblock %}
 
 {% block scripts %}
+
     <script>
     $(document).ready( function () {
         monitor_vid();
@@ -311,7 +312,7 @@
 
         var socket = io();
     </script>
-
+<!--
     <script>
         socket.on('connect', function() {
             socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
@@ -453,7 +454,7 @@
         }
     </script>
 
-
+-->
     <script>
     //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
     function monitor_vid(){
@@ -542,15 +543,5 @@
         monitor_vid();
     }, 10000);
     </script>
-    <script>
-        $('#search').on('input', function(){
-            var query = document.getElementById("search").value.toLowerCase();
-            $('.streamcard-vids').each(function(){
-                 var $this = $(this);
-                 if($this.text().toLowerCase().indexOf(query) === -1)
-                     $this.closest('.streamcard').hide();
-                else $this.closest('.streamcard').show();
-            });
-        });
-        </script>
+
 {% endblock %}
