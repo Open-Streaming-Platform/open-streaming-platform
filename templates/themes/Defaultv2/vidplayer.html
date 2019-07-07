@@ -4,6 +4,14 @@
     <title>{{sysSettings.siteName}} - {{video.channelName}}</title>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+
+    <script>
+        function newScreenShot() {
+            window.whereYouAt = player.currentTime();
+            console.log(window.whereYouAt);
+            socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: window.whereYouAt});
+        }
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -430,13 +438,6 @@
         });
     </script>
 
-    <script>
-        function newScreenShot() {
-            window.whereYouAt = player.currentTime();
-            console.log(window.whereYouAt);
-            socket.emit('newScreenShot', {loc: '{{video.id}}', timeStamp: window.whereYouAt});
-        }
-    </script>
 
     <script>
         function setScreenShot() {
