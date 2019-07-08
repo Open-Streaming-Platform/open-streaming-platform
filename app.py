@@ -1688,6 +1688,7 @@ def video_sender(channelID, filename):
             redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1695,6 +1696,7 @@ def video_sender(channelID, filename):
         redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/stream-thumb/<path:filename>')
@@ -1706,6 +1708,7 @@ def live_thumb_sender(filename):
             redirect_path = "/osp-streamthumbs" + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1713,6 +1716,7 @@ def live_thumb_sender(filename):
         redirect_path = "/osp-streamthumbs" + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-adapt/<path:filename>')
@@ -1724,6 +1728,7 @@ def live_adapt_stream_image_sender(filename):
             redirect_path = "/osp-liveadapt" + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1731,6 +1736,7 @@ def live_adapt_stream_image_sender(filename):
         redirect_path = "/osp-liveadapt" + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
@@ -1741,6 +1747,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1748,6 +1755,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live/<string:channelID>/<path:filename>')
@@ -1758,6 +1766,7 @@ def live_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
 
         else:
@@ -1766,6 +1775,7 @@ def live_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-rec/<string:channelID>/<path:filename>')
@@ -1776,6 +1786,7 @@ def live_rec_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             abort(401)
@@ -1783,6 +1794,7 @@ def live_rec_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 ### Start NGINX-RTMP Authentication Functions
