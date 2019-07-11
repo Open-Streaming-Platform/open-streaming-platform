@@ -1094,13 +1094,17 @@ def admin_page():
             pass
 
         if validGitRepo == True:
-            remoteSHA = None
-            if repo != None:
-                repoSHA = str(repo.head.object.hexsha)
-                branch = repo.active_branch
-                branch = branch.name
-                remote = repo.remotes.origin.fetch()[0].commit
-                remoteSHA = str(remote)
+            try:
+                remoteSHA = None
+                if repo != None:
+                    repoSHA = str(repo.head.object.hexsha)
+                    branch = repo.active_branch
+                    branch = branch.name
+                    remote = repo.remotes.origin.fetch()[0].commit
+                    remoteSHA = str(remote)
+            except:
+                validGitRepo = False
+                branch = "Local Install"
 
 
         appDBVer = dbVersion.dbVersion.query.first().version
