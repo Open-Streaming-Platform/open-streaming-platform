@@ -40,7 +40,7 @@
                 <div class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
-                    <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" {% else %} src="/static/img/video-placeholder.jpg"{% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" {% else %} src="/static/img/video-placeholder.jpg"{% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
                     </div>
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
@@ -68,7 +68,6 @@
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
                         {{video.videoDate|normalize_date}}<br>
-                        {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
