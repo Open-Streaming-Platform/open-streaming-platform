@@ -39,7 +39,7 @@ class settings(db.Model):
         self.showEmptyTables = showEmptyTables
         self.allowComments = allowComments
         self.background = "Ash"
-        self.systemTheme = "Default"
+        self.systemTheme = "Defaultv2"
         self.version = version
         self.systemLogo = "/static/img/logo.png"
 
