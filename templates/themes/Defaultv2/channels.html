@@ -24,7 +24,7 @@
                         {% else %}
                             <span class="badge badge-secondary">Offline</span>
                         {% endif %}
-                        <br>
+                        {% if channel.protected %}<span class="badge btn-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
                         </span>
