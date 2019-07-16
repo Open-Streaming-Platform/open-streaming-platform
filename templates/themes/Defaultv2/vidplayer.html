@@ -20,7 +20,7 @@
      <div class="row">
          <div class="col-lg-8 col-xs-12 col-sm-12">
              <div class="row m-2">
-                <div class="index-video-title"><b>{{video.channelName}}</b> {% if video.channel.protected %}<span class="badge btn-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</div>
+                 <span class="index-video-title"><b>{{video.channelName}}</b></span> {% if video.channel.protected %}<span class="badge badge-warning float-right"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
              </div>
              <div class="player ml-2">
                  <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay controls preload="auto" data-setup='{"fluid": true}'>
