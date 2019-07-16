@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12">
                     <div class="viewerText">
-                        <h2 class="display-5"><b>{{channelData.channelName}}</b> {% if channelData.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</h2>
+                        <h2 class="display-5"><b>{{channelData.channelName}}</b> {% if channelData.protected %}</h2> <span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                         <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
                         <span>{{channelData.description}}</span><br>
                         <br>
