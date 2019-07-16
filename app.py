@@ -1351,6 +1351,20 @@ def admin_page():
 
             db.session.commit()
 
+        elif settingType == "newuser":
+
+            password = request.form['password1']
+            email = request.form['emailaddress']
+            username = request.form['username']
+
+            passwordhash = utils.hash_password(password)
+
+            user_datastore.create_user(email=email, username=username, password=passwordhash)
+            db.session.commit()
+
+            user = Sec.User.query.filter_by(username=username).first()
+            user_datastore.add_role_to_user(user, 'User')
+
         return redirect(url_for('admin_page'))
 
 
@@ -1642,8 +1656,9 @@ def initialSetup():
             user_datastore.create_user(email=email, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
-            user_datastore.add_role_to_user(user,'Admin')
+            user_datastore.add_role_to_user(user, 'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
+            user_datastore.add_role_to_user(user, 'User')
 
             serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)

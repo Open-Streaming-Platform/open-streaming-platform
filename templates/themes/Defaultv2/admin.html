@@ -155,7 +155,8 @@
                       </form>
                 </div>
                 <div class="settingsOption" id="userList" style="display:none;">
-                    <h5>User List</h5>
+                    <h5>User List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button></h5></h5>
+                    <button class="btn btn-success"></button>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
                             <div class="input-group-prepend shadow">
@@ -205,6 +206,55 @@
                         <br>
                     {% endfor %}
                     </div>
+                    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" name="username" id="username" class="form-control" required>
+                                        <label for="username">Username</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" name="emailaddress" id="emailaddress" class="form-control" required>
+                                        <label for="emailaddress">Email Address</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="password" name="password1" id="password1" class="form-control" required>
+                                        <label for="password1">Password</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="password" name="password2" id="password2" class="form-control" required>
+                                        <label for="password2">Confirm Password</label>
+                                    </div>
+                                </div>
+                                <br>
+
+                              </div>
+                              <input type="hidden" value="newuser" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Create">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+
                 </div>
 
                 <div class="settingsOption" id="topicsList" style="display:none;">
@@ -490,6 +540,23 @@ $('#search').on('input', function(){
         else $this.closest('.searchable').show();
     });
 });
+</script>
+
+<script>
+    function passwordCheck() {
+    var password1 = document.getElementById("password1").value;
+    var password2 = document.getElementById("password2").value;
+    var ok = true;
+    if (password1 != password2) {
+        //alert("Passwords Do not match");
+        document.getElementById("password1").style.borderColor = "#E34234";
+        document.getElementById("password2").style.borderColor = "#E34234";
+        ok = false;
+    }
+
+    return ok;
+}
+
 </script>
 
 {% endblock %}
