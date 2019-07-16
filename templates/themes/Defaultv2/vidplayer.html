@@ -60,14 +60,14 @@
                      </span>
                      <span class="d-none d-md-block float-right">
                           <i class="fas fa-users mr-2"></i> {{video.views}}
-                          <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled {% endif %}>
+                          <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true"{% endif %}>
                               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                           </button>
                      </span>
                   </div>
                  <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
                      <i class="fas fa-users mr-2"></i> {{video.views}}
-                      <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled {% endif %}>
+                      <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true"{% endif %}>
                           <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
                       </button>
                  </div>
