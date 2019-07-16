@@ -20,9 +20,9 @@
                         {{channel.topic|get_topicName}}<br>
                         <b> {{channel.owningUser|get_userName}}</b><br>
                         {% if channel.stream|length > 0 %}
-                            <span class="badge badge-danger">Live</span>
+                            <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
                         {% else %}
-                            <span class="badge badge-secondary">Offline</span>
+                            <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
                         {% endif %}
                         {% if channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer">

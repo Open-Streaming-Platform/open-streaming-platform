@@ -23,7 +23,7 @@
          <div class="col-lg col-xs-12 col-sm-12">
               <div class="index-video-title ml-2 my-2">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b> {% if channel.protected %}</span>
-                  <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b>Offline</b></span> <span class="badge badge-warning float-right mr-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                  <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b><i class="fas fa-video-slash"></i> Offline</b></span> <span class="badge badge-warning float-right mr-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
               </div>
          </div>
          <div class="col-lg-auto col-sm-12" style="width:475px;">
@@ -446,7 +446,7 @@
                     var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
                     onlineBadge.className = 'float-right badge badge-danger';
-                    onlineBadge.innerHTML = 'Live';
+                    onlineBadge.innerHTML = '<i class="fas fa-video"></i> Live';
 
                     nameDiv.innerHTML = nameDivHTML;
                     topicDiv.innerHTML = topicDivHTML;
@@ -458,7 +458,7 @@
                     videoJSObj.pause();
                     videoJSObj.reset();
                     onlineBadge.className = 'float-right badge badge-secondary';
-                    onlineBadge.innerHTML = 'Offline';
+                    onlineBadge.innerHTML = '<i class="fas fa-video-slash"></i> Offline';
                     videoContainer.style.display = "none";
                     offlineWindow.style.display = "block";
                     var currentStreamName = "No Stream";
