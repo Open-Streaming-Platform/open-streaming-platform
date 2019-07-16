@@ -78,7 +78,7 @@ sudo mkdir -p /var/www/videos
 sudo mkdir -p /var/www/live-rec
 sudo mkdir -p /var/www/images
 sudo mkdir -p /var/www/live-adapt
-sudo mkdir -p /var/stream-thumb
+sudo mkdir -p /var/www/stream-thumb
 
 sudo chown -R www-data:www-data /var/www
 
