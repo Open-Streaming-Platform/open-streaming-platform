@@ -23,7 +23,7 @@
                         {% else %}
                             <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
                         {% endif %}
-                        <span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                        {% if channelData.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span>{{channelData.description}}</span><br>
                         <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
                     </div>
@@ -46,7 +46,7 @@
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
                         {{stream.channel.channelName}}<br>
                         {{stream.topic|get_topicName}}<br>
-                        <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span><br>
+                        <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span> {% if stream.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer pt-2">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
@@ -68,6 +68,7 @@
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
                         {{video.videoDate|normalize_date}}<br>
+                        {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
