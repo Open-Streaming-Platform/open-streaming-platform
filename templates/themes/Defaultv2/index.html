@@ -56,7 +56,7 @@
                         {{video.channel.channelName}}<br>
                         {{video.topic|get_topicName}}<br>
                         {{video.videoDate|normalize_date}}<br>
-                        {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
