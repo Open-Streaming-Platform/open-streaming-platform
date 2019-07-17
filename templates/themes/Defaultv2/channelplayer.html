@@ -44,8 +44,7 @@
                 <div class="videoPanel">
                      <div class="player ml-2">
                          <div id="videoContainer">
-                             <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true }'>
-                                <source src="{{streamURL}}" type="application/x-mpegURL">
+                             <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true}'>
                                 <p class="vjs-no-js">
                                   To view this video please enable JavaScript, and consider upgrading to a web browser that
                                   <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
@@ -226,7 +225,15 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
-        var player = videojs('video', {autoplay: true, errorDisplay: false, liveui: true, liveTracker:true});
+        var player = videojs('video', {autoplay: true, errorDisplay: false, liveui: true, liveTracker:true, html5: {nativeAudioTracks: false, nativeVideoTracks:false, hls: {overrideNative: true}});
+
+        player.ready(function() {
+               this.src({
+                       src: '{{streamURL}}',
+                       type: 'application/x-mpegURL'
+               });
+       });
+       player.play();
     </script>
 
 
