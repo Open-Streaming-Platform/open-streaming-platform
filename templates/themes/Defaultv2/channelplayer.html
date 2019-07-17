@@ -225,7 +225,21 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
-        var player = videojs('video', {autoplay: true, errorDisplay: false, liveui: true, liveTracker:true, html5: {nativeAudioTracks: false, nativeVideoTracks:false, hls: {overrideNative: true}});
+        var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: true,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
 
         player.ready(function() {
                this.src({
