@@ -2077,28 +2077,29 @@ def playback_auth_handler():
     stream = request.form['name']
 
     streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+    if streamQuery != None:
 
-    if streamQuery.protected is False:
-        db.session.close()
-        return 'OK'
-    else:
-        username = request.form['username']
-        secureHash = request.form['hash']
+        if streamQuery.protected is False:
+            db.session.close()
+            return 'OK'
+        else:
+            username = request.form['username']
+            secureHash = request.form['hash']
 
-        if streamQuery is not None:
-            requestedUser = Sec.User.query.filter_by(username=username).first()
-            if requestedUser is not None:
-                isValid = False
-                if secureHash == hashlib.sha256(requestedUser.username + streamQuery.channelLoc + requestedUser.password).hexdigest():
-                    isValid = True
-                if isValid is True:
-                    if streamQuery.owningUser == requestedUser.id:
-                        db.session.close()
-                        return 'OK'
-                    else:
-                        if check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+            if streamQuery is not None:
+                requestedUser = Sec.User.query.filter_by(username=username).first()
+                if requestedUser is not None:
+                    isValid = False
+                    if secureHash == hashlib.sha256(requestedUser.username + streamQuery.channelLoc + requestedUser.password).hexdigest():
+                        isValid = True
+                    if isValid is True:
+                        if streamQuery.owningUser == requestedUser.id:
                             db.session.close()
                             return 'OK'
+                        else:
+                            if check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                                db.session.close()
+                                return 'OK'
     db.session.close()
     return abort(400)
 
