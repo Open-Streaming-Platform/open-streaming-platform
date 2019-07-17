@@ -707,14 +707,22 @@ def view_page(loc):
             secureHash = None
             rtmpURI = None
 
+            endpoint = None
+            if sysSettings.adaptiveStreaming is True:
+                endpoint = 'show'
+            elif requestedChannel.record is True:
+                endpoint = 'streamrec-data'
+            elif requestedChannel.record is False:
+                endpoint = 'stream-data'
+
             if requestedChannel.protected:
                 if current_user.is_authenticated():
                     secureHash = hashlib.sha256(
                         current_user.username + requestedChannel.channelLoc + current_user.password).hexdigest()
                     username = current_user.username
-                    rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/stream/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+                    rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
             else:
-                rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/stream/" + requestedChannel.channelLoc
+                rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
             return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash, rtmpURI=rtmpURI)
@@ -2071,6 +2079,7 @@ def playback_auth_handler():
     streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
 
     if streamQuery.protected is False:
+        db.session.close()
         return 'OK'
     else:
         username = request.form['username']
@@ -2084,11 +2093,13 @@ def playback_auth_handler():
                     isValid = True
                 if isValid is True:
                     if streamQuery.owningUser == requestedUser.id:
+                        db.session.close()
                         return 'OK'
                     else:
                         if check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                            db.session.close()
                             return 'OK'
-
+    db.session.close()
     return abort(400)
 
 
