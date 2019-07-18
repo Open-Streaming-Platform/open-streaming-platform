@@ -785,7 +785,7 @@ def view_vid_page(videoID):
 @app.route('/play/<loc>/move', methods=['POST'])
 @login_required
 def vid_move_page(loc):
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc, owningUser=current_user.id).first()
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
     sysSettings = settings.settings.query.first()
 
     if recordedVidQuery != None:
@@ -2084,8 +2084,6 @@ def playback_auth_handler():
                 if requestedUser is not None:
                     isValid = False
                     validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
-                    print(secureHash)
-                    print(validHash)
                     if secureHash == validHash:
                         isValid = True
                     if isValid is True:
