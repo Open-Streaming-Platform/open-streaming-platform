@@ -711,7 +711,7 @@ def view_page(loc):
 
             if requestedChannel.protected:
                 if current_user.is_authenticated:
-                    secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.password.encode('utf-8'))).hexdigest()
+                    secureHash = hashlib.sha256(str((current_user.username + requestedChannel.channelLoc + current_user.password.encode('utf-8')))).hexdigest()
                     username = current_user.username
                     rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
             else:
@@ -2083,7 +2083,7 @@ def playback_auth_handler():
                 requestedUser = Sec.User.query.filter_by(username=username).first()
                 if requestedUser is not None:
                     isValid = False
-                    if secureHash == hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest():
+                    if secureHash == hashlib.sha256(str((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8'))).hexdigest():
                         isValid = True
                     if isValid is True:
                         if streamQuery.owningUser == requestedUser.id:
