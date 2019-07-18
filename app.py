@@ -2083,7 +2083,10 @@ def playback_auth_handler():
                 requestedUser = Sec.User.query.filter_by(username=username).first()
                 if requestedUser is not None:
                     isValid = False
-                    if secureHash == hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest():
+                    validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                    print(secureHash)
+                    print(validHash)
+                    if secureHash == validHash:
                         isValid = True
                     if isValid is True:
                         if streamQuery.owningUser == requestedUser.id:
