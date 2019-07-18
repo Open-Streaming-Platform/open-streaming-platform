@@ -710,7 +710,7 @@ def view_page(loc):
             endpoint = 'live'
 
             if requestedChannel.protected:
-                if current_user.is_authenticated():
+                if current_user.is_authenticated:
                     secureHash = hashlib.sha256(
                         current_user.username + requestedChannel.channelLoc + current_user.password).hexdigest()
                     username = current_user.username
