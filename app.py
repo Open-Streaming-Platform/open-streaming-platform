@@ -707,13 +707,7 @@ def view_page(loc):
             secureHash = None
             rtmpURI = None
 
-            endpoint = None
-            if sysSettings.adaptiveStreaming is True:
-                endpoint = 'show'
-            elif requestedChannel.record is True:
-                endpoint = 'streamrec-data'
-            elif requestedChannel.record is False:
-                endpoint = 'stream-data'
+            endpoint = 'live'
 
             if requestedChannel.protected:
                 if current_user.is_authenticated():
