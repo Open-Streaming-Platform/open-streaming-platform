@@ -10,17 +10,19 @@
         <div class="index-live-title"><b>Topics</b></div>
     </div>
     <div class="row mx-2">
-        <div class="d-flex flex-wrap justify-content-start">
-            {% for topic in topicsList %}
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for topic in topicsList %}
                 <div class="displayCard py-1 pr-2">
                     <a href="/topic/{{topic.id}}/">
-                    <img class="shadow lazy" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <div class="card-data">
-                        <div class="card-cut-text"><b>{{topic.name}}</b></div>
-                    </div>
+                        <img class="shadow lazy" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-data">
+                            <div class="card-cut-text"><b>{{topic.name}}</b></div>
+                        </div>
                     </a>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
@@ -29,5 +31,3 @@
 {% block scripts %}
 
 {% endblock %}
-
-
