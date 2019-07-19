@@ -321,11 +321,13 @@ def check_isValidChannelViewer(channelID):
     return False
 
 def check_isCommentUpvoted(commentID):
-    commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
-    if commentQuery != None:
-        return True
-    else:
-        return False
+    if current_user.is_authenticated:
+        commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
+        if commentQuery != None:
+            return True
+        else:
+            return False
+    return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
     userQuery = Sec.User.query.filter_by(id=userID).first()
