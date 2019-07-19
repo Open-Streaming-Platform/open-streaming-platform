@@ -1,0 +1,48 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Channels</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+
+            <div class="d-flex flex-wrap justify-content-between">
+                {% for channel in channelList %}
+                <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
+                    <div class="video-card-header">
+                        <a href="/channel/{{channel.id}}/">
+                            <img class="shadow lazy" width="100%" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
+                    </div>
+                    <div class="video-card-body">
+                        <b><i class="fas fa-video"></i></b><a href="/channel/{{channel.id}}/"><b> {{channel.channelName}}</b></a>
+                        <span class="float-right">
+                            {% if channel.stream|length > 0 %}
+                            <span class="badge badge-danger">Live</span>
+                            {% else %}
+                            <span class="badge badge-secondary">Offline</span>
+                            {% endif %}
+                        </span><br />
+                        <b><i class="fas fa-user"></i></b><b> {{channel.owningUser|get_userName}}</b>
+                        <span class="float-right"><b><i class="fas fa-hashtag"></i></b> <a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></span>
+                        <br>
+                        <i class="fas fa-users"></i> {{channel.views}}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}}</title>
+{% endblock %}
+
+{% block body %}
+<style>
+
+
+</style>
+
+<div class="container-fluid p-2" id="index-live-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Live Now</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+
+            <div class="d-flex flex-wrap justify-content-between">
+                {% if streamList == [] %}
+                No Live Streams Online...
+                {% endif %}
+                {% for stream in streamList %}
+                <div class="video-card bg-dark mb-3" style="max-width: 45rem;">
+                    <div class="row no-gutters">
+                        <div class="video-card-header">
+                            <a href="/view/{{stream.channel.channelLoc}}/">
+                                <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
+                        </div>
+                        <div class="video-card-body ml-3">
+                            <b><i class="px-2 fas fa-tv"></i></b><span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName|limit_title}}</b></a></span><br />
+                            <b><i class="px-2 fas fa-video "></i></b><a href="/channel/{{stream.channel.id}}/"> {{stream.channel.channelName}}</a>
+                            <span class="float-right"><span class="ml-4 px-2 badge badge-danger">Live</span></span><br />
+                            <b><i class="px-2 fas fa-hashtag"></i></b><a href="/topic/{{stream.topic}}/"> {{stream.topic|get_topicName}}<br></a>
+                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Videos</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-between">
+                {% for video in randomRecorded %}
+                <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
+                    <div class="video-card-header">
+                        <a href="/play/{{video.id}}">
+                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        </a>
+                    </div>
+                    <div class="video-card-body">
+                        <b><i class="fas fa-tv mr-2"></i></b><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span><br />
+                        <i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}
+                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{video.length|hms_format}}</span>
+                        <br />
+                        <b><i class="fas fa-video mr-2"></i></b><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
+                        <span class="float-right"><i class="fas fa-users mr-2"></i> {{video.views}}</span>
+                        <br />
+                        <b><i class="fas fa-hashtag mr-2"></i></b><a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
+                        <span class="float-right"><i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
+
+                        <br />
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
