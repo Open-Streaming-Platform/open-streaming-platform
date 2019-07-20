@@ -20,6 +20,16 @@ from classes import settings
 from classes.shared import db
 from classes.shared import socketio
 
+class fixedAPI(Api):
+    # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
+    @property
+    def specs_url(self):
+        '''
+        The Swagger specifications absolute url (ie. `swagger.json`)
+
+        :rtype: str
+        '''
+        return url_for(self.endpoint('specs'), _external=False)
 
 authorizations = {
     'apikey': {
@@ -30,7 +40,7 @@ authorizations = {
 }
 
 api_v1 = Blueprint('api', __name__, url_prefix='/apiv1')
-api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
+api = fixedAPI(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
 
 ### Start API Functions ###
 
