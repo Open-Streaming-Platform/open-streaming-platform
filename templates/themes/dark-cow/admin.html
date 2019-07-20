@@ -58,11 +58,11 @@
                                     <div class="card-body">
                                         CPU<br>
                                         <div class="progress">
-                                          <div id="cpuUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                          <div id="cpuUsage" class="progress-bar bg-info" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
                                         Memory<br>
                                         <div class="progress">
-                                          <div id="memoryUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                          <div id="memoryUsage" class="progress-bar bg-danger" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
                                         Disk<br>
                                         <div class="progress">
@@ -171,7 +171,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="card shadow searchable">
-                                    <div class="card-header {% if user.active == True %}bg-success{% else %}bg-secondary{% endif %} text-white">
+                                    <div class="card-header {% if user.active == False %} bg-primary{% endif %} text-white">
                                         <b>{{user.username}}</b>
                                         <div class="float-right">
                                             <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
@@ -307,7 +307,7 @@
                             <div class="col-12">
                                 <div class="card shadow searchable">
                                   <div class="card-header">
-                                      <b><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></b>
+                                      <b><span class="video-title"><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></span></b>
                                     <div class="float-right"><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a></button></div>
                                   </div>
                                   <div class="card-body">
@@ -354,13 +354,14 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="card shadow searchable">
-                                  <div class="card-header"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></div>
+                                  <div class="card-header"><span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></span></div>
                                   <div class="card-body">
                                     <div class="row">
                                       <div class="col-xl-3 col-sm-12">
                                         <img width="100%" src="/live{% if stream.channel.record == True %}-rec{% endif %}/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"><br>
                                       </div>
                                       <div class="col-xl-3 col-sm-12">
+                                        <i class="fas fa-video"></i> {{stream.channel.channelName}} <br>
                                         <i class="fas fa-user"></i> {{stream.channel.owningUser|get_userName}} <br>
                                         <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
                                         <i class="fas fa-eye"></i> {{stream.currentViewers}} <br>
@@ -441,8 +442,8 @@
             datasets: [{
                 label: "Live Viewers",
                 fill: true,
-                borderColor: 'rgb(255, 0, 0)',
-                backgroundColor: 'rgb(255, 0, 0)',
+                borderColor: 'rgb(40, 90, 150)',
+                backgroundColor: 'rgb(40, 90, 150)',
                 spanGaps: true,
                 lineTension: 0,
                 data:[
@@ -453,8 +454,8 @@
                 {
                 label: "Video Viewers",
                 fill: true,
-                borderColor: 'rgb(0, 0, 255)',
-                backgroundColor: 'rgb(0, 0, 255)',
+                borderColor: 'rgb(90, 150, 40)',
+                backgroundColor: 'rgb(90, 150, 40)',
                 spanGaps: true,
                 lineTension: 0,
                 data:[

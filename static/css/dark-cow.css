@@ -366,7 +366,7 @@ hr {
   margin-bottom: 1rem;  
   display: inline-block;
 }
-.video-card-body .video-title a{
+.video-card-body .video-title a, .card-header .video-title a{
   color: #fff;
 }
 
