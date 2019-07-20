@@ -90,7 +90,7 @@ hr {
   -moz-border-top-colors: none;
   border-color: #3488db;
   border-width: 1px 0;
-  margin: 20px;
+  margin: 10px;
   margin-left: auto;
   margin-right: auto;
   width: 75%;
@@ -240,6 +240,9 @@ hr {
     white-space: pre-wrap;
 }
 
+.videodescription p{
+    white-space: pre-wrap;
+}
 .videoStream {
         width:100%;
     }
