@@ -234,6 +234,7 @@ hr {
 
 .comment {
     width:100%;
+    white-space: pre-wrap;
 }
 
 .videoStream {
