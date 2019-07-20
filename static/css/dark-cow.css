@@ -234,6 +234,9 @@ hr {
 
 .comment {
     width:100%;
+}
+
+.comment p{
     white-space: pre-wrap;
 }
 
