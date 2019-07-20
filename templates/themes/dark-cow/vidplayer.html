@@ -139,8 +139,8 @@
             <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
               <div class="video-card-header">
                 <a href="/play/{{video.id}}">
-                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" {% else %} src="/static/img/video-placeholder.jpg" {% endif %} data-src="/videos/{{video.thumbnailLocation}}"
-                    onerror="this.src='/static/img/video-placeholder.jpg';">
+                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
+                                                                     
                 </a>
               </div>
               <div class="video-card-body">
