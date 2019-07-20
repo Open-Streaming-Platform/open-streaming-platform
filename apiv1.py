@@ -39,7 +39,7 @@ if environ.get('HTTPS'):
         """Monkey patch for HTTPS"""
         return url_for(self.endpoint('specs'), _external=True, _scheme='https')
 
-    Api.specs_url = specs_url
+    api.specs_url = specs_url
 
 
 ### Start API Functions ###
