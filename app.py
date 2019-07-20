@@ -305,6 +305,11 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
+def get_Video_Comments(videoID):
+    videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
+    result = videoCommentsQuery
+    return result
+
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
         channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
@@ -440,6 +445,11 @@ def get_Video_Upvotes_Filter(videoID):
 @app.template_filter('get_Stream_Upvotes')
 def get_Stream_Upvotes_Filter(videoID):
     result = get_Stream_Upvotes(videoID)
+    return result
+
+@app.template_filter('get_Video_Comments')
+def get_Video_Comments_Filter(videoID):
+    result = get_Video_Comments(videoID)
     return result
 
 @app.template_filter('get_pictureLocation')
