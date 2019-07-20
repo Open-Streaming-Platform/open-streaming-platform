@@ -213,8 +213,9 @@ hr {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    line-height: 1.5em;
+    line-height: 2em !important;
     word-wrap: break-word;
+    margin: 15px;
 }
 .video-card-header{
   margin-bottom: 0px
@@ -224,6 +225,14 @@ hr {
     flex: 1 1 auto;
     line-height: 1.5em;
 }
+
+.video-card .video-card-body .videocard-footer {
+    font-size:1em;
+    position:relative;
+    left: 30px;
+    top: 30px;
+}
+
 .recordedStream {
     width:99%;
     display:block;
@@ -367,6 +376,33 @@ hr {
   color: #fff;
 }
 
+.streamcard-overlay {
+  position:absolute;
+  top: -1px;
+  right: 0;
+  left: -1px;
+  bottom: 0;
+}
+
+.stream-image-overlay-text{
+    margin-left:10px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
+
+.streamcard-overlay-right {
+  position:absolute;
+  top: -1px;
+  right: -1px;
+}
+
+.stream-image-overylay-text{
+    margin-left:20px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+}
 .nav-tabs{
 	border: 0px !important;
 }

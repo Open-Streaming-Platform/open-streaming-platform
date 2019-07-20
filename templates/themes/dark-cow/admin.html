@@ -324,10 +324,10 @@
                                         <i class="fas fa-paragraph"></i> {{channel.description}}<br>
                                       </div>
                                       <div class="col-xl-2">
-                                        <i class="fas fa-comment"></i> <span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span> <br>
-                                          <i class="fas fa-save"></i> <span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span>  <br>
-                                          <i class="fas fa-comments"></i> <span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span> <br>
-                                          <i class="fas fa-lock"></i> <span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span><br>
+                                        <i class="fas fa-comment"></i> <span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-info {% endif %}"> {{channel.chatEnabled}} </span> <br>
+                                          <i class="fas fa-save"></i> <span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-info {% endif %}"> {{channel.record}}</span>  <br>
+                                          <i class="fas fa-comments"></i> <span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-info {% endif %}"> {{channel.allowComments}}</span> <br>
+                                          <i class="fas fa-lock"></i> <span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-info {% endif %}"> {{channel.protected}}</span><br>
                                       </div>
                                     </div>
                                   </div>
