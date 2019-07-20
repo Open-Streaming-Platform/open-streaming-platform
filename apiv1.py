@@ -1,9 +1,8 @@
 import sys
 from os import path, remove
-from os import environ
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from flask import Blueprint, request, url_for
+from flask import Blueprint, request
 from flask_restplus import Api, Resource, reqparse
 from flask_socketio import emit
 
@@ -32,15 +31,6 @@ authorizations = {
 
 api_v1 = Blueprint('api', __name__, url_prefix='/apiv1')
 api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
-
-if environ.get('HTTPS'):
-    @property
-    def specs_url(self):
-        """Monkey patch for HTTPS"""
-        return url_for(self.endpoint('specs'), _external=True, _scheme='https')
-
-    Api.specs_url = specs_url
-
 
 ### Start API Functions ###
 
