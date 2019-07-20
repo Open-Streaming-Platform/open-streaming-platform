@@ -25,8 +25,8 @@
                     <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
-                        {{stream.channel.channelName}}<br>
-                        {{stream.topic|get_topicName}}<br>
+                        <i class="fas fa-video mr-2"></i> {{stream.channel.channelName}}<br>
+                        <i class="fas fa-hashtag mr-2"></i> {{stream.topic|get_topicName}}<br>
                         <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span> {% if stream.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer pt-2">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
@@ -53,8 +53,8 @@
                     <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
-                        {{video.channel.channelName}}<br>
-                        {{video.topic|get_topicName}}<br>
+                        <i class="fas fa-video mr-2"></i> {{video.channel.channelName}}<br>
+                        <i class="fas fa-hashtag mr-2"></i> {{video.topic|get_topicName}}<br>
                         {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
