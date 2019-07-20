@@ -40,7 +40,7 @@
                 <div class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
-                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" {% else %} src="/static/img/video-placeholder.jpg"{% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     </div>
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
@@ -61,7 +61,7 @@
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                     <div>
-                    <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" {% else %} src="/static/img/video-placeholder.jpg"{% endif %} data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     </div>
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
