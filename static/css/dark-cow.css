@@ -235,9 +235,11 @@ hr {
 .comment {
     width:100%;
 }
-
 .comment p{
     white-space: pre-wrap;
+}
+.comment hr{
+    border-color: #aaa !important;
 }
 .videodescription p{
     white-space: pre-wrap;
@@ -245,6 +247,7 @@ hr {
 .viewerText p{
     white-space: pre-wrap;
 }
+
 .videoStream {
         width:100%;
     }
