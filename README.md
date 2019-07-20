@@ -153,13 +153,13 @@ cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 ```
 8: Copy the Gunicorn and NGINX SystemD files
 ```
-cp /opt/osp/setup/nginx/nginx.service /lib/systemd/system/nginx.service
+cp /opt/osp/setup/nginx/nginx-osp.service /lib/systemd/system/nginx-osp.service
 cp /opt/osp/setup/gunicorn/osp.service /lib/systemd/system/osp.service
 ```
 9: Reload SystemD
 ```
 systemctl daemon-reload
-systemctl enable nginx.service
+systemctl enable nginx-osp.service
 systemctl enable osp.service
 ```
 10: Make the Required OSP Directories and Set Ownership
@@ -185,7 +185,7 @@ apt-get install ffmpeg -y
 ```
 12: Start NGINX and OSP
 ```
-systemctl start nginx.service
+systemctl start nginx-osp.service
 systemctl start osp.service
 ```
 13: Open the site in a browser and run through the First Time Setup
