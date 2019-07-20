@@ -20,7 +20,8 @@
   <div class="row">
     <div class="col-lg col-xs-12 col-sm-12">
       <div class="index-video-title ml-2 my-2">
-        <span class="float-left" id="channelName">{{video.channelName}}</span>{% if video.channel.protected %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i> Protected</span></h6>{% endif %}
+        <span class="float-left" id="channelName">{{video.channelName}}</span>{% if video.channel.protected %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
+            Protected</span></h6>{% endif %}
       </div>
     </div>
     <div class="col-lg-auto col-sm-12" style="width:450px;">
@@ -123,6 +124,7 @@
                 </div>
               </div>
             </div>
+            <hr>
           </div>
           {% endfor %}
         </div>
@@ -139,8 +141,9 @@
             <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
               <div class="video-card-header">
                 <a href="/play/{{video.id}}">
-                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
-                                                                     
+                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
+
                 </a>
               </div>
               <div class="video-card-body">
