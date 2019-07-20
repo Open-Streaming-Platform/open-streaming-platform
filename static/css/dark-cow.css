@@ -239,8 +239,10 @@ hr {
 .comment p{
     white-space: pre-wrap;
 }
-
 .videodescription p{
+    white-space: pre-wrap;
+}
+.viewerText p{
     white-space: pre-wrap;
 }
 .videoStream {
