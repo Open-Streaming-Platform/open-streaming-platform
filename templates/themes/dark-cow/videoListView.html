@@ -126,7 +126,7 @@
                         </a>
                     </div>
                     <div class="video-card-body">
-                        <i class="fas fa-tv mr-2"></i><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a>
+                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span><br />
                         <span class="float-right">{% if video.channel.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
                         <br />
                         <i class="fas fa-video mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
