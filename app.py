@@ -1506,7 +1506,7 @@ def admin_page():
                             user_datastore.add_role_to_user(user, roleEntry)
                         user.id = restoredUser['id']
                         user.pictureLocation = restoredUser['pictureLocation']
-                        user.active = restoredUser['active']
+                        user.active = eval(restoredUser['active'])
                         user.confirmed_at = restoredUser['confirmed_at']
                         db.session.commit()
 
