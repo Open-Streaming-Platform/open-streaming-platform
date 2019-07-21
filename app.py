@@ -1195,6 +1195,7 @@ def admin_page():
                 dbTables = db.engine.table_names()
                 dbDump = {}
                 for table in dbTables:
+                    table = getattr(table,table)
                     tableDict = table2Dict(table)
                     dbDump[table] = tableDict
                 dbDumpJson = json.dumps(dbDump)
