@@ -222,8 +222,23 @@ hr {
     flex: 1 1 auto;
     line-height: 1.5em;
 }
-
-
+.channel-card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 2em !important;
+    word-wrap: break-word;
+    margin: 15px;
+}
+.channel-card-header{
+  margin-bottom: 0px
+}
+.channel-card-body{
+    padding: 0.5rem 0rem 0.5rem 0rem;
+    flex: 1 1 auto;
+    line-height: 1.5em;
+}
 .recordedStream {
     width:99%;
     display:block;
@@ -353,10 +368,6 @@ hr {
   white-space: nowrap;
 }
 
-.video-card-body .video-title{
-  margin-bottom: 1rem;  
-  display: inline-block;
-}
 .video-card-body .video-title a, .card-header .video-title a{
   color: #fff;
 }
