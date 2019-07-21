@@ -1442,10 +1442,10 @@ def admin_page():
                 restoreDict = json.loads(restoreJSON)
                 if 'restoreCheckSettings' in request.form or 'restoreCheckAll' in request.form:
 
-                    serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), bool(restoreDict['settings'][0]['smtpTLS']),
-                                                       bool(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], bool(restoreDict['settings'][0]['allowRegistration']),
-                                                       bool(restoreDict['settings'][0]['requireConfirmedEmail']), bool(restoreDict['settings'][0]['allowRecording']), bool(restoreDict['settings'][0]['adaptiveStreaming']), bool(restoreDict['settings'][0]['showEmptyTables']),
-                                                       bool(restoreDict['settings'][0]['allowComments']), version)
+                    serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
+                                                       eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
+                                                       eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
+                                                       eval(restoreDict['settings'][0]['allowComments']), version)
                     serverSettings.id = int(restoreDict['settings'][0]['id'])
                     serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
                     serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
