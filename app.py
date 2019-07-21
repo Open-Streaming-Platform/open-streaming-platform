@@ -1507,7 +1507,8 @@ def admin_page():
                         user.id = restoredUser['id']
                         user.pictureLocation = restoredUser['pictureLocation']
                         user.active = eval(restoredUser['active'])
-                        user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
+                        if restoredUser['confirmed_at'] != "None":
+                            user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
                         db.session.commit()
 
         return redirect(url_for('admin_page'))
