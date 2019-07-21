@@ -1432,6 +1432,17 @@ def admin_page():
             user_datastore.add_role_to_user(user, 'User')
             db.session.commit()
 
+        elif settingType == "dbRestore":
+            restoreJSON = None
+            if 'restoreData' in request.files:
+                file = request.files['restoreData']
+                if file.filename != '':
+                    restoreJSON = file.read()
+            if restoreJSON != None:
+                restoreDict = json.loads(restoreJSON)
+                return restoreDict
+
+
         return redirect(url_for('admin_page'))
 
 
