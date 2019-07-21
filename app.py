@@ -353,7 +353,7 @@ def check_isUserValidRTMPViewer(userID,channelID):
 
 def table2Dict(table):
     exportedTable = table.query.all()
-    column_names = [c for c in exportedTable.metadata.columns.keys()]
+    column_names = [c for c in exportedTable.__table__.columns.keys()]
     return [dict(zip(column_names, row)) for row in exportedTable.all()]
 
 @asynch
