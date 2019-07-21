@@ -1201,6 +1201,11 @@ def admin_page():
                         if hasattr(c, '__table__') and c.__tablename__ == table:
                             tableDict = table2Dict(c)
                             dbDump[table] = tableDict
+                userQuery = Sec.User.query.all()
+                dbDump['roles'] = {}
+                for user in userQuery:
+                    roles = user.roles
+                    dbDump['roles'][user.username] = roles
                 dbDumpJson = json.dumps(dbDump)
                 return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
@@ -1458,7 +1463,8 @@ def admin_page():
 
                     db.session.add(serverSettings)
                     db.session.commit()
-
+                if 'restoreCheckUsers' in request.form or 'restoreCheckAll' in request.form:
+                    pass
 
         return redirect(url_for('admin_page'))
 
