@@ -444,7 +444,7 @@
                                 <p>When restoring a table, it will wipe all existing data</p>
                                 <form action="/settings/admin" enctype=multipart/form-data method="post">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData">
+                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
                                         <label class="custom-file-label" for="restoreData">Upload Backup File</label>
                                     </div>
                                     <br><br>
@@ -505,6 +505,8 @@
                                         Channel Bans
                                       </label><br>
                                     </div>
+                                    <input type="hidden" value="dbRestore" id="settingType" name="settingType">
+                                    <input type="submit" class="btn btn-warning" value="Restore">
                                 </form>
                             </div>
                         </div>
