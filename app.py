@@ -351,6 +351,10 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.commit()
     return False
 
+def table2Dict(table):
+    exportedTable = table.query.all()
+    column_names = [c["name"] for c in exportedTable.column_descriptions]
+    return [dict(zip(column_names, row)) for row in exportedTable.all()]
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
@@ -1187,6 +1191,14 @@ def admin_page():
                             userQuery.active = True
                             flash("User Enabled")
                         db.session.commit()
+            elif action == "backup":
+                dbTables = db.engine.table_names()
+                dbDump = {}
+                for table in dbTables:
+                    tableDict = table2Dict(table)
+                    dbDump[table] = tableDict
+                dbDumpJson = json.dumps(dbDump)
+                return dbDumpJson
 
             return redirect(url_for('admin_page'))
 
