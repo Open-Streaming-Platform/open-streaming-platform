@@ -2,7 +2,7 @@
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered
@@ -1202,7 +1202,7 @@ def admin_page():
                             tableDict = table2Dict(c)
                             dbDump[table] = tableDict
                 dbDumpJson = json.dumps(dbDump)
-                return dbDumpJson
+                return Response(dbDumpJson, mimeType='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup.json'})
 
             return redirect(url_for('admin_page'))
 
