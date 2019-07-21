@@ -1197,7 +1197,7 @@ def admin_page():
                 for table in dbTables:
                     for c in db.Model._decl_class_registry.values():
                         if hasattr(c, '__table__') and c.__tablename__ == table:
-                            tableDict = table2Dict(table)
+                            tableDict = table2Dict(c)
                             dbDump[table] = tableDict
                 dbDumpJson = json.dumps(dbDump)
                 return dbDumpJson
