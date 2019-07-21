@@ -32,6 +32,9 @@
                 <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('backuprestore')">Backup/Restore</a>
+                </li>
               </ul>
           </div>
           <div class="card-body">
@@ -424,6 +427,85 @@
                             </div>
                         </div>
                         {% endfor %}
+                    </div>
+                </div>
+                <div class="settingsOption" id="backuprestore">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <h4>Backup the OSP Database</h4><br>
+                                <a href="/settings/admin?action=backup" class="btn btn-primary">Download</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <h4>Restore the OSP Database</h4>
+                                <p>When restoring a table, it will wipe all existing data</p>
+                                <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData">
+                                        <label class="custom-file-label" for="restoreData">Upload Backup File</label>
+                                    </div>
+                                    <h5>Tables to Restore</h5><br>
+                                    <div class="form-check">
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckAll">
+                                      <label class="form-check-label" for="restoreCheckAll">
+                                        Restore All Tables
+                                      </label>
+                                    </div>
+                                    <div class="form-check">
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckSettings">
+                                      <label class="form-check-label" for="restoreCheckSettings">
+                                        Settings
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckUsers">
+                                      <label class="form-check-label" for="restoreCheckUsers">
+                                        Users
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckChannels">
+                                      <label class="form-check-label" for="restoreCheckChannels">
+                                        Channels
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckRecordedVideo">
+                                      <label class="form-check-label" for="restoreCheckRecordedVideo">
+                                        Recorded Video
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckTopics">
+                                      <label class="form-check-label" for="restoreCheckTopics">
+                                        Topics
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckComments">
+                                      <label class="form-check-label" for="restoreCheckComments">
+                                        Comments
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckUpvotes">
+                                      <label class="form-check-label" for="restoreCheckUpvotes">
+                                        Upvotes
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckViews">
+                                      <label class="form-check-label" for="restoreCheckViews">
+                                        Viewer Counts
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckWebhooks">
+                                      <label class="form-check-label" for="restoreCheckWebhooks">
+                                        Webhooks
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckAPIKeys">
+                                      <label class="form-check-label" for="restoreCheckAPIKeys">
+                                        API Keys
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckInvites">
+                                      <label class="form-check-label" for="restoreCheckInvites">
+                                        Channel Invites
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckBans">
+                                      <label class="form-check-label" for="restoreCheckBans">
+                                        Users
+                                      </label><br>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
               </div>
