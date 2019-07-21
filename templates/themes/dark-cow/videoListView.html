@@ -17,7 +17,7 @@
             <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
                 <div class="h-100 viewerText">
                     <h2 class="display-5"><b><i class="fas fa-video"></i> {{channelData.channelName}}</b></h2>
-                    <a href="/streamers/{{comment.userID}}/"><h2 class="display-5"><img width="34" height="34" class="userphoto" src="{{channelData.owningUser|get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{channelData.owningUser|get_userName}}</h2></a>
+                    <a href="/streamers/{{channelData.owningUser}}/"><h2 class="display-5"><img width="34" height="34" class="userphoto" src="{{channelData.owningUser|get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{channelData.owningUser|get_userName}}</h2></a>
                     {% if channelData.stream|length > 0 %}
                     <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
                     {% else %}
