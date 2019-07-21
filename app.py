@@ -1202,7 +1202,7 @@ def admin_page():
                             tableDict = table2Dict(c)
                             dbDump[table] = tableDict
                 dbDumpJson = json.dumps(dbDump)
-                return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup.json'})
+                return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
             return redirect(url_for('admin_page'))
 
