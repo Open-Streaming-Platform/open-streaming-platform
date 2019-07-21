@@ -450,12 +450,12 @@
                                     <br>
                                     <h5>Tables to Restore</h5>
                                     <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckAll">
+                                      <input class="form-check-input" type="checkbox" value="" id="restoreCheckAll" onchange="restoreCheckShowHide();">
                                       <label class="form-check-label" for="restoreCheckAll">
                                         Restore All Tables
                                       </label>
                                     </div><br>
-                                    <div class="form-check">
+                                    <div class="form-check" id="restoreCheckIndividual">
                                       <input class="form-check-input" type="checkbox" value="" id="restoreCheckSettings">
                                       <label class="form-check-label" for="restoreCheckSettings">
                                         Settings
@@ -518,6 +518,16 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript">
+function restoreCheckShowHide()
+{
+    if($('#restoreCheckAll').is(":checked"))
+        $("#restoreCheckIndividual").show();
+    else
+        $("#restoreCheckIndividual").hide();
+}
+</script>
+
 <script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
