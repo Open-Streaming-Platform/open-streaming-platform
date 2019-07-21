@@ -1465,8 +1465,50 @@ def admin_page():
 
                     db.session.add(serverSettings)
                     db.session.commit()
+
+                    sysSettings = settings.settings.query.first()
+
+                    if settings != None:
+                        app.config.update(
+                            SERVER_NAME=None,
+                            SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                            MAIL_SERVER=sysSettings.smtpAddress,
+                            MAIL_PORT=sysSettings.smtpPort,
+                            MAIL_USE_TLS=sysSettings.smtpTLS,
+                            MAIL_USE_SSL=sysSettings.smtpSSL,
+                            MAIL_USERNAME=sysSettings.smtpUsername,
+                            MAIL_PASSWORD=sysSettings.smtpPassword,
+                            SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                            SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
+                            SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
+                            SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
+                            SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
+                            SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
+                            SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
+                            SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
+                            SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
+                            SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
+                            SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
+                            SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+                        global mail
+                        mail = Mail(app)
+
                 if 'restoreCheckUsers' in request.form or 'restoreCheckAll' in request.form:
-                    pass
+                    oldUsers = Sec.User.query.all()
+                    for user in oldUsers:
+                        db.session.delete(user)
+                    db.session.commit()
+                    for restoredUser in restoreDict['user']:
+                        user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'], password=restoredUser['password'])
+                        db.session.commit()
+                        user = Sec.User.query.filter_by(username=restoredUser['username']).first()
+                        for roleEntry in restoreDict['roles'][user.username]:
+                            user_datastore.add_role_to_user(user, roleEntry)
+                        user.id = restoredUser['id']
+                        user.pictureLocation = restoredUser['pictureLocation']
+                        user.active = restoredUser['active']
+                        user.confirmed_at = restoredUser['confirmed_at']
+                        db.session.commit()
 
         return redirect(url_for('admin_page'))
 
