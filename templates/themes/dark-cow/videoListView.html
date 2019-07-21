@@ -128,6 +128,7 @@
                     <div class="video-card-body">
                         <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span>
                         <span class="float-right">{% if video.channel.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
+                        
                         <i class="fas fa-video mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
                         <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}">{{video.owningUser|get_userName}}</a>
