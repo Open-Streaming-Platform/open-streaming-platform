@@ -18,13 +18,15 @@
                 <div class="h-100 viewerText">
                     <h2 class="display-5"><b><i class="fas fa-video"></i> {{channelData.channelName}}</b></h2>
                     <h2 class="display-5"><img width="34" height="34" class="userphoto" src="{{channelData.owningUser|get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{channelData.owningUser|get_userName}}</h2>
-                                            {% if channelData.stream|length > 0 %}
-                                            <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
-                                            {% else %}
-                                            <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
-                                            {% endif %}
-                                            {% if channelData.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-                    <span><p>{{channelData.description}}</p></span><br>
+                    {% if channelData.stream|length > 0 %}
+                    <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
+                    {% else %}
+                    <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
+                    {% endif %}
+                    {% if channelData.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                    <span>
+                        <p>{{channelData.description}}</p>
+                    </span><br>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
@@ -47,7 +49,8 @@
                     <div class="row no-gutters">
                         <div class="video-card-header">
                             <a href="/view/{{stream.channel.channelLoc}}/">
-                                <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
+                                <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
                         </div>
                         <div class="video-card-body ml-3">
                             <b><i class="px-2 fas fa-tv"></i></b><span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName|limit_title}}</b></a></span><br />
@@ -118,7 +121,8 @@
                 <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/play/{{video.id}}">
-                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/videos/{{video.thumbnailLocation}}">
+                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/videos/{{video.thumbnailLocation}}">
                         </a>
                     </div>
                     <div class="video-card-body">
@@ -142,7 +146,12 @@
 </div>
 {% endif %}
 {% if not recordedVids or userChannels or openStreams or channelData%}
-<p>Nothing to see here.</p>
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Videos</b></div>
+        <p>Nothing to see here.</p>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
 
