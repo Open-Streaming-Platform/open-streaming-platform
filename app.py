@@ -1204,8 +1204,10 @@ def admin_page():
                 userQuery = Sec.User.query.all()
                 dbDump['roles'] = {}
                 for user in userQuery:
-                    roles = user.roles
-                    dbDump['roles'][user.username] = roles
+                    userroles = user.roles
+                    dbDump['roles'][user.username] = []
+                    for role in userroles:
+                        dbDump['roles'][user.username].append(role.name)
                 dbDumpJson = json.dumps(dbDump)
                 return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
