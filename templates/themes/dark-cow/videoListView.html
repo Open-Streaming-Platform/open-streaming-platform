@@ -31,9 +31,6 @@
                 <span class="float-right"><a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a></span>
             </div>
         </div>
-
-
-
     </div>
 </div>
 {% endif %}
@@ -79,7 +76,7 @@
 
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-around">
+            <div class="d-flex flex-wrap justify-content-between">
                 {% for channel in userChannels %}
                 <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
                     <div class="video-card-header">
@@ -108,8 +105,6 @@
     </div>
 </div>
 <hr>
-{% else %}
-{{userChannels.userID|get_userName}} does not stream yet.
 {% endif %}
 
 <div class="container-fluid p-2" id="index-videos-container">
