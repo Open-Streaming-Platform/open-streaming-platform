@@ -371,8 +371,6 @@ hr {
 .video-card-body .video-title{
   margin-bottom: 1rem;  
   display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
 }
 .video-card-body .video-title a, .card-header .video-title a{
   color: #fff;
