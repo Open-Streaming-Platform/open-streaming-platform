@@ -1490,7 +1490,7 @@ def admin_page():
                             SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
                             SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
                             SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
-                        global mail
+
                         mail = Mail(app)
 
                 if 'restoreCheckUsers' in request.form or 'restoreCheckAll' in request.form:
