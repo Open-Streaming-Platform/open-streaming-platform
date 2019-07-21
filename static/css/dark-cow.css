@@ -368,10 +368,6 @@ hr {
   white-space: nowrap;
 }
 
-.video-card-body .video-title{
-  margin-bottom: 1rem;  
-  display: inline-block;
-}
 .video-card-body .video-title a, .card-header .video-title a{
   color: #fff;
 }
