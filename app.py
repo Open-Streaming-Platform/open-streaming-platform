@@ -1440,7 +1440,20 @@ def admin_page():
                     restoreJSON = file.read()
             if restoreJSON != None:
                 restoreDict = json.loads(restoreJSON)
-                return restoreDict
+                if 'restoreCheckSettings' in request.form or 'restoreCheckAll' in request.form:
+                    oldSettings = settings.settings.query.all()
+                    for row in oldSettings:
+                        db.session.delete(row)
+                    db.session.commit()
+                    serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), bool(restoreDict['settings'][0]['smtpTLS']),
+                                                       bool(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], bool(restoreDict['settings'][0]['allowRegistration']),
+                                                       bool(restoreDict['settings'][0]['requireConfirmedEmail']), bool(restoreDict['settings'][0]['allowRecording']), bool(restoreDict['settings'][0]['adaptiveStreaming']), bool(restoreDict['settings'][0]['showEmptyTables']),
+                                                       bool(restoreDict['settings'][0]['allowComments']), version)
+                    serverSettings.id = int(restoreDict['settings']['id'])
+                    serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
+                    serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+                    db.session.add(serverSettings)
+                    db.session.commit()
 
 
         return redirect(url_for('admin_page'))
