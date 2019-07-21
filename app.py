@@ -649,7 +649,7 @@ def streamers_view_page(userID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName + " - Videos")
+    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName)
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
