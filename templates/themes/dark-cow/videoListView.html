@@ -45,7 +45,7 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-between">
                 {% for stream in openStreams %}
-                <div class="video-card bg-dark mb-3" style="max-width: 45rem;">
+                <div class="video-card bg-dark mx-4" style="max-width: 45rem;">
                     <div class="row no-gutters">
                         <div class="video-card-header">
                             <a href="/view/{{stream.channel.channelLoc}}/">
@@ -79,9 +79,9 @@
 
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-between">
+            <div class="d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
-                <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/channel/{{channel.id}}/">
                             <img class="shadow lazy" height="180" width="320" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
@@ -116,9 +116,9 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-between">
+            <div class="d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
-                <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/play/{{video.id}}">
                             <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
