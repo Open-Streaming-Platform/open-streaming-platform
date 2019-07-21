@@ -1447,69 +1447,103 @@ def admin_page():
                     restoreJSON = file.read()
             if restoreJSON != None:
                 restoreDict = json.loads(restoreJSON)
-                if 'restoreCheckSettings' in request.form or 'restoreCheckAll' in request.form:
 
-                    serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
-                                                       eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
-                                                       eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
-                                                       eval(restoreDict['settings'][0]['allowComments']), version)
-                    serverSettings.id = int(restoreDict['settings'][0]['id'])
-                    serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
-                    serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+                ## Restore Settings
 
-                    # Remove Old Settings
-                    oldSettings = settings.settings.query.all()
-                    for row in oldSettings:
-                        db.session.delete(row)
+                serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
+                                                   eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
+                                                   eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
+                                                   eval(restoreDict['settings'][0]['allowComments']), version)
+                serverSettings.id = int(restoreDict['settings'][0]['id'])
+                serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
+                serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+
+                # Remove Old Settings
+                oldSettings = settings.settings.query.all()
+                for row in oldSettings:
+                    db.session.delete(row)
+                db.session.commit()
+
+                db.session.add(serverSettings)
+                db.session.commit()
+
+                sysSettings = settings.settings.query.first()
+
+                if settings != None:
+                    app.config.update(
+                        SERVER_NAME=None,
+                        SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                        MAIL_SERVER=sysSettings.smtpAddress,
+                        MAIL_PORT=sysSettings.smtpPort,
+                        MAIL_USE_TLS=sysSettings.smtpTLS,
+                        MAIL_USE_SSL=sysSettings.smtpSSL,
+                        MAIL_USERNAME=sysSettings.smtpUsername,
+                        MAIL_PASSWORD=sysSettings.smtpPassword,
+                        SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                        SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
+                        SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
+                        SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
+                        SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
+                        SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
+                        SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
+                        SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
+                        SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
+                        SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
+                        SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
+                        SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+
+                    mail = Mail(app)
+
+                ## Restores Users
+                oldUsers = Sec.User.query.all()
+                for user in oldUsers:
+                    db.session.delete(user)
+                db.session.commit()
+                for restoredUser in restoreDict['user']:
+                    user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'], password=restoredUser['password'])
+                    db.session.commit()
+                    user = Sec.User.query.filter_by(username=restoredUser['username']).first()
+                    for roleEntry in restoreDict['roles'][user.username]:
+                        user_datastore.add_role_to_user(user, roleEntry)
+                    user.id = int(restoredUser['id'])
+                    user.pictureLocation = restoredUser['pictureLocation']
+                    user.active = eval(restoredUser['active'])
+                    if restoredUser['confirmed_at'] != "None":
+                        user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
                     db.session.commit()
 
-                    db.session.add(serverSettings)
-                    db.session.commit()
+                ## Restore Topics
+                oldTopics = topics.topics.query.all()
+                for topic in oldTopics:
+                    db.session.delete(topic)
+                db.session.commit()
+                for restoredTopic in restoreDict['topics']:
+                    topic = topics.topics(restoredTopic['name'], "None")
+                    topic.id = int(restoredTopic['id'])
+                    db.session.add(topic)
+                db.session.commit()
 
-                    sysSettings = settings.settings.query.first()
+                ## Restores Channels
+                oldChannels = Channel.Channel.query.all()
+                for channel in oldChannels:
+                    db.session.delete(channel)
+                db.session.commit()
+                for restoredChannel in restoreDict['Channel']:
+                    channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'], restoredChannel['channelName'], int(restoredChannel['topic']), eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
+                                              eval(restoredChannel['allowComments']), restoredChannel['description'])
+                    channel.id = int(restoredChannel['id'])
+                    channel.channelLoc = restoredChannel['channelLoc']
+                    channel.chatBG = restoredChannel['chatBG']
+                    channel.chatTextColor = restoredChannel['chatTextColor']
+                    channel.chatAnimation = restoredChannel['chatAnimation']
+                    channel.views = int(restoredChannel['views'])
+                    channel.protected = eval(restoredChannel['protected'])
+                    channel.channelMuted = eval(restoredChannel['channelMuted'])
 
-                    if settings != None:
-                        app.config.update(
-                            SERVER_NAME=None,
-                            SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                            MAIL_SERVER=sysSettings.smtpAddress,
-                            MAIL_PORT=sysSettings.smtpPort,
-                            MAIL_USE_TLS=sysSettings.smtpTLS,
-                            MAIL_USE_SSL=sysSettings.smtpSSL,
-                            MAIL_USERNAME=sysSettings.smtpUsername,
-                            MAIL_PASSWORD=sysSettings.smtpPassword,
-                            SECURITY_REGISTERABLE=sysSettings.allowRegistration,
-                            SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
-                            SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
-                            SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
-                            SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
-                            SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
-                            SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                            SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
-                            SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
-                            SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
-                            SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
-                            SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+                    db.session.add(channel)
+                db.session.commit()
 
-                        mail = Mail(app)
 
-                if 'restoreCheckUsers' in request.form or 'restoreCheckAll' in request.form:
-                    oldUsers = Sec.User.query.all()
-                    for user in oldUsers:
-                        db.session.delete(user)
-                    db.session.commit()
-                    for restoredUser in restoreDict['user']:
-                        user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'], password=restoredUser['password'])
-                        db.session.commit()
-                        user = Sec.User.query.filter_by(username=restoredUser['username']).first()
-                        for roleEntry in restoreDict['roles'][user.username]:
-                            user_datastore.add_role_to_user(user, roleEntry)
-                        user.id = restoredUser['id']
-                        user.pictureLocation = restoredUser['pictureLocation']
-                        user.active = eval(restoredUser['active'])
-                        if restoredUser['confirmed_at'] != "None":
-                            user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
-                        db.session.commit()
 
         return redirect(url_for('admin_page'))
 
