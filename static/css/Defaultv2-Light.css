@@ -145,6 +145,22 @@ body {
 .comment {
     width:100%;
 }
+.comment p{
+    white-space: pre-wrap;
+    margin-top: 1rem;
+}
+.comment hr{
+    border-color: #aaa !important;
+}
+.comment img{
+    margin-top: 1rem;
+}
+.videodescription p{
+    white-space: pre-wrap;
+}
+.viewerText p{
+    white-space: pre-wrap;
+}
 
 .videoStream {
         width:100%;
