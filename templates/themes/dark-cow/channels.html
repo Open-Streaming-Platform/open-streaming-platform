@@ -13,12 +13,12 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-around">
                 {% for channel in channelList %}
-                <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
-                    <div class="video-card-header">
+                <div class="channel-card bg-dark mb-3" style="max-width: 20rem;">
+                    <div class="channel-card-header">
                         <a href="/channel/{{channel.id}}/">
                             <img class="shadow lazy" height="180" width="320" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
                     </div>
-                    <div class="video-card-body">
+                    <div class="channel-card-body">
                         <b><i class="fas fa-video mr-2"></i></b><span class="video-title"><a href="/channel/{{channel.id}}/"><b> {{channel.channelName}}</b></a></span>
                         <span class="float-right">
                             {% if channel.stream|length > 0 %}
