@@ -352,9 +352,8 @@ def check_isUserValidRTMPViewer(userID,channelID):
     return False
 
 def table2Dict(table):
-    exportedTable = table.query.all()
 
-    return dict((column.name, getattr(exportedTable, column.name)) for column in exportedTable.__table__.columns)
+    return dict((column.name, getattr(table, column.name)) for column in table.__table__.columns)
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
