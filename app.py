@@ -355,7 +355,7 @@ def table2Dict(table):
     exportedTableList = table.query.all()
     dataList = []
     for tbl in exportedTableList:
-        dataList.append(dict((column.name, getattr(tbl, column.name)) for column in tbl.__table__.columns))
+        dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
     return dataList
 
 @asynch
