@@ -456,63 +456,14 @@
                                         </script>
                                     </div>
                                     <br><br>
-                                    <h5>Tables to Restore</h5>
+                                    <h5>Restore Options</h5>
                                     <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckAll" id="restoreCheckAll" onchange="restoreCheckShowHide();">
-                                      <label class="form-check-label" for="restoreCheckAll">
-                                        Restore All Tables
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckAll" id="restoreVideos">
+                                      <label class="form-check-label" for="restoreVideos">
+                                        Restore Recorded Videos
                                       </label>
                                     </div><br>
-                                    <div class="form-check" id="restoreCheckIndividual">
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckSettings" id="restoreCheckSettings">
-                                      <label class="form-check-label" for="restoreCheckSettings">
-                                        Settings
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckUsers" id="restoreCheckUsers">
-                                      <label class="form-check-label" for="restoreCheckUsers">
-                                        Users
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckChannels" id="restoreCheckChannels">
-                                      <label class="form-check-label" for="restoreCheckChannels">
-                                        Channels
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckRecordedVideo" id="restoreCheckRecordedVideo">
-                                      <label class="form-check-label" for="restoreCheckRecordedVideo">
-                                        Recorded Video
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckTopics" id="restoreCheckTopics">
-                                      <label class="form-check-label" for="restoreCheckTopics">
-                                        Topics
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckComments" id="restoreCheckComments">
-                                      <label class="form-check-label" for="restoreCheckComments">
-                                        Comments
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckUpvotes" id="restoreCheckUpvotes">
-                                      <label class="form-check-label" for="restoreCheckUpvotes">
-                                        Upvotes
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckViews" id="restoreCheckViews">
-                                      <label class="form-check-label" for="restoreCheckViews">
-                                        Viewer Counts
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckWebhooks" id="restoreCheckWebhooks">
-                                      <label class="form-check-label" for="restoreCheckWebhooks">
-                                        Webhooks
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckAPIKeys" id="restoreCheckAPIKeys">
-                                      <label class="form-check-label" for="restoreCheckAPIKeys">
-                                        API Keys
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckInvites" id="restoreCheckInvites">
-                                      <label class="form-check-label" for="restoreCheckInvites">
-                                        Channel Invites
-                                      </label><br>
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckBans" id="restoreCheckBans">
-                                      <label class="form-check-label" for="restoreCheckBans">
-                                        Channel Bans
-                                      </label><br>
-                                    </div><br>
+                                    <br>
                                     <input type="hidden" value="dbRestore" id="settingType" name="settingType">
                                     <input type="submit" class="btn btn-warning" value="Restore">
                                 </form>
@@ -528,16 +479,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-function restoreCheckShowHide()
-{
-    if($('#restoreCheckAll').is(":checked"))
-        $("#restoreCheckIndividual").hide();
-    else
-        $("#restoreCheckIndividual").show();
-}
-</script>
-
 <script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
