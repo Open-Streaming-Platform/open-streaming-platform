@@ -26,7 +26,8 @@
                     <div class="row no-gutters">
                         <div class="video-card-header">
                             <a href="/view/{{stream.channel.channelLoc}}/">
-                                <img class="shadow lazy"  {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-locked.jpg';"{% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
+                                <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                    onerror="this.src='/static/img/video-locked.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
                         </div>
                         <div class="video-card-body ml-3">
                             <b><i class="px-2 fas fa-tv"></i></b><span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName|limit_title}}</b></a></span><br />
@@ -56,12 +57,13 @@
                 <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/play/{{video.id}}">
-                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg"  onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/videos/{{video.thumbnailLocation}}">
+                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/videos/{{video.thumbnailLocation}}">
                         </a>
                     </div>
                     <div class="video-card-body">
                         <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span><br />
-                        {% if video.channel.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br />
+                        {% if video.channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
                         <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
                         <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
