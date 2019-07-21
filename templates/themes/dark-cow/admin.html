@@ -32,6 +32,9 @@
                 <li class="nav-item">
                     <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link link" href="#" onclick="toggleDiv('backuprestore')">Backup/Restore</a>
+                </li>
               </ul>
           </div>
           <div class="card-body">
@@ -375,6 +378,97 @@
                         {% endfor %}
                     </div>
                 </div>
+                <div class="settingsOption" id="backuprestore" style="display:none;">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <h4>Backup the OSP Database</h4>
+                                <a href="/settings/admin?action=backup" class="btn btn-primary">Download</a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <h4>Restore the OSP Database</h4>
+                                <p>When restoring a table, it will wipe all existing data</p>
+                                <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
+                                        <label class="custom-file-label" for="restoreData">Upload Backup File</label>
+                                        <script>
+                                            $('#restoreData').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('.custom-file-label').html(fileName);
+                                            })
+                                        </script>
+                                    </div>
+                                    <br><br>
+                                    <h5>Tables to Restore</h5>
+                                    <div class="form-check">
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckAll" id="restoreCheckAll" onchange="restoreCheckShowHide();">
+                                      <label class="form-check-label" for="restoreCheckAll">
+                                        Restore All Tables
+                                      </label>
+                                    </div><br>
+                                    <div class="form-check" id="restoreCheckIndividual">
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckSettings" id="restoreCheckSettings">
+                                      <label class="form-check-label" for="restoreCheckSettings">
+                                        Settings
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckUsers" id="restoreCheckUsers">
+                                      <label class="form-check-label" for="restoreCheckUsers">
+                                        Users
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckChannels" id="restoreCheckChannels">
+                                      <label class="form-check-label" for="restoreCheckChannels">
+                                        Channels
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckRecordedVideo" id="restoreCheckRecordedVideo">
+                                      <label class="form-check-label" for="restoreCheckRecordedVideo">
+                                        Recorded Video
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckTopics" id="restoreCheckTopics">
+                                      <label class="form-check-label" for="restoreCheckTopics">
+                                        Topics
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckComments" id="restoreCheckComments">
+                                      <label class="form-check-label" for="restoreCheckComments">
+                                        Comments
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckUpvotes" id="restoreCheckUpvotes">
+                                      <label class="form-check-label" for="restoreCheckUpvotes">
+                                        Upvotes
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckViews" id="restoreCheckViews">
+                                      <label class="form-check-label" for="restoreCheckViews">
+                                        Viewer Counts
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckWebhooks" id="restoreCheckWebhooks">
+                                      <label class="form-check-label" for="restoreCheckWebhooks">
+                                        Webhooks
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckAPIKeys" id="restoreCheckAPIKeys">
+                                      <label class="form-check-label" for="restoreCheckAPIKeys">
+                                        API Keys
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckInvites" id="restoreCheckInvites">
+                                      <label class="form-check-label" for="restoreCheckInvites">
+                                        Channel Invites
+                                      </label><br>
+                                      <input class="form-check-input" type="checkbox" value="" name="restoreCheckBans" id="restoreCheckBans">
+                                      <label class="form-check-label" for="restoreCheckBans">
+                                        Channel Bans
+                                      </label><br>
+                                    </div><br>
+                                    <input type="hidden" value="dbRestore" id="settingType" name="settingType">
+                                    <input type="submit" class="btn btn-warning" value="Restore">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
               </div>
           </div>
       </div>
@@ -383,6 +477,16 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript">
+function restoreCheckShowHide()
+{
+    if($('#restoreCheckAll').is(":checked"))
+        $("#restoreCheckIndividual").hide();
+    else
+        $("#restoreCheckIndividual").show();
+}
+</script>
+
 <script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
