@@ -1544,6 +1544,161 @@ def admin_page():
                 db.session.commit()
 
 
+                ## Restored Videos - Deletes if not restored to maintain DB
+                oldVideos = RecordedVideo.RecordedVideo.query.all()
+                for video in oldVideos:
+                    db.session.delete(video)
+                db.session.commit()
+
+                if 'restoreVideos' in request.form:
+
+                    for restoredVideo in restoreDict['RecordedVideo']:
+                        video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']), int(restoredVideo['channelID']), restoredVideo['channelName'], int(restoredVideo['topic']), int(restoredVideo['views']), restoredVideo['videoLocation'],
+                                                            datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
+                        video.id = int(restoredVideo['id'])
+                        video.description = restoredVideo['description']
+                        video.length = int(restoredVideo['length'])
+                        video.thumbnailLocation = restoredVideo['thumbnailLocation']
+                        video.pending = eval(restoredVideo['pending'])
+                        db.session.add(video)
+                    db.session.commit()
+
+                ## Restores API Keys
+                oldAPI = apikey.apikey.query.all()
+                for api in oldAPI:
+                    db.session.delete(api)
+                db.session.commit()
+
+                for restoredAPIKey in restoreDict['apikey']:
+                    key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']), restoredAPIKey['description'], 0)
+                    key.id =  int(restoredAPIKey['id'])
+                    key.key = restoredAPIKey['key']
+                    key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
+                    key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    db.session.add(key)
+                db.session.commit()
+
+                ## Restores Webhooks
+                oldWebhooks = webhook.webhook.query.all()
+                for hook in oldWebhooks:
+                    db.session.delete(hook)
+                db.session.commit()
+
+                for restoredWebhook in restoreDict['webhook']:
+                    hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']), restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
+                                           int(restoredWebhook['requestTrigger']))
+                    db.session.add(hook)
+                db.session.commit()
+
+                ## Restores Views
+                oldViews = views.views.query.all()
+                for view in oldViews:
+                    db.session.delete(view)
+                db.session.commit()
+
+                for restoredView in restoreDict['views']:
+                    if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
+                        view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
+                        view.id = int(restoredView['id'])
+                        view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(view)
+                db.session.commit()
+
+                ## Restores Invites
+                oldInviteCode = invites.inviteCode.query.all()
+                for code in oldInviteCode:
+                    db.session.delete(code)
+                db.session.commit()
+
+                for restoredInviteCode in restoreDict['inviteCode']:
+                    code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
+                    code.id = int(restoredInviteCode['id'])
+                    code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    code.uses = int(restoredInviteCode['uses'])
+                    db.session.add(code)
+                db.session.commit()
+
+                oldInvitedViewers = invites.invitedViewer.query.all()
+                for invite in oldInvitedViewers:
+                    db.session.delete(invite)
+                db.session.commit()
+
+                for restoredInvitedViewer in restoreDict['invitedUser']:
+                    invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
+                    invite.id = int(restoredInvitedViewer['id'])
+                    invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
+                    invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    if 'inviteCode' in restoredInvitedViewer:
+                        if restoredInvitedViewer['inviteCode'] != None:
+                            invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
+                    db.session.add(invite)
+                db.session.commit()
+
+                ## Restores Comments
+                oldComments = comments.videoComments.query.all()
+                for comment in oldComments:
+                    db.session.delete(comment)
+                db.session.commit()
+
+                if 'restoreVideos' in request.form:
+                    for restoredComment in restoreDict['videoComments']:
+                        comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'], int(restoredComment['videoID']))
+                        comment.id = int(restoredComment['id'])
+                        comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(comment)
+                    db.session.commit()
+
+                ## Restores Ban List
+                oldBanList = banList.banList.query.all()
+                for ban in oldBanList:
+                    db.session.delete(ban)
+                db.session.commit()
+
+                for restoredBan in restoreDict['banList']:
+                    ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
+                    ban.id = int(restoredBan['id'])
+                    db.session.add(ban)
+                db.session.commit()
+
+                ## Restores Upvotes
+                oldChannelUpvotes = upvotes.channelUpvotes.query.all()
+                for upvote in oldChannelUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldStreamUpvotes = upvotes.streamUpvotes.query.all()
+                for upvote in oldStreamUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldVideoUpvotes = upvotes.videoUpvotes.query.all()
+                for upvote in oldVideoUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldCommentUpvotes = upvotes.commentUpvotes.query.all()
+                for upvote in oldCommentUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+
+                for restoredUpvote in restoreDict['channelUpvotes']:
+                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                db.session.commit()
+                for restoredUpvote in restoreDict['streamUpvotes']:
+                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                db.session.commit()
+                if 'restoreVideos' in request.form:
+                    for restoredUpvote in restoreDict['videoUpvotes']:
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    db.session.commit()
+                for restoredUpvote in restoreDict['commentUpvotes']:
+                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                db.session.commit()
 
         return redirect(url_for('admin_page'))
 
