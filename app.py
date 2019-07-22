@@ -1614,7 +1614,10 @@ def admin_page():
                 for restoredInviteCode in restoreDict['inviteCode']:
                     code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
                     code.id = int(restoredInviteCode['id'])
-                    code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    if restoredInviteCode['expiration'] != "None":
+                        code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    else:
+                        code.expiration = None
                     code.uses = int(restoredInviteCode['uses'])
                     db.session.add(code)
                 db.session.commit()
