@@ -1654,7 +1654,7 @@ def admin_page():
                     db.session.delete(ban)
                 db.session.commit()
 
-                for restoredBan in restoreDict['banList']:
+                for restoredBan in restoreDict['ban_list']:
                     ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
                     ban.id = int(restoredBan['id'])
                     db.session.add(ban)
