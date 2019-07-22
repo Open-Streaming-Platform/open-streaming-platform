@@ -70,10 +70,10 @@
                 <div class="btn-group" role="group">
                   <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download Video</a>
+                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download video</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
-                      Create Comment</a>
-                    <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share Video</a>
+                      Create comment</a>
+                    <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share video</a>
                   </div>
                 </div>
               </span>
@@ -337,7 +337,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="shareModalTitle">Share a Video/Stream</h5>
+        <h5 class="modal-title" id="shareModalTitle">Share video</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

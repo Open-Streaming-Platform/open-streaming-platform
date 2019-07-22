@@ -73,11 +73,11 @@
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#shareModal" aria-pressed="false" autocomplete="off" href="#"><i class="fas fa-share-alt"></i> Share Video</a>
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#shareModal" aria-pressed="false" autocomplete="off" href="#"><i class="fas fa-share-alt"></i> Share stream</a>
                                             <a class="dropdown-item" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" {% if channel.chatEnabled == False %}disabled{% endif %} href="#"><i
-                                                    class="fas fa-eye-slash"></i> Toggle Chat</a>
-                                            <a class="dropdown-item" tabindex="10" data-html="true" data-toggle="popover" title="User List" data-trigger="focus" data-content="" data-placement="top" href="#"><i class="fas fa-users"></i> User List</a>
-                                            <a class="dropdown-item" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Pop-out Chat" href="#"><i class="fas fa-comment"></i> Pop-Out Chat</a>
+                                                    class="fas fa-eye-slash"></i> Toggle chat</a>
+                                            <a class="dropdown-item" tabindex="10" data-html="true" data-toggle="popover" title="User List" data-trigger="focus" data-content="" data-placement="top" href="#"><i class="fas fa-users"></i> User list</a>
+                                            <a class="dropdown-item" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Pop-out Chat" href="#"><i class="fas fa-comment"></i> Pop-out chat</a>
                                         </div>
                                     </div>
                                     <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-1" onclick="changeUpvote();" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
@@ -192,7 +192,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="shareModalTitle">Share a Video/Stream</h5>
+                    <h5 class="modal-title" id="shareModalTitle">Share stream</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
