@@ -1678,23 +1678,23 @@ def admin_page():
                     db.session.delete(upvote)
                 db.session.commit()
 
-                for restoredUpvote in restoreDict['channelUpvotes']:
+                for restoredUpvote in restoreDict['channel_upvotes']:
                     upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
                     upvote.id = int(restoredUpvote['id'])
                     db.session.add(upvote)
                 db.session.commit()
-                for restoredUpvote in restoreDict['streamUpvotes']:
+                for restoredUpvote in restoreDict['stream_upvotes']:
                     upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
                     upvote.id = int(restoredUpvote['id'])
                     db.session.add(upvote)
                 db.session.commit()
                 if 'restoreVideos' in request.form:
-                    for restoredUpvote in restoreDict['videoUpvotes']:
+                    for restoredUpvote in restoreDict['video_upvotes']:
                         upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
                     db.session.commit()
-                for restoredUpvote in restoreDict['commentUpvotes']:
+                for restoredUpvote in restoreDict['comment_upvotes']:
                     upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
                     upvote.id = int(restoredUpvote['id'])
                     db.session.add(upvote)
