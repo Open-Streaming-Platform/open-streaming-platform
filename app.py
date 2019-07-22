@@ -1557,7 +1557,8 @@ def admin_page():
                                                             datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
                         video.id = int(restoredVideo['id'])
                         video.description = restoredVideo['description']
-                        video.length = float(restoredVideo['length'])
+                        if restoredVideo['length'] != "None":
+                            video.length = float(restoredVideo['length'])
                         video.thumbnailLocation = restoredVideo['thumbnailLocation']
                         video.pending = eval(restoredVideo['pending'])
                         db.session.add(video)
