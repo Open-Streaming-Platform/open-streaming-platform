@@ -1623,7 +1623,7 @@ def admin_page():
                     db.session.delete(invite)
                 db.session.commit()
 
-                for restoredInvitedViewer in restoreDict['invitedUser']:
+                for restoredInvitedViewer in restoreDict['invitedViewer']:
                     invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
                     invite.id = int(restoredInvitedViewer['id'])
                     invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
