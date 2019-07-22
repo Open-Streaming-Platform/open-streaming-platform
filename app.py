@@ -1700,6 +1700,7 @@ def admin_page():
                     upvote.id = int(restoredUpvote['id'])
                     db.session.add(upvote)
                 db.session.commit()
+                flash("Database Restored from Backup", "success")
 
         return redirect(url_for('admin_page'))
 
