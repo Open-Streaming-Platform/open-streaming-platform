@@ -2047,6 +2047,7 @@ def video_sender(channelID, filename):
             redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            del response.headers["Content-Type"]
             db.session.close()
             return response
         else:
@@ -2055,6 +2056,7 @@ def video_sender(channelID, filename):
         redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        del response.headers["Content-Type"]
         db.session.close()
         return response
 
