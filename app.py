@@ -999,6 +999,10 @@ def comments_vid_page(videoID):
 @roles_required('Streamer')
 def upload():
     if request.files['file']:
+
+        if not os.path.exists('/var/www/videos/temp'):
+            os.makedirs('/var/www/videos/temp')
+
         file = request.files['file']
 
         if request.form['ospfilename'] != "":
