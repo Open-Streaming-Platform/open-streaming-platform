@@ -75,12 +75,12 @@
                       Create comment</a>
                     <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share video</a>
                   </div>
+                  <span class="float-right">
+                    <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow " onclick="changeUpvote('video',{{video.id}});" title="Upvote">
+                      <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
+                    </button>
+                  </span>
                 </div>
-              </span>
-              <span class="float-right">
-                <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow " onclick="changeUpvote('video',{{video.id}});" title="Upvote">
-                  <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
-                </button>
               </span>
 
             </div>
@@ -114,12 +114,12 @@
                     Create Comment</a>
                   <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share Video</a>
                 </div>
+                <span class="float-right">
+                  <button id="upvoteButton" type="button" class="btn btn-outline-success shadow " onclick="changeUpvote('video',{{video.id}});" title="Upvote">
+                    <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                  </button>
+                </span>
               </div>
-            </span>
-            <span class="float-right">
-              <button id="upvoteButton" type="button" class="btn btn-outline-success shadow " onclick="changeUpvote('video',{{video.id}});" title="Upvote">
-                <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-              </button>
             </span>
           </div>
         </div>
