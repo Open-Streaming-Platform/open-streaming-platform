@@ -1,53 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel=stylesheet type=text/css href="/static/css/Default.css">
-    <link rel=stylesheet type=text/css href="/static/css/slider.css">
-    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
+  <link rel=stylesheet type=text/css href="/static/css/Default.css">
+  <link rel=stylesheet type=text/css href="/static/css/slider.css">
+  <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
 
-    <title>OSP First Run</title>
+  <title>OSP First Run</title>
 
-    <style>
-        html {
-            height: 100%;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            background-repeat:no-repeat;
-            background: #606c88; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #3f4c6b, #606c88); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #3f4c6b, #606c88); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-        }
-    </style>
+  <style>
+    body {
+      height: 100%;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background: #606c88;
+      /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #3f4c6b, #606c88);
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #3f4c6b, #606c88);
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+  </style>
 
 </head>
+
 <body>
 
-<div>
-    <div class="card shadow" style="position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;width:800px;height:1200px;">
-      <h5 class="card-header">Open Streaming Platform</h5>
-      <div class="card-body">
-        <h5 class="card-title"><i class="fas fa-cogs"></i> Initial Setup Wizard</h5>
-        <p class="card-text">In order to ensure proper operation of OSP, please provide the following information:</p>
-          <form action="/settings/initialSetup" method="post">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-md-12" style="margin-top:15px;">
+        <div class="card shadow">
+          <h5 class="card-header">Open Streaming Platform</h5>
+          <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-cogs"></i> Initial Setup Wizard</h5>
+            <p class="card-text">In order to ensure proper operation of OSP, please provide the following information:</p>
+            <form action="/settings/initialSetup" method="post">
               <div class="row">
-                  <div class="col-12">
-                    <h4><i class="fas fa-user"></i> Initial Admin</h4>
-                      Username: <input type="text" name="username" class="form-control" required>
-                      Email: <input type="email" name="email" class="form-control" required>
-                      Password: <input type="password" name="password1" class="form-control" required>
-                      Confirm Password: <input type="password" name="password2" class="form-control" required>
-                  </div>
+                <div class="col-12">
+                  <h4><i class="fas fa-user"></i> Initial Admin</h4>
+                  Username: <input type="text" name="username" class="form-control" required>
+                  Email: <input type="email" name="email" class="form-control" required>
+                  Password: <input type="password" name="password1" class="form-control" required>
+                  Confirm Password: <input type="password" name="password2" class="form-control" required>
+                </div>
               </div>
               <hr>
               <div class="row">
                 <div class="col-6">
-                    <h4><i class="fas fa-server"></i> Server Settings</h4>
+                  <h4><i class="fas fa-server"></i> Server Settings</h4>
                   Server Name: <input type="text" name="serverName" class="form-control" required>
                   Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" required>
                   Allow Users to Register:<br>
@@ -82,37 +89,39 @@
                   </label><br>
                 </div>
                 <div class="col-6">
-                    <h4><i class="fas fa-envelope"></i> Email Settings</h4>
-                    SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" required>
-                    SMTP Address: <input type="text" name="smtpAddress" class="form-control" required>
-                    SMTP Port: <input type="number" name="smtpPort" class="form-control" required>
-                    SMTP Username:<input type="text" name="smtpUser" class="form-control">
-                    SMTP Password<input type="password" name="smtpPassword" class="form-control">
-                    SMTP SSL:<br>
-                    <label class="switch">
-                      <input type="checkbox" id="smtpSSL" name="smtpSSL">
-                      <span class="slider round"></span>
-                    </label><br>
-                    SMTP TLS:<br>
-                    <label class="switch">
-                      <input type="checkbox" id="smtpTLS" name="smtpTLS">
-                      <span class="slider round"></span>
-                    </label>
+                  <h4><i class="fas fa-envelope"></i> Email Settings</h4>
+                  SMTP Email From: <input type="email" name="smtpSendAs" class="form-control" required>
+                  SMTP Address: <input type="text" name="smtpAddress" class="form-control" required>
+                  SMTP Port: <input type="number" name="smtpPort" class="form-control" required>
+                  SMTP Username:<input type="text" name="smtpUser" class="form-control">
+                  SMTP Password<input type="password" name="smtpPassword" class="form-control">
+                  SMTP SSL:<br>
+                  <label class="switch">
+                    <input type="checkbox" id="smtpSSL" name="smtpSSL">
+                    <span class="slider round"></span>
+                  </label><br>
+                  SMTP TLS:<br>
+                  <label class="switch">
+                    <input type="checkbox" id="smtpTLS" name="smtpTLS">
+                    <span class="slider round"></span>
+                  </label>
                 </div>
               </div>
               <hr>
-            <div class="form-row text-center">
+              <div class="form-row text-center">
                 <button type="submit" class="btn btn-primary" style="width:100%;">Submit</button>
-            </div>
-          </form>
-
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-</div>
+  </div>
 
-    <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/vendor/popper/js/popper.min.js"></script>
-    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/vendor/popper/js/popper.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 
 </body>
+
 </html>
