@@ -85,6 +85,7 @@ app.config['SECURITY_MSG_INVALID_EMAIL_ADDRESS'] = ("Invalid Username or Passwor
 app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
+app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
@@ -358,6 +359,15 @@ def table2Dict(table):
     for tbl in exportedTableList:
         dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
     return dataList
+
+def videoupload_allowedExt(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in app.config["VIDEO_UPLOAD_EXTENSIONS"]:
+        return True
+    else:
+        return False
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
@@ -985,33 +995,45 @@ def comments_vid_page(videoID):
 
 
 @app.route('/upload/video-files', methods=['GET', 'POST'])
+@login_required
+@roles_required('Streamer')
 def upload():
-    file = request.files['file']
+    if request.files['file']:
+        file = request.files['file']
 
-    save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(file.filename))
-    current_chunk = int(request.form['dzchunkindex'])
+        if videoupload_allowedExt(file.filename):
+            save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(file.filename))
+            current_chunk = int(request.form['dzchunkindex'])
+        else:
+            return make_response(("Filetype not allowed", 403))
 
-    if os.path.exists(save_path) and current_chunk == 0:
-        open(save_path, 'w').close()
+        if current_chunk > 4500:
+            open(save_path, 'w').close()
+            return make_response(("File is getting too large.", 403))
 
-    try:
-        with open(save_path, 'ab') as f:
-            f.seek(int(request.form['dzchunkbyteoffset']))
-            f.write(file.stream.read())
-    except OSError:
-        return make_response(("Ooops.", 500))
+        if os.path.exists(save_path) and current_chunk == 0:
+            open(save_path, 'w').close()
 
-    total_chunks = int(request.form['dztotalchunkcount'])
+        try:
+            with open(save_path, 'ab') as f:
+                f.seek(int(request.form['dzchunkbyteoffset']))
+                f.write(file.stream.read())
+        except OSError:
+            return make_response(("Ooops.", 500))
 
-    if current_chunk + 1 == total_chunks:
-        if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
-            return make_response(('Size mismatch', 500))
+        total_chunks = int(request.form['dztotalchunkcount'])
 
-    return make_response(("success", 200))
+        if current_chunk + 1 == total_chunks:
+            if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
+                return make_response(('Size mismatch', 500))
 
+        return make_response(("success", 200))
+    else:
+        return make_response(("I don't understand", 501))
 
 @app.route('/upload/video-details', methods=['POST'])
 @login_required
+@roles_required('Streamer')
 def upload_vid():
     sysSettings = settings.settings.query.first()
 
@@ -1054,7 +1076,7 @@ def upload_vid():
         newVideo.channelName = strip_html(request.form['videoTitle'])
     else:
         newVideo.channelName = currentTime
-        
+
     newVideo.description = strip_html(request.form['videoDescription'])
 
     if os.path.isfile(videoPath):
