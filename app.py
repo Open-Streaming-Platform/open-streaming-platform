@@ -1001,8 +1001,13 @@ def upload():
     if request.files['file']:
         file = request.files['file']
 
+        if request.form['ospfilename'] != "":
+            ospfilename = request.form['ospfilename']
+        else:
+            return make_response(("Ooops.", 500))
+
         if videoupload_allowedExt(file.filename):
-            save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(file.filename))
+            save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
             current_chunk = int(request.form['dzchunkindex'])
         else:
             return make_response(("Filetype not allowed", 403))
@@ -1049,11 +1054,11 @@ def upload_vid():
         flash('You are not allowed to upload to this channel!')
         return redirect(url_for('main_page'))
 
-    videoName = str(uuid.uuid4())
+    # videoName = str(uuid.uuid4())
 
     newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
 
-    videoLoc = ChannelQuery.channelLoc + "/" + videoName + ".mp4"
+    videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
     videoPath = '/var/www/videos/' + videoLoc
 
     if videoFilename != "":
@@ -1065,7 +1070,7 @@ def upload_vid():
     newVideo.videoLocation = videoLoc
 
     if thumbnailFilename != "":
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoName + ".png"
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
@@ -3076,4 +3081,4 @@ mail = Mail(app)
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
-    app.run()
+    app.run(debug = True)

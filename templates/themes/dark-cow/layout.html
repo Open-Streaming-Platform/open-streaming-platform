@@ -171,6 +171,13 @@
 
   {% endblock %}
   <script type="application/javascript">
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    
     var thumbnaildropper = new Dropzone(
       '#thumbnaildropper', {
         acceptedFiles: 'image/png',
@@ -185,8 +192,11 @@
         chunkSize: 1000000 // bytes
       }
     );
+    thumbnaildropper.on('sending', function (file, xhr, formData) {
+      formData.append('ospfilename', videofilename + '.png');
+    });
     thumbnaildropper.on("addedfile", function (file) {
-      document.getElementById('thumbnailFilename').value = file.name
+      document.getElementById('thumbnailFilename').value = videofilename + '.png'
       document.getElementById('thumbnailFilenameDisplay').value = file.name
 
     });
@@ -195,7 +205,7 @@
     });
     thumbnaildropper.on('error', function (file, response) {
       document.getElementById('thumbnailuploadsuccess').innerHTML = document.getElementById('videouploadsuccess').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>'
-      document.getElementById('thumbnailFilename').value = 'Error: ' + response
+      document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response
     });
 
     var videodropper = new Dropzone(
@@ -213,13 +223,16 @@
         chunkSize: 1000000, // bytes
       }
     );
+    videodropper.on('sending', function (file, xhr, formData) {
+        formData.append('ospfilename', videofilename + '.mp4');
+    });
     videodropper.on("uploadprogress", function (file, progress, bytesSent) {
       progress = Math.round(bytesSent / file.size * 100);
       $('.progress-bar').width(progress + "%");
       document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = '<b>' + progress + '%</b>'
     });
     videodropper.on("addedfile", function (file) {
-      document.getElementById('videoFilename').value = file.name
+      document.getElementById('videoFilename').value = videofilename + '.mp4'
       document.getElementById('videoFilenameDisplay').value = file.name
 
     });
@@ -230,7 +243,7 @@
     });
     videodropper.on('error', function (file, response) {
       document.getElementById('videouploadsuccess').innerHTML = document.getElementById('videouploadsuccess').innerHTML = '<i class="fas fa-exclamation-triangle"></i>'
-      document.getElementById('videoFilename').value = 'Error: ' + response
+      document.getElementById('videoFilenameDisplay').value = 'Error: ' + response
     });
   </script>
 
