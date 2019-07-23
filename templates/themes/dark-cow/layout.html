@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel=stylesheet type=text/css href="/static/css/shared.css">
-    <link rel=stylesheet type=text/css href="/static/css/slider.css">
-    <link rel="stylesheet" href="/static/vendor/bootswatch-slate/css/bootstrap-slate.min.css">
-    <link rel=stylesheet type=text/css href="/static/css/dark-cow.css">
-    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
-    <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
-    <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel=stylesheet type=text/css href="/static/css/shared.css">
+  <link rel=stylesheet type=text/css href="/static/css/slider.css">
+  <link rel="stylesheet" href="/static/vendor/bootswatch-slate/css/bootstrap-slate.min.css">
+  <link rel=stylesheet type=text/css href="/static/css/dark-cow.css">
+  <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
+  <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
+  <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+  <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
 
-    {% block head %}
 
-    {% endblock %}
+  {% block head %}
+
+  {% endblock %}
 
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="/">
@@ -41,70 +46,206 @@
             </form>
         </div>-->
         <li class="nav-item">
-            <a class="nav-link" href="/channels">Channels</a>
+          <a class="nav-link" href="/channels">Channels</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/topics">Topics</a>
+          <a class="nav-link" href="/topics">Topics</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/streamers">Streamers</a>
+          <a class="nav-link" href="/streamers">Streamers</a>
         </li>
         {% if user.is_authenticated == False %}
-          <li class="nav-item">
-              <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-          </li>
-          {% if sysSettings.allowRegistration == True %}
-            <li class="nav-item">
-                <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
-            </li>
-          {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+        </li>
+        {% if sysSettings.allowRegistration == True %}
+        <li class="nav-item">
+          <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
+        </li>
+        {% endif %}
         {% else %}
-          <li class="nav-item dropdown">
-            <a class="nav-link profile-image dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img width="34" height="34" class="userphoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              {% if user.has_role('Admin') %}
-                <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
-              {% endif %}
-              {% if user.has_role('Streamer') %}
-                <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My Channels</a>
-                <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API Keys</a>
-              {% endif %}
-              <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
-              <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-            </div>
-          </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link profile-image dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img width="34" height="34" class="userphoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            {% if user.has_role('Admin') %}
+            <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
+            {% endif %}
+            {% if user.has_role('Streamer') %}
+            <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My channels</a>
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload video</a>
+            <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API keys</a>
+            {% endif %}
+            <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
+            <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
+          </div>
+        </li>
         {% endif %}
       </ul>
     </div>
   </nav>
+  <!-- Modal -->
+  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="videoTitle">Title</label>
+              <input class="form-control" id="videoTitle" name="videoTitle">
+            </div>
+            <div class="form-group">
+              <label for="uploadToChannelID">Channel</label>
+              <select name="uploadToChannelID" class="form-control">
+                {% for chan in current_user.channels %}
+                <option value="{{chan.id}}">{{chan.channelName}}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-    {% block body %}
+            <span>Thumbnail <span id="thumbnailuploadsuccess"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="thumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="thumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+              </div>
+            </div>
 
-    {% endblock %}
+            <span>Video file <span id="videouploadsuccess"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="videouploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="videoFilenameDisplay" name="videoFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
+              </div>
+            </div>
 
+            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="videouploadprogress" class="progress-bar progress-bar-success bg-info" style="color: white; width:0%;" data-dz-uploadprogress></div>
+            </div>
 
+            <div class="form-group">
+              <label for="videoDescription">Video description</label>
+              <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
+            </div>
 
-    <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/vendor/popper/js/popper.min.js"></script>
-    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
-    {% block scripts %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            <button id="uploadbutton" type="submit" class="btn btn-info" disabled>Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-    {% endblock %}
+  {% block body %}
 
-<script>
-$(document).ready(function(){
-  $('.toast').toast('show');
-});
-</script>
+  {% endblock %}
 
-<script>
+  <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/vendor/popper/js/popper.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+  <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+  <script type="text/javascript">
+    Dropzone.autoDiscover = false;     
+  </script>
+  {% block scripts %}
+
+  {% endblock %}
+  <script type="application/javascript">
+    var thumbnaildropper = new Dropzone(
+      '#thumbnaildropper', {
+        acceptedFiles: 'image/png',
+        previewTemplate: '<div></div>',
+        clickable: '#thumbnailuploadbutton',
+        addRemoveLinks: true,
+        paramName: 'file',
+        chunking: true,
+        forceChunking: true,
+        url: '/upload/video-files',
+        maxFilesize: 5, // megabytes
+        chunkSize: 1000000 // bytes
+      }
+    );
+    thumbnaildropper.on("addedfile", function (file) {
+      document.getElementById('thumbnailFilename').value = file.name
+      document.getElementById('thumbnailFilenameDisplay').value = file.name
+
+    });
+    thumbnaildropper.on("success", function (file) {
+      document.getElementById('thumbnailuploadsuccess').innerHTML = document.getElementById('thumbnailuploadsuccess').innerHTML = ' <i class="fas fa-check">'
+    });
+    thumbnaildropper.on('error', function (file, response) {
+      document.getElementById('thumbnailuploadsuccess').innerHTML = document.getElementById('videouploadsuccess').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>'
+      document.getElementById('thumbnailFilename').value = 'Error: ' + response
+    });
+
+    var videodropper = new Dropzone(
+      '#videodropper', {
+        acceptedFiles: 'video/mp4',
+        createImageThumbnails: false,
+        previewTemplate: '<div></div>',
+        clickable: '#videouploadbutton',
+        addRemoveLinks: true,
+        paramName: 'file',
+        chunking: true,
+        forceChunking: true,
+        url: '/upload/video-files',
+        maxFilesize: 4096, // megabytes
+        chunkSize: 1000000, // bytes
+      }
+    );
+    videodropper.on("uploadprogress", function (file, progress, bytesSent) {
+      progress = Math.round(bytesSent / file.size * 100);
+      $('.progress-bar').width(progress + "%");
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = '<b>' + progress + '%</b>'
+    });
+    videodropper.on("addedfile", function (file) {
+      document.getElementById('videoFilename').value = file.name
+      document.getElementById('videoFilenameDisplay').value = file.name
+
+    });
+    videodropper.on("success", function (file) {
+      $('#uploadbutton').removeAttr('disabled');
+      document.getElementById('videouploadsuccess').innerHTML = document.getElementById('videouploadsuccess').innerHTML = '<i class="fas fa-check">'
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = 'Upload complete'
+    });
+    videodropper.on('error', function (file, response) {
+      document.getElementById('videouploadsuccess').innerHTML = document.getElementById('videouploadsuccess').innerHTML = '<i class="fas fa-exclamation-triangle"></i>'
+      document.getElementById('videoFilename').value = 'Error: ' + response
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $('.toast').toast('show');
+      document.getElementById("uploadform").reset();
+    });
+  </script>
+
+  <script>
     var lazyLoadInstance = new LazyLoad({
-    elements_selector: ".lazy"
-});
-</script>
+      elements_selector: ".lazy"
+    });
+  </script>
 
 </body>
 

@@ -53,6 +53,7 @@ version = "beta-2"
 app = Flask(__name__)
 
 from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.utils import secure_filename
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 
@@ -78,12 +79,12 @@ app.config['UPLOADED_PHOTOS_DEST'] = '/var/www/images'
 app.config['UPLOADED_DEFAULT_DEST'] = '/var/www/images'
 app.config['SECURITY_POST_LOGIN_VIEW'] = 'main_page'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = 'main_page'
-
 app.config['SECURITY_MSG_EMAIL_ALREADY_ASSOCIATED'] = ("Username or Email Already Associated with an Account", "error")
 app.config['SECURITY_MSG_INVALID_PASSWORD'] = ("Invalid Username or Password", "error")
 app.config['SECURITY_MSG_INVALID_EMAIL_ADDRESS'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
+app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
 
 logger = logging.getLogger('gunicorn.error').handlers
 
@@ -981,6 +982,85 @@ def comments_vid_page(videoID):
         return redirect(url_for('main_page'))
 
     return redirect(url_for('view_vid_page', videoID=videoID))
+
+
+@app.route('/upload/video-files', methods=['GET', 'POST'])
+def upload():
+    file = request.files['file']
+
+    save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(file.filename))
+    current_chunk = int(request.form['dzchunkindex'])
+
+    if os.path.exists(save_path) and current_chunk == 0:
+        open(save_path, 'w').close()
+
+    try:
+        with open(save_path, 'ab') as f:
+            f.seek(int(request.form['dzchunkbyteoffset']))
+            f.write(file.stream.read())
+    except OSError:
+        return make_response(("Ooops.", 500))
+
+    total_chunks = int(request.form['dztotalchunkcount'])
+
+    if current_chunk + 1 == total_chunks:
+        if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
+            return make_response(('Size mismatch', 500))
+
+    return make_response(("success", 200))
+
+
+@app.route('/upload/video-details', methods=['POST'])
+@login_required
+def upload_vid():
+    sysSettings = settings.settings.query.first()
+
+    currentTime = datetime.datetime.now()
+
+    channel = int(request.form['uploadToChannelID'])
+    thumbnailFilename = request.form['thumbnailFilename']
+    videoFilename= request.form['videoFilename']
+
+    ChannelQuery = Channel.Channel.query.filter_by(id=channel).first()
+
+    if ChannelQuery.owningUser != current_user.id:
+        flash('You are not allowed to upload to this channel!')
+        return redirect(url_for('main_page'))
+
+    videoName = str(uuid.uuid4())
+
+    newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
+
+    videoLoc = ChannelQuery.channelLoc + "/" + videoName + ".mp4"
+    videoPath = '/var/www/videos/' + videoLoc
+
+    if videoFilename != "":
+        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
+    else:
+        flash('Ooops')
+        return redirect(url_for('main_page'))
+
+    newVideo.videoLocation = videoLoc
+
+    if thumbnailFilename != "":
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoName + ".png"
+        thumbnailPath = '/var/www/videos/' + thumbnailLoc
+        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+        newVideo.thumbnailLocation = thumbnailLoc
+    else:
+        newVideo.thumbnailLocation = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+
+    newVideo.channelName = strip_html(request.form['videoTitle'])
+    newVideo.description = strip_html(request.form['videoDescription'])
+
+    if os.path.isfile(videoPath):
+        newVideo.pending = False
+        db.session.add(newVideo)
+        db.session.commit()
+
+    return redirect(url_for('view_vid_page', videoID=newVideo.id))
+    # return redirect(url_for('main_page'))
+
 
 
 @app.route('/settings/user', methods=['POST','GET'])
