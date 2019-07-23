@@ -1050,7 +1050,11 @@ def upload_vid():
     else:
         newVideo.thumbnailLocation = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
 
-    newVideo.channelName = strip_html(request.form['videoTitle'])
+    if request.form['videoTitle'] != "":
+        newVideo.channelName = strip_html(request.form['videoTitle'])
+    else:
+        newVideo.channelName = currentTime
+        
     newVideo.description = strip_html(request.form['videoDescription'])
 
     if os.path.isfile(videoPath):
