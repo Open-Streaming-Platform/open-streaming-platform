@@ -45,19 +45,6 @@
         <div class="row m-2">
           <div class="video-buttons-row">
             <div class="video-buttons-mobile d-none mt-2">
-              {% if video.owningUser == current_user.id %}
-              <span class="float-left" style="margin-right: 10px">
-                <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
-                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
-                  </div>
-                </div>
-              </span>
-              {% endif %}
               <span class="float-left">
                 <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
                 <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
@@ -66,9 +53,22 @@
                 <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
                 <i class="fas fa-users"></i> {{video.views}}
               </span>
-              <span class="float-right" style="margin-right: 10px">
+              <span class="float-right mr-1">
                 <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
+                  {% if video.owningUser == current_user.id %}
+                  <span class="float-left">
+                    <div class="btn-group" role="group">
+                      <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                      <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
+                      </div>
+                    </div>
+                  </span>
+                  {% endif %}
+                  <button id="btnGroupDrop1" type="button" class="btn btn-primary mx-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download video</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
@@ -84,19 +84,6 @@
               </span>
 
             </div>
-            {% if video.owningUser == current_user.id %}
-            <span class="float-left" style="margin-right: 10px">
-              <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                  <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
-                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
-                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
-                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
-                </div>
-              </div>
-            </span>
-            {% endif %}
             <span class="float-left">
               <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
               <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
@@ -105,9 +92,22 @@
               <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
               <i class="fas fa-users"></i> {{video.views}}
             </span>
-            <span class="float-right" style="margin-right: 10px">
+            <span class="float-right mr-1">
               <div class="btn-group" role="group">
-                <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
+                {% if video.owningUser == current_user.id %}
+                <span class="float-left">
+                  <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                      <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
+                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
+                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
+                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
+                    </div>
+                  </div>
+                </span>
+                {% endif %}
+                <button id="btnGroupDrop1" type="button" class="btn btn-primary mx-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                   <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download Video</a>
                   <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
