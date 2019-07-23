@@ -372,6 +372,10 @@ hr {
   color: #fff;
 }
 
+.dropzone {
+    display: none;
+}
+
 .nav-tabs{
 	border: 0px !important;
 }
