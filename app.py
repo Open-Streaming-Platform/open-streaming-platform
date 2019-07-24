@@ -2753,7 +2753,7 @@ def setScreenShot(message):
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
         if videoQuery != None and videoQuery.owningUser == current_user.id:
             videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            newThumbnailLocation = videoLocation[:-3] + ".png"
+            newThumbnailLocation = videoLocation[:-3] + "png"
             videoQuery.thumbnailLocation = newThumbnailLocation
             fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
             db.session.commit()
