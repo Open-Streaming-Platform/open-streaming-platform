@@ -2753,13 +2753,16 @@ def setScreenShot(message):
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
         if videoQuery != None and videoQuery.owningUser == current_user.id:
             videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            thumbnailLocation = '/var/www/videos/' + videoQuery.thumbnailLocation
+            newThumbnailLocation = videoLocation[:-3] + ".png"
+            videoQuery.thumbnailLocation = newThumbnailLocation
+            fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+            db.session.commit()
             db.session.close()
             try:
-                os.remove(thumbnailLocation)
+                os.remove(fullthumbnailLocation)
             except OSError:
                 pass
-            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
+            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
 @socketio.on('updateStreamData')
 def updateStreamData(message):
