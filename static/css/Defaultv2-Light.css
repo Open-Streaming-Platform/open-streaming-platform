@@ -138,6 +138,9 @@ body {
     width:99%;
     display:block;
 }
+.dropzone {
+    display: none;
+}
 .video-buttons-row {
     width: 100%;
 }
