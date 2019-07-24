@@ -1078,8 +1078,6 @@ def upload_vid():
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
-    else:
-        newVideo.thumbnailLocation = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
 
     if request.form['videoTitle'] != "":
         newVideo.channelName = strip_html(request.form['videoTitle'])
