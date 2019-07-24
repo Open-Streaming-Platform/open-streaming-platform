@@ -376,6 +376,18 @@ hr {
     display: none;
 }
 
+.toast {
+    background: #272B30;
+    color: #aaa;
+    border: 1px solid #3488db
+}
+.toast-header{
+    background-color: unset;
+}
+.toast-body{
+    font-size: 1.2em;
+}
+
 .nav-tabs{
 	border: 0px !important;
 }
