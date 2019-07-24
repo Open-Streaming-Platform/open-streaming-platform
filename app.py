@@ -2527,6 +2527,20 @@ def playback_auth_handler():
 
 ### Start Socket.IO Functions ###
 
+
+@socketio.on('cancelUpload')
+def handle_videoupload_disconnect(videofilename):
+    ospvideofilename = app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + str(videofilename['data'])
+    thumbnailFilename = ospvideofilename + '.png'
+    videoFilename = ospvideofilename + '.mp4'
+
+    time.sleep(5)
+
+    if os.path.exists(thumbnailFilename) and time.time() - os.stat(thumbnailFilename).st_mtime > 5:
+            os.remove(thumbnailFilename)
+    if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
+            os.remove(videoFilename)
+
 @socketio.on('newViewer')
 def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])

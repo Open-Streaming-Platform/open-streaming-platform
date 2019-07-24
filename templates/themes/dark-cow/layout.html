@@ -12,6 +12,7 @@
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+  <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
 
@@ -199,28 +200,29 @@
 
   {% endblock %}
 
-  <script>
-    function canceluploads() {
-      videodropper.removeAllFiles(true);
-      thumbnaildropper.removeAllFiles(true);
-      document.getElementById("uploadform").reset();
-      document.getElementById('videouploadstatus').innerHTML = "";
-      document.getElementById('videouploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
-      document.getElementById('thumbnailuploadstatus').innerHTML = "";
-      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
-      $('#uploadbutton').attr('disabled');
-      $('#thumbnailuploadprogress').width("0%");
-      $('#videouploadprogress').width("0%");
-
-    }
-  </script>
   <script type="application/javascript">
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)
         .toString(16)
         .substring(1);
     }
+    
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+
+    function videouploadsocket() {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
+      socket.on('disconnect', function () {
+        socket.emit('cancelUpload', { data: videofilename });
+      });
+      window.addEventListener("beforeunload", function (e) {
+        socket.emit('cancelUpload', { data: videofilename });
+        return null;
+      });
+    }
 
     var thumbnaildropper = new Dropzone(
       '#thumbnaildropper', {
@@ -247,6 +249,7 @@
     thumbnaildropper.on("addedfile", function (file) {
       document.getElementById('thumbnailFilename').value = videofilename + '.png'
       document.getElementById('thumbnailFilenameDisplay').value = file.name
+      videouploadsocket();
 
     });
     thumbnaildropper.on("success", function (file) {
@@ -285,7 +288,7 @@
     videodropper.on("addedfile", function (file) {
       document.getElementById('videoFilename').value = videofilename + '.mp4'
       document.getElementById('videoFilenameDisplay').value = file.name
-
+      videouploadsocket();
     });
     videodropper.on("success", function (file) {
       $('#uploadbutton').removeAttr('disabled');
@@ -309,6 +312,21 @@
     var lazyLoadInstance = new LazyLoad({
       elements_selector: ".lazy"
     });
+  </script>
+
+  <script>
+    function canceluploads() {
+      videodropper.removeAllFiles(true);
+      thumbnaildropper.removeAllFiles(true);
+      document.getElementById("uploadform").reset();
+      document.getElementById('videouploadstatus').innerHTML = "";
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+      document.getElementById('thumbnailuploadstatus').innerHTML = "";
+      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+      $('#uploadbutton').attr('disabled');
+      $('#thumbnailuploadprogress').width("0%");
+      $('#videouploadprogress').width("0%");
+    }
   </script>
 
 </body>
