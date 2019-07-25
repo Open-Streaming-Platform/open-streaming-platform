@@ -925,7 +925,7 @@ def delete_vid_page(videoID):
         db.session.delete(recordedVid)
 
         db.session.commit()
-
+        flash("Video deleted")
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Video")
@@ -1008,17 +1008,17 @@ def upload():
         if request.form['ospfilename'] != "":
             ospfilename = request.form['ospfilename']
         else:
-            return make_response(("Ooops.", 500))
+            return ("Ooops.", 500)
 
         if videoupload_allowedExt(file.filename):
             save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
             current_chunk = int(request.form['dzchunkindex'])
         else:
-            return make_response(("Filetype not allowed", 403))
+            return ("Filetype not allowed", 403)
 
         if current_chunk > 4500:
             open(save_path, 'w').close()
-            return make_response(("File is getting too large.", 403))
+            return ("File is getting too large.", 403)
 
         if os.path.exists(save_path) and current_chunk == 0:
             open(save_path, 'w').close()
@@ -1028,17 +1028,17 @@ def upload():
                 f.seek(int(request.form['dzchunkbyteoffset']))
                 f.write(file.stream.read())
         except OSError:
-            return make_response(("Ooops.", 500))
+            return ("Ooops.", 500)
 
         total_chunks = int(request.form['dztotalchunkcount'])
 
         if current_chunk + 1 == total_chunks:
             if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
-                return make_response(('Size mismatch', 500))
+                return ("Size mismatch", 500)
 
-        return make_response(("success", 200))
+        return ("success", 200)
     else:
-        return make_response(("I don't understand", 501))
+        return ("I don't understand", 501)
 
 @app.route('/upload/video-details', methods=['POST'])
 @login_required
@@ -1066,9 +1066,15 @@ def upload_vid():
     videoPath = '/var/www/videos/' + videoLoc
 
     if videoFilename != "":
+        if not os.path.isdir("/var/www/videos/" + ChannelQuery.channelLoc):
+            try:
+                os.mkdir("/var/www/videos/" + ChannelQuery.channelLoc)
+            except OSError:
+                flash("Error uploading video - Unable to create directory","error")
+                return redirect(url_for("main_page"))
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
     else:
-        flash('Ooops')
+        flash("Error uploading video - Couldn't move video file")
         return redirect(url_for('main_page'))
 
     newVideo.videoLocation = videoLoc
@@ -1078,6 +1084,11 @@ def upload_vid():
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
+    else:
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
+        newVideo.thumbnailLocation = thumbnailLoc
+
 
     if request.form['videoTitle'] != "":
         newVideo.channelName = strip_html(request.form['videoTitle'])
@@ -1090,7 +1101,7 @@ def upload_vid():
         newVideo.pending = False
         db.session.add(newVideo)
         db.session.commit()
-
+    flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
     # return redirect(url_for('main_page'))
 
@@ -2520,6 +2531,20 @@ def playback_auth_handler():
 
 
 ### Start Socket.IO Functions ###
+
+
+@socketio.on('cancelUpload')
+def handle_videoupload_disconnect(videofilename):
+    ospvideofilename = app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + str(videofilename['data'])
+    thumbnailFilename = ospvideofilename + '.png'
+    videoFilename = ospvideofilename + '.mp4'
+
+    time.sleep(5)
+
+    if os.path.exists(thumbnailFilename) and time.time() - os.stat(thumbnailFilename).st_mtime > 5:
+            os.remove(thumbnailFilename)
+    if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
+            os.remove(videoFilename)
 
 @socketio.on('newViewer')
 def handle_new_viewer(streamData):
