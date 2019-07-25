@@ -171,7 +171,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="card shadow searchable">
-                                    <div class="card-header {% if user.active == False %} bg-primary{% endif %} text-white">
+                                    <div class="card-header {% if user.active == true %} bg-success{% endif %}">
                                         <b>{{user.username}}</b>
                                         <div class="float-right">
                                             <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
