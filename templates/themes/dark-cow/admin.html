@@ -11,35 +11,32 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-md-12" style="margin-top:15px;">
-          <div class="card" style="width:100%">
-          <div class="card-header">
-              <ul class="nav nav-tabs card-header-tabs">
+            <ul class="nav nav-pills mb-3" id="admin-nav" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('dashboard')">Dashboard</a>
+                    <a class="nav-link active" role="tab" id="admin-nav-dashboard" href="#dashboard" data-toggle="pill" aria-controls="admin-nav-dashboard" aria-selected="true">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('adminSettings')">Settings</a>
+                    <a class="nav-link" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('userList')">Users</a>
+                    <a class="nav-link" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('topicsList')">Topics</a>
+                    <a class="nav-link" role="tab" id="admin-nav-topics" href="#topicsList" data-toggle="pill" aria-controls="admin-nav-topics" aria-selected="false">Topics</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('channelsList')">Channels</a>
+                    <a class="nav-link" role="tab" id="admin-nav-channels" href="#channelsList" data-toggle="pill" aria-controls="admin-nav-channels" aria-selected="false">Channels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('streamsList')">Streams</a>
+                    <a class="nav-link" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link" href="#" onclick="toggleDiv('backuprestore')">Backup/Restore</a>
+                    <a class="nav-link" role="tab" id="admin-nav-backuprestore" href="backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
                 </li>
-              </ul>
-          </div>
-          <div class="card-body">
-            <div style="padding-bottom:20px;padding-top:10px;">
-                <div class="settingsOption" id="dashboard">
+            </ul>
+
+            <div class="tab-content" id="admin-content">
+                <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="admin-content-dashboard" id="dashboard">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
@@ -95,7 +92,7 @@
                         <br>
                     </div>
                 </div>
-                <div class="settingsOption" id="adminSettings" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-settings" id="adminSettings">
                     <h5>Configuration Options</h5>
                       <form action="/settings/admin" enctype=multipart/form-data method="post">
                           <div class="row">
@@ -157,7 +154,7 @@
                           </div>
                       </form>
                 </div>
-                <div class="settingsOption" id="userList" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
                     <h5>User List <button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button></h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -208,59 +205,58 @@
                         <br>
                     {% endfor %}
                     </div>
-                    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                        <div class="modal-content">
-                          <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                              <div class="container">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <label for="username">Username</label>
-                                        <input type="text" name="username" id="username" class="form-control" required>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <label for="emailaddress">Email Address</label>
-                                        <input type="text" name="emailaddress" id="emailaddress" class="form-control" required>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <label for="password1">Password</label>
-                                        <input type="password" name="password1" id="password1" class="form-control" required>
+                        <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                              <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="username">Username</label>
+                                            <input type="text" name="username" id="username" class="form-control" required>
+                                        </div>
                                     </div>
                                     <br>
-                                    <div class="col-12">
-                                        <label for="password2">Confirm Password</label>
-                                        <input type="password" name="password2" id="password2" class="form-control" required>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="emailaddress">Email Address</label>
+                                            <input type="text" name="emailaddress" id="emailaddress" class="form-control" required>
+                                        </div>
                                     </div>
-                                </div>
-                                <br>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="password1">Password</label>
+                                            <input type="password" name="password1" id="password1" class="form-control" required>
+                                        </div>
+                                        <br>
+                                        <div class="col-12">
+                                            <label for="password2">Confirm Password</label>
+                                            <input type="password" name="password2" id="password2" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <br>
 
+                                  </div>
+                                  <input type="hidden" value="newuser" id="settingType" name="settingType">
                               </div>
-                              <input type="hidden" value="newuser" id="settingType" name="settingType">
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <input type="submit" class="btn btn-success" value="Create">
+                              </div>
+                              </form>
+                            </div>
                           </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                            <input type="submit" class="btn btn-success" value="Create">
-                          </div>
-                          </form>
                         </div>
-                      </div>
                     </div>
-                </div>
-
-                <div class="settingsOption" id="topicsList" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
                     <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
                     <div class="container-fluid">
                         {% for topic in topicsList %}
@@ -342,8 +338,7 @@
                       </div>
                     </div>
                 </div>
-
-                <div class="settingsOption" id="channelsList" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-channels" id="channelsList">
                     <h5>Channels List</h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -391,7 +386,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="settingsOption" id="streamsList" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-streams" id="streamsList">
                     <h5>Stream List</h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -428,7 +423,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="settingsOption" id="backuprestore" style="display:none;">
+                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
@@ -470,11 +465,11 @@
                         </div>
                     </div>
                 </div>
-              </div>
-          </div>
-      </div>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -513,13 +508,13 @@
         console.log('Recieved:' + msg)
 
         $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage'] + '%');
-        $('#cpuUsage').text(msg['cpuUsage'] + '%')
+        $('#cpuUsage').text(msg['cpuUsage'] + '%');
 
         $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
-        $('#memoryUsage').text(msg['memoryUsage'] + '%')
+        $('#memoryUsage').text(msg['memoryUsage'] + '%');
 
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
-        $('#diskUsage').text(msg['diskUsage'] + '%')
+        $('#diskUsage').text(msg['diskUsage'] + '%');
 
     });
 </script>
