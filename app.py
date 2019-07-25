@@ -1664,18 +1664,21 @@ def admin_page():
                     db.session.delete(channel)
                 db.session.commit()
                 for restoredChannel in restoreDict['Channel']:
-                    channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'], restoredChannel['channelName'], int(restoredChannel['topic']), eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
-                                              eval(restoredChannel['allowComments']), restoredChannel['description'])
-                    channel.id = int(restoredChannel['id'])
-                    channel.channelLoc = restoredChannel['channelLoc']
-                    channel.chatBG = restoredChannel['chatBG']
-                    channel.chatTextColor = restoredChannel['chatTextColor']
-                    channel.chatAnimation = restoredChannel['chatAnimation']
-                    channel.views = int(restoredChannel['views'])
-                    channel.protected = eval(restoredChannel['protected'])
-                    channel.channelMuted = eval(restoredChannel['channelMuted'])
+                    if restoredChannel['owningUser'] != "None":
+                        channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'], restoredChannel['channelName'], int(restoredChannel['topic']), eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
+                                                  eval(restoredChannel['allowComments']), restoredChannel['description'])
+                        channel.id = int(restoredChannel['id'])
+                        channel.channelLoc = restoredChannel['channelLoc']
+                        channel.chatBG = restoredChannel['chatBG']
+                        channel.chatTextColor = restoredChannel['chatTextColor']
+                        channel.chatAnimation = restoredChannel['chatAnimation']
+                        channel.views = int(restoredChannel['views'])
+                        channel.protected = eval(restoredChannel['protected'])
+                        channel.channelMuted = eval(restoredChannel['channelMuted'])
 
-                    db.session.add(channel)
+                        db.session.add(channel)
+                    else:
+                        flash("Error Restoring Channel: ID# " + str(restoredChannel['id']), "error")
                 db.session.commit()
 
 
@@ -1688,15 +1691,19 @@ def admin_page():
                 if 'restoreVideos' in request.form:
 
                     for restoredVideo in restoreDict['RecordedVideo']:
-                        video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']), int(restoredVideo['channelID']), restoredVideo['channelName'], int(restoredVideo['topic']), int(restoredVideo['views']), restoredVideo['videoLocation'],
-                                                            datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
-                        video.id = int(restoredVideo['id'])
-                        video.description = restoredVideo['description']
-                        if restoredVideo['length'] != "None":
-                            video.length = float(restoredVideo['length'])
-                        video.thumbnailLocation = restoredVideo['thumbnailLocation']
-                        video.pending = eval(restoredVideo['pending'])
-                        db.session.add(video)
+                        if restoredVideo['channelID'] != "None":
+
+                            video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']), int(restoredVideo['channelID']), restoredVideo['channelName'], int(restoredVideo['topic']), int(restoredVideo['views']), restoredVideo['videoLocation'],
+                                                                datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
+                            video.id = int(restoredVideo['id'])
+                            video.description = restoredVideo['description']
+                            if restoredVideo['length'] != "None":
+                                video.length = float(restoredVideo['length'])
+                            video.thumbnailLocation = restoredVideo['thumbnailLocation']
+                            video.pending = eval(restoredVideo['pending'])
+                            db.session.add(video)
+                        else:
+                            flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
                     db.session.commit()
 
                 ## Restores API Keys
@@ -1706,12 +1713,15 @@ def admin_page():
                 db.session.commit()
 
                 for restoredAPIKey in restoreDict['apikey']:
-                    key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']), restoredAPIKey['description'], 0)
-                    key.id =  int(restoredAPIKey['id'])
-                    key.key = restoredAPIKey['key']
-                    key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
-                    key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
-                    db.session.add(key)
+                    if restoredAPIKey['userID'] != "None":
+                        key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']), restoredAPIKey['description'], 0)
+                        key.id =  int(restoredAPIKey['id'])
+                        key.key = restoredAPIKey['key']
+                        key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
+                        key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(key)
+                    else:
+                        flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
                 db.session.commit()
 
                 ## Restores Webhooks
@@ -1721,9 +1731,12 @@ def admin_page():
                 db.session.commit()
 
                 for restoredWebhook in restoreDict['webhook']:
-                    hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']), restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
-                                           int(restoredWebhook['requestTrigger']))
-                    db.session.add(hook)
+                    if restoredWebhook['channelID'] != "None":
+                        hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']), restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
+                                               int(restoredWebhook['requestTrigger']))
+                        db.session.add(hook)
+                    else:
+                        flash("Error Restoring Webook ID# " + restoredWebhook['id'], "error")
                 db.session.commit()
 
                 ## Restores Views
@@ -1747,14 +1760,17 @@ def admin_page():
                 db.session.commit()
 
                 for restoredInviteCode in restoreDict['inviteCode']:
-                    code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
-                    code.id = int(restoredInviteCode['id'])
-                    if restoredInviteCode['expiration'] != "None":
-                        code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    if restoredInviteCode['channelID'] != "None":
+                        code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
+                        code.id = int(restoredInviteCode['id'])
+                        if restoredInviteCode['expiration'] != "None":
+                            code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        else:
+                            code.expiration = None
+                        code.uses = int(restoredInviteCode['uses'])
+                        db.session.add(code)
                     else:
-                        code.expiration = None
-                    code.uses = int(restoredInviteCode['uses'])
-                    db.session.add(code)
+                        flash("Error Invite Code: ID# " + str(restoredInviteCode['id']), "error")
                 db.session.commit()
 
                 oldInvitedViewers = invites.invitedViewer.query.all()
@@ -1763,14 +1779,17 @@ def admin_page():
                 db.session.commit()
 
                 for restoredInvitedViewer in restoreDict['invitedViewer']:
-                    invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
-                    invite.id = int(restoredInvitedViewer['id'])
-                    invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
-                    invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'], '%Y-%m-%d %H:%M:%S.%f')
-                    if 'inviteCode' in restoredInvitedViewer:
-                        if restoredInvitedViewer['inviteCode'] != None:
-                            invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
-                    db.session.add(invite)
+                    if restoredInvitedViewer['channelID'] != "None" and restoredInvitedViewer['userID'] != "None":
+                        invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
+                        invite.id = int(restoredInvitedViewer['id'])
+                        invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
+                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        if 'inviteCode' in restoredInvitedViewer:
+                            if restoredInvitedViewer['inviteCode'] != None:
+                                invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
+                        db.session.add(invite)
+                    else:
+                        flash("Error Restoring Invited Viewer: ID# " + str(restoredInvitedViewer['id']), "error")
                 db.session.commit()
 
                 ## Restores Comments
@@ -1781,10 +1800,13 @@ def admin_page():
 
                 if 'restoreVideos' in request.form:
                     for restoredComment in restoreDict['videoComments']:
-                        comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'], int(restoredComment['videoID']))
-                        comment.id = int(restoredComment['id'])
-                        comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
-                        db.session.add(comment)
+                        if restoredComment['userID'] != "None" and restoredComment['videoID'] != "None":
+                            comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'], int(restoredComment['videoID']))
+                            comment.id = int(restoredComment['id'])
+                            comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                            db.session.add(comment)
+                        else:
+                            flash("Error Restoring Video Comment: ID# " + str(restoredComment['id']), "error")
                     db.session.commit()
 
                 ## Restores Ban List
@@ -1794,9 +1816,12 @@ def admin_page():
                 db.session.commit()
 
                 for restoredBan in restoreDict['ban_list']:
-                    ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
-                    ban.id = int(restoredBan['id'])
-                    db.session.add(ban)
+                    if restoredBan['channelLoc'] != "None" and restoredBan['userID'] != "None":
+                        ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
+                        ban.id = int(restoredBan['id'])
+                        db.session.add(ban)
+                    else:
+                        flash("Error Restoring Channel Ban Entry: ID# " + str(restoredBan['id']), "error")
                 db.session.commit()
 
                 ## Restores Upvotes
@@ -1818,25 +1843,35 @@ def admin_page():
                 db.session.commit()
 
                 for restoredUpvote in restoreDict['channel_upvotes']:
-                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
-                    upvote.id = int(restoredUpvote['id'])
-                    db.session.add(upvote)
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['channelID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
                 db.session.commit()
                 for restoredUpvote in restoreDict['stream_upvotes']:
-                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
-                    upvote.id = int(restoredUpvote['id'])
-                    db.session.add(upvote)
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
                 db.session.commit()
                 if 'restoreVideos' in request.form:
                     for restoredUpvote in restoreDict['video_upvotes']:
-                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
-                        upvote.id = int(restoredUpvote['id'])
-                        db.session.add(upvote)
+                        if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
+                            upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                            upvote.id = int(restoredUpvote['id'])
+                            db.session.add(upvote)
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                     db.session.commit()
                 for restoredUpvote in restoreDict['comment_upvotes']:
-                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
-                    upvote.id = int(restoredUpvote['id'])
-                    db.session.add(upvote)
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                 db.session.commit()
                 flash("Database Restored from Backup", "success")
 
