@@ -176,8 +176,8 @@ def init_db_values():
 
     if sysSettings != None:
         # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
-        if sysSettings.systemTheme == None:
-            sysSettings.systemTheme = "Default"
+        if sysSettings.systemTheme == None or sysSettings.systemTheme == "Default":
+            sysSettings.systemTheme = "Defaultv2"
             db.session.commit()
         if sysSettings.version == "None":
             sysSettings.version = version
@@ -1058,8 +1058,6 @@ def upload_vid():
         flash('You are not allowed to upload to this channel!')
         return redirect(url_for('main_page'))
 
-    # videoName = str(uuid.uuid4())
-
     newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
 
     videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
@@ -1119,9 +1117,6 @@ def upload_vid():
 
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
-    # return redirect(url_for('main_page'))
-
-
 
 @app.route('/settings/user', methods=['POST','GET'])
 @login_required
@@ -2835,6 +2830,7 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
+
 @socketio.on('newScreenShot')
 def newScreenShot(message):
     video = message['loc']
@@ -2997,7 +2993,6 @@ def generateInviteCode(message):
         emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
 
     else:
-        #emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
         pass
     db.session.close()
 
