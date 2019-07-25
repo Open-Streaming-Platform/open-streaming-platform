@@ -199,7 +199,7 @@ http://<ip or host>/
 
 Set your OBS client to stream at:
 ```
-rtsp://[serverip]/stream
+rtmp://[serverip]/stream
 ```
 
 **Important Note**: 
