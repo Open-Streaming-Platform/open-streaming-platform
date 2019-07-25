@@ -1101,6 +1101,22 @@ def upload_vid():
         newVideo.pending = False
         db.session.add(newVideo)
         db.session.commit()
+
+        if ChannelQuery.imageLocation is None:
+            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        else:
+            channelImage = (sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
+
+        runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
+                   channelurl=(sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
+                   channeltopic=get_topicName(ChannelQuery.topic),
+                   channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
+                   channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
+                   videodate=newVideo.videoDate, videodescription=newVideo.description,
+                   videotopic=get_topicName(newVideo.topic),
+                   videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
+                   videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
     # return redirect(url_for('main_page'))
