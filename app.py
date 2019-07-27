@@ -193,6 +193,10 @@ def init_db_values():
         if sysSettings.allowComments == None:
             sysSettings.allowComments = False
             db.session.commit()
+        # Sets allowUploads to False if None is Set - Caused by Moving from Pre-Beta 2
+        if sysSettings.allowUploads == None:
+            sysSettings.allowUploads = False
+            db.session.commit()
         # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Alpha to Beta
         channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
         for chan in channelQuery:
@@ -998,6 +1002,10 @@ def comments_vid_page(videoID):
 @login_required
 @roles_required('Streamer')
 def upload():
+    sysSettings = settings.settings.query.first()
+    if sysSettings.allowUploads == False:
+        db.session.close()
+        return ("Video Uploads Disabled", 501)
     if request.files['file']:
 
         if not os.path.exists('/var/www/videos/temp'):
@@ -1045,6 +1053,10 @@ def upload():
 @roles_required('Streamer')
 def upload_vid():
     sysSettings = settings.settings.query.first()
+    if sysSettings.allowUploads == False:
+        db.session.close()
+        flash("Video Upload Disabled", "error")
+        return redirect(url_for('main_page'))
 
     currentTime = datetime.datetime.now()
 
@@ -1056,6 +1068,7 @@ def upload_vid():
 
     if ChannelQuery.owningUser != current_user.id:
         flash('You are not allowed to upload to this channel!')
+        db.session.close()
         return redirect(url_for('main_page'))
 
     newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
@@ -1069,9 +1082,11 @@ def upload_vid():
                 os.mkdir("/var/www/videos/" + ChannelQuery.channelLoc)
             except OSError:
                 flash("Error uploading video - Unable to create directory","error")
+                db.session.close()
                 return redirect(url_for("main_page"))
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
     else:
+        db.session.close()
         flash("Error uploading video - Couldn't move video file")
         return redirect(url_for('main_page'))
 
@@ -1114,7 +1129,7 @@ def upload_vid():
                    videotopic=get_topicName(newVideo.topic),
                    videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                    videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
-
+    db.session.close()
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
 
@@ -1430,6 +1445,7 @@ def admin_page():
 
             recordSelect = False
             registerSelect = False
+            uploadSelect = False
             emailValidationSelect = False
             adaptiveStreaming = False
             showEmptyTables = False
@@ -1439,6 +1455,9 @@ def admin_page():
 
             if 'recordSelect' in request.form:
                 recordSelect = True
+
+            if 'uploadSelect' in request.form:
+                uploadSelect = True
 
             if 'registerSelect' in request.form:
                 registerSelect = True
@@ -1478,6 +1497,7 @@ def admin_page():
             sysSettings.smtpTLS = smtpTLS
             sysSettings.smtpSSL = smtpSSL
             sysSettings.allowRecording = recordSelect
+            sysSettings.allowUploads = uploadSelect
             sysSettings.allowRegistration = registerSelect
             sysSettings.requireConfirmedEmail = emailValidationSelect
             sysSettings.adaptiveStreaming = adaptiveStreaming
@@ -1587,7 +1607,7 @@ def admin_page():
 
                 serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
                                                    eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
-                                                   eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
+                                                   eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['allowUploads']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
                                                    eval(restoreDict['settings'][0]['allowComments']), version)
                 serverSettings.id = int(restoreDict['settings'][0]['id'])
                 serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
@@ -2127,6 +2147,7 @@ def initialSetup():
 
         recordSelect = False
         registerSelect = False
+        uploadSelect = False
         emailValidationSelect = False
         adaptiveStreaming = False
         showEmptyTables = False
@@ -2139,6 +2160,9 @@ def initialSetup():
 
         if 'registerSelect' in request.form:
             registerSelect = True
+
+        if 'uploadSelect' in request.form:
+            uploadSelect = True
 
         if 'emailValidationSelect' in request.form:
             emailValidationSelect = True
@@ -2170,7 +2194,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Streamer')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
+            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)
             db.session.commit()
 

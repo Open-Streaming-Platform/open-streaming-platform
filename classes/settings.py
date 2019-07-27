@@ -14,6 +14,7 @@ class settings(db.Model):
     allowRegistration = db.Column(db.Boolean)
     requireConfirmedEmail = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
+    allowUploads = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
     background = db.Column(db.String(255))
     showEmptyTables = db.Column(db.Boolean)
@@ -22,7 +23,7 @@ class settings(db.Model):
     systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, adaptiveStreaming, showEmptyTables, allowComments, version):
+    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
@@ -35,6 +36,7 @@ class settings(db.Model):
         self.allowRegistration = allowRegistration
         self.requireConfirmedEmail = requireConfirmedEmail
         self.allowRecording = allowRecording
+        self.allowUploads = allowUploads
         self.adaptiveStreaming = adaptiveStreaming
         self.showEmptyTables = showEmptyTables
         self.allowComments = allowComments
@@ -53,6 +55,7 @@ class settings(db.Model):
             'siteLogo': self.systemLogo,
             'allowRegistration': self.allowRegistration,
             'allowRecording': self.allowRecording,
+            'allowUploads': self.allowUploads,
             'allowComments': self.allowComments,
             'version': self.version
         }
