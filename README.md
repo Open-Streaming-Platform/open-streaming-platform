@@ -1,6 +1,6 @@
 # Open Streaming Platform
 
-[![N|Solid](https://i.imgur.com/iKfwtyS.jpg)](https://i.imgur.com/4RV5IXH.jpg)
+[![N|Solid](https://imgur.com/qSbBiF3.jpg)](https://imgur.com/qSbBiF3.jpg)
 
 **Open Streaming Platform (OSP) is an open-source, RTMP streamer software front-end for [Arut's NGINX RTMP Module](https://github.com/arut/nginx-rtmp-module).**
 
@@ -11,8 +11,9 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
  - Multiple Channels per User, allowing a single user to broadcast multiple streams at the same time without needing muiltiple accounts.
- - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/4RV5IXH.jpg)](https://i.imgur.com/4RV5IXH.jpg)
- - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/c598KLa.jpg)](https://i.imgur.com/c598KLa.jpg)
+ - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/nCawXQs.jpg)](https://i.imgur.com/4RV5IXH.jpg)
+ - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://imgur.com/73Z3VB1.jpg)](https://i.imgur.com/c598KLa.jpg)
+ - Manual Video Uploading of MP4s that are sourced outside of OSP
  - Real-Time Chat Moderation by Channel Owners (Banning/Unbanning)
  - Admin Controlled Adaptive Streaming
  - Protected Streams to allow access only to the audience you want.
@@ -23,6 +24,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 ## Planned Features:
  - Subscribe to a Channel and Get Notified on When a New Stream Starts.
+ - Connect to the Open Streaming Platform Hub, an upcoming central service showing all videos, streams, and creators who opt-in to participate and connect their OSP Servers.
 
 ## Tech
 
@@ -58,7 +60,7 @@ OSP's Git Branches are setup in the following configuration
 ## Installation
 
 ### Standard Install
-OSP has only been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
+OSP has been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
 
 Clone the Gitlab Repo
 ```
@@ -230,14 +232,27 @@ cp /opt/osp/db/database.db /opt/osp/db/database.bak
 cd /opt/osp
 sudo git pull
 ```
+* Run a check of the Requirements
+```
+sudo pip3 install -r /opt/osp/setup/requirements.txt
+```
 * Reset Ownership of OSP back to www-data
 ```
 sudo chown -R www-data:www-data /opt/osp
 ```
+* Typically, it is recommended to upgrade to the newest nginx.conf file to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
+```
+cp /usr/local/nginx/conf/nginx.con /usr/local/nginx/conf/nginx.conf.old
+cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+sudo systemctl restart nginx
+```
+
 * Run the DB Upgrade Script to Ensure the Database Schema is up-to-date
 ```
 bash dbUpgrade.sh
 ```
+### Upgrading from Beta1 to Beta2
+It is recommended to replace your Nginx.conf file to take advantage of many changes made to the directory structure of OSP's video repository.
 
 ### Upgrading from Alpha4 to Beta1
 With the move to Beta1, to support channel protections it is recommended to replace your nginx.conf file with the new configuration to support this feature. To do so, run the beta1upgrade.sh script to ensure all settings and directories are created.
@@ -246,27 +261,6 @@ cd /opt/osp/setup/other
 sudo bash alpha4tobeta1.sh
 ``` 
 After completion, your original nginx.conf file will be renamed to nginx.conf.old and you make adjustments to the new file.
-
-### Upgrading from Alpha3 to Alpha4
-Due to the changes from Python 2 to Python 3, You need to run a script to remove Python 2.7 and its modules and replace them with Python 3
-* Perform a Git Pull
-* Run the Upgrade Script
-```
-cd /opt/osp/setup/other
-sudo bash alpha3toalpha4.sh
-```
-
-### Upgrading from Pre-Alpha3
-* If you are updating from pre-Alpha3 and use SQLite, save a backup copy of your database.db file and config.py files in a safe location outside of /opt/osp.
-* Remove the /opt/osp directory and perform a fresh install then move your database.db file to /opt/osp/db and your config.py to /opt/osp/conf.
-* Edit your config.py file and change the dbLocation variable to be the following:
-```
-dbLocation = 'sqlite:///db/database.db'
-```
-* Restart the OSP Service
-```
-sudo service osp restart
-```
 
 ## Other Info
 ### Chat Comands
@@ -392,7 +386,7 @@ theme.json:
 
 Thanks
 ----
-Special thanks to the folks of the [OSP Discord channel](https://discord.gg/Jp5rzbD) for their testing and suggestions!
+Special thanks to the folks of the [OSP Discord channel](https://discord.gg/Jp5rzbD) and all contributors for their code, testing, and suggestions!
 
 License
 ----
