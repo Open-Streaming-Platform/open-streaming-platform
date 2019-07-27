@@ -1867,7 +1867,8 @@ def admin_page():
                         upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
-                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
 
                 db.session.commit()
                 for restoredUpvote in restoreDict['stream_upvotes']:
@@ -1875,7 +1876,8 @@ def admin_page():
                         upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
-                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
 
                 db.session.commit()
                 if 'restoreVideos' in request.form:
@@ -1891,7 +1893,8 @@ def admin_page():
                         upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
-                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                 db.session.commit()
                 flash("Database Restored from Backup", "success")
 
