@@ -212,6 +212,12 @@ def init_db_values():
         for chan in channelQuery:
             chan.currentViewers = 0
             db.session.commit()
+        # Create the stream-thumb directory if it does not exist
+        if not os.path.isdir("/var/www/stream-thumb"):
+            try:
+                os.mkdir("/var/www/stream-thumb")
+            except OSError:
+                flash("Unable to create /var/www/stream-thumb", "error")
 
         sysSettings = settings.settings.query.first()
 
