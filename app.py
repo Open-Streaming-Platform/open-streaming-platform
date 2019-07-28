@@ -808,7 +808,7 @@ def view_vid_page(videoID):
         if 'startTime' in request.args:
             startTime = request.args.get("startTime")
         try:
-            startTime = int(startTime)
+            startTime = float(startTime)
         except:
             startTime = None
 
