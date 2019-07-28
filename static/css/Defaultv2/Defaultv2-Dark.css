@@ -33,7 +33,7 @@ body {
 }
 
 .modal-content {
-    background-color: black;
+    background-color: #303030;
 }
 
 .jumbotron{
@@ -44,8 +44,13 @@ body {
     background-color: #303030;
 }
 
-.tooltip-inner {
-    background-color: black;
+.popover-header {
+    background-color: #303030;
+    color: white;
+}
+.popover-body {
+    background-color: #303030;
+    color: white;
 }
 
 .card-cut-text {
