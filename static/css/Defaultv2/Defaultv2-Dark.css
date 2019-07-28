@@ -32,6 +32,10 @@ body {
     background-color: black;
 }
 
+.jumbotron{
+    background-color: darkslateblue;
+}
+
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
