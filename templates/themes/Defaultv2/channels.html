@@ -1,0 +1,45 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Channels</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="d-flex flex-wrap justify-content-start">
+            {% for channel in channelList %}
+                <div class="displayCard py-1 pr-1">
+                    <a href="/channel/{{channel.id}}/">
+                    <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
+                        {{channel.topic|get_topicName}}<br>
+                        <b> {{channel.owningUser|get_userName}}</b><br>
+                        {% if channel.stream|length > 0 %}
+                            <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
+                        {% else %}
+                            <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
+                        {% endif %}
+                        {% if channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                        <span class="displayCard-footer">
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
+                        </span>
+                    </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
+
+

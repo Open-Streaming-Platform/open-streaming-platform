@@ -53,9 +53,9 @@ fi
 # Enable SystemD
 if cd $cwd/nginx
 then
-        sudo cp nginx.service /lib/systemd/system/nginx.service
+        sudo cp nginx-osp.service /lib/systemd/system/nginx-osp.service
         sudo systemctl daemon-reload
-        sudo systemctl enable nginx.service
+        sudo systemctl enable nginx-osp.service
 else
         echo "Unable to find downloaded Nginx config directory. Aborting."
         exit 1
@@ -78,7 +78,7 @@ sudo mkdir -p /var/www/videos
 sudo mkdir -p /var/www/live-rec
 sudo mkdir -p /var/www/images
 sudo mkdir -p /var/www/live-adapt
-sudo mkdir -p /var/stream-thumb
+sudo mkdir -p /var/www/stream-thumb
 
 sudo chown -R www-data:www-data /var/www
 
@@ -95,7 +95,7 @@ sudo mkdir -p /var/log/gunicorn
 sudo chown -R www-data:www-data /var/log/gunicorn
 
 # Start Nginx
-sudo systemctl start nginx.service
+sudo systemctl start nginx-osp.service
 sudo systemctl start osp
 
 echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py and review"

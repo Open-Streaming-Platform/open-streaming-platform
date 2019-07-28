@@ -1,0 +1,342 @@
+body {
+    background-color: white;
+}
+
+.main-navbar {
+    font-size: 1.25em;
+}
+
+.navbar-title {
+    font-size: 1.25em;
+}
+
+.navbar-search-container {
+    margin-right:20px;
+}
+
+#navbar-search {
+    width: 100%;;
+}
+
+#main-navbar-options a {
+    color:black;
+}
+
+.card-cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 260px;
+  height: 1.35em;
+  white-space: nowrap;
+}
+
+.index-live-title {
+    font-size:1.35em;
+    width: 100%;
+}
+
+.index-video-title {
+    font-size:1.35em;
+    width: 100%;
+}
+
+.displayCard {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.displayCard a {
+    color: black;
+}
+
+.displayCard img {
+    width: 310px;
+    height: 175px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.displayCard .card-data {
+    margin-left:15px;
+    float: left;
+    font-size:1.10em;
+}
+
+.displayCard .card-data .displayCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 45px;
+}
+
+.displayCard-other {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.displayCard-other a {
+    color: black;
+}
+
+.displayCard-other img {
+    width: 275px;
+    height: 155px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.displayCard-other .card-data {
+    margin-left:18px;
+    float: left;
+    font-size:1em;
+}
+
+.displayCard-other .card-data .displayCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 40px;
+}
+
+.streamerCard {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.streamerCard a {
+    color: black;
+}
+
+.streamerCard img {
+    width: 175px;
+    height: 175px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.streamerCard .card-data {
+    margin-left:15px;
+    float: left;
+    font-size:1.10em;
+}
+
+.streamerCard .card-data .streamerCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 45px;
+}
+
+.recordedStream {
+    width:99%;
+    display:block;
+}
+.dropzone {
+    display: none;
+}
+.video-buttons-row {
+    width: 100%;
+}
+
+.comment {
+    width:100%;
+}
+.comment p{
+    white-space: pre-wrap;
+    margin-top: 1rem;
+}
+.comment hr{
+    border-color: #aaa !important;
+}
+.comment img{
+    margin-top: 1rem;
+}
+.videodescription p{
+    white-space: pre-wrap;
+}
+.viewerText p{
+    white-space: pre-wrap;
+}
+
+.videoStream {
+        width:100%;
+    }
+
+.chat {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 75vh;
+    padding: 5px 5px 5px 5px;
+    width:100%;
+}
+
+.chatpopout {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 640px;
+    padding: 5px 5px 5px 5px;
+}
+
+.chatBar-Item {
+    border: 0px solid black;
+    border-radius: 4px;
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-bottom: 4px;
+    padding-right: 4px;
+    margin-top: 5px;
+    min-height: 60px;
+}
+
+.charBar-Item-Image {
+    float:left;
+}
+
+.chatBar-Item-Text {
+    position:relative;
+    left:20px;
+    color:white;
+    word-wrap: break-word;
+    width:82%;
+    display:inline-block;
+}
+
+.chatbox {
+    height: 540px;
+    width:425px;
+}
+
+.chatbox textarea {
+    resize: none;
+}
+
+#chatside {
+    border-left: 1px solid #eeeeee;
+    width:475px;
+}
+
+.streamcard-overlay {
+  position:relative;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.stream-image-overlay-text{
+    margin-left:10px;
+    margin-top:10px;
+    text-shadow: 1px 1px 2px #000000;
+    color:white;
+    position: relative;
+    top:-210px;
+    left:3px;
+}
+
+.videoPanel{
+    overflow-y: auto;
+    max-height:90vh;
+}
+
+.videoPanel::-webkit-scrollbar {
+    width: 0 !important
+}
+
+
+
+@media screen and (min-width : 992px) and (max-width : 1854px) {
+    .displayCard-other .card-data {
+        margin-left:0px;
+        float:left;
+    }
+    .displayCard-other .card-data .displayCard-footer {
+        top: initial;
+        font-size:1em;
+    }
+
+
+}
+
+
+@media screen and (max-width : 640px) {
+
+    .card-cut-text {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 360px;
+      height: 1.35em;
+      white-space: nowrap;
+    }
+
+    .displayCard {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .displayCard img{
+        width: 100%;
+        height: initial;
+    }
+
+    .displayCard .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .displayCard .card-data .displayCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+
+    .displayCard-other {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .displayCard-other img{
+        width: 100%;
+        height: initial;
+    }
+
+    .displayCard-other .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .displayCard-other .card-data .displayCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+    
+    .streamerCard {
+        width: 100%;
+        height: initial;
+        margin-bottom: 5px;
+    }
+
+    .streamerCard img{
+        width: 100%;
+        height: initial;
+    }
+
+    .streamerCard .card-data {
+        margin-left:0px;
+        float: left;
+        font-size:1em;
+    }
+    .streamerCard .card-data .streamerCard-footer {
+        font-size:1em;
+        top: initial;
+    }
+
+}
+
+

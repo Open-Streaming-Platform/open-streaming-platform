@@ -2,7 +2,7 @@
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered
@@ -32,6 +32,7 @@ import requests
 from threading import Thread
 from functools import wraps
 import json
+import hashlib
 
 #Import Paths
 cwp = sys.path[0]
@@ -47,9 +48,12 @@ import datetime
 
 from conf import config
 
+version = "beta-2"
+
 app = Flask(__name__)
 
 from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.utils import secure_filename
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 
@@ -58,8 +62,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
-    app.config['MYSQL_DATABASE_CHARSET'] = "utf8mb4"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8mb4', 'pool_use_lifo': 'True', 'pool_size': '20'}
+    app.config['MYSQL_DATABASE_CHARSET'] = "utf8"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20}
 else:
     pass
 
@@ -69,28 +73,30 @@ app.config['SECURITY_PASSWORD_SALT'] = config.passwordSalt
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_CHANGABLE'] = True
-app.config['SECURITY_CONFIRMABLE'] = True
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = '/var/www/images'
 app.config['UPLOADED_DEFAULT_DEST'] = '/var/www/images'
 app.config['SECURITY_POST_LOGIN_VIEW'] = 'main_page'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = 'main_page'
-app.config['SECURITY_SEND_REGISTER_EMAIL'] = True
-
 app.config['SECURITY_MSG_EMAIL_ALREADY_ASSOCIATED'] = ("Username or Email Already Associated with an Account", "error")
 app.config['SECURITY_MSG_INVALID_PASSWORD'] = ("Invalid Username or Password", "error")
 app.config['SECURITY_MSG_INVALID_EMAIL_ADDRESS'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
+app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
+app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app,logger=True)
+#socketio = SocketIO(app,logger=True)
 
 appDBVersion = 0.45
 
 from classes.shared import db
+from classes.shared import socketio
+
+socketio.init_app(app)
 
 db.init_app(app)
 db.app = app
@@ -164,14 +170,32 @@ def init_db_values():
 
     sysSettings = settings.settings.query.first()
 
+    if sysSettings.version != version:
+        sysSettings.version = version
+        db.session.commit()
+
     if sysSettings != None:
         # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
-        if sysSettings.systemTheme == None:
-            sysSettings.systemTheme = "Default"
+        if sysSettings.systemTheme == None or sysSettings.systemTheme == "Default":
+            sysSettings.systemTheme = "Defaultv2"
+            db.session.commit()
+        if sysSettings.version == "None":
+            sysSettings.version = version
+            db.session.commit()
+        if sysSettings.systemLogo == None:
+            sysSettings.systemLogo = "/static/img/logo.png"
+            db.session.commit()
+        # Sets Registration to Required if None is Set - Change from Beta 1 to Beta 2
+        if sysSettings.requireConfirmedEmail == None:
+            sysSettings.requireConfirmedEmail = True
             db.session.commit()
         # Sets allowComments to False if None is Set - Usual Cause is moving from Alpha to Beta
         if sysSettings.allowComments == None:
             sysSettings.allowComments = False
+            db.session.commit()
+        # Sets allowUploads to False if None is Set - Caused by Moving from Pre-Beta 2
+        if sysSettings.allowUploads == None:
+            sysSettings.allowUploads = False
             db.session.commit()
         # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Alpha to Beta
         channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
@@ -188,7 +212,14 @@ def init_db_values():
         for chan in channelQuery:
             chan.currentViewers = 0
             db.session.commit()
+        # Create the stream-thumb directory if it does not exist
+        if not os.path.isdir("/var/www/stream-thumb"):
+            try:
+                os.mkdir("/var/www/stream-thumb")
+            except OSError:
+                flash("Unable to create /var/www/stream-thumb", "error")
 
+        sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
         app.config['SECURITY_EMAIL_SENDER'] = sysSettings.smtpSendAs
@@ -198,6 +229,8 @@ def init_db_values():
         app.config['MAIL_USE_TLS'] = sysSettings.smtpTLS
         app.config['MAIL_USERNAME'] = sysSettings.smtpUsername
         app.config['MAIL_PASSWORD'] = sysSettings.smtpPassword
+        app.config['SECURITY_CONFIRMABLE'] = sysSettings.requireConfirmedEmail
+        app.config['SECURITY_SEND_REGISTER_EMAIL'] = sysSettings.requireConfirmedEmail
         app.config['SECURITY_FORGOT_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/forgot_password.html'
         app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/login_user.html'
         app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/register_user.html'
@@ -214,7 +247,7 @@ def init_db_values():
         if config.dbLocation[:6] != "sqlite":
             dbEngine = db.engine
             dbConnection = dbEngine.connect()
-            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
+            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'" % dbEngine.url.database)
 
             sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
 
@@ -284,6 +317,11 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
+def get_Video_Comments(videoID):
+    videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
+    result = videoCommentsQuery
+    return result
+
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
         channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
@@ -298,6 +336,48 @@ def check_isValidChannelViewer(channelID):
                     db.session.delete(invite)
                     db.session.commit()
     return False
+
+def check_isCommentUpvoted(commentID):
+    if current_user.is_authenticated:
+        commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
+        if commentQuery != None:
+            return True
+        else:
+            return False
+    return False
+
+def check_isUserValidRTMPViewer(userID,channelID):
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery is not None:
+        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        if channelQuery is not None:
+            if channelQuery.owningUser is userQuery.id:
+                return True
+            else:
+                inviteQuery = invites.invitedViewer.query.filter_by(userID=userQuery.id, channelID=channelID).all()
+                for invite in inviteQuery:
+                    if invite.isValid():
+                        return True
+                    else:
+                        db.session.delete(invite)
+                        db.session.commit()
+    return False
+
+def table2Dict(table):
+    exportedTableList = table.query.all()
+    dataList = []
+    for tbl in exportedTableList:
+        dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
+    return dataList
+
+def videoupload_allowedExt(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in app.config["VIDEO_UPLOAD_EXTENSIONS"]:
+        return True
+    else:
+        return False
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
@@ -330,7 +410,7 @@ def processWebhookVariables(payload, **kwargs):
     return payload
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
-
+app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 ### Start Jinja2 Filters
 
 @app.context_processor
@@ -392,6 +472,11 @@ def get_Video_Upvotes_Filter(videoID):
 @app.template_filter('get_Stream_Upvotes')
 def get_Stream_Upvotes_Filter(videoID):
     result = get_Stream_Upvotes(videoID)
+    return result
+
+@app.template_filter('get_Video_Comments')
+def get_Video_Comments_Filter(videoID):
+    result = get_Video_Comments(videoID)
     return result
 
 @app.template_filter('get_pictureLocation')
@@ -591,7 +676,7 @@ def streamers_view_page(userID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, title=userName + " - Videos")
+    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName)
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
@@ -657,8 +742,22 @@ def view_page(loc):
         db.session.commit()
 
         if isEmbedded == None or isEmbedded == "False":
+
+            secureHash = None
+            rtmpURI = None
+
+            endpoint = 'live'
+
+            if requestedChannel.protected:
+                if current_user.is_authenticated:
+                    secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.password).encode('utf-8')).hexdigest()
+                    username = current_user.username
+                    rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+            else:
+                rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
+
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel)
+            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -704,11 +803,20 @@ def view_vid_page(videoID):
         db.session.add(newView)
         db.session.commit()
 
+        # Function to allow custom start time on Video
+        startTime = None
+        if 'startTime' in request.args:
+            startTime = request.args.get("startTime")
+        try:
+            startTime = float(startTime)
+        except:
+            startTime = None
+
         if isEmbedded == None or isEmbedded == "False":
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=recordedVid.channel.id).order_by(func.random()).limit(12)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
 
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, startTime=startTime)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -717,10 +825,42 @@ def view_vid_page(videoID):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
     else:
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
+
+@app.route('/play/<loc>/move', methods=['POST'])
+@login_required
+def vid_move_page(loc):
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+        newChannel = int(request.form['moveToChannelID'])
+        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
+        if newChannelQuery != None:
+            recordedVidQuery.channelID = newChannelQuery.id
+            coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
+            if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
+                try:
+                    os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc)
+                except OSError:
+                    flash("Error Moving Video - Unable to Create Directory","error")
+                    return redirect(url_for("main_page"))
+            shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation, "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
+            recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
+            if (recordedVidQuery.thumbnailLocation != None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
+                coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
+                shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
+
+            db.session.commit()
+            flash("Video Moved to Another Channel", "success")
+            return redirect(url_for('view_vid_page', videoID=loc))
+
+    flash("Error Moving Video", "error")
+    return redirect(url_for("main_page"))
 
 @app.route('/play/<loc>/change', methods=['POST'])
 @login_required
@@ -804,7 +944,7 @@ def delete_vid_page(videoID):
         db.session.delete(recordedVid)
 
         db.session.commit()
-
+        flash("Video deleted")
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Video")
@@ -857,6 +997,9 @@ def comments_vid_page(videoID):
                 commentQuery = comments.videoComments.query.filter_by(id=commentID).first()
                 if commentQuery != None:
                     if current_user.has_role('Admin') or recordedVid.owningUser == current_user.id or commentQuery.userID == current_user.id:
+                        upvoteQuery = upvotes.commentUpvotes.query.filter_by(commentID=commentQuery.id).all()
+                        for vote in upvoteQuery:
+                            db.session.delete(vote)
                         db.session.delete(commentQuery)
                         db.session.commit()
                         flash('Comment Deleted', "success")
@@ -869,6 +1012,141 @@ def comments_vid_page(videoID):
 
     return redirect(url_for('view_vid_page', videoID=videoID))
 
+
+@app.route('/upload/video-files', methods=['GET', 'POST'])
+@login_required
+@roles_required('Streamer')
+def upload():
+    sysSettings = settings.settings.query.first()
+    if sysSettings.allowUploads == False:
+        db.session.close()
+        return ("Video Uploads Disabled", 501)
+    if request.files['file']:
+
+        if not os.path.exists('/var/www/videos/temp'):
+            os.makedirs('/var/www/videos/temp')
+
+        file = request.files['file']
+
+        if request.form['ospfilename'] != "":
+            ospfilename = request.form['ospfilename']
+        else:
+            return ("Ooops.", 500)
+
+        if videoupload_allowedExt(file.filename):
+            save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
+            current_chunk = int(request.form['dzchunkindex'])
+        else:
+            return ("Filetype not allowed", 403)
+
+        if current_chunk > 4500:
+            open(save_path, 'w').close()
+            return ("File is getting too large.", 403)
+
+        if os.path.exists(save_path) and current_chunk == 0:
+            open(save_path, 'w').close()
+
+        try:
+            with open(save_path, 'ab') as f:
+                f.seek(int(request.form['dzchunkbyteoffset']))
+                f.write(file.stream.read())
+        except OSError:
+            return ("Ooops.", 500)
+
+        total_chunks = int(request.form['dztotalchunkcount'])
+
+        if current_chunk + 1 == total_chunks:
+            if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
+                return ("Size mismatch", 500)
+
+        return ("success", 200)
+    else:
+        return ("I don't understand", 501)
+
+@app.route('/upload/video-details', methods=['POST'])
+@login_required
+@roles_required('Streamer')
+def upload_vid():
+    sysSettings = settings.settings.query.first()
+    if sysSettings.allowUploads == False:
+        db.session.close()
+        flash("Video Upload Disabled", "error")
+        return redirect(url_for('main_page'))
+
+    currentTime = datetime.datetime.now()
+
+    channel = int(request.form['uploadToChannelID'])
+    thumbnailFilename = request.form['thumbnailFilename']
+    videoFilename= request.form['videoFilename']
+
+    ChannelQuery = Channel.Channel.query.filter_by(id=channel).first()
+
+    if ChannelQuery.owningUser != current_user.id:
+        flash('You are not allowed to upload to this channel!')
+        db.session.close()
+        return redirect(url_for('main_page'))
+
+    newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
+
+    videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
+    videoPath = '/var/www/videos/' + videoLoc
+
+    if videoFilename != "":
+        if not os.path.isdir("/var/www/videos/" + ChannelQuery.channelLoc):
+            try:
+                os.mkdir("/var/www/videos/" + ChannelQuery.channelLoc)
+            except OSError:
+                flash("Error uploading video - Unable to create directory","error")
+                db.session.close()
+                return redirect(url_for("main_page"))
+        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
+    else:
+        db.session.close()
+        flash("Error uploading video - Couldn't move video file")
+        return redirect(url_for('main_page'))
+
+    newVideo.videoLocation = videoLoc
+
+    if thumbnailFilename != "":
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        thumbnailPath = '/var/www/videos/' + thumbnailLoc
+        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+        newVideo.thumbnailLocation = thumbnailLoc
+    else:
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
+        newVideo.thumbnailLocation = thumbnailLoc
+
+
+    if request.form['videoTitle'] != "":
+        newVideo.channelName = strip_html(request.form['videoTitle'])
+    else:
+        newVideo.channelName = currentTime
+
+    newVideo.description = strip_html(request.form['videoDescription'])
+
+    if os.path.isfile(videoPath):
+        newVideo.pending = False
+        db.session.add(newVideo)
+        db.session.commit()
+
+        if ChannelQuery.imageLocation is None:
+            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        else:
+            channelImage = (sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
+
+        runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
+                   channelurl=(sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
+                   channeltopic=get_topicName(ChannelQuery.topic),
+                   channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
+                   channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
+                   videodate=newVideo.videoDate, videodescription=newVideo.description,
+                   videotopic=get_topicName(newVideo.topic),
+                   videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
+                   videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+    db.session.close()
+    flash("Video upload complete")
+    return redirect(url_for('view_vid_page', videoID=newVideo.id))
 
 @app.route('/settings/user', methods=['POST','GET'])
 @login_required
@@ -1080,6 +1358,23 @@ def admin_page():
                             userQuery.active = True
                             flash("User Enabled")
                         db.session.commit()
+            elif action == "backup":
+                dbTables = db.engine.table_names()
+                dbDump = {}
+                for table in dbTables:
+                    for c in db.Model._decl_class_registry.values():
+                        if hasattr(c, '__table__') and c.__tablename__ == table:
+                            tableDict = table2Dict(c)
+                            dbDump[table] = tableDict
+                userQuery = Sec.User.query.all()
+                dbDump['roles'] = {}
+                for user in userQuery:
+                    userroles = user.roles
+                    dbDump['roles'][user.username] = []
+                    for role in userroles:
+                        dbDump['roles'][user.username].append(role.name)
+                dbDumpJson = json.dumps(dbDump)
+                return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
             return redirect(url_for('admin_page'))
 
@@ -1165,6 +1460,8 @@ def admin_page():
 
             recordSelect = False
             registerSelect = False
+            uploadSelect = False
+            emailValidationSelect = False
             adaptiveStreaming = False
             showEmptyTables = False
             allowComments = False
@@ -1174,8 +1471,14 @@ def admin_page():
             if 'recordSelect' in request.form:
                 recordSelect = True
 
+            if 'uploadSelect' in request.form:
+                uploadSelect = True
+
             if 'registerSelect' in request.form:
                 registerSelect = True
+
+            if 'emailValidationSelect' in request.form:
+                emailValidationSelect = True
 
             if 'adaptiveStreaming' in request.form:
                 adaptiveStreaming = True
@@ -1192,6 +1495,13 @@ def admin_page():
             if 'smtpSSL' in request.form:
                 smtpSSL = True
 
+            systemLogo = None
+            if 'photo' in request.files:
+                file = request.files['photo']
+                if file.filename != '':
+                    filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                    systemLogo = "/images/" + filename
+
             sysSettings.siteName = serverName
             sysSettings.siteAddress = serverAddress
             sysSettings.smtpSendAs = smtpSendAs
@@ -1202,11 +1512,15 @@ def admin_page():
             sysSettings.smtpTLS = smtpTLS
             sysSettings.smtpSSL = smtpSSL
             sysSettings.allowRecording = recordSelect
+            sysSettings.allowUploads = uploadSelect
             sysSettings.allowRegistration = registerSelect
+            sysSettings.requireConfirmedEmail = emailValidationSelect
             sysSettings.adaptiveStreaming = adaptiveStreaming
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            if systemLogo != None:
+                sysSettings.systemLogo = systemLogo
 
             db.session.commit()
 
@@ -1222,6 +1536,8 @@ def admin_page():
                 MAIL_USERNAME=sysSettings.smtpUsername,
                 MAIL_PASSWORD=sysSettings.smtpPassword,
                 SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                SECURITY_CONFIRMABLE = sysSettings.requireConfirmedEmail,
+                SECURITY_SEND_REGISTER_EMAIL = sysSettings.requireConfirmedEmail,
                 SECURITY_EMAIL_SUBJECT_PASSWORD_RESET = sysSettings.siteName + " - Password Reset Request",
                 SECURITY_EMAIL_SUBJECT_REGISTER = sysSettings.siteName + " - Welcome!",
                 SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE = sysSettings.siteName + " - Password Reset Notification",
@@ -1278,6 +1594,325 @@ def admin_page():
 
             db.session.commit()
 
+        elif settingType == "newuser":
+
+            password = request.form['password1']
+            email = request.form['emailaddress']
+            username = request.form['username']
+
+            passwordhash = utils.hash_password(password)
+
+            user_datastore.create_user(email=email, username=username, password=passwordhash)
+            db.session.commit()
+
+            user = Sec.User.query.filter_by(username=username).first()
+            user_datastore.add_role_to_user(user, 'User')
+            db.session.commit()
+
+        elif settingType == "dbRestore":
+            restoreJSON = None
+            if 'restoreData' in request.files:
+                file = request.files['restoreData']
+                if file.filename != '':
+                    restoreJSON = file.read()
+            if restoreJSON != None:
+                restoreDict = json.loads(restoreJSON)
+
+                ## Restore Settings
+
+                serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
+                                                   eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
+                                                   eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['allowUploads']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
+                                                   eval(restoreDict['settings'][0]['allowComments']), version)
+                serverSettings.id = int(restoreDict['settings'][0]['id'])
+                serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
+                serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+
+                # Remove Old Settings
+                oldSettings = settings.settings.query.all()
+                for row in oldSettings:
+                    db.session.delete(row)
+                db.session.commit()
+
+                db.session.add(serverSettings)
+                db.session.commit()
+
+                sysSettings = settings.settings.query.first()
+
+                if settings != None:
+                    app.config.update(
+                        SERVER_NAME=None,
+                        SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                        MAIL_SERVER=sysSettings.smtpAddress,
+                        MAIL_PORT=sysSettings.smtpPort,
+                        MAIL_USE_TLS=sysSettings.smtpTLS,
+                        MAIL_USE_SSL=sysSettings.smtpSSL,
+                        MAIL_USERNAME=sysSettings.smtpUsername,
+                        MAIL_PASSWORD=sysSettings.smtpPassword,
+                        SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                        SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
+                        SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
+                        SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
+                        SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
+                        SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
+                        SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
+                        SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
+                        SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
+                        SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
+                        SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
+                        SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+
+                    mail = Mail(app)
+
+                ## Restores Users
+                oldUsers = Sec.User.query.all()
+                for user in oldUsers:
+                    db.session.delete(user)
+                db.session.commit()
+                for restoredUser in restoreDict['user']:
+                    user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'], password=restoredUser['password'])
+                    db.session.commit()
+                    user = Sec.User.query.filter_by(username=restoredUser['username']).first()
+                    for roleEntry in restoreDict['roles'][user.username]:
+                        user_datastore.add_role_to_user(user, roleEntry)
+                    user.id = int(restoredUser['id'])
+                    user.pictureLocation = restoredUser['pictureLocation']
+                    user.active = eval(restoredUser['active'])
+                    if restoredUser['confirmed_at'] != "None":
+                        user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
+                    db.session.commit()
+
+                ## Restore Topics
+                oldTopics = topics.topics.query.all()
+                for topic in oldTopics:
+                    db.session.delete(topic)
+                db.session.commit()
+                for restoredTopic in restoreDict['topics']:
+                    topic = topics.topics(restoredTopic['name'], "None")
+                    topic.id = int(restoredTopic['id'])
+                    db.session.add(topic)
+                db.session.commit()
+
+                ## Restores Channels
+                oldChannels = Channel.Channel.query.all()
+                for channel in oldChannels:
+                    db.session.delete(channel)
+                db.session.commit()
+                for restoredChannel in restoreDict['Channel']:
+                    if restoredChannel['owningUser'] != "None":
+                        channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'], restoredChannel['channelName'], int(restoredChannel['topic']), eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
+                                                  eval(restoredChannel['allowComments']), restoredChannel['description'])
+                        channel.id = int(restoredChannel['id'])
+                        channel.channelLoc = restoredChannel['channelLoc']
+                        channel.chatBG = restoredChannel['chatBG']
+                        channel.chatTextColor = restoredChannel['chatTextColor']
+                        channel.chatAnimation = restoredChannel['chatAnimation']
+                        channel.views = int(restoredChannel['views'])
+                        channel.protected = eval(restoredChannel['protected'])
+                        channel.channelMuted = eval(restoredChannel['channelMuted'])
+
+                        db.session.add(channel)
+                    else:
+                        flash("Error Restoring Channel: ID# " + str(restoredChannel['id']), "error")
+                db.session.commit()
+
+
+                ## Restored Videos - Deletes if not restored to maintain DB
+                oldVideos = RecordedVideo.RecordedVideo.query.all()
+                for video in oldVideos:
+                    db.session.delete(video)
+                db.session.commit()
+
+                if 'restoreVideos' in request.form:
+
+                    for restoredVideo in restoreDict['RecordedVideo']:
+                        if restoredVideo['channelID'] != "None":
+
+                            video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']), int(restoredVideo['channelID']), restoredVideo['channelName'], int(restoredVideo['topic']), int(restoredVideo['views']), restoredVideo['videoLocation'],
+                                                                datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
+                            video.id = int(restoredVideo['id'])
+                            video.description = restoredVideo['description']
+                            if restoredVideo['length'] != "None":
+                                video.length = float(restoredVideo['length'])
+                            video.thumbnailLocation = restoredVideo['thumbnailLocation']
+                            video.pending = eval(restoredVideo['pending'])
+                            db.session.add(video)
+                        else:
+                            flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
+                    db.session.commit()
+
+                ## Restores API Keys
+                oldAPI = apikey.apikey.query.all()
+                for api in oldAPI:
+                    db.session.delete(api)
+                db.session.commit()
+
+                for restoredAPIKey in restoreDict['apikey']:
+                    if restoredAPIKey['userID'] != "None":
+                        key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']), restoredAPIKey['description'], 0)
+                        key.id =  int(restoredAPIKey['id'])
+                        key.key = restoredAPIKey['key']
+                        key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
+                        key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(key)
+                    else:
+                        flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
+                db.session.commit()
+
+                ## Restores Webhooks
+                oldWebhooks = webhook.webhook.query.all()
+                for hook in oldWebhooks:
+                    db.session.delete(hook)
+                db.session.commit()
+
+                for restoredWebhook in restoreDict['webhook']:
+                    if restoredWebhook['channelID'] != "None":
+                        hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']), restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
+                                               int(restoredWebhook['requestTrigger']))
+                        db.session.add(hook)
+                    else:
+                        flash("Error Restoring Webook ID# " + restoredWebhook['id'], "error")
+                db.session.commit()
+
+                ## Restores Views
+                oldViews = views.views.query.all()
+                for view in oldViews:
+                    db.session.delete(view)
+                db.session.commit()
+
+                for restoredView in restoreDict['views']:
+                    if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
+                        view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
+                        view.id = int(restoredView['id'])
+                        view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(view)
+                db.session.commit()
+
+                ## Restores Invites
+                oldInviteCode = invites.inviteCode.query.all()
+                for code in oldInviteCode:
+                    db.session.delete(code)
+                db.session.commit()
+
+                for restoredInviteCode in restoreDict['inviteCode']:
+                    if restoredInviteCode['channelID'] != "None":
+                        code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
+                        code.id = int(restoredInviteCode['id'])
+                        if restoredInviteCode['expiration'] != "None":
+                            code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        else:
+                            code.expiration = None
+                        code.uses = int(restoredInviteCode['uses'])
+                        db.session.add(code)
+                    else:
+                        flash("Error Invite Code: ID# " + str(restoredInviteCode['id']), "error")
+                db.session.commit()
+
+                oldInvitedViewers = invites.invitedViewer.query.all()
+                for invite in oldInvitedViewers:
+                    db.session.delete(invite)
+                db.session.commit()
+
+                for restoredInvitedViewer in restoreDict['invitedViewer']:
+                    if restoredInvitedViewer['channelID'] != "None" and restoredInvitedViewer['userID'] != "None":
+                        invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
+                        invite.id = int(restoredInvitedViewer['id'])
+                        invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
+                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                        if 'inviteCode' in restoredInvitedViewer:
+                            if restoredInvitedViewer['inviteCode'] != None:
+                                invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
+                        db.session.add(invite)
+                    else:
+                        flash("Error Restoring Invited Viewer: ID# " + str(restoredInvitedViewer['id']), "error")
+                db.session.commit()
+
+                ## Restores Comments
+                oldComments = comments.videoComments.query.all()
+                for comment in oldComments:
+                    db.session.delete(comment)
+                db.session.commit()
+
+                if 'restoreVideos' in request.form:
+                    for restoredComment in restoreDict['videoComments']:
+                        if restoredComment['userID'] != "None" and restoredComment['videoID'] != "None":
+                            comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'], int(restoredComment['videoID']))
+                            comment.id = int(restoredComment['id'])
+                            comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                            db.session.add(comment)
+                        else:
+                            flash("Error Restoring Video Comment: ID# " + str(restoredComment['id']), "error")
+                    db.session.commit()
+
+                ## Restores Ban List
+                oldBanList = banList.banList.query.all()
+                for ban in oldBanList:
+                    db.session.delete(ban)
+                db.session.commit()
+
+                for restoredBan in restoreDict['ban_list']:
+                    if restoredBan['channelLoc'] != "None" and restoredBan['userID'] != "None":
+                        ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
+                        ban.id = int(restoredBan['id'])
+                        db.session.add(ban)
+                    else:
+                        flash("Error Restoring Channel Ban Entry: ID# " + str(restoredBan['id']), "error")
+                db.session.commit()
+
+                ## Restores Upvotes
+                oldChannelUpvotes = upvotes.channelUpvotes.query.all()
+                for upvote in oldChannelUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldStreamUpvotes = upvotes.streamUpvotes.query.all()
+                for upvote in oldStreamUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldVideoUpvotes = upvotes.videoUpvotes.query.all()
+                for upvote in oldVideoUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+                oldCommentUpvotes = upvotes.commentUpvotes.query.all()
+                for upvote in oldCommentUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
+
+                for restoredUpvote in restoreDict['channel_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['channelID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
+                db.session.commit()
+                for restoredUpvote in restoreDict['stream_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
+                db.session.commit()
+                if 'restoreVideos' in request.form:
+                    for restoredUpvote in restoreDict['video_upvotes']:
+                        if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
+                            upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                            upvote.id = int(restoredUpvote['id'])
+                            db.session.add(upvote)
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                    db.session.commit()
+                for restoredUpvote in restoreDict['comment_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
+                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                db.session.commit()
+                flash("Database Restored from Backup", "success")
+
         return redirect(url_for('admin_page'))
 
 
@@ -1285,7 +1920,7 @@ def admin_page():
 @login_required
 def settings_channels_page():
     sysSettings = settings.settings.query.first()
-    channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'}, {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'}, {'name': 'Terminal', 'value': 'Terminal'}]
+    channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'},{'name': 'Plain White', 'value': 'PlainWhite'}, {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'}, {'name': 'Terminal', 'value': 'Terminal'}, {'name': 'Lawrencium', 'value': 'Lawrencium'}, {'name': 'Lush', 'value': 'Lush'}, {'name': 'Transparent', 'value': 'Transparent'}]
     channelChatAnimationOptions = [{'name':'No Animation', 'value':'None'},{'name': 'Slide-in From Left', 'value': 'slide-in-left'}, {'name':'Slide-In Blurred From Left','value':'slide-in-blurred-left'}, {'name':'Fade-In', 'value': 'fade-in-fwd'}]
 
     if request.method == 'GET':
@@ -1530,6 +2165,8 @@ def initialSetup():
 
         recordSelect = False
         registerSelect = False
+        uploadSelect = False
+        emailValidationSelect = False
         adaptiveStreaming = False
         showEmptyTables = False
         allowComments = False
@@ -1541,6 +2178,12 @@ def initialSetup():
 
         if 'registerSelect' in request.form:
             registerSelect = True
+
+        if 'uploadSelect' in request.form:
+            uploadSelect = True
+
+        if 'emailValidationSelect' in request.form:
+            emailValidationSelect = True
 
         if 'adaptiveStreaming' in request.form:
             adaptiveStreaming = True
@@ -1565,10 +2208,11 @@ def initialSetup():
             user_datastore.create_user(email=email, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
-            user_datastore.add_role_to_user(user,'Admin')
+            user_datastore.add_role_to_user(user, 'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
+            user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, recordSelect, adaptiveStreaming, showEmptyTables, allowComments)
+            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)
             db.session.commit()
 
@@ -1585,6 +2229,8 @@ def initialSetup():
                     MAIL_USERNAME=sysSettings.smtpUsername,
                     MAIL_PASSWORD=sysSettings.smtpPassword,
                     SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                    SECURITY_CONFIRMABLE = sysSettings.requireConfirmedEmail,
+                    SECURITY_SEND_REGISTER_EMAIL = sysSettings.requireConfirmedEmail,
                     SECURITY_EMAIL_SUBJECT_PASSWORD_RESET = sysSettings.siteName + " - Password Reset Request",
                     SECURITY_EMAIL_SUBJECT_REGISTER = sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE = sysSettings.siteName + " - Password Reset Notification",
@@ -1613,6 +2259,8 @@ def video_sender(channelID, filename):
             redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            del response.headers["Content-Type"]
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1620,6 +2268,8 @@ def video_sender(channelID, filename):
         redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        del response.headers["Content-Type"]
+        db.session.close()
         return response
 
 @app.route('/stream-thumb/<path:filename>')
@@ -1631,6 +2281,7 @@ def live_thumb_sender(filename):
             redirect_path = "/osp-streamthumbs" + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1638,6 +2289,7 @@ def live_thumb_sender(filename):
         redirect_path = "/osp-streamthumbs" + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-adapt/<path:filename>')
@@ -1649,6 +2301,7 @@ def live_adapt_stream_image_sender(filename):
             redirect_path = "/osp-liveadapt" + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1656,6 +2309,7 @@ def live_adapt_stream_image_sender(filename):
         redirect_path = "/osp-liveadapt" + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
@@ -1666,6 +2320,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             return abort(401)
@@ -1673,6 +2328,7 @@ def live_adapt_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live/<string:channelID>/<path:filename>')
@@ -1683,6 +2339,7 @@ def live_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
 
         else:
@@ -1691,6 +2348,7 @@ def live_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 @app.route('/live-rec/<string:channelID>/<path:filename>')
@@ -1701,6 +2359,7 @@ def live_rec_stream_directory_sender(channelID, filename):
             redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
             response = make_response("")
             response.headers["X-Accel-Redirect"] = redirect_path
+            db.session.close()
             return response
         else:
             abort(401)
@@ -1708,6 +2367,7 @@ def live_rec_stream_directory_sender(channelID, filename):
         redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
+        db.session.close()
         return response
 
 ### Start NGINX-RTMP Authentication Functions
@@ -1925,9 +2585,54 @@ def rec_Complete_handler():
     db.session.close()
     return 'OK'
 
+@app.route('/playbackAuth', methods=['POST'])
+def playback_auth_handler():
+    stream = request.form['name']
+
+    streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+    if streamQuery != None:
+
+        if streamQuery.protected is False:
+            db.session.close()
+            return 'OK'
+        else:
+            username = request.form['username']
+            secureHash = request.form['hash']
+
+            if streamQuery is not None:
+                requestedUser = Sec.User.query.filter_by(username=username).first()
+                if requestedUser is not None:
+                    isValid = False
+                    validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                    if secureHash == validHash:
+                        isValid = True
+                    if isValid is True:
+                        if streamQuery.owningUser == requestedUser.id:
+                            db.session.close()
+                            return 'OK'
+                        else:
+                            if check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                                db.session.close()
+                                return 'OK'
+    db.session.close()
+    return abort(400)
 
 
 ### Start Socket.IO Functions ###
+
+
+@socketio.on('cancelUpload')
+def handle_videoupload_disconnect(videofilename):
+    ospvideofilename = app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + str(videofilename['data'])
+    thumbnailFilename = ospvideofilename + '.png'
+    videoFilename = ospvideofilename + '.mp4'
+
+    time.sleep(5)
+
+    if os.path.exists(thumbnailFilename) and time.time() - os.stat(thumbnailFilename).st_mtime > 5:
+            os.remove(thumbnailFilename)
+    if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
+            os.remove(videoFilename)
 
 @socketio.on('newViewer')
 def handle_new_viewer(streamData):
@@ -2085,6 +2790,13 @@ def handle_upvote_total_request(streamData):
             myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
         except:
             pass
+    elif vidType == "comment":
+        loc = int(loc)
+        totalQuery = upvotes.commentUpvotes.query.filter_by(commentID=loc).all()
+        try:
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=loc).first()
+        except:
+            pass
 
     if totalQuery != None:
         for vote in totalQuery:
@@ -2094,7 +2806,7 @@ def handle_upvote_total_request(streamData):
 
     db.session.commit()
     db.session.close()
-    emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote)})
+    emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote), 'type': vidType, 'loc': loc})
 
 @socketio.on('changeUpvote')
 def handle_upvoteChange(streamData):
@@ -2125,6 +2837,17 @@ def handle_upvoteChange(streamData):
         else:
             db.session.delete(myVoteQuery)
         db.session.commit()
+    elif vidType == "comment":
+        loc = int(loc)
+        videoCommentQuery = comments.videoComments.query.filter_by(id=loc).first()
+        if videoCommentQuery != None:
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=videoCommentQuery.id).first()
+            if myVoteQuery == None:
+                newUpvote = upvotes.commentUpvotes(current_user.id, videoCommentQuery.id)
+                db.session.add(newUpvote)
+            else:
+                db.session.delete(myVoteQuery)
+            db.session.commit()
     db.session.close()
 
 
@@ -2143,13 +2866,16 @@ def setScreenShot(message):
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
         if videoQuery != None and videoQuery.owningUser == current_user.id:
             videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            thumbnailLocation = '/var/www/videos/' + videoQuery.thumbnailLocation
+            newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
+            videoQuery.thumbnailLocation = newThumbnailLocation
+            fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+            db.session.commit()
             db.session.close()
             try:
-                os.remove(thumbnailLocation)
+                os.remove(fullthumbnailLocation)
             except OSError:
                 pass
-            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
+            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
 @socketio.on('updateStreamData')
 def updateStreamData(message):
@@ -2181,6 +2907,7 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
+
 @socketio.on('newScreenShot')
 def newScreenShot(message):
     video = message['loc']
@@ -2343,7 +3070,6 @@ def generateInviteCode(message):
         emit('newInviteCode', {'code': str(newInviteCode.code), 'expiration': str(newInviteCode.expiration), 'channelID':str(newInviteCode.channelID)}, broadcast=False)
 
     else:
-        #emit('newInviteCode', {'code': 'error', 'expiration': 'error', 'channelID': channelID}, broadcast=False)
         pass
     db.session.close()
 
@@ -2473,6 +3199,6 @@ except Exception as e:
 mail = Mail(app)
 
 if __name__ == '__main__':
-    app.jinja_env.auto_reload = True
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    socketio.run(app)
+    app.jinja_env.auto_reload = False
+    app.config['TEMPLATES_AUTO_RELOAD'] = False
+    app.run()

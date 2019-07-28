@@ -2,8 +2,9 @@ import sys
 from os import path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from flask import Blueprint, request
+from flask import Blueprint, request, url_for
 from flask_restplus import Api, Resource, reqparse
+from flask_socketio import emit
 
 import shutil
 import uuid
@@ -15,8 +16,20 @@ from classes import topics
 from classes import upvotes
 from classes import apikey
 from classes import views
+from classes import settings
 from classes.shared import db
+from classes.shared import socketio
 
+class fixedAPI(Api):
+    # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
+    @property
+    def specs_url(self):
+        '''
+        The Swagger specifications absolute url (ie. `swagger.json`)
+
+        :rtype: str
+        '''
+        return url_for(self.endpoint('specs'), _external=False)
 
 authorizations = {
     'apikey': {
@@ -27,7 +40,7 @@ authorizations = {
 }
 
 api_v1 = Blueprint('api', __name__, url_prefix='/apiv1')
-api = Api(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
+api = fixedAPI(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
 
 ### Start API Functions ###
 
@@ -50,6 +63,22 @@ streamParserPut.add_argument('topicID', type=int)
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
 videoParserPut.add_argument('topicID', type=int)
+
+chatParserPost = reqparse.RequestParser()
+chatParserPost.add_argument('username', type=str, required=True)
+chatParserPost.add_argument('message', type=str, required=True)
+chatParserPost.add_argument('userImage', type=str)
+
+@api.route('/server')
+class api_1_Server(Resource):
+    # Server - Get Basic Server Information
+    def get(self):
+        """
+            Displays a Listing of Server Settings
+        """
+        serverSettings = settings.settings.query.all()[0]
+        db.session.commit()
+        return {'results': serverSettings.serialize() }
 
 @api.route('/channels/')
 class api_1_ListChannels(Resource):
@@ -160,6 +189,30 @@ class api_1_ListChannel(Resource):
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+@api.route('/channels/chat/<string:channelEndpointID>')
+@api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
+class api_1_ChannelChat(Resource):
+    @api.expect(chatParserPost)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self, channelEndpointID):
+        """
+            Creates a New Chat Message in the Channel
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                if requestAPIKey.isValid():
+                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    if channelQuery != None:
+                        args = chatParserPost.parse_args()
+                        userImage = '/static/img/user2.png'
+                        if 'userImage' in args:
+                            if args['userImage'] is not None:
+                                userImage = args['userImage']
+                    socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
+                    return {'results': {'message': 'Message Posted'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
     def get(self):
