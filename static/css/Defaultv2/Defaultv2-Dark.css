@@ -24,6 +24,10 @@ body {
     background-color: black;
 }
 
+.dropdown-menu a:hover {
+    background-color: #303030;
+}
+
 #main-navbar-options a {
     color:white;
 }
@@ -34,6 +38,14 @@ body {
 
 .jumbotron{
     background-color: #303030;
+}
+
+.card {
+    background-color: #303030;
+}
+
+.tooltip-inner {
+    background-color: black;
 }
 
 .card-cut-text {
