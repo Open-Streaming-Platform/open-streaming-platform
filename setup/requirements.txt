@@ -36,3 +36,4 @@ SQLAlchemy==1.3.5
 Werkzeug==0.15.4
 WTForms==2.2.1
 requests==2.18.4
+flask-markdown==0.3
