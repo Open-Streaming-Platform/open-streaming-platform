@@ -465,11 +465,11 @@
   function toggleShareTimestamp() {
     if (document.getElementById('shareTimestamp').checked)
     {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime=' + player.currentTime() + '" width=600 height=345></iframe>';
-        document.getElementById('linkShareInput').value = '{{request.url}}?startTime=' + player.currentTime();
+        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime='.replace('?startTime={{starTime}}') + player.currentTime() + '" width=600 height=345></iframe>';
+        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{starTime}}') + '?startTime=' + player.currentTime();
     } else {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>';
-        document.getElementById('linkShareInput').value = '{{request.url}}?startTime=';
+        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime={{starTime}}');
+        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{starTime}}');
     }
   }
 </script>
