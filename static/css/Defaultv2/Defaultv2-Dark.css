@@ -21,6 +21,10 @@ body {
     width: 100%;;
 }
 
+.dropdown {
+    background-color: black;
+}
+
 #main-navbar-options a {
     color:white;
 }
