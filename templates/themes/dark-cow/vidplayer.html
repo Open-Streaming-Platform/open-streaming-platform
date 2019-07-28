@@ -342,7 +342,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+     <div class="modal-body">
         <div style="margin: 0 auto;width: 99%; text-align: center;">
           <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
             onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
@@ -350,21 +350,35 @@
             onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
         </div>
         <br>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="shareTimestamp" value="shareTimestamp" onclick="toggleShareTimestamp();">
+          <label class="form-check-label" for="shareTimestamp">Set URL to Start at Current Timestamp</label>
+        </div>
         <div class="form-group row">
           <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
           <div class="col-sm-10">
-            <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+            </div>
           </div>
         </div>
         <div class="form-group row">
           <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
           <div class="col-sm-10">
-            <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+            </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('shareTimestamp').checked = false;">Close</button>
       </div>
     </div>
   </div>
@@ -527,5 +541,26 @@
   player.play();
 </script>
 {% endif %}
+
+<script>
+  function toggleShareTimestamp() {
+    if (document.getElementById('shareTimestamp').checked)
+    {
+        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime='.replace('?startTime={{startTime}}','') + player.currentTime() + '" width=600 height=345></iframe>';
+        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','') + '?startTime=' + player.currentTime();
+    } else {
+        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime={{startTime}}','');
+        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','');
+    }
+  }
+</script>
+
+<script>
+    function CopyDiv(divVal) {
+      var copyText = document.getElementById(divVal);
+      copyText.select();
+      document.execCommand("copy");
+    }
+</script>
 
 {% endblock %}
