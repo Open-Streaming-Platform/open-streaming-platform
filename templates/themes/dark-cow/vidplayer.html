@@ -523,7 +523,7 @@
 
 {% if startTime != None %}
 <script>
-  player.startTime = {{startTime}};
+  player.currentTime({{startTime}});
   player.play();
 </script>
 {% endif %}
