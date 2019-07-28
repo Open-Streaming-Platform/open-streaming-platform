@@ -450,4 +450,11 @@
   }
 </script>
 
+{% if startTime != None %}
+<script>
+  player.startTime = {{startTime}};
+  player.play();
+</script>
+{% endif %}
+
 {% endblock %}

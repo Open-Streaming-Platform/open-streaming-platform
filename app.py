@@ -803,11 +803,20 @@ def view_vid_page(videoID):
         db.session.add(newView)
         db.session.commit()
 
+        # Function to allow custom start time on Video
+        startTime = None
+        if 'startTime' in request.args:
+            startTime = request.args.get("startTime")
+        try:
+            startTime = int(startTime)
+        except:
+            startTime = None
+
         if isEmbedded == None or isEmbedded == "False":
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
 
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded)
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, startTime=startTime)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -816,7 +825,7 @@ def view_vid_page(videoID):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
     else:
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
