@@ -110,7 +110,7 @@
         <div class="tab-pane fade" id="videoList" role="tabpanel" aria-labelledby="videos-tab">
             <div class="container-fluid p-2" id="index-videos-container">
                 <div class="row mx-2">
-                    <div class="d-flex flex-wrap justify-content-between">
+                    <div class="d-flex flex-wrap justify-content-start">
                         {% for video in channel.recordedVideo|sort(attribute='videoDate', reverse=True)%}
                         {% if video.pending == False %}
                             <div class="displayCard py-1 pr-1">
@@ -118,13 +118,12 @@
                                 <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                 <div class="card-data">
                                     <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
-                                    {{video.channel.channelName}}<br>
-                                    {{video.topic|get_topicName}}<br>
-                                    {{video.videoDate|normalize_date}}<br>
+                                    <i class="fas fa-video mr-2"></i> {{video.channel.channelName}}<br>
+                                    <i class="fas fa-hashtag mr-2"></i> {{video.topic|get_topicName}}<br>
+                                    {% if video.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                                     <span class="displayCard-footer">
                                         <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{video.id|get_Video_Upvotes}}</span>
                                         <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{video.views}}</span>
-                                        <span class="px-2 flex-fill"><i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}</span>
                                         <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{video.length|hms_format}}</span>
                                     </span>
                                 </div>
