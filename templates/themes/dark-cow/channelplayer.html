@@ -209,19 +209,34 @@
                     <div class="form-group row">
                         <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
                         <div class="col-sm-10">
-                            <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+                              </div>
+                              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
                         <div class="col-sm-10">
-                            <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+                              </div>
+                              <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="rtmpURI" class="col-sm-2 col-form-label"><b>RTMP Link</b></label>
                         <div class="col-sm-10">
-                            <input class="form-control" id="rtmpURI" type="text" value="{{rtmpURI}}" readonly onClick="this.select();">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                  <button type="button" class="btn btn-primary" onclick="CopyDiv('rtmpURI')"><i class="fas fa-copy"></i></button>
+                              </div>
+                              <input class="form-control" id="rtmpURI" type="text" value="{{rtmpURI}}" readonly onClick="this.select();">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -463,7 +478,7 @@
                             videoJSObj.play();
                             currentReadyState = videoJSObj.readyState();
                         } catch (e) {
-                            console.log("OSP tried restarting the stream but had an issue:" + e)
+                            console.log("OSP tried restarting the stream but had an issue:" + e);
                         }
                     } else if (currentReadyState == 0) {
                         try {
@@ -472,7 +487,7 @@
                             videoJSObj.pause().trigger('loadstart');
                             videoJSObj.play();
                         } catch (e) {
-                            console.log("OSP tried restarting the stream but had an issue:" + e)
+                            console.log("OSP tried restarting the stream but had an issue:" + e);
                         }
                     }
 
@@ -526,4 +541,13 @@
             monitor_vid();
         }, 10000);
     </script>
+
+    <script>
+        function CopyDiv(divVal) {
+          var copyText = document.getElementById(divVal);
+          copyText.select();
+          document.execCommand("copy");
+        }
+    </script>
+
     {% endblock %}
