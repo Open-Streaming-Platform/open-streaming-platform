@@ -28,6 +28,10 @@ body {
     color:white;
 }
 
+.modal-content {
+    background-color: black;
+}
+
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
