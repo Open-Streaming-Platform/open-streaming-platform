@@ -58,7 +58,7 @@
                      <div class="row m-2">
                          <div class="video-buttons-row">
                              <span class="float-left">
-                                  <button type="button" class="btn btn-primary shadow" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" {% if channel.chatEnabled == False %}disabled{% endif %}>
+                                  <button type="button" class="btn btn-primary shadow {% if channel.chatEnabled == False %} disabled {% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
                                     <i class="fas fa-comment"></i>
                                   </button>
 
