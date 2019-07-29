@@ -244,7 +244,7 @@ sudo chown -R www-data:www-data /opt/osp
 ```
 * Typically, it is recommended to upgrade to the newest nginx.conf file to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
 ```
-cp /usr/local/nginx/conf/nginx.con /usr/local/nginx/conf/nginx.conf.old
+cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
 cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
 sudo systemctl restart nginx
 ```
