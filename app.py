@@ -49,7 +49,7 @@ import datetime
 
 from conf import config
 
-version = "beta-2"
+version = "beta-3"
 
 app = Flask(__name__)
 
