@@ -261,6 +261,7 @@
     </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-hls-quality-selector/js/videojs-hls-quality-selector.js"></script>
 
     <script>
         var player = videojs('video', {
@@ -278,6 +279,8 @@
                 }
             }
         });
+
+        player.hlsQualitySelector();
 
         player.ready(function () {
             this.src({
