@@ -35,11 +35,9 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script src="/static/vendor/videojs-hls-quality-selector/js/videojs-hls-quality-selector.js"></script>
 
     <script>
         var player = videojs('video', {autoplay: {{isAutoPlay}}, errorDisplay: false, liveui: true, liveTracker:true});
-        player.hlsQualitySelector();
     </script>
 
     <script>
