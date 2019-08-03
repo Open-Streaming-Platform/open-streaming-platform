@@ -13,6 +13,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
+from flaskext.markdown import Markdown
 from apiv1 import api_v1
 
 import uuid
@@ -129,6 +130,9 @@ security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
+
+#Initialize Flask-Markdown
+md = Markdown(app)
 
 # Establish Channel User List
 streamUserList = {}

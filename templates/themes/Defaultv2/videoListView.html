@@ -27,7 +27,7 @@
                     {% endif %}
                     {% if channelData.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                     <span>
-                        <p>{{channelData.description}}</p>
+                        <p>{{channelData.description|markdown}}</p>
                     </span><br>
                     <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
                 </div>
