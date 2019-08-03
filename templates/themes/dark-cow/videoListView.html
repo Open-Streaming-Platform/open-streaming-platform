@@ -27,7 +27,7 @@
                     {% endif %}
                     {% if channelData.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                     <span>
-                        <p>{{channelData.description}}</p>
+                        <p>{{channelData.description|markdown}}</p>
                     </span><br>
                 </div>
             </div>
