@@ -125,7 +125,7 @@
         </div>
         <hr style="width: 100%;">
         <div class="row m-2">
-          <div class="videodescription">{% if video.description != None %}<p>{{video.description}}</p> {% else %}No Description Available {% endif %}</div>
+          <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
         </div>
         {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
         <div class="row m-2">
@@ -140,7 +140,7 @@
               </div>
               <div class="col">
                 <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
-                <p>{{comment.comment}}</p>
+                <p>{{comment.comment|markdown}}</p>
               </div>
               <div class="col-lg-2 col-md-2">
                 <div class="float-md-right float-left">
@@ -442,6 +442,12 @@
 
   var socket = io();
 </script>
+
+<script>
+    var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
+    var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+</script>
+
 
 <script>
   socket.on('connect', function () {
