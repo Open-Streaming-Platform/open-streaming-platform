@@ -714,7 +714,7 @@ def view_page(loc):
 
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
-            streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            streamURL = '/show/' + requestedChannel.channelLoc + '.m3u8'
         elif requestedChannel.record is True:
             streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
         elif requestedChannel.record is False:
