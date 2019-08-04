@@ -10,8 +10,8 @@
 <div class="container-fluid p-2" id="index-live-container">
     {% if sysSettings.serverMessage != "" or sysSettings.serverMessage != None %}
     <div class="jumbotron shadow mt-2 p-3">
-        <div class="row">
-            <h2 class="display-5"><b>Server MOTD</b></h2>
+        <div class="row p-2">
+            <h2 class="display-5"><b>Server Message</b></h2><br>
             {{sysSettings.serverMessage|markdown}}
         </div>
     </div>
