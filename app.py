@@ -251,7 +251,7 @@ def init_db_values():
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
         # Import Theme Data into Theme Dictionary
-        with open('templates/' + sysSettings.systemTheme +'/theme.json') as f:
+        with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
             global themeData
 
             themeData = json.load(f)
