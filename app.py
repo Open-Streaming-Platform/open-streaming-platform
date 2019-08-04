@@ -137,6 +137,9 @@ md = Markdown(app)
 # Establish Channel User List
 streamUserList = {}
 
+# Create Theme Data Dictionary
+themeData = {}
+
 
 def init_db_values():
     db.create_all()
@@ -238,7 +241,7 @@ def init_db_values():
         app.config['SECURITY_FORGOT_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/forgot_password.html'
         app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/login_user.html'
         app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/register_user.html'
-        app.config['SECURITY_SEND_CONFIRMATION_TEMPLATE'] = 'themes/'  + sysSettings.systemTheme + '/security/send_confirmation.html'
+        app.config['SECURITY_SEND_CONFIRMATION_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/send_confirmation.html'
         app.config['SECURITY_RESET_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/reset_password.html'
         app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_RESET'] = sysSettings.siteName + " - Password Reset Request"
         app.config['SECURITY_EMAIL_SUBJECT_REGISTER'] = sysSettings.siteName + " - Welcome!"
@@ -246,6 +249,12 @@ def init_db_values():
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
 
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
+
+        # Import Theme Data into Theme Dictionary
+        with open('templates/' + sysSettings.systemTheme +'/theme.json') as f:
+            global themeData
+
+            themeData = json.load(f)
 
         ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
         if config.dbLocation[:6] != "sqlite":
@@ -382,6 +391,13 @@ def videoupload_allowedExt(filename):
         return True
     else:
         return False
+
+def checkOverride(themeHTMLFile):
+    if themeHTMLFile in themeData['Override']:
+        return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
+    else:
+        return "themes/Defaultv2/" + themeHTMLFile
+
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
@@ -537,12 +553,12 @@ def user_registered_sighandler(app, user, confirm_token):
 @app.errorhandler(404)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
-    return render_template('themes/' + sysSettings.systemTheme + '/404.html', sysSetting=sysSettings), 404
+    return render_template(checkOverride('404.html'), sysSetting=sysSettings), 404
 
 @app.errorhandler(500)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
-    return render_template('themes/' + sysSettings.systemTheme + '/500.html', sysSetting=sysSettings, error=e), 500
+    return render_template(checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
 
 
 @app.teardown_appcontext
@@ -565,7 +581,7 @@ def main_page():
 
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False).order_by(func.random()).limit(16)
 
-        return render_template('themes/' + sysSettings.systemTheme + '/index.html', streamList=activeStreams, randomRecorded=randomRecorded)
+        return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded)
 
 @app.route('/channels')
 def channels_page():
@@ -577,8 +593,7 @@ def channels_page():
         for channel in Channel.Channel.query.all():
             if len(channel.recordedVideo) > 0:
                 channelList.append(channel)
-    return render_template('themes/' + sysSettings.systemTheme + '/channels.html', channelList=channelList)
-
+    return render_template(checkOverride('channels.html'), channelList=channelList)
 
 @app.route('/channel/<chanID>/')
 def channel_view_page(chanID):
@@ -593,7 +608,7 @@ def channel_view_page(chanID):
 
         # Sort Video to Show Newest First
         recordedVids.sort(key=lambda x: x.videoDate, reverse=True)
-        return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, title="Channels - Videos")
+        return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, title="Channels - Videos")
     else:
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
@@ -619,7 +634,7 @@ def topic_page():
             if topicQuery != None:
                 topicsList.append(topicQuery)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/topics.html', topicsList=topicsList)
+    return render_template(checkOverride('topics.html'), topicsList=topicsList)
 
 
 @app.route('/topic/<topicID>/')
@@ -632,7 +647,7 @@ def topic_view_page(topicID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streamsQuery, recordedVids=recordedVideoQuery, title="Topics - Videos")
+    return render_template(checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, title="Topics - Videos")
 
 @app.route('/streamers')
 def streamers_page():
@@ -658,7 +673,7 @@ def streamers_page():
         if userQuery != None:
             streamerList.append(userQuery)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/streamers.html', streamerList=streamerList)
+    return render_template(checkOverride('streamers.html'), streamerList=streamerList)
 
 @app.route('/streamers/<userID>/')
 def streamers_view_page(userID):
@@ -680,7 +695,7 @@ def streamers_view_page(userID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template('themes/' + sysSettings.systemTheme + '/videoListView.html', openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName)
+    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName)
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
@@ -705,7 +720,7 @@ def view_page(loc):
 
     if requestedChannel.protected:
         if not check_isValidChannelViewer(requestedChannel.id):
-            return render_template('themes/' + sysSettings.systemTheme + '/channelProtectionAuth.html')
+            return render_template(checkOverride('channelProtectionAuth.html'))
 
     global streamUserList
 
@@ -735,7 +750,7 @@ def view_page(loc):
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled == True:
-                return render_template('themes/' + sysSettings.systemTheme + '/chatpopout.html', stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel)
+                return render_template(checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -761,7 +776,7 @@ def view_page(loc):
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template('themes/' + sysSettings.systemTheme + '/channelplayer.html', stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash, rtmpURI=rtmpURI)
+            return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -770,7 +785,7 @@ def view_page(loc):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template('themes/' + sysSettings.systemTheme + '/player_embed.html', stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+            return render_template(checkOverride('player_embed.html'), stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
 
     else:
         flash("No Live Stream at URL","error")
@@ -785,7 +800,7 @@ def view_vid_page(videoID):
 
     if recordedVid.channel.protected:
         if not check_isValidChannelViewer(recordedVid.channel.id):
-            return render_template('themes/' + sysSettings.systemTheme + '/channelProtectionAuth.html')
+            return render_template(checkOverride('channelProtectionAuth.html'))
 
     if recordedVid != None:
         recordedVid.views = recordedVid.views + 1
@@ -820,7 +835,7 @@ def view_vid_page(videoID):
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
 
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer.html', video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, startTime=startTime)
+            return render_template(checkOverride('vidplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, startTime=startTime)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
@@ -829,7 +844,7 @@ def view_vid_page(videoID):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template('themes/' + sysSettings.systemTheme + '/vidplayer_embed.html', video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
+            return render_template(checkOverride('vidplayer_embed.html'), video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
     else:
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
@@ -1157,7 +1172,7 @@ def upload_vid():
 def user_page():
     if request.method == 'GET':
         sysSettings = settings.settings.query.first()
-        return render_template('themes/' + sysSettings.systemTheme + '/userSettings.html')
+        return render_template(checkOverride('userSettings.html'))
     elif request.method == 'POST':
         emailAddress = request.form['emailAddress']
         password1 = request.form['password1']
@@ -1446,7 +1461,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template('themes/' + sysSettings.systemTheme + '/admin.html', appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -2125,7 +2140,7 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
-    return render_template('themes/' + sysSettings.systemTheme + '/user_channels.html', channels=user_channels, topics=topicList, viewStats=user_channels_stats, channelChatBGOptions=channelChatBGOptions, channelChatAnimationOptions=channelChatAnimationOptions)
+    return render_template(checkOverride('user_channels.html'), channels=user_channels, topics=topicList, viewStats=user_channels_stats, channelChatBGOptions=channelChatBGOptions, channelChatAnimationOptions=channelChatAnimationOptions)
 
 @app.route('/settings/api', methods=['GET'])
 @login_required
@@ -2133,7 +2148,7 @@ def settings_channels_page():
 def settings_apikeys_page():
     sysSettings = settings.settings.query.first()
     apiKeyQuery = apikey.apikey.query.filter_by(userID=current_user.id).all()
-    return render_template('themes/' + sysSettings.systemTheme + '/apikeys.html',apikeys=apiKeyQuery)
+    return render_template(checkOverride('apikeys.html'),apikeys=apiKeyQuery)
 
 @app.route('/settings/api/<string:action>', methods=['POST'])
 @login_required
