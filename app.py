@@ -1460,6 +1460,7 @@ def admin_page():
             smtpPort = request.form['smtpPort']
             smtpUser = request.form['smtpUser']
             smtpPassword = request.form['smtpPassword']
+            serverMessage = request.form['serverMessage']
             theme = request.form['theme']
 
             recordSelect = False
@@ -1523,6 +1524,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.serverMessage = serverMessage
             if systemLogo != None:
                 sysSettings.systemLogo = systemLogo
 
@@ -1631,6 +1633,8 @@ def admin_page():
                 serverSettings.id = int(restoreDict['settings'][0]['id'])
                 serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
                 serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+                if 'serverMessage' in restoreDict['settings'][0]:
+                    serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
 
                 # Remove Old Settings
                 oldSettings = settings.settings.query.all()

@@ -22,6 +22,7 @@ class settings(db.Model):
     systemTheme = db.Column(db.String(255))
     systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
+    serverMessage = db.Column(db.String(2048))
 
     def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
@@ -44,6 +45,7 @@ class settings(db.Model):
         self.systemTheme = "Defaultv2"
         self.version = version
         self.systemLogo = "/static/img/logo.png"
+        self.serverMessage = ""
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -53,6 +55,7 @@ class settings(db.Model):
             'siteName': self.siteName,
             'siteAddress': self.siteAddress,
             'siteLogo': self.systemLogo,
+            'serverMessage': self.serverMessage,
             'allowRegistration': self.allowRegistration,
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,

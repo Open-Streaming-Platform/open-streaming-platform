@@ -144,6 +144,12 @@
                                   <br>
                                   SMTP TLS:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                                  <br>
+                                  <h4><i class="fas fa-stream"></i> Other</h4>
+                                  <div class="form-group">
+                                    <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label>
+                                    <textarea class="form-control" name="serverMessage" id="serverMessage" value="" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
+                                  </div>
                               </div>
                               <hr>
                           </div><br>
@@ -573,6 +579,11 @@
         }
     });
 </script>
+
+<script>
+    var simplemde1 = new SimpleMDE({ element: document.getElementById("serverMessage") });
+</script>
+
 
 <script>
 $('#search').on('input', function(){
