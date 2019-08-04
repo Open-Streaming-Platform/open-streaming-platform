@@ -7,6 +7,16 @@
 {% block body %}
 
 <div class="container-fluid p-2" id="index-live-container">
+    <div class="jumbotron shadow mt-2 p-3">
+        <div class="row p-2">
+            <div>
+                <h2 class="display-5"><b>Server Message</b></h2>
+            </div>
+        </div>
+        <div class="row p-2">
+            {{sysSettings.serverMessage|markdown}}
+        </div>
+    </div>
     <div class="row m-2">
         <div class="index-live-title"><b>Live Now</b></div>
     </div>
