@@ -35,3 +35,15 @@ class videoUpvotes(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class commentUpvotes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer)
+    commentID = db.Column(db.Integer, db.ForeignKey('videoComments.id'))
+
+    def __init__(self,userID, commentID):
+        self.userID = userID
+        self.commentID = commentID
+
+    def __repr__(self):
+        return '<id %r>' % self.id

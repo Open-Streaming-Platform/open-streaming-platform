@@ -40,3 +40,4 @@ class User(db.Model, UserMixin):
     pictureLocation = db.Column(db.String(255))
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="joined")
+    channels = db.relationship('Channel', backref='owner', lazy="joined")
