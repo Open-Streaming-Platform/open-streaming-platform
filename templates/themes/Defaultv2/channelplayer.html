@@ -6,6 +6,12 @@
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+    <script src="/static/vendor/videojs/js/video.js"></script>
+    {% if sysSettings.adaptiveStreaming == True %}
+    <link href="/static/vendor/videojs-resolution-switcher/css/videojs-resolution-switcher.css" rel="stylesheet">
+    <script src="/static/vendor/videojs-resolution-switcher/js/videojs-resolution-switcher.js"></script>
+    {% endif %}
+
 
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -240,8 +246,6 @@
     });
     </script>
 
-    <script src="/static/vendor/videojs/js/video.js"></script>
-
     <script>
         var player = videojs('video', {
             autoplay: true,
@@ -260,11 +264,49 @@
         });
 
         player.ready(function() {
+               {% if sysSettings.adaptiveStreaming == True %}
+               this.src([
+                   {
+                       src: '{{streamURL}}!Auto',
+                       type: 'application/x-mpegURL',
+                       label: "Auto",
+                       res: "1"
+                   },
+                   {
+                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_240.m3u8?240',
+                       type: 'application/x-mpegURL',
+                       label: "240p",
+                       res: "2"
+                   },
+                   {
+                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_480.m3u8?480',
+                       type: 'application/x-mpegURL',
+                       label: "480p",
+                       res: "3"
+                   },
+                   {
+                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_720.m3u8?720',
+                       type: 'application/x-mpegURL',
+                       label: "720p",
+                       res: "4"
+                   },
+                   {
+                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_1080.m3u8?1080',
+                       type: 'application/x-mpegURL',
+                       label: "1080p",
+                       res: "5"
+                   }
+               ]);
+               {% else %}
                this.src({
                        src: '{{streamURL}}',
                        type: 'application/x-mpegURL'
                });
+               {% endif %}
        });
+        {% if sysSettings.adaptiveStreaming == True %}
+        player.videoJSResolutionSwitcher();
+        {% endif %}
        player.play();
     </script>
 
