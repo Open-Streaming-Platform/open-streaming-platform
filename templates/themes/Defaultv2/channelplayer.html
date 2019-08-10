@@ -8,8 +8,7 @@
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
     <script src="/static/vendor/videojs/js/video.js"></script>
     {% if sysSettings.adaptiveStreaming == True %}
-    <link href="/static/vendor/videojs-resolution-switcher/css/videojs-resolution-switcher.css" rel="stylesheet">
-    <script src="/static/vendor/videojs-resolution-switcher/js/videojs-resolution-switcher.js"></script>
+    <script src="/static/vendor/silvermine-videojs-quality-selector/js/silvermine-videojs-quality-selector.min.js"></script>
     {% endif %}
 
 
@@ -264,7 +263,7 @@
         });
 
         {% if sysSettings.adaptiveStreaming %}
-        player.videoJsResolutionSwitcher();
+        player.controlBar.addChild('QualitySelector');
         {% endif %}
 
         player.ready(function() {
@@ -274,31 +273,27 @@
                        src: '{{streamURL}}!Auto',
                        type: 'application/x-mpegURL',
                        label: "Auto",
-                       res: "1"
+                       selected: true
                    },
                    {
                        src: '/live-adapt/{{channel.channelLoc}}_360/index.m3u8?360',
                        type: 'application/x-mpegURL',
                        label: "360p",
-                       res: "2"
                    },
                    {
                        src: '/live-adapt/{{channel.channelLoc}}_480/index.m3u8?480',
                        type: 'application/x-mpegURL',
                        label: "480p",
-                       res: "3"
                    },
                    {
                        src: '/live-adapt/{{channel.channelLoc}}_720/index.m3u8?720',
                        type: 'application/x-mpegURL',
                        label: "720p",
-                       res: "4"
                    },
                    {
                        src: '/live-adapt/{{channel.channelLoc}}_1080/index.m3u8?1080',
                        type: 'application/x-mpegURL',
                        label: "1080p",
-                       res: "5"
                    }
                ]);
                {% else %}
