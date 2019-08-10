@@ -48,6 +48,7 @@ class Channel(db.Model):
         self.currentViewers = 0
         self.protected = False
         self.channelMuted = False
+        self.defaultStreamName = ""
 
     def __repr__(self):
         return '<id %r>' % self.id
