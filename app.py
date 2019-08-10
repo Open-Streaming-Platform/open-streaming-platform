@@ -219,6 +219,10 @@ def init_db_values():
         for chan in channelQuery:
             chan.currentViewers = 0
             db.session.commit()
+        channelQuery = Channel.Channel.query.filter_by(defaultStreamName=None).all()
+        for chan in channelQuery:
+            chan.defaultStreamName = ""
+            db.session.commit()
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir("/var/www/stream-thumb"):
             try:
@@ -2459,11 +2463,9 @@ def streamkey_check():
                         db.session.delete(stream)
                     db.session.commit()
 
-                defaultStreamName = ""
-                if channelRequest.defaultStreamName != None or channelRequest.defaultStreamName != "":
+                defaultStreamName = normalize_date(str(currentTime))
+                if channelRequest.defaultStreamName != "":
                     defaultStreamName = channelRequest.defaultStreamName
-                else:
-                    defaultStreamName = normalize_date(str(currentTime))
 
                 newStream = Stream.Stream(key, defaultStreamName, int(channelRequest.id), channelRequest.topic)
                 db.session.add(newStream)
