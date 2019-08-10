@@ -252,14 +252,6 @@
             errorDisplay: false,
             liveui: true,
             liveTracker:true,
-            plugins: {
-            {% if sysSettings.adaptiveStreaming == True %}
-                 videoJsResolutionSwitcher: {
-                    default: '1',
-                    dynamicLabel: true
-                  }
-            {% endif %}
-            },
             html5:
                 {
                     nativeAudioTracks: false,
@@ -271,8 +263,12 @@
                 }
         });
 
+        {% if sysSettings.adaptiveStreaming %}
+        player.videoJsResolutionSwitcher();
+        {% endif %}
+
         player.ready(function() {
-               {% if sysSettings.adaptiveStreaming == True %}
+               {% if sysSettings.adaptiveStreaming %}
                this.src([
                    {
                        src: '{{streamURL}}!Auto',
