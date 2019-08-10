@@ -1536,7 +1536,7 @@ def admin_page():
                 externalIP = socket.gethostbyname(validAddress)
             except socket.gaierror:
                 flash("Invalid Server Address/IP", "error")
-                return redirect(url_for("admin_page"))
+                return redirect(url_for("admin_page", page="settings"))
 
             sysSettings.siteName = serverName
             sysSettings.siteAddress = serverAddress
