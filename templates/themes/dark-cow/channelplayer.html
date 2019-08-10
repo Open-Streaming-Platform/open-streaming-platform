@@ -254,11 +254,6 @@
     {% endblock %}
 
     {% block scripts %}
-    <script>
-        $(document).ready(function () {
-            monitor_vid();
-        });
-    </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
 
@@ -286,6 +281,12 @@
             });
         });
         player.play();
+    </script>
+
+       <script>
+        $(document).ready(function () {
+            monitor_vid(player);
+        });
     </script>
 
 
@@ -452,10 +453,10 @@
 
     <script>
         //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
-        function monitor_vid() {
+        function monitor_vid(vidplayer) {
 
 
-            videoJSObj = videojs('video');
+            videoJSObj = vidplayer;
             currentReadyState = videoJSObj.readyState();
 
             videoWindowState = document.getElementsByTagName('video');
@@ -542,7 +543,7 @@
         }
 
         setInterval(function () {
-            monitor_vid();
+            monitor_vid(player);
         }, 10000);
     </script>
 

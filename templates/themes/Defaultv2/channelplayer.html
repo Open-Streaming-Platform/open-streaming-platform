@@ -431,10 +431,10 @@
 
     <script>
     //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
-    function monitor_vid(player){
+    function monitor_vid(vidplayer){
 
 
-        videoJSObj = player;
+        videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
 
         videoWindowState = document.getElementsByTagName('video');
