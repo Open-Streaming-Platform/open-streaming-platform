@@ -13,25 +13,25 @@
         <div class="col-lg-10 col-md-12" style="margin-top:15px;">
             <ul class="nav nav-pills mb-3" id="admin-nav" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" role="tab" id="admin-nav-dashboard" href="#dashboard" data-toggle="pill" aria-controls="admin-nav-dashboard" aria-selected="true">Dashboard</a>
+                    <a class="nav-link {% if page == None or page == 'dash' %} active {% endif %}"  role="tab" id="admin-nav-dashboard" href="#dashboard" data-toggle="pill" aria-controls="admin-nav-dashboard" aria-selected="true">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
+                    <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
+                    <a class="nav-link {% if page == 'users' %} active {% endif %}" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-topics" href="#topicsList" data-toggle="pill" aria-controls="admin-nav-topics" aria-selected="false">Topics</a>
+                    <a class="nav-link {% if page == 'topics' %} active {% endif %}" role="tab" id="admin-nav-topics" href="#topicsList" data-toggle="pill" aria-controls="admin-nav-topics" aria-selected="false">Topics</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-channels" href="#channelsList" data-toggle="pill" aria-controls="admin-nav-channels" aria-selected="false">Channels</a>
+                    <a class="nav-link {% if page == 'channels' %} active {% endif %}" role="tab" id="admin-nav-channels" href="#channelsList" data-toggle="pill" aria-controls="admin-nav-channels" aria-selected="false">Channels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
+                    <a class="nav-link {% if page == 'streams' %} active {% endif %}" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
+                    <a class="nav-link {% if page == 'backup' %} active {% endif %}" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
                 </li>
             </ul>
 

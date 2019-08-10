@@ -1266,6 +1266,7 @@ def admin_page():
                     db.session.delete(topicQuery)
                     db.session.commit()
                     flash("Topic Deleted")
+                    return redirect(url_for('admin_page',page="topics"))
 
                 elif setting == "channel":
                     channelID = int(request.args.get("channelID"))
@@ -1297,6 +1298,7 @@ def admin_page():
                     db.session.delete(channelQuery)
                     db.session.commit()
                     flash("Channel Deleted")
+                    return redirect(url_for('admin_page', page="channels"))
 
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
@@ -1335,6 +1337,7 @@ def admin_page():
                         db.session.delete(userQuery)
                         db.session.commit()
                         flash("User " + str(userQuery.username) + " Deleted")
+                        return redirect(url_for('admin_page', page="users"))
 
                 elif setting == "userRole":
                     userID = int(request.args.get("userID"))
@@ -1350,6 +1353,7 @@ def admin_page():
 
                     else:
                         flash("Invalid Role or User!")
+                    return redirect(url_for('admin_page', page="users"))
 
             elif action == "add":
                 if setting == "userRole":
@@ -1365,6 +1369,7 @@ def admin_page():
                         flash("Added Role to User")
                     else:
                         flash("Invalid Role or User!")
+                    return redirect(url_for('admin_page', page="users"))
             elif action == "toggleActive":
                 if setting == "users":
                     userID = int(request.args.get("userID"))
@@ -1377,6 +1382,7 @@ def admin_page():
                             userQuery.active = True
                             flash("User Enabled")
                         db.session.commit()
+                    return redirect(url_for('admin_page', page="users"))
             elif action == "backup":
                 dbTables = db.engine.table_names()
                 dbDump = {}
@@ -1397,6 +1403,9 @@ def admin_page():
 
             return redirect(url_for('admin_page'))
 
+        page = None
+        if request.args.get('page') is not None:
+            page = str(request.args.get("page"))
         repoSHA = "N/A"
         remoteSHA = repoSHA
         branch = "Local Install"
@@ -1461,7 +1470,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -1578,6 +1587,7 @@ def admin_page():
 
             global mail
             mail = Mail(app)
+            return redirect(url_for('admin_page', page="settings"))
 
         elif settingType == "topics":
 
@@ -1621,6 +1631,7 @@ def admin_page():
                 db.session.add(newTopic)
 
             db.session.commit()
+            return redirect(url_for('admin_page', page="topics"))
 
         elif settingType == "newuser":
 
@@ -1636,6 +1647,7 @@ def admin_page():
             user = Sec.User.query.filter_by(username=username).first()
             user_datastore.add_role_to_user(user, 'User')
             db.session.commit()
+            return redirect(url_for('admin_page', page="users"))
 
         elif settingType == "dbRestore":
             restoreJSON = None
@@ -1942,6 +1954,7 @@ def admin_page():
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                 db.session.commit()
                 flash("Database Restored from Backup", "success")
+                return redirect(url_for('admin_page', page="backup"))
 
         return redirect(url_for('admin_page'))
 
