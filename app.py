@@ -2363,7 +2363,9 @@ def live_adapt_stream_image_sender(filename):
 
 @app.route('/live-adapt/<string:channelID>/<path:filename>')
 def live_adapt_stream_directory_sender(channelID, filename):
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID[:-4]).first()
+    parsedPath = channelID.split("_")
+    channelloc = parsedPath[0]
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelloc).first()
     if channelQuery.protected:
         if check_isValidChannelViewer(channelQuery.id):
             redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
