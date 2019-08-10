@@ -39,8 +39,11 @@
       this.player_.currentResolution(this.options_.label);
     };
     ResolutionMenuItem.prototype.update = function(){
+      if(!this.player_)return false;
       var selection = this.player_.currentResolution();
       this.selected(this.options_.label === selection.label);
+      this.player_.controlBar.resolutionSwitcher.lastElementChild.textContent = selection.label;
+      this.player_.controlBar.resolutionSwitcher.children[1].classList.remove('vjs-hidden');
     };
     MenuItem.registerComponent('ResolutionMenuItem', ResolutionMenuItem);
 
@@ -178,10 +181,8 @@
           .setSourcesSanitized(sources, label, customSourcePicker || settings.customSourcePicker)
           .one(handleSeekEvent, function() {
             player.currentTime(currentTime);
-            player.handleTechSeeked_();
             if(!isPaused){
-              // Start playing and hide loadingSpinner (flash issue ?)
-              player.play().handleTechSeeked_();
+              player.play();
             }
             player.trigger('resolutionchange');
           });
