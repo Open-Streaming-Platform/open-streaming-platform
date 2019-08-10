@@ -1522,6 +1522,13 @@ def admin_page():
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
                     systemLogo = "/images/" + filename
 
+            validAddress = formatSiteAddress(serverAddress)
+            try:
+                externalIP = socket.gethostbyname(validAddress)
+            except socket.gaierror:
+                flash("Invalid Server Address/IP", "error")
+                return redirect(url_for("admin_page"))
+
             sysSettings.siteName = serverName
             sysSettings.siteAddress = serverAddress
             sysSettings.smtpSendAs = smtpSendAs
@@ -2179,7 +2186,7 @@ def initialSetup():
         password1 = request.form['password1']
         password2 = request.form['password2']
         serverName = request.form['serverName']
-        serverAddress = request.form['serverAddress']
+        serverAddress = str(request.form['serverAddress'])
         smtpSendAs = request.form['smtpSendAs']
         smtpAddress = request.form['smtpAddress']
         smtpPort = request.form['smtpPort']
@@ -2223,6 +2230,12 @@ def initialSetup():
         if 'smtpSSL' in request.form:
             smtpSSL = True
 
+        validAddress = formatSiteAddress(serverAddress)
+        try:
+            externalIP = socket.gethostbyname(validAddress)
+        except socket.gaierror:
+            flash("Invalid Server Address/IP", "error")
+            return redirect(url_for("initialSetup"))
 
         if password1 == password2:
 
