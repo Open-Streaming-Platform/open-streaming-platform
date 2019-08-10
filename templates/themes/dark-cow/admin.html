@@ -36,7 +36,7 @@
             </ul>
 
             <div class="tab-content" id="admin-content">
-                <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="admin-content-dashboard" id="dashboard">
+                <div class="tab-pane fade {% if page == None or page == 'dash' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-dashboard" id="dashboard">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
@@ -92,7 +92,7 @@
                         <br>
                     </div>
                 </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-settings" id="adminSettings">
+                <div class="tab-pane fade {% if page == 'settings' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-settings" id="adminSettings">
                     <h5>Configuration Options</h5>
                       <form action="/settings/admin" enctype=multipart/form-data method="post">
                           <div class="row">
@@ -163,7 +163,7 @@
                           </div>
                       </form>
                 </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
+                <div class="tab-pane fade {% if page == 'users' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
                     <h5>User List <button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button></h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -265,7 +265,7 @@
                           </div>
                         </div>
                     </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
+                <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
                     <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
                     <div class="container-fluid">
                         {% for topic in topicsList %}
@@ -347,7 +347,7 @@
                       </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-channels" id="channelsList">
+                <div class="tab-pane fade {% if page == 'channels' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-channels" id="channelsList">
                     <h5>Channels List</h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -395,7 +395,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-streams" id="streamsList">
+                <div class="tab-pane fade {% if page == 'streams' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-streams" id="streamsList">
                     <h5>Stream List</h5>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
@@ -432,7 +432,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="tab-pane fade" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
+                <div class="tab-pane fade {% if page == 'backup' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
