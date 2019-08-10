@@ -235,11 +235,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-    $(document).ready( function () {
-        monitor_vid();
-    });
-    </script>
 
     <script>
         var player = videojs('video', {
@@ -266,6 +261,12 @@
                });
        });
        player.play();
+    </script>
+
+    <script>
+        $(document).ready( function () {
+            monitor_vid(player);
+        });
     </script>
 
 
@@ -430,10 +431,10 @@
 
     <script>
     //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
-    function monitor_vid(vidPlayer){
+    function monitor_vid(player){
 
 
-        videoJSObj = vidPlayer;
+        videoJSObj = player;
         currentReadyState = videoJSObj.readyState();
 
         videoWindowState = document.getElementsByTagName('video');
