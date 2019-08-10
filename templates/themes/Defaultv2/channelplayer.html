@@ -252,6 +252,14 @@
             errorDisplay: false,
             liveui: true,
             liveTracker:true,
+            plugins: {
+            {% if sysSettings.adaptiveStreaming == True %}
+                 videoJsResolutionSwitcher: {
+                    default: '1',
+                    dynamicLabel: true
+                  }
+            {% endif %}
+            },
             html5:
                 {
                     nativeAudioTracks: false,
@@ -273,25 +281,25 @@
                        res: "1"
                    },
                    {
-                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_240.m3u8?240',
+                       src: '/live-adapt/{{channel.channelLoc}}_360/index.m3u8?360',
                        type: 'application/x-mpegURL',
-                       label: "240p",
+                       label: "360p",
                        res: "2"
                    },
                    {
-                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_480.m3u8?480',
+                       src: '/live-adapt/{{channel.channelLoc}}_480/index.m3u8?480',
                        type: 'application/x-mpegURL',
                        label: "480p",
                        res: "3"
                    },
                    {
-                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_720.m3u8?720',
+                       src: '/live-adapt/{{channel.channelLoc}}_720/index.m3u8?720',
                        type: 'application/x-mpegURL',
                        label: "720p",
                        res: "4"
                    },
                    {
-                       src: '/live-adapt/{{channel.channelLoc}}/{{channelLoc}}_1080.m3u8?1080',
+                       src: '/live-adapt/{{channel.channelLoc}}_1080/index.m3u8?1080',
                        type: 'application/x-mpegURL',
                        label: "1080p",
                        res: "5"
@@ -304,9 +312,6 @@
                });
                {% endif %}
        });
-        {% if sysSettings.adaptiveStreaming == True %}
-        player.videoJSResolutionSwitcher();
-        {% endif %}
        player.play();
     </script>
 
