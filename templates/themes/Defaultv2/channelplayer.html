@@ -7,10 +7,6 @@
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
     <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
     <script src="/static/vendor/videojs/js/video.js"></script>
-    {% if sysSettings.adaptiveStreaming == True %}
-    <script src="/static/vendor/silvermine-videojs-quality-selector/js/silvermine-videojs-quality-selector.min.js"></script>
-    {% endif %}
-
 
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -264,36 +260,10 @@
 
 
         player.ready(function() {
-               {% if sysSettings.adaptiveStreaming %}
-               this.src([
-                   {
-                       src: '{{streamURL}}!Auto',
-                       type: 'application/x-mpegURL',
-                       label: "Auto",
-                       selected: true
-                   },
-                   {
-                       src: '/live-adapt/{{channel.channelLoc}}_480/index.m3u8?480',
-                       type: 'application/x-mpegURL',
-                       label: "480p",
-                   },
-                   {
-                       src: '/live-adapt/{{channel.channelLoc}}_720/index.m3u8?720',
-                       type: 'application/x-mpegURL',
-                       label: "720p",
-                   },
-                   {
-                       src: '/live-adapt/{{channel.channelLoc}}_1080/index.m3u8?1080',
-                       type: 'application/x-mpegURL',
-                       label: "1080p",
-                   }
-               ]);
-               {% else %}
                this.src({
                        src: '{{streamURL}}',
                        type: 'application/x-mpegURL'
                });
-               {% endif %}
        });
        player.play();
     </script>
