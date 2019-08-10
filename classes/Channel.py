@@ -23,6 +23,7 @@ class Channel(db.Model):
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
     channelMuted = db.Column(db.Boolean)
+    defaultStreamName = db.Column(db.String(255))
     stream = db.relationship('Stream', backref='channel', lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")

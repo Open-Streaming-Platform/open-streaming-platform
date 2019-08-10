@@ -2056,6 +2056,8 @@ def settings_channels_page():
             chatAnimation = request.form['chatAnimation']
             chatTextColor = request.form['chatTextColor']
 
+            defaultstreamName = request.form['channelStreamName']
+
             # TODO Validate ChatBG and chatAnimation
 
             requestedChannel = Channel.Channel.query.filter_by(streamKey=origStreamKey).first()
@@ -2072,6 +2074,7 @@ def settings_channels_page():
                 requestedChannel.chatAnimation = chatAnimation
                 requestedChannel.chatTextColor = chatTextColor
                 requestedChannel.protected = protection
+                requestedChannel.defaultStreamName = defaultstreamName
 
                 if 'photo' in request.files:
                     file = request.files['photo']
@@ -2456,7 +2459,13 @@ def streamkey_check():
                         db.session.delete(stream)
                     db.session.commit()
 
-                newStream = Stream.Stream(key, normalize_date(str(currentTime)), int(channelRequest.id), channelRequest.topic)
+                defaultStreamName = ""
+                if channelRequest.defaultStreamName != None or channelRequest.defaultStreamName != "":
+                    defaultStreamName = channelRequest.defaultStreamName
+                else:
+                    defaultStreamName = normalize_date(str(currentTime))
+
+                newStream = Stream.Stream(key, defaultStreamName, int(channelRequest.id), channelRequest.topic)
                 db.session.add(newStream)
                 db.session.commit()
 
