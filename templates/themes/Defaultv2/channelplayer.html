@@ -262,9 +262,6 @@
                 }
         });
 
-        {% if sysSettings.adaptiveStreaming %}
-        player.controlBar.addChild('QualitySelector');
-        {% endif %}
 
         player.ready(function() {
                {% if sysSettings.adaptiveStreaming %}
