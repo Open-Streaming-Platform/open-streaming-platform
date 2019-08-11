@@ -204,6 +204,10 @@ def init_db_values():
         if sysSettings.allowUploads == None:
             sysSettings.allowUploads = False
             db.session.commit()
+        # Sets Blank Server Message to Prevent Crash if set to None
+        if sysSettings.serverMessage == None:
+            sysSettings.serverMessage = ""
+            db.session.commit()
         # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Alpha to Beta
         channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
         for chan in channelQuery:
