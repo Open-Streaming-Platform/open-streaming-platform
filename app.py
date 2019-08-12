@@ -51,6 +51,9 @@ from conf import config
 
 version = "beta-3"
 
+# TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
+hubURL = "https://hub.openstreamingplatform.com"
+
 app = Flask(__name__)
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -402,6 +405,7 @@ def videoupload_allowedExt(filename):
 
 def checkOverride(themeHTMLFile):
     if themeHTMLFile in themeData['Override']:
+        sysSettings = db.session.query(settings.settings).first()
         return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
     else:
         return "themes/Defaultv2/" + themeHTMLFile
