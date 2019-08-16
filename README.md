@@ -151,9 +151,9 @@ cd nginx-1.13.10
 make
 make install
 ```
-7: Copy the NGINX conf file to the configuration directory
+7: Copy the NGINX conf files to the configuration directory
 ```
-cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 ```
 8: Copy the Gunicorn and NGINX SystemD files
 ```
@@ -242,10 +242,9 @@ sudo pip3 install -r /opt/osp/setup/requirements.txt
 ```
 sudo chown -R www-data:www-data /opt/osp
 ```
-* Typically, it is recommended to upgrade to the newest nginx.conf file to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
+* Typically, it is recommended to upgrade to the newest Nginx .conf files to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
 ```
-cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
-cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+cp /opt/osp/setup/nginx/osp-*.conf /usr/local/nginx/conf/
 sudo systemctl restart nginx
 ```
 

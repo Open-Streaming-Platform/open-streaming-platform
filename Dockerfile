@@ -54,7 +54,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 
 
 # Configure NGINX
-RUN cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+RUN cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \

@@ -45,7 +45,7 @@ fi
 # Grab Configuration
 if cd $cwd/nginx
 then
-        sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
+        sudo cp *.conf /usr/local/nginx/conf/
 else
         echo "Unable to find downloaded Nginx config directory.  Aborting."
         exit 1
