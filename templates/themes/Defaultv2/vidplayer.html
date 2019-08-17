@@ -280,7 +280,7 @@
         </div>
         <div class="modal-body">
           <div class="player ml-2">
-            <video id="videoClip" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+            <video id="videoClip m-2" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
               <source src="{{streamURL}}" type="video/mp4">
               <p class="vjs-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -289,18 +289,18 @@
             </video>
           </div>
           <div id="clipTimeSelect">
-            <form>
+            <form class="form-inline">
               <div class="input-group mb-3 w-50">
                 <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button" id="clipStartTimeButton">A</button>
+                  <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClickStart()">A</button>
                 </div>
-                <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" onclick="setClickStart()">
+                <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly>
               </div>
               <div class="input-group mb-3 w-50">
                 <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button" id="clipStopTimeButton">B</button>
+                  <button class="btn btn-primary" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
                 </div>
-                <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" onclick="setClipStop()">
+                <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly>
               </div>
             </form>
           </div>
