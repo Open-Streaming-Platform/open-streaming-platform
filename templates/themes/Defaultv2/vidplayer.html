@@ -291,17 +291,19 @@
           <br>
           <div id="clipTimeSelect">
             <form class="form-inline">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClickStart()">A</button>
+              <div class="form-row">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClickStart()">A</button>
+                  </div>
+                  <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly>
                 </div>
-                <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly>
-              </div>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                  </div>
+                  <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly>
                 </div>
-                <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly>
               </div>
             </form>
           </div>
