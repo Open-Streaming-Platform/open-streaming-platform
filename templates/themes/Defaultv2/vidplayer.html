@@ -50,6 +50,9 @@
             <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
               <i class="fas fa-arrow-circle-right"></i>
             </button>
+            <button type="button" class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal()">
+              <i class="fas fa-cut"></i>
+            </button>
             <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
               <i class="fas fa-edit"></i>
             </button>
@@ -259,6 +262,52 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-warning">Move</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clipModal" tabindex="-1" role="dialog" aria-labelledby="clipModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="/play/{{video.id}}/clip" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clipModalTitle">Create a Video Clip</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="player ml-2">
+            <video id="videoClip" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="{{streamURL}}" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <div id="clipTimeSelect">
+            <form>
+              <div class="input-group mb-3 w-50">
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary" type="button" id="clipStartTimeButton">A</button>
+                </div>
+                <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" onclick="setClickStart()">
+              </div>
+              <div class="input-group mb-3 w-50">
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary" type="button" id="clipStopTimeButton">B</button>
+                </div>
+                <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" onclick="setClipStop()">
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-warning">Create</button>
         </div>
       </form>
     </div>
@@ -496,4 +545,17 @@
     }
 </script>
 
+{% if video.owningUser == current_user.id %}
+<script>
+  var clipplayer = videojs('videoClip', { autoplay: false });
+</script>
+
+<script>
+  function openClipModal() {
+    player.pause();
+    $("#clipModal").modal();
+  }
+
+</script>
+{% endif %}
 {% endblock %}
