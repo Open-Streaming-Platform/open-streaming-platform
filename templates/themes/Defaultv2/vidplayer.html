@@ -290,31 +290,29 @@
           </div>
           <br>
           <div id="clipTimeSelect">
-            <form class="form-inline">
-              <div class="row">
-                <div class="col-12 col-md-6">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
-                    </div>
-                    <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly>
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
                   </div>
-                </div>
-                <div class="col-12 col-md-6">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
-                    </div>
-                    <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly>
-                  </div>
+                  <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly>
                 </div>
               </div>
-            </form>
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                  </div>
+                  <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-warning">Create</button>
+          <button type="submit" class="btn btn-success">Create</button>
         </div>
       </form>
     </div>
