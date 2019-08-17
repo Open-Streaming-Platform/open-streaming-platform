@@ -3127,6 +3127,7 @@ def get_resource_usage(message):
 
 @socketio.on('generateInviteCode')
 def generateInviteCode(message):
+    inviteCode = str(message['inviteCode'])
     daysToExpire = int(message['daysToExpiration'])
     channelID = int(message['chanID'])
 
@@ -3134,6 +3135,14 @@ def generateInviteCode(message):
 
     if channelQuery is not None:
         newInviteCode = invites.inviteCode(daysToExpire, channelID)
+        if inviteCode != "":
+            inviteCodeQuery = invites.inviteCode(code=inviteCode).first()
+            if inviteCodeQuery != None:
+                newInviteCode.code = inviteCode
+            else:
+                db.session.close()
+                return False
+
         db.session.add(newInviteCode)
         db.session.commit()
 
