@@ -563,6 +563,13 @@
 <script>
   function openClipModal() {
     player.pause();
+
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = null;
+
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = null;
+
     $("#clipModal").modal();
   }
 
