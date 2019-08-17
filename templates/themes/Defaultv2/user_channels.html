@@ -184,13 +184,13 @@
                                                 <div class="row">
                                                     <div class="col">
                                                         <div class="input-group mb-3">
-                                                            <label for="newInviteCodeText-{{channel.id}}" class="col-form-label"><b>Invite Code</b></label><br>
+                                                            <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-1"><b>Invite Code</b></label><br>
                                                             <input name="nullField" id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
                                                         </div>
                                                     </div>
                                                     <div class="col">
                                                         <div class="input-group mb-3">
-                                                            <label for="newInviteCode-{{channel.id}}" class="col-form-label"><b>Days Invite Code Valid</b></label><br>
+                                                            <label for="newInviteCode-{{channel.id}}" class="col-form-label" mr-1><b>Days Invite Code Valid</b></label><br>
                                                             <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
                                                         </div>
                                                     </div>
@@ -675,7 +675,6 @@ function toggleDiv(divID) {
         var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
         var daysToExpire = newInviteElementInput.value;
         var customInviteCode = newInviteTextInput.value;
-        console.log(newInviteTextInput.value);
         socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire, inviteCode: customInviteCode});
     }
 </script>

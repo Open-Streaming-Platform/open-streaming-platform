@@ -3137,7 +3137,7 @@ def generateInviteCode(message):
         newInviteCode = invites.inviteCode(daysToExpire, channelID)
         if selectedInviteCode != "":
             inviteCodeQuery = invites.inviteCode.query.filter_by(code=selectedInviteCode).first()
-            if inviteCodeQuery != None:
+            if inviteCodeQuery is None:
                 newInviteCode.code = selectedInviteCode
             else:
                 db.session.close()
