@@ -308,6 +308,7 @@
                 </div>
               </div>
             </div>
+            <textarea id="clipDescription" name="clipDescription" class="form-control" placeholder="Description of the Clip" maxlength="2048" required>
           </div>
         </div>
         <div class="modal-footer">
@@ -428,6 +429,9 @@
 <script>
     var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
     var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+    {% if video.owningUser == current_user.id %}
+    var simplemde3 = new SimpleMDE({ element: document.getElementById("clipDescription") });
+    {% endif %}
 </script>
 
 <script>
