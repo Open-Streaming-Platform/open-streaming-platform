@@ -279,8 +279,8 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="player ml-2">
-            <video id="videoClip m-2" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
+          <div class="player">
+            <video id="videoClip" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
               <source src="{{streamURL}}" type="video/mp4">
               <p class="vjs-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -288,6 +288,7 @@
               </p>
             </video>
           </div>
+          <br>
           <div id="clipTimeSelect">
             <form class="form-inline">
               <div class="input-group mb-3 w-50">
