@@ -180,13 +180,22 @@
                                         <div class="card">
                                             <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
                                             <div class="card-body">
-                                                <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
-                                                <div class="input-group mb-3">
-                                                    <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    <div class="input-group-append">
-                                                        <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                <form>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-12 col-lg-4">
+                                                            <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-2"><b>Invite Code</b></label>
+                                                            <input name="nullField" id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
+                                                        </div>
+                                                        <div class="form-group col-12 col-lg-4">
+                                                            <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Days Invite Code Valid</b></label>
+                                                            <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                        </div>
+                                                        <div class="form-group col-12 col-lg-4">
+                                                            <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Options</b></label><br>
+                                                            <input type="button" id="newInviteAddButton-{{channel.id}}" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')" value="Add">
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </form>
                                                 <div id="inviteCodes">
                                                     <div class="table-responsive">
                                                         <table id="inviteCodeTable-{{channel.id}}" class="table table-borderless" width="100%">
@@ -660,10 +669,13 @@ function toggleDiv(divID) {
 
 <script>
     function generateInviteCode(channelID) {
+        var newInviteTextInput = document.getElementById('newInviteCodeText-' + channelID);
         var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
         var daysToExpire = newInviteElementInput.value;
-
-        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
+        var customInviteCode = newInviteTextInput.value;
+        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire, inviteCode: customInviteCode});
+        newInviteElementInput.value = null;
+        newInviteTextInput.value = "";
     }
 </script>
 
