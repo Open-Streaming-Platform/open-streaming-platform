@@ -1002,6 +1002,15 @@ def delete_vid_page(videoID):
                 if os.path.exists(thumbnailPath):
                     os.remove(thumbnailPath)
 
+        # Delete Clips Attached to Video
+        for clip in recordedVid.clips:
+            thumbnailPath = '/var/www/videos/' + clip.thumbnailLocation
+
+            if thumbnailPath != '/var/www/videos/':
+                if os.path.exists(thumbnailPath) and (clip.thumbnailLocation != None or clip.thumbnailLocation != ""):
+                    os.remove(thumbnailPath)
+            db.session.delete(clip)
+
         # Delete Upvotes Attached to Video
         upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
 
