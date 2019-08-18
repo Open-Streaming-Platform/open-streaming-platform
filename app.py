@@ -878,7 +878,7 @@ def vid_clip_page(loc):
             db.session.add(newClip)
             db.session.commit()
 
-            newClipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=int(loc), startTime=clipStart, stopTime=clipStop, clipName=clipName, description=clipDescription).first()
+            newClipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=int(loc), startTime=clipStart, endTime=clipStop, clipName=clipName, description=clipDescription).first()
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
