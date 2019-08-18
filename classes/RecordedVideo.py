@@ -62,6 +62,7 @@ class Clips(db.Model):
     views = db.Column(db.Integer)
     clipName = db.Column(db.String(255))
     description = db.Column(db.String(2048))
+    thumbnailLocation = db.Column(db.String(255))
 
     def __init__(self, parentVideo, startTime, endTime, clipName, description):
         self.parentVideo = parentVideo
@@ -84,5 +85,6 @@ class Clips(db.Model):
             'length': self.length,
             'name': self.clipName,
             'description': self.description,
-            'views': 'self.views'
+            'views': self.views,
+            'thumbnailLocation': '/videos/' + self.recordedVideo.channel.channelLoc + '/clips/' + self.thumnailLocation
         }
