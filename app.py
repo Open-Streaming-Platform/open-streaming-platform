@@ -1110,7 +1110,7 @@ def comments_vid_page(videoID):
 
     return redirect(url_for('view_vid_page', videoID=videoID))
 
-@app.route('/clip/<clipIP>')
+@app.route('/clip/<clipID>')
 def view_clip_page(clipID):
     sysSettings = settings.settings.query.first()
 
