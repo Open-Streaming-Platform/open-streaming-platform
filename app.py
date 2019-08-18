@@ -880,6 +880,7 @@ def view_vid_page(videoID):
 @app.route('/play/<loc>/clip', methods=['POST'])
 @login_required
 def vid_clip_page(loc):
+    # TODO Add Webhook for Clip Creation
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
     sysSettings = settings.settings.query.first()
 
@@ -922,6 +923,7 @@ def vid_clip_page(loc):
 @app.route('/play/<loc>/move', methods=['POST'])
 @login_required
 def vid_move_page(loc):
+    # TODO Set Clips to Move with Video (Move Clip Thumbnails)
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
     sysSettings = settings.settings.query.first()
 
@@ -1162,6 +1164,50 @@ def view_clip_page(clipID):
         flash("No Such Clip at URL","error")
         return redirect(url_for("main_page"))
 
+@app.route('/clip/<clipID>/delete')
+@login_required
+def delete_clip_page(clipID):
+
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+
+    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery != None:
+        thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+
+        if thumbnailPath != '/var/www/videos/':
+            if os.path.exists(thumbnailPath) and (thumbnailPath != None or thumbnailPath != ""):
+                os.remove(thumbnailPath)
+
+        db.session.delete(clipQuery)
+
+        db.session.commit()
+        flash("Clip deleted")
+        return redirect(url_for('main_page'))
+    else:
+        flash("Error Deleting Clip")
+        return redirect(url_for('view_clip_page', clipID=clipID))
+
+@app.route('/clip/<clipID>/change', methods=['POST'])
+@login_required
+def clip_change_page(clipID):
+
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+    sysSettings = settings.settings.query.first()
+
+    if clipQuery != None:
+        if clipQuery.recordedVideo.owningUser == current_user.id:
+
+            newClipName = request.form['newVidName']
+            description = request.form['description']
+
+            clipQuery.clipName = strip_html(newClipName)
+            clipQuery.description = strip_html(description)
+
+            db.session.commit()
+
+            return redirect(url_for('view_clip_page', clipID=clipID))
+
+    flash("Error Changing Clip Metadata", "error")
+    return redirect(url_for("main_page"))
 
 @app.route('/upload/video-files', methods=['GET', 'POST'])
 @login_required
