@@ -1110,6 +1110,67 @@ def comments_vid_page(videoID):
 
     return redirect(url_for('view_vid_page', videoID=videoID))
 
+@app.route('/clip/<clipIP>')
+def view_vid_page(clipID):
+    sysSettings = settings.settings.query.first()
+
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+
+    if clipQuery != None:
+
+        recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=clipQuery.recordedVideo.id).first()
+
+        if recordedVid.channel.protected:
+            if not check_isValidChannelViewer(clipQuery.recordedVideo.channel.id):
+                return render_template(checkOverride('channelProtectionAuth.html'))
+
+        if recordedVid != None:
+            #recordedVid.views = recordedVid.views + 1
+            #recordedVid.channel.views = recordedVid.channel.views + 1
+
+            if recordedVid.length == None:
+                fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
+                duration = getVidLength(fullVidPath)
+                recordedVid.length = duration
+            db.session.commit()
+
+            topicList = topics.topics.query.all()
+
+            streamURL = '/videos/' + recordedVid.videoLocation
+
+            isEmbedded = request.args.get("embedded")
+
+            #newView = views.views(1, recordedVid.id)
+            #db.session.add(newView)
+            #db.session.commit()
+
+            # Function to allow custom start time on Video
+            #startTime = None
+            #if 'startTime' in request.args:
+            #    startTime = request.args.get("startTime")
+            #try:
+            #    startTime = float(startTime)
+            #except:
+            #    startTime = None
+
+            if isEmbedded == None or isEmbedded == "False":
+
+                randomClips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.id != clipQuery.id).order_by(func.random()).limit(12)
+
+                return render_template(checkOverride('clipplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomClips=randomClips, clip=clipQuery)
+            #else:
+            #    isAutoPlay = request.args.get("autoplay")
+            #    if isAutoPlay == None:
+            #        isAutoPlay = False
+            #    elif isAutoPlay.lower() == 'true':
+            #        isAutoPlay = True
+            #    else:
+            #        isAutoPlay = False
+            #    return render_template(checkOverride('vidplayer_embed.html'), video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
+    else:
+        flash("No Such Clip at URL","error")
+        return redirect(url_for("main_page"))
+
 
 @app.route('/upload/video-files', methods=['GET', 'POST'])
 @login_required
