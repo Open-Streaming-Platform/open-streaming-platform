@@ -60,13 +60,15 @@ class Clips(db.Model):
     endTime = db.Column(db.Float)
     length = db.Column(db.Float)
     views = db.Column(db.Integer)
+    clipName = db.Column(db.String(255))
     description = db.Column(db.String(2048))
 
-    def __init__(self, parentVideo, startTime, endTime, description):
+    def __init__(self, parentVideo, startTime, endTime, clipName, description):
         self.parentVideo = parentVideo
         self.startTime = startTime
         self.endTime = endTime
         self.description = description
+        self.clipName = clipName
         self.length = endTime-startTime
         self.view = 0
 
@@ -80,6 +82,7 @@ class Clips(db.Model):
             'startTime': self.startTime,
             'endTime': self.endTime,
             'length': self.length,
+            'name': self.clipName,
             'description': self.description,
             'views': 'self.views'
         }
