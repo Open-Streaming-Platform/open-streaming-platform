@@ -877,9 +877,11 @@ def vid_clip_page(loc):
             newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
-            clipThumbNailLocation = recordedVidQuery.videoLocation[:-4] + '-' + str(newClip.id) + ".png"
+            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClip.id) + ".png"
 
-            fullthumbnailLocation = '/var/www/videos/' + recordedVidQuery.channel.channelLoc + '/clips/' + clipThumbNailLocation
+            newClip.thumbnailLocation = clipThumbNailLocation
+
+            fullthumbnailLocation = '/var/www/videos/' + recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClip.id) + ".png"
 
             if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
