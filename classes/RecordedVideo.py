@@ -49,7 +49,8 @@ class RecordedVideo(db.Model):
             'length': self.length,
             'upvotes': self.get_upvotes(),
             'videoLocation': '/videos/' + self.videoLocation,
-            'thumbnailLocation': '/videos/' + self.thumbnailLocation
+            'thumbnailLocation': '/videos/' + self.thumbnailLocation,
+            'ClipIDs': [obj.id for obj in self.clips],
         }
 
 class Clips(db.Model):
