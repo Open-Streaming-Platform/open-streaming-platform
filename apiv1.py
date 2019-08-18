@@ -361,7 +361,7 @@ class api_1_ListClip(Resource):
         """
              Returns Info on a Single Saved Clip
         """
-        clipList = RecordedVideo.RecordedVideo.query.filter_by(id=clipID).all()
+        clipList = RecordedVideo.Clips.query.filter_by(id=clipID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipList]}
 
