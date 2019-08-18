@@ -1126,7 +1126,7 @@ def view_clip_page(clipID):
 
         if recordedVid != None:
             clipQuery.views = clipQuery.views + 1
-            clipQuery.recordedVid.channel.views = clipQuery.recordedVid.channel.views + 1
+            clipQuery.recordedVideo.channel.views = clipQuery.recordedVideo.channel.views + 1
 
             if recordedVid.length == None:
                 fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
