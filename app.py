@@ -3086,15 +3086,13 @@ def handle_upvoteChange(streamData):
             db.session.commit()
     db.session.close()
 
-
-
 @socketio.on('disconnect')
 def disconnect(message):
     logger.error(message)
     emit('message', {'msg': message['msg']})
 
-@socketio.on('setScreenShot')
-def setScreenShot(message):
+@socketio.on('newScreenShot')
+def newScreenShot(message):
     video = message['loc']
     timeStamp = message['timeStamp']
 
@@ -3102,16 +3100,54 @@ def setScreenShot(message):
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
         if videoQuery != None and videoQuery.owningUser == current_user.id:
             videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
-            videoQuery.thumbnailLocation = newThumbnailLocation
-            fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+            thumbnailLocation = '/var/www/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png'
+            try:
+                os.remove(thumbnailLocation)
+            except OSError:
+                pass
+            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
+            tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
+            emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
+            db.session.close()
+
+@socketio.on('setScreenShot')
+def setScreenShot(message):
+    timeStamp = message['timeStamp']
+
+    if 'loc' in message:
+        video = message['loc']
+        if video != None:
+            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
+            if videoQuery != None and videoQuery.owningUser == current_user.id:
+                videoLocation = '/var/www/videos/' + videoQuery.videoLocation
+                newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
+                videoQuery.thumbnailLocation = newThumbnailLocation
+                fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+                db.session.commit()
+                db.session.close()
+                try:
+                    os.remove(fullthumbnailLocation)
+                except OSError:
+                    pass
+                result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+    elif 'clipID' in message:
+        clipID = message['clipID']
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+        if clipQuery != None and current_user.id == clipQuery.recordedVideo.owningUser:
+            thumbnailLocation = clipQuery.thumbnailLocation
+            fullthumbnailLocation = '/var/www/videos/' + thumbnailLocation
+            videoLocation = '/var/www/videos/' + clipQuery.recordedVideo.videoLocation
+            newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id)
+            fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
+            clipQuery.thumbnailLocation = newClipThumbnail
             db.session.commit()
             db.session.close()
             try:
                 os.remove(fullthumbnailLocation)
             except OSError:
                 pass
-            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
+
 
 @socketio.on('updateStreamData')
 def updateStreamData(message):
@@ -3143,25 +3179,6 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
-
-@socketio.on('newScreenShot')
-def newScreenShot(message):
-    video = message['loc']
-    timeStamp = message['timeStamp']
-
-    if video != None:
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
-        if videoQuery != None and videoQuery.owningUser == current_user.id:
-            videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            thumbnailLocation = '/var/www/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png'
-            try:
-                os.remove(thumbnailLocation)
-            except OSError:
-                pass
-            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
-            tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
-            emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
-            db.session.close()
 
 @socketio.on('text')
 def text(message):
