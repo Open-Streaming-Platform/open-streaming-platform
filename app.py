@@ -876,13 +876,16 @@ def vid_clip_page(loc):
         if clipStop > clipStart:
             newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
             db.session.add(newClip)
+            db.session.commit()
+
+            newClipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=recordedVidQuery, startTime=clipStart, stopTime=clipStop, clipName=clipName, description=clipDescription).first()
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
-            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClip.id) + ".png"
+            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
 
-            newClip.thumbnailLocation = clipThumbNailLocation
+            newClipQuery.thumbnailLocation = clipThumbNailLocation
 
-            fullthumbnailLocation = '/var/www/videos/' + recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClip.id) + ".png"
+            fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
 
             if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
@@ -890,6 +893,7 @@ def vid_clip_page(loc):
             result = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
             db.session.commit()
+            db.session.close()
 
             flash("Clip Created", "success")
 
