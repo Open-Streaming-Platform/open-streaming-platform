@@ -1189,6 +1189,7 @@ def delete_clip_page(clipID):
 @app.route('/clip/<clipID>/change', methods=['POST'])
 @login_required
 def clip_change_page(clipID):
+    # TODO Add Webhook for Clip Metadata Change
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
     sysSettings = settings.settings.query.first()
