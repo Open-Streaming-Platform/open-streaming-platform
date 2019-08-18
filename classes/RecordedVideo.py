@@ -71,7 +71,7 @@ class Clips(db.Model):
         self.description = description
         self.clipName = clipName
         self.length = endTime-startTime
-        self.view = 0
+        self.views = 0
 
     def __repr__(self):
         return '<id %r>' % self.id
