@@ -270,6 +270,7 @@
     }
     if (player.currentTime() >= stopTime) {
         player.currentTime(stopTime);
+        player.pause();
         player.stop();
     }
    });
