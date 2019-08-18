@@ -875,6 +875,7 @@ def vid_clip_page(loc):
 
         if clipStop > clipStart:
             newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
+            db.session.add(newClip)
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClip.id) + ".png"
@@ -888,7 +889,6 @@ def vid_clip_page(loc):
 
             result = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
-            db.session.add(newClip)
             db.session.commit()
 
             flash("Clip Created", "success")
