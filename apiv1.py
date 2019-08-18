@@ -344,6 +344,27 @@ class api_1_ListVideo(Resource):
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+@api.route('/clips/')
+class api_1_ListClips(Resource):
+    def get(self):
+        """
+             Returns a List of All Saved Clips
+        """
+        clipsList = RecordedVideo.Clips.query.all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in clipsList]}
+
+@api.route('/clips/<int:clipID>')
+@api.doc(params={'clipID': 'ID Number for the Clip'})
+class api_1_ListClip(Resource):
+    def get(self, clipID):
+        """
+             Returns Info on a Single Saved Clip
+        """
+        clipList = RecordedVideo.RecordedVideo.query.filter_by(id=clipID).all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in clipList]}
+
 @api.route('/topics/')
 class api_1_ListTopics(Resource):
     def get(self):
