@@ -3137,7 +3137,7 @@ def setScreenShot(message):
             thumbnailLocation = clipQuery.thumbnailLocation
             fullthumbnailLocation = '/var/www/videos/' + thumbnailLocation
             videoLocation = '/var/www/videos/' + clipQuery.recordedVideo.videoLocation
-            newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id)
+            newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
             fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail
             db.session.commit()
