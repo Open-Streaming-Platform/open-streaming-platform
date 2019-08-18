@@ -364,7 +364,7 @@
 
 <script>
   function setScreenShot() {
-    socket.emit('setScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
+    socket.emit('setScreenShot', {timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
   }
 </script>
 
