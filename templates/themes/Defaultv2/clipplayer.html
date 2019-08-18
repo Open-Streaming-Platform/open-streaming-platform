@@ -258,19 +258,19 @@
 <script>
   var player = videojs('video', { autoplay: true });
 
-  var startTime = Math.round({{clip.startTime}});
-  var stopTime = Math.round({{clip.endTime}});
+  var startTime = {{clip.startTime}};
+  var stopTime = {{clip.endTime}};
 
   player.currentTime(startTime);
   player.play();
 
   player.on('timeupdate', function (e) {
-    if (Math.round(player.currentTime()) < startTime) {
+    if (player.currentTime() < startTime) {
         player.currentTime(startTime);
     }
-      if (Math.round(player.currentTime()) >= stopTime) {
+    if (player.currentTime() >= stopTime) {
         player.currentTime(stopTime);
-        player.pause();
+        player.stop();
     }
    });
 
@@ -283,18 +283,6 @@
 
   var socket = io();
 </script>
-
-<script>
-
-var startTime = {{clip.startTime}};
-var stoptime = {{clip.endTime}};
-
-
-
-
-
-</script>
-
 
 <script>
     var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
