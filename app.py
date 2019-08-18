@@ -3053,7 +3053,7 @@ def handle_upvote_total_request(streamData):
             pass
     elif vidType == "clip":
         loc = int(loc)
-        totalQuery = upvotes.clipUpvotes.query.filter_by(commentID=loc).all()
+        totalQuery = upvotes.clipUpvotes.query.filter_by(clipID=loc).all()
         try:
             myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
         except:
