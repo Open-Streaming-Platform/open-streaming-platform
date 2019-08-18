@@ -269,7 +269,7 @@
         player.currentTime(startTime);
     }
     if (player.currentTime() >= stopTime) {
-        player.currentTime(stopTime);
+        player.currentTime(startTime);
         player.pause();
         player.stop();
     }
