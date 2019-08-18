@@ -822,7 +822,14 @@ def view_page(loc):
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-            return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, secureHash=secureHash, rtmpURI=rtmpURI)
+
+            clipsList = []
+            for vid in requestedChannel.recordedVideo:
+                for clip in vid.clips:
+                    clipsList.append(clip)
+            clipsList.sort(key=lambda x: x.views, reverse=True)
+
+            return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:

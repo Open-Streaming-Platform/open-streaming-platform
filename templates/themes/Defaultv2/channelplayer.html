@@ -143,7 +143,7 @@
             <div class="container-fluid p-2" id="index-videos-container">
                 <div class="row mx-2">
                     <div class="d-flex flex-wrap justify-content-start">
-                        {% for clip in channel.recordedVideo.clips|sort(attribute='views', reverse=True)%}
+                        {% for clip in clipsList %}
                         <div class="displayCard py-1 pr-1">
                             <a href="/clip/{{clip.id}}">
                                 <div>
