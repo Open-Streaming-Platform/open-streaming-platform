@@ -63,6 +63,7 @@ class Clips(db.Model):
     clipName = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     thumbnailLocation = db.Column(db.String(255))
+    upvotes = db.relationship('clipUpvotes', backref='clip', lazy="joined")
 
     def __init__(self, parentVideo, startTime, endTime, clipName, description):
         self.parentVideo = parentVideo

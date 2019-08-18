@@ -3041,6 +3041,13 @@ def handle_upvote_total_request(streamData):
             myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=loc).first()
         except:
             pass
+    elif vidType == "clip":
+        loc = int(loc)
+        totalQuery = upvotes.clipUpvotes.query.filter_by(commentID=loc).all()
+        try:
+            myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
+        except:
+            pass
 
     if totalQuery != None:
         for vote in totalQuery:
@@ -3092,6 +3099,16 @@ def handle_upvoteChange(streamData):
             else:
                 db.session.delete(myVoteQuery)
             db.session.commit()
+    elif vidType == 'clip':
+        loc = int(loc)
+        myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
+
+        if myVoteQuery == None:
+            newUpvote = upvotes.clipUpvotes(current_user.id, loc)
+            db.session.add(newUpvote)
+        else:
+            db.session.delete(myVoteQuery)
+        db.session.commit()
     db.session.close()
 
 @socketio.on('disconnect')
