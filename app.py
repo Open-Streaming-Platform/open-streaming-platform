@@ -897,11 +897,11 @@ def vid_clip_page(loc):
 
             flash("Clip Created", "success")
 
-            return redirect(url_for("view_vid_page",videoID=recordedVidQuery.id))
+            return redirect(url_for("view_vid_page",videoID=loc))
         else:
             flash("Invalid Start/Stop Time for Clip", "error")
     flash("Invalid Video ID", "error")
-    return redirect(url_for("view_vid_page", videoID=recordedVidQuery.id))
+    return redirect(url_for("view_vid_page", videoID=loc))
 
 @app.route('/play/<loc>/move', methods=['POST'])
 @login_required
