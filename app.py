@@ -1125,8 +1125,8 @@ def view_clip_page(clipID):
                 return render_template(checkOverride('channelProtectionAuth.html'))
 
         if recordedVid != None:
-            #recordedVid.views = recordedVid.views + 1
-            #recordedVid.channel.views = recordedVid.channel.views + 1
+            clipQuery.views = clipQuery.views + 1
+            clipQuery.recordedVid.channel.views = clipQuery.recordedVid.channel.views + 1
 
             if recordedVid.length == None:
                 fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
@@ -1143,15 +1143,6 @@ def view_clip_page(clipID):
             #newView = views.views(1, recordedVid.id)
             #db.session.add(newView)
             #db.session.commit()
-
-            # Function to allow custom start time on Video
-            #startTime = None
-            #if 'startTime' in request.args:
-            #    startTime = request.args.get("startTime")
-            #try:
-            #    startTime = float(startTime)
-            #except:
-            #    startTime = None
 
             if isEmbedded == None or isEmbedded == "False":
 

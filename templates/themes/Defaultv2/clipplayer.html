@@ -111,38 +111,21 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editModalTitle">Edit Video Info</h5>
+        <h5 class="modal-title" id="editModalTitle">Edit Clip Info</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="/play/{{video.id}}/change" method="post">
+      <form action="/clip/{{clip.id}}/change" method="post">
         <div class="modal-body">
 
-          <h5>Name of the Stream:</h5>
-          <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
-          <br>
-          <h5>Stream Topic:</h5>
-          <select class="form-control" name="newVidTopic" id="channeltopic" required>
-            {% for topic in topics %}
-            <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
-            {% endfor %}
-          </select>
+          <h5>Name of the Clip:</h5>
+          <input type="text" class="form-control" value="{{clip.clipName}}" name="newVidName" required>
           <br>
           <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>
-            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
+            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{clip.description}}</textarea>
           </div>
-          <div class="form-group row">
-            <div class="col-8">
-              <label for="chatSelect" class="col-form-label"><b>Allow Comments on This Video</b></label>
-            </div>
-            <div class="col-4">
-              <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if video.allowComments == True %} checked {% endif %}>
-            </div>
-          </div>
-
-
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -157,18 +140,18 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalTitle">Confirm Video Deletion</h5>
+        <h5 class="modal-title" id="deleteModalTitle">Confirm Clip Deletion</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
       <div class="modal-body">
-        <h5>Are you sure you want to delete this video?</h5>
+        <h5>Are you sure you want to delete this clip?</h5>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        <a href="/play/{{video.id}}/delete" class="btn btn-danger">Delete</a>
+        <a href="/clip/{{clip.id}}/delete" class="btn btn-danger">Delete</a>
       </div>
     </div>
   </div>
@@ -178,7 +161,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="newSSModalTitle">Confirm New Video Thumbnail</h5>
+        <h5 class="modal-title" id="newSSModalTitle">Confirm New Clip Thumbnail</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -216,10 +199,6 @@
             onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
         </div>
         <br>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="shareTimestamp" value="shareTimestamp" onclick="toggleShareTimestamp();">
-          <label class="form-check-label" for="shareTimestamp">Set URL to Start at Current Timestamp</label>
-        </div>
         <div class="form-group row">
           <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
           <div class="col-sm-10">
@@ -244,7 +223,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('shareTimestamp').checked = false;">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -371,7 +350,7 @@
   function newScreenShot() {
     window.whereYouAt = player.currentTime();
     console.log(window.whereYouAt);
-    socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
+    socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
   }
 </script>
 
@@ -395,19 +374,6 @@
   player.play();
 </script>
 {% endif %}
-
-<script>
-  function toggleShareTimestamp() {
-    if (document.getElementById('shareTimestamp').checked)
-    {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime='.replace('?startTime={{startTime}}','') + player.currentTime() + '" width=600 height=345></iframe>';
-        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','') + '?startTime=' + player.currentTime();
-    } else {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime={{startTime}}','');
-        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','');
-    }
-  }
-</script>
 
 <script>
     function CopyDiv(divVal) {
