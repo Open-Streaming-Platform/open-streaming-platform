@@ -287,10 +287,6 @@
       upvoteDivID = 'totalUpvotes';
       upvoteIconID = 'upVoteIcon';
       upvoteButtonID = 'upvoteButton';
-    } else if (msg['type'] === 'comment') {
-      upvoteDivID = 'upvoteTotalComments-' + msg['loc'];
-      upvoteIconID = 'commentUpvoteIcon-' + msg['loc'];
-      upvoteButtonID = 'commentUpvoteButton-' + msg['loc'];
     }
 
     document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];

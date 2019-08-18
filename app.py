@@ -341,6 +341,11 @@ def get_Stream_Upvotes(videoID):
     result = videoUpVotesQuery
     return result
 
+def get_Clip_Upvotes(videoID):
+    videoUpVotesQuery = upvotes.clipUpvotes.query.filter_by(clipID=videoID).count()
+    result = videoUpVotesQuery
+    return result
+
 def get_Video_Comments(videoID):
     videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
     result = videoCommentsQuery
@@ -504,6 +509,11 @@ def get_Video_Upvotes_Filter(videoID):
 @app.template_filter('get_Stream_Upvotes')
 def get_Stream_Upvotes_Filter(videoID):
     result = get_Stream_Upvotes(videoID)
+    return result
+
+@app.template_filter('get_Clip_Upvotes')
+def get_Clip_Upvotes_Filter(videoID):
+    result = get_Clip_Upvotes(videoID)
     return result
 
 @app.template_filter('get_Video_Comments')
