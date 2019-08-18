@@ -593,7 +593,7 @@ def main_page():
 
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False).order_by(func.random()).limit(16)
 
-        randomClips = RecordedVideo.Clips.query.all().order_by(func.random()).limit(16)
+        randomClips = RecordedVideo.Clips.query.order_by(func.random()).limit(16)
 
         return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
 
