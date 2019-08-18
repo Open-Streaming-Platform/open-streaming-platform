@@ -85,30 +85,28 @@
         <div class="index-video-title"><b>Clips</b></div>
     </div>
     <div class="row mx-2">
-        <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-start">
-                {% for clip in randomClips %}
-                <div class="displayCard py-1 pr-1">
-                    <a href="/clip/{{clip.id}}">
-                        <div>
-                            <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
-                        </div>
-                        <div class="card-data">
-                            <div class="card-cut-text"><b>{{clip.clipName|limit_title}}</b></div>
-                            <i class="fas fa-video mr-2"></i> {{clip.recordedVideo.channel.channelName}}<br>
-                            <i class="fas fa-hashtag mr-2"></i> {{clip.recordedVideo.topic|get_topicName}}<br>
-                            {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-                            <span class="displayCard-footer">
-                                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> 0</span>
-                                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clip.views}}</span>
-                                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clip.length|hms_format}}</span>
-                            </span>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
+        <div class="d-flex flex-wrap justify-content-start">
+            {% for clip in randomClips %}
+            <div class="displayCard py-1 pr-1">
+                <a href="/clip/{{clip.id}}">
+                    <div>
+                        <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
+                    </div>
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{clip.clipName|limit_title}}</b></div>
+                        <i class="fas fa-video mr-2"></i> {{clip.recordedVideo.channel.channelName}}<br>
+                        <i class="fas fa-hashtag mr-2"></i> {{clip.recordedVideo.topic|get_topicName}}<br>
+                        {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                        <span class="displayCard-footer">
+                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> 0</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clip.views}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clip.length|hms_format}}</span>
+                        </span>
+                    </div>
+                </a>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
