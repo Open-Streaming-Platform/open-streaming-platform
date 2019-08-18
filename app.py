@@ -861,6 +861,30 @@ def view_vid_page(videoID):
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
 
+@app.route('/play/<loc>/clip', methods=['POST'])
+@login_required
+def vid_clip_page(loc):
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+        clipStart = float(request.form['clipStartTime'])
+        clipStop = float(request.form['clipStopTime'])
+        clipDescription = str(request.form['clipDescription'])
+
+        if clipStop > clipStart:
+            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipDescription)
+            db.session.add(newClip)
+            db.session.commit()
+
+            flash("Clip Created", "success")
+
+            return redirect(url_for("view_vid_page",videoID=recordedVidQuery.id))
+        else:
+            flash("Invalid Start/Stop Time for Clip", "error")
+    flash("Invalid Video ID", "error")
+    return redirect(url_for("view_vid_page", videoID=recordedVidQuery.id))
+
 @app.route('/play/<loc>/move', methods=['POST'])
 @login_required
 def vid_move_page(loc):

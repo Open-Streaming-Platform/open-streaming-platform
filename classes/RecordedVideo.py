@@ -17,6 +17,7 @@ class RecordedVideo(db.Model):
     allowComments = db.Column(db.Boolean)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
     comments = db.relationship('videoComments', backref='recordedVideo', lazy="joined")
+    clips = db.relationship('Clips', backref='recordedVideo', lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
         self.videoDate = videoDate
@@ -49,4 +50,36 @@ class RecordedVideo(db.Model):
             'upvotes': self.get_upvotes(),
             'videoLocation': '/videos/' + self.videoLocation,
             'thumbnailLocation': '/videos/' + self.thumbnailLocation
+        }
+
+class Clips(db.Model):
+    __tablename__ = "Clips"
+    id = db.Column(db.Integer, primary_key=True)
+    parentVideo = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
+    startTime = db.Column(db.Float)
+    endTime = db.Column(db.Float)
+    length = db.Column(db.Float)
+    views = db.Column(db.Integer)
+    description = db.Column(db.String(2048))
+
+    def __init__(self, parentVideo, startTime, endTime, description):
+        self.parentVideo = parentVideo
+        self.startTime = startTime
+        self.endTime = endTime
+        self.description = description
+        self.length = endTime-startTime
+        self.view = 0
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'parentVideo': self.parentVideo,
+            'startTime': self.startTime,
+            'endTime': self.endTime,
+            'length': self.length,
+            'description': self.description,
+            'views': 'self.views'
         }
