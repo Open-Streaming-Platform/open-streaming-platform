@@ -88,5 +88,5 @@ class Clips(db.Model):
             'name': self.clipName,
             'description': self.description,
             'views': self.views,
-            'thumbnailLocation': '/videos/' + self.recordedVideo.channel.channelLoc + '/clips/' + self.thumnailLocation
+            'thumbnailLocation': '/videos/' + self.thumbnailLocation
         }
