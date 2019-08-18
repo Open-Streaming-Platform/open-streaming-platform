@@ -927,12 +927,13 @@ def vid_clip_page(loc):
 
             result = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
+            redirectID = newClipQuery.id
             db.session.commit()
             db.session.close()
 
             flash("Clip Created", "success")
 
-            return redirect(url_for("view_vid_page",videoID=loc))
+            return redirect(url_for("view_clip_page", clipID=redirectID))
         else:
             flash("Invalid Start/Stop Time for Clip", "error")
     flash("Invalid Video ID", "error")
