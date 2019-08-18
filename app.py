@@ -870,10 +870,11 @@ def vid_clip_page(loc):
     if recordedVidQuery != None:
         clipStart = float(request.form['clipStartTime'])
         clipStop = float(request.form['clipStopTime'])
+        clipName = str(request.form['clipName'])
         clipDescription = str(request.form['clipDescription'])
 
         if clipStop > clipStart:
-            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipDescription)
+            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
             db.session.add(newClip)
             db.session.commit()
 
