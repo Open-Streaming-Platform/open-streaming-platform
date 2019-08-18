@@ -1979,6 +1979,22 @@ def admin_page():
                             flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
                     db.session.commit()
 
+                oldClips = RecordedVideo.Clips.query.all()
+                for clip in oldClips:
+                    db.session.delete(clip)
+                db.session.commit()
+                if 'restoreVideos' in request.form:
+                    for restoredClip in restoreDict['Clips']:
+                        if restoredClip['parentVideo'] != "None":
+                            newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), float(restoredClip['startTime']), float(restoredClip['endTime']), restoredClip['clipName'], restoredClip['description'])
+                            newClip.id = int(restoredClip['id'])
+                            newClip.views = int(restoredClip['views'])
+                            newClip.thumbnailLocation = restoredClip['thumbnailLocation']
+                            db.session.add(newClip)
+                        else:
+                            flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
+                    db.session.commit()
+
                 ## Restores API Keys
                 oldAPI = apikey.apikey.query.all()
                 for api in oldAPI:
