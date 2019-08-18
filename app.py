@@ -941,7 +941,6 @@ def vid_clip_page(loc):
 @app.route('/play/<loc>/move', methods=['POST'])
 @login_required
 def vid_move_page(loc):
-    # TODO Set Clips to Move with Video (Move Clip Thumbnails)
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
     sysSettings = settings.settings.query.first()
 
@@ -963,6 +962,17 @@ def vid_move_page(loc):
                 coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
                 shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
                 recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
+            for clip in recordedVidQuery.clips:
+                coreThumbnail = (clip.thumbnailLocation.split("/")[2])
+                if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
+                    try:
+                        os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips')
+                    except OSError:
+                        flash("Error Moving Video - Unable to Create Clips Directory", "error")
+                        return redirect(url_for("main_page"))
+                newClipLocation = "/var/www/videos/" + newChannelQuery.channelLoc +"/clips/" + coreThumbnail
+                shutil.move("/var/www/videos/" + clip.thumbnailLocation, newClipLocation)
+                clip.thumbnailLocation = newChannelQuery.channelLoc +"/clips/" + coreThumbnail
 
             db.session.commit()
             flash("Video Moved to Another Channel", "success")
