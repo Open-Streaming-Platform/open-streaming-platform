@@ -665,7 +665,12 @@ def topic_view_page(topicID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template(checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, title="Topics - Videos")
+    clipsList = []
+    for vid in recordedVideoQuery:
+        for clip in vid.clips:
+            clipsList.append(clip)
+
+    return render_template(checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, clipsList=clipsList, title="Topics - Videos")
 
 @app.route('/streamers')
 def streamers_page():
@@ -713,7 +718,12 @@ def streamers_view_page(userID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, title=userName)
+    clipsList = []
+    for vid in recordedVideoQuery:
+        for clip in vid.clips:
+            clipsList.append(clip)
+
+    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userName)
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
