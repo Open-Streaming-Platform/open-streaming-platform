@@ -1111,7 +1111,7 @@ def comments_vid_page(videoID):
     return redirect(url_for('view_vid_page', videoID=videoID))
 
 @app.route('/clip/<clipIP>')
-def view_vid_page(clipID):
+def view_clip_page(clipID):
     sysSettings = settings.settings.query.first()
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
