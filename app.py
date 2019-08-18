@@ -593,7 +593,9 @@ def main_page():
 
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False).order_by(func.random()).limit(16)
 
-        return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded)
+        randomClips = RecordedVideo.Clips.query.all().order_by(func.random()).limit(16)
+
+        return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
 
 @app.route('/channels')
 def channels_page():
@@ -625,6 +627,8 @@ def channel_view_page(chanID):
         for vid in recordedVids:
             for clip in vid.clips:
                 clipsList.append(clip)
+
+        clipsList.sort(key=lambda x: x.views, reverse=True)
 
         return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, title="Channels - Videos")
     else:
@@ -669,6 +673,8 @@ def topic_view_page(topicID):
     for vid in recordedVideoQuery:
         for clip in vid.clips:
             clipsList.append(clip)
+
+    clipsList.sort(key=lambda x: x.views, reverse=True)
 
     return render_template(checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, clipsList=clipsList, title="Topics - Videos")
 
@@ -722,6 +728,8 @@ def streamers_view_page(userID):
     for vid in recordedVideoQuery:
         for clip in vid.clips:
             clipsList.append(clip)
+
+    clipsList.sort(key=lambda x: x.views, reverse=True)
 
     return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userName)
 
