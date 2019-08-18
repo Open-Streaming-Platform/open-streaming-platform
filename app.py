@@ -620,7 +620,13 @@ def channel_view_page(chanID):
 
         # Sort Video to Show Newest First
         recordedVids.sort(key=lambda x: x.videoDate, reverse=True)
-        return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, title="Channels - Videos")
+
+        clipsList = []
+        for vid in recordedVids:
+            for clip in vid.clips:
+                clipsList.append(clip)
+
+        return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, title="Channels - Videos")
     else:
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
