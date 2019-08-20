@@ -63,6 +63,9 @@ streamParserPut.add_argument('topicID', type=int)
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
 videoParserPut.add_argument('topicID', type=int)
+# TODO Add Video Description
+
+# TODO Add Clip Post Arguments
 
 chatParserPost = reqparse.RequestParser()
 chatParserPost.add_argument('username', type=str, required=True)
