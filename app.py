@@ -16,6 +16,7 @@ from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 from apiv1 import api_v1
 
+
 import uuid
 
 import psutil
@@ -34,6 +35,8 @@ from threading import Thread
 from functools import wraps
 import json
 import hashlib
+
+import smtplib
 
 #Import Paths
 cwp = sys.path[0]
@@ -414,6 +417,27 @@ def checkOverride(themeHTMLFile):
         return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
     else:
         return "themes/Defaultv2/" + themeHTMLFile
+
+def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
+    server = None
+    if smtpSSL is True:
+        server = smtplib.SMTP_SSL(smtpServer, int(smtpPort))
+    else:
+        server = smtplib.SMTP(smtpServer, int(smtpPort))
+    try:
+        if smtpTLS:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        if smtpUsername and smtpPassword:
+            server.login(smtpUsername, smtpPassword)
+        msg = "Test Email - Your Instance of OSP has been successfully configured!"
+        server.sendmail(smtpSender, smtpReceiver, msg)
+    except Exception as e:
+        print(e)
+        return False
+    server.quit()
+    return True
 
 
 @asynch
@@ -2908,6 +2932,21 @@ def playback_auth_handler():
 
 ### Start Socket.IO Functions ###
 
+@socketio.on('testEmail')
+def test_email(info):
+    if current_user.has_role('Admin'):
+        smtpServer = info['smtpServer']
+        smtpPort = int(info['smtpPort'])
+        smtpTLS = bool(info['smtpTLS'])
+        smtpSSL = bool(info['smtpSSL'])
+        smtpUsername = info['smtpUsername']
+        smtpPassword = info['smtpPassword']
+        smtpSender = info['smtpSender']
+        smtpReceiver = info['smtpReceiver']
+
+        results = sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
+
+        emit('testEmailResults', {'results': str(results)}, broadcast=False)
 
 @socketio.on('cancelUpload')
 def handle_videoupload_disconnect(videofilename):
