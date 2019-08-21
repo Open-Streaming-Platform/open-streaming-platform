@@ -435,7 +435,7 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
         server.sendmail(smtpSender, smtpReceiver, msg)
     except Exception as e:
         print(e)
-        return "False " e
+        return "False " + e
     server.quit()
     return True
 
