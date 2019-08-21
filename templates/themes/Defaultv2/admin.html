@@ -538,13 +538,13 @@
 
 <script>
     function testEmail(){
-        smtpAddress = document.getElementById("smtpAddress");
-        smtpPort = document.getElementById("smtpPort");
-        smtpTLS = document.getElementById("smtpTLS");
-        smtpSSL = document.getElementById("smtpSSL");
-        smtpUser = document.getElementById("smtpUser");
-        smtpPassword = document.getElementById("smtpPassword");
-        smtpSender = document.getElementById("smtpSendAs");
+        smtpAddress = document.getElementById("smtpAddress").value;
+        smtpPort = document.getElementById("smtpPort").value;
+        smtpTLS = document.getElementById("smtpTLS").value;
+        smtpSSL = document.getElementById("smtpSSL").value;
+        smtpUser = document.getElementById("smtpUser").value;
+        smtpPassword = document.getElementById("smtpPassword").value;
+        smtpSender = document.getElementById("smtpSendAs").value;
 
         socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpSender});
     }
