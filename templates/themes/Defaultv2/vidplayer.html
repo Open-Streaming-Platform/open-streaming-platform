@@ -345,7 +345,7 @@
       <div class="modal-body">
         <div style="margin: 0 auto;width: 99%; text-align: center;">
           <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
-            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.ur|normalize_urll}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
+            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url|normalize_url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
           <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
             onclick="window.open('https://twitter.com/share?url={{request.url|normalize_url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
         </div>
