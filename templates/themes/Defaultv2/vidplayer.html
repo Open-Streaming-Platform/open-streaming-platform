@@ -6,10 +6,10 @@
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
 <meta property="og:title" content="{{video.channelName}}" />
 <meta property="og:type" content="video.other" />
-<meta property="og:url" content="{{request.url}}" />
-<meta property="og:image" content="{{request.url_root}}/videos/{{video.thumbnailLocation}}" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}/videos/{{video.thumbnailLocation}}" />
 <meta property="og:description" content="{{video.description}}" />
-<meta property="og:video" content="{{request.url_root}}{{streamURL}}" />
+<meta property="og:video" content="{{request.url_root|normalize_urlroot}}{{streamURL}}" />
 <meta property="og:video:type" content="video/mp4" />
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
@@ -345,9 +345,9 @@
       <div class="modal-body">
         <div style="margin: 0 auto;width: 99%; text-align: center;">
           <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
-            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
+            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.ur|normalize_urll}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
           <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
-            onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+            onclick="window.open('https://twitter.com/share?url={{request.url|normalize_url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
         </div>
         <br>
         <div class="form-check form-check-inline">
@@ -361,7 +361,7 @@
               <div class="input-group-prepend">
                   <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
               </div>
-              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url|normalize_url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
             </div>
           </div>
         </div>
@@ -372,7 +372,7 @@
               <div class="input-group-prepend">
                   <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
               </div>
-              <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+              <input class="form-control" id="linkShareInput" type="text" value="{{request.url|normalize_url}}" readonly onClick="this.select();">
             </div>
           </div>
         </div>

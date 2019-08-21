@@ -35,6 +35,7 @@ from threading import Thread
 from functools import wraps
 import json
 import hashlib
+from urllib.parse import urlparse
 
 import smtplib
 
@@ -496,6 +497,17 @@ def inject_sysSettings():
 def normalize_uuid(uuidstr):
     return uuidstr.replace("-", "")
 
+@app.template_filter('normalize_urlroot')
+def normalize_urlroot(urlString):
+    parsedURLRoot = urlparse(urlString)
+    reparsedString = str(parsedURLRoot.scheme) + "://" + str(parsedURLRoot.hostname)
+    return str(reparsedString)
+
+@app.template_filter('normalize_url')
+def normalize_url(urlString):
+    parsedURL = urlparse(urlString)
+    reparsedString = str(parsedURL.scheme) + "://" + str(parsedURL.hostname) + str(parsedURL.path)
+    return str(reparsedString)
 
 @app.template_filter('normalize_date')
 def normalize_date(dateStr):
