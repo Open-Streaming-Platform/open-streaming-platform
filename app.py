@@ -2938,12 +2938,12 @@ def test_email(info):
         smtpServer = info['smtpServer']
         smtpPort = int(info['smtpPort'])
         smtpTLS = info['smtpTLS']
-        if smtpTLS == "true" or smtpTLS == "True" or smtpTLS == "TRUE":
+        if smtpTLS == "true" or smtpTLS == "True" or smtpTLS == "TRUE" or smtpTLS == True:
             smtpTLS = True
         else:
             smtpTLS = False
         smtpSSL = info['smtpSSL']
-        if smtpSSL == "true" or smtpSSL == "True" or smtpSSL == "TRUE":
+        if smtpSSL == "true" or smtpSSL == "True" or smtpSSL == "TRUE" or smtpSSL == True:
             smtpSSL = True
         else:
             smtpSSL = False
