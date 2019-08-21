@@ -420,14 +420,19 @@ def checkOverride(themeHTMLFile):
 
 def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
     server = None
+    sslContext = None
     if smtpSSL is True:
-        server = smtplib.SMTP_SSL(smtpServer, int(smtpPort))
-    else:
-        server = smtplib.SMTP(smtpServer, int(smtpPort))
+        import ssl
+        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
+    server = smtplib.SMTP(smtpServer, int(smtpPort))
     try:
-        if smtpTLS:
+        if smtpTLS or smtpSSL:
             server.ehlo()
-            server.starttls()
+            if smtpSSL:
+                server.starttls(context=sslContext)
+            else:
+                server.starttls()
             server.ehlo()
         if smtpUsername and smtpPassword:
             server.login(smtpUsername, smtpPassword)

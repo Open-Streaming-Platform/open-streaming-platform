@@ -134,7 +134,10 @@
                               </div>
                               <div class="col-sm-12 col-md-6">
                                   <h4><i class="fas fa-envelope"></i> Email Settings</h4>
-                                  <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button><br>
+                                  <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button>
+                                  <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:lawngreen;"></i> Email Test was Successful!</div>
+                                  <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
+                                  <br>
                                   SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
                                   SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
                                   SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
@@ -532,7 +535,11 @@
 <script>
     socket.on('testEmailResults', function(msg) {
         var results = msg['results'];
-        console.log(results);
+        if (results == "True") {
+            document.getElementById("emailsuccess").style.display = "Block";
+        } else if (results == "False") {
+            document.getElementById("emailfailure").style.display = "Block";
+        }
     });
 </script>
 
@@ -545,6 +552,9 @@
         smtpUser = document.getElementById("smtpUser").value;
         smtpPassword = document.getElementById("smtpPassword").value;
         smtpSender = document.getElementById("smtpSendAs").value;
+
+        document.getElementById("emailsuccess").style.display = "None";
+        document.getElementById("emailfailure").style.display = "None";
 
         socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpSender});
     }
