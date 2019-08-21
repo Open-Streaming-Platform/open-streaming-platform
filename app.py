@@ -503,7 +503,7 @@ def normalize_urlroot(urlString):
     URLProtocol = None
     if parsedURLRoot.port == '80':
         URLProtocol = "http"
-    if parsedURLRoot.port == '443':
+    elif parsedURLRoot.port == '443':
         URLProtocol = "https"
     else:
         URLProtocol = parsedURLRoot.scheme
@@ -515,7 +515,7 @@ def normalize_url(urlString):
     parsedURL = urlparse(urlString)
     if parsedURL.port == '80':
         URLProtocol = "http"
-    if parsedURL.port == '443':
+    elif parsedURL.port == '443':
         URLProtocol = "https"
     else:
         URLProtocol = parsedURL.scheme
