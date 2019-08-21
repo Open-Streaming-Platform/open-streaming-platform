@@ -2308,6 +2308,12 @@ def settings_channels_page():
             db.session.commit()
 
         elif type == 'change':
+
+            #DEBUG
+            dict = request.form
+            for key in dict:
+                print(key + ":" + dict[key])
+
             streamKey = request.form['streamKey']
             origStreamKey = request.form['origStreamKey']
 
