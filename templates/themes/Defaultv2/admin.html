@@ -484,27 +484,6 @@
 
 {% block scripts %}
 <script>
-    function testEmail(){
-        smtpAddress = document.getElementById("smtpAddress");
-        smtpPort = document.getElementById("smtpPort");
-        smtpTLS = document.getElementById("smtpTLS");
-        smtpSSL = document.getElementById("smtpSSL");
-        smtpUser = document.getElementById("smtpUser");
-        smtpPassword = document.getElementById("smtpPassword");
-        smtpSender = document.getElementById("smtpSendAs");
-
-        socket.emit('testEmail',{'smtpServer':smtpAddress, 'smtpPort':smtpPort, 'smtpTLS': smtpTLS, 'smtpSSL':smtpSSL, 'smtpUsername':smtpUser, 'smtpPassword':smtpPassword, 'smtpSender':smtpSender, 'smtpReceiver':smtpSender});
-    }
-</script>
-
-<script>
-    socket.on('testEmailResults', function(msg) {
-        var results = msg['results'];
-        console.log(results);
-    });
-</script>
-
-<script>
     function toggleDiv(selDiv){
         var divid = '#' + selDiv;
         $('.settingsOption').hide();
@@ -549,6 +528,28 @@
 
     });
 </script>
+
+<script>
+    socket.on('testEmailResults', function(msg) {
+        var results = msg['results'];
+        console.log(results);
+    });
+</script>
+
+<script>
+    function testEmail(){
+        smtpAddress = document.getElementById("smtpAddress");
+        smtpPort = document.getElementById("smtpPort");
+        smtpTLS = document.getElementById("smtpTLS");
+        smtpSSL = document.getElementById("smtpSSL");
+        smtpUser = document.getElementById("smtpUser");
+        smtpPassword = document.getElementById("smtpPassword");
+        smtpSender = document.getElementById("smtpSendAs");
+
+        socket.emit('testEmail',{'smtpServer':smtpAddress, 'smtpPort':smtpPort, 'smtpTLS': smtpTLS, 'smtpSSL':smtpSSL, 'smtpUsername':smtpUser, 'smtpPassword':smtpPassword, 'smtpSender':smtpSender, 'smtpReceiver':smtpSender});
+    }
+</script>
+
 <script>
     var ctx = document.getElementById('viewershipChart').getContext('2d');
     ctx.canvas.width = 1024
