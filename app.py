@@ -500,13 +500,26 @@ def normalize_uuid(uuidstr):
 @app.template_filter('normalize_urlroot')
 def normalize_urlroot(urlString):
     parsedURLRoot = urlparse(urlString)
-    reparsedString = str(parsedURLRoot.scheme) + "://" + str(parsedURLRoot.hostname)
+    URLProtocol = None
+    if parsedURLRoot.port == '80':
+        URLProtocol = "http"
+    if parsedURLRoot.port == '443':
+        URLProtocol = "https"
+    else:
+        URLProtocol = parsedURLRoot.scheme
+    reparsedString = str(URLProtocol) + "://" + str(parsedURLRoot.hostname)
     return str(reparsedString)
 
 @app.template_filter('normalize_url')
 def normalize_url(urlString):
     parsedURL = urlparse(urlString)
-    reparsedString = str(parsedURL.scheme) + "://" + str(parsedURL.hostname) + str(parsedURL.path)
+    if parsedURL.port == '80':
+        URLProtocol = "http"
+    if parsedURL.port == '443':
+        URLProtocol = "https"
+    else:
+        URLProtocol = parsedURL.scheme
+    reparsedString = str(URLProtocol) + "://" + str(parsedURL.hostname) + str(parsedURL.path)
     return str(reparsedString)
 
 @app.template_filter('normalize_date')
