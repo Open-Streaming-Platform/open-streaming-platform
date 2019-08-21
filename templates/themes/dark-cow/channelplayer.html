@@ -147,7 +147,7 @@
                         <div class="index-video-title mb-2"><b>Chat</b></div>
                         <div class="chatbox" id="chatBlock">
                             <div id="chat" class="chat"></div><br>
-                            <input id="text" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}>
+                            <input id="text" autocomplete="off" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}>
                             <span class="float-right"><button id="chatSubmit" class="btn btn-success btn-sm shadow" onclick="sendChat();">Send</button></span>
                         </div>
                     </div>
