@@ -2937,8 +2937,16 @@ def test_email(info):
     if current_user.has_role('Admin'):
         smtpServer = info['smtpServer']
         smtpPort = int(info['smtpPort'])
-        smtpTLS = bool(info['smtpTLS'])
-        smtpSSL = bool(info['smtpSSL'])
+        smtpTLS = info['smtpTLS']
+        if smtpTLS == "true" or smtpTLS == "True" or smtpTLS == "TRUE":
+            smtpTLS = True
+        else:
+            smtpTLS = False
+        smtpSSL = info['smtpSSL']
+        if smtpSSL == "true" or smtpSSL == "True" or smtpSSL == "TRUE":
+            smtpSSL = True
+        else:
+            smtpSSL = False
         smtpUsername = info['smtpUsername']
         smtpPassword = info['smtpPassword']
         smtpSender = info['smtpSender']
