@@ -546,7 +546,7 @@
         smtpPassword = document.getElementById("smtpPassword");
         smtpSender = document.getElementById("smtpSendAs");
 
-        socket.emit('testEmail',{'smtpServer':smtpAddress, 'smtpPort':smtpPort, 'smtpTLS': smtpTLS, 'smtpSSL':smtpSSL, 'smtpUsername':smtpUser, 'smtpPassword':smtpPassword, 'smtpSender':smtpSender, 'smtpReceiver':smtpSender});
+        socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpSender});
     }
 </script>
 
