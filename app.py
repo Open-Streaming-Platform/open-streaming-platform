@@ -2939,7 +2939,14 @@ def playback_auth_handler():
 
 @socketio.on('testEmail')
 def test_email(info):
-    if current_user.has_role('Admin'):
+    sysSettings = settings.settings.query.all()
+    validTester = False
+    if sysSettings == [] or sysSettings == None:
+        validTester = True
+    else:
+        if current_user.has_role('Admin'):
+            validTester = True
+    if validTester is True:
         smtpServer = info['smtpServer']
         smtpPort = int(info['smtpPort'])
         smtpTLS = bool(info['smtpTLS'])
