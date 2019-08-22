@@ -501,9 +501,9 @@ def normalize_uuid(uuidstr):
 def normalize_urlroot(urlString):
     parsedURLRoot = urlparse(urlString)
     URLProtocol = None
-    if parsedURLRoot.port == '80':
+    if parsedURLRoot.port == 80:
         URLProtocol = "http"
-    elif parsedURLRoot.port == '443':
+    elif parsedURLRoot.port == 443:
         URLProtocol = "https"
     else:
         URLProtocol = parsedURLRoot.scheme
@@ -513,9 +513,9 @@ def normalize_urlroot(urlString):
 @app.template_filter('normalize_url')
 def normalize_url(urlString):
     parsedURL = urlparse(urlString)
-    if parsedURL.port == '80':
+    if parsedURL.port == 80:
         URLProtocol = "http"
-    elif parsedURL.port == '443':
+    elif parsedURL.port == 443:
         URLProtocol = "https"
     else:
         URLProtocol = parsedURL.scheme
