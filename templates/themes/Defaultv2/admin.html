@@ -51,6 +51,41 @@
                                         <b>Database Version:</b> {{appDBVer}} <br>
                                     </div>
                                 </div><br>
+                                <div>
+                                    <b>NGINX Version:</b> {{nginxStatData['nginx_version']}}<br>
+                                    <b>NGINX-RTMP Version</b> {{nginxStatData['nginx_rtmp_version']}}<br>
+                                    <b>Uptime:</b> {{nginxStatData['uptime']}}
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Stream Endpoint</th>
+                                            <th scope="col">Stream Key</th>
+                                            <th scope="col">In Kbps</th>
+                                            <th scope="col">Out Kbps</th>
+                                            <th scope="col">Time</th>
+                                            <th scope="col">Clients</th>
+                                            <th scope="col">Resoluton</th>
+                                            <th scope="col">Frames/Sec</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for app in nginxStatData['server']['application']
+                                            {% for nginxstream in app['live'] %}
+                                                <tr>
+                                                    <td>{{app['name'}}</td>
+                                                    <td>{{nginxstream['stream']['name'}}</td>
+                                                    <td>{{nginxstream['stream']['bw_in']}}</td>
+                                                    <td>{{nginxstream['stream']['bw_out]}}</td>
+                                                    <td>{{nginxstream['stream']['time']}}</td>
+                                                    <td>{{nginxstream['stream']['nclients']}}</td>
+                                                    <td>{{nginxstream['meta']['video']['width']}}x{{nginxstream['meta']['video']['height']}}</td>
+                                                    <td>{{nginxstream['meta']['video']['frame_rate']}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
