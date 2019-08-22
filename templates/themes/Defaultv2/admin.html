@@ -72,7 +72,7 @@
                                         {% for app in nginxStatData['server']['application']
                                             {% for nginxstream in app['live'] %}
                                                 <tr>
-                                                    <td>{{app['name'}}</td>
+                                                    <td>{{app['name']}}</td>
                                                     <td>{{nginxstream['stream']['name'}}</td>
                                                     <td>{{nginxstream['stream']['bw_in']}}</td>
                                                     <td>{{nginxstream['stream']['bw_out]}}</td>
