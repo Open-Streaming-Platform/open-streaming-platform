@@ -22,15 +22,15 @@ fi
 # Build Nginx with RTMP module
 if cd /tmp
 then
-        sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
+        sudo wget "http://nginx.org/download/nginx-1.17.3.tar.gz"
         sudo wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
         sudo wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
-        sudo tar xvfz nginx-1.13.10.tar.gz
-        sudo unzip master.zip
+        sudo tar xvfz nginx-1.17.3.tar.gz
+        sudo unzip v1.2.1.zip
         sudo tar xvfz zlib-1.2.11.tar.gz
-        if cd nginx-1.13.10
+        if cd nginx-1.17.3
         then
-                ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-zlib=../zlib-1.2.11
+                ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
                 make
                 sudo make install
         else
