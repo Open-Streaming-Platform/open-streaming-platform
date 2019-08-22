@@ -23,7 +23,7 @@ fi
 if cd /tmp
 then
         sudo wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
-        sudo wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
+        sudo wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
         sudo wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
         sudo tar xvfz nginx-1.13.10.tar.gz
         sudo unzip master.zip
