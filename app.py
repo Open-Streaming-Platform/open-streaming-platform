@@ -14,8 +14,9 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_cl
 from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
-from apiv1 import api_v1
+import xmltodict
 
+from apiv1 import api_v1
 
 import uuid
 
@@ -1731,6 +1732,9 @@ def admin_page():
         for stream in streamList:
             currentViewers = currentViewers + stream.currentViewers
 
+        nginxStatDataRequest = requests.get('http://127.0.0.1:9000/stats')
+        nginxStatData = (json.loads(json.dumps(xmltodict.parse(nginxStatDataRequest.text))))
+
         themeList = []
         themeDirectorySearch = os.listdir("./templates/themes/")
         for theme in themeDirectorySearch:
@@ -1738,7 +1742,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, page=page)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
