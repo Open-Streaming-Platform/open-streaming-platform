@@ -192,6 +192,11 @@
   {% block scripts %}
 
   {% endblock %}
+
+  <script>
+    var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+  </script>
+
   <script type="application/javascript">
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)

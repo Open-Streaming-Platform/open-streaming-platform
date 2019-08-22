@@ -661,6 +661,8 @@ function toggleDiv(divID) {
 </script>
 
 <script>
+    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+
     {% for channel in channels %}
     var simplemde{{channel.id}} = new SimpleMDE({ element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
