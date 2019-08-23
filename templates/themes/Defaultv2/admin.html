@@ -71,6 +71,7 @@
                                         <tbody>
                                         {% for app in nginxStatData['rtmp']['server']['application'] %}
                                             {% for nginxstream in app['live'] %}
+                                                {% if 'stream' in nginxstream %}
                                                 <tr>
                                                     <td>{{app['name']}}</td>
                                                     <td>{{nginxstream['stream']['name']}}</td>
@@ -81,6 +82,7 @@
                                                     <td>{{nginxstream['meta']['video']['width']}}x{{nginxstream['meta']['video']['height']}}</td>
                                                     <td>{{nginxstream['meta']['video']['frame_rate']}}</td>
                                                 </tr>
+                                                {% endif %}
                                             {% endfor %}
                                         {% endfor %}
                                         </tbody>
