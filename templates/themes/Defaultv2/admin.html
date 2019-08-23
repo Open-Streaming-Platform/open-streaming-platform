@@ -59,13 +59,10 @@
                                         <thead>
                                         <tr>
                                             <th scope="col">Stream Endpoint</th>
-                                            <th scope="col">Stream Key</th>
                                             <th scope="col">In Kbps</th>
                                             <th scope="col">Out Kbps</th>
                                             <th scope="col">Time</th>
                                             <th scope="col">Clients</th>
-                                            <th scope="col">Resoluton</th>
-                                            <th scope="col">Frames/Sec</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -75,7 +72,6 @@
                                                     <td>{{nginxStatData['rtmp']['server']['application'][app]['name']}}</td>
 
                                                 </tr>
-                                                {% endif %}
                                             {% endfor %}
                                         {% endfor %}
                                         </tbody>
