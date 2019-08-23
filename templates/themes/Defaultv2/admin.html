@@ -65,11 +65,18 @@
                                             <th scope="col">Clients</th>
                                         </tr>
                                         </thead>
-                                        <tbody></tbody></table>
+                                        <tbody>
                                         {% for data in nginxStatData['rtmp']['server']['application'] %}
-                                        {{data}}
-                                        {% endfor %}}
-
+                                            {% if 'stream' in data['live'] %}
+                                                <td>{{data['name']}}</td>
+                                                <td>{{data['live']['stream']['bw_in']}}</td>
+                                                <td>{{data['live']['stream']['bw_out']}}</td>
+                                                <td>{{data['live']['stream']['time']}}</td>
+                                                <td>{{data['live']['stream']['nclients']}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
