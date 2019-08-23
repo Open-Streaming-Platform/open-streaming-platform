@@ -70,17 +70,17 @@
                                         </thead>
                                         <tbody>
                                         {% for app in nginxStatData['rtmp']['server']['application'] %}
-                                            {% for nginxstream in app['live'] %}
-                                                {% if 'stream' in nginxstream %}
+                                            {% for nginxstream in nginxStatData['rtmp']['server']['application'][app] %}
+                                                {% if 'stream' in nginxstream['live'] %}
                                                 <tr>
                                                     <td>{{app['name']}}</td>
-                                                    <td>{{nginxstream['stream']['name']}}</td>
-                                                    <td>{{nginxstream['stream']['bw_in']}}</td>
-                                                    <td>{{nginxstream['stream']['bw_out']}}</td>
-                                                    <td>{{nginxstream['stream']['time']}}</td>
-                                                    <td>{{nginxstream['stream']['nclients']}}</td>
-                                                    <td>{{nginxstream['meta']['video']['width']}}x{{nginxstream['meta']['video']['height']}}</td>
-                                                    <td>{{nginxstream['meta']['video']['frame_rate']}}</td>
+                                                    <td>{{nginxstream['live']['stream']['name']}}</td>
+                                                    <td>{{nginxstream['live']['stream']['bw_in']}}</td>
+                                                    <td>{{nginxstream['live']['stream']['bw_out']}}</td>
+                                                    <td>{{nginxstream['live']['stream']['time']}}</td>
+                                                    <td>{{nginxstream['live']['stream']['nclients']}}</td>
+                                                    <td>{{nginxstream['live']['meta']['video']['width']}}x{{nginxstream['meta']['video']['height']}}</td>
+                                                    <td>{{nginxstream['live']['meta']['video']['frame_rate']}}</td>
                                                 </tr>
                                                 {% endif %}
                                             {% endfor %}
