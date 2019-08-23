@@ -1,7 +1,14 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
 {% block head %}
-<title>{{sysSettings.siteName}} - {{video.channelName}}</title>
+<title>{{sysSettings.siteName}} - {{clip.clipName}}</title>
+<meta name="twitter:card" content="player" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{clip.clipName}}" />
+<meta property="og:type" content="video.other" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/videos/{{clip.thumbnailLocation}}" />
+<meta property="og:description" content="{{clip.description}}" />
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 
