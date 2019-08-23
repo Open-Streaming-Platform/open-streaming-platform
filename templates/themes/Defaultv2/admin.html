@@ -58,7 +58,8 @@
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                         <tr>
-                                            <th scope="col">Stream Endpoint</th>
+                                            <th scope="col">Endpoint</th>
+                                            <th scope="col">Key</th>
                                             <th scope="col">In Kbps</th>
                                             <th scope="col">Out Kbps</th>
                                             <th scope="col">Time</th>
@@ -68,11 +69,14 @@
                                         <tbody>
                                         {% for data in nginxStatData['rtmp']['server']['application'] %}
                                             {% if 'stream' in data['live'] %}
+                                            <tr>
                                                 <td>{{data['name']}}</td>
+                                                <td>{{data['live']['stream']['name']}}</td>
                                                 <td>{{data['live']['stream']['bw_in']}}</td>
                                                 <td>{{data['live']['stream']['bw_out']}}</td>
                                                 <td>{{data['live']['stream']['time']}}</td>
                                                 <td>{{data['live']['stream']['nclients']}}</td>
+                                            </tr>
                                             {% endif %}
                                         {% endfor %}
                                         </tbody>
