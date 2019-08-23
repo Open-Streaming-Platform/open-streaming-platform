@@ -65,17 +65,9 @@
                                             <th scope="col">Clients</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        {% for app in nginxStatData['rtmp']['server']['application'] %}
-                                            {% for data in nginxStatData['rtmp']['server']['application'][app] %}
-                                                <tr>
-                                                    <td>{{nginxStatData['rtmp']['server']['application'][app]['name']}}</td>
+                                        <tbody></tbody></table>
+                                        {{nginxStatData['rtmp']['server']['application']}}
 
-                                                </tr>
-                                            {% endfor %}
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
