@@ -48,6 +48,7 @@ RUN cd /tmp && \
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --with-http_ssl_module \
+  --with-http_v2_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install

@@ -147,7 +147,7 @@ tar xvfz nginx-1.17.3.tar.gz
 unzip v1.2.1.zip
 tar xvfz zlib-1.2.11.tar.gz
 cd nginx-1.17.3
-./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
+./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
 make
 make install
 ```
