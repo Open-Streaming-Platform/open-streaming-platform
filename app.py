@@ -542,6 +542,7 @@ def format_kbps(bits):
 @app.template_filter('hms_format')
 def hms_format(seconds):
     val = "Unknown"
+    seconds = int(seconds)
 
     if seconds != None:
         val = time.strftime("%H:%M:%S", time.gmtime(seconds))
