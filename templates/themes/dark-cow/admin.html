@@ -48,9 +48,41 @@
                                         <b>Server Version:</b> {{sysSettings.version}} <br>
                                         <b>Git Branch:</b> {{repoBranch}} <br>
                                         <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
-                                        <b>Database Version:</b> {{appDBVer}} <br>
+                                        <b>Database Version:</b> {{appDBVer}} <br><br>
+                                        <b>NGINX Version:</b> {{nginxStatData['rtmp']['nginx_version']}}<br>
+                                        <b>NGINX-RTMP Version</b> {{nginxStatData['rtmp']['nginx_rtmp_version']}}<br>
+                                        <b>Uptime:</b> {{nginxStatData['rtmp']['uptime']|hms_format}}
                                     </div>
                                 </div><br>
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-video"></i> RTMP Stats</div>
+                                    <div class="card-body">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Endpoint</th>
+                                                <th scope="col">Key</th>
+                                                <th scope="col">In Kbps</th>
+                                                <th scope="col">Out Kbps</th>
+                                                <th scope="col">Clients</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for data in nginxStatData['rtmp']['server']['application'] %}
+                                                {% if 'stream' in data['live'] %}
+                                                <tr>
+                                                    <td>{{data['name']}}</td>
+                                                    <td>{{data['live']['stream']['name']}}</td>
+                                                    <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
+                                                    <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
+                                                    <td>{{data['live']['stream']['nclients']}}</td>
+                                                </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
