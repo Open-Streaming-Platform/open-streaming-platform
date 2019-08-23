@@ -534,6 +534,10 @@ def limit_title(titleStr):
     else:
         return titleStr
 
+@app.template_filter('format_kbps')
+def format_kbps(bits):
+    bits = int(bits)
+    return round(bits/1000)
 
 @app.template_filter('hms_format')
 def hms_format(seconds):

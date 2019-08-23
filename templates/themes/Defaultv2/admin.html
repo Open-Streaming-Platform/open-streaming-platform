@@ -48,14 +48,14 @@
                                         <b>Server Version:</b> {{sysSettings.version}} <br>
                                         <b>Git Branch:</b> {{repoBranch}} <br>
                                         <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
-                                        <b>Database Version:</b> {{appDBVer}} <br>
+                                        <b>Database Version:</b> {{appDBVer}} <br><br>
+                                        <b>NGINX Version:</b> {{nginxStatData['rtmp']['nginx_version']}}<br>
+                                        <b>NGINX-RTMP Version</b> {{nginxStatData['rtmp']['nginx_rtmp_version']}}<br>
+                                        <b>Uptime:</b> {{nginxStatData['rtmp']['uptime']|hms_format}}
                                     </div>
                                 </div><br>
                                 <div>
-                                    <b>NGINX Version:</b> {{nginxStatData['rtmp']['nginx_version']}}<br>
-                                    <b>NGINX-RTMP Version</b> {{nginxStatData['rtmp']['nginx_rtmp_version']}}<br>
-                                    <b>Uptime:</b> {{nginxStatData['rtmp']['uptime']|hms_format}}
-                                    <table class="table table-bordered table-hover">
+                                    <table class="table table-hover">
                                         <thead>
                                         <tr>
                                             <th scope="col">Endpoint</th>
