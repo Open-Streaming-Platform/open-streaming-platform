@@ -3606,6 +3606,19 @@ def addChangeWebhook(message):
     db.session.commit()
     db.session.close()
 
+@socketio.on('deleteWebhook')
+def deleteWebhook(message):
+    webhookID = int(message['webhookID'])
+    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
+
+    if webhookQuery is not None:
+        channelQuery = webhookQuery.channel
+        if channelQuery is not None:
+            if channelQuery.owningUser is current_user.id:
+                db.session.delete(webhookQuery)
+                db.session.commit()
+    db.session.close()
+
 @socketio.on('submitGlobalWebhook')
 def addChangeGlobalWebhook(message):
 
@@ -3639,8 +3652,8 @@ def addChangeGlobalWebhook(message):
     db.session.commit()
     db.session.close()
 
-@socketio.on('deleteWebhook')
-def deleteWebhook(message):
+@socketio.on('deleteGlobalWebhook')
+def deleteGlobalWebhook(message):
     webhookID = int(message['webhookID'])
     webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
 
