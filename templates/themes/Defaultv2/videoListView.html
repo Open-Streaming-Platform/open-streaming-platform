@@ -69,6 +69,26 @@
 {% endif %}
 
 {% if userChannels %}
+<div class="container-fluid justify-content-center" style="width:100%">
+    <div class="jumbotron shadow p-3">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
+                <div>
+                    <img class="shadow" src="/images/{{streamer.pictureLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                <div class="h-100 viewerText">
+                    <h2 class="display-5"><i class="fas fa-user mr-2"></i> {{title}}</h2>
+
+                    <span>
+                        <p>{{streamer.biography|markdown}}</p>
+                    </span><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container-fluid p-2" id="index-live-container">
     <div class="row m-2">
         <div class="index-live-title"><b>Channels by {{title}}</b></div>
