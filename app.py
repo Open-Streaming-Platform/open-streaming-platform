@@ -1751,6 +1751,8 @@ def admin_page():
         nginxStatDataRequest = requests.get('http://127.0.0.1:9000/stats')
         nginxStatData = (json.loads(json.dumps(xmltodict.parse(nginxStatDataRequest.text))))
 
+        globalWebhookQuery = webhook.globalWebhook.query.all()
+
         themeList = []
         themeDirectorySearch = os.listdir("./templates/themes/")
         for theme in themeDirectorySearch:
@@ -1758,7 +1760,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, page=page)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
