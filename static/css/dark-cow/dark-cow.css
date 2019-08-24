@@ -415,6 +415,10 @@ hr {
 	border-color: #3488db !important;
 	border-bottom: 1px solid #3488db !important;
 }
+#clips-tab.nav-link:hover, #clips-tab.nav-link:focus, #clips-tab.nav-link.active{
+	border-color: #3488db !important;
+	border-bottom: 1px solid #3488db !important;
+}
 .channel-img {
     width:100%;
     object-fit: contain;
