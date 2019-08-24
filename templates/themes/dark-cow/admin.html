@@ -19,6 +19,9 @@
                     <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'webhooks' %} active {% endif %}" role="tab" id="admin-nav-webhooks" href="#webhooksSettings" data-toggle="pill" aria-controls="webhooks-nav-settings" aria-selected="false">Webhooks</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'users' %} active {% endif %}" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
                 </li>
                 <li class="nav-item">
@@ -194,6 +197,117 @@
                               </div>
                           </div>
                       </form>
+                </div>
+                <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-webhooks" id="webhooksSettings">
+                <h5>Global Webhooks</h5>
+                     <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
+                                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i></button></span>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="webhookList">
+                                        <div class="table-responsive">
+                                            <table id="webhookTable" class="table table-borderless" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Webhook Name</th>
+                                                        <th>Trigger</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for webhook in globalHooks %}
+                                                    <tr id="webhookTableRow-{{webhook.id}}">
+                                                        <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                        <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                        <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                        <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                        <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                        <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                    <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newWebhookModalTitle">Create/Edit Webhook</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                             <div class="row">
+                                 <div class="col-12">
+                                     <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="webhookName">Name</label>
+                                            <input id="webhookName" class="form-control">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="webhookEndpoint">Endpoint URL</label>
+                                            <input id="webhookEndpoint" class="form-control">
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="form-group col-md-12">
+                                            <label for="webhookHeader">Request Header</label>
+                                            <textarea id="webhookHeader" class="form-control"></textarea>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label for="webhookPayload">Payload</label>
+                                            <textarea id="webhookPayload" class="form-control" cols=50 rows=25></textarea>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="webhookReqType">Type</label>
+                                            <select id="webhookReqType" class="form-control">
+                                                 <option value=0 selected>POST</option>
+                                                 <option value=1>GET</option>
+                                                 <option value=2>PUT</option>
+                                                 <option value=3>DELETE</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="webhookTrigger">Trigger Event</label>
+                                            <select id="webhookTrigger" class="form-control">
+                                                 <option value=0 selected>Stream Start</option>
+                                                 <option value=1>Stream End</option>
+                                                 <option value=2>Stream Viewer Join</option>
+                                                 <option value=4>Stream Name Change</option>
+                                                 <option value=5>Chat Message</option>
+                                                 <option value=6>New Video</option>
+                                                 <option value=7>Video Comment</option>
+                                                 <option value=9>Video Name Change</option>
+                                                 <option value=20>New User</option>
+                                            </select>
+                                        </div>
+                                        <input id="webhookInputAction" type="hidden">
+                                        <input id="webhookID" type="hidden">
+                                     </div>
+                                 </div>
+                             </div>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitWebhook();">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'users' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
                     <h5>User List <button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button></h5>
@@ -609,6 +723,280 @@
                 }],
             }
         }
+    });
+</script>
+
+<script>
+    function deleteWebhook(webhookID) {
+        socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
+        var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
+        webhookTableRow.parentNode.removeChild(webhookTableRow);
+    }
+</script>
+
+<script>
+    function openNewWebhookModal() {
+        $('#newWebhookModal').modal('show');
+        var webhookName = document.getElementById('webhookName');
+        var webhookEndpoint = document.getElementById('webhookEndpoint');
+        var webhookHeader = document.getElementById('webhookHeader');
+        var webhookPayload = document.getElementById('webhookPayload');
+        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookTriggerElement = document.getElementById('webhookTrigger');
+        var webhookInputAction = document.getElementById('webhookInputAction');
+        var webhookInputID = document.getElementById('webhookID');
+
+        webhookInputID.value = 'New';
+        webhookName.value = "";
+        webhookEndpoint.value = "";
+        webhookHeader.value = "";
+        webhookPayload.value = "";
+        webhookReqTypeElement.value = 0;
+        webhookTriggerElement.value = 0;
+        webhookInputAction.value = 'new';
+    }
+</script>
+
+<script>
+	function submitWebhook() {
+        var webhookName = document.getElementById('webhookName').value;
+        var webhookEndpoint = document.getElementById('webhookEndpoint').value;
+        var webhookHeader = document.getElementById('webhookHeader').value;
+        var webhookPayload = document.getElementById('webhookPayload').value;
+        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+        var webhookTriggerElement = document.getElementById('webhookTrigger');
+        var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
+        var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
+        var webhookInputAction = document.getElementById('webhookInputAction').value;
+        var webhookInputID = document.getElementById('webhookID').value;
+
+        if (webhookName == '') {
+            (document.getElementById('webhookName')).setCustomValidity('Name is Required');
+        }
+        if (webhookEndpoint == '') {
+            (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
+        }
+        socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID});
+	}
+</script>
+
+<script>
+    function editWebhook(webhookID) {
+        var webhookTrigger = document.getElementById('webhookTrigger');
+        var webhookName = document.getElementById('webhookName');
+        var webhookEndpoint = document.getElementById('webhookEndpoint');
+        var webhookHeader = document.getElementById('webhookHeader');
+        var webhookPayload = document.getElementById('webhookPayload');
+        var webhookReqTypeElement = document.getElementById('webhookReqType');
+        var webhookInputAction = document.getElementById('webhookInputAction');
+        var webhookInputID = document.getElementById('webhookID');
+
+        var triggerVal = document.getElementById('webhookRowTrigger-' + webhookID).innerText;
+
+        switch(triggerVal) {
+          case 'Stream Start':
+            triggerVal = 0;
+            break;
+          case 'Stream End':
+            triggerVal = 1;
+            break;
+          case 'Stream Viewer Join':
+            triggerVal = 2;
+            break;
+          case 'Stream Viewer Upvote':
+            triggerVal = 3;
+            break;
+          case 'Stream Name Change':
+            triggerVal = 4;
+            break;
+          case 'Chat Message':
+            triggerVal = 5;
+            break;
+          case 'New Video':
+            triggerVal = 6;
+            break;
+          case 'Video Comment':
+            triggerVal = 7;
+            break;
+          case 'Video Upvote':
+            triggerVal = 8;
+            break;
+          case 'Video Name Change':
+            triggerVal = 9;
+            break;
+          case 'New User':
+            triggerVal = 20;
+            break;
+          default:
+            triggerVal = 0;
+        }
+
+        webhookName.value = document.getElementById('webhookRowName-' + webhookID).innerText;
+        webhookEndpoint.value = document.getElementById('webhookRowEndpoint-' + webhookID).innerText;
+        webhookHeader.value = document.getElementById('webhookRowHeader-' + webhookID).innerText;
+        webhookPayload.value = document.getElementById('webhookRowPayload-' + webhookID).innerText;
+        webhookReqTypeElement.value = document.getElementById('webhookRowType-' + webhookID).innerText;
+        webhookTrigger.value = triggerVal;
+        webhookInputAction.value = 'edit';
+        webhookInputID.value = webhookID;
+
+        $('#newWebhookModal').modal('show');
+        webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
+        webhookPayload.value = JSON.stringify(JSON.parse(webhookPayload.value), undefined, 2);
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('newGlobalWebhookAck', function (msg) {
+        var webhookName = msg['webhookName'];
+        var webhookURL = msg['requestURL'];
+        var webhookHeader = msg['requestHeader'];
+        var webhookPayload = msg['requestPayload'];
+        var webhookRequestType = msg['requestType'];
+        var webhookTrigger = msg['requestTrigger'];
+        var webhookID = msg['requestID'];
+
+        var tableRef = document.getElementById('webhookTable').getElementsByTagName('tbody')[0];
+
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.id = 'webhookTableRow-' + webhookID;
+
+        var webhookNameCell = newRow.insertCell(0);
+        var endpointURLCell = newRow.insertCell(1);
+        var requestTriggerCell = newRow.insertCell(2);
+        var requestTypeCell = newRow.insertCell(3);
+        var requestHeaderCell = newRow.insertCell(4);
+        var requestPayloadCell = newRow.insertCell(5);
+        var buttonCell = newRow.insertCell(6);
+
+        webhookNameCell.id = "webhookRowName-" + webhookID;
+        endpointURLCell.id = "webhookRowEndpoint-" + webhookID;
+        requestTriggerCell.id = "webhookRowTrigger-" + webhookID;
+        requestTypeCell.id = "webhookRowType-" + webhookID;
+        requestHeaderCell.id = "webhookRowHeader-" + webhookID;
+        requestPayloadCell.id = "webhookRowPayload-" + webhookID;
+
+        endpointURLCell.style.display = 'none';
+        requestTypeCell.style.display = 'none';
+        requestHeaderCell.style.display = 'none';
+        requestPayloadCell.style.display = 'none';
+
+        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
+
+        var triggerVal = 'Unknown';
+
+        switch(webhookTrigger) {
+          case 0:
+            triggerVal = 'Stream Start';
+            break;
+          case 1:
+            triggerVal = 'Stream End';
+            break;
+          case 2:
+            triggerVal = 'Stream Viewer Join';
+            break;
+          case 3:
+            triggerVal = 'Stream Viewer Upvote';
+            break;
+          case 4:
+            triggerVal = 'Stream Name Change';
+            break;
+          case 5:
+            triggerVal = 'Chat Message';
+            break;
+          case 6:
+            triggerVal = 'New Video';
+            break;
+          case 7:
+            triggerVal = 'Video Comment';
+            break;
+          case 8:
+            triggerVal = 'Video Upvote';
+            break;
+          case 9:
+            triggerVal = 'Video Name Change';
+            break;
+          case 20:
+            triggerVal = 'New User';
+            break;
+          default:
+            triggerVal = 'Unknown';
+        }
+
+        webhookNameCell.appendChild(document.createTextNode(webhookName));
+        endpointURLCell.appendChild(document.createTextNode(webhookURL));
+        requestTriggerCell.appendChild(document.createTextNode(triggerVal));
+        requestTypeCell.appendChild(document.createTextNode(webhookRequestType));
+        requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
+        requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
+        buttonCell.innerHTML = buttonText;
+
+    });
+    </script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('changeGlobalWebhookAck', function (msg) {
+        var webhookName = msg['webhookName'];
+        var webhookURL = msg['requestURL'];
+        var webhookHeader = msg['requestHeader'];
+        var webhookPayload = msg['requestPayload'];
+        var webhookRequestType = msg['requestType'];
+        var webhookTrigger = msg['requestTrigger'];
+        var webhookID = msg['requestID'];
+
+        webhookNameCell = document.getElementById('webhookRowName-' + webhookID);
+        endpointURLCell = document.getElementById('webhookRowEndpoint-' + webhookID);
+        requestTriggerCell = document.getElementById('webhookRowTrigger-' + webhookID);
+        requestTypeCell = document.getElementById('webhookRowType-' + webhookID);
+        requestHeaderCell = document.getElementById('webhookRowHeader-' + webhookID);
+        requestPayloadCell = document.getElementById('webhookRowPayload-' + webhookID);
+
+        var triggerVal = 'Unknown';
+
+        switch(webhookTrigger) {
+          case 0:
+            triggerVal = 'Stream Start';
+            break;
+          case 1:
+            triggerVal = 'Stream End';
+            break;
+          case 2:
+            triggerVal = 'Stream Viewer Join';
+            break;
+          case 3:
+            triggerVal = 'Stream Viewer Upvote';
+            break;
+          case 4:
+            triggerVal = 'Stream Name Change';
+            break;
+          case 5:
+            triggerVal = 'Chat Message';
+            break;
+          case 6:
+            triggerVal = 'New Video';
+            break;
+          case 7:
+            triggerVal = 'Video Comment';
+            break;
+          case 8:
+            triggerVal = 'Video Upvote';
+            break;
+          case 9:
+            triggerVal = 'Video Name Change';
+            break;
+          case 20:
+            triggerVal = 'New User';
+            break;
+          default:
+            triggerVal = 'Unknown';
+        }
+
+        webhookNameCell.innerText = webhookName;
+        endpointURLCell.innerText = webhookURL;
+        requestTriggerCell.innerText = triggerVal;
+        requestTypeCell.innerText = webhookRequestType;
+        requestHeaderCell.innerText = webhookHeader;
+        requestPayloadCell.innerText = webhookPayload;
     });
 </script>
 
