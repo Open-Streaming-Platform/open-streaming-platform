@@ -3647,7 +3647,6 @@ def addChangeGlobalWebhook(message):
                 existingWebhookQuery.requestType = webhookReqType
                 existingWebhookQuery.requestTrigger = webhookTrigger
 
-
                 emit('changeGlobalWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id}, broadcast=False)
     db.session.commit()
     db.session.close()

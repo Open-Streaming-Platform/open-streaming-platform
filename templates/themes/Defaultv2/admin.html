@@ -877,7 +877,7 @@
 </script>
 
 <script type="text/javascript" charset="utf-8">
-    socket.on('newWebhookAck', function (msg) {
+    socket.on('newGlobalWebhookAck', function (msg) {
         var webhookName = msg['webhookName'];
         var webhookURL = msg['requestURL'];
         var webhookHeader = msg['requestHeader'];
