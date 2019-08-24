@@ -1476,19 +1476,21 @@ def user_page():
                 flash("Passwords Don't Match!")
 
         if 'photo' in request.files:
-            oldImage = None
+            file = request.files['photo']
+            if file.filename != '':
+                oldImage = None
 
-            if current_user.pictureLocation != None:
-                oldImage = current_user.pictureLocation
+                if current_user.pictureLocation != None:
+                    oldImage = current_user.pictureLocation
 
-            filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
-            current_user.pictureLocation = filename
+                filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
+                current_user.pictureLocation = filename
 
-            if oldImage != None:
-                try:
-                    os.remove(oldImage)
-                except OSError:
-                    pass
+                if oldImage != None:
+                    try:
+                        os.remove(oldImage)
+                    except OSError:
+                        pass
 
         current_user.emailAddress = emailAddress
 
