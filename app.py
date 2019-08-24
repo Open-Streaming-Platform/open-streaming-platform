@@ -98,7 +98,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app,logger=True)
+socketio = SocketIO(app,logger=True, engineio_logger=True)
 
 appDBVersion = 0.45
 
