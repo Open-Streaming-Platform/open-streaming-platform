@@ -35,6 +35,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
+    biography = db.Column(db.String(2048))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     pictureLocation = db.Column(db.String(255))
