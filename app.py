@@ -3574,6 +3574,9 @@ def deleteInvitedUser(message):
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
+
+    invalidTriggers = [20]
+
     channelID = int(message['webhookChannelID'])
 
     channelQuery = Channel.Channel.query.filter_by(id=channelID, owningUser=current_user.id).first()
@@ -3587,13 +3590,12 @@ def addChangeWebhook(message):
         webhookInputAction = message['inputAction']
         webhookInputID = message['webhookInputID']
 
-
-        if webhookInputAction == 'new':
+        if webhookInputAction == 'new' and webhookTrigger not in invalidTriggers:
             newWebHook = webhook.webhook(webhookName, channelID, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
             db.session.add(newWebHook)
             db.session.commit()
             emit('newWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestTrigger':webhookTrigger, 'requestID':newWebHook.id, 'channelID':channelID}, broadcast=False)
-        elif webhookInputAction == 'edit':
+        elif webhookInputAction == 'edit' and webhookTrigger not in invalidTriggers:
             existingWebhookQuery = webhook.webhook.query.filter_by(channelID=channelID, id=int(webhookInputID)).first()
             if existingWebhookQuery is not None:
                 existingWebhookQuery.name = webhookName
