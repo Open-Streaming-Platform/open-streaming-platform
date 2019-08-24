@@ -298,7 +298,6 @@
                                                  <option value=9>Video Name Change</option>
                                             </select>
                                         </div>
-                                        <input id="webhookChannelIDInput" type="hidden">
                                         <input id="webhookInputAction" type="hidden">
                                         <input id="webhookID" type="hidden">
                                      </div>
@@ -810,7 +809,6 @@
         if (webhookEndpoint == '') {
             (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
         }
-
         socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID});
 	}
 </script>
