@@ -789,29 +789,33 @@ def streamers_view_page(userID):
     sysSettings = settings.settings.query.first()
     userID = int(userID)
 
-    userName = Sec.User.query.filter_by(id=userID).first().username
-    streamer = Sec.User.query.filter_by(id=userID).first()
-    userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
+    streamerQuery = Sec.User.query.filter_by(id=userID).first()
+    if streamerQuery != None:
+        if streamerQuery.has_role('Streamer'):
+            userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
 
-    streams = []
+            streams = []
 
-    for channel in userChannels:
-        for stream in channel.stream:
-            streams.append(stream)
+            for channel in userChannels:
+                for stream in channel.stream:
+                    streams.append(stream)
 
-    recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False).all()
+            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False).all()
 
-    # Sort Video to Show Newest First
-    recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
+            # Sort Video to Show Newest First
+            recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    clipsList = []
-    for vid in recordedVideoQuery:
-        for clip in vid.clips:
-            clipsList.append(clip)
+            clipsList = []
+            for vid in recordedVideoQuery:
+                for clip in vid.clips:
+                    clipsList.append(clip)
 
-    clipsList.sort(key=lambda x: x.views, reverse=True)
+            clipsList.sort(key=lambda x: x.views, reverse=True)
 
-    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userName, streamer=streamer)
+            return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=streamerQuery.username, streamerData=streamerQuery)
+    flash('Invalid Streamer','error')
+    return redirect(url_for("main_page"))
+
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
