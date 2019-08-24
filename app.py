@@ -449,11 +449,11 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
-
     webhookQueue = []
+    if channelID != "ZZZ":
 
-    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
-    webhookQueue.append(webhookQuery)
+        webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
+        webhookQueue.append(webhookQuery)
 
     globalWebhookQuery = webhook.globalWebhook.query.filter_by(requestTrigger=triggerType).all()
     webhookQueue.append(globalWebhookQuery)
