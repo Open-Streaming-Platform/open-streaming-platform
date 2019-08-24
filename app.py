@@ -780,7 +780,7 @@ def streamers_view_page(userID):
     userID = int(userID)
 
     userName = Sec.User.query.filter_by(id=userID).first().username
-
+    streamer = Sec.User.query.filter_by(id=userID).first()
     userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
 
     streams = []
@@ -801,7 +801,7 @@ def streamers_view_page(userID):
 
     clipsList.sort(key=lambda x: x.views, reverse=True)
 
-    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userName)
+    return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userName, streamer=streamer)
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
@@ -1451,6 +1451,7 @@ def user_page():
         emailAddress = request.form['emailAddress']
         password1 = request.form['password1']
         password2 = request.form['password2']
+        biography = request.form['biography']
 
         if password1 != "":
             if password1 == password2:
@@ -1476,6 +1477,8 @@ def user_page():
                     pass
 
         current_user.emailAddress = emailAddress
+
+        current_user.biography = biography
 
         db.session.commit()
 
