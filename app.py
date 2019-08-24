@@ -3619,7 +3619,6 @@ def addChangeGlobalWebhook(message):
         webhookInputAction = message['inputAction']
         webhookInputID = message['webhookInputID']
 
-
         if webhookInputAction == 'new':
             newWebHook = webhook.globalWebhook(webhookName, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
             db.session.add(newWebHook)
