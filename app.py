@@ -627,7 +627,8 @@ def get_webhookTrigger(webhookTrigger):
         '6': 'New Video',
         '7': 'Video Comment',
         '8': 'Video Upvote',
-        '9': 'Video Name Change'
+        '9': 'Video Name Change',
+        '20': 'New User'
     }
     return webhookNames[webhookTrigger]
 
@@ -636,6 +637,7 @@ def get_webhookTrigger(webhookTrigger):
 def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
+    runWebhook("ZZZ", 20, user=user.username)
     db.session.commit()
 
 ### Start Error Handling ###

@@ -296,6 +296,7 @@
                                                  <option value=6>New Video</option>
                                                  <option value=7>Video Comment</option>
                                                  <option value=9>Video Name Change</option>
+                                                 <option value=20>New User</option>
                                             </select>
                                         </div>
                                         <input id="webhookInputAction" type="hidden">
@@ -857,6 +858,9 @@
           case 'Video Name Change':
             triggerVal = 9;
             break;
+           case 'New User':
+            triggerVal = 20;
+            break;
           default:
             triggerVal = 0;
         }
@@ -945,6 +949,9 @@
             break;
           case 9:
             triggerVal = 'Video Name Change';
+            break;
+          case 20:
+            triggerVal = 'New User';
             break;
           default:
             triggerVal = 'Unknown';
