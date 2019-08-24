@@ -20,7 +20,12 @@ a.btn, a.dropdown-item{
 text{
   color: #aaa;
 }
-
+table {
+  border: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
 .navbar{
 	border: 0px !important;
 	border-bottom: 1px solid #3488db !important;

@@ -140,7 +140,7 @@ configure_uploads(app, photos)
 patch_request_class(app)
 
 #Initialize Flask-Markdown
-md = Markdown(app)
+md = Markdown(app, extensions=['tables'])
 
 # Establish Channel User List
 streamUserList = {}
