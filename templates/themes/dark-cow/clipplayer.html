@@ -18,99 +18,142 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-8 col-xs-12 col-sm-12">
-      <div class="row m-2">
-        <div class="index-video-title"><b>{{clip.clipName}}</b>
-          <span class="badge badge-primary float-right">
-            <i class="fas fa-cut"></i> Clip
-          </span>
-          {% if video.channel.protected %}
-          <span class="badge badge-warning float-right">
-            <i class="fas fa-user-lock"></i> Protected
-          </span>
-          {% endif %}
-        </div>
-      </div>
-      <div class="player ml-2">
-        <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{clip.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
-          <source src="{{streamURL}}" type="video/mp4">
-          <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a web browser that
-            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-          </p>
-        </video>
-      </div>
-      <div class="row m-2">
-        <div class="video-buttons-row">
-          <span class="float-md-left">
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-              <i class="fas fa-share-alt"></i>
-            </button>
-            {% if video.owningUser == current_user.id %}
-            <button type="button" class="btn btn-primary shadow" onclick="newScreenShot();">
-              <i class="fas fa-camera"></i>
-            </button>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-            {% endif %}
-          </span>
-          <span class="d-none d-md-block float-right">
-            <i class="fas fa-users mr-2"></i> {{clip.views}}
-            <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-              <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-            </button>
-          </span>
-        </div>
-        <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
-          <i class="fas fa-users mr-2"></i> {{clip.views}}
-          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-            <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
-          </button>
-        </div>
-      </div>
-      <div class="row m-2">
-        <div class="col-12 nopadding">
-          <div><b><i class="fas fa-video"></i> <a href="/play/{{video.id}}">{{video.channelName}}</a></b></div>
-          <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-          <div><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
-          <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
-        </div>
-      </div>
-
-      <div class="row m-2">
-        <div class="videodescription">{% if clip.description != None %}<p>{{clip.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
+    <div class="col-lg col-xs-12 col-sm-12">
+      <div class="index-video-title ml-2 my-2">
+        <span class="float-left" id="clipName">{{clip.clipName}}</span>
+        <h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-secondary float-left m-2"><i class="fas fa-cut"></i>
+            Clip</span></h6>{% if video.channel.protected %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
+            Protected</span></h6>{% endif %}
       </div>
     </div>
-    <div class="col-lg-4 col-sm-12 col-xs-12">
-      <div class="row m-2">
-        <div class="index-video-title mb-2"><b>Other Clips</b></div>
-        {% for clipEntry in randomClips[:4] %}
-        <div class="displayCard-other pb-1 pr-1">
-          <a href="/clip/{{clipEntry.id}}">
-            <img class="shadow lazy" {% if clipEntry.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-              onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clipEntry.thumbnailLocation}}">
-            <div class="card-data">
-              <div class="card-cut-text"><b>{{clipEntry.clipName|limit_title}}</b></div>
-              {{clipEntry.recordedVideo.channel.channelName}}<br>
-              {{clipEntry.recordedVideo.topic|get_topicName}}<br>
-              {{clipEntry.recordedVideo.videoDate|normalize_date}}<br>
-              <span class="displayCard-footer">
-                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{clipEntry.id|get_Video_Upvotes}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clipEntry.views}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clipEntry.length|hms_format}}</span>
-              </span>
-            </div>
-          </a>
+    <div class="col-lg-auto col-sm-12" style="width:450px;">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg" id="videoWindow">
+      <div class="videoPanel">
+        <div class="player ml-2">
+          <div id="videoContainer">
+            <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{clip.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="{{streamURL}}" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
         </div>
-        {% endfor %}
+        <div class="row m-2">
+          <div class="video-buttons-row">
+            <div class="video-buttons-mobile d-none mt-2">
+
+
+              {% if video.owningUser == current_user.id %}
+              <span class="float-right">
+                <div class="btn-group" role="group">
+                  <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
+                  </div>
+                </div>
+              </span>
+              {% endif %}
+              <span class="float-left">
+                <b><i class="fas fa-video mr-1"></i></b> <a href="/play/{{video.id}}"> {{video.channelName}}</a><br />
+                <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
+                <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
+              </span>
+              <span class="float-right">
+                <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
+                <i class="fas fa-users"></i> {{clip.views}}
+              </span>
+              <span class="float-right" style="margin-right: 10px">
+                <button type="button" class="btn btn-primary shadow mx-1" data-toggle="modal" data-target="#shareModal">
+                  <i class="fas fa-share-alt"></i>
+                </button>
+                <span class="float-right">
+                  <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+                    <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                  </button>
+                </span>
+              </span>
+
+            </div>
+            <span class="float-left">
+              <b><i class="fas fa-video mr-1"></i></b> <a href="/play/{{video.id}}"> {{video.channelName}}</a><br />
+              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
+              <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
+            </span>
+            <span class="float-right">
+              <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
+              <i class="fas fa-users"></i> {{clip.views}}
+            </span>
+            <span class="float-right" style="margin-right: 10px">
+              <button type="button" class="btn btn-primary shadow mx-1" data-toggle="modal" data-target="#shareModal">
+                <i class="fas fa-share-alt"></i>
+              </button>
+              <span class="float-right">
+                <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+                  <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                </button>
+              </span>
+            </span>
+
+            {% if video.owningUser == current_user.id %}
+            <span class="float-right">
+              <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                  <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
+                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
+                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
+                </div>
+              </div>
+            </span>
+            {% endif %}
+          </div>
+
+
+
+          <div class="row m-2">
+            <div class="videodescription">{% if clip.description != None %}<p>{{clip.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12">
+      <div class="col-lg-auto col-sm-12 col-xs-12">
+        <div class="row ml-2 mr-1">
+          <div class="index-video-title mb-2"><b>Other Clips</b></div>
+          {% for clipEntry in randomClips[:4] %}
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
+                  <div class="video-card-header">
+                    <a href="/clipEntry/{{clipEntry.id}}">
+                      <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clipEntry.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    </a>
+                  </div>
+                  <div class="video-card-body">
+                    <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/clip/{{clipEntry.id}}"><b> {{clipEntry.clipName|limit_title}}</b></a></span><br />
+                    <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clipEntry.recordedVideo.channel.protected %}<span class="float-right"><span class="badge badge-info"><i
+                          class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
+                    <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clipEntry.recordedVideo.channel.id}}/"> {{clipEntry.recordedVideo.channel.channelName}}</a>
+                    <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{clipEntry.recordedVideo.videoDate|normalize_date}}</span><br />
+                    <i class="fas fa-user mr-2"></i><a href="/streamers/{{clipEntry.recordedVideo.owningUser}}"> {{clipEntry.recordedVideo.owningUser|get_userName}}</a>
+                    <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{clipEntry.recordedVideo.topic}}/"> {{clipEntry.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                    <i class="fas fa-thumbs-up mr-2"></i> {{clipEntry.id|get_Clip_Upvotes}}</span>
+                    <i class="fas fa-eye mx-2"></i> {{clipEntry.views}}</span>
+                    <span class="float-right"><i class="fas fa-clock mr-2"></i> {{clipEntry.length|hms_format}}</span>
+                  </div>
+                </div>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 
 {% if video.owningUser == current_user.id %}
 <!-- Modal -->
@@ -211,7 +254,7 @@
           <div class="col-sm-10">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
               </div>
               <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
             </div>
@@ -222,7 +265,7 @@
           <div class="col-sm-10">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
               </div>
               <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
             </div>
@@ -244,21 +287,21 @@
 <script>
   var player = videojs('video', { autoplay: false });
 
-  var startTime = {{clip.startTime}};
-  var stopTime = {{clip.endTime}};
+  var startTime = {{ clip.startTime }};
+  var stopTime = {{ clip.endTime }};
 
   player.currentTime(startTime);
   player.play();
 
   player.on('timeupdate', function (e) {
     if (player.currentTime() < startTime) {
-        player.currentTime(startTime);
+      player.currentTime(startTime);
     }
     if (player.currentTime() >= stopTime) {
-        player.currentTime(startTime);
-        player.pause();
+      player.currentTime(startTime);
+      player.pause();
     }
-   });
+  });
 
 </script>
 
@@ -271,7 +314,7 @@
 </script>
 
 <script>
-    var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+  var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
 </script>
 
 <script>
@@ -366,23 +409,23 @@
 
 <script>
   function setScreenShot() {
-    socket.emit('setScreenShot', {timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
+    socket.emit('setScreenShot', { timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
   }
 </script>
 
 {% if startTime != None %}
 <script>
-  player.currentTime({{startTime}});
+  player.currentTime({{ startTime }});
   player.play();
 </script>
 {% endif %}
 
 <script>
-    function CopyDiv(divVal) {
-      var copyText = document.getElementById(divVal);
-      copyText.select();
-      document.execCommand("copy");
-    }
+  function CopyDiv(divVal) {
+    var copyText = document.getElementById(divVal);
+    copyText.select();
+    document.execCommand("copy");
+  }
 </script>
 
 {% endblock %}
