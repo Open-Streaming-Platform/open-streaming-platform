@@ -449,25 +449,33 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
-    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
 
-    if webhookQuery != []:
-        for hook in webhookQuery:
-            url = hook.endpointURL
-            payload = processWebhookVariables(hook.requestPayload, **kwargs)
-            header = json.loads(hook.requestHeader)
-            requestType = hook.requestType
-            try:
-                if requestType == 0:
-                    r = requests.post(url, headers=header, data=payload)
-                elif requestType == 1:
-                    r = requests.get(url, headers=header, data=payload)
-                elif requestType == 2:
-                    r = requests.put(url, headers=header, data=payload)
-                elif requestType == 3:
-                    r = requests.delete(url, headers=header, data=payload)
-            except:
-                pass
+    webhookQueue = []
+
+    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
+    webhookQueue.append(webhookQuery)
+
+    globalWebhookQuery = webhook.globalWebhook.query.filter_by(requestTrigger=triggerType).all()
+    webhookQueue.append(globalWebhookQuery)
+
+    for queue in webhookQueue:
+        if queue != []:
+            for hook in queue:
+                url = hook.endpointURL
+                payload = processWebhookVariables(hook.requestPayload, **kwargs)
+                header = json.loads(hook.requestHeader)
+                requestType = hook.requestType
+                try:
+                    if requestType == 0:
+                        r = requests.post(url, headers=header, data=payload)
+                    elif requestType == 1:
+                        r = requests.get(url, headers=header, data=payload)
+                    elif requestType == 2:
+                        r = requests.put(url, headers=header, data=payload)
+                    elif requestType == 3:
+                        r = requests.delete(url, headers=header, data=payload)
+                except:
+                    pass
     db.session.commit()
     db.session.close()
 
@@ -3593,17 +3601,49 @@ def addChangeWebhook(message):
     db.session.commit()
     db.session.close()
 
+@socketio.on('submitGlobalWebhook')
+def addChangeGlobalWebhook(message):
+
+    if current_user.has_role('Admin'):
+        webhookName = message['webhookName']
+        webhookEndpoint = message['webhookEndpoint']
+        webhookTrigger = int(message['webhookTrigger'])
+        webhookHeader = message['webhookHeader']
+        webhookPayload = message['webhookPayload']
+        webhookReqType = int(message['webhookReqType'])
+        webhookInputAction = message['inputAction']
+        webhookInputID = message['webhookInputID']
+
+
+        if webhookInputAction == 'new':
+            newWebHook = webhook.globalWebhook(webhookName, webhookEndpoint, webhookHeader, webhookPayload, webhookReqType, webhookTrigger)
+            db.session.add(newWebHook)
+            db.session.commit()
+            emit('newGlobalWebhookAck', {'webhookName': webhookName, 'requestURL':webhookEndpoint, 'requestHeader':webhookHeader, 'requestPayload':webhookPayload, 'requestType':webhookReqType, 'requestTrigger':webhookTrigger, 'requestID':newWebHook.id}, broadcast=False)
+        elif webhookInputAction == 'edit':
+            existingWebhookQuery = webhook.globalWebhook.query.filter_by(id=int(webhookInputID)).first()
+            if existingWebhookQuery is not None:
+                existingWebhookQuery.name = webhookName
+                existingWebhookQuery.endpointURL = webhookEndpoint
+                existingWebhookQuery.requestHeader = webhookHeader
+                existingWebhookQuery.requestPayload = webhookPayload
+                existingWebhookQuery.requestType = webhookReqType
+                existingWebhookQuery.requestTrigger = webhookTrigger
+
+
+                emit('changeGlobalWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id}, broadcast=False)
+    db.session.commit()
+    db.session.close()
+
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
     webhookID = int(message['webhookID'])
     webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
 
     if webhookQuery is not None:
-        channelQuery = webhookQuery.channel
-        if channelQuery is not None:
-            if channelQuery.owningUser is current_user.id:
-                db.session.delete(webhookQuery)
-                db.session.commit()
+        if current_user.has_role('Admin'):
+            db.session.delete(webhookQuery)
+            db.session.commit()
     db.session.close()
 
 # Start App Initiation

@@ -30,6 +30,7 @@ class Channel(db.Model):
     inviteCodes = db.relationship('inviteCode', backref='channel', lazy="joined")
     invitedViewers = db.relationship('invitedViewer', backref='channel', lazy="joined")
     webhooks = db.relationship('webhook', backref='channel', lazy="joined")
+    globalWebhooks = db.relationship('globalWebhook', backref='channel', lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
