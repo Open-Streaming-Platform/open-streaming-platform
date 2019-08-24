@@ -343,11 +343,23 @@ hr {
     left:3px;
 }
 
+#videoWindow {
+    display: flex;
+    justify-content: center; /* Can be changed in the live sample */
+}
+
 .videoPanel{
     overflow-y: auto;
-    max-height:90vh;
+    /* max-height:90vh; */
+    width: 100%;
     scrollbar-color: #1b1e22 #272b30;
     scrollbar-width: thin;
+}
+
+@media all and (min-width: 2350px) {
+   .videoPanel {
+     width: 1850px;
+   }
 }
 
 .videoPanel::-webkit-scrollbar {
