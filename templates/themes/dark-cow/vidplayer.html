@@ -133,7 +133,7 @@
                   {% endif %}
           </div>
         </div>
-        <hr style="width: 100%;">
+        <!-- <hr style="width: 100%;"> -->
         <div class="row m-2">
           <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
         </div>
@@ -142,7 +142,6 @@
           <div class="index-video-title mb-2"><b>{{video.id|get_Video_Comments}} Comments</b></div>
           {% for comment in video.comments %}
           <div class="comment mb-2">
-            <hr>
             <div class="row">
               <div class="col-auto mr-auto">
                 <a href="/streamers/{{comment.userID}}/"><b>{{comment.userID|get_userName}}</b><br>

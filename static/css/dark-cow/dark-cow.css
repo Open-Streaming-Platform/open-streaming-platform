@@ -254,9 +254,7 @@ hr {
     white-space: pre-wrap;
     margin-top: 1rem;
 }
-.comment hr{
-    border-color: #aaa !important;
-}
+
 .comment img{
     margin-top: 1rem;
 }
