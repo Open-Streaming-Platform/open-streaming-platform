@@ -3655,7 +3655,7 @@ def addChangeGlobalWebhook(message):
 @socketio.on('deleteGlobalWebhook')
 def deleteGlobalWebhook(message):
     webhookID = int(message['webhookID'])
-    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
+    webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).first()
 
     if webhookQuery is not None:
         if current_user.has_role('Admin'):
