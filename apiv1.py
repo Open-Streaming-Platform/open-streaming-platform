@@ -62,6 +62,7 @@ streamParserPut.add_argument('topicID', type=int)
 
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
+videoParserPut.add_argument('description', type=str)
 videoParserPut.add_argument('topicID', type=int)
 # TODO Add Video Description
 
@@ -308,6 +309,9 @@ class api_1_ListVideo(Resource):
                                     possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
                                     if possibleTopics != None:
                                         videoQuery.topic = int(args['topicID'])
+                            if 'description' in args:
+                                if args['description'] is not None:
+                                    videoQuery.description = args['description']
                             db.session.commit()
                             return {'results': {'message': 'Video Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
