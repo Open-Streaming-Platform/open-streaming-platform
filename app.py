@@ -1950,355 +1950,401 @@ def admin_page():
             db.session.commit()
             return redirect(url_for('admin_page', page="users"))
 
-        elif settingType == "dbRestore":
-            restoreJSON = None
-            if 'restoreData' in request.files:
-                file = request.files['restoreData']
-                if file.filename != '':
-                    restoreJSON = file.read()
-            if restoreJSON != None:
-                restoreDict = json.loads(restoreJSON)
-
-                ## Restore Settings
-
-                serverSettings = settings.settings(restoreDict['settings'][0]['siteName'], restoreDict['settings'][0]['siteAddress'], restoreDict['settings'][0]['smtpAddress'], int(restoreDict['settings'][0]['smtpPort']), eval(restoreDict['settings'][0]['smtpTLS']),
-                                                   eval(restoreDict['settings'][0]['smtpSSL']), restoreDict['settings'][0]['smtpUsername'], restoreDict['settings'][0]['smtpPassword'], restoreDict['settings'][0]['smtpSendAs'], eval(restoreDict['settings'][0]['allowRegistration']),
-                                                   eval(restoreDict['settings'][0]['requireConfirmedEmail']), eval(restoreDict['settings'][0]['allowRecording']), eval(restoreDict['settings'][0]['allowUploads']), eval(restoreDict['settings'][0]['adaptiveStreaming']), eval(restoreDict['settings'][0]['showEmptyTables']),
-                                                   eval(restoreDict['settings'][0]['allowComments']), version)
-                serverSettings.id = int(restoreDict['settings'][0]['id'])
-                serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
-                serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
-                if 'serverMessage' in restoreDict['settings'][0]:
-                    serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
-
-                # Remove Old Settings
-                oldSettings = settings.settings.query.all()
-                for row in oldSettings:
-                    db.session.delete(row)
-                db.session.commit()
-
-                db.session.add(serverSettings)
-                db.session.commit()
-
-                sysSettings = settings.settings.query.first()
-
-                if settings != None:
-                    app.config.update(
-                        SERVER_NAME=None,
-                        SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                        MAIL_SERVER=sysSettings.smtpAddress,
-                        MAIL_PORT=sysSettings.smtpPort,
-                        MAIL_USE_TLS=sysSettings.smtpTLS,
-                        MAIL_USE_SSL=sysSettings.smtpSSL,
-                        MAIL_USERNAME=sysSettings.smtpUsername,
-                        MAIL_PASSWORD=sysSettings.smtpPassword,
-                        SECURITY_REGISTERABLE=sysSettings.allowRegistration,
-                        SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
-                        SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
-                        SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
-                        SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
-                        SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
-                        SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                        SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
-                        SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
-                        SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
-                        SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
-                        SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
-
-                    mail = Mail(app)
-
-                ## Restores Users
-                oldUsers = Sec.User.query.all()
-                for user in oldUsers:
-                    db.session.delete(user)
-                db.session.commit()
-                for restoredUser in restoreDict['user']:
-                    user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'], password=restoredUser['password'])
-                    db.session.commit()
-                    user = Sec.User.query.filter_by(username=restoredUser['username']).first()
-                    for roleEntry in restoreDict['roles'][user.username]:
-                        user_datastore.add_role_to_user(user, roleEntry)
-                    user.id = int(restoredUser['id'])
-                    user.pictureLocation = restoredUser['pictureLocation']
-                    user.active = eval(restoredUser['active'])
-                    user.biography = restoredUser['biography']
-                    if restoredUser['confirmed_at'] != "None":
-                        user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
-                    db.session.commit()
-
-                ## Restore Topics
-                oldTopics = topics.topics.query.all()
-                for topic in oldTopics:
-                    db.session.delete(topic)
-                db.session.commit()
-                for restoredTopic in restoreDict['topics']:
-                    topic = topics.topics(restoredTopic['name'], restoredTopic['iconClass'])
-                    topic.id = int(restoredTopic['id'])
-                    db.session.add(topic)
-                db.session.commit()
-
-                ## Restores Channels
-                oldChannels = Channel.Channel.query.all()
-                for channel in oldChannels:
-                    db.session.delete(channel)
-                db.session.commit()
-                for restoredChannel in restoreDict['Channel']:
-                    if restoredChannel['owningUser'] != "None":
-                        channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'], restoredChannel['channelName'], int(restoredChannel['topic']), eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
-                                                  eval(restoredChannel['allowComments']), restoredChannel['description'])
-                        channel.id = int(restoredChannel['id'])
-                        channel.channelLoc = restoredChannel['channelLoc']
-                        channel.chatBG = restoredChannel['chatBG']
-                        channel.chatTextColor = restoredChannel['chatTextColor']
-                        channel.chatAnimation = restoredChannel['chatAnimation']
-                        channel.views = int(restoredChannel['views'])
-                        channel.protected = eval(restoredChannel['protected'])
-                        channel.channelMuted = eval(restoredChannel['channelMuted'])
-                        channel.defaultStreamName = restoredChannel['defaultStreamName']
-                        channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
-                        channel.imageLocation = restoredChannel['imageLocation']
-                        channel.offlineImageLocation = restoredChannel['offlineImageLocation']
-
-                        db.session.add(channel)
-                    else:
-                        flash("Error Restoring Channel: ID# " + str(restoredChannel['id']), "error")
-                db.session.commit()
-
-
-                ## Restored Videos - Deletes if not restored to maintain DB
-                oldVideos = RecordedVideo.RecordedVideo.query.all()
-                for video in oldVideos:
-                    db.session.delete(video)
-                db.session.commit()
-
-                if 'restoreVideos' in request.form:
-
-                    for restoredVideo in restoreDict['RecordedVideo']:
-                        if restoredVideo['channelID'] != "None":
-
-                            video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']), int(restoredVideo['channelID']), restoredVideo['channelName'], int(restoredVideo['topic']), int(restoredVideo['views']), restoredVideo['videoLocation'],
-                                                                datetime.datetime.strptime(restoredVideo['videoDate'], '%Y-%m-%d %H:%M:%S.%f'), eval(restoredVideo['allowComments']))
-                            video.id = int(restoredVideo['id'])
-                            video.description = restoredVideo['description']
-                            if restoredVideo['length'] != "None":
-                                video.length = float(restoredVideo['length'])
-                            video.thumbnailLocation = restoredVideo['thumbnailLocation']
-                            video.pending = eval(restoredVideo['pending'])
-                            db.session.add(video)
-                        else:
-                            flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
-                    db.session.commit()
-
-                oldClips = RecordedVideo.Clips.query.all()
-                for clip in oldClips:
-                    db.session.delete(clip)
-                db.session.commit()
-                if 'restoreVideos' in request.form:
-                    for restoredClip in restoreDict['Clips']:
-                        if restoredClip['parentVideo'] != "None":
-                            newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), float(restoredClip['startTime']), float(restoredClip['endTime']), restoredClip['clipName'], restoredClip['description'])
-                            newClip.id = int(restoredClip['id'])
-                            newClip.views = int(restoredClip['views'])
-                            newClip.thumbnailLocation = restoredClip['thumbnailLocation']
-                            db.session.add(newClip)
-                        else:
-                            flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
-                    db.session.commit()
-
-                ## Restores API Keys
-                oldAPI = apikey.apikey.query.all()
-                for api in oldAPI:
-                    db.session.delete(api)
-                db.session.commit()
-
-                for restoredAPIKey in restoreDict['apikey']:
-                    if restoredAPIKey['userID'] != "None":
-                        key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']), restoredAPIKey['description'], 0)
-                        key.id =  int(restoredAPIKey['id'])
-                        key.key = restoredAPIKey['key']
-                        key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
-                        key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
-                        db.session.add(key)
-                    else:
-                        flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
-                db.session.commit()
-
-                ## Restores Webhooks
-                oldWebhooks = webhook.webhook.query.all()
-                for hook in oldWebhooks:
-                    db.session.delete(hook)
-                db.session.commit()
-
-                for restoredWebhook in restoreDict['webhook']:
-                    if restoredWebhook['channelID'] != "None":
-                        hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']), restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
-                                               int(restoredWebhook['requestTrigger']))
-                        db.session.add(hook)
-                    else:
-                        flash("Error Restoring Webook ID# " + restoredWebhook['id'], "error")
-                db.session.commit()
-
-                ## Restores Global Webhooks
-                oldWebhooks = webhook.globalWebhook.query.all()
-                for hook in oldWebhooks:
-                    db.session.delete(hook)
-                db.session.commit()
-
-                for restoredWebhook in restoreDict['global_webhook']:
-                    hook = webhook.globalWebhook(restoredWebhook['name'], restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']), int(restoredWebhook['requestTrigger']))
-                    db.session.add(hook)
-                db.session.commit()
-
-                ## Restores Views
-                oldViews = views.views.query.all()
-                for view in oldViews:
-                    db.session.delete(view)
-                db.session.commit()
-
-                for restoredView in restoreDict['views']:
-                    if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
-                        view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
-                        view.id = int(restoredView['id'])
-                        view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
-                        db.session.add(view)
-                db.session.commit()
-
-                ## Restores Invites
-                oldInviteCode = invites.inviteCode.query.all()
-                for code in oldInviteCode:
-                    db.session.delete(code)
-                db.session.commit()
-
-                for restoredInviteCode in restoreDict['inviteCode']:
-                    if restoredInviteCode['channelID'] != "None":
-                        code = invites.inviteCode(0,int(restoredInviteCode['channelID']))
-                        code.id = int(restoredInviteCode['id'])
-                        if restoredInviteCode['expiration'] != "None":
-                            code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'], '%Y-%m-%d %H:%M:%S.%f')
-                        else:
-                            code.expiration = None
-                        code.uses = int(restoredInviteCode['uses'])
-                        db.session.add(code)
-                    else:
-                        flash("Error Invite Code: ID# " + str(restoredInviteCode['id']), "error")
-                db.session.commit()
-
-                oldInvitedViewers = invites.invitedViewer.query.all()
-                for invite in oldInvitedViewers:
-                    db.session.delete(invite)
-                db.session.commit()
-
-                for restoredInvitedViewer in restoreDict['invitedViewer']:
-                    if restoredInvitedViewer['channelID'] != "None" and restoredInvitedViewer['userID'] != "None":
-                        invite = invites.invitedViewer(int(restoredInvitedViewer['userID']), int(restoredInvitedViewer['channelID']), 0, None)
-                        invite.id = int(restoredInvitedViewer['id'])
-                        invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'], '%Y-%m-%d %H:%M:%S.%f')
-                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'], '%Y-%m-%d %H:%M:%S.%f')
-                        if 'inviteCode' in restoredInvitedViewer:
-                            if restoredInvitedViewer['inviteCode'] != None:
-                                invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
-                        db.session.add(invite)
-                    else:
-                        flash("Error Restoring Invited Viewer: ID# " + str(restoredInvitedViewer['id']), "error")
-                db.session.commit()
-
-                ## Restores Comments
-                oldComments = comments.videoComments.query.all()
-                for comment in oldComments:
-                    db.session.delete(comment)
-                db.session.commit()
-
-                if 'restoreVideos' in request.form:
-                    for restoredComment in restoreDict['videoComments']:
-                        if restoredComment['userID'] != "None" and restoredComment['videoID'] != "None":
-                            comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'], int(restoredComment['videoID']))
-                            comment.id = int(restoredComment['id'])
-                            comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
-                            db.session.add(comment)
-                        else:
-                            flash("Error Restoring Video Comment: ID# " + str(restoredComment['id']), "error")
-                    db.session.commit()
-
-                ## Restores Ban List
-                oldBanList = banList.banList.query.all()
-                for ban in oldBanList:
-                    db.session.delete(ban)
-                db.session.commit()
-
-                for restoredBan in restoreDict['ban_list']:
-                    if restoredBan['channelLoc'] != "None" and restoredBan['userID'] != "None":
-                        ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
-                        ban.id = int(restoredBan['id'])
-                        db.session.add(ban)
-                    else:
-                        flash("Error Restoring Channel Ban Entry: ID# " + str(restoredBan['id']), "error")
-                db.session.commit()
-
-                ## Restores Upvotes
-                oldChannelUpvotes = upvotes.channelUpvotes.query.all()
-                for upvote in oldChannelUpvotes:
-                    db.session.delete(upvote)
-                db.session.commit()
-                oldStreamUpvotes = upvotes.streamUpvotes.query.all()
-                for upvote in oldStreamUpvotes:
-                    db.session.delete(upvote)
-                db.session.commit()
-                oldVideoUpvotes = upvotes.videoUpvotes.query.all()
-                for upvote in oldVideoUpvotes:
-                    db.session.delete(upvote)
-                db.session.commit()
-                oldCommentUpvotes = upvotes.commentUpvotes.query.all()
-                for upvote in oldCommentUpvotes:
-                    db.session.delete(upvote)
-                db.session.commit()
-                oldClipUpvotes = upvotes.clipUpvotes.query.all()
-                for upvote in oldClipUpvotes:
-                    db.session.delete(upvote)
-                db.session.commit()
-
-                for restoredUpvote in restoreDict['channel_upvotes']:
-                    if restoredUpvote['userID'] != "None" and restoredUpvote['channelID'] != "None":
-                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
-                        upvote.id = int(restoredUpvote['id'])
-                        db.session.add(upvote)
-                    else:
-                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-                db.session.commit()
-                for restoredUpvote in restoreDict['stream_upvotes']:
-                    if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
-                        upvote = upvotes.streamUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
-                        upvote.id = int(restoredUpvote['id'])
-                        db.session.add(upvote)
-                    else:
-                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-                db.session.commit()
-                if 'restoreVideos' in request.form:
-                    for restoredUpvote in restoreDict['video_upvotes']:
-                        if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
-                            upvote = upvotes.videoUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
-                            upvote.id = int(restoredUpvote['id'])
-                            db.session.add(upvote)
-                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-                    db.session.commit()
-                    for restoredUpvote in restoreDict['clip_upvotes']:
-                        if restoredUpvote['userID'] != "None" and restoredUpvote['clipID'] != "None":
-                            upvote = upvotes.clipUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['clipID']))
-                            upvote.id = int(restoredUpvote['id'])
-                            db.session.add(upvote)
-                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-                    db.session.commit()
-                for restoredUpvote in restoreDict['comment_upvotes']:
-                    if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
-                        upvote = upvotes.commentUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
-                        upvote.id = int(restoredUpvote['id'])
-                        db.session.add(upvote)
-                    else:
-                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-                db.session.commit()
-                flash("Database Restored from Backup", "success")
-                return redirect(url_for('admin_page', page="backup"))
-
         return redirect(url_for('admin_page'))
+
+@app.route('/settings/dbRestore', methods=['POST'])
+def settings_dbRestore():
+    validRestoreAttempt = False
+    if settings.settings.query.all() == []:
+        validRestoreAttempt = True
+    elif current_user.is_authenticated():
+        if current_user.has_role("Admin"):
+            validRestoreAttempt = True
+
+
+    if validRestoreAttempt == True:
+
+        restoreJSON = None
+        if 'restoreData' in request.files:
+            file = request.files['restoreData']
+            if file.filename != '':
+                restoreJSON = file.read()
+        if restoreJSON != None:
+            restoreDict = json.loads(restoreJSON)
+
+            ## Restore Settings
+
+            serverSettings = settings.settings(restoreDict['settings'][0]['siteName'],
+                                               restoreDict['settings'][0]['siteAddress'],
+                                               restoreDict['settings'][0]['smtpAddress'],
+                                               int(restoreDict['settings'][0]['smtpPort']),
+                                               eval(restoreDict['settings'][0]['smtpTLS']),
+                                               eval(restoreDict['settings'][0]['smtpSSL']),
+                                               restoreDict['settings'][0]['smtpUsername'],
+                                               restoreDict['settings'][0]['smtpPassword'],
+                                               restoreDict['settings'][0]['smtpSendAs'],
+                                               eval(restoreDict['settings'][0]['allowRegistration']),
+                                               eval(restoreDict['settings'][0]['requireConfirmedEmail']),
+                                               eval(restoreDict['settings'][0]['allowRecording']),
+                                               eval(restoreDict['settings'][0]['allowUploads']),
+                                               eval(restoreDict['settings'][0]['adaptiveStreaming']),
+                                               eval(restoreDict['settings'][0]['showEmptyTables']),
+                                               eval(restoreDict['settings'][0]['allowComments']), version)
+            serverSettings.id = int(restoreDict['settings'][0]['id'])
+            serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
+            serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+            if 'serverMessage' in restoreDict['settings'][0]:
+                serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
+
+            # Remove Old Settings
+            oldSettings = settings.settings.query.all()
+            for row in oldSettings:
+                db.session.delete(row)
+            db.session.commit()
+
+            db.session.add(serverSettings)
+            db.session.commit()
+
+            sysSettings = settings.settings.query.first()
+
+            if settings != None:
+                app.config.update(
+                    SERVER_NAME=None,
+                    SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                    MAIL_SERVER=sysSettings.smtpAddress,
+                    MAIL_PORT=sysSettings.smtpPort,
+                    MAIL_USE_TLS=sysSettings.smtpTLS,
+                    MAIL_USE_SSL=sysSettings.smtpSSL,
+                    MAIL_USERNAME=sysSettings.smtpUsername,
+                    MAIL_PASSWORD=sysSettings.smtpPassword,
+                    SECURITY_REGISTERABLE=sysSettings.allowRegistration,
+                    SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
+                    SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
+                    SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
+                    SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
+                    SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
+                    SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
+                    SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
+                    SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
+                    SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
+                    SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
+                    SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+
+                mail = Mail(app)
+
+            ## Restores Users
+            oldUsers = Sec.User.query.all()
+            for user in oldUsers:
+                db.session.delete(user)
+            db.session.commit()
+            for restoredUser in restoreDict['user']:
+                user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'],
+                                           password=restoredUser['password'])
+                db.session.commit()
+                user = Sec.User.query.filter_by(username=restoredUser['username']).first()
+                for roleEntry in restoreDict['roles'][user.username]:
+                    user_datastore.add_role_to_user(user, roleEntry)
+                user.id = int(restoredUser['id'])
+                user.pictureLocation = restoredUser['pictureLocation']
+                user.active = eval(restoredUser['active'])
+                user.biography = restoredUser['biography']
+                if restoredUser['confirmed_at'] != "None":
+                    user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
+                db.session.commit()
+
+            ## Restore Topics
+            oldTopics = topics.topics.query.all()
+            for topic in oldTopics:
+                db.session.delete(topic)
+            db.session.commit()
+            for restoredTopic in restoreDict['topics']:
+                topic = topics.topics(restoredTopic['name'], restoredTopic['iconClass'])
+                topic.id = int(restoredTopic['id'])
+                db.session.add(topic)
+            db.session.commit()
+
+            ## Restores Channels
+            oldChannels = Channel.Channel.query.all()
+            for channel in oldChannels:
+                db.session.delete(channel)
+            db.session.commit()
+            for restoredChannel in restoreDict['Channel']:
+                if restoredChannel['owningUser'] != "None":
+                    channel = Channel.Channel(int(restoredChannel['owningUser']), restoredChannel['streamKey'],
+                                              restoredChannel['channelName'], int(restoredChannel['topic']),
+                                              eval(restoredChannel['record']), eval(restoredChannel['chatEnabled']),
+                                              eval(restoredChannel['allowComments']), restoredChannel['description'])
+                    channel.id = int(restoredChannel['id'])
+                    channel.channelLoc = restoredChannel['channelLoc']
+                    channel.chatBG = restoredChannel['chatBG']
+                    channel.chatTextColor = restoredChannel['chatTextColor']
+                    channel.chatAnimation = restoredChannel['chatAnimation']
+                    channel.views = int(restoredChannel['views'])
+                    channel.protected = eval(restoredChannel['protected'])
+                    channel.channelMuted = eval(restoredChannel['channelMuted'])
+                    channel.defaultStreamName = restoredChannel['defaultStreamName']
+                    channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
+                    channel.imageLocation = restoredChannel['imageLocation']
+                    channel.offlineImageLocation = restoredChannel['offlineImageLocation']
+
+                    db.session.add(channel)
+                else:
+                    flash("Error Restoring Channel: ID# " + str(restoredChannel['id']), "error")
+            db.session.commit()
+
+            ## Restored Videos - Deletes if not restored to maintain DB
+            oldVideos = RecordedVideo.RecordedVideo.query.all()
+            for video in oldVideos:
+                db.session.delete(video)
+            db.session.commit()
+
+            if 'restoreVideos' in request.form:
+
+                for restoredVideo in restoreDict['RecordedVideo']:
+                    if restoredVideo['channelID'] != "None":
+
+                        video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']),
+                                                            int(restoredVideo['channelID']), restoredVideo['channelName'],
+                                                            int(restoredVideo['topic']), int(restoredVideo['views']),
+                                                            restoredVideo['videoLocation'],
+                                                            datetime.datetime.strptime(restoredVideo['videoDate'],
+                                                                                       '%Y-%m-%d %H:%M:%S.%f'),
+                                                            eval(restoredVideo['allowComments']))
+                        video.id = int(restoredVideo['id'])
+                        video.description = restoredVideo['description']
+                        if restoredVideo['length'] != "None":
+                            video.length = float(restoredVideo['length'])
+                        video.thumbnailLocation = restoredVideo['thumbnailLocation']
+                        video.pending = eval(restoredVideo['pending'])
+                        db.session.add(video)
+                    else:
+                        flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
+                db.session.commit()
+
+            oldClips = RecordedVideo.Clips.query.all()
+            for clip in oldClips:
+                db.session.delete(clip)
+            db.session.commit()
+            if 'restoreVideos' in request.form:
+                for restoredClip in restoreDict['Clips']:
+                    if restoredClip['parentVideo'] != "None":
+                        newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), float(restoredClip['startTime']),
+                                                      float(restoredClip['endTime']), restoredClip['clipName'],
+                                                      restoredClip['description'])
+                        newClip.id = int(restoredClip['id'])
+                        newClip.views = int(restoredClip['views'])
+                        newClip.thumbnailLocation = restoredClip['thumbnailLocation']
+                        db.session.add(newClip)
+                    else:
+                        flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
+                db.session.commit()
+
+            ## Restores API Keys
+            oldAPI = apikey.apikey.query.all()
+            for api in oldAPI:
+                db.session.delete(api)
+            db.session.commit()
+
+            for restoredAPIKey in restoreDict['apikey']:
+                if restoredAPIKey['userID'] != "None":
+                    key = apikey.apikey(int(restoredAPIKey['userID']), int(restoredAPIKey['type']),
+                                        restoredAPIKey['description'], 0)
+                    key.id = int(restoredAPIKey['id'])
+                    key.key = restoredAPIKey['key']
+                    key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
+                    key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    db.session.add(key)
+                else:
+                    flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
+            db.session.commit()
+
+            ## Restores Webhooks
+            oldWebhooks = webhook.webhook.query.all()
+            for hook in oldWebhooks:
+                db.session.delete(hook)
+            db.session.commit()
+
+            for restoredWebhook in restoreDict['webhook']:
+                if restoredWebhook['channelID'] != "None":
+                    hook = webhook.webhook(restoredWebhook['name'], int(restoredWebhook['channelID']),
+                                           restoredWebhook['endpointURL'], restoredWebhook['requestHeader'],
+                                           restoredWebhook['requestPayload'], int(restoredWebhook['requestType']),
+                                           int(restoredWebhook['requestTrigger']))
+                    db.session.add(hook)
+                else:
+                    flash("Error Restoring Webook ID# " + restoredWebhook['id'], "error")
+            db.session.commit()
+
+            ## Restores Global Webhooks
+            oldWebhooks = webhook.globalWebhook.query.all()
+            for hook in oldWebhooks:
+                db.session.delete(hook)
+            db.session.commit()
+
+            for restoredWebhook in restoreDict['global_webhook']:
+                hook = webhook.globalWebhook(restoredWebhook['name'], restoredWebhook['endpointURL'],
+                                             restoredWebhook['requestHeader'], restoredWebhook['requestPayload'],
+                                             int(restoredWebhook['requestType']), int(restoredWebhook['requestTrigger']))
+                db.session.add(hook)
+            db.session.commit()
+
+            ## Restores Views
+            oldViews = views.views.query.all()
+            for view in oldViews:
+                db.session.delete(view)
+            db.session.commit()
+
+            for restoredView in restoreDict['views']:
+                if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
+                    view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
+                    view.id = int(restoredView['id'])
+                    view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
+                    db.session.add(view)
+            db.session.commit()
+
+            ## Restores Invites
+            oldInviteCode = invites.inviteCode.query.all()
+            for code in oldInviteCode:
+                db.session.delete(code)
+            db.session.commit()
+
+            for restoredInviteCode in restoreDict['inviteCode']:
+                if restoredInviteCode['channelID'] != "None":
+                    code = invites.inviteCode(0, int(restoredInviteCode['channelID']))
+                    code.id = int(restoredInviteCode['id'])
+                    if restoredInviteCode['expiration'] != "None":
+                        code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'],
+                                                                     '%Y-%m-%d %H:%M:%S.%f')
+                    else:
+                        code.expiration = None
+                    code.uses = int(restoredInviteCode['uses'])
+                    db.session.add(code)
+                else:
+                    flash("Error Invite Code: ID# " + str(restoredInviteCode['id']), "error")
+            db.session.commit()
+
+            oldInvitedViewers = invites.invitedViewer.query.all()
+            for invite in oldInvitedViewers:
+                db.session.delete(invite)
+            db.session.commit()
+
+            for restoredInvitedViewer in restoreDict['invitedViewer']:
+                if restoredInvitedViewer['channelID'] != "None" and restoredInvitedViewer['userID'] != "None":
+                    invite = invites.invitedViewer(int(restoredInvitedViewer['userID']),
+                                                   int(restoredInvitedViewer['channelID']), 0, None)
+                    invite.id = int(restoredInvitedViewer['id'])
+                    invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'],
+                                                                  '%Y-%m-%d %H:%M:%S.%f')
+                    invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
+                                                                   '%Y-%m-%d %H:%M:%S.%f')
+                    if 'inviteCode' in restoredInvitedViewer:
+                        if restoredInvitedViewer['inviteCode'] != None:
+                            invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
+                    db.session.add(invite)
+                else:
+                    flash("Error Restoring Invited Viewer: ID# " + str(restoredInvitedViewer['id']), "error")
+            db.session.commit()
+
+            ## Restores Comments
+            oldComments = comments.videoComments.query.all()
+            for comment in oldComments:
+                db.session.delete(comment)
+            db.session.commit()
+
+            if 'restoreVideos' in request.form:
+                for restoredComment in restoreDict['videoComments']:
+                    if restoredComment['userID'] != "None" and restoredComment['videoID'] != "None":
+                        comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'],
+                                                         int(restoredComment['videoID']))
+                        comment.id = int(restoredComment['id'])
+                        comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(comment)
+                    else:
+                        flash("Error Restoring Video Comment: ID# " + str(restoredComment['id']), "error")
+                db.session.commit()
+
+            ## Restores Ban List
+            oldBanList = banList.banList.query.all()
+            for ban in oldBanList:
+                db.session.delete(ban)
+            db.session.commit()
+
+            for restoredBan in restoreDict['ban_list']:
+                if restoredBan['channelLoc'] != "None" and restoredBan['userID'] != "None":
+                    ban = banList.banList(restoredBan['channelLoc'], int(restoredBan['userID']))
+                    ban.id = int(restoredBan['id'])
+                    db.session.add(ban)
+                else:
+                    flash("Error Restoring Channel Ban Entry: ID# " + str(restoredBan['id']), "error")
+            db.session.commit()
+
+            ## Restores Upvotes
+            oldChannelUpvotes = upvotes.channelUpvotes.query.all()
+            for upvote in oldChannelUpvotes:
+                db.session.delete(upvote)
+            db.session.commit()
+            oldStreamUpvotes = upvotes.streamUpvotes.query.all()
+            for upvote in oldStreamUpvotes:
+                db.session.delete(upvote)
+            db.session.commit()
+            oldVideoUpvotes = upvotes.videoUpvotes.query.all()
+            for upvote in oldVideoUpvotes:
+                db.session.delete(upvote)
+            db.session.commit()
+            oldCommentUpvotes = upvotes.commentUpvotes.query.all()
+            for upvote in oldCommentUpvotes:
+                db.session.delete(upvote)
+            db.session.commit()
+            oldClipUpvotes = upvotes.clipUpvotes.query.all()
+            for upvote in oldClipUpvotes:
+                db.session.delete(upvote)
+            db.session.commit()
+
+            for restoredUpvote in restoreDict['channel_upvotes']:
+                if restoredUpvote['userID'] != "None" and restoredUpvote['channelID'] != "None":
+                    upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['channelID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                else:
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+            db.session.commit()
+            for restoredUpvote in restoreDict['stream_upvotes']:
+                if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
+                    upvote = upvotes.streamUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                else:
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+            db.session.commit()
+            if 'restoreVideos' in request.form:
+                for restoredUpvote in restoreDict['video_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
+                        upvote = upvotes.videoUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                db.session.commit()
+                for restoredUpvote in restoreDict['clip_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['clipID'] != "None":
+                        upvote = upvotes.clipUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['clipID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                db.session.commit()
+            for restoredUpvote in restoreDict['comment_upvotes']:
+                if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
+                    upvote = upvotes.commentUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                    upvote.id = int(restoredUpvote['id'])
+                    db.session.add(upvote)
+                else:
+                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+            db.session.commit()
+            flash("Database Restored from Backup", "success")
+            return redirect(url_for('admin_page', page="backup"))
+
+    else:
+        flash("Invalid Restore Attempt","error")
+        return redirect(url_for('main_page'))
 
 
 @app.route('/settings/channels', methods=['POST','GET'])
