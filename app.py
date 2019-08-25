@@ -1961,7 +1961,6 @@ def settings_dbRestore():
         if current_user.has_role("Admin"):
             validRestoreAttempt = True
 
-
     if validRestoreAttempt == True:
 
         restoreJSON = None
@@ -2343,8 +2342,11 @@ def settings_dbRestore():
             return redirect(url_for('admin_page', page="backup"))
 
     else:
-        flash("Invalid Restore Attempt","error")
-        return redirect(url_for('main_page'))
+        if settings.settings.query.all() != []:
+            flash("Invalid Restore Attempt","error")
+            return redirect(url_for('main_page'))
+        else:
+            return redirect(url_for('initialSetup'))
 
 
 @app.route('/settings/channels', methods=['POST','GET'])
