@@ -2142,7 +2142,7 @@ def admin_page():
                     db.session.delete(hook)
                 db.session.commit()
 
-                for restoredWebhook in restoreDict['globalWebhook']:
+                for restoredWebhook in restoreDict['global_webhook']:
                     hook = webhook.globalWebhook(restoredWebhook['name'], restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']), int(restoredWebhook['requestTrigger']))
                     db.session.add(hook)
                 db.session.commit()
