@@ -2032,7 +2032,7 @@ def admin_page():
                     db.session.delete(topic)
                 db.session.commit()
                 for restoredTopic in restoreDict['topics']:
-                    topic = topics.topics(restoredTopic['name'], "None")
+                    topic = topics.topics(restoredTopic['name'], restoredTopic['iconClass'])
                     topic.id = int(restoredTopic['id'])
                     db.session.add(topic)
                 db.session.commit()
