@@ -216,7 +216,7 @@ def init_db_values():
         if sysSettings.serverMessage == None:
             sysSettings.serverMessage = ""
             db.session.commit()
-        # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Alpha to Beta
+        # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
         channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
         for chan in channelQuery:
             chan.chatBG = "Standard"
@@ -226,6 +226,10 @@ def init_db_values():
         channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
         for chan in channelQuery:
             chan.channelMuted = False
+            db.session.commit()
+        channelQuery = Channel.Channel.query.filter_by(showChatJoinLeaveNotification=None).all()
+        for chan in channelQuery:
+            chan.showChatJoinLeaveNotification = True
             db.session.commit()
         channelQuery = Channel.Channel.query.filter_by(currentViewers=None).all()
         for chan in channelQuery:
@@ -3058,42 +3062,41 @@ def handle_new_viewer(streamData):
 
     join_room(streamData['data'])
 
-    if current_user.is_authenticated:
-        pictureLocation = current_user.pictureLocation
-        if current_user.pictureLocation == None:
-            pictureLocation = '/static/img/user2.png'
-        else:
-            pictureLocation = '/images/' + pictureLocation
+    if requestedChannel.showChatJoinLeaveNotification == True:
+        if current_user.is_authenticated:
+            pictureLocation = current_user.pictureLocation
+            if current_user.pictureLocation == None:
+                pictureLocation = '/static/img/user2.png'
+            else:
+                pictureLocation = '/images/' + pictureLocation
 
-        if current_user.username not in streamUserList[channelLoc]:
-            streamUserList[channelLoc].append(current_user.username)
-        emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
-        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                   channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                   channeltopic=requestedChannel.topic,
-                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                   channeldescription=requestedChannel.description,
-                   streamname=streamName,
-                   streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(streamTopic),
-                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                   user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
-        db.session.commit()
-        db.session.close()
-    else:
-        emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                   channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                   channeltopic=requestedChannel.topic,
-                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                   channeldescription=requestedChannel.description,
-                   streamname=streamName,
-                   streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(streamTopic),
-                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                   user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
-        db.session.commit()
-        db.session.close()
+            if current_user.username not in streamUserList[channelLoc]:
+                streamUserList[channelLoc].append(current_user.username)
+            emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
+            runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channeltopic=requestedChannel.topic,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                       channeldescription=requestedChannel.description,
+                       streamname=streamName,
+                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamtopic=get_topicName(streamTopic),
+                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                       user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
+        else:
+            emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+            runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channeltopic=requestedChannel.topic,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                       channeldescription=requestedChannel.description,
+                       streamname=streamName,
+                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamtopic=get_topicName(streamTopic),
+                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                       user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
+    db.session.commit()
+    db.session.close()
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
@@ -3119,23 +3122,22 @@ def handle_leaving_viewer(streamData):
             stream.currentViewers = 0
         db.session.commit()
     leave_room(streamData['data'])
-    if current_user.is_authenticated:
+    if requestedChannel.showChatJoinLeaveNotification == True:
+        if current_user.is_authenticated:
+            pictureLocation = current_user.pictureLocation
+            if current_user.pictureLocation == None:
+                pictureLocation = '/static/img/user2.png'
+            else:
+                pictureLocation = '/images/' + pictureLocation
 
-        pictureLocation = current_user.pictureLocation
-        if current_user.pictureLocation == None:
-            pictureLocation = '/static/img/user2.png'
+            if current_user.username in streamUserList[channelLoc]:
+                streamUserList[channelLoc].remove(current_user.username)
+            emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
+
         else:
-            pictureLocation = '/images/' + pictureLocation
-
-        if current_user.username in streamUserList[channelLoc]:
-            streamUserList[channelLoc].remove(current_user.username)
-        emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
-        db.session.commit()
-        db.session.close()
-    else:
-        emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-        db.session.commit()
-        db.session.close()
+            emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+    db.session.commit()
+    db.session.close()
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
