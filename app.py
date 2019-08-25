@@ -2055,7 +2055,7 @@ def admin_page():
                         channel.protected = eval(restoredChannel['protected'])
                         channel.channelMuted = eval(restoredChannel['channelMuted'])
                         channel.defaultStreamName = restoredChannel['defaultStreamName']
-                        channel.showChatJoinLeaveNotification = restoredChannel['showChatJoinLeaveNotification']
+                        channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
 
                         db.session.add(channel)
                     else:
