@@ -1888,6 +1888,14 @@ def admin_page():
 
             global mail
             mail = Mail(app)
+
+            themeList = []
+            themeDirectorySearch = os.listdir("./templates/themes/")
+            for theme in themeDirectorySearch:
+                hasJSON = os.path.isfile("./templates/themes/" + theme + "/theme.json")
+                if hasJSON:
+                    themeList.append(theme)
+
             return redirect(url_for('admin_page', page="settings"))
 
         elif settingType == "topics":
@@ -2338,6 +2346,14 @@ def settings_dbRestore():
                 else:
                     flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
             db.session.commit()
+
+            themeList = []
+            themeDirectorySearch = os.listdir("./templates/themes/")
+            for theme in themeDirectorySearch:
+                hasJSON = os.path.isfile("./templates/themes/" + theme + "/theme.json")
+                if hasJSON:
+                    themeList.append(theme)
+
             flash("Database Restored from Backup", "success")
             return redirect(url_for('admin_page', page="backup"))
 
