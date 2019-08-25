@@ -1965,7 +1965,7 @@ def settings_dbRestore():
     validRestoreAttempt = False
     if settings.settings.query.all() == []:
         validRestoreAttempt = True
-    elif current_user.is_authenticated():
+    elif current_user.is_authenticated:
         if current_user.has_role("Admin"):
             validRestoreAttempt = True
 
