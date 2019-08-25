@@ -348,15 +348,15 @@ hr {
 
 #videoWindow {
     display: flex;
-    justify-content: center; /* Can be changed in the live sample */
+    justify-content: center;
+    max-height:90vh;
+    overflow-y: auto;
+    scrollbar-color: #1b1e22 #272b30;
+    scrollbar-width: thin;
 }
 
 .videoPanel{
-    overflow-y: auto;
-    /* max-height:90vh; */
     width: 100%;
-    scrollbar-color: #1b1e22 #272b30;
-    scrollbar-width: thin;
 }
 
 @media all and (min-width: 2350px) {
@@ -369,8 +369,8 @@ hr {
     width: 0 !important
 }
 
-.videoPanel{ overflow: -moz-scrollbars-none; }
-.videoPanel{ -ms-overflow-style: none; }
+/* .videoPanel{ overflow: -moz-scrollbars-none; }
+.videoPanel{ -ms-overflow-style: none; } */
 
 .liveindicator{
 	margin-left: 10px;
