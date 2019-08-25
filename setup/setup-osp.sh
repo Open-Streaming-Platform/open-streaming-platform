@@ -96,6 +96,5 @@ sudo chown -R www-data:www-data /var/log/gunicorn
 
 # Start Nginx
 sudo systemctl start nginx-osp.service
-sudo systemctl start osp
 
-echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py and review"
+echo "OSP Install Completed! Please copy /opt/osp/setup/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service"

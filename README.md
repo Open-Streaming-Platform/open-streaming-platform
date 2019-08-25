@@ -39,6 +39,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Security] - Handle User Accounts, Login, and Registration
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
+* [Flask-Markdown] - Displaying Markdown in Jinja2 Templates
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
@@ -187,12 +188,16 @@ add-apt-repository ppa:jonathonf/ffmpeg-3 -y
 apt-get update
 apt-get install ffmpeg -y
 ```
-12: Start NGINX and OSP
+12: Copy the Default Config File and Make Changes
+```
+cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
+```
+13: Start NGINX and OSP
 ```
 systemctl start nginx-osp.service
 systemctl start osp.service
 ```
-13: Open the site in a browser and run through the First Time Setup
+14: Open the site in a browser and run through the First Time Setup
 ```
 http://<ip or host>/
 ```

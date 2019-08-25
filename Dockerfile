@@ -56,6 +56,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 
 # Configure NGINX
 RUN cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
+RUN cp /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
 
 # Establish the Video and Image Directories
 RUN mkdir /var/www && \
@@ -86,7 +87,7 @@ RUN pip3 install --upgrade pip
 RUN apk add ffmpeg
 
 # Copy the Default Config File
-RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+RUN cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
 
 # Install Supervisor
 RUN apk add supervisor
@@ -94,4 +95,4 @@ RUN mkdir -p /var/log/supervisor
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
-CMD supervisord --nodaemon --configuration /opt/osp/setup/supervisord.conf
+CMD supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
