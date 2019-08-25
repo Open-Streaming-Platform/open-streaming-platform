@@ -2021,6 +2021,7 @@ def admin_page():
                     user.id = int(restoredUser['id'])
                     user.pictureLocation = restoredUser['pictureLocation']
                     user.active = eval(restoredUser['active'])
+                    user.biography = restoredUser['biography']
                     if restoredUser['confirmed_at'] != "None":
                         user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
                     db.session.commit()
@@ -2053,6 +2054,8 @@ def admin_page():
                         channel.views = int(restoredChannel['views'])
                         channel.protected = eval(restoredChannel['protected'])
                         channel.channelMuted = eval(restoredChannel['channelMuted'])
+                        channel.defaultStreamName = restoredChannel['defaultStreamName']
+                        channel.showChatJoinLeaveNotification = restoredChannel['showChatJoinLeaveNotification']
 
                         db.session.add(channel)
                     else:
@@ -2131,6 +2134,17 @@ def admin_page():
                         db.session.add(hook)
                     else:
                         flash("Error Restoring Webook ID# " + restoredWebhook['id'], "error")
+                db.session.commit()
+
+                ## Restores Global Webhooks
+                oldWebhooks = webhook.globalWebhook.query.all()
+                for hook in oldWebhooks:
+                    db.session.delete(hook)
+                db.session.commit()
+
+                for restoredWebhook in restoreDict['globalWebhook']:
+                    hook = webhook.globalWebhook(restoredWebhook['name'], restoredWebhook['endpointURL'], restoredWebhook['requestHeader'], restoredWebhook['requestPayload'], int(restoredWebhook['requestType']), int(restoredWebhook['requestTrigger']))
+                    db.session.add(hook)
                 db.session.commit()
 
                 ## Restores Views
@@ -2235,6 +2249,10 @@ def admin_page():
                 for upvote in oldCommentUpvotes:
                     db.session.delete(upvote)
                 db.session.commit()
+                oldClipUpvotes = upvotes.clipUpvotes.query.all()
+                for upvote in oldClipUpvotes:
+                    db.session.delete(upvote)
+                db.session.commit()
 
                 for restoredUpvote in restoreDict['channel_upvotes']:
                     if restoredUpvote['userID'] != "None" and restoredUpvote['channelID'] != "None":
@@ -2243,28 +2261,33 @@ def admin_page():
                         db.session.add(upvote)
                     else:
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-
                 db.session.commit()
                 for restoredUpvote in restoreDict['stream_upvotes']:
                     if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
-                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                        upvote = upvotes.streamUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
                     else:
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
-
                 db.session.commit()
                 if 'restoreVideos' in request.form:
                     for restoredUpvote in restoreDict['video_upvotes']:
                         if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
-                            upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                            upvote = upvotes.videoUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                            upvote.id = int(restoredUpvote['id'])
+                            db.session.add(upvote)
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+                    db.session.commit()
+                    for restoredUpvote in restoreDict['clip_upvotes']:
+                        if restoredUpvote['userID'] != "None" and restoredUpvote['clipID'] != "None":
+                            upvote = upvotes.clipUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
                             upvote.id = int(restoredUpvote['id'])
                             db.session.add(upvote)
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                     db.session.commit()
                 for restoredUpvote in restoreDict['comment_upvotes']:
                     if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
-                        upvote = upvotes.channelUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                        upvote = upvotes.commentUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
                         upvote.id = int(restoredUpvote['id'])
                         db.session.add(upvote)
                     else:
