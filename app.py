@@ -2280,7 +2280,7 @@ def admin_page():
                     db.session.commit()
                     for restoredUpvote in restoreDict['clip_upvotes']:
                         if restoredUpvote['userID'] != "None" and restoredUpvote['clipID'] != "None":
-                            upvote = upvotes.clipUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['videoID']))
+                            upvote = upvotes.clipUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['clipID']))
                             upvote.id = int(restoredUpvote['id'])
                             db.session.add(upvote)
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
