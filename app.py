@@ -1977,7 +1977,7 @@ def settings_dbRestore():
             if file.filename != '':
                 restoreJSON = file.read()
         if restoreJSON != None:
-            restoreDict = json.loads(restoreJSON)
+            restoreDict = json.loads(str(restoreJSON))
 
             ## Restore Settings
 
