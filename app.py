@@ -2056,6 +2056,8 @@ def admin_page():
                         channel.channelMuted = eval(restoredChannel['channelMuted'])
                         channel.defaultStreamName = restoredChannel['defaultStreamName']
                         channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
+                        channel.imageLocation = restoredChannel['imageLocation']
+                        channel.offlineImageLocation = restoredChannel['offlineImageLocation']
 
                         db.session.add(channel)
                     else:
