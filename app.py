@@ -2640,6 +2640,12 @@ def initialSetup():
                 global mail
                 mail = Mail(app)
 
+                # Import Theme Data into Theme Dictionary
+                with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
+                    global themeData
+
+                    themeData = json.load(f)
+
         else:
             flash('Passwords do not match')
             return redirect(url_for('main_page'))
