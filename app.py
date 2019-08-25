@@ -3627,10 +3627,10 @@ def deleteWebhook(message):
     webhookID = int(message['webhookID'])
     webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
 
-    if webhookQuery is not None:
+    if webhookQuery != None:
         channelQuery = webhookQuery.channel
-        if channelQuery is not None:
-            if channelQuery.owningUser is current_user.id:
+        if channelQuery != None:
+            if channelQuery.owningUser == current_user.id:
                 db.session.delete(webhookQuery)
                 db.session.commit()
     db.session.close()
