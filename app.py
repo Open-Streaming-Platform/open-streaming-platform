@@ -2340,6 +2340,10 @@ def settings_channels_page():
         if 'chatSelect' in request.form:
             chatEnabled = True
 
+        chatJoinNotifications = False
+        if 'chatJoinNotificationSelect' in request.form:
+            chatJoinNotifications = True
+
         allowComments = False
 
         if 'allowComments' in request.form:
@@ -2388,6 +2392,7 @@ def settings_channels_page():
                 requestedChannel.allowComments = allowComments
                 requestedChannel.description = description
                 requestedChannel.chatBG = chatBG
+                requestedChannel.showChatJoinLeaveNotification = chatJoinNotifications
                 requestedChannel.chatAnimation = chatAnimation
                 requestedChannel.chatTextColor = chatTextColor
                 requestedChannel.protected = protection

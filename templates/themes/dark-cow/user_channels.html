@@ -93,6 +93,14 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-6">
+                                    <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-6">
                                     <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
                                 </div>
                                 <div class="col-6">
