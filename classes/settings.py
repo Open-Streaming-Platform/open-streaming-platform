@@ -22,6 +22,9 @@ class settings(db.Model):
     version = db.Column(db.String(255))
     serverMessage = db.Column(db.String(2048))
 
+    allowRegistration = db.Column(db.Boolean) # Moved to config.py
+    requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
+
     def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
         self.siteAddress = siteAddress
