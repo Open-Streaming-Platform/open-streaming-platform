@@ -270,11 +270,6 @@ def init_db_values():
 
         app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
-        # Reload Flask-Security with Set Configuration
-        user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
-        security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                            confirm_register_form=Sec.ExtendedConfirmRegisterForm)
-
         # Import Theme Data into Theme Dictionary
         with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
             global themeData
@@ -2043,10 +2038,6 @@ def settings_dbRestore():
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
 
                 mail = Mail(app)
-                # Reload Flask-Security
-                user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
-                security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                                    confirm_register_form=Sec.ExtendedConfirmRegisterForm)
 
             ## Restores Users
             oldUsers = Sec.User.query.all()
@@ -2714,11 +2705,6 @@ def initialSetup():
                     SECURITY_SEND_CONFIRMATION_TEMPLATE = 'themes/'  + sysSettings.systemTheme + '/security/send_confirmation.html')
                 global mail
                 mail = Mail(app)
-
-                # Reload Flask-Security
-                user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
-                security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                                    confirm_register_form=Sec.ExtendedConfirmRegisterForm)
 
                 # Import Theme Data into Theme Dictionary
                 with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
