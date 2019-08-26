@@ -2323,12 +2323,11 @@ def settings_dbRestore():
                     flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
             db.session.commit()
 
-            themeList = []
-            themeDirectorySearch = os.listdir("./templates/themes/")
-            for theme in themeDirectorySearch:
-                hasJSON = os.path.isfile("./templates/themes/" + theme + "/theme.json")
-                if hasJSON:
-                    themeList.append(theme)
+            # Import Theme Data into Theme Dictionary
+            with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
+                global themeData
+
+                themeData = json.load(f)
 
             flash("Database Restored from Backup", "success")
             return redirect(url_for('admin_page', page="backup"))
