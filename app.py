@@ -79,8 +79,10 @@ else:
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
 app.config['SECURITY_PASSWORD_SALT'] = config.passwordSalt
-app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_REGISTERABLE'] = config.allowRegistration
 app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_CONFIRMABLE'] = config.requireEmailRegistration
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = config.requireEmailRegistration
 app.config['SECURITY_CHANGABLE'] = True
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
 app.config['SECURITY_FLASH_MESSAGES'] = True
@@ -200,10 +202,6 @@ def init_db_values():
         if sysSettings.systemLogo == None:
             sysSettings.systemLogo = "/static/img/logo.png"
             db.session.commit()
-        # Sets Registration to Required if None is Set - Change from Beta 1 to Beta 2
-        if sysSettings.requireConfirmedEmail == None:
-            sysSettings.requireConfirmedEmail = True
-            db.session.commit()
         # Sets allowComments to False if None is Set - Usual Cause is moving from Alpha to Beta
         if sysSettings.allowComments == None:
             sysSettings.allowComments = False
@@ -256,8 +254,6 @@ def init_db_values():
         app.config['MAIL_USE_TLS'] = sysSettings.smtpTLS
         app.config['MAIL_USERNAME'] = sysSettings.smtpUsername
         app.config['MAIL_PASSWORD'] = sysSettings.smtpPassword
-        app.config['SECURITY_CONFIRMABLE'] = sysSettings.requireConfirmedEmail
-        app.config['SECURITY_SEND_REGISTER_EMAIL'] = sysSettings.requireConfirmedEmail
         app.config['SECURITY_FORGOT_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/forgot_password.html'
         app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/login_user.html'
         app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/register_user.html'
@@ -267,8 +263,6 @@ def init_db_values():
         app.config['SECURITY_EMAIL_SUBJECT_REGISTER'] = sysSettings.siteName + " - Welcome!"
         app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
-
-        app.config.update(SECURITY_REGISTERABLE=sysSettings.allowRegistration)
 
         # Import Theme Data into Theme Dictionary
         with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
@@ -1789,9 +1783,7 @@ def admin_page():
             theme = request.form['theme']
 
             recordSelect = False
-            registerSelect = False
             uploadSelect = False
-            emailValidationSelect = False
             adaptiveStreaming = False
             showEmptyTables = False
             allowComments = False
@@ -1803,12 +1795,6 @@ def admin_page():
 
             if 'uploadSelect' in request.form:
                 uploadSelect = True
-
-            if 'registerSelect' in request.form:
-                registerSelect = True
-
-            if 'emailValidationSelect' in request.form:
-                emailValidationSelect = True
 
             if 'adaptiveStreaming' in request.form:
                 adaptiveStreaming = True
@@ -1850,8 +1836,6 @@ def admin_page():
             sysSettings.smtpSSL = smtpSSL
             sysSettings.allowRecording = recordSelect
             sysSettings.allowUploads = uploadSelect
-            sysSettings.allowRegistration = registerSelect
-            sysSettings.requireConfirmedEmail = emailValidationSelect
             sysSettings.adaptiveStreaming = adaptiveStreaming
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
@@ -1873,9 +1857,6 @@ def admin_page():
                 MAIL_USE_TLS=sysSettings.smtpTLS,
                 MAIL_USERNAME=sysSettings.smtpUsername,
                 MAIL_PASSWORD=sysSettings.smtpPassword,
-                SECURITY_REGISTERABLE=sysSettings.allowRegistration,
-                SECURITY_CONFIRMABLE = sysSettings.requireConfirmedEmail,
-                SECURITY_SEND_REGISTER_EMAIL = sysSettings.requireConfirmedEmail,
                 SECURITY_EMAIL_SUBJECT_PASSWORD_RESET = sysSettings.siteName + " - Password Reset Request",
                 SECURITY_EMAIL_SUBJECT_REGISTER = sysSettings.siteName + " - Welcome!",
                 SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE = sysSettings.siteName + " - Password Reset Notification",
@@ -1990,8 +1971,6 @@ def settings_dbRestore():
                                                restoreDict['settings'][0]['smtpUsername'],
                                                restoreDict['settings'][0]['smtpPassword'],
                                                restoreDict['settings'][0]['smtpSendAs'],
-                                               eval(restoreDict['settings'][0]['allowRegistration']),
-                                               eval(restoreDict['settings'][0]['requireConfirmedEmail']),
                                                eval(restoreDict['settings'][0]['allowRecording']),
                                                eval(restoreDict['settings'][0]['allowUploads']),
                                                eval(restoreDict['settings'][0]['adaptiveStreaming']),
@@ -2024,9 +2003,6 @@ def settings_dbRestore():
                     MAIL_USE_SSL=sysSettings.smtpSSL,
                     MAIL_USERNAME=sysSettings.smtpUsername,
                     MAIL_PASSWORD=sysSettings.smtpPassword,
-                    SECURITY_REGISTERABLE=sysSettings.allowRegistration,
-                    SECURITY_CONFIRMABLE=sysSettings.requireConfirmedEmail,
-                    SECURITY_SEND_REGISTER_EMAIL=sysSettings.requireConfirmedEmail,
                     SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
                     SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
@@ -2621,9 +2597,7 @@ def initialSetup():
         smtpPassword = request.form['smtpPassword']
 
         recordSelect = False
-        registerSelect = False
         uploadSelect = False
-        emailValidationSelect = False
         adaptiveStreaming = False
         showEmptyTables = False
         allowComments = False
@@ -2633,14 +2607,8 @@ def initialSetup():
         if 'recordSelect' in request.form:
             recordSelect = True
 
-        if 'registerSelect' in request.form:
-            registerSelect = True
-
         if 'uploadSelect' in request.form:
             uploadSelect = True
-
-        if 'emailValidationSelect' in request.form:
-            emailValidationSelect = True
 
         if 'adaptiveStreaming' in request.form:
             adaptiveStreaming = True
@@ -2675,7 +2643,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Streamer')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, registerSelect, emailValidationSelect, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
+            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)
             db.session.commit()
 
@@ -2691,9 +2659,6 @@ def initialSetup():
                     MAIL_USE_SSL=sysSettings.smtpSSL,
                     MAIL_USERNAME=sysSettings.smtpUsername,
                     MAIL_PASSWORD=sysSettings.smtpPassword,
-                    SECURITY_REGISTERABLE=sysSettings.allowRegistration,
-                    SECURITY_CONFIRMABLE = sysSettings.requireConfirmedEmail,
-                    SECURITY_SEND_REGISTER_EMAIL = sysSettings.requireConfirmedEmail,
                     SECURITY_EMAIL_SUBJECT_PASSWORD_RESET = sysSettings.siteName + " - Password Reset Request",
                     SECURITY_EMAIL_SUBJECT_REGISTER = sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE = sysSettings.siteName + " - Password Reset Notification",
