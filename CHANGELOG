@@ -1,0 +1,26 @@
+Beta-3
+==============================================
+Added Implemented Video Clips - Set markers for videos to display only a section of a video you want to share.
+Added Streamer Biographies
+Added Server MOTD on main page
+Added Markdown Support for all Text Area type fields
+Added Mail Settings Testing on First Run and Admin Settings Pages
+Added the Option to Set a Default Stream Name instead of Timestamp
+Added the Ability to set a Custom Invite Code
+Added RTMP Stats endpoint in the nginx.conf file and Display the information in the Admin Dashboard
+Added Open Graph Metadata to the Video, Stream, and Clip pages
+Added the Option for Channel Owners to Disable the Chat Joining/Leaving Notification
+Added Global Webhooks
+Added Theme Override Options for Theme Developers who want to just create a custom CSS file without needing to maintain a full theme file set
+Added Checks for the Server Address IP/DNS Settings in the Admin Menu
+Reworked the Nginx.conf file to split off the OSP specific into their own included osp-*.conf files to reduce the need of reworking the single file
+Added HTTP2 Support to the default install of OSP.  Upgrading Users should run the Manual Install Procedures to Upgrade their Nginx systems to the most recent build to add support
+Reworked Admin Pages to Return the the last Tab on Settings Changes
+Changed the First Run Page to allow for Restore of Backup Files without needing to do a dummy setup first
+Fixed TextArea MaxLength Restrictions to match database restrictions
+Fixed a Dropzone error which was displaying on the Defaultv2 and Defaultv2 Themes
+Fixed Chatboxes from using Autocomplete
+Fixed Some instances of Videos not showing their Protected Status when in "Other Videos"
+Fixed an issue which caused adaptive streaming to not stream in 1080p
+Moved the "Allow Users to Register" and "Required Email Validation Settings" Options to the config.py file due to issues with Flask-Security not adhering to the settings
+
