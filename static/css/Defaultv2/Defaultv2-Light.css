@@ -179,7 +179,6 @@ body {
 .chatpopout {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 640px;
     padding: 5px 5px 5px 5px;
 }
 
@@ -224,8 +223,6 @@ body {
 .chatbox-popout {
     height:100%;
     width:100%;
-    margin-left:30px;
-    margin-right:30px;
     margin-top: 10px;
     margin-bottom: 50px;
 }
@@ -233,8 +230,8 @@ body {
 .chat-popout-bottom {
     height:100px;
     position: fixed;
-    bottom:0%;
-    width:100%;
+    bottom:25px;
+    width:96%;
 }
 
 .streamcard-overlay {
