@@ -286,8 +286,21 @@ hr {
 .chatpopout {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 640px;
     padding: 5px 5px 5px 5px;
+}
+
+.chatbox-popout {
+    height:100%;
+    width:100%;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.chat-popout-bottom {
+    height:100px;
+    position: fixed;
+    bottom:25px;
+    width:96%;
 }
 
 .chatBar-Item {
