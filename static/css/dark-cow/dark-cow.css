@@ -279,29 +279,18 @@ hr {
     scrollbar-width: thin;
     overflow-y: auto;
     overflow-x: hidden;
+    height: 75vh;
     padding: 5px 5px 5px 5px;
-    height: 77vh;
+    width:100%;
 }
 
 .chatpopout {
     overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-color: #1b1e22 #272b30;
+    scrollbar-width: thin;
     padding: 5px 5px 5px 5px;
     max-height: calc(100vh - 150px);
-}
-
-.chatbox-popout {
-    height:100%;
-    width:100%;
-    margin-top: 10px;
-    margin-bottom: 50px;
-}
-
-.chat-popout-bottom {
-    height:100px;
-    position: fixed;
-    bottom:25px;
-    width:96%;
 }
 
 .chatBar-Item {
@@ -329,7 +318,7 @@ hr {
 }
 
 .chatbox {
-    /*height: 540px;*/
+    height: 540px;
     width:425px;
 }
 
@@ -338,8 +327,23 @@ hr {
 }
 
 #chatside {
-    border-left: 1px solid #3488db;
-    width:450px;
+    border-left: 1px solid #eeeeee;
+    width:475px;
+}
+
+.chatbox-popout {
+    height:100%;
+    width:100%;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.chat-popout-bottom {
+    height:100px;
+    position: fixed;
+    display: block;
+    bottom:25px;
+    width:96%;
 }
 
 .streamcard-overlay {
