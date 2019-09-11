@@ -1489,7 +1489,7 @@ def user_page():
                     except OSError:
                         pass
 
-        current_user.emailAddress = emailAddress
+        current_user.email = emailAddress
 
         current_user.biography = biography
 
