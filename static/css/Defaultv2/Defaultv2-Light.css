@@ -230,7 +230,7 @@ body {
 
 .chat-popout-bottom {
     height:100px;
-    position: absolute;
+    position: fixed;
     display: block;
     bottom:25px;
     width:96%;
