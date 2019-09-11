@@ -14,12 +14,16 @@
 </head>
 <body>
 <div class="col-12">
-  <div class="chatbox" style="margin-bottom:210px;">
-      <div id="chat" class="chatpopout"></div><br>
-      <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
-      <a href="#" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
-      <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>
+  <div class="chatbox-popout">
+      <div class="h-100 d-flex flex-column">
+          <div id="chat" class="chatpopout flex-grow-1"></div><br>
+          <div class="chat-popout-bottom">
+              <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+              <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
+              <a href="#" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
+              <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>
+          </div>
+      </div>
   </div>
 </div>
 
