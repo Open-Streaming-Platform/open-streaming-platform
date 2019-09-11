@@ -211,6 +211,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 5px 5px 5px 5px;
+    max-height: calc(100vh - 150px);
 }
 
 .chatBar-Item {
