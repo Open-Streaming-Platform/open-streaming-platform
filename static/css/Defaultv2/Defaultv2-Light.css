@@ -180,6 +180,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 5px 5px 5px 5px;
+    bottom-margin: 100px;
 }
 
 .chatBar-Item {
@@ -229,7 +230,8 @@ body {
 
 .chat-popout-bottom {
     height:100px;
-    position: fixed;
+    position: sticky;
+    display: block;
     bottom:25px;
     width:96%;
 }
