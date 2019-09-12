@@ -26,3 +26,4 @@ Beta-3
 - Fixed Issues with how Docker was handling Volumes and Mounts, causing configuration files to disappear and crashing OSP
 - Fixed Sizing and Positioning of Chat Popouts to allow for variable viewport sizes
 - Fixed an issue where changing of a user's email address would cause a 500 Error
+- Reduced the Delay for Chat User Listings from 30s to 5s
