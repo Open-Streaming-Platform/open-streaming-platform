@@ -5,7 +5,7 @@ import git
 from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
-from flask_security.signals import user_registered
+from flask_security.signals import user_registered, confirm_instructions_sent
 from flask_security import utils
 from sqlalchemy.sql.expression import func
 from sqlalchemy import desc, asc
@@ -635,7 +635,14 @@ def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
     runWebhook("ZZZ", 20, user=user.username)
+    if config.requireEmailRegistration == True:
+        flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
+
+@confirm_instructions_sent.connect_via(app)
+def confirm_instructions_sent_sighandler(app, user):
+    if config.requireEmailRegistration == True:
+        flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
 
 ### Start Error Handling ###
 
