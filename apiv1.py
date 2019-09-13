@@ -454,7 +454,6 @@ class api_1_ListTopic(Resource):
         return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/validateServer')
-@api.doc(params={'verificationToken': 'Token Generated from the Hub on Initial Connection', 'serverToken': 'Token Granted to the OSP Node by the Hub on Validation'})
 class api_1_hubValidateServer:
     """
         Endpoint for an OSP Hub Server to Validate the Connection to a Node
