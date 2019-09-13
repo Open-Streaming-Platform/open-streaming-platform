@@ -454,7 +454,7 @@ class api_1_ListTopic(Resource):
         return {'results': [ob.serialize() for ob in topicList]}
 
 @api.route('/validateServer')
-class api_1_hubValidateServer:
+class api_1_hubValidateServer(Resource):
     """
         Endpoint for an OSP Hub Server to Validate the Connection to a Node
     """
