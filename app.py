@@ -127,6 +127,7 @@ from classes import views
 from classes import comments
 from classes import invites
 from classes import webhook
+from classes import hubConnection
 
 sysSettings = None
 

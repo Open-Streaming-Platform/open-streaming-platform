@@ -17,6 +17,7 @@ from classes import upvotes
 from classes import apikey
 from classes import views
 from classes import settings
+from classes import hubConnection
 from classes.shared import db
 from classes.shared import socketio
 
@@ -74,6 +75,10 @@ chatParserPost = reqparse.RequestParser()
 chatParserPost.add_argument('username', type=str, required=True)
 chatParserPost.add_argument('message', type=str, required=True)
 chatParserPost.add_argument('userImage', type=str)
+
+hubConnectionPost = reqparse.RequestParser()
+hubConnectionPost.add_arument('verificationToken', type=str, required=True)
+hubConnectionPost.add_arument('serverToken', type=str, required=True)
 
 @api.route('/server')
 class api_1_Server(Resource):
@@ -447,3 +452,21 @@ class api_1_ListTopic(Resource):
         topicList = topics.topics.query.filter_by(id=topicID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
+
+@api.route('/validateServer')
+@api.doc(params={'verificationToken': 'Token Generated from the Hub on Initial Connection', 'serverToken': 'Token Granted to the OSP Node by the Hub on Validation'})
+class api_1_hubValidateServer:
+    """
+        Endpoint for an OSP Hub Server to Validate the Connection to a Node
+    """
+    @api.expect(hubConnectionPost)
+    def post(self):
+        args = hubConnectionPost.parse_args()
+        if 'verificationToken' in args:
+            connectionQuery = hubConnection.hubConnection.query.filter_by(verificationToke=args['verificationToken']).first()
+            if connectionQuery != None:
+                if 'serverToken' in args:
+                    connectionQuery.validateHub(args['serverToken'])
+                    db.session.commit()
+                    return {'results': {'message': 'Server Validated with OSP Hub'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
