@@ -639,10 +639,10 @@ def user_registered_sighandler(app, user, confirm_token):
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
 
-@confirm_instructions_sent.connect_via(app)
-def confirm_instructions_sent_sighandler(app, user):
-    if config.requireEmailRegistration == True:
-        flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
+#@confirm_instructions_sent.connect_via(app)
+#def confirm_instructions_sent_sighandler(app, user):
+#    if config.requireEmailRegistration == True:
+#        flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
 
 ### Start Error Handling ###
 
