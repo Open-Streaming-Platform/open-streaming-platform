@@ -77,8 +77,8 @@ chatParserPost.add_argument('message', type=str, required=True)
 chatParserPost.add_argument('userImage', type=str)
 
 hubConnectionPost = reqparse.RequestParser()
-hubConnectionPost.add_arument('verificationToken', type=str, required=True)
-hubConnectionPost.add_arument('serverToken', type=str, required=True)
+hubConnectionPost.add_argument('verificationToken', type=str, required=True)
+hubConnectionPost.add_argument('serverToken', type=str, required=True)
 
 @api.route('/server')
 class api_1_Server(Resource):
