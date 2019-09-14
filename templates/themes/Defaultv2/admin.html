@@ -582,7 +582,7 @@
                 <div class="tab-pane fade {% if page == 'hub' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-hub" id="hubSettings">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-10 col-md-12">
                                 <div class="card">
                                     <div class="card-header"><h4>OSP Hub Servers</h4></div>
                                     <div class="card-body">
@@ -632,16 +632,16 @@
                                         <hr>
                                         {% for hub in hubConnections %}
                                         <div class="row">
-                                            <div class="col-4">
+                                            <div class="col-12 col-md-5">
                                                 {{hub.hubServer|get_hubName}}
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-12 col-md-2">
                                                 {{hub.status|get_hubStatus}}
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-12 col-md-3">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-12 col-md-3">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.serverToken}}">
                                             </div>
                                         </div>
