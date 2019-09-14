@@ -1954,17 +1954,17 @@ def admin_page():
 
         return redirect(url_for('admin_page'))
 
-@app.route('/settings/admin/hub', methods=['POST','GET'])
+@app.route('/settings/admin/hub', methods=['POST'])
 @login_required
 @roles_required('Admin')
 def admin_hub_page():
     sysSettings = settings.settings.query.first()
 
-    if request.args.get("action") is not None:
-        action = request.args.get("action")
-        if action == "add":
-            if request.args.get("hubServer") is not None:
-                hubServer = int(request.args.get("hubServer"))
+    if "action" in request.form:
+        action = request.form["action"]
+        if action == "addConnection":
+            if "hubServer" in request.form:
+                hubServer = int(request.form["hubServer"])
 
                 hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
 

@@ -590,7 +590,17 @@
                                 {% endfor %}
                                 <h5>Add an OSP Hub</h5>
                                 <form action="/settings/admin/hub">
-                                    <input type="text" class="form-control">
+                                    <input type="text" name="hubServerAddress" class="form-control">
+                                    <input type="hidden" name="action" id="hubaction" value="addHub">
+                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                </form>
+                                <form action="/settings/admin/hub">
+                                    <select class="form-control">
+                                        {% for hubServer in hubServers %}
+                                            <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
                                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                                 </form>
                                 <h4>Hub Connections</h4>
