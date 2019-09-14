@@ -453,7 +453,7 @@ class api_1_ListTopic(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
-@api.route('/validateServer')
+@api.route('/hub/validateServer')
 class api_1_hubValidateServer(Resource):
     """
         Endpoint for an OSP Hub Server to Validate the Connection to a Node
