@@ -633,10 +633,10 @@
                                         {% for hub in hubConnections %}
                                         <div class="row">
                                             <div class="col-12 col-md-5">
-                                                {{hub.hubServer|get_hubName}}
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.hubServer|get_hubName}}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                {{hub.status|get_hubStatus}}
+                                                <div class="badge {% if hub.status == 0 %}badge-warning {% elif hub.status == 1 %}badge-success {% endif%}">{{hub.status|get_hubStatus}}</div>
                                             </div>
                                             <div class="col-12 col-md-3">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
