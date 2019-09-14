@@ -238,6 +238,13 @@ def init_db_values():
         for chan in channelQuery:
             chan.defaultStreamName = ""
             db.session.commit()
+
+        hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
+        if hubQuery == None:
+            newHub = hubConnection.hubServers(hubURL)
+            db.session.add(newHub)
+            db.session.commit()
+
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir("/var/www/stream-thumb"):
             try:
@@ -1761,6 +1768,9 @@ def admin_page():
 
         globalWebhookQuery = webhook.globalWebhook.query.all()
 
+        hubServerQuery = hubConnection.hubServers.query.all()
+        hubRegistrationQuery = hubConnection.hubConnection.query.all()
+
         themeList = []
         themeDirectorySearch = os.listdir("./templates/themes/")
         for theme in themeDirectorySearch:
@@ -1768,7 +1778,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, page=page)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, hubServers=hubServerQuery, hubConnections=hubRegistrationQuery, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -1944,34 +1954,40 @@ def admin_page():
 
         return redirect(url_for('admin_page'))
 
-@app.route('/settings/admin/addhub', methods=['POST','GET'])
+@app.route('/settings/admin/hub', methods=['POST','GET'])
 @login_required
 @roles_required('Admin')
-def admin_addhub_page():
+def admin_hub_page():
     sysSettings = settings.settings.query.first()
 
-    r = None
-    newTokenRequest = hubConnection.hubConnection()
-    try:
-        r = requests.post(hubURL + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
-    except requests.exceptions.Timeout:
-        pass
-    except requests.exceptions.ConnectionError:
-        pass
-    if r != None:
-        if r.status_code == 200:
-            db.session.add(newTokenRequest)
-            db.session.commit()
-            flash("Successfully Added to Hub")
-            return redirect(url_for('main_page'))
-        else:
-            flash("Failed to Add to Hub Due to Validation Bug")
-            return redirect(url_for('main_page'))
-    flash("Failed to Add to Hub")
-    return redirect(url_for('main_page'))
+    if request.args.get("action") is not None:
+        action = request.args.get("action")
+        if action == "add":
+            if request.args.get("hubServer") is not None:
+                hubServer = int(request.args.get("hubServer"))
 
+                hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
 
-
+                if hubServerQuery != None:
+                    r = None
+                    newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
+                    try:
+                        r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+                    except requests.exceptions.Timeout:
+                        pass
+                    except requests.exceptions.ConnectionError:
+                        pass
+                    if r != None:
+                        if r.status_code == 200:
+                            db.session.add(newTokenRequest)
+                            db.session.commit()
+                            flash("Successfully Added to Hub")
+                            return redirect(url_for('admin_page', page="hub"))
+                        else:
+                            flash("Failed to Add to Hub Due to Server Error")
+                            return redirect(url_for('admin_page', page="hub"))
+            flash("Failed to Add to Hub")
+    return redirect(url_for('admin_page', page="hub"))
 
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():
