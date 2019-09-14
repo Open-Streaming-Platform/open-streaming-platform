@@ -1952,11 +1952,11 @@ def admin_addhub_page():
 
     r = None
     newTokenRequest = hubConnection.hubConnection()
-    r = requests.post(hubURL + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress, 'serverVersion': version})
-    #except requests.exceptions.Timeout:
-    #    pass
-    #except requests.exceptions.ConnectionError:
-    #    pass
+    r = requests.post(hubURL + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+        #except requests.exceptions.Timeout:
+        #    pass
+        #except requests.exceptions.ConnectionError:
+        #    pass
     if r != None:
         if r.status_code == 200:
             db.session.add(newTokenRequest)
@@ -1964,7 +1964,7 @@ def admin_addhub_page():
             flash("Successfully Added to Hub")
             return redirect(url_for('main_page'))
         else:
-            flash("Failed to Add to Hub - " + str(r.status_code))
+            flash("Failed to Add to Hub - " + str(r.status_code) + "-" + newTokenRequest.verificationToken)
             return redirect(url_for('main_page'))
     flash("Failed to Add to Hub")
     return redirect(url_for('main_page'))
