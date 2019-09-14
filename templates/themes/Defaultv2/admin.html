@@ -585,14 +585,22 @@
                             <div class="col-lg-6 col-md-12">
                                 <h4>OSP Hub Servers</h4>
                                 {% for hubServer in hubServers %}
+                                <div class="form-group">
                                     <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
-                                    <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a><br>
+                                    <div class="input-group-append">
+                                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </div>
                                 {% endfor %}
                                 <h5>Add an OSP Hub</h5>
                                 <form action="/settings/admin/hub" method="post">
-                                    <input type="text" name="hubServerAddress" class="form-control">
-                                    <input type="hidden" name="action" id="hubaction" value="addHub">
-                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                    <div class="form-group">
+                                        <input type="hidden" name="action" id="hubaction" value="addHub">
+                                        <input type="text" name="hubServerAddress" class="form-control">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                        </div>
+                                    </div>
                                 </form>
                                 <br>
                                 <h4>Hub Connections</h4>
