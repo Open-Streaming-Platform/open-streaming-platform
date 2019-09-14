@@ -462,7 +462,7 @@ class api_1_hubValidateServer(Resource):
     def post(self):
         args = hubConnectionPost.parse_args()
         if 'verificationToken' in args:
-            connectionQuery = hubConnection.hubConnection.query.filter_by(verificationToke=args['verificationToken']).first()
+            connectionQuery = hubConnection.hubConnection.query.filter_by(verificationToken=args['verificationToken']).first()
             if connectionQuery != None:
                 if 'serverToken' in args:
                     connectionQuery.validateHub(args['serverToken'])
