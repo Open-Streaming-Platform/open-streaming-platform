@@ -1944,6 +1944,29 @@ def admin_page():
 
         return redirect(url_for('admin_page'))
 
+@app.route('/settings/admin/addhub', methods=['POST','GET'])
+@login_required
+@roles_required('Admin')
+def admin_addhub_page():
+    sysSettings = settings.settings.query.first()
+
+    r = None
+    newTokenRequest = hubConnection.hubConnection()
+    try:
+        r = requests.post(hubURL + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress, 'serverVersion': version})
+    except requests.exceptions.Timeout:
+        pass
+    except requests.exceptions.ConnectionError:
+        pass
+    if r.status_code == 200:
+        db.session.add(newTokenRequest)
+        db.session.commit()
+        return True
+    return False
+
+
+
+
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():
     validRestoreAttempt = False

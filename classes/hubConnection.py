@@ -1,4 +1,5 @@
 from .shared import db
+from secrets import token_hex
 
 class hubConnection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -6,8 +7,8 @@ class hubConnection(db.Model):
     serverToken = db.Column(db.String(2056))
     status = db.Column(db.Integer)
 
-    def __init__(self, verificationToken):
-        self.verificationToken = verificationToken
+    def __init__(self):
+        self.verificationToken = token_hex(256)
         self.status = 0
 
     def validateHub(self, serverToken):
