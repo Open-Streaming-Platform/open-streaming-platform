@@ -1970,6 +1970,12 @@ def admin_hub_page():
 
                 if hubServerQuery != None:
                     r = None
+
+                    existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
+                    if existingConnectionRequest != None:
+                        db.session.delete(existingConnectionRequest)
+                        db.session.commit()
+
                     newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
                     try:
                         r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
