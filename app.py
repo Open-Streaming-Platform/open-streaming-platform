@@ -1963,6 +1963,9 @@ def admin_addhub_page():
             db.session.commit()
             flash("Successfully Added to Hub")
             return redirect(url_for('main_page'))
+        else:
+            flash("Failed to Add to Hub - " + str(r.status_code))
+            return redirect(url_for('main_page'))
     flash("Failed to Add to Hub")
     return redirect(url_for('main_page'))
 
