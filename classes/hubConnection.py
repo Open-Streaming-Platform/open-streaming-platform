@@ -2,6 +2,7 @@ from .shared import db
 from secrets import token_hex
 
 class hubServers(db.Model):
+    __tablename__ = "hubServers"
     id = db.Column(db.Integer, primary_key=True)
     serverAddress = db.Column(db.String(2056))
     status = db.Column(db.Integer)
@@ -15,6 +16,7 @@ class hubServers(db.Model):
         return '<id %r>' % self.id
 
 class hubConnection(db.Model):
+    __tablename__ = "hubConnection"
     id = db.Column(db.Integer, primary_key=True)
     verificationToken = db.Column(db.String(2056))
     serverToken = db.Column(db.String(2056))
