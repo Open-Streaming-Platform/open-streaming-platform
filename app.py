@@ -57,7 +57,7 @@ from conf import config
 version = "beta-3"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
-hubURL = "https://hub.openstreamingplatform.com"
+hubURL = "http://osphubdev.internal.divby0.net"
 
 app = Flask(__name__)
 
@@ -1958,10 +1958,11 @@ def admin_addhub_page():
         pass
     except requests.exceptions.ConnectionError:
         pass
-    if r.status_code == 200:
-        db.session.add(newTokenRequest)
-        db.session.commit()
-        return True
+    if r != None:
+        if r.status_code == 200:
+            db.session.add(newTokenRequest)
+            db.session.commit()
+            return True
     return False
 
 
