@@ -583,49 +583,60 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-12">
-                                <h4>OSP Hub Servers</h4>
-                                {% for hubServer in hubServers %}
-                                <div class="input-group">
-                                    <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
-                                    <div class="input-group-append">
-                                        <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                <div class="card">
+                                    <div class="card-header"><h4>OSP Hub Servers</h4></div>
+                                    <div class="card-body">
+                                        {% for hubServer in hubServers %}
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
+                                            <div class="input-group-append">
+                                                <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <h5>Add an OSP Hub</h5>
+                                        <form action="/settings/admin/hub" method="post">
+                                            <div class="input-group">
+                                                <input type="hidden" name="action" id="hubaction" value="addHub">
+                                                <input type="text" name="hubServerAddress" class="form-control">
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                {% endfor %}
-                                <h5>Add an OSP Hub</h5>
-                                <form action="/settings/admin/hub" method="post">
-                                    <div class="input-group">
-                                        <input type="hidden" name="action" id="hubaction" value="addHub">
-                                        <input type="text" name="hubServerAddress" class="form-control">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
                                 <br>
-                                <h4>Hub Connections</h4>
-                                <h5>Add a New Connection</h5>
-                                <form action="/settings/admin/hub" method="post">
-                                    <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
-                                    <div class="input-group">
-                                        <select class="form-control" name="hubServer">
-                                            {% for hubServer in hubServers %}
-                                                <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                                        </div>
+                                <div class="card">
+                                    <div class="card-header"><h4>Hub Connections</h4></div>
+                                    <div class="card-body">
+                                        <h5>Add a New Connection</h5>
+                                        <hr>
+                                        <form action="/settings/admin/hub" method="post">
+                                            <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
+                                            <div class="input-group">
+                                                <select class="form-control" name="hubServer">
+                                                    {% for hubServer in hubServers %}
+                                                        <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <br>
+                                        <h5>Existing Connections</h5>
+                                        <hr>
+                                        {% for hub in hubConnections %}
+                                        {{hub.verificationToken}} <br>
+                                        {{hub.serverToken}} <br>
+                                        {{hub.hubServer}} <br>
+                                        {{hub.status}}<br>
+                                        <br>
+                                        {% endfor %}
                                     </div>
-                                </form>
-                                <h5>Existing Connections</h5>
-                                {% for hub in hubConnections %}
-                                {{hub.verificationToken}} <br>
-                                {{hub.serverToken}} <br>
-                                {{hub.hubServer}} <br>
-                                {{hub.status}}<br>
-                                <br>
-                                {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
