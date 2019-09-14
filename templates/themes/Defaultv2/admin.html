@@ -598,7 +598,7 @@
                                 <h4>Hub Connections</h4>
                                 <h5>Add a New Connection</h5>
                                 <form action="/settings/admin/hub" method="post">
-                                    <select class="form-control">
+                                    <select class="form-control" name="hubServer">
                                         {% for hubServer in hubServers %}
                                             <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
                                         {% endfor %}
