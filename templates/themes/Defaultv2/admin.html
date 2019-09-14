@@ -631,10 +631,20 @@
                                         <h5>Existing Connections</h5>
                                         <hr>
                                         {% for hub in hubConnections %}
-                                        {{hub.verificationToken}} <br>
-                                        {{hub.serverToken}} <br>
-                                        {{hub.hubServer}} <br>
-                                        {{hub.status}}<br>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                {{hub.hubServer|get_hubName}}
+                                            </div>
+                                            <div class="col-2">
+                                                {{hub.status|get_hubStatus}}
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.serverToken}}">
+                                            </div>
+                                        </div>
                                         <br>
                                         {% endfor %}
                                     </div>

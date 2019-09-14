@@ -637,6 +637,26 @@ def get_webhookTrigger(webhookTrigger):
     }
     return webhookNames[webhookTrigger]
 
+@app.template_filter('get_hubStatus')
+def get_hubStatus(hubStatus):
+
+    hubStatus = str(hubStatus)
+    hubStatusNames = {
+        '0': 'Unverified',
+        '1': 'Verified'
+    }
+    return hubStatusNames[hubStatus]
+
+@app.template_filter('get_hubName')
+def get_hubName(hubID):
+
+    hubID = int(hubID)
+    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
+    if hubQuery != None:
+        return hubQuery.serverAddress
+    return "Unknown"
+
+
 
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
