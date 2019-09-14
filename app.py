@@ -1962,9 +1962,8 @@ def admin_addhub_page():
             db.session.add(newTokenRequest)
             db.session.commit()
             flash("Successfully Added to Hub")
-            return redirect(url_for('main_page'))
+            return {'verificationToken':newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress}
         else:
-            flash("Failed to Add to Hub - " + str(r.status_code) + "-" + newTokenRequest.verificationToken)
             return redirect(url_for('main_page'))
     flash("Failed to Add to Hub")
     return redirect(url_for('main_page'))
