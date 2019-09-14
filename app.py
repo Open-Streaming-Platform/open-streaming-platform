@@ -1973,6 +1973,12 @@ def admin_hub_page():
 
                     existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
                     if existingConnectionRequest != None:
+                        try:
+                            r = requests.delete(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': existingConnectionRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+                        except requests.exceptions.Timeout:
+                            pass
+                        except requests.exceptions.ConnectionError:
+                            pass
                         db.session.delete(existingConnectionRequest)
                         db.session.commit()
 
