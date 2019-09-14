@@ -1964,7 +1964,7 @@ def admin_addhub_page():
             flash("Successfully Added to Hub")
             return {'verificationToken':newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress}
         else:
-            return redirect(url_for('main_page'))
+            return {'verificationToken':newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress}
     flash("Failed to Add to Hub")
     return redirect(url_for('main_page'))
 
