@@ -1962,8 +1962,10 @@ def admin_addhub_page():
         if r.status_code == 200:
             db.session.add(newTokenRequest)
             db.session.commit()
-            return True
-    return False
+            flash("Successfully Added to Hub")
+            return redirect(url_for('main_page'))
+    flash("Failed to Add to Hub")
+    return redirect(url_for('main_page'))
 
 
 
