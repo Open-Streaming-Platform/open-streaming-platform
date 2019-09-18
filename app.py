@@ -560,7 +560,7 @@ def processHubConnection(connection, payload):
 
     r = None
     try:
-        r = requests.post(hubServer.serverAddress + '/' + apiEndpoint + '/update', data={'serverToken': connection.serverToken, 'jsonData': str(payload)})
+        r = requests.post(hubServer.serverAddress + '/' + apiEndpoint + '/update', data={'serverToken': connection.serverToken, 'jsonData': json.dumps(payload)})
     except requests.exceptions.Timeout:
         return False
     except requests.exceptions.ConnectionError:
