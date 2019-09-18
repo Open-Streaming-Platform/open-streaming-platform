@@ -15,6 +15,10 @@ from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 import xmltodict
+from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.utils import secure_filename
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from apiv1 import api_v1
 
@@ -54,6 +58,10 @@ import datetime
 
 from conf import config
 
+#----------------------------------------------------------------------------#
+# App Configuration Setup
+#----------------------------------------------------------------------------#
+
 version = "beta-3"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
@@ -61,8 +69,6 @@ hubURL = "http://osphubdev.internal.divby0.net"
 
 app = Flask(__name__)
 
-from werkzeug.contrib.fixers import ProxyFix
-from werkzeug.utils import secure_filename
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 
@@ -113,6 +119,10 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
+#----------------------------------------------------------------------------#
+# Modal Imports
+#----------------------------------------------------------------------------#
+
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -151,7 +161,9 @@ streamUserList = {}
 # Create Theme Data Dictionary
 themeData = {}
 
-
+#----------------------------------------------------------------------------#
+# Functions
+#----------------------------------------------------------------------------#
 def init_db_values():
     db.create_all()
 
@@ -491,9 +503,95 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
+def prepareHubJSON():
+    topicQuery = topics.topics.query.all()
+    topicDump = {}
+    for topic in topicQuery:
+        topicDump[topic.id] = {'name': topic.name, 'img': topic.iconClass}
+
+    streamerIDs = []
+    for channel in db.session.query(Channel.Channel.owningUser).distinct():
+        if channel.owningUser not in streamerIDs:
+            streamerIDs.append(channel.owningUser)
+
+    streamerDump = {}
+    for streamerID in streamerIDs:
+        streamerQuery = Sec.User.query.filter_by(id=streamerID).first()
+        streamerDump[streamerQuery.id] = {'username': streamerQuery.username, 'biography': streamerQuery.biography,
+                                          'img': streamerQuery.pictureLocation}
+
+    channelDump = {}
+    channelQuery = Channel.Channel.query.all()
+    for channel in channelQuery:
+        channelDump[channel.id] = {'streamer': channel.owningUser, 'name': channel.channelName,
+                                   'location': channel.channelLoc, 'topic': channel.topic, 'views': channel.views,
+                                   'protected': channel.protected,
+                                   'currentViewers': channel.currentViewers, 'img': channel.imageLocation,
+                                   'description': channel.description}
+
+    videoDump = {}
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
+    for video in videoQuery:
+        videoDump[video.id] = {'streamer': video.owningUser, 'name': video.channelName, 'channelID': video.channelID,
+                               'description': video.description, 'topic': video.topic, 'views': video.views,
+                               'length': video.length, 'location': video.videoLocation, 'img': video.thumbnailLocation}
+
+    clipDump = {}
+    clipQuery = RecordedVideo.Clips.query.all()
+    for clip in clipQuery:
+        clipDump[clip.id] = {'parentVideo': clip.parentVideo, 'length': clip.length, 'views': clip.views,
+                             'name': clip.clipName, 'description': clip.description, 'img': clip.thumbnailLocation}
+
+    streamDump = {}
+    streamQuery = Stream.Stream.query.all()
+    for stream in streamQuery:
+        streamDump[stream.id] = {'channelID': stream.linkedChannel, 'url': ('/view/' + stream.channel.channelLoc + '/'),
+                                 'name': stream.streamName, 'topic': stream.topic,
+                                 'currentViewers': stream.currentViewers, 'views': stream.totalViewers}
+
+    dataDump = {'topics': topicDump, 'streamers': streamerDump, 'channels': channelDump, 'videos': videoDump,
+                'clips': clipDump, 'streams': streamDump}
+    db.session.close()
+    return dataDump
+
+def processHubConnection(connection, payload):
+    hubServer = connection.server
+    apiEndpoint = "apiv1"
+
+    r = None
+    try:
+        r = requests.post(hubServer.serverAddress + '/' + apiEndpoint + '/update', data={'serverToken': hubServer.serverToken, 'jsonData': str(payload)})
+    except requests.exceptions.Timeout:
+        return False
+    except requests.exceptions.ConnectionError:
+        return False
+    if r.status_code == 200:
+        db.session.close()
+        return True
+    return False
+
+def processAllHubConnections():
+
+    jsonPayload = prepareHubJSON()
+
+    hubConnectionQuery = hubConnection.hubConnection.query.filter_by(status=1).all()
+    for connection in hubConnectionQuery:
+        processHubConnection(connection, jsonPayload)
+
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
-### Start Jinja2 Filters
+
+#----------------------------------------------------------------------------#
+# Scheduler Tasks
+#----------------------------------------------------------------------------#
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=120)
+scheduler.start()
+
+#----------------------------------------------------------------------------#
+# Context Processors
+#----------------------------------------------------------------------------#
 
 @app.context_processor
 def inject_user_info():
@@ -507,6 +605,9 @@ def inject_sysSettings():
 
     return dict(sysSettings=sysSettings)
 
+#----------------------------------------------------------------------------#
+# Template Filters
+#----------------------------------------------------------------------------#
 
 @app.template_filter('normalize_uuid')
 def normalize_uuid(uuidstr):
@@ -656,7 +757,9 @@ def get_hubName(hubID):
         return hubQuery.serverAddress
     return "Unknown"
 
-
+#----------------------------------------------------------------------------#
+# Flask Signal Handlers.
+#----------------------------------------------------------------------------#
 
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
@@ -667,8 +770,9 @@ def user_registered_sighandler(app, user, confirm_token):
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
 
-### Start Error Handling ###
-
+#----------------------------------------------------------------------------#
+# Error Handlers.
+#----------------------------------------------------------------------------#
 @app.errorhandler(404)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
@@ -679,12 +783,17 @@ def page_not_found(e):
     sysSettings = settings.settings.query.first()
     return render_template(checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
 
+#----------------------------------------------------------------------------#
+# Additional Handlers.
+#----------------------------------------------------------------------------#
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
 
-### Start Flask Routes ###
+#----------------------------------------------------------------------------#
+# Route Controllers.
+#----------------------------------------------------------------------------#
 
 @app.route('/')
 def main_page():
