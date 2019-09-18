@@ -2876,7 +2876,7 @@ def initialSetup():
 
 @app.route('/debug/hubSync')
 def debug_hub():
-    return processAllHubConnections()
+    return str(processAllHubConnections())
 
 ### Start Video / Stream Handler Routes
 
