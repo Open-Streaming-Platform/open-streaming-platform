@@ -568,7 +568,7 @@ def processHubConnection(connection, payload):
     if r.status_code == 200:
         db.session.close()
         return True
-    return str(payload)
+    return False
 
 def processAllHubConnections():
 
@@ -2873,10 +2873,6 @@ def initialSetup():
             return redirect(url_for('main_page'))
 
     return redirect(url_for('main_page'))
-
-@app.route('/debug/hubSync')
-def debug_hub():
-    return str(processAllHubConnections())
 
 ### Start Video / Stream Handler Routes
 
