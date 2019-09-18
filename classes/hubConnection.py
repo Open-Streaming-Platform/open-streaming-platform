@@ -6,7 +6,7 @@ class hubServers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     serverAddress = db.Column(db.String(2056))
     status = db.Column(db.Integer)
-    connections = db.relationship('hubConnection', backref='server', lazy="joined")
+    connections = db.relationship('hubConnection', backref='server', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, serverAddress):
         self.serverAddress = serverAddress
