@@ -568,7 +568,7 @@ def processHubConnection(connection, payload):
     if r.status_code == 200:
         db.session.close()
         return True
-    return False
+    return r.text
 
 def processAllHubConnections():
 
