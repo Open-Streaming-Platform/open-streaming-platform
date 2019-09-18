@@ -574,9 +574,12 @@ def processAllHubConnections():
 
     jsonPayload = prepareHubJSON()
 
+    results = []
+
     hubConnectionQuery = hubConnection.hubConnection.query.filter_by(status=1).all()
     for connection in hubConnectionQuery:
-        processHubConnection(connection, jsonPayload)
+        results.append(processHubConnection(connection, jsonPayload))
+    return results
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
@@ -2870,6 +2873,10 @@ def initialSetup():
             return redirect(url_for('main_page'))
 
     return redirect(url_for('main_page'))
+
+@app.route('/debug/hubSync')
+def debug_hub():
+    return processAllHubConnections()
 
 ### Start Video / Stream Handler Routes
 
