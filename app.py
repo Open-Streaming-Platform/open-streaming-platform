@@ -545,9 +545,9 @@ def prepareHubJSON():
     streamDump = {}
     streamQuery = Stream.Stream.query.all()
     for stream in streamQuery:
-        streamDump[stream.id] = {"channelID": stream.linkedChannel, "location": ("/view/" + stream.channel.channelLoc + "/"),
-                                 "name": stream.streamName, "topic": stream.topic,
-                                 "currentViewers": stream.currentViewers, "views": stream.totalViewers, "img": "/stream-thumb/" + stream.channel.channelLoc + ".png"}
+        streamDump[stream.id] = {"channelID": stream.linkedChannel, "location": ("/view/" + stream.channel.channelLoc + "/"), "streamer": str(stream.channel.owningUser),
+                                 "name": stream.streamName, "topic": stream.topic, "currentViewers": stream.currentViewers, "views": stream.totalViewers,
+                                 "img": "/stream-thumb/" + stream.channel.channelLoc + ".png"}
 
     dataDump = {"topics": topicDump, "streamers": streamerDump, "channels": channelDump, "videos": videoDump,
                 "clips": clipDump, "streams": streamDump}
@@ -589,7 +589,7 @@ app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 #----------------------------------------------------------------------------#
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=120)
+scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
 scheduler.start()
 
 #----------------------------------------------------------------------------#
