@@ -52,6 +52,7 @@ class Stream(db.Model):
             'streamPage': '/view/' + self.channel.channelLoc + '/',
             'streamURL': streamURL,
             'streamName': self.streamName,
+            'thumbnail': '/stream-thumb/' + self.channel.channelLoc + '.png',
             'topic': self.topic,
             'currentViewers': self.currentViewers,
             'totalViewers': self.currentViewers,
