@@ -547,7 +547,7 @@ def prepareHubJSON():
     for stream in streamQuery:
         streamDump[stream.id] = {"channelID": stream.linkedChannel, "location": ("/view/" + stream.channel.channelLoc + "/"), "streamer": str(stream.channel.owningUser),
                                  "name": stream.streamName, "topic": stream.topic, "currentViewers": stream.currentViewers, "views": stream.totalViewers,
-                                 "img": "/stream-thumb/" + stream.channel.channelLoc + ".png", "upvotes": str(get_Stream_Upvotes(stream.id))}
+                                 "img": stream.channel.channelLoc + ".png", "upvotes": str(get_Stream_Upvotes(stream.id))}
 
     dataDump = {"topics": topicDump, "streamers": streamerDump, "channels": channelDump, "videos": videoDump,
                 "clips": clipDump, "streams": streamDump}
