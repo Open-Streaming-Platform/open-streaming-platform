@@ -828,7 +828,7 @@ def channels_page():
                 channelList.append(channel)
     return render_template(checkOverride('channels.html'), channelList=channelList)
 
-@app.route('/channel/<chanID>/')
+@app.route('/channel/<int:chanID>/')
 def channel_view_page(chanID):
     sysSettings = settings.settings.query.first()
     chanID = int(chanID)
@@ -854,6 +854,14 @@ def channel_view_page(chanID):
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
 
+@app.route('/channel/link/<channelLoc>')
+def channel_view_link_page(channelLoc):
+    if channelLoc != None:
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
+        if channelQuery != None:
+            return redirect(url_for("channel_view_page",chanID=channelQuery.id))
+    flash("Invalid Channel Location", "error")
+    return redirect(url_for("main_page"))
 
 @app.route('/topics')
 def topic_page():
