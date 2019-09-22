@@ -854,7 +854,7 @@ def channel_view_page(chanID):
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
 
-@app.route('/channel/link/<channelLoc>')
+@app.route('/channel/link/<channelLoc>/')
 def channel_view_link_page(channelLoc):
     if channelLoc != None:
         channelQuery = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
