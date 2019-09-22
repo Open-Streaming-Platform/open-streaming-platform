@@ -524,7 +524,7 @@ def prepareHubJSON():
     channelQuery = Channel.Channel.query.all()
     for channel in channelQuery:
         channelDump[channel.id] = {"streamer": channel.owningUser, "name": channel.channelName,
-                                   "location": channel.channelLoc, "topic": channel.topic, "views": channel.views,
+                                   "location": "/channel/link/" + channel.channelLoc, "topic": channel.topic, "views": channel.views,
                                    "protected": channel.protected,
                                    "currentViewers": channel.currentViewers, "img": channel.imageLocation,
                                    "description": channel.description}
