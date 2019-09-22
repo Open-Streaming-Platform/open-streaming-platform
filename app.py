@@ -534,7 +534,7 @@ def prepareHubJSON():
     for video in videoQuery:
         videoDump[video.id] = {"streamer": video.owningUser, "name": video.channelName, "channelID": video.channelID,
                                "description": video.description, "topic": video.topic, "views": video.views,
-                               "length": video.length, "location": "/videos/" + str(video.id), "img": video.thumbnailLocation}
+                               "length": video.length, "location": "/play/" + str(video.id), "img": video.thumbnailLocation}
 
     clipDump = {}
     clipQuery = RecordedVideo.Clips.query.all()
