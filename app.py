@@ -534,20 +534,20 @@ def prepareHubJSON():
     for video in videoQuery:
         videoDump[video.id] = {"streamer": video.owningUser, "name": video.channelName, "channelID": video.channelID,
                                "description": video.description, "topic": video.topic, "views": video.views,
-                               "length": video.length, "location": "/play/" + str(video.id), "img": video.thumbnailLocation}
+                               "length": video.length, "location": "/play/" + str(video.id), "img": video.thumbnailLocation, "upvotes": str(video.upvotes.count())}
 
     clipDump = {}
     clipQuery = RecordedVideo.Clips.query.all()
     for clip in clipQuery:
         clipDump[clip.id] = {"parentVideo": clip.parentVideo, "length": clip.length, "views": clip.views,
-                             "name": clip.clipName, "description": clip.description, "img": clip.thumbnailLocation, "location": "/clip/" + str(clip.id)}
+                             "name": clip.clipName, "description": clip.description, "img": clip.thumbnailLocation, "location": "/clip/" + str(clip.id), "upvotes": str(clip.upvotes.count())}
 
     streamDump = {}
     streamQuery = Stream.Stream.query.all()
     for stream in streamQuery:
         streamDump[stream.id] = {"channelID": stream.linkedChannel, "location": ("/view/" + stream.channel.channelLoc + "/"), "streamer": str(stream.channel.owningUser),
                                  "name": stream.streamName, "topic": stream.topic, "currentViewers": stream.currentViewers, "views": stream.totalViewers,
-                                 "img": "/stream-thumb/" + stream.channel.channelLoc + ".png"}
+                                 "img": "/stream-thumb/" + stream.channel.channelLoc + ".png", "upvotes": str(stream.upvotes.count())}
 
     dataDump = {"topics": topicDump, "streamers": streamerDump, "channels": channelDump, "videos": videoDump,
                 "clips": clipDump, "streams": streamDump}
