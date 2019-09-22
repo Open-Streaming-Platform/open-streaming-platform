@@ -518,7 +518,7 @@ def prepareHubJSON():
     for streamerID in streamerIDs:
         streamerQuery = Sec.User.query.filter_by(id=streamerID).first()
         streamerDump[streamerQuery.id] = {"username": streamerQuery.username, "biography": streamerQuery.biography,
-                                          "img": streamerQuery.pictureLocation}
+                                          "img": streamerQuery.pictureLocation, "location": "/streamers/" + str(streamerQuery.id) + "/"}
 
     channelDump = {}
     channelQuery = Channel.Channel.query.all()
