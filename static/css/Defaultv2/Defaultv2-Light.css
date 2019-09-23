@@ -233,7 +233,8 @@ body {
     position: fixed;
     display: block;
     bottom:25px;
-    width:96%;
+    width:100%;
+    padding-right:35px;
 }
 
 .streamcard-overlay {

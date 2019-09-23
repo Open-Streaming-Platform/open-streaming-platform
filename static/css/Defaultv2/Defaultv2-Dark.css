@@ -257,8 +257,8 @@ body {
 .chat-popout-bottom {
     height:100px;
     position: fixed;
-    bottom:25px;
-    width:96%;
+    width:100%;
+    padding-right:35px;
 }
 
 #chatside {
