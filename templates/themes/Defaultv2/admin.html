@@ -591,7 +591,7 @@
                                         <form action="/settings/admin/hub" method="post">
                                             <div class="input-group">
                                                 <input type="hidden" name="action" id="hubaction" value="addHub">
-                                                <input type="text" name="hubServerAddress" class="form-control">
+                                                <input type="text" name="hubServerAddress" class="form-control disabled" disabled>
                                                 <div class="input-group-append">
                                                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                                                 </div>
@@ -602,7 +602,7 @@
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
                                             <div class="input-group-append">
-                                                <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                                <a href="/settings/admin/hub?action=deleteServer&connectionID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                             </div>
                                         </div>
                                         {% endfor %}
@@ -632,17 +632,23 @@
                                         <hr>
                                         {% for hub in hubConnections %}
                                         <div class="row">
-                                            <div class="col-12 col-md-5">
+                                            <div class="col-12 col-md-4">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.hubServer|get_hubName}}">
                                             </div>
                                             <div class="col-12 col-md-1">
                                                 <div class="badge {% if hub.status == 0 %}badge-warning {% elif hub.status == 1 %}badge-success {% endif%}">{{hub.status|get_hubStatus}}</div>
                                             </div>
-                                            <div class="col-12 col-md-3">
+                                            <div class="col-12 col-md-1">
+                                                {{hub.lastUpload|normalize_date}}
+                                            </div>
+                                            <div class="col-12 col-md-2">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
                                             </div>
-                                            <div class="col-12 col-md-3">
+                                            <div class="col-12 col-md-2">
                                                 <input type="text" class="form-control readonly" readonly value="{{hub.serverToken}}">
+                                            </div>
+                                            <div class="col-12 col-md-1">
+                                                <a href="/settings/admin/hub?action=deleteConnection&connectionID={{hub.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                             </div>
                                         </div>
                                         <br>

@@ -21,6 +21,7 @@ class hubConnection(db.Model):
     verificationToken = db.Column(db.String(2056))
     serverToken = db.Column(db.String(2056))
     hubServer = db.Column(db.Integer, db.ForeignKey('hubServers.id'))
+    lastUpload = db.Column(db.DateTime)
     status = db.Column(db.Integer)
 
     def __init__(self, hubServer):
