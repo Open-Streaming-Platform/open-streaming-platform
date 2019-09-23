@@ -617,7 +617,7 @@
                                         <form action="/settings/admin/hub" method="post">
                                             <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
                                             <div class="input-group">
-                                                <select class="form-control" name="hubServer">
+                                                <select class="form-control" name="hubServer" required>
                                                     {% for hubServer in hubServers %}
                                                         <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
                                                     {% endfor %}
