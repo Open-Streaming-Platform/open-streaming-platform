@@ -65,7 +65,7 @@ from conf import config
 version = "beta-3"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
-hubURL = "http://osphubdev.internal.divby0.net"
+hubURL = "https://hub.openstreamingplatform.com"
 
 app = Flask(__name__)
 
