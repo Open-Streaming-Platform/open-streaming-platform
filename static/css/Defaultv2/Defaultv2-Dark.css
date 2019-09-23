@@ -214,6 +214,13 @@ body {
     max-height: calc(100vh - 150px);
 }
 
+.chatpopout-nobar {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 5px 5px 5px 5px;
+}
+
+
 .chatBar-Item {
     border: 0px solid black;
     border-radius: 4px;

@@ -16,7 +16,7 @@
 <div class="col-12">
   <div class="chatbox-popout">
       <div class="h-100 d-flex flex-column">
-          <div id="chat" class="chatpopout flex-grow-1"></div> <br>
+          <div id="chat" class="{% if hideBar != True %}chatpopout{% elif hideBar == True %}chatpopout-nobar{% endif %} flex-grow-1"></div> <br>
           {% if hideBar == False %}
           <div class="chat-popout-bottom">
               <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
