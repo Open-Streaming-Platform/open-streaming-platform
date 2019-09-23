@@ -17,7 +17,7 @@
   <div class="chatbox-popout">
       <div class="h-100 d-flex flex-column">
           <div id="chat" class="chatpopout flex-grow-1"></div><br>
-          <div class="chat-popout-bottom">
+          <div class="chat-popout-bottom" {% if hideBar == True %} style="display:none;" {% endif %}>
               <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
               <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
               <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>

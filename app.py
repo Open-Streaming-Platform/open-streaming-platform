@@ -1019,7 +1019,13 @@ def view_page(loc):
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled == True:
-                return render_template(checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel)
+                hideBar = False
+
+                hideBarReq = request.args.get("hideBar")
+                if hideBarReq == "True" or hideBarReq == "true":
+                    hideBar = True
+
+                return render_template(checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
