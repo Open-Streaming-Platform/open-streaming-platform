@@ -60,6 +60,7 @@
         });
     </script>
 
+    {% if hideBar == False %}
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
@@ -84,6 +85,7 @@
             }
         });
     </script>
+    {% endif %}
 
     <script>
 
