@@ -598,9 +598,10 @@
                                         <div class="input-group">
                                             <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
                                             <div class="input-group-append">
-                                                <a href="/settings/admin/hub?action=deleteServer&connectionID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                                <a href="/settings/admin/hub?action=deleteServer&serverID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                             </div>
                                         </div>
+                                        <br>
                                         {% endfor %}
                                     </div>
                                 </div>
