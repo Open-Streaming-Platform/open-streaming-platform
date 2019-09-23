@@ -25,12 +25,12 @@ class Channel(db.Model):
     channelMuted = db.Column(db.Boolean)
     showChatJoinLeaveNotification = db.Column(db.Boolean)
     defaultStreamName = db.Column(db.String(255))
-    stream = db.relationship('Stream', backref='channel', lazy="joined")
-    recordedVideo = db.relationship('RecordedVideo', backref='channel', lazy="joined")
-    upvotes = db.relationship('channelUpvotes', backref='stream', lazy="joined")
-    inviteCodes = db.relationship('inviteCode', backref='channel', lazy="joined")
-    invitedViewers = db.relationship('invitedViewer', backref='channel', lazy="joined")
-    webhooks = db.relationship('webhook', backref='channel', lazy="joined")
+    stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
+    inviteCodes = db.relationship('inviteCode', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser

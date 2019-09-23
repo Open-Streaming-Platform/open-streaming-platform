@@ -10,7 +10,7 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
-    upvotes = db.relationship('streamUpvotes', backref='stream', lazy="joined")
+    upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
         self.streamKey = streamKey
@@ -52,6 +52,7 @@ class Stream(db.Model):
             'streamPage': '/view/' + self.channel.channelLoc + '/',
             'streamURL': streamURL,
             'streamName': self.streamName,
+            'thumbnail': '/stream-thumb/' + self.channel.channelLoc + '.png',
             'topic': self.topic,
             'currentViewers': self.currentViewers,
             'totalViewers': self.currentViewers,

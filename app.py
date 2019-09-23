@@ -15,6 +15,10 @@ from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 import xmltodict
+from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.utils import secure_filename
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from apiv1 import api_v1
 
@@ -54,15 +58,17 @@ import datetime
 
 from conf import config
 
+#----------------------------------------------------------------------------#
+# App Configuration Setup
+#----------------------------------------------------------------------------#
+
 version = "beta-3"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
-hubURL = "https://hub.openstreamingplatform.com"
+hubURL = "http://osphubdev.internal.divby0.net"
 
 app = Flask(__name__)
 
-from werkzeug.contrib.fixers import ProxyFix
-from werkzeug.utils import secure_filename
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 
@@ -113,6 +119,10 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
+#----------------------------------------------------------------------------#
+# Modal Imports
+#----------------------------------------------------------------------------#
+
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -127,6 +137,7 @@ from classes import views
 from classes import comments
 from classes import invites
 from classes import webhook
+from classes import hubConnection
 
 sysSettings = None
 
@@ -150,7 +161,9 @@ streamUserList = {}
 # Create Theme Data Dictionary
 themeData = {}
 
-
+#----------------------------------------------------------------------------#
+# Functions
+#----------------------------------------------------------------------------#
 def init_db_values():
     db.create_all()
 
@@ -237,6 +250,13 @@ def init_db_values():
         for chan in channelQuery:
             chan.defaultStreamName = ""
             db.session.commit()
+
+        hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
+        if hubQuery == None:
+            newHub = hubConnection.hubServers(hubURL)
+            db.session.add(newHub)
+            db.session.commit()
+
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir("/var/www/stream-thumb"):
             try:
@@ -483,9 +503,100 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
+def prepareHubJSON():
+    topicQuery = topics.topics.query.all()
+    topicDump = {}
+    for topic in topicQuery:
+        topicDump[topic.id] = {"name": topic.name, "img": topic.iconClass}
+
+    streamerIDs = []
+    for channel in db.session.query(Channel.Channel.owningUser).distinct():
+        if channel.owningUser not in streamerIDs:
+            streamerIDs.append(channel.owningUser)
+
+    streamerDump = {}
+    for streamerID in streamerIDs:
+        streamerQuery = Sec.User.query.filter_by(id=streamerID).first()
+        streamerDump[streamerQuery.id] = {"username": streamerQuery.username, "biography": streamerQuery.biography,
+                                          "img": streamerQuery.pictureLocation, "location": "/streamers/" + str(streamerQuery.id) + "/"}
+
+    channelDump = {}
+    channelQuery = Channel.Channel.query.all()
+    for channel in channelQuery:
+        channelDump[channel.id] = {"streamer": channel.owningUser, "name": channel.channelName,
+                                   "location": "/channel/link/" + channel.channelLoc, "topic": channel.topic, "views": channel.views,
+                                   "protected": channel.protected,
+                                   "currentViewers": channel.currentViewers, "img": channel.imageLocation,
+                                   "description": channel.description}
+
+    videoDump = {}
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
+    for video in videoQuery:
+        videoDump[video.id] = {"streamer": video.owningUser, "name": video.channelName, "channelID": video.channelID,
+                               "description": video.description, "topic": video.topic, "views": video.views,
+                               "length": video.length, "location": "/play/" + str(video.id), "img": video.thumbnailLocation, "upvotes": str(get_Video_Upvotes(video.id))}
+
+    clipDump = {}
+    clipQuery = RecordedVideo.Clips.query.all()
+    for clip in clipQuery:
+        clipDump[clip.id] = {"parentVideo": clip.parentVideo, "length": clip.length, "views": clip.views,
+                             "name": clip.clipName, "description": clip.description, "img": clip.thumbnailLocation, "location": "/clip/" + str(clip.id), "upvotes": str(get_Clip_Upvotes(clip.id))}
+
+    streamDump = {}
+    streamQuery = Stream.Stream.query.all()
+    for stream in streamQuery:
+        streamDump[stream.id] = {"channelID": stream.linkedChannel, "location": ("/view/" + stream.channel.channelLoc + "/"), "streamer": str(stream.channel.owningUser),
+                                 "name": stream.streamName, "topic": stream.topic, "currentViewers": stream.currentViewers, "views": stream.totalViewers,
+                                 "img": stream.channel.channelLoc + ".png", "upvotes": str(get_Stream_Upvotes(stream.id))}
+
+    dataDump = {"topics": topicDump, "streamers": streamerDump, "channels": channelDump, "videos": videoDump,
+                "clips": clipDump, "streams": streamDump}
+    db.session.close()
+    return dataDump
+
+def processHubConnection(connection, payload):
+    hubServer = connection.server
+    apiEndpoint = "apiv1"
+
+    r = None
+    try:
+        r = requests.post(hubServer.serverAddress + '/' + apiEndpoint + '/update', data={'serverToken': connection.serverToken, 'jsonData': json.dumps(payload)})
+    except requests.exceptions.Timeout:
+        return False
+    except requests.exceptions.ConnectionError:
+        return False
+    if r.status_code == 200:
+        connection.lastUpload = datetime.datetime.now()
+        db.session.commit()
+        db.session.close()
+        return True
+    return False
+
+def processAllHubConnections():
+
+    jsonPayload = prepareHubJSON()
+
+    results = []
+
+    hubConnectionQuery = hubConnection.hubConnection.query.filter_by(status=1).all()
+    for connection in hubConnectionQuery:
+        results.append(processHubConnection(connection, jsonPayload))
+    return results
+
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
-### Start Jinja2 Filters
+
+#----------------------------------------------------------------------------#
+# Scheduler Tasks
+#----------------------------------------------------------------------------#
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
+scheduler.start()
+
+#----------------------------------------------------------------------------#
+# Context Processors
+#----------------------------------------------------------------------------#
 
 @app.context_processor
 def inject_user_info():
@@ -499,6 +610,9 @@ def inject_sysSettings():
 
     return dict(sysSettings=sysSettings)
 
+#----------------------------------------------------------------------------#
+# Template Filters
+#----------------------------------------------------------------------------#
 
 @app.template_filter('normalize_uuid')
 def normalize_uuid(uuidstr):
@@ -629,6 +743,28 @@ def get_webhookTrigger(webhookTrigger):
     }
     return webhookNames[webhookTrigger]
 
+@app.template_filter('get_hubStatus')
+def get_hubStatus(hubStatus):
+
+    hubStatus = str(hubStatus)
+    hubStatusNames = {
+        '0': 'Unverified',
+        '1': 'Verified'
+    }
+    return hubStatusNames[hubStatus]
+
+@app.template_filter('get_hubName')
+def get_hubName(hubID):
+
+    hubID = int(hubID)
+    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
+    if hubQuery != None:
+        return hubQuery.serverAddress
+    return "Unknown"
+
+#----------------------------------------------------------------------------#
+# Flask Signal Handlers.
+#----------------------------------------------------------------------------#
 
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
@@ -639,8 +775,9 @@ def user_registered_sighandler(app, user, confirm_token):
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
 
-### Start Error Handling ###
-
+#----------------------------------------------------------------------------#
+# Error Handlers.
+#----------------------------------------------------------------------------#
 @app.errorhandler(404)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
@@ -651,12 +788,17 @@ def page_not_found(e):
     sysSettings = settings.settings.query.first()
     return render_template(checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
 
+#----------------------------------------------------------------------------#
+# Additional Handlers.
+#----------------------------------------------------------------------------#
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
 
-### Start Flask Routes ###
+#----------------------------------------------------------------------------#
+# Route Controllers.
+#----------------------------------------------------------------------------#
 
 @app.route('/')
 def main_page():
@@ -688,7 +830,7 @@ def channels_page():
                 channelList.append(channel)
     return render_template(checkOverride('channels.html'), channelList=channelList)
 
-@app.route('/channel/<chanID>/')
+@app.route('/channel/<int:chanID>/')
 def channel_view_page(chanID):
     sysSettings = settings.settings.query.first()
     chanID = int(chanID)
@@ -714,6 +856,14 @@ def channel_view_page(chanID):
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
 
+@app.route('/channel/link/<channelLoc>/')
+def channel_view_link_page(channelLoc):
+    if channelLoc != None:
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
+        if channelQuery != None:
+            return redirect(url_for("channel_view_page",chanID=channelQuery.id))
+    flash("Invalid Channel Location", "error")
+    return redirect(url_for("main_page"))
 
 @app.route('/topics')
 def topic_page():
@@ -1760,6 +1910,9 @@ def admin_page():
 
         globalWebhookQuery = webhook.globalWebhook.query.all()
 
+        hubServerQuery = hubConnection.hubServers.query.all()
+        hubRegistrationQuery = hubConnection.hubConnection.query.all()
+
         themeList = []
         themeDirectorySearch = os.listdir("./templates/themes/")
         for theme in themeDirectorySearch:
@@ -1767,7 +1920,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, page=page)
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, hubServers=hubServerQuery, hubConnections=hubRegistrationQuery, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -1942,6 +2095,88 @@ def admin_page():
             return redirect(url_for('admin_page', page="users"))
 
         return redirect(url_for('admin_page'))
+
+@app.route('/settings/admin/hub', methods=['POST', 'GET'])
+@login_required
+@roles_required('Admin')
+def admin_hub_page():
+    sysSettings = settings.settings.query.first()
+    if request.method == "POST":
+        if "action" in request.form:
+            action = request.form["action"]
+            if action == "addConnection":
+                if "hubServer" in request.form:
+                    hubServer = int(request.form["hubServer"])
+
+                    hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
+
+                    if hubServerQuery != None:
+                        r = None
+
+                        existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
+                        if existingConnectionRequest != None:
+                            try:
+                                r = requests.delete(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': existingConnectionRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+                            except requests.exceptions.Timeout:
+                                pass
+                            except requests.exceptions.ConnectionError:
+                                pass
+                            db.session.delete(existingConnectionRequest)
+                            db.session.commit()
+
+                        newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
+                        try:
+                            r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+                        except requests.exceptions.Timeout:
+                            pass
+                        except requests.exceptions.ConnectionError:
+                            pass
+                        if r != None:
+                            if r.status_code == 200:
+                                db.session.add(newTokenRequest)
+                                db.session.commit()
+                                flash("Successfully Added to Hub", "success")
+                                return redirect(url_for('admin_page', page="hub"))
+                            else:
+                                flash("Failed to Add to Hub Due to Server Error")
+                                return redirect(url_for('admin_page', page="hub"))
+                flash("Failed to Add to Hub")
+    if request.method == "GET":
+        if request.args.get("action") is not None:
+            action = request.args.get("action")
+            if action == "deleteConnection":
+                if request.args.get("connectionID"):
+                    connection = hubConnection.hubConnection.query.filter_by(id=int(request.args.get("connectionID"))).first()
+                    try:
+                        r = requests.delete(connection.server.serverAddress + '/apiv1/servers', data={'verificationToken': connection.verificationToken, 'serverAddress': sysSettings.siteAddress})
+                    except requests.exceptions.Timeout:
+                        flash("Unable to Remove from Hub Server Due to Timeout", "error")
+                        return redirect(url_for('admin_page', page="hub"))
+                    except requests.exceptions.ConnectionError:
+                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
+                        return redirect(url_for('admin_page', page="hub"))
+                    if r.status_code == 200:
+                        db.session.delete(connection)
+                        db.session.commit()
+                        flash("Successfully Removed from Hub","success")
+                        return redirect(url_for('admin_page', page="hub"))
+                    else:
+                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
+                        return redirect(url_for('admin_page', page="hub"))
+            if action == "deleteServer":
+                if request.args.get("serverID"):
+                    serverQuery = hubConnection.hubServers.query.filter_by(id=int(request.args.get("serverID"))).first()
+                    if serverQuery != None:
+                        if serverQuery.serverAddress == hubURL:
+                            flash("Unable to Delete Default Hub", "error")
+                            return redirect(url_for('admin_page', page="hub"))
+                        else:
+                            db.session.delete(serverQuery)
+                            db.session.commit()
+                            flash("Successfully Deleted Hub", "success")
+                            return redirect(url_for('admin_page', page="hub"))
+
+    return redirect(url_for('admin_page', page="hub"))
 
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():

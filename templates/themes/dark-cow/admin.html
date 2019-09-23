@@ -34,6 +34,9 @@
                     <a class="nav-link {% if page == 'streams' %} active {% endif %}" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'hub' %} active {% endif %}" role="tab" id="admin-nav-hub" href="#hubSettings" data-toggle="pill" aria-controls="admin-nav-hub" aria-selected="false">Hub</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'backup' %} active {% endif %}" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
                 </li>
             </ul>
@@ -572,6 +575,84 @@
                         {% endfor %}
                     </div>
                 </div>
+                <div class="tab-pane fade {% if page == 'hub' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-hub" id="hubSettings">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-10 col-md-12">
+                                <div class="card">
+                                    <div class="card-header"><h4>OSP Hub Servers</h4></div>
+                                    <div class="card-body">
+                                        <h5>Add an OSP Hub</h5>
+                                        <hr>
+                                        <form action="/settings/admin/hub" method="post">
+                                            <div class="input-group">
+                                                <input type="hidden" name="action" id="hubaction" value="addHub">
+                                                <input type="text" name="hubServerAddress" class="form-control disabled" disabled>
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <br>
+                                        {% for hubServer in hubServers %}
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
+                                            <div class="input-group-append">
+                                                <a href="/settings/admin/hub?action=deleteServer&connectionID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card">
+                                    <div class="card-header"><h4>Hub Connections</h4></div>
+                                    <div class="card-body">
+                                        <h5>Add a New Connection</h5>
+                                        <hr>
+                                        <form action="/settings/admin/hub" method="post">
+                                            <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
+                                            <div class="input-group">
+                                                <select class="form-control" name="hubServer" required>
+                                                    {% for hubServer in hubServers %}
+                                                        <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <br>
+                                        <h5>Existing Connections</h5>
+                                        <hr>
+                                        {% for hub in hubConnections %}
+                                        <div class="row">
+                                            <div class="col-12 col-md-5">
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.hubServer|get_hubName}}">
+                                            </div>
+                                            <div class="col-12 col-md-1">
+                                                <div class="badge {% if hub.status == 0 %}badge-warning {% elif hub.status == 1 %}badge-success {% endif%}">{{hub.status|get_hubStatus}}</div>
+                                            </div>
+                                            <div class="col-12 col-md-2">
+                                                {{hub.lastUpload|normalize_date}}
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
+                                                <input type="text" class="form-control readonly" readonly value="{{hub.serverToken}}">
+                                            </div>
+                                            <div class="col-12 col-md-1">
+                                                <a href="/settings/admin/hub?action=deleteConnection&connectionID={{hub.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
                 <div class="tab-pane fade {% if page == 'backup' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
                     <div class="container-fluid">
                         <div class="row">

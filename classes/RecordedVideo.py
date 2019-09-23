@@ -15,9 +15,9 @@ class RecordedVideo(db.Model):
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
-    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
-    comments = db.relationship('videoComments', backref='recordedVideo', lazy="joined")
-    clips = db.relationship('Clips', backref='recordedVideo', lazy="joined")
+    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
+    comments = db.relationship('videoComments', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
+    clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
         self.videoDate = videoDate
@@ -64,7 +64,7 @@ class Clips(db.Model):
     clipName = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     thumbnailLocation = db.Column(db.String(255))
-    upvotes = db.relationship('clipUpvotes', backref='clip', lazy="joined")
+    upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, parentVideo, startTime, endTime, clipName, description):
         self.parentVideo = parentVideo
