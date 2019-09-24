@@ -76,13 +76,25 @@
                                             <tbody>
                                             {% for data in nginxStatData['rtmp']['server']['application'] %}
                                                 {% if 'stream' in data['live'] %}
-                                                <tr>
-                                                    <td>{{data['name']}}</td>
-                                                    <td>{{data['live']['stream']['name']}}</td>
-                                                    <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
-                                                    <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
-                                                    <td>{{data['live']['stream']['nclients']}}</td>
-                                                </tr>
+                                                    {% if type(data['live']) == list %}
+                                                        {% for entry in data['live'] %}
+                                                            <tr>
+                                                                <td>{{data['name']}}</td>
+                                                                <td>{{entry['name']}}</td>
+                                                                <td>{{entry['bw_in']|format_kbps}}</td>
+                                                                <td>{{entry['bw_out']|format_kbps}}</td>
+                                                                <td>{{entry['nclients']}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                    <tr>
+                                                        <td>{{data['name']}}</td>
+                                                        <td>{{data['live']['stream']['name']}}</td>
+                                                        <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
+                                                        <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
+                                                        <td>{{data['live']['stream']['nclients']}}</td>
+                                                    </tr>
+                                                    {% endif %}
                                                 {% endif %}
                                             {% endfor %}
                                             </tbody>
