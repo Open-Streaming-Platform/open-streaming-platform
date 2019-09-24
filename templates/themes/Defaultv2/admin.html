@@ -77,7 +77,7 @@
                                             {% for data in nginxStatData['rtmp']['server']['application'] %}
                                                 {% if 'stream' in data['live'] %}
                                                     {% if data['live']['stream'] | testList %}
-                                                        {% for entry in data['live'] %}
+                                                        {% for entry in data['live']['stream'] %}
                                                             <tr>
                                                                 <td>{{data['name']}}</td>
                                                                 <td>{{entry['name']}}</td>
