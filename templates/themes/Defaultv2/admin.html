@@ -76,7 +76,7 @@
                                             <tbody>
                                             {% for data in nginxStatData['rtmp']['server']['application'] %}
                                                 {% if 'stream' in data['live'] %}
-                                                    {% if type(data['live']) == list %}
+                                                    {% if data['live'] | testlist %}
                                                         {% for entry in data['live'] %}
                                                             <tr>
                                                                 <td>{{data['name']}}</td>

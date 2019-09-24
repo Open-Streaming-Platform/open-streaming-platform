@@ -724,6 +724,13 @@ def get_diskUsage(channelLocation):
             total_size += os.path.getsize(fp)
     return "{:,}".format(total_size)
 
+@ app.template_filter('testList')
+def testList(obj):
+    if type(obj) == list:
+        return True
+    else:
+        return False
+
 @app.template_filter('get_webhookTrigger')
 def get_webhookTrigger(webhookTrigger):
 
