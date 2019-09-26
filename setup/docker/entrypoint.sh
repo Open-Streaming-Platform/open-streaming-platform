@@ -14,6 +14,8 @@ mkdir -p /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
 chown -R www-data:www-data /opt/osp/conf/config.py
 
-/bin/bash /opt/osp/dbUpgrade.sh
+cd /opt/osp
+python3 manage.py db migrate
+python3 manage.py db upgrade
 
-/usr/local/bin/supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
+supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf

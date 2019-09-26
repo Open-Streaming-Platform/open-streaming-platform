@@ -77,6 +77,8 @@ RUN apk add ffmpeg
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 
+RUN cd /opt/osp && python3 manage.py db init
+
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
 RUN chmod +x /opt/osp/setup/docker/entrypoint.sh
