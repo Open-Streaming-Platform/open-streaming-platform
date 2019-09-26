@@ -3,10 +3,10 @@
 dbLocation="sqlite:///db/database.db"
 
 # Flask Secret Key
-secretKey="CHANGEME"
+secretKey='CHANGEME'
 
 # Password Salt Value
-passwordSalt="CHANGEME"
+passwordSalt='CHANGEME'
 
 # Allow Users to Register with the OSP Server
 allowRegistration=True
