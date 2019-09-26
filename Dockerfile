@@ -93,7 +93,6 @@ RUN apk add ffmpeg
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
-RUN cd /opt/osp && python3 manage.py db init
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
