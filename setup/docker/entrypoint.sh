@@ -15,12 +15,13 @@ mkdir -p /var/www && \
   chown -R www-data:www-data /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
 echo 'Setting up OSP Configuration'
+
 export DB_URL
-sed -i 's/dbLocation='"sqlite:\/\/\/db\/database.db"'/dbLocation='"$DB_URL"'/g' /opt/osp/conf/config.py
+sed -i 's/dbLocation='"sqlite:\/\/\/db\/database.db"'\/dbLocation='"$DB_URL"'/g' /opt/osp/conf/config.py
 export FLASK_SECRET
-sed -i 's/secretKey='"CHANGEME"'/secretKey='"$FLASK_SECRET"'/g' /opt/osp/conf/config.py
+sed -i 's/secretKey=CHANGEME/secretKey='"$FLASK_SECRET"'/g' /opt/osp/conf/config.py
 export FLASK_SALT
-sed -i 's/passwordSalt='"CHANGEME"'/passwordSalt='"$FLASK_SALT"'/g' /opt/osp/conf/config.py
+sed -i 's/passwordSalt=CHANGEME/passwordSalt='"$FLASK_SALT"'/g' /opt/osp/conf/config.py
 export OSP_ALLOWREGISTRATION
 sed -i "s/allowRegistration=True/allowRegistration=$OSP_ALLOWREGISTRATION/g" /opt/osp/conf/config.py
 export OSP_REQUIREVERIFICATION
