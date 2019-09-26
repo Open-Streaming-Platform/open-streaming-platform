@@ -32,5 +32,6 @@ cd /opt/osp
 python3 manage.py db init
 python3 manage.py db migrate
 python3 manage.py db upgrade
+cd /
 echo 'Starting OSP'
-sh supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
+supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
