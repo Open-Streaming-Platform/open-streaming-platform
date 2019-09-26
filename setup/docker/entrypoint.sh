@@ -16,7 +16,7 @@ mkdir -p /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
 echo 'Setting up OSP Configuration'
 export DB_URL
-sed -i 's/dbLocation='"sqlite:///db/database.db"'/dbLocation='"$DB_URL"'/g' /opt/osp/conf/config.py
+sed -i 's/dbLocation='"sqlite:\/\/\/db\/database.db"'/dbLocation='"$DB_URL"'/g' /opt/osp/conf/config.py
 export FLASK_SECRET
 sed -i 's/secretKey='"CHANGEME"'/secretKey='"$FLASK_SECRET"'/g' /opt/osp/conf/config.py
 export FLASK_SALT
