@@ -4,6 +4,19 @@ MAINTAINER David Lockwood
 ARG NGINX_VERSION=1.17.3
 ARG NGINX_RTMP_VERSION=1.2.1
 
+ARG DEFAULT_DB_URL="sqlite:///db/database.db"
+ARG DEFAULT_FLASK_SECRET="Super-Sekrit"
+ARG DEFAULT_FLASK_SALT="CHANGEME"
+ARG DEFAULT_OSP_ALLOWREGISTRATION="True"
+ARG DEFAULT_OSP_REQUIREVERIFICATION="True"
+ARG DEFAULT_TZ="ETC/UTC"
+
+ENV DB_URL=$DEFAULT_DB_URL
+ENV FLASK_SECRET=$DEFAULT_FLASK_SECRET
+ENV FLASK_SALT=$DEFAULT_FLASK_SALT
+ENV OSP_ALLOWREGISTRATION=$DEFAULT_OSP_ALLOWREGISTRATION
+ENV OSP_REQUIREVERIFICATION=$DEFAULT_OSP_REQUIREVERIFICATION
+
 EXPOSE 80/tcp
 EXPOSE 443/tcp
 EXPOSE 1935/tcp
@@ -19,6 +32,10 @@ RUN apk add alpine-sdk \
   git \
   linux-headers \
   zlib-dev
+
+RUN apk add --no-cache tzdata
+
+ENV TZ=$DEFAULT_TZ
 
 RUN apk add --no-cache bash
 
@@ -76,10 +93,9 @@ RUN apk add ffmpeg
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
-
 RUN cd /opt/osp && python3 manage.py db init
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
 RUN chmod +x /opt/osp/setup/docker/entrypoint.sh
-ENTRYPOINT ["/opt/osp/setup/docker/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh","-c", "/opt/osp/setup/docker/entrypoint.sh"]
