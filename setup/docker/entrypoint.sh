@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+echo 'Placing Configuration Files'
 cp -R -u -p /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 cp -u -p /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
 cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
+echo 'Setting up Directories'
 mkdir -p /var/www && \
   mkdir -p /var/www/live && \
   mkdir -p /var/www/videos && \
@@ -12,7 +14,7 @@ mkdir -p /var/www && \
   mkdir -p /var/log/gunicorn && \
   chown -R www-data:www-data /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
-
+echo 'Setting up OSP Configuration'
 export DB_URL
 sed -i 's/dbLocation='"sqlite:///db/database.db"'/dbLocation='"$DB_URL"'/g' /opt/osp/conf/config.py
 export FLASK_SECRET
@@ -25,10 +27,10 @@ export OSP_REQUIREVERIFICATION
 sed -i "s/requireEmailRegistration=True/requireEmailRegistration=$OSP_REQUIREVERIFICATION/g" /opt/osp/conf/config.py
 
 chown -R www-data:www-data /opt/osp/conf/config.py
-
+echo 'Performing DB Migrations'
 cd /opt/osp
 python3 manage.py db init
 python3 manage.py db migrate
 python3 manage.py db upgrade
-
-supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
+echo 'Starting OSP'
+sh supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
