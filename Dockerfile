@@ -53,22 +53,9 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
-
 # Configure NGINX
 RUN cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 RUN cp /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
-
-# Establish the Video and Image Directories
-RUN mkdir /var/www && \
-  mkdir /var/www/live && \
-  mkdir /var/www/videos && \
-  mkdir /var/www/live-rec && \
-  mkdir /var/www/live-adapt && \
-  mkdir /var/www/stream-thumb && \
-  mkdir /var/www/images  && \
-  mkdir /var/log/gunicorn && \
-  chown -R www-data:www-data /var/www && \
-  chown -R www-data:www-data /var/log/gunicorn
 
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python3 \
@@ -86,13 +73,11 @@ RUN pip3 install --upgrade pip
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
 
-# Copy the Default Config File
-RUN cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
-
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
-CMD supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
+RUN chmod +x /opt/osp/setup/docker/entrypoint.sh
+ENTRYPOINT ["/opt/osp/setup/docker/entrypoint.sh"]
