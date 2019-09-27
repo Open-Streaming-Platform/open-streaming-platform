@@ -21,7 +21,7 @@ echo "dbLocation='$DB_URL'" > /opt/osp/conf/config.py
 export FLASK_SECRET
 echo "secretKey='$FLASK_SECRET'" >> /opt/osp/conf/config.py
 export FLASK_SALT
-echo "passwordSalt=$FLASK_SALT" >> /opt/osp/conf/config.py
+echo "passwordSalt='$FLASK_SALT'" >> /opt/osp/conf/config.py
 export OSP_ALLOWREGISTRATION
 echo "allowRegistration=$OSP_ALLOWREGISTRATION" >> /opt/osp/conf/config.py
 export OSP_REQUIREVERIFICATION
