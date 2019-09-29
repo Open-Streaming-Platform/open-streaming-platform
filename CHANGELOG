@@ -15,6 +15,7 @@ Beta-3
 - Added Checks for the Server Address IP/DNS Settings in the Admin Menu
 - Added Thumbnail location for Streams to APIv1
 - Added Initial Support for the Open Streaming Platform Hub, a listing service for OSP Instances that want to Opt-in to display their Channels, Videos, Streams, and Clips in one place
+- Added Support for OSP Site-wide Search
 - Reworked the Nginx.conf file to split off the OSP specific into their own included osp-*.conf files to reduce the need of reworking the single file
 - Added HTTP2 Support to the default install of OSP.  Upgrading Users should run the Manual Install Procedures to Upgrade their Nginx systems to the most recent build to add support
 - Reworked Admin Pages to Return the the last Tab on Settings Changes
