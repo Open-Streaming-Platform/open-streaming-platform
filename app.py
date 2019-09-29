@@ -2945,7 +2945,8 @@ def search_page():
         for stream in streamerList1:
             streamerList.append(stream)
         for stream in streamerList2:
-            streamerList.append(stream)
+            if stream not in streamerList:
+                streamerList.append(stream)
 
         channelList = []
         channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.contains(search)).all()
@@ -2953,7 +2954,8 @@ def search_page():
         for channel in channelList1:
             channelList.append(channel)
         for channel in channelList2:
-            channelList.append(channel)
+            if channel not in channelList:
+                channelList.append(channel)
 
         videoList = []
         videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.contains(search)).all()
@@ -2961,7 +2963,8 @@ def search_page():
         for video in videoList1:
             videoList.append(video)
         for video in videoList2:
-            videoList.append(video)
+            if video not in videoList:
+                videoList.append(video)
 
         streamList = Stream.Stream.query.filter(Stream.Stream.streamName.contains(search)).all()
 
@@ -2971,7 +2974,8 @@ def search_page():
         for clip in clipList1:
             clipList.append(clip)
         for clip in clipList2:
-            clipList.append(clip)
+            if clip not in clipList:
+                clipList.append(clip)
 
         return render_template(checkOverride('search.html'), topicList=topicList, streamerList=streamerList, channelList=channelList, videoList=videoList, streamList=streamList, clipList=clipList)
 
