@@ -2937,37 +2937,37 @@ def search_page():
     if 'term' in request.form:
         search = str(request.form['term'])
 
-        topicList = topics.topics.query.filter(topics.topics.name.like(search)).all()
+        topicList = topics.topics.query.filter(topics.topics.name.contains(search)).all()
 
         streamerList = []
-        streamerList1 = Sec.User.query.filter(Sec.User.username.like(search)).all()
-        streamerList2 = Sec.User.query.filter(Sec.User.biography.like(search)).all()
+        streamerList1 = Sec.User.query.filter(Sec.User.username.contains(search)).all()
+        streamerList2 = Sec.User.query.filter(Sec.User.biography.contains(search)).all()
         for stream in streamerList1:
             streamerList.append(stream)
         for stream in streamerList2:
             streamerList.append(stream)
 
         channelList = []
-        channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.like(search)).all()
-        channelList2 = Channel.Channel.query.filter(Channel.Channel.description.like(search)).all()
+        channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.contains(search)).all()
+        channelList2 = Channel.Channel.query.filter(Channel.Channel.description.contains(search)).all()
         for channel in channelList1:
             channelList.append(channel)
         for channel in channelList2:
             channelList.append(channel)
 
         videoList = []
-        videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like(search)).all()
-        videoList2 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.description.like(search)).all()
+        videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.contains(search)).all()
+        videoList2 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.description.contains(search)).all()
         for video in videoList1:
             videoList.append(video)
         for video in videoList2:
             videoList.append(video)
 
-        streamList = Stream.Stream.query.filter(Stream.Stream.streamName.like(search)).all()
+        streamList = Stream.Stream.query.filter(Stream.Stream.streamName.contains(search)).all()
 
         clipList = []
-        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like(search)).all()
-        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.like(search)).all()
+        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).all()
+        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).all()
         for clip in clipList1:
             clipList.append(clip)
         for clip in clipList2:
