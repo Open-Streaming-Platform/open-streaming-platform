@@ -2943,9 +2943,10 @@ def search_page():
         streamerList1 = Sec.User.query.filter(Sec.User.username.contains(search)).all()
         streamerList2 = Sec.User.query.filter(Sec.User.biography.contains(search)).all()
         for stream in streamerList1:
-            streamerList.append(stream)
+            if stream.has_role('streamer'):
+                streamerList.append(stream)
         for stream in streamerList2:
-            if stream not in streamerList:
+            if stream not in streamerList and stream.has_role('streamer'):
                 streamerList.append(stream)
 
         channelList = []
