@@ -37,6 +37,9 @@
                     <a class="nav-link {% if page == 'hub' %} active {% endif %}" role="tab" id="admin-nav-hub" href="#hubSettings" data-toggle="pill" aria-controls="admin-nav-hub" aria-selected="false">Hub</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'logs' %} active {% endif %}" role="tab" id="admin-nav-logs" href="#logs" data-toggle="pill" aria-controls="admin-nav-logs" aria-selected="false">Logs</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'backup' %} active {% endif %}" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
                 </li>
             </ul>
@@ -595,8 +598,9 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-10 col-md-12">
+                                <h5>OSP Hub Setup</h5>
                                 <div class="card">
-                                    <div class="card-header"><h4>OSP Hub Servers</h4></div>
+                                    <div class="card-header"><h6>OSP Hub Servers</h6></div>
                                     <div class="card-body">
                                         <h5>Add an OSP Hub</h5>
                                         <hr>
@@ -623,7 +627,7 @@
                                 </div>
                                 <br>
                                 <div class="card">
-                                    <div class="card-header"><h4>Hub Connections</h4></div>
+                                    <div class="card-header"><h6>Hub Connections</h6></div>
                                     <div class="card-body">
                                         <h5>Add a New Connection</h5>
                                         <hr>
@@ -666,6 +670,49 @@
                                         {% endfor %}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'logs' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-logs" id="logs">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-10 col-md-12">
+                                <h5>OSP Hub Setup</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-hover" id="logTable">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>
+                                            <b>Timestamp</b>
+                                        </th>
+                                        <th>
+                                            <b>Type</b>
+                                        </th>
+                                        <th>
+                                            <b>Message</b>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for log in logsList %}
+                                        <tr>
+                                            <td>
+                                                {{log.timestamp|normalize_date}}
+                                            </td>
+                                            <td>
+                                                {{log.type|get_logType}}
+                                            </td>
+                                            <td>
+                                                {{log.message}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

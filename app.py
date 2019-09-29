@@ -138,6 +138,7 @@ from classes import comments
 from classes import invites
 from classes import webhook
 from classes import hubConnection
+from classes import logs
 
 sysSettings = None
 
@@ -305,6 +306,12 @@ def init_db_values():
             db.close()
         ## End DB UT8MB4 Fixes
 
+def newLog(logType, message):
+    newLogItem = logs.logs(datetime.datetime.now, str(message), logType)
+    db.session.add(newLogItem)
+    db.session.commit()
+    return True
+
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
 
@@ -460,10 +467,11 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
         server.sendmail(smtpSender, smtpReceiver, msg)
     except Exception as e:
         print(e)
+        newLog(1, "Test Email Failed for " + str(smtpServer) + "Reason:" + str(e))
         return False
     server.quit()
+    newLog(1, "Test Email Successful for " + str(smtpServer))
     return True
-
 
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
@@ -494,6 +502,7 @@ def runWebhook(channelID, triggerType, **kwargs):
                         r = requests.delete(url, headers=header, data=payload)
                 except:
                     pass
+                newLog(8, "Processing Webhook for ID #" + str(hook.id) + " - Destination:" + str(url))
     db.session.commit()
     db.session.close()
 
@@ -562,18 +571,23 @@ def processHubConnection(connection, payload):
     try:
         r = requests.post(hubServer.serverAddress + '/' + apiEndpoint + '/update', data={'serverToken': connection.serverToken, 'jsonData': json.dumps(payload)})
     except requests.exceptions.Timeout:
+        newLog(10, "Failed Update to OSP Hub Due to Timeout - Server:" + str(hubServer.serverAddress))
         return False
     except requests.exceptions.ConnectionError:
+        newLog(10, "Failed Update to OSP Hub Due to Connection Error - Server:" + str(hubServer.serverAddress))
         return False
     if r.status_code == 200:
         connection.lastUpload = datetime.datetime.now()
         db.session.commit()
         db.session.close()
+        newLog(10,"Successful Update to OSP Hub - Server:" + str(hubServer.serverAddress))
         return True
+    else:
+        newLog(10, "Failed Update to OSP Hub Due to Error " + str(r.status_code) + " - Server:" + str(hubServer.serverAddress))
     return False
 
 def processAllHubConnections():
-
+    newLog(0, "Scheduled Task: Processing All Hub Connections")
     jsonPayload = prepareHubJSON()
 
     results = []
@@ -768,6 +782,25 @@ def get_hubName(hubID):
     if hubQuery != None:
         return hubQuery.serverAddress
     return "Unknown"
+
+@app.template_filter('get_logType')
+def get_logType(logType):
+
+    logType = str(logType)
+    logTypeNames = {
+        '0': 'System',
+        '1': 'Security',
+        '2': 'Email',
+        '3': 'Channel',
+        '4': 'Video',
+        '5': 'Stream',
+        '6': 'Clip',
+        '7': 'API',
+        '8': 'Webhook',
+        '9': 'Topic',
+        '10': 'Hub'
+    }
+    return logTypeNames[logType]
 
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
@@ -1933,7 +1966,11 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch, remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery, hubServers=hubServerQuery, hubConnections=hubRegistrationQuery, page=page)
+        logsList = logs.logs.query.all()
+
+        return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch,
+                               remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery,
+                               hubServers=hubServerQuery, hubConnections=hubRegistrationQuery, logsList=logsList, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -4045,6 +4082,7 @@ try:
 except Exception as e:
     print(e)
 mail = Mail(app)
+newLog("0", "OSP Started Up Successfully - version: " + str(version))
 
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
