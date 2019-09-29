@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block body %}
-<h1>Search</h1>
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Search</b></div>
+    </div>
+</div>
 
 {% if streamerList != [] %}
 <div class="container-fluid p-2" id="index-videos-container">
@@ -155,7 +159,7 @@
 </div>
 {% endif %}
 
-{% if clipsList != []%}
+{% if clipList != [] %}
 <div class="container-fluid p-2" id="index-videos-container">
     <div class="row m-2">
         <div class="index-video-title"><b>Clips</b></div>
@@ -163,7 +167,7 @@
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
-                {% for clip in clipsList %}
+                {% for clip in clipList %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/clip/{{clip.id}}">
                         <div>
