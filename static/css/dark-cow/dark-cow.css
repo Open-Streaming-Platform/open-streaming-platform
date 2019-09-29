@@ -377,6 +377,18 @@ hr {
     width: 100%;
 }
 
+.search {
+    -webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+    border-radius: 20px; /* (height/2) + border-width */
+    border-style: none;
+	border-width: 0px;
+    color: #333;
+    -webkit-appearance: none;
+	-moz-appearance: none;
+}
+
 @media all and (min-width: 2350px) {
    .videoPanel {
      width: 1850px;
