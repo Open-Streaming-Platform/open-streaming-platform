@@ -773,7 +773,9 @@
 <script>
 
     $(document).ready(function() {
-        $('#logTable').DataTable();
+        $('#logTable').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
     } );
 </script>
 
