@@ -307,7 +307,7 @@ def init_db_values():
         ## End DB UT8MB4 Fixes
 
 def newLog(logType, message):
-    newLogItem = logs.logs(datetime.datetime.now, str(message), logType)
+    newLogItem = logs.logs(datetime.datetime.now(), str(message), logType)
     db.session.add(newLogItem)
     db.session.commit()
     return True
