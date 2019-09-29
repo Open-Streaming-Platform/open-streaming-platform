@@ -272,7 +272,18 @@ body {
     width: 0 !important
 }
 
-
+.search {
+    -webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+    border-radius: 25px; /* (height/2) + border-width */
+    border-style: solid;
+	border-width: 1px;
+    margin-top: 15px;
+    color: #333;
+    -webkit-appearance: none;
+	-moz-appearance: none;
+}
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
     .displayCard-other .card-data {
