@@ -811,6 +811,7 @@ def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
     runWebhook("ZZZ", 20, user=user.username)
+    newLog(1, "A New User has Registered - Username:" + str(user.username))
     if config.requireEmailRegistration == True:
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
@@ -821,11 +822,13 @@ def user_registered_sighandler(app, user, confirm_token):
 @app.errorhandler(404)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
+    newLog(0, "404 Error - " + str(e))
     return render_template(checkOverride('404.html'), sysSetting=sysSettings), 404
 
 @app.errorhandler(500)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
+    newLog(0,"500 Error - " + str(e))
     return render_template(checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
 
 #----------------------------------------------------------------------------#
@@ -1204,9 +1207,9 @@ def vid_clip_page(loc):
             result = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
 
             redirectID = newClipQuery.id
+            newLog(6, "New Clip Created - ID #" + str(redirectID))
             db.session.commit()
             db.session.close()
-
             flash("Clip Created", "success")
 
             return redirect(url_for("view_clip_page", clipID=redirectID))
@@ -1231,6 +1234,7 @@ def vid_move_page(loc):
                 try:
                     os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc)
                 except OSError:
+                    newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
                     flash("Error Moving Video - Unable to Create Directory","error")
                     return redirect(url_for("main_page"))
             shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation, "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
@@ -1245,6 +1249,7 @@ def vid_move_page(loc):
                     try:
                         os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips')
                     except OSError:
+                        newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
                         flash("Error Moving Video - Unable to Create Clips Directory", "error")
                         return redirect(url_for("main_page"))
                 newClipLocation = "/var/www/videos/" + newChannelQuery.channelLoc +"/clips/" + coreThumbnail
@@ -1252,6 +1257,7 @@ def vid_move_page(loc):
                 clip.thumbnailLocation = newChannelQuery.channelLoc +"/clips/" + coreThumbnail
 
             db.session.commit()
+            newLog(4, "Video ID #" + str(recordedVidQuery.id) + "Moved to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
             flash("Video Moved to Another Channel", "success")
             return redirect(url_for('view_vid_page', videoID=loc))
 
@@ -1296,6 +1302,7 @@ def vid_change_page(loc):
                        videourl=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
                        videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
             db.session.commit()
+            newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
 
         return redirect(url_for('view_vid_page', videoID=loc))
     else:
@@ -1350,6 +1357,7 @@ def delete_vid_page(videoID):
 
         db.session.commit()
         flash("Video deleted")
+        newLog(4, "Video Deleted - ID #" + str(videoID))
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Video")
@@ -1395,6 +1403,7 @@ def comments_vid_page(videoID):
                        videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
                        user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation), comment=comment)
             flash('Comment Added', "success")
+            newLog(4, "Video Comment Added by " + current_user.username + "to Video ID #" + str(recordedVid.id))
 
         elif request.method == 'GET':
             if request.args.get('action') == "delete":
@@ -1407,6 +1416,7 @@ def comments_vid_page(videoID):
                             db.session.delete(vote)
                         db.session.delete(commentQuery)
                         db.session.commit()
+                        newLog(4, "Video Comment Deleted by " + current_user.username + "to Video ID #" + str(recordedVid.id))
                         flash('Comment Deleted', "success")
                     else:
                         flash("Not Authorized to Remove Comment", "error")
@@ -1447,10 +1457,6 @@ def view_clip_page(clipID):
 
             isEmbedded = request.args.get("embedded")
 
-            #newView = views.views(1, recordedVid.id)
-            #db.session.add(newView)
-            #db.session.commit()
-
             if isEmbedded == None or isEmbedded == "False":
 
                 randomClips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.id != clipQuery.id).order_by(func.random()).limit(12)
@@ -1485,6 +1491,7 @@ def delete_clip_page(clipID):
         db.session.delete(clipQuery)
 
         db.session.commit()
+        newLog(6,"Clip Deleted - ID #" + str(clipID))
         flash("Clip deleted")
         return redirect(url_for('main_page'))
     else:
@@ -1509,7 +1516,7 @@ def clip_change_page(clipID):
             clipQuery.description = strip_html(description)
 
             db.session.commit()
-
+            newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
             return redirect(url_for('view_clip_page', clipID=clipID))
 
     flash("Error Changing Clip Metadata", "error")
@@ -1539,6 +1546,7 @@ def upload():
             save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
             current_chunk = int(request.form['dzchunkindex'])
         else:
+            newLog(4,"File Upload Failed - File Type not Allowed - Username:" + current_user.username)
             return ("Filetype not allowed", 403)
 
         if current_chunk > 4500:
@@ -1553,6 +1561,7 @@ def upload():
                 f.seek(int(request.form['dzchunkbyteoffset']))
                 f.write(file.stream.read())
         except OSError:
+            newLog(4, "File Upload Failed - OSError - Username:" + current_user.username)
             return ("Ooops.", 500)
 
         total_chunks = int(request.form['dztotalchunkcount'])
@@ -1598,6 +1607,7 @@ def upload_vid():
             try:
                 os.mkdir("/var/www/videos/" + ChannelQuery.channelLoc)
             except OSError:
+                newLog(4, "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
                 flash("Error uploading video - Unable to create directory","error")
                 db.session.close()
                 return redirect(url_for("main_page"))
@@ -1646,6 +1656,7 @@ def upload_vid():
                    videotopic=get_topicName(newVideo.topic),
                    videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                    videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+    newLog(4, "File Upload Successful - Username:" + current_user.username)
     db.session.close()
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
@@ -1666,6 +1677,7 @@ def user_page():
             if password1 == password2:
                 newPassword = hash_password(password1)
                 current_user.password = newPassword
+                newLog(1, "User Password Changed - Username:" + current_user.username)
                 flash("Password Changed")
             else:
                 flash("Passwords Don't Match!")
@@ -1690,7 +1702,7 @@ def user_page():
         current_user.email = emailAddress
 
         current_user.biography = biography
-
+        newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
 
     return redirect(url_for('user_page'))
@@ -1713,12 +1725,14 @@ def user_addInviteCode():
                     inviteCodeQuery.uses = inviteCodeQuery.uses + 1
                     db.session.add(newInvitedUser)
                     db.session.commit()
+                    newLog(3, "User Added Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(inviteCodeQuery.channelID))
                     flash("Added Invite Code to Channel", "success")
                     if 'redirectURL' in request.args:
                         return redirect(request.args.get("redirectURL"))
                 else:
                     flash("Invite Code Already Applied", "error")
             else:
+                newLog(3, "User Attempted to add Expired Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(inviteCodeQuery.channelID))
                 flash("Invite Code Expired", "error")
         else:
             flash("Invalid Invite Code", "error")
@@ -1751,6 +1765,7 @@ def admin_page():
                     for vid in videos:
                         vid.topic = defaultTopic.id
 
+                    newLog(1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name))
                     db.session.delete(topicQuery)
                     db.session.commit()
                     flash("Topic Deleted")
@@ -1783,8 +1798,10 @@ def admin_page():
                     if filePath != '/var/www/videos/':
                         shutil.rmtree(filePath, ignore_errors=True)
 
+                    newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
                     db.session.delete(channelQuery)
                     db.session.commit()
+
                     flash("Channel Deleted")
                     return redirect(url_for('admin_page', page="channels"))
 
@@ -1794,6 +1811,11 @@ def admin_page():
                     userQuery = Sec.User.query.filter_by(id=userID).first()
 
                     if userQuery != None:
+
+                        commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
+                        for comment in commentQuery:
+                            db.session.delete(comment)
+                        db.session.commit()
 
                         channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
 
@@ -1811,6 +1833,9 @@ def admin_page():
                                 for view in vidViews:
                                     db.session.delete(view)
 
+                                for clip in vid.clips:
+                                    db.session.delete(clip)
+
                                 db.session.delete(vid)
                             for upvote in chan.upvotes:
                                 db.session.delete(upvote)
@@ -1822,9 +1847,12 @@ def admin_page():
 
                             db.session.delete(chan)
 
+                        flash("User " + str(userQuery.username) + " Deleted")
+                        newLog(1, "User " + current_user.username + " deleted User " + str(userQuery.username))
+
                         db.session.delete(userQuery)
                         db.session.commit()
-                        flash("User " + str(userQuery.username) + " Deleted")
+
                         return redirect(url_for('admin_page', page="users"))
 
                 elif setting == "userRole":
@@ -1837,6 +1865,7 @@ def admin_page():
                     if userQuery != None and roleQuery != None:
                         user_datastore.remove_role_from_user(userQuery,roleQuery.name)
                         db.session.commit()
+                        newLog(1, "User " + current_user.username + " Removed Role " + roleQuery.name + " from User" + userQuery.username)
                         flash("Removed Role from User")
 
                     else:
@@ -1854,6 +1883,7 @@ def admin_page():
                     if userQuery != None and roleQuery != None:
                         user_datastore.add_role_to_user(userQuery, roleQuery.name)
                         db.session.commit()
+                        newLog(1, "User " + current_user.username + " Added Role " + roleQuery.name + " to User " + userQuery.username)
                         flash("Added Role to User")
                     else:
                         flash("Invalid Role or User!")
@@ -1865,9 +1895,11 @@ def admin_page():
                     if userQuery != None:
                         if userQuery.active == True:
                             userQuery.active = False
+                            newLog(1, "User " + current_user.username + " Disabled User " + userQuery.username)
                             flash("User Disabled")
                         else:
                             userQuery.active = True
+                            newLog(1, "User " + current_user.username + " Enabled User " + userQuery.username)
                             flash("User Enabled")
                         db.session.commit()
                     return redirect(url_for('admin_page', page="users"))
@@ -1887,6 +1919,7 @@ def admin_page():
                     for role in userroles:
                         dbDump['roles'][user.username].append(role.name)
                 dbDumpJson = json.dumps(dbDump)
+                newLog(1, "User " + current_user.username + " Performed DB Backup Dump")
                 return Response(dbDumpJson, mimetype='application/json', headers={'Content-Disposition':'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
             return redirect(url_for('admin_page'))
@@ -1967,6 +2000,8 @@ def admin_page():
                 themeList.append(theme)
 
         logsList = logs.logs.query.all()
+
+        newLog(1,"User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery,
@@ -2081,6 +2116,8 @@ def admin_page():
                 hasJSON = os.path.isfile("./templates/themes/" + theme + "/theme.json")
                 if hasJSON:
                     themeList.append(theme)
+
+            newLog(1, "User " + current_user.username + " altered System Settings")
 
             return redirect(url_for('admin_page', page="settings"))
 
