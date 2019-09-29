@@ -587,7 +587,6 @@ def processHubConnection(connection, payload):
     return False
 
 def processAllHubConnections():
-    newLog(0, "Scheduled Task: Processing All Hub Connections")
     jsonPayload = prepareHubJSON()
 
     results = []
