@@ -109,11 +109,23 @@ A Dockerfile has been provided for running OSP in a container.  However due to t
 
 This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 
+**Environment Variables**
+- DB_URL: Sets the SQLAlchemy URL String for the used DB.
+    - Default: ```"sqlite:///db/database.db"```
+    - See https://docs.sqlalchemy.org/en/13/core/engines.html
+- FLASK_SECRET: Flask Secret Key
+    - Format: ```"CHANGEME"```
+- FLASK_SALT: Flask User Salt Value
+    - Format: ```"CHANGEME"```
+- OSP_ALLOWREGISTRATION: Sets OSP to allow users to create accounts
+    - Default: ```True```
+- OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
+    - Default: ```True```
+
 **Recommended Volumes/Mount Points**
-* /var/www - Storage of Images, Streams, and Stored Video Files
-* /opt/osp/conf/config.py - DB configuration and Password Salt Settings
-* /opt/osp/db/database.db - Initial SQLite DB File
-* /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
+-  /var/www - Storage of Images, Streams, and Stored Video Files
+-  /opt/osp/db/ - SQLite DB Location (if used)
+-  /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
 
 ### Manual Install
 
