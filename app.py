@@ -822,13 +822,13 @@ def user_registered_sighandler(app, user, confirm_token):
 @app.errorhandler(404)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
-    newLog(0, "404 Error - " + str(e))
+    newLog(0, "404 Error - " + str(request.url))
     return render_template(checkOverride('404.html'), sysSetting=sysSettings), 404
 
 @app.errorhandler(500)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
-    newLog(0,"500 Error - " + str(e))
+    newLog(0,"500 Error - " + str(request.url))
     return render_template(checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
 
 #----------------------------------------------------------------------------#
