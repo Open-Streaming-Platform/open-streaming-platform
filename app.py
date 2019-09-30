@@ -1122,11 +1122,12 @@ def view_vid_page(videoID):
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
-    if recordedVid.channel.protected:
-        if not check_isValidChannelViewer(recordedVid.channel.id):
-            return render_template(checkOverride('channelProtectionAuth.html'))
-
     if recordedVid != None:
+
+        if recordedVid.channel.protected:
+            if not check_isValidChannelViewer(recordedVid.channel.id):
+                return render_template(checkOverride('channelProtectionAuth.html'))
+
         recordedVid.views = recordedVid.views + 1
         recordedVid.channel.views = recordedVid.channel.views + 1
 
