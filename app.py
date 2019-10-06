@@ -3590,9 +3590,6 @@ def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
     global streamUserList
 
-    # Testing
-    newLog("Debug", str(socketio.rooms))
-
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
     viewers = requestedChannel.currentViewers
