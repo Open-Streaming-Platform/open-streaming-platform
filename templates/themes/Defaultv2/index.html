@@ -37,7 +37,7 @@
             No Live Streams Online...
             {% endif %}
             {% for stream in streamList %}
-                <div class="displayCard py-1 pr-2">
+                <div class="displayCard py-1 pr-2 zoom">
                     <a href="/view/{{stream.channel.channelLoc}}/">
                     <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     <div class="card-data">
@@ -65,7 +65,7 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for video in randomRecorded %}
-                <div class="displayCard py-1 pr-1">
+                <div class="displayCard py-1 pr-1 zoom">
                     <a href="/play/{{video.id}}">
                     <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                     <div class="card-data">
@@ -93,7 +93,7 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for clip in randomClips %}
-            <div class="displayCard py-1 pr-1">
+            <div class="displayCard py-1 pr-1 zoom">
                 <a href="/clip/{{clip.id}}">
                     <div>
                         <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
