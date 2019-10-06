@@ -1999,9 +1999,9 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        logsList = logs.logs.query.all()
+        logsList = logs.logs.order_by(logs.logs.timestamp.desc()).limit(250)
 
-        newLog(1,"User " + current_user.username + " Accessed Admin Interface")
+        newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery,
