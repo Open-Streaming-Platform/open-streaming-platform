@@ -159,6 +159,9 @@ md = Markdown(app, extensions=['tables'])
 # Establish Channel User List
 streamUserList = {}
 
+# Establish Channel SID List
+streamSIDList = {}
+
 # Create Theme Data Dictionary
 themeData = {}
 
@@ -1037,6 +1040,11 @@ def view_page(loc):
 
     if requestedChannel.channelLoc not in streamUserList:
         streamUserList[requestedChannel.channelLoc] = []
+
+    global streamSIDList
+
+    if requestedChannel.channelLoc not in streamSIDList:
+        streamSIDList[requestedChannel.channelLoc] = []
 
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
@@ -3276,7 +3284,7 @@ def user_auth_check():
     if authedStream is not None:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
-        streamUserList[authedStream.id] = []
+        #streamUserList[authedStream.id] = []
 
         if requestedChannel.imageLocation is None:
             channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
@@ -3328,6 +3336,7 @@ def user_deauth_check():
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
             streamUserList[channelRequest.channelLoc] = []
+
             print(returnMessage)
 
             if channelRequest.imageLocation is None:
@@ -3479,9 +3488,14 @@ def handle_new_viewer(streamData):
 
     sysSettings = settings.settings.query.first()
     global streamUserList
+    global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+
+    userSID = request.sid
+    if userSID not in streamSIDList[channelLoc]:
+        streamSIDList[channelLoc].append(userSID)
 
     streamName = ""
     streamTopic = 0
@@ -3549,6 +3563,7 @@ def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
     global streamUserList
+    global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
@@ -3564,6 +3579,12 @@ def handle_leaving_viewer(streamData):
             stream.currentViewers = 0
         db.session.commit()
     leave_room(streamData['data'])
+
+    userSID = request.sid
+
+    if userSID in streamSIDList:
+        streamSIDList.remove(userSID)
+
     if requestedChannel.showChatJoinLeaveNotification == True:
         if current_user.is_authenticated:
             pictureLocation = current_user.pictureLocation
@@ -3581,6 +3602,11 @@ def handle_leaving_viewer(streamData):
     db.session.commit()
     db.session.close()
 
+@socketio.on('disconnect')
+def disconnect(message):
+    logger.error(message)
+    emit('message', {'msg': message['msg']})
+
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
     leave_room(streamData['data'])
@@ -3589,10 +3615,12 @@ def handle_leaving_popup_viewer(streamData):
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
     global streamUserList
+    global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
-    viewers = requestedChannel.currentViewers
+    #viewers = requestedChannel.currentViewers
+    viewers = len(streamSIDList[requestedChannel.channelLoc])
 
     db.session.commit()
     db.session.close()
@@ -3703,11 +3731,6 @@ def handle_upvoteChange(streamData):
             db.session.delete(myVoteQuery)
         db.session.commit()
     db.session.close()
-
-@socketio.on('disconnect')
-def disconnect(message):
-    logger.error(message)
-    emit('message', {'msg': message['msg']})
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):
