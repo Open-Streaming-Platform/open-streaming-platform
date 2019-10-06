@@ -127,7 +127,7 @@
                         {% if video.pending == False %}
                             <div class="displayCard py-1 pr-1">
                                 <a href="/play/{{video.id}}">
-                                <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                <img class="shadow lazy zoom" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                 <div class="card-data">
                                     <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
                                     <i class="fas fa-video mr-2"></i> {{video.channel.channelName}}<br>
@@ -155,7 +155,7 @@
                         <div class="displayCard py-1 pr-1">
                             <a href="/clip/{{clip.id}}">
                                 <div>
-                                    <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                    <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                         onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                                 </div>
                                 <div class="card-data">

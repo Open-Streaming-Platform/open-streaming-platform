@@ -14,7 +14,7 @@
             {% for channel in channelList %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
-                    <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                         {{channel.topic|get_topicName}}<br>

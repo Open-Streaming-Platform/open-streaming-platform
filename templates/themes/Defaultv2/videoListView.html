@@ -71,7 +71,7 @@
             <div class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
-                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                        <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                             onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     </div>
                     <div class="card-data">
@@ -105,7 +105,7 @@
                 {% for channel in userChannels %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
-                        <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
                             <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                             {{channel.topic|get_topicName}}<br>
@@ -141,7 +141,7 @@
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                         <div>
-                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            <img class="shadow lazy zoom" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                         </div>
                         <div class="card-data">
@@ -176,7 +176,7 @@
                 <div class="displayCard py-1 pr-1">
                     <a href="/clip/{{clip.id}}">
                         <div>
-                            <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                         </div>
                         <div class="card-data">

@@ -91,7 +91,7 @@
         {% for clipEntry in randomClips[:4] %}
         <div class="displayCard-other pb-1 pr-1">
           <a href="/clip/{{clipEntry.id}}">
-            <img class="shadow lazy" {% if clipEntry.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+            <img class="shadow lazy zoom" {% if clipEntry.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
               onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clipEntry.thumbnailLocation}}">
             <div class="card-data">
               <div class="card-cut-text"><b>{{clipEntry.clipName|limit_title}}</b></div>
