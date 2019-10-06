@@ -3850,7 +3850,13 @@ def text(message):
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
 
+    global streamSIDList
+
     if channelQuery != None:
+
+        userSID = request.sid
+        if userSID not in streamSIDList[channelQuery.channelLoc]:
+            streamSIDList[channelQuery.channelLoc].append(userSID)
 
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation == None:
