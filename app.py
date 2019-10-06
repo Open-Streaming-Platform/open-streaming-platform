@@ -3497,13 +3497,15 @@ def handle_new_viewer(streamData):
     if userSID not in streamSIDList[requestedChannel.channelLoc]:
         streamSIDList[requestedChannel.channelLoc].append(userSID)
 
+    currentViewers = len(streamSIDList[requestedChannel.channelLoc])
+
     streamName = ""
     streamTopic = 0
 
-    requestedChannel.currentViewers = requestedChannel.currentViewers + 1
+    requestedChannel.currentViewers = currentViewers
 
     if stream is not None:
-        stream.currentViewers = stream.currentViewers + 1
+        stream.currentViewers = currentViewers
         db.session.commit()
         streamName = stream.streamName
         streamTopic = stream.topic
@@ -3568,13 +3570,20 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    requestedChannel.currentViewers = requestedChannel.currentViewers - 1
+    userSID = request.sid
+
+    if userSID in streamSIDList[requestedChannel.channelLoc]:
+        streamSIDList[requestedChannel.channelLoc].remove(userSID)
+
+    currentViewers = len(streamSIDList[requestedChannel.channelLoc])
+
+    requestedChannel.currentViewers = currentViewers
     if requestedChannel.currentViewers < 0:
         requestedChannel.currentViewers = 0
     db.session.commit()
 
     if stream is not None:
-        stream.currentViewers = stream.currentViewers - 1
+        stream.currentViewers = currentViewers
         if stream.currentViewers < 0:
             stream.currentViewers = 0
         db.session.commit()
