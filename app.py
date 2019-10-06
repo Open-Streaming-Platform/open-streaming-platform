@@ -3431,6 +3431,9 @@ def playback_auth_handler():
     db.session.close()
     return abort(400)
 
+@app.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 ### Start Socket.IO Functions ###
 
