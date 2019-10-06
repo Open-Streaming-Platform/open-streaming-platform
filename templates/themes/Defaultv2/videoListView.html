@@ -68,7 +68,7 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for stream in openStreams %}
-            <div class="displayCard py-1 pr-2 zoom">
+            <div class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
                         <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -103,7 +103,7 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
-                <div class="displayCard py-1 pr-1 zoom">
+                <div class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
                         <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
@@ -138,7 +138,7 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
-                <div class="displayCard py-1 pr-1 zoom">
+                <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                         <div>
                             <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -173,7 +173,7 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
                 {% for clip in clipsList %}
-                <div class="displayCard py-1 pr-1 zoom">
+                <div class="displayCard py-1 pr-1">
                     <a href="/clip/{{clip.id}}">
                         <div>
                             <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"

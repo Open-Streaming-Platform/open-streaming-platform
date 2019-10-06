@@ -37,9 +37,9 @@
             No Live Streams Online...
             {% endif %}
             {% for stream in streamList %}
-                <div class="displayCard py-1 pr-2 zoom">
+                <div class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
-                    <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                    <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
                         <i class="fas fa-video mr-2"></i> {{stream.channel.channelName}}<br>
@@ -65,9 +65,9 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for video in randomRecorded %}
-                <div class="displayCard py-1 pr-1 zoom">
+                <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
-                    <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
+                    <img class="shadow lazy zoom" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{video.channelName|limit_title}}</b></div>
                         <i class="fas fa-video mr-2"></i> {{video.channel.channelName}}<br>
@@ -93,10 +93,10 @@
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for clip in randomClips %}
-            <div class="displayCard py-1 pr-1 zoom">
+            <div class="displayCard py-1 pr-1">
                 <a href="/clip/{{clip.id}}">
                     <div>
-                        <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                        <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                             onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                     </div>
                     <div class="card-data">
