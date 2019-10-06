@@ -1999,7 +1999,7 @@ def admin_page():
             if hasJSON:
                 themeList.append(theme)
 
-        logsList = logs.logs.order_by(logs.logs.timestamp.desc()).limit(250)
+        logsList = logs.logs.query.order_by(logs.logs.timestamp.desc()).limit(250)
 
         newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
