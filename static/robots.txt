@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /settings/
+Disallow: /login/
+Disallow: /logout/
+Disallow: /reset/
+Disallow: /confirm/
+Disallow: /stream/
+Disallow: /live/
