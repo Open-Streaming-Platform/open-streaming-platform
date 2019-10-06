@@ -9,7 +9,7 @@ from flask_security.signals import user_registered, confirm_instructions_sent
 from flask_security import utils
 from sqlalchemy.sql.expression import func
 from sqlalchemy import desc, asc
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail
 from flask_migrate import Migrate, migrate, upgrade
@@ -3589,6 +3589,9 @@ def handle_leaving_popup_viewer(streamData):
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
     global streamUserList
+
+    # Testing
+    newLog("Debug", str(socketio.rooms['']['channelLoc']))
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
