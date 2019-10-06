@@ -3494,8 +3494,8 @@ def handle_new_viewer(streamData):
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     userSID = request.sid
-    if userSID not in streamSIDList[channelLoc]:
-        streamSIDList[channelLoc].append(userSID)
+    if userSID not in streamSIDList[requestedChannel.channelLoc]:
+        streamSIDList[requestedChannel.channelLoc].append(userSID)
 
     streamName = ""
     streamTopic = 0
@@ -3582,8 +3582,8 @@ def handle_leaving_viewer(streamData):
 
     userSID = request.sid
 
-    if userSID in streamSIDList:
-        streamSIDList.remove(userSID)
+    if userSID in streamSIDList[requestedChannel.channelLoc]:
+        streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
     if requestedChannel.showChatJoinLeaveNotification == True:
         if current_user.is_authenticated:
@@ -3605,6 +3605,15 @@ def handle_leaving_viewer(streamData):
 @socketio.on('disconnect')
 def disconnect(message):
     logger.error(message)
+
+    global streamSIDList
+
+    userSID = request.sid
+
+    for channel in streamSIDList:
+        if userSID in streamSIDList[channel]:
+            streamSIDList[channel].remove(userSID)
+
     emit('message', {'msg': message['msg']})
 
 @socketio.on('closePopup')
