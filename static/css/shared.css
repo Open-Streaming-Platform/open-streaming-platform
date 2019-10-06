@@ -98,7 +98,7 @@
 .zoom:hover {
   -ms-transform: scale(1.05); /* IE 9 */
   -webkit-transform: scale(1.05); /* Safari 3-8 */
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 /* ----------------------------------------------
