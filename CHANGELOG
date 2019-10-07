@@ -18,6 +18,7 @@ Beta-3
 - Added Support for OSP Site-wide Search
 - Added Favicons
 - Added On Hover Animation for Link images for most pages in Defaultv2
+- Fixed Method for determining current viewers of a Live Stream, making the value more accurate
 - Reworked the Nginx.conf file to split off the OSP specific into their own included osp-*.conf files to reduce the need of reworking the single file
 - Added HTTP2 Support to the default install of OSP.  Upgrading Users should run the Manual Install Procedures to Upgrade their Nginx systems to the most recent build to add support
 - Reworked Admin Pages to Return the the last Tab on Settings Changes
