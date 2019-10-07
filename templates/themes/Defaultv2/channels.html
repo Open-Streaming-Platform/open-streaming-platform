@@ -17,8 +17,8 @@
                     <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
-                        {{channel.topic|get_topicName}}<br>
-                        <b> {{channel.owningUser|get_userName}}</b><br>
+                        <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}<br>
+                        <i class="fas fa-user-circle"></i> <b> {{channel.owningUser|get_userName}}</b><br>
                         {% if channel.stream|length > 0 %}
                             <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
                         {% else %}
