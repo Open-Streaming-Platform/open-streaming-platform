@@ -28,6 +28,7 @@ RUN apk add alpine-sdk \
   pcre-dev \
   libressl2.7-libcrypto \
   openssl-dev \
+  libffi-dev \
   wget \
   git \
   linux-headers \
@@ -83,6 +84,7 @@ RUN apk add python3 \
 
 # Install OSP Dependancies
 RUN pip3 install -r /opt/osp/setup/requirements.txt
+RUN pip3 install cryptography
 
 # Upgrade PIP
 RUN pip3 install --upgrade pip
