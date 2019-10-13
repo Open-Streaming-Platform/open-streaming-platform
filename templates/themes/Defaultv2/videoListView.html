@@ -238,7 +238,7 @@ function toggleChannelSub(chanID) {
 
 socket.on('sendChanSubResults', function (msg) {
     var subButton = document.getElementById('chanSubStateButton');
-    if (msg['state'] === 'True') {
+    if (msg['state'] === true) {
         subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
         subButton.className = "btn btn-success";
     } else {
