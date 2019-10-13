@@ -8,6 +8,7 @@
   <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2-Light.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
   <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+  <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
@@ -94,24 +95,20 @@
 
                     <div class="col-12 col-md-6">
                       <h4><i class="fas fa-envelope"></i> Email Settings</h4><br>
-                      <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button><br>
+                      <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button>
                       <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:springgreen;"></i> Email Test was Successful!</div>
-                      <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div><br>
-                      SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" required>
-                      SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" required>
-                      SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" required>
-                      SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control">
-                      SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control">
+                      <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
+                      <br>
+                      SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
+                      SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
+                      SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
+                      SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
+                      SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
                       SMTP SSL:<br>
-                      <label class="switch">
-                        <input type="checkbox" id="smtpSSL" name="smtpSSL">
-                        <span class="slider round"></span>
-                      </label><br>
+                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                      <br>
                       SMTP TLS:<br>
-                      <label class="switch">
-                        <input type="checkbox" id="smtpTLS" name="smtpTLS">
-                        <span class="slider round"></span>
-                      </label>
+                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
                     </div>
                   </div>
                   <hr>
@@ -158,10 +155,12 @@
         </div>
       </div>
   </div>
+  </div>
 
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/popper/js/popper.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
 
 
 <script type="text/javascript" charset="utf-8">
@@ -192,12 +191,11 @@
         smtpUser = document.getElementById("smtpUser").value;
         smtpPassword = document.getElementById("smtpPassword").value;
         smtpSender = document.getElementById("smtpSendAs").value;
-        smtpReciever = document.getElementById("email");
 
         document.getElementById("emailsuccess").style.display = "None";
         document.getElementById("emailfailure").style.display = "None";
 
-        socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpReciever});
+        socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpSender});
     }
 </script>
 
