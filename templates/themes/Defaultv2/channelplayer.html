@@ -32,6 +32,13 @@
          <div class="col-lg col-xs-12 col-sm-12">
               <div class="index-video-title ml-2 my-2">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b></span>
+                  <span class="float-right m-1">
+                    {% if current_user.is_authenticated %}
+                    <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                    {% endif %}
+                  </span>
                   <span id="liveIndicatorBadge" class="float-right badge badge-secondary"><b><i class="fas fa-video-slash"></i> Offline</b></span> {% if channel.protected %}<span class="badge badge-warning float-right mr-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
               </div>
          </div>
