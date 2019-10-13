@@ -266,6 +266,7 @@ body {
 .videoPanel{
     overflow-y: auto;
     max-height:90vh;
+    scrollbar-width: none;
 }
 
 .videoPanel::-webkit-scrollbar {
