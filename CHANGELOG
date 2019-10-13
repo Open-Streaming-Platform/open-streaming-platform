@@ -34,3 +34,4 @@ Beta-3
 - Fixed an issue where changing of a user's email address would cause a 500 Error
 - Reduced the Delay for Chat User Listings from 30s to 5s
 - DB Improvements to prevent orphaned entries
+- Changed Topics page to sort by Name
