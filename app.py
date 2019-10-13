@@ -3502,7 +3502,7 @@ def toggle_chanSub(payload):
                     db.session.delete(currentSubscription)
                 db.session.commit()
                 db.session.close()
-                emit('testEmailResults', {'state': subState}, broadcast=False)
+                emit('sendChanSubResults', {'state': subState}, broadcast=False)
     db.session.close()
 
 @socketio.on('cancelUpload')
