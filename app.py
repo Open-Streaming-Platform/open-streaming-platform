@@ -930,6 +930,8 @@ def topic_page():
             if topicQuery != None:
                 topicsList.append(topicQuery)
 
+    topicsList.sort(key=lambda x: x.name)
+
     return render_template(checkOverride('topics.html'), topicsList=topicsList)
 
 
