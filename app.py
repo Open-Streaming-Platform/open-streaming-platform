@@ -1117,7 +1117,14 @@ def view_page(loc):
                     clipsList.append(clip)
             clipsList.sort(key=lambda x: x.views, reverse=True)
 
-            return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList, secureHash=secureHash, rtmpURI=rtmpURI)
+            subState = False
+            if current_user.is_authenticated:
+                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id, userID=current_user.id).first()
+                if chanSubQuery is not None:
+                    subState = True
+
+            return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList,
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
