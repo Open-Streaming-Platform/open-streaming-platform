@@ -32,7 +32,16 @@
                 </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
-                <span class="float-right"><a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a></span>
+                <span class="m-1">
+                    {% if current_user.is_authenticated %}
+                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    {% else %}
+                    <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                    {% endif %}
+                </span>
+                <span class="m-1">
+                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
+                </span>
             </div>
         </div>
     </div>
@@ -219,15 +228,30 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  var conn_options = {
+    'sync disconnect on unload': true
+  };
+
+  var socket = io();
+</script>
+
 <script>
-    $('#search').on('input', function () {
-        var query = document.getElementById("search").value.toLowerCase();
-        $('.streamcard').each(function () {
-            var $this = $(this);
-            if ($this.text().toLowerCase().indexOf(query) === -1)
-                $this.closest('.streamcard').hide();
-            else $this.closest('.streamcard').show();
-        });
-    });
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-outline-success";
+    }
+  });
 </script>
 {% endblock %}
