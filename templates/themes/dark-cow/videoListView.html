@@ -33,14 +33,14 @@
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                 <span class="m-1">
+                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
+                </span>
+                <span class="m-1">
                     {% if current_user.is_authenticated %}
                     <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
                     {% else %}
                     <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
                     {% endif %}
-                </span>
-                <span class="m-1">
-                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
                 </span>
             </div>
         </div>
