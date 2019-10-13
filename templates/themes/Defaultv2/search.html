@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-title-container">
     <div class="row m-2">
         <div class="index-video-title"><b>Search</b></div>
     </div>
 </div>
 
 {% if streamerList != [] %}
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-streams-container">
     <div class="row m-2">
         <div class="index-live-title"><b>Streamers</b></div>
     </div>
@@ -34,7 +34,7 @@
 {% endif %}
 
 {% if topicList != [] %}
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-topics-container">
     <div class="row m-2">
         <div class="index-live-title"><b>Topics</b></div>
     </div>
@@ -59,7 +59,7 @@
 <div class="row m-2">
     <div class="index-live-title"><b>Channels</b></div>
 </div>
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-channels-container">
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for stream in streamList %}
@@ -160,7 +160,7 @@
 {% endif %}
 
 {% if clipList != [] %}
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-clips-container">
     <div class="row m-2">
         <div class="index-video-title"><b>Clips</b></div>
     </div>
@@ -195,7 +195,7 @@
 {% endif %}
 
 {% if clipList == [] and channelList == [] and topicList == [] and streamerList == [] and videoList == [] and clipList == [] %}
-<div class="container-fluid p-2" id="index-videos-container">
+<div class="container-fluid p-2" id="index-empty-container">
     <div class="row m-2">
         <div class="col">
             <p>Nothing to see here.</p>
