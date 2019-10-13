@@ -73,23 +73,19 @@
                       </label><br>
                       Allow Users to Upload Videos:<br>
                       <label class="switch">
-                        <input type="checkbox" id="uploadSelect" name="uploadSelect">
-                        <span class="slider round"></span>
+                        <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="uploadSelect" name="uploadSelect">
                       </label><br>
                       Enable Adaptive Streaming (Can Cause Significant CPU Usage Per Stream):<br>
                       <label class="switch">
-                        <input type="checkbox" id="adaptiveStreaming" name="adaptiveStreaming">
-                        <span class="slider round"></span>
+                        <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="adaptiveStreaming" name="adaptiveStreaming">
                       </label><br>
                       Display Empty Channels, Streamers, and Topics<br>
                       <label class="switch">
-                        <input type="checkbox" id="showEmptyTables" name="showEmptyTables">
-                        <span class="slider round"></span>
+                        <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="showEmptyTables" name="showEmptyTables">
                       </label><br>
                       Globally Allow Comments (Can be Disabled on a Per Video Basis)<br>
                       <label class="switch">
-                        <input type="checkbox" id="allowComments" name="allowComments">
-                        <span class="slider round"></span>
+                        <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="allowComments" name="allowComments">
                       </label><br>
                     </div>
 
@@ -105,10 +101,10 @@
                       SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
                       SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
                       SMTP SSL:<br>
-                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL">
                       <br>
                       SMTP TLS:<br>
-                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                      <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS">
                     </div>
                   </div>
                   <hr>
