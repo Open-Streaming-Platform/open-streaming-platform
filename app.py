@@ -3489,7 +3489,7 @@ def test_email(info):
 @socketio.on('toggleChannelSubscription')
 def toggle_chanSub(payload):
     if current_user.is_authenticated:
-        if 'channelID' in payload['channelID']:
+        if 'channelID' in payload:
             channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
             if channelQuery is not None:
                 currentSubscription = subscriptions.channelSubs.query.filter_by(channelID=channelQuery.id, userID=current_user.id).first()
