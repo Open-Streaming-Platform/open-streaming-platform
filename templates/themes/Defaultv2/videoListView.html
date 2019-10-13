@@ -30,7 +30,16 @@
                     <span>
                         <p>{{channelData.description|markdown}}</p>
                     </span><br>
-                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
+                    <span class="m-1">
+                        {% if current_user.is_authenticated %}
+                        <button class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}">{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                        {% else %}
+                        <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                        {% endif %}
+                    </span>
+                    <span class="m-1">
+                        <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
+                    </span>
                 </div>
             </div>
         </div>

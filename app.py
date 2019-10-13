@@ -897,7 +897,13 @@ def channel_view_page(chanID):
 
         clipsList.sort(key=lambda x: x.views, reverse=True)
 
-        return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, title="Channels - Videos")
+        subState = False
+        if current_user.is_authenticated:
+            chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=channelData.id, userID=current_user.id).first()
+            if chanSubQuery is not None:
+                subState = True
+
+        return render_template(checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, subState=subState, title="Channels - Videos")
     else:
         flash("No Such Channel", "error")
         return redirect(url_for("main_page"))
@@ -3477,8 +3483,27 @@ def test_email(info):
         smtpReceiver = info['smtpReceiver']
 
         results = sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
-
+        db.session.close()
         emit('testEmailResults', {'results': str(results)}, broadcast=False)
+
+@socketio.on('toggleChannelSubscription')
+def toggle_chanSub(payload):
+    if current_user.is_authenticated:
+        if 'channelID' in payload['channelID']:
+            channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
+            if channelQuery is not None:
+                currentSubscription = subscriptions.channelSubs.query.filter_by(channelID=channelQuery.id, userID=current_user.id).first()
+                subState = False
+                if currentSubscription is None:
+                    newSub = subscriptions.channelSubs(channelQuery.id, current_user.id)
+                    db.session.add(newSub)
+                    subState = True
+                else:
+                    db.session.delete(currentSubscription)
+                db.session.commit()
+                db.session.close()
+                emit('testEmailResults', {'state': subState}, broadcast=False)
+    db.session.close()
 
 @socketio.on('cancelUpload')
 def handle_videoupload_disconnect(videofilename):
