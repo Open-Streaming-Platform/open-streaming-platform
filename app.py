@@ -139,6 +139,7 @@ from classes import invites
 from classes import webhook
 from classes import hubConnection
 from classes import logs
+from classes import subscriptions
 
 sysSettings = None
 
@@ -1716,6 +1717,14 @@ def user_page():
         db.session.commit()
 
     return redirect(url_for('user_page'))
+
+@app.route('/settings/user/subscriptions')
+@login_required
+def subscription_page():
+    sysSettings = settings.settings.query.first()
+    channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
+
+    return render_template(checkOverride('subscriptions.html'), channelSubList=channelSubList)
 
 @app.route('/settings/user/addInviteCode')
 @login_required

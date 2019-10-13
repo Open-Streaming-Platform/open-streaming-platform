@@ -42,3 +42,4 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="joined")
     channels = db.relationship('Channel', backref='owner', lazy="joined")
+    subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="joined")

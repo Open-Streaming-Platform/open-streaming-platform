@@ -1,0 +1,56 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% block head %}
+<title>{{sysSettings.siteName}} - Subscriptions</title>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="subscriptions-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Subscriptions</b></div>
+    </div>
+    <div class="row m-2">
+        <h3>Channel Subscriptions</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Channel Name
+                    </th>
+                    <th>
+                        Streamer
+                    </th>
+                    <th>
+                        Topic
+                    </th>
+                    <th>
+                        Options
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sub in channelSubList %}
+                <tr>
+                    <td>
+                        {{sub.channel.channelName}}
+                    </td>
+                    <td>
+                        {{sub.channel.owner.username}}
+                    </td>
+                    <td>
+                        {{sub.channel.topic}}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger mb-2"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
