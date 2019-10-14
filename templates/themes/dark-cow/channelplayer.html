@@ -33,6 +33,13 @@
                 <a href="/channel/{{channel.id}}"><span class="float-left" id="channelName">{{channel.channelName}}</span></a>
                 <h6 style="display: inline; margin: 0px;"><span id="liveIndicatorBadge" class="float-left m-2 liveindicator badge badge-secondary"><b><i class="fas fa-video-slash"></i> Offline</b></span> {% if channel.protected %}<span
                         class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i> Protected</span></h6>{% endif %}
+                <span class="float-right mx-1">
+                    {% if current_user.is_authenticated %}
+                    <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                    {% endif %}
+                </span>
             </div>
         </div>
         <div class="col-lg-auto col-sm-12" style="width:450px;">
@@ -591,6 +598,25 @@
             copyText.select();
             document.execCommand("copy");
         }
+    </script>
+
+    <script>
+    function toggleChannelSub(chanID) {
+        socket.emit('toggleChannelSubscription', { channelID: chanID });
+    }
+    </script>
+    <script>
+
+    socket.on('sendChanSubResults', function (msg) {
+        var subButton = document.getElementById('chanSubStateButton');
+        if (msg['state'] === true) {
+            subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+            subButton.className = "btn btn-success";
+        } else {
+            subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+            subButton.className = "btn btn-outline-success";
+        }
+      });
     </script>
 
     {% endblock %}
