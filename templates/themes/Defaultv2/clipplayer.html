@@ -21,14 +21,23 @@
     <div class="col-lg-8 col-xs-12 col-sm-12">
       <div class="row m-2">
         <div class="index-video-title"><b>{{clip.clipName}}</b>
-          <span class="badge badge-primary float-right">
-            <i class="fas fa-cut"></i> Clip
+          <span class="float-right mx-1">
+            {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.recordedVideo.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+            {% else %}
+            <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+            {% endif %}
           </span>
-          {% if video.channel.protected %}
-          <span class="badge badge-warning float-right">
-            <i class="fas fa-user-lock"></i> Protected
+          <span class="float-right mt-2">
+            <span class="badge badge-primary">
+              <i class="fas fa-cut"></i> Clip
+            </span>
+            {% if video.channel.protected %}
+              <span class="badge badge-warning">
+                <i class="fas fa-user-lock"></i> Protected
+              </span>
+            {% endif %}
           </span>
-          {% endif %}
         </div>
       </div>
       <div class="player ml-2">
@@ -383,6 +392,25 @@
       copyText.select();
       document.execCommand("copy");
     }
+</script>
+
+<script>
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-sm btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-sm btn-outline-success";
+    }
+  });
 </script>
 
 {% endblock %}
