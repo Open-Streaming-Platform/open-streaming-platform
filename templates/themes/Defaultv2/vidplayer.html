@@ -23,6 +23,14 @@
     <div class="col-lg-8 col-xs-12 col-sm-12">
       <div class="row m-2">
         <div class="index-video-title"><b>{{video.channelName}}</b>
+
+          <span class="float-right mx-1">
+            {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+            {% else %}
+            <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+            {% endif %}
+          </span>
           {% if video.channel.protected %}
           <span class="badge badge-warning float-right">
             <i class="fas fa-user-lock"></i> Protected
@@ -604,5 +612,25 @@
   }
 
 </script>
+
+<script>
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-outline-success";
+    }
+  });
+</script>
+
 {% endif %}
 {% endblock %}
