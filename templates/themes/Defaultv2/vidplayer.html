@@ -613,6 +613,7 @@
 
 </script>
 
+{% endif %}
 <script>
 function toggleChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });
@@ -632,5 +633,4 @@ socket.on('sendChanSubResults', function (msg) {
   });
 </script>
 
-{% endif %}
 {% endblock %}
