@@ -31,13 +31,13 @@
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="index-video-title ml-2 my-2">
                 <a href="/channel/{{channel.id}}"><span class="float-left" id="channelName">{{channel.channelName}}</span></a>
-                <h6 style="display: inline; margin: 0px;"><span id="liveIndicatorBadge" class="float-left m-2 liveindicator badge badge-secondary"><b><i class="fas fa-video-slash"></i> Offline</b></span> {% if channel.protected %}<span
-                        class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i> Protected</span></h6>{% endif %}
+                <h6 style="display: inline; margin: 0px;"><span id="liveIndicatorBadge" class="float-left m-2 liveindicator badge badge-secondary"><b><i class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-block"> Offline</span></b></span> {% if channel.protected %}<span
+                        class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-block"> Protected</span></span></h6>{% endif %}
                 <span class="float-right mx-1">
                     {% if current_user.is_authenticated %}
-                    <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-block"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-block"> Subscribe</span>{% endif %}</button>
                     {% else %}
-                    <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                    <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-block"> Subscribe</span></button>
                     {% endif %}
                 </span>
             </div>
@@ -559,7 +559,7 @@
                         var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] + '</span></a></b>';
 
                         onlineBadge.className = 'float-left m-2 liveindicator badge badge-danger';
-                        onlineBadge.innerHTML = '<i class="fas fa-video"></i> Live';
+                        onlineBadge.innerHTML = '<i class="fas fa-video"></i><span class="d-none d-sm-none d-md-block"> Live</span>';
 
                         nameDiv.innerHTML = nameDivHTML;
                         topicDiv.innerHTML = topicDivHTML;
@@ -571,7 +571,7 @@
                         videoJSObj.pause();
                         videoJSObj.reset();
                         onlineBadge.className = 'float-left m-2 liveindicator badge badge-secondary';
-                        onlineBadge.innerHTML = '<i class="fas fa-video-slash"></i> Offline';
+                        onlineBadge.innerHTML = '<i class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-block"> Offline</span>';
                         videoContainer.style.display = "none";
                         offlineWindow.style.display = "block";
                         var currentStreamName = "No Stream";
@@ -610,10 +610,10 @@
     socket.on('sendChanSubResults', function (msg) {
         var subButton = document.getElementById('chanSubStateButton');
         if (msg['state'] === true) {
-            subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+            subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-block'> Unsubscribe</span>";
             subButton.className = "btn btn-sm btn-success";
         } else {
-            subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+            subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-block'> Subscribe</span>";
             subButton.className = "btn btn-sm btn-outline-success";
         }
       });
