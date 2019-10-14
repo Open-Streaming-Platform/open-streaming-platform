@@ -26,15 +26,15 @@
 
           <span class="float-right mx-1">
             {% if current_user.is_authenticated %}
-            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-block"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-block"> Subscribe</span>{% endif %}</button>
+            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
             {% else %}
-            <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-block"> Subscribe</span></button>
+            <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
             {% endif %}
           </span>
           {% if video.channel.protected %}
           <span class="float-right">
             <span class="badge badge-warning">
-              <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-block"> Protected</span>
+              <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
             </span>
           </span>
           {% endif %}
@@ -79,7 +79,7 @@
             </button>
             {% endif %}
           </span>
-          <span class="d-none d-md-block float-right">
+          <span class="d-none d-md-inline float-right">
             <i class="fas fa-users mr-2"></i> {{video.views}}
             <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
@@ -626,10 +626,10 @@ function toggleChannelSub(chanID) {
 socket.on('sendChanSubResults', function (msg) {
     var subButton = document.getElementById('chanSubStateButton');
     if (msg['state'] === true) {
-        subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-block'> Unsubscribe</span>";
+        subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
         subButton.className = "btn btn-sm btn-success";
     } else {
-        subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-block'> Subscribe</span>";
+        subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
         subButton.className = "btn btn-sm btn-outline-success";
     }
   });
