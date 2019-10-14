@@ -763,6 +763,7 @@ def get_webhookTrigger(webhookTrigger):
         '7': 'Video Comment',
         '8': 'Video Upvote',
         '9': 'Video Name Change',
+        '10': 'Channel Subscription',
         '20': 'New User'
     }
     return webhookNames[webhookTrigger]
@@ -3508,6 +3509,7 @@ def test_email(info):
 @socketio.on('toggleChannelSubscription')
 def toggle_chanSub(payload):
     if current_user.is_authenticated:
+        sysSettings = settings.settings.query.first()
         if 'channelID' in payload:
             channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
             if channelQuery is not None:
@@ -3517,6 +3519,25 @@ def toggle_chanSub(payload):
                     newSub = subscriptions.channelSubs(channelQuery.id, current_user.id)
                     db.session.add(newSub)
                     subState = True
+
+                    channelImage = None
+                    if channelQuery.imageLocation is None:
+                        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                    else:
+                        channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+
+                    pictureLocation = current_user.pictureLocation
+                    if current_user.pictureLocation == None:
+                        pictureLocation = '/static/img/user2.png'
+                    else:
+                        pictureLocation = '/images/' + pictureLocation
+
+                    runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
+                               channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                               channeltopic=get_topicName(channelQuery.topic),
+                               channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                               channeldescription=channelQuery.description,
+                               user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation)
                 else:
                     db.session.delete(currentSubscription)
                 db.session.commit()
