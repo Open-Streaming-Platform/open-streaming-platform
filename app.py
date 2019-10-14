@@ -516,6 +516,17 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
+#TODO Write Subscription Send Function
+@asynch
+def sendSubscriptionNotification(userID):
+    pass
+
+def processSubscriptions(channelID, notificationType):
+    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
+    for sub in subscriptionQuery:
+        sendSubscriptionNotification(sub.userID)
+    return True
+
 def prepareHubJSON():
     topicQuery = topics.topics.query.all()
     topicDump = {}
