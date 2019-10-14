@@ -1184,7 +1184,13 @@ def view_vid_page(videoID):
 
             randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
 
-            return render_template(checkOverride('vidplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, startTime=startTime)
+            subState = False
+            if current_user.is_authenticated:
+                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channel.id, userID=current_user.id).first()
+                if chanSubQuery is not None:
+                    subState = True
+
+            return render_template(checkOverride('vidplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, subState=subState, startTime=startTime)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay == None:
