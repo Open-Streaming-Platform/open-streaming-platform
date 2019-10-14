@@ -39,7 +39,12 @@
                     <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
                     {% endif %}
                   </span>
-                  <span id="liveIndicatorBadge" class="float-right badge badge-secondary align-bottom"><b><i class="fas fa-video-slash"></i> Offline</b></span> {% if channel.protected %}<span class="badge badge-warning float-right mr-1 align-bottom"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                  <span class="float-right mt-2">
+                    <span id="liveIndicatorBadge" class="badge badge-secondary"><b><i class="fas fa-video-slash"></i> Offline</b></span>
+                    {% if channel.protected %}
+                        <span class="badge badge-warning float-right mr-1 align-bottom"><i class="fas fa-user-lock"></i> Protected</span>
+                    {% endif %}
+                  </span>
               </div>
          </div>
          <div class="col-lg-auto col-sm-12" style="width:475px;">
