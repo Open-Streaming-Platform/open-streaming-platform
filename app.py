@@ -1491,7 +1491,13 @@ def view_clip_page(clipID):
 
                 randomClips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.id != clipQuery.id).order_by(func.random()).limit(12)
 
-                return render_template(checkOverride('clipplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomClips=randomClips, clip=clipQuery)
+                subState = False
+                if current_user.is_authenticated:
+                    chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channel.id, userID=current_user.id).first()
+                    if chanSubQuery is not None:
+                        subState = True
+
+                return render_template(checkOverride('clipplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomClips=randomClips, subState=subState, clip=clipQuery)
             #else:
             #    isAutoPlay = request.args.get("autoplay")
             #    if isAutoPlay == None:
