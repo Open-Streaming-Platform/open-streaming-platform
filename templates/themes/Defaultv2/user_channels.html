@@ -18,8 +18,14 @@
             </div>
 
         {% for channel in channels %}
+        <div id="channelEntry-{{channel.id}}" onclick="toggleDiv('channelCard-{{channel.id}}')">
+            <h5>{{channel.channelName}}</h5>
+            <span class="float-right">
+            Test
+            </span>
+        </div>
         <form action="/settings/channels" enctype=multipart/form-data method="post">
-            <div class="card m-2 shadow">
+            <div id="channelCard-{{channel.id}}" class="card m-2 shadow" style="display:none;">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-4 col-lg-6 col-md-12">
@@ -653,11 +659,7 @@ function updateChatPreview(channelID) {
 <script>
 function toggleDiv(divID) {
   var x = document.getElementById(divID);
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
+  $(x).slideToggle();
 }
 </script>
 
