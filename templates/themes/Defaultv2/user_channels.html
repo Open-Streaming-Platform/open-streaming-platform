@@ -18,11 +18,21 @@
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" onclick="toggleDiv('channelCard-{{channel.id}}')">
-            <h5>{{channel.channelName}}</h5>
-            <span class="float-right">
-            Test
-            </span>
+        <div id="channelEntry-{{channel.id}}" onclick="toggleDiv('channelCard-{{channel.id}}')" style="-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);">
+            <div class="row">
+                <h5>{{channel.channelName}}</h5><br>
+                <div class="col-12 col-md-4">
+                    <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}
+                </div>
+                <div class="col-12 col-md-4">
+                    <i class="fas fa-users"></i> {{channel.views}}</span>
+                </div>
+                <div class="col-12 col-md-4">
+                    <i class="fas fa-star"></i> {{channel.subscriptions|length}}
+                </div>
+            </div>
         </div>
         <form action="/settings/channels" enctype=multipart/form-data method="post">
             <div id="channelCard-{{channel.id}}" class="card m-2 shadow" style="display:none;">
