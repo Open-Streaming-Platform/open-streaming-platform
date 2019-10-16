@@ -18,9 +18,7 @@
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" class="p-2" onclick="toggleDiv('channelCard-{{channel.id}}')" style="-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);">
+        <div id="channelEntry-{{channel.id}}" class="p-2 m-2 shadow" onclick="toggleDiv('channelCard-{{channel.id}}')">
             <h5>{{channel.channelName}}</h5>
             <div class="row">
                 <div class="col-12 col-md-4">
