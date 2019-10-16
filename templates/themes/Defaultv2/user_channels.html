@@ -18,7 +18,7 @@
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" class="p-2 m-2 shadow" onclick="toggleDiv('channelCard-{{channel.id}}')">
+        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="border: 1px solid black;" onclick="toggleDiv('channelCard-{{channel.id}}')">
             <h5>{{channel.channelName}}</h5>
             <div class="row">
                 <div class="col-12 col-md-4">
@@ -33,7 +33,7 @@
             </div>
         </div>
         <form action="/settings/channels" enctype=multipart/form-data method="post">
-            <div id="channelCard-{{channel.id}}" class="card m-2 shadow" style="display:none;">
+            <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow" style="display:none;">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-4 col-lg-6 col-md-12">
