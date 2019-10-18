@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block body %}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
@@ -18,7 +19,7 @@
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" onclick="toggleDiv('channelCard-{{channel.id}}')">
+        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelCard-{{channel.id}}')">
             <div class="row">
                 <div class="ml-2 col-auto align-middle my-auto">
                     <b><h3><i class="fas fa-bars"></i></h3></b>
