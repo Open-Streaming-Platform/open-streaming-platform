@@ -18,8 +18,9 @@
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="border: 1px solid black;" onclick="toggleDiv('channelCard-{{channel.id}}')">
+        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" onclick="toggleDiv('channelCard-{{channel.id}}')">
             <h5>{{channel.channelName}}</h5>
+            <span class="float-right"><b><i class="fas fa-bars"></i></b></span>
             <div class="row">
                 <div class="col-12 col-md-4">
                     <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}
