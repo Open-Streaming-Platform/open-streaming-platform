@@ -527,7 +527,7 @@ def processSubscriptions(channelID, subject, message):
         for sub in subscriptionQuery:
             userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
             if userQuery != None:
-                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
                 msg = Message(subject, recipients=[userQuery.email])
                 msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
                 msg.body = finalMessage
@@ -1715,8 +1715,8 @@ def upload_vid():
                    videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
         processSubscriptions(ChannelQuery.id,
                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
-                             "<html><body><img src='http://" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
-                             "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
+                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
+                             "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
 
     newLog(4, "File Upload Successful - Username:" + current_user.username)
     db.session.close()
@@ -3391,7 +3391,8 @@ def user_auth_check():
 
         processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='http://" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
+                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
+                             " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
                              + "'>" + requestedChannel.channelName + "</a></p>")
         db.session.close()
         return 'OK'
@@ -3500,8 +3501,8 @@ def rec_Complete_handler():
 
     processSubscriptions(requestedChannel.id,
                          sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
-                         "<html><body><img src='http://" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
-                         "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+                         "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
+                         "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
 
     while not os.path.exists(fullVidPath):
         time.sleep(1)
