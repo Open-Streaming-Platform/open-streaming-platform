@@ -11,7 +11,7 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy import desc, asc
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 import xmltodict
@@ -516,15 +516,21 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
-#TODO Write Subscription Send Function
 @asynch
-def sendSubscriptionNotification(userID):
-    pass
+def sendSubscriptionNotification(userID, subject, message):
+    sysSettings = db.session.query(settings.settings).first()
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'</a></p></body></html>"
+    if userQuery != None:
+        msg = Message(subject, recipients=[userQuery.email])
+        msg.html = message
+        mail.send(msg)
+    return True
 
-def processSubscriptions(channelID, notificationType):
+def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     for sub in subscriptionQuery:
-        sendSubscriptionNotification(sub.userID)
+        sendSubscriptionNotification(sub.userID, subject, message)
     return True
 
 def prepareHubJSON():
@@ -1708,6 +1714,18 @@ def upload_vid():
     db.session.close()
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
+
+@app.route('/unsubscribe')
+def unsubscribe_page():
+    if 'email' in request.args:
+        emailAddress = request.args.get("email")
+        userQuery = Sec.User.query.filter_by(email=emailAddress).first()
+        if userQuery != None:
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(userID=userQuery.id).all()
+            for sub in subscriptionQuery:
+                db.session.delete(sub)
+            db.session.commit()
+    return emailAddress + " has been removed from all subscriptions"
 
 @app.route('/settings/user', methods=['POST','GET'])
 @login_required
@@ -3358,6 +3376,9 @@ def user_auth_check():
         runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
                    streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
+
+        processSubscriptions(requestedChannel.channelID, sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream", "<html><body><img src='" + sysSettings.systemLogo + "'><p>Channel "
+                             + requestedChannel.channelName + " has stated a new video stream.</p><p>Click this link to watch<br><a href='" + (sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)) + "'></p>")
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
