@@ -1712,7 +1712,7 @@ def upload_vid():
                    videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
         processSubscriptions(ChannelQuery.id,
                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
-                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
+                             "<html><body><img src='" + normalize_urlroot(request.url_root) + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
                              "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
 
     newLog(4, "File Upload Successful - Username:" + current_user.username)
@@ -3384,7 +3384,7 @@ def user_auth_check():
 
         processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
+                             "<html><body><img src='" + normalize_urlroot(request.url_root) + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
                              + "'>" + requestedChannel.channelName + "</a></p>")
         db.session.close()
         return 'OK'
@@ -3493,7 +3493,7 @@ def rec_Complete_handler():
 
     processSubscriptions(requestedChannel.id,
                          sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
-                         "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
+                         "<html><body><img src='" + normalize_urlroot(request.url_root) + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
 
     while not os.path.exists(fullVidPath):
