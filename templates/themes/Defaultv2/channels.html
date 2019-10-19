@@ -27,6 +27,7 @@
                         {% if channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                         <span class="displayCard-footer">
                             <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-star"></i> {{channel.subscriptions|length}}</span>
                         </span>
                     </div>
                     </a>
