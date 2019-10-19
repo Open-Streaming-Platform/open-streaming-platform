@@ -516,7 +516,7 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
-#@asynch
+@asynch
 def sendSubscriptionNotification(userID, subject, message):
     sysSettings = settings.settings.query.first()
     userQuery = Sec.User.query.filter_by(id=int(userID)).first()
@@ -527,6 +527,7 @@ def sendSubscriptionNotification(userID, subject, message):
         msg.body = message
         msg.html = message
         mail.send(msg)
+    db.session.close()
     return True
 
 def processSubscriptions(channelID, subject, message):
