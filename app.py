@@ -3486,6 +3486,11 @@ def rec_Complete_handler():
                videourl=(sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
+    processSubscriptions(requestedChannel.id,
+                         sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
+                         "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
+                         "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+
     while not os.path.exists(fullVidPath):
         time.sleep(1)
 
