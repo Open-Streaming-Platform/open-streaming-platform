@@ -1344,14 +1344,14 @@ def vid_change_page(loc):
                 channelImage = (sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
 
             runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                        channeltopic=get_topicName(recordedVidQuery.channel.topic),
                        channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
                        channeldescription=recordedVidQuery.channel.description, videoname=recordedVidQuery.channelName,
                        videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
                        videotopic=get_topicName(recordedVidQuery.topic),
-                       videourl=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
-                       videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
+                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
+                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
             db.session.commit()
             newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
 
@@ -1444,15 +1444,15 @@ def comments_vid_page(videoID):
                 pictureLocation = '/images/' + pictureLocation
 
             runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
                        channeltopic=get_topicName(recordedVid.channel.topic),
                        channelimage=channelImage, streamer=get_userName(recordedVid.channel.owningUser),
                        channeldescription=recordedVid.channel.description, videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
                        videotopic=get_topicName(recordedVid.topic),
-                       videourl=(sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
-                       videothumbnail=(sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
-                       user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation), comment=comment)
+                       videourl=(sysSettings.siteProtocol +sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
+                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
+                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation), comment=comment)
             flash('Comment Added', "success")
             newLog(4, "Video Comment Added by " + current_user.username + "to Video ID #" + str(recordedVid.id))
 
@@ -1705,14 +1705,14 @@ def upload_vid():
             channelImage = (sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
 
         runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
-                   channelurl=(sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
+                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
                    channeltopic=get_topicName(ChannelQuery.topic),
                    channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
                    channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
                    videodate=newVideo.videoDate, videodescription=newVideo.description,
                    videotopic=get_topicName(newVideo.topic),
-                   videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
-                   videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
+                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
         processSubscriptions(ChannelQuery.id,
                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
                              "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
@@ -3385,9 +3385,10 @@ def user_auth_check():
         else:
             channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
-        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
+        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
-                   streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
+                   streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
+                   streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
         processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
@@ -3446,14 +3447,14 @@ def user_deauth_check():
                 channelImage = (sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
 
             runWebhook(channelRequest.id, 1, channelname=channelRequest.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
                        channeltopic=channelRequest.topic,
                        channelimage=channelImage, streamer=get_userName(channelRequest.owningUser),
                        channeldescription=channelRequest.description,
                        streamname=stream.streamName,
-                       streamurl=(sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
+                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
                        streamtopic=get_topicName(stream.topic),
-                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelRequest.channelLoc + ".png"))
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelRequest.channelLoc + ".png"))
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closure Failure - No Such Stream', 'key': str(key), 'ipAddress': str(ipaddress)}
@@ -3491,13 +3492,13 @@ def rec_Complete_handler():
         channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
-               channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+               channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                channeltopic=get_topicName(requestedChannel.topic),
                channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
                videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=get_topicName(pendingVideo.topic),
-               videourl=(sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
-               videothumbnail=(sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
+               videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
+               videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
     processSubscriptions(requestedChannel.id,
                          sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
@@ -3602,11 +3603,11 @@ def toggle_chanSub(payload):
                         pictureLocation = '/images/' + pictureLocation
 
                     runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
-                               channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                               channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                                channeltopic=get_topicName(channelQuery.topic),
                                channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                                channeldescription=channelQuery.description,
-                               user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation)
+                               user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation)
                 else:
                     db.session.delete(currentSubscription)
                 db.session.commit()
@@ -3677,27 +3678,27 @@ def handle_new_viewer(streamData):
                 streamUserList[channelLoc].append(current_user.username)
             emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
             runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                        channeltopic=requestedChannel.topic,
                        channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                        channeldescription=requestedChannel.description,
                        streamname=streamName,
-                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                        streamtopic=get_topicName(streamTopic),
-                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                       user=current_user.username, userpicture=(sysSettings.siteAddress + pictureLocation))
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation))
         else:
             emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
             runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                       channelurl=(sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                        channeltopic=requestedChannel.topic,
                        channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
                        channeldescription=requestedChannel.description,
                        streamname=streamName,
-                       streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                        streamtopic=get_topicName(streamTopic),
-                       streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                       user="Guest", userpicture=(sysSettings.siteAddress + '/static/img/user2.png'))
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                       user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
     db.session.commit()
     db.session.close()
 
@@ -3973,14 +3974,14 @@ def updateStreamData(message):
             channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
         runWebhook(channelQuery.id, 4, channelname=channelQuery.channelName,
-                   channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                    channeltopic=channelQuery.topic,
                    channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                    channeldescription=channelQuery.description,
                    streamname=stream.streamName,
-                   streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                   streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                    streamtopic=get_topicName(stream.topic),
-                   streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
+                   streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
 
@@ -4085,14 +4086,14 @@ def text(message):
                     streamTopic = channelQuery.topic
 
                 runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
-                           channelurl=(sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
+                           channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                            channeltopic=get_topicName(channelQuery.topic),
                            channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
                            channeldescription=channelQuery.description,
                            streamname=streamName,
-                           streamurl=(sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
-                           user=current_user.username, userpicture=sysSettings.siteAddress + pictureLocation, message=msg)
+                           streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                           streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                           user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation, message=msg)
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
                 db.session.commit()
                 db.session.close()
