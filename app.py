@@ -1710,6 +1710,11 @@ def upload_vid():
                    videotopic=get_topicName(newVideo.topic),
                    videourl=(sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                    videothumbnail=(sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+        processSubscriptions(ChannelQuery.id,
+                             sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
+                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
+                             "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
+
     newLog(4, "File Upload Successful - Username:" + current_user.username)
     db.session.close()
     flash("Video upload complete")
