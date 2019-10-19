@@ -520,7 +520,7 @@ def processWebhookVariables(payload, **kwargs):
 def sendSubscriptionNotification(userID, subject, message):
     sysSettings = settings.settings.query.first()
     userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'</a></p></body></html>"
+    message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
     if userQuery != None:
         msg = Message(subject, recipients=[userQuery.email])
         msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
@@ -3382,8 +3382,8 @@ def user_auth_check():
 
         processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='" + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)
-                             + "'></p>")
+                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)
+                             + "'>" + requestedChannel.channelName + "</a></p>")
         db.session.close()
         return 'OK'
     else:
