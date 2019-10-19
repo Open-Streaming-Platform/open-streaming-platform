@@ -524,11 +524,11 @@ def processSubscriptions(channelID, subject, message):
         for sub in subscriptionQuery:
             userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
             if userQuery != None:
-                message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
                 msg = Message(subject, recipients=[userQuery.email])
                 msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-                msg.body = message
-                msg.html = message
+                msg.body = finalMessage
+                msg.html = finalMessage
                 conn.send(msg)
     db.session.close()
     return True
