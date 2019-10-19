@@ -3382,7 +3382,7 @@ def user_auth_check():
 
         processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)
+                             "<html><body><img src='" + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
                              + "'>" + requestedChannel.channelName + "</a></p>")
         db.session.close()
         return 'OK'
