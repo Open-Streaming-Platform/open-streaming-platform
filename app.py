@@ -3380,8 +3380,10 @@ def user_auth_check():
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
                    streamname=authedStream.streamName, streamurl=(sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic), streamimage=(sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
-        processSubscriptions(requestedChannel.channelID, sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream", "<html><body><img src='" + sysSettings.systemLogo + "'><p>Channel "
-                             + requestedChannel.channelName + " has stated a new video stream.</p><p>Click this link to watch<br><a href='" + (sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)) + "'></p>")
+        processSubscriptions(requestedChannel.channelID,
+                             sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
+                             "<html><body><img src='" + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has stated a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)
+                             + "'></p>")
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
