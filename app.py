@@ -518,11 +518,12 @@ def processWebhookVariables(payload, **kwargs):
 
 @asynch
 def sendSubscriptionNotification(userID, subject, message):
-    sysSettings = db.session.query(settings.settings).first()
-    userQuery = Sec.User.query.filter_by(id=userID).first()
+    sysSettings = settings.settings.query.first()
+    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
     message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'</a></p></body></html>"
     if userQuery != None:
         msg = Message(subject, recipients=[userQuery.email])
+        msg.body = message
         msg.html = message
         mail.send(msg)
         newLog(2, "Subscription Email sent to " + str(userQuery.email))
