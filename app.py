@@ -3383,6 +3383,7 @@ def user_auth_check():
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
                              "<html><body><img src='" + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)
                              + "'></p>")
+        db.session.close()
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
