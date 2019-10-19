@@ -516,25 +516,21 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
-@asynch
-def sendSubscriptionNotification(userID, subject, message):
-    sysSettings = settings.settings.query.first()
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
-    if userQuery != None:
-        msg = Message(subject, recipients=[userQuery.email])
-        msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-        msg.body = message
-        msg.html = message
-        mail.send(msg)
-    db.session.close()
-    return True
-
 def processSubscriptions(channelID, subject, message):
+    sysSettings = settings.settings.query.first()
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
-    for sub in subscriptionQuery:
-        sendSubscriptionNotification(sub.userID, subject, message)
+    with mail.connect() as conn:
+        for sub in subscriptionQuery:
+            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+            if userQuery != None:
+                message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                msg = Message(subject, recipients=[userQuery.email])
+                msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+                msg.body = message
+                msg.html = message
+                conn.send(msg)
+    db.session.close()
     return True
 
 def prepareHubJSON():
