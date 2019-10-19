@@ -1339,9 +1339,9 @@ def vid_change_page(loc):
             recordedVidQuery.allowComments = allowComments
 
             if recordedVidQuery.channel.imageLocation is None:
-                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
-                channelImage = (sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
 
             runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
@@ -1433,9 +1433,9 @@ def comments_vid_page(videoID):
             db.session.commit()
 
             if recordedVid.channel.imageLocation is None:
-                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
-                channelImage = (sysSettings.siteAddress + "/images/" + recordedVid.channel.imageLocation)
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVid.channel.imageLocation)
 
             pictureLocation = ""
             if current_user.pictureLocation == None:
@@ -1700,9 +1700,9 @@ def upload_vid():
         db.session.commit()
 
         if ChannelQuery.imageLocation is None:
-            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
-            channelImage = (sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
 
         runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
@@ -3381,9 +3381,9 @@ def user_auth_check():
         #streamUserList[authedStream.id] = []
 
         if requestedChannel.imageLocation is None:
-            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
-            channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
         runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
                    channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
@@ -3442,9 +3442,9 @@ def user_deauth_check():
             print(returnMessage)
 
             if channelRequest.imageLocation is None:
-                channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
-                channelImage = (sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
 
             runWebhook(channelRequest.id, 1, channelname=channelRequest.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
@@ -3487,9 +3487,9 @@ def rec_Complete_handler():
     db.session.commit()
 
     if requestedChannel.imageLocation is None:
-        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
     else:
-        channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
@@ -3592,9 +3592,9 @@ def toggle_chanSub(payload):
 
                     channelImage = None
                     if channelQuery.imageLocation is None:
-                        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
                     else:
-                        channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+                        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
                     pictureLocation = current_user.pictureLocation
                     if current_user.pictureLocation == None:
@@ -3660,9 +3660,9 @@ def handle_new_viewer(streamData):
         streamTopic = requestedChannel.topic
 
     if requestedChannel.imageLocation is None:
-        channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
     else:
-        channelImage = (sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+        channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     join_room(streamData['data'])
 
@@ -3969,9 +3969,9 @@ def updateStreamData(message):
         db.session.commit()
 
         if channelQuery.imageLocation is None:
-            channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
-            channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
         runWebhook(channelQuery.id, 4, channelname=channelQuery.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
@@ -4071,9 +4071,9 @@ def text(message):
                     flags = "Owner"
 
                 if channelQuery.imageLocation is None:
-                    channelImage = (sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                    channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
                 else:
-                    channelImage = (sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+                    channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
                 streamName = None
                 streamTopic = None
