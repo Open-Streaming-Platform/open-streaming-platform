@@ -526,7 +526,6 @@ def sendSubscriptionNotification(userID, subject, message):
         msg.body = message
         msg.html = message
         mail.send(msg)
-        newLog(2, "Subscription Email sent to " + str(userQuery.email))
     return True
 
 def processSubscriptions(channelID, subject, message):
