@@ -54,7 +54,9 @@ class settings(db.Model):
     def serialize(self):
         return {
             'siteName': self.siteName,
-            'siteAddress': self.siteProtocol + self.siteAddress,
+            'siteProtocol': self.siteProtocol,
+            'siteAddress': self.siteAddress,
+            'siteURI': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
             'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,
