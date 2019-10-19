@@ -2,11 +2,11 @@
 
 [![N|Solid](https://imgur.com/qSbBiF3.jpg)](https://imgur.com/qSbBiF3.jpg)
 
+## Overview:
+
 **Open Streaming Platform (OSP) is an open-source, RTMP streamer software front-end for [Arut's NGINX RTMP Module](https://github.com/arut/nginx-rtmp-module).**
 
 OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.tv, and Youtube Live.
-
-**OSP is still considered Beta and is not complete**
 
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
