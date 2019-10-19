@@ -214,7 +214,7 @@ def init_db_values():
         if sysSettings.systemTheme == None or sysSettings.systemTheme == "Default":
             sysSettings.systemTheme = "Defaultv2"
             db.session.commit()
-        if sysSettings.siteProtocl == None:
+        if sysSettings.siteProtocol == None:
             sysSettings.siteProtocol = "http://"
             db.session.commit()
         if sysSettings.version == "None":
