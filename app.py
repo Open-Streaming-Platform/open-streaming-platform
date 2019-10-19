@@ -530,9 +530,10 @@ def sendSubscriptionNotification(userID, subject, message):
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
+    newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
     for sub in subscriptionQuery:
         sendSubscriptionNotification(sub.userID, subject, message)
-    newLog(2, "Subscription Emails sent for " + str(channelID))
+
     return True
 
 def prepareHubJSON():
