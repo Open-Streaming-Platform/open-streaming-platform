@@ -525,12 +525,14 @@ def sendSubscriptionNotification(userID, subject, message):
         msg = Message(subject, recipients=[userQuery.email])
         msg.html = message
         mail.send(msg)
+        newLog(2, "Subscription Email sent to " + str(userQuery.email))
     return True
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     for sub in subscriptionQuery:
         sendSubscriptionNotification(sub.userID, subject, message)
+    newLog(2, "Subscription Emails sent for " + str(channelID))
     return True
 
 def prepareHubJSON():
