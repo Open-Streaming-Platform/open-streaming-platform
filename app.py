@@ -2454,6 +2454,22 @@ def settings_dbRestore():
                 else:
                     flash("Error Restoring Channel: ID# " + str(restoredChannel['id']), "error")
             db.session.commit()
+            
+            ## Restore Subscriptions
+            oldSubscriptions = subscriptions.channelSubs.query.all()
+            for sub in oldSubscriptions:
+                db.session.delete(sub)
+            db.session.commit()
+
+            if 'channelSubs' in restoreDict:
+                for restoredChannelSub in restoreDict['channelSubs']:
+                    channelID = int(restoredChannelSub['channelID'])
+                    userID = int(restoredChannelSub['userID'])
+
+                    channelSub = subscriptions.channelSubs(channelID, userID)
+                    channelSub.id = int(restoredChannelSub['id'])
+                    db.session.add(channelSub)
+                db.session.commit()
 
             ## Restored Videos - Deletes if not restored to maintain DB
             oldVideos = RecordedVideo.RecordedVideo.query.all()
