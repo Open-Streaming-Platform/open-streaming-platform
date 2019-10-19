@@ -523,6 +523,7 @@ def sendSubscriptionNotification(userID, subject, message):
     message = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'</a></p></body></html>"
     if userQuery != None:
         msg = Message(subject, recipients=[userQuery.email])
+        msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
         msg.body = message
         msg.html = message
         mail.send(msg)
