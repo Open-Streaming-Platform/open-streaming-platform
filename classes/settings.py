@@ -3,6 +3,7 @@ from .shared import db
 class settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     siteName = db.Column(db.String(255))
+    siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
     smtpAddress = db.Column(db.String(255))
     smtpPort = db.Column(db.Integer)
@@ -25,8 +26,9 @@ class settings(db.Model):
     allowRegistration = db.Column(db.Boolean) # Moved to config.py
     requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
+    def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
+        self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
         self.smtpPort = smtpPort
@@ -52,7 +54,7 @@ class settings(db.Model):
     def serialize(self):
         return {
             'siteName': self.siteName,
-            'siteAddress': self.siteAddress,
+            'siteAddress': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
             'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,

@@ -2092,6 +2092,7 @@ def admin_page():
         if settingType == "system":
 
             serverName = request.form['serverName']
+            serverProtocol = request.form['siteProtocol']
             serverAddress = request.form['serverAddress']
             smtpSendAs = request.form['smtpSendAs']
             smtpAddress = request.form['smtpAddress']
@@ -2145,6 +2146,7 @@ def admin_page():
                 return redirect(url_for("admin_page", page="settings"))
 
             sysSettings.siteName = serverName
+            sysSettings.siteProtocol = serverProtocol
             sysSettings.siteAddress = serverAddress
             sysSettings.smtpSendAs = smtpSendAs
             sysSettings.smtpAddress = smtpAddress
@@ -2366,6 +2368,7 @@ def settings_dbRestore():
             ## Restore Settings
 
             serverSettings = settings.settings(restoreDict['settings'][0]['siteName'],
+                                               restoreDict['settings'][0]['siteProtocol'],
                                                restoreDict['settings'][0]['siteAddress'],
                                                restoreDict['settings'][0]['smtpAddress'],
                                                int(restoreDict['settings'][0]['smtpPort']),
@@ -3007,6 +3010,7 @@ def initialSetup():
         password1 = request.form['password1']
         password2 = request.form['password2']
         serverName = request.form['serverName']
+        serverProtocol = str(request.fomr['siteProtocol'])
         serverAddress = str(request.form['serverAddress'])
         smtpSendAs = request.form['smtpSendAs']
         smtpAddress = request.form['smtpAddress']
@@ -3061,7 +3065,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Streamer')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
+            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
             db.session.add(serverSettings)
             db.session.commit()
 
