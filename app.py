@@ -137,7 +137,7 @@ from classes import views
 from classes import comments
 from classes import invites
 from classes import webhook
-from classes import hubConnection
+#from classes import hubConnection
 from classes import logs
 from classes import subscriptions
 
@@ -259,11 +259,11 @@ def init_db_values():
             chan.defaultStreamName = ""
             db.session.commit()
 
-        hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
-        if hubQuery == None:
-            newHub = hubConnection.hubServers(hubURL)
-            db.session.add(newHub)
-            db.session.commit()
+        #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
+        #if hubQuery == None:
+        #    newHub = hubConnection.hubServers(hubURL)
+        #    db.session.add(newHub)
+        #    db.session.commit()
 
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir("/var/www/stream-thumb"):
@@ -610,15 +610,15 @@ def processHubConnection(connection, payload):
         newLog(10, "Failed Update to OSP Hub Due to Error " + str(r.status_code) + " - Server:" + str(hubServer.serverAddress))
     return False
 
-def processAllHubConnections():
-    jsonPayload = prepareHubJSON()
-
-    results = []
-
-    hubConnectionQuery = hubConnection.hubConnection.query.filter_by(status=1).all()
-    for connection in hubConnectionQuery:
-        results.append(processHubConnection(connection, jsonPayload))
-    return results
+#def processAllHubConnections():
+#    jsonPayload = prepareHubJSON()
+#
+#    results = []
+#
+#    hubConnectionQuery = hubConnection.hubConnection.query.filter_by(status=1).all()
+#    for connection in hubConnectionQuery:
+#        results.append(processHubConnection(connection, jsonPayload))
+#    return results
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
@@ -628,7 +628,7 @@ app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 #----------------------------------------------------------------------------#
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
+#scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
 scheduler.start()
 
 #----------------------------------------------------------------------------#
@@ -798,14 +798,14 @@ def get_hubStatus(hubStatus):
     }
     return hubStatusNames[hubStatus]
 
-@app.template_filter('get_hubName')
-def get_hubName(hubID):
-
-    hubID = int(hubID)
-    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
-    if hubQuery != None:
-        return hubQuery.serverAddress
-    return "Unknown"
+#@app.template_filter('get_hubName')
+#def get_hubName(hubID):
+#
+#    hubID = int(hubID)
+#    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
+#    if hubQuery != None:
+#        return hubQuery.serverAddress
+#    return "Unknown"
 
 @app.template_filter('get_logType')
 def get_logType(logType):
@@ -2071,8 +2071,8 @@ def admin_page():
 
         globalWebhookQuery = webhook.globalWebhook.query.all()
 
-        hubServerQuery = hubConnection.hubServers.query.all()
-        hubRegistrationQuery = hubConnection.hubConnection.query.all()
+        #hubServerQuery = hubConnection.hubServers.query.all()
+        #hubRegistrationQuery = hubConnection.hubConnection.query.all()
 
         themeList = []
         themeDirectorySearch = os.listdir("./templates/themes/")
@@ -2087,7 +2087,7 @@ def admin_page():
 
         return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery,
-                               hubServers=hubServerQuery, hubConnections=hubRegistrationQuery, logsList=logsList, page=page)
+                               logsList=logsList, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -2267,87 +2267,87 @@ def admin_page():
 
         return redirect(url_for('admin_page'))
 
-@app.route('/settings/admin/hub', methods=['POST', 'GET'])
-@login_required
-@roles_required('Admin')
-def admin_hub_page():
-    sysSettings = settings.settings.query.first()
-    if request.method == "POST":
-        if "action" in request.form:
-            action = request.form["action"]
-            if action == "addConnection":
-                if "hubServer" in request.form:
-                    hubServer = int(request.form["hubServer"])
+#@app.route('/settings/admin/hub', methods=['POST', 'GET'])
+#@login_required
+#@roles_required('Admin')
+#def admin_hub_page():
+#    sysSettings = settings.settings.query.first()
+#    if request.method == "POST":
+#        if "action" in request.form:
+#            action = request.form["action"]
+#            if action == "addConnection":
+#                if "hubServer" in request.form:
+#                    hubServer = int(request.form["hubServer"])
+#
+#                    hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
+#
+#                    if hubServerQuery != None:
+#                        r = None
 
-                    hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
+#                        existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
+#                        if existingConnectionRequest != None:
+#                            try:
+#                                r = requests.delete(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': existingConnectionRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+#                            except requests.exceptions.Timeout:
+#                                pass
+#                            except requests.exceptions.ConnectionError:
+#                                pass
+#                            db.session.delete(existingConnectionRequest)
+#                            db.session.commit()
 
-                    if hubServerQuery != None:
-                        r = None
-
-                        existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
-                        if existingConnectionRequest != None:
-                            try:
-                                r = requests.delete(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': existingConnectionRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
-                            except requests.exceptions.Timeout:
-                                pass
-                            except requests.exceptions.ConnectionError:
-                                pass
-                            db.session.delete(existingConnectionRequest)
-                            db.session.commit()
-
-                        newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
-                        try:
-                            r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
-                        except requests.exceptions.Timeout:
-                            pass
-                        except requests.exceptions.ConnectionError:
-                            pass
-                        if r != None:
-                            if r.status_code == 200:
-                                db.session.add(newTokenRequest)
-                                db.session.commit()
-                                flash("Successfully Added to Hub", "success")
-                                return redirect(url_for('admin_page', page="hub"))
-                            else:
-                                flash("Failed to Add to Hub Due to Server Error")
-                                return redirect(url_for('admin_page', page="hub"))
-                flash("Failed to Add to Hub")
-    if request.method == "GET":
-        if request.args.get("action") is not None:
-            action = request.args.get("action")
-            if action == "deleteConnection":
-                if request.args.get("connectionID"):
-                    connection = hubConnection.hubConnection.query.filter_by(id=int(request.args.get("connectionID"))).first()
-                    try:
-                        r = requests.delete(connection.server.serverAddress + '/apiv1/servers', data={'verificationToken': connection.verificationToken, 'serverAddress': sysSettings.siteAddress})
-                    except requests.exceptions.Timeout:
-                        flash("Unable to Remove from Hub Server Due to Timeout", "error")
-                        return redirect(url_for('admin_page', page="hub"))
-                    except requests.exceptions.ConnectionError:
-                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
-                        return redirect(url_for('admin_page', page="hub"))
-                    if r.status_code == 200:
-                        db.session.delete(connection)
-                        db.session.commit()
-                        flash("Successfully Removed from Hub","success")
-                        return redirect(url_for('admin_page', page="hub"))
-                    else:
-                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
-                        return redirect(url_for('admin_page', page="hub"))
-            if action == "deleteServer":
-                if request.args.get("serverID"):
-                    serverQuery = hubConnection.hubServers.query.filter_by(id=int(request.args.get("serverID"))).first()
-                    if serverQuery != None:
-                        if serverQuery.serverAddress == hubURL:
-                            flash("Unable to Delete Default Hub", "error")
-                            return redirect(url_for('admin_page', page="hub"))
-                        else:
-                            db.session.delete(serverQuery)
-                            db.session.commit()
-                            flash("Successfully Deleted Hub", "success")
-                            return redirect(url_for('admin_page', page="hub"))
-
-    return redirect(url_for('admin_page', page="hub"))
+#                        newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
+#                        try:
+#                            r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
+#                        except requests.exceptions.Timeout:
+#                            pass
+#                        except requests.exceptions.ConnectionError:
+#                            pass
+#                        if r != None:
+#                            if r.status_code == 200:
+#                                db.session.add(newTokenRequest)
+#                                db.session.commit()
+#                                flash("Successfully Added to Hub", "success")
+#                                return redirect(url_for('admin_page', page="hub"))
+#                            else:
+#                                flash("Failed to Add to Hub Due to Server Error")
+#                                return redirect(url_for('admin_page', page="hub"))
+#                flash("Failed to Add to Hub")
+#    if request.method == "GET":
+#        if request.args.get("action") is not None:
+#            action = request.args.get("action")
+#            if action == "deleteConnection":
+#                if request.args.get("connectionID"):
+#                    connection = hubConnection.hubConnection.query.filter_by(id=int(request.args.get("connectionID"))).first()
+#                    try:
+#                        r = requests.delete(connection.server.serverAddress + '/apiv1/servers', data={'verificationToken': connection.verificationToken, 'serverAddress': sysSettings.siteAddress})
+#                    except requests.exceptions.Timeout:
+#                        flash("Unable to Remove from Hub Server Due to Timeout", "error")
+#                        return redirect(url_for('admin_page', page="hub"))
+#                    except requests.exceptions.ConnectionError:
+#                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
+#                        return redirect(url_for('admin_page', page="hub"))
+#                    if r.status_code == 200:
+#                        db.session.delete(connection)
+#                        db.session.commit()
+#                        flash("Successfully Removed from Hub","success")
+#                        return redirect(url_for('admin_page', page="hub"))
+#                    else:
+#                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
+#                        return redirect(url_for('admin_page', page="hub"))
+#            if action == "deleteServer":
+#                if request.args.get("serverID"):
+#                    serverQuery = hubConnection.hubServers.query.filter_by(id=int(request.args.get("serverID"))).first()
+#                    if serverQuery != None:
+#                        if serverQuery.serverAddress == hubURL:
+#                            flash("Unable to Delete Default Hub", "error")
+#                            return redirect(url_for('admin_page', page="hub"))
+#                        else:
+#                            db.session.delete(serverQuery)
+#                            db.session.commit()
+#                            flash("Successfully Deleted Hub", "success")
+#                            return redirect(url_for('admin_page', page="hub"))
+#
+#    return redirect(url_for('admin_page', page="hub"))
 
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():
