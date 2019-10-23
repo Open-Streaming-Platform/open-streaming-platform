@@ -14,7 +14,6 @@ Beta-3
 - Added Theme Override Options for Theme Developers who want to just create a custom CSS file without needing to maintain a full theme file set
 - Added Checks for the Server Address IP/DNS Settings in the Admin Menu
 - Added Thumbnail location for Streams to APIv1
-- Added Initial Support for the Open Streaming Platform Hub, a listing service for OSP Instances that want to Opt-in to display their Channels, Videos, Streams, and Clips in one place
 - Added Support for OSP Site-wide Search
 - Added Favicons
 - Added Email Channel Subscriptions.  Be notified when a Stream is Live or a new Video is posted.
