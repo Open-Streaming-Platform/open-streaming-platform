@@ -202,7 +202,7 @@ apt-get install ffmpeg -y
 ```
 12: Copy the Default Config File and Make Changes
 ```
-cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
+cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 ```
 13: Start NGINX and OSP
 ```
