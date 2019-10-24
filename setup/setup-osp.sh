@@ -30,7 +30,7 @@ then
         sudo tar xvfz zlib-1.2.11.tar.gz
         if cd nginx-1.17.3
         then
-                ./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11 --with-cc-opt="-Wimplicit-fallthrough=0"
+                ./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11"
                 sudo make install
         else
                 echo "Unable to Build Nginx! Aborting."
@@ -52,7 +52,7 @@ fi
 # Enable SystemD
 if cd $cwd/nginx
 then
-        sudo cp nginx-osp.service /lib/systemd/system/nginx-osp.service
+        sudo cp nginx-osp.service /etc/systemd/system/nginx-osp.service
         sudo systemctl daemon-reload
         sudo systemctl enable nginx-osp.service
 else
@@ -62,7 +62,7 @@ fi
 
 if cd $cwd/gunicorn
 then
-        sudo cp osp.service /lib/systemd/system/
+        sudo cp osp.service /etc/systemd/system/
         sudo systemctl daemon-reload
         sudo systemctl enable osp.service
 else
@@ -96,4 +96,4 @@ sudo chown -R www-data:www-data /var/log/gunicorn
 # Start Nginx
 sudo systemctl start nginx-osp.service
 
-echo "OSP Install Completed! Please copy /opt/osp/setup/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service"
+echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service"
