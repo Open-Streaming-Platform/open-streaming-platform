@@ -62,6 +62,10 @@ OSP's Git Branches are setup in the following configuration
 
 ## Installation
 
+### Requirements
+* Ubuntu 18.04 or Later, Debian 10 or Later
+* Python 3.7 or later
+
 ### Standard Install
 OSP has been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
 
