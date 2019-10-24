@@ -3013,7 +3013,7 @@ def initialSetup():
         password1 = request.form['password1']
         password2 = request.form['password2']
         serverName = request.form['serverName']
-        serverProtocol = str(request.fomr['siteProtocol'])
+        serverProtocol = str(request.form['siteProtocol'])
         serverAddress = str(request.form['serverAddress'])
         smtpSendAs = request.form['smtpSendAs']
         smtpAddress = request.form['smtpAddress']
