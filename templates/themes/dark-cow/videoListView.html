@@ -37,7 +37,7 @@
                 </span>
                 <span class="m-1">
                     {% if current_user.is_authenticated %}
-                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
                     {% else %}
                     <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
                     {% endif %}
@@ -250,7 +250,7 @@ socket.on('sendChanSubResults', function (msg) {
         subButton.className = "btn btn-success";
     } else {
         subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
-        subButton.className = "btn btn-outline-success";
+        subButton.className = "btn btn-outline-secondary";
     }
   });
 </script>

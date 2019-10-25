@@ -30,28 +30,29 @@
     <div class="row">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="index-video-title ml-2 my-2">
-                <a href="/channel/{{channel.id}}"><span class="float-left" id="channelName">{{channel.channelName}}</span></a>
-                <h6 style="display: inline; margin: 0px;"><span id="liveIndicatorBadge" class="float-left m-2 liveindicator badge badge-secondary"><b><i class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-inline"> Offline</span></b></span> {% if channel.protected %}<span
-                        class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span></span></h6>{% endif %}
-                <span class="float-right mx-1">
-                    {% if current_user.is_authenticated %}
-                    <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
-                    {% else %}
-                    <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
-                    {% endif %}
-                </span>
+                <a href="/channel/{{channel.id}}"><span class="float-left"
+                        id="channelName">{{channel.channelName}}</span></a>
+                <h6 style="display: inline; margin: 0px;"><span id="liveIndicatorBadge"
+                        class="float-left m-2 liveindicator badge badge-secondary"><b><i
+                                class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-inline">
+                                Offline</span></b></span> {% if channel.protected %}<span
+                        class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i><span
+                            class="d-none d-sm-none d-md-inline"> Protected</span></span></h6>{% endif %}
             </div>
         </div>
         <div class="col-lg-auto col-sm-12" style="width:450px;">
             <ul id="channelPlayerMenu" class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab" aria-controls="home" aria-selected="true">Live Channel</a>
+                    <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#livechannel" role="tab"
+                        aria-controls="home" aria-selected="true">Live Channel</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab" aria-controls="profile" aria-selected="false">Videos</a>
+                    <a class="nav-link" id="videos-tab" data-toggle="tab" href="#videoList" role="tab"
+                        aria-controls="profile" aria-selected="false">Videos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="clips-tab" data-toggle="tab" href="#clipList" role="tab" aria-controls="profile" aria-selected="false">Clips</a>
+                    <a class="nav-link" id="clips-tab" data-toggle="tab" href="#clipList" role="tab"
+                        aria-controls="profile" aria-selected="false">Clips</a>
                 </li>
             </ul>
         </div>
@@ -59,59 +60,103 @@
     <div class="tab-content" id="tabList">
         <div class="tab-pane fade show active" id="livechannel" role="tabpanel" aria-labelledby="channel-tab">
             <div class="row">
-                <div class="{% if channel.chatEnabled == True %}col-lg{% else %} col-12{% endif %} col-xs-12 col-sm-12" id="videoWindow">
+                <div class="{% if channel.chatEnabled == True %}col-lg{% else %} col-12{% endif %} col-xs-12 col-sm-12"
+                    id="videoWindow">
                     <div class="videoPanel">
                         <div class="player ml-2">
                             <div id="videoContainer">
-                                <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+                                <video id="video" class="shadow videoStream video-js vjs-big-play-centered"
+                                    poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto"
+                                    data-setup='{"fluid": true}'>
                                     <p class="vjs-no-js">
-                                        To view this video please enable JavaScript, and consider upgrading to a web browser that
-                                        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                                        To view this video please enable JavaScript, and consider upgrading to a web
+                                        browser that
+                                        <a href="https://videojs.com/html5-video-support/" target="_blank">supports
+                                            HTML5 video</a>
                                     </p>
                                 </video>
                             </div>
                             <div id="offlineImage" style="display:none;">
-                                <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
+                                <img class="videoStream shadow" {% if channel.offlineImageLocation != None %}
+                                    src="/images/{{channel.offlineImageLocation}}" {% else %}
+                                    src="/static/img/video-placeholder.jpg" {% endif %}>
                             </div>
                         </div>
                         <div class="row m-2">
                             <div class="video-buttons-row">
                                 {% if channel.owningUser == current_user.id %}
                                 <span class="float-left" style="margin-right: 10px">
-                                    <button type="button" class="btn btn-primary shadow ml-1" data-toggle="modal" data-target="#editModal">
+                                    <button type="button" class="btn btn-primary ml-1" data-toggle="modal"
+                                        data-target="#editModal">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </span>
                                 {% endif %}
                                 <span class="float-left">
-                                    <span id="streamMetadataName" class="stream-title"><b><i class="fas fa-video mr-2"></i>{% if stream != None %} {{stream.streamName|limit_title}} {% else %} No Stream {% endif %}</b></span><br />
-                                    <span id="streamMetadataTopic"><b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></span>
+                                    <span id="streamMetadataName" class="stream-title"><b><i
+                                                class="fas fa-video mr-2"></i>{% if stream != None %}
+                                            {{stream.streamName|limit_title}} {% else %} No Stream
+                                            {% endif %}</b></span><br />
+                                    <span id="streamMetadataTopic"><b><i class="fas fa-hashtag mr-2"></i></b> <a
+                                            href="/topic/{{stream.topic}}/">{% if stream != None %}
+                                            {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}}
+                                            {% endif %}</a></span>
                                 </span>
 
                                 <span class="float-right">
                                     <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
+                                        <button id="btnGroupDrop1" type="button"
+                                            class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false"><i id="cog"
+                                                class="fas fa-bars"></i></button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#shareModal" aria-pressed="false" autocomplete="off" href="#"><i class="fas fa-share-alt"></i> Share stream</a>
-                                            <a class="dropdown-item {% if channel.chatEnabled == False %}disabled{% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" href="#"><i
-                                                    class="fas fa-eye-slash"></i> Toggle chat</a>
-                                            <a class="dropdown-item" tabindex="10" data-html="true" data-toggle="popover" title="User List" data-trigger="focus" data-content="" data-placement="top" href="#"><i class="fas fa-users"></i> User list</a>
-                                            <a class="dropdown-item" onClick="popoutChat();return false;" class="btn btn-primary shadow {% if channel.chatEnabled == False %}disabled {% endif %}" title="Pop-out Chat" href="#"><i
-                                                    class="fas fa-comment"></i> Pop-out chat</a>
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#shareModal"
+                                                aria-pressed="false" autocomplete="off" href="#"><i
+                                                    class="fas fa-share-alt"></i> Share stream</a>
+                                            <a class="dropdown-item {% if channel.chatEnabled == False %}disabled{% endif %}"
+                                                data-toggle="button" aria-pressed="false" autocomplete="off"
+                                                onclick="toggleChat()" href="#"><i class="fas fa-eye-slash"></i> Toggle
+                                                chat</a>
+                                            <a class="dropdown-item" tabindex="10" data-html="true"
+                                                data-toggle="popover" title="User List" data-trigger="focus"
+                                                data-content="" data-placement="top" href="#"><i
+                                                    class="fas fa-users"></i> User list</a>
+                                            <a class="dropdown-item" onClick="popoutChat();return false;"
+                                                class="btn btn-primary {% if channel.chatEnabled == False %}disabled {% endif %}"
+                                                title="Pop-out Chat" href="#"><i class="fas fa-comment"></i> Pop-out
+                                                chat</a>
                                         </div>
                                     </div>
-                                    <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-1" onclick="changeUpvote();" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+                                    <span class="float-right mx-1">
+                                        {% if current_user.is_authenticated %}
+                                        <button id="chanSubStateButton"
+                                            class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}"
+                                            onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i
+                                                class="fas fa-star"></i>{% else %}<i
+                                                class="far fa-star"></i>{% endif %}</button>
+                                        {% else %}
+                                        <button id="chanSubStateButton" class="btn btn-outline-secondary disabled"
+                                            disabled><i class="far fa-star"></i></button>
+                                        {% endif %}
+                                    </span>
+                                    <button id="upvoteButton" type="button" class="btn btn-outline-secondary ml-1"
+                                        onclick="changeUpvote();" title="Upvote"
+                                        {% if current_user.is_authenticated==false %} disabled aria-disabled="true"
+                                        {% endif %}>
                                         <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                                     </button>
                                 </span>
                                 <span class="float-right">
                                     <i class="fas fa-users mx-2"></i> {{channel.views}}<br />
-                                    <i class="fas fa-eye mx-2"></i> <span id="currentViewers">{{channel.currentViewers}}</span>
+                                    <i class="fas fa-eye mx-2"></i> <span
+                                        id="currentViewers">{{channel.currentViewers}}</span>
                                 </span>
                             </div>
                         </div>
                         <div class="row m-2">
-                            <div class="channeldescription">{% if channel.description != None %}<p>{{channel.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
+                            <div class="channeldescription">{% if channel.description != None %}<p>
+                                    {{channel.description|markdown}}</p> {% else %}No Description Available {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -121,8 +166,11 @@
                         <div class="index-video-title mb-2"><b>Chat</b></div>
                         <div class="chatbox" id="chatBlock">
                             <div id="chat" class="chat"></div><br>
-                            <input id="text" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}>
-                            <span class="float-right"><button id="chatSubmit" class="btn btn-success btn-sm shadow" onclick="sendChat();">Send</button></span>
+                            <input id="text" class="form-control shadow" {% if current_user.is_authenticated==false %}
+                                disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..."
+                                {% endif %}>
+                            <span class="float-right"><button id="chatSubmit" class="btn btn-success btn-sm"
+                                    onclick="sendChat();">Send</button></span>
                         </div>
                     </div>
                 </div>
@@ -140,20 +188,32 @@
                                 <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                                     <div class="video-card-header">
                                         <a href="/play/{{video.id}}">
-                                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg"
+                                                width="100%" data-src="/videos/{{video.thumbnailLocation}}"
+                                                onerror="this.src='/static/img/video-placeholder.jpg';">
                                         </a>
                                     </div>
                                     <div class="video-card-body">
-                                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span><br />
-                                        {% if video.channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
-                                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
-                                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
-                                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a></span><br />
+                                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a
+                                                href="/play/{{video.id}}"><b>
+                                                    {{video.channelName|limit_title}}</b></a></span><br />
+                                        {% if video.channel.protected %}<span class="float-right"><span
+                                                class="badge badge-info"><i class="fas fa-user-lock"></i>
+                                                Protected</span></span>{% endif %}<br />
+                                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/">
+                                            {{video.channel.channelName}}</a>
+                                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
+                                            {{video.videoDate|normalize_date}}</span><br />
+                                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}">
+                                            {{video.owningUser|get_userName}}</a>
+                                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a
+                                                href="/topic/{{video.topic}}/">
+                                                {{video.topic|get_topicName}}</a></span><br />
                                         <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
                                         <i class="fas fa-eye mx-2"></i> {{video.views}}</span>
                                         <i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}</span>
-                                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{video.length|hms_format}}</span>
+                                        <span class="float-right"><i class="fas fa-clock mr-2"></i>
+                                            {{video.length|hms_format}}</span>
                                     </div>
                                 </div>
 
@@ -176,20 +236,36 @@
                                 <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                                     <div class="video-card-header">
                                         <a href="/clip/{{clip.id}}">
-                                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg"
+                                                width="100%" data-src="/videos/{{clip.thumbnailLocation}}"
+                                                onerror="this.src='/static/img/video-placeholder.jpg';">
                                         </a>
                                     </div>
                                     <div class="video-card-body">
-                                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/clip/{{clip.id}}"><b> {{clip.clipName|limit_title}}</b></a></span><br />
-                                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.recordedVideo.channel.protected %}<span class="float-right"><span
-                                                class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/"> {{clip.recordedVideo.channel.channelName}}</a>
-                                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{clip.recordedVideo.videoDate|normalize_date}}</span><br />
-                                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}"> {{clip.recordedVideo.owningUser|get_userName}}</a>
-                                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{clip.recordedVideo.topic}}/"> {{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a
+                                                href="/clip/{{clip.id}}"><b>
+                                                    {{clip.clipName|limit_title}}</b></a></span><br />
+                                        <span class="float-right"><span class="badge badge-secondary ml-2"><i
+                                                    class="fas fa-user-lock"></i>
+                                                Clip</span></span>{% if clip.recordedVideo.channel.protected %}<span
+                                            class="float-right"><span class="badge badge-info"><i
+                                                    class="fas fa-user-lock"></i>
+                                                Protected</span></span>{% endif %}<br />
+                                        <i class="fas fa-podcast mr-2"></i><a
+                                            href="/channel/{{clip.recordedVideo.channel.id}}/">
+                                            {{clip.recordedVideo.channel.channelName}}</a>
+                                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
+                                            {{clip.recordedVideo.videoDate|normalize_date}}</span><br />
+                                        <i class="fas fa-user mr-2"></i><a
+                                            href="/streamers/{{clip.recordedVideo.owningUser}}">
+                                            {{clip.recordedVideo.owningUser|get_userName}}</a>
+                                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a
+                                                href="/topic/{{clip.recordedVideo.topic}}/">
+                                                {{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
                                         <i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
                                         <i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
-                                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{clip.length|hms_format}}</span>
+                                        <span class="float-right"><i class="fas fa-clock mr-2"></i>
+                                            {{clip.length|hms_format}}</span>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -205,7 +281,8 @@
 
     {% if channel.owningUser == current_user.id %}
     <!-- Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -217,18 +294,22 @@
                 <form>
                     <div class="modal-body">
                         <h5>Name of the Stream:</h5>
-                        <input type="text" id="editStreamNameInput" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
+                        <input type="text" id="editStreamNameInput" class="form-control" value="{{stream.streamName}}"
+                            name="newStreamName" required>
                         <br>
                         <h5>Stream Topic:</h5>
-                        <select class="form-control" name="newStreamTopic" id="editChannelTopicInput" style="font-family: FontAwesome, sans-serif;" required>
+                        <select class="form-control" name="newStreamTopic" id="editChannelTopicInput"
+                            style="font-family: FontAwesome, sans-serif;" required>
                             {% for topic in topics %}
-                            <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                            <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>
+                                {{topic.name}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick="submitStreamChanges()">Save Changes</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            onClick="submitStreamChanges()">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -237,7 +318,8 @@
 
     {% endif %}
 
-    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -249,10 +331,13 @@
 
                 <div class="modal-body">
                     <div style="margin: 0 auto;width: 99%; text-align: center;">
-                        <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
-                            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
-                        <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
-                            onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Stream! - {{stream.streamName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+                        <button type="button" id="FBShareBtn" class="btn" style="background-color:#4267B2;color:white;"
+                            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share
+                            on Facebook</button>
+                        <button type="button" id="TwitterShareBtn" class="btn"
+                            style="background-color:#1dcaff;color:white;"
+                            onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Stream! - {{stream.streamName}}','twitter-share-dialog','width=626,height=436');return false;">Share
+                            on Twitter</button>
                     </div>
                     <br>
                     <div class="form-group row">
@@ -260,9 +345,12 @@
                         <div class="col-sm-10">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i
+                                            class="fas fa-copy"></i></button>
                                 </div>
-                                <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+                                <input class="form-control" id="embedURLInput" type="text"
+                                    value="<iframe src='{{request.url}}?embedded=True' width=600 height=345></iframe>"
+                                    readonly onClick="this.select();">
                             </div>
                         </div>
                     </div>
@@ -271,9 +359,11 @@
                         <div class="col-sm-10">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i
+                                            class="fas fa-copy"></i></button>
                                 </div>
-                                <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+                                <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}"
+                                    readonly onClick="this.select();">
                             </div>
                         </div>
                     </div>
@@ -282,9 +372,11 @@
                         <div class="col-sm-10">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('rtmpURI')"><i class="fas fa-copy"></i></button>
+                                    <button type="button" class="btn btn-primary" onclick="CopyDiv('rtmpURI')"><i
+                                            class="fas fa-copy"></i></button>
                                 </div>
-                                <input class="form-control" id="rtmpURI" type="text" value="{{rtmpURI}}" readonly onClick="this.select();">
+                                <input class="form-control" id="rtmpURI" type="text" value="{{rtmpURI}}" readonly
+                                    onClick="this.select();">
                             </div>
                         </div>
                     </div>
@@ -442,23 +534,23 @@
         }, 30000);
     </script>
 
-    <script type="text/javascript" charset="utf-8">
-        socket.on('upvoteTotalResponse', function (msg) {
-            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
-            if (msg['myUpvote'] === 'True') {
-                if (document.getElementById("upVoteIcon").classList.contains('far')) {
-                    document.getElementById("upVoteIcon").classList.remove('far');
-                    document.getElementById("upVoteIcon").classList.add('fas');
-                }
+<script type="text/javascript" charset="utf-8">
+    socket.on('upvoteTotalResponse', function (msg) {
+        document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+        if (msg['myUpvote'] === 'True'){
+            if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+                document.getElementById("upVoteIcon").classList.remove('far');
+                document.getElementById("upVoteIcon").classList.add('fas');
             }
-            else if (msg['myUpvote'] === 'False') {
-                if (document.getElementById("upVoteIcon").classList.contains('fas')) {
-                    document.getElementById("upVoteIcon").classList.remove('fas');
-                    document.getElementById("upVoteIcon").classList.add('far');
-                }
+        }
+        else if (msg['myUpvote'] === 'False'){
+            if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+                document.getElementById("upVoteIcon").classList.remove('fas');
+                document.getElementById("upVoteIcon").classList.add('far');
             }
-        });
-    </script>
+        }
+    });
+</script>
 
     <script>
         function changeUpvote() {
@@ -601,22 +693,22 @@
     </script>
 
     <script>
-    function toggleChannelSub(chanID) {
-        socket.emit('toggleChannelSubscription', { channelID: chanID });
-    }
+        function toggleChannelSub(chanID) {
+            socket.emit('toggleChannelSubscription', { channelID: chanID });
+        }
     </script>
     <script>
 
-    socket.on('sendChanSubResults', function (msg) {
-        var subButton = document.getElementById('chanSubStateButton');
-        if (msg['state'] === true) {
-            subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
-            subButton.className = "btn btn-sm btn-success";
-        } else {
-            subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
-            subButton.className = "btn btn-sm btn-outline-success";
-        }
-      });
+        socket.on('sendChanSubResults', function (msg) {
+            var subButton = document.getElementById('chanSubStateButton');
+            if (msg['state'] === true) {
+                subButton.innerHTML = "<i class='fas fa-star'></i>";
+                subButton.className = "btn btn-outline-success";
+            } else {
+                subButton.innerHTML = "<i class='far fa-star'></i>";
+                subButton.className = "btn btn-outline-secondary";
+            }
+        });
     </script>
 
     {% endblock %}

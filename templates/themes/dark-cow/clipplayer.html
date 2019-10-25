@@ -24,13 +24,6 @@
         <h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-secondary float-left m-2"><i class="fas fa-cut"></i>
             Clip</span></h6>{% if video.channel.protected %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
         <span class="d-none d-sm-none d-md-inline">Protected</span></span></h6>{% endif %}
-        <span class="float-right mx-1">
-            {% if current_user.is_authenticated %}
-          <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.recordedVideo.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
-            {% else %}
-          <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
-            {% endif %}
-        </span>
       </div>
     </div>
     <div class="col-lg-auto col-sm-12" style="width:450px;">
@@ -101,6 +94,13 @@
               <button type="button" class="btn btn-primary shadow mx-1" data-toggle="modal" data-target="#shareModal">
                 <i class="fas fa-share-alt"></i>
               </button>
+              <span class="float-right mx-1">
+                  {% if current_user.is_authenticated %}
+                <button id="chanSubStateButton" class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}</button>
+                  {% else %}
+                <button id="chanSubStateButton" class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i></button>
+                  {% endif %}
+              </span>
               <span class="float-right">
                 <button id="upvoteButton" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
                   <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
@@ -353,18 +353,18 @@
         document.getElementById(upvoteIconID).classList.remove('far');
         document.getElementById(upvoteIconID).classList.add('fas');
       }
-      if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-success')) {
-        document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
-        document.getElementById(upvoteButtonID).classList.add('btn-success');
+      if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-secondary')) {
+        document.getElementById(upvoteButtonID).classList.remove('btn-outline-secondary');
+        document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
       }
       if (msg['type'] === 'video') {
         if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('far')) {
           document.getElementById(upvoteIconID + 'Mobile').classList.remove('far');
           document.getElementById(upvoteIconID + 'Mobile').classList.add('fas');
         }
-        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-success')) {
-          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-success');
-          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-success');
+        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-secondary')) {
+          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-secondary');
+          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-success');
         }
       }
     }
@@ -373,18 +373,18 @@
         document.getElementById(upvoteIconID).classList.remove('fas');
         document.getElementById(upvoteIconID).classList.add('far');
       }
-      if (document.getElementById(upvoteButtonID).classList.contains('btn-success')) {
-        document.getElementById(upvoteButtonID).classList.remove('btn-success');
-        document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
+      if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-success')) {
+        document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
+        document.getElementById(upvoteButtonID).classList.add('btn-outline-secondary');
       }
       if (msg['type'] === 'video') {
         if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('fas')) {
           document.getElementById(upvoteIconID + 'Mobile').classList.remove('fas');
           document.getElementById(upvoteIconID + 'Mobile').classList.add('far');
         }
-        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-success')) {
-          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-success');
-          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-success');
+        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-success')) {
+          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-success');
+          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-secondary');
         }
       }
     }
@@ -442,16 +442,15 @@ function toggleChannelSub(chanID) {
 </script>
 <script>
 
-socket.on('sendChanSubResults', function (msg) {
-    var subButton = document.getElementById('chanSubStateButton');
-    if (msg['state'] === true) {
-        subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
-        subButton.className = "btn btn-sm btn-success";
-    } else {
-        subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
-        subButton.className = "btn btn-sm btn-outline-success";
-    }
-  });
-</script>
-
+    socket.on('sendChanSubResults', function (msg) {
+        var subButton = document.getElementById('chanSubStateButton');
+        if (msg['state'] === true) {
+            subButton.innerHTML = "<i class='fas fa-star'></i>";
+            subButton.className = "btn btn-outline-success";
+        } else {
+            subButton.innerHTML = "<i class='far fa-star'></i>";
+            subButton.className = "btn btn-outline-secondary";
+        }
+      });
+    </script>
 {% endblock %}

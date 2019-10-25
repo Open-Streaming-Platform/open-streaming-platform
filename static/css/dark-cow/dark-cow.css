@@ -60,6 +60,9 @@ color: #aaa !important;
 border: 1px solid #000 !important;
 border-radius: 0.1rem !important;
 }
+.btn-outline-success{
+    color: #3488db !important;
+} 
 .btn-success{
 	background-image: linear-gradient(#3488dbc7, #3488db 60%, #3488dbb0) !important;
 	color: #fff !important;
@@ -382,9 +385,10 @@ hr {
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
     border-radius: 20px; /* (height/2) + border-width */
-    border-style: none;
+    border-style: none !important;
 	border-width: 0px;
     color: #333;
+    background-color: #3A3F44 !important;
     -webkit-appearance: none;
 	-moz-appearance: none;
 }
