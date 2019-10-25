@@ -382,9 +382,10 @@ hr {
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
     border-radius: 20px; /* (height/2) + border-width */
-    border-style: none;
+    border-style: none !important;
 	border-width: 0px;
     color: #333;
+    background-color: #3A3F44 !important;
     -webkit-appearance: none;
 	-moz-appearance: none;
 }
