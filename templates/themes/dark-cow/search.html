@@ -1,0 +1,256 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% block head %}
+<title>{{sysSettings.siteName}} - Search</title>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="index-title-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Search</b></div>
+    </div>
+</div>
+
+{% if streamerList != [] %}
+<div class="container-fluid p-2" id="index-streams-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Streamers</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for streamer in streamerList %}
+                <div class="streamerCard py-1 mx-4">
+                    <a href="/streamers/{{streamer.id}}/">
+                        <img class="shadow lazy zoom" src="/images/{{streamer.pictureLocation}}"
+                            onerror="this.src='/static/img/user2.png';">
+                        <div class="card-data">
+                            <div class="card-cut-text"><b>{{streamer.username}}</b></div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if topicList != [] %}
+<div class="container-fluid p-2" id="index-topics-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Topics</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for topic in topicList %}
+                <div class="displayCard py-1 mx-4">
+                    <a href="/topic/{{topic.id}}/">
+                        <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}"
+                            onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-data">
+                            <div class="card-cut-text"><b>{{topic.name}}</b></div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if streamList != [] %}
+<div class="container-fluid p-2" id="index-live-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Live Now</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-between">
+                {% for stream in streamList %}
+                <div class="video-card bg-dark mx-4" style="max-width: 45rem;">
+                    <div class="row no-gutters">
+                        <div class="video-card-header">
+                            <a href="/view/{{stream.channel.channelLoc}}/">
+                                <img class="shadow lazy" {% if stream.channel.protected %}
+                                    src="/static/img/video-locked.jpg"
+                                    onerror="this.src='/static/img/video-locked.jpg';" {% else %}
+                                    src="/static/img/video-placeholder.jpg"
+                                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%"
+                                    data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
+                        </div>
+                        <div class="video-card-body ml-3">
+                            <b><i class="px-2 fas fa-tv"></i></b><span class="video-title"><a
+                                    href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName|limit_title}}</b></a></span><br />
+                            <b><i class="px-2 fas fa-podcast "></i></b><a href="/channel/{{stream.channel.id}}/">
+                                {{stream.channel.channelName}}</a>
+                            <span class="float-right"><span
+                                    class="ml-4 px-2 badge badge-danger">Live</span>{% if stream.channel.protected %}<span
+                                    class="badge badge-info"><i class="fas fa-user-lock"></i>
+                                    Protected</span>{% endif %}</span><br />
+                            <b><i class="px-2 fas fa-hashtag"></i></b><a href="/topic/{{stream.topic}}/">
+                                {{stream.topic|get_topicName}}<br></a>
+                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i>
+                                {{stream.id|get_Stream_Upvotes}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
+                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if channelList != [] %}
+<div class="container-fluid p-2" id="index-live-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Channels</b></div>
+    </div>
+
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for channel in ChannelList %}
+                <div class="channel-card bg-dark mx-4" style="max-width: 20rem;">
+                    <div class="channel-card-header">
+                        <a href="/channel/{{channel.id}}/">
+                            <img class="shadow lazy" height="180" width="320" src="/images/{{channel.imageLocation}}"
+                                onerror="this.src='/static/img/video-placeholder.jpg';"></a>
+                    </div>
+                    <div class="channel-card-body">
+                        <i class="fas fa-podcast mr-2"></i><span class="video-title"><a
+                                href="/channel/{{channel.id}}/"><b> {{channel.channelName}}</b></a></span>
+                        <span class="float-right">
+                            {% if channel.stream|length > 0 %}
+                            <span class="badge badge-danger">Live</span>
+                            {% else %}
+                            <span class="badge badge-secondary">Offline</span>
+                            {% endif %}
+                        </span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{channel.owningUser}}">
+                            {{channel.owningUser|get_userName}}</a>
+                        {% if channel.protected %}<span class="float-right"><span class="badge badge-info"><i
+                                    class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
+                        <i class="fas fa-hashtag mr-2"></i> <a
+                            href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a>
+                        <span class="float-right"><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if videoList != [] %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Videos</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for video in videoList %}
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
+                    <div class="video-card-header">
+                        <a href="/play/{{video.id}}">
+                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg"
+                                onerror="this.src='/static/img/video-locked.jpg';" {% else %}
+                                src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%"
+                                data-src="/videos/{{video.thumbnailLocation}}">
+                        </a>
+                    </div>
+                    <div class="video-card-body">
+                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b>
+                                    {{video.channelName|limit_title}}</b></a></span><br />
+                        {% if video.channel.protected %}<span class="float-right"><span class="badge badge-info"><i
+                                    class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/">
+                            {{video.channel.channelName}}</a>
+                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
+                            {{video.videoDate|normalize_date}}</span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}">
+                            {{video.owningUser|get_userName}}</a>
+                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a
+                                href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a></span><br />
+                        <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
+                        <i class="fas fa-eye mx-2"></i> {{video.views}}</span>
+                        <i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}</span>
+                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{video.length|hms_format}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if clipList != [] %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Clips</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for clip in clipList %}
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
+                    <div class="video-card-header">
+                        <a href="/clip/{{clip.id}}">
+                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%"
+                                data-src="/videos/{{clip.thumbnailLocation}}"
+                                onerror="this.src='/static/img/video-placeholder.jpg';">
+                        </a>
+                    </div>
+                    <div class="video-card-body">
+                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/clip/{{clip.id}}"><b>
+                                    {{clip.clipName|limit_title}}</b></a></span><br />
+                        <span class="float-right"><span class="badge badge-secondary ml-2"><i
+                                    class="fas fa-user-lock"></i>
+                                Clip</span></span>{% if clip.recordedVideo.channel.protected %}<span
+                            class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i>
+                                Protected</span></span>{% endif %}<br />
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/">
+                            {{clip.recordedVideo.channel.channelName}}</a>
+                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
+                            {{clip.recordedVideo.videoDate|normalize_date}}</span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}">
+                            {{clip.recordedVideo.owningUser|get_userName}}</a>
+                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a
+                                href="/topic/{{clip.recordedVideo.topic}}/">
+                                {{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                        <i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
+                        <i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
+                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{clip.length|hms_format}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if clipList == [] and channelList == [] and topicList == [] and streamerList == [] and videoList == [] and clipList == [] %}
+<div class="container-fluid p-2" id="index-empty-container">
+    <div class="row m-2">
+        <div class="col">
+            <p>Nothing to see here.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
