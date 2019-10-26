@@ -30,7 +30,7 @@
     <div class="col-lg col-xs-12 col-sm-12">
       <div class="index-video-title ml-2 my-2">
         <span class="float-left" id="channelName">{{video.channelName}}</span>{% if video.channel.protected %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
-        <span class="d-none d-sm-none d-md-inline">Protected</span></span></h6>{% endif %}
+            <span class="d-none d-sm-none d-md-inline">Protected</span></span></h6>{% endif %}
       </div>
     </div>
     <div class="col-lg-auto col-sm-12" style="width:450px;">
@@ -53,96 +53,62 @@
         </div>
         <div class="row m-2">
           <div class="video-buttons-row">
-            <div class="video-buttons-mobile d-none mt-2">
-              {% if video.owningUser == current_user.id %}
-              <span class="float-left" style="margin-right: 10px">
+            <span class="float-left">
+              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a><br />
+              <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a>
+            </span>
+            <span class="float-right ml-2">
+              <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
+              <i class="fas fa-users"></i> {{video.views}}
+            </span>
+            <span class="float-right mx-1">
+              <span class="float-right mx-1">
                 <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                  <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
+                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download
+                      Video</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
+                      Create Comment</a>
+                    <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share Video</a>
+                  </div>
+                  <span class="float-right mx-1">
+                    {% if current_user.is_authenticated %}
+                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}</button>
+                    {% else %}
+                    <button id="chanSubStateButton" class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i></button>
+                    {% endif %}
+                  </span>
+                  <span class="float-right">
+                    <button id="upvoteButton" type="button" class="btn btn-outline-secondary" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
+                      <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                    </button>
+                  </span>
+                </div>
+              </span>
+              {% if video.owningUser == current_user.id %}
+              <span class="float-right">
+                <div class="btn-group" role="group">
+                  <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
+                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create
+                      Thumbnail</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
+                    <a class="dropdown-item" href="#" onclick="openClipModal();"><i class="fas fa-cut"></i> Create a
+                      Clip</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
                   </div>
                 </div>
               </span>
               {% endif %}
-              <span class="float-left">
-                <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
-                <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
-              </span>
-              <span class="float-right">
-                <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
-                <i class="fas fa-users"></i> {{video.views}}
-              </span>
-              <span class="float-right" style="margin-right: 10px">
-                <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary ml-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
-                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download video</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
-                      Create comment</a>
-                    <a class="dropdown-item" href="#" class="btn btn-primary" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share video</a>
-                  </div>
-                  <span class="float-right">
-                    <button id="upvoteButtonMobile" type="button" class="btn btn-outline-secondary " onclick="changeUpvote('video',{{video.id}});" title="Upvote">
-                      <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
-                    </button>
-                  </span>
-                </div>
-              </span>
-
-            </div>
-            <span class="float-left">
-              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a><br />
-              <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
             </span>
-            <span class="float-right">
-              <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
-              <i class="fas fa-users"></i> {{video.views}}
-            </span>
-            <span class="float-right" style="margin-right: 10px">
-                <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary mx-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-bars"></i></button>
-                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download Video</a>
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}><i class="fas fa-comment"></i>
-                      Create Comment</a>
-                      <a class="dropdown-item" href="#" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i> Share Video</a>
-                    </div>
-                    <span class="float-right mx-1">
-                        {% if current_user.is_authenticated %}
-                      <button id="chanSubStateButton" class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}</button>
-                        {% else %}
-                      <button id="chanSubStateButton" class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i></button>
-                        {% endif %}
-                    </span>
-                    <span class="float-right">
-                      <button id="upvoteButton" type="button" class="btn btn-outline-secondary" onclick="changeUpvote('video',{{video.id}});" title="Upvote">
-                          <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-                        </button>
-                      </span>
-                    </div>
-                  </span>
-                  {% if video.owningUser == current_user.id %}
-                  <span class="float-right">
-                    <div class="btn-group" role="group">
-                      <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
-                      <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i> Move to Channel</a>
-                        <a class="dropdown-item" href="#" onclick="openClipModal();"><i class="fas fa-cut"></i> Create a Clip</a>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
-                      </div>
-                    </div>
-                  </span>
-                  {% endif %}
           </div>
         </div>
         <!-- <hr style="width: 100%;"> -->
         <div class="row m-2">
-          <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
+          <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p>
+            {% else %}No Description Available {% endif %}</div>
         </div>
         {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
         <div class="row m-2">
@@ -160,10 +126,8 @@
               </div>
               <div class="col-lg-2 col-md-2">
                 <div class="float-md-right float-left">
-                  {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
-                      class="fas fa-thumbs-up"></i>
-                    {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
-                        class="far fa-thumbs-up"></i>
+                  {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="fas fa-thumbs-up"></i>
+                    {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
                       {% endif %}
                       <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
                     {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
@@ -190,18 +154,22 @@
             <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
               <div class="video-card-header">
                 <a href="/play/{{video.id}}">
-                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
+                  <img class="shadow lazy card-img-top" width="100%" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
 
                 </a>
               </div>
               <div class="video-card-body">
-                <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b> {{video.channelName|limit_title}}</b></a></span><br />
+                <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b>
+                      {{video.channelName|limit_title}}</b></a></span><br />
                 {% if video.channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
-                <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
-                <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
-                <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a></span><br />
+                <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/">
+                  {{video.channel.channelName}}</a>
+                <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
+                  {{video.videoDate|normalize_date}}</span><br />
+                <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}">
+                  {{video.owningUser|get_userName}}</a>
+                <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{video.topic}}/">
+                    {{video.topic|get_topicName}}</a></span><br />
                 <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
                 <i class="fas fa-eye mx-2"></i> {{video.views}}</span>
                 <i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}</span>
@@ -411,12 +379,12 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-     <div class="modal-body">
+      <div class="modal-body">
         <div style="margin: 0 auto;width: 99%; text-align: center;">
-          <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
-            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
-          <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
-            onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+          <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share
+            on Facebook</button>
+          <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;" onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share
+            on Twitter</button>
         </div>
         <br>
         <div class="form-check form-check-inline">
@@ -428,7 +396,7 @@
           <div class="col-sm-10">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
               </div>
               <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
             </div>
@@ -439,7 +407,7 @@
           <div class="col-sm-10">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+                <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
               </div>
               <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
             </div>
@@ -513,11 +481,11 @@
 </script>
 
 <script>
-    var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
-    var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
-    {% if video.owningUser == current_user.id %}
-    var simplemde3 = new SimpleMDE({ element: document.getElementById("clipDescription") });
-    {% endif %}
+  var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
+  var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+  {% if video.owningUser == current_user.id %}
+  var simplemde3 = new SimpleMDE({ element: document.getElementById("clipDescription") });
+  {% endif %}
 </script>
 
 
@@ -547,7 +515,6 @@
     }
 
     document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];
-    document.getElementById(upvoteDivID + 'Mobile').innerHTML = msg['totalUpvotes'];
 
     if (msg['myUpvote'] === 'True') {
       if (document.getElementById(upvoteIconID).classList.contains('far')) {
@@ -558,16 +525,6 @@
         document.getElementById(upvoteButtonID).classList.remove('btn-outline-secondary');
         document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
       }
-      if (msg['type'] === 'video') {
-        if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('far')) {
-          document.getElementById(upvoteIconID + 'Mobile').classList.remove('far');
-          document.getElementById(upvoteIconID + 'Mobile').classList.add('fas');
-        }
-        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-secondary')) {
-          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-secondary');
-          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-success');
-        }
-      }
     }
     else if (msg['myUpvote'] === 'False') {
       if (document.getElementById(upvoteIconID).classList.contains('fas')) {
@@ -577,16 +534,6 @@
       if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-success')) {
         document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
         document.getElementById(upvoteButtonID).classList.add('btn-outline-secondary');
-      }
-      if (msg['type'] === 'video') {
-        if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('fas')) {
-          document.getElementById(upvoteIconID + 'Mobile').classList.remove('fas');
-          document.getElementById(upvoteIconID + 'Mobile').classList.add('far');
-        }
-        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-success')) {
-          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-success');
-          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-secondary');
-        }
       }
     }
   });
@@ -615,30 +562,29 @@
 
 {% if startTime != None %}
 <script>
-  player.currentTime({{startTime}});
+  player.currentTime({{ startTime }});
   player.play();
 </script>
 {% endif %}
 
 <script>
   function toggleShareTimestamp() {
-    if (document.getElementById('shareTimestamp').checked)
-    {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime='.replace('?startTime={{startTime}}','') + player.currentTime() + '" width=600 height=345></iframe>';
-        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','') + '?startTime=' + player.currentTime();
+    if (document.getElementById('shareTimestamp').checked) {
+      document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True&startTime='.replace('?startTime={{startTime}}', '') + player.currentTime() + '" width=600 height=345></iframe>';
+      document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}', '') + '?startTime=' + player.currentTime();
     } else {
-        document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime={{startTime}}','');
-        document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}','');
+      document.getElementById('embedURLInput').value = '<iframe src="{{request.url}}?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime={{startTime}}', '');
+      document.getElementById('linkShareInput').value = '{{request.url}}'.replace('?startTime={{startTime}}', '');
     }
   }
 </script>
 
 <script>
-    function CopyDiv(divVal) {
-      var copyText = document.getElementById(divVal);
-      copyText.select();
-      document.execCommand("copy");
-    }
+  function CopyDiv(divVal) {
+    var copyText = document.getElementById(divVal);
+    copyText.select();
+    document.execCommand("copy");
+  }
 </script>
 
 {% if video.owningUser == current_user.id %}
@@ -676,20 +622,20 @@
 {% endif %}
 
 <script>
-function toggleChannelSub(chanID) {
+  function toggleChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });
-}
+  }
 </script>
 <script>
 
-socket.on('sendChanSubResults', function (msg) {
+  socket.on('sendChanSubResults', function (msg) {
     var subButton = document.getElementById('chanSubStateButton');
     if (msg['state'] === true) {
-        subButton.innerHTML = "<i class='fas fa-star'></i>";
-        subButton.className = "btn btn-outline-success";
+      subButton.innerHTML = "<i class='fas fa-star'></i>";
+      subButton.className = "btn btn-outline-success";
     } else {
-        subButton.innerHTML = "<i class='far fa-star'></i>";
-        subButton.className = "btn btn-outline-secondary";
+      subButton.innerHTML = "<i class='far fa-star'></i>";
+      subButton.className = "btn btn-outline-secondary";
     }
   });
 </script>
