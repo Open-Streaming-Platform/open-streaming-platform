@@ -2441,7 +2441,7 @@ def settings_dbRestore():
                 user.active = eval(restoredUser['active'])
                 user.biography = restoredUser['biography']
                 if restoredUser['confirmed_at'] != "None":
-                    user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
+                    user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S')
                 db.session.commit()
 
             ## Restore Topics
@@ -2516,7 +2516,7 @@ def settings_dbRestore():
                                                             int(restoredVideo['topic']), int(restoredVideo['views']),
                                                             restoredVideo['videoLocation'],
                                                             datetime.datetime.strptime(restoredVideo['videoDate'],
-                                                                                       '%Y-%m-%d %H:%M:%S.%f'),
+                                                                                       '%Y-%m-%d %H:%M:%S'),
                                                             eval(restoredVideo['allowComments']))
                         video.id = int(restoredVideo['id'])
                         video.description = restoredVideo['description']
@@ -2559,8 +2559,8 @@ def settings_dbRestore():
                                         restoredAPIKey['description'], 0)
                     key.id = int(restoredAPIKey['id'])
                     key.key = restoredAPIKey['key']
-                    key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
-                    key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S')
+                    key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S')
                     db.session.add(key)
                 else:
                     flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
@@ -2606,7 +2606,7 @@ def settings_dbRestore():
                 if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
                     view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
                     view.id = int(restoredView['id'])
-                    view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
+                    view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S')
                     db.session.add(view)
             db.session.commit()
 
@@ -2622,7 +2622,7 @@ def settings_dbRestore():
                     code.id = int(restoredInviteCode['id'])
                     if restoredInviteCode['expiration'] != "None":
                         code.expiration = datetime.datetime.strptime(restoredInviteCode['expiration'],
-                                                                     '%Y-%m-%d %H:%M:%S.%f')
+                                                                     '%Y-%m-%d %H:%M:%S')
                     else:
                         code.expiration = None
                     code.uses = int(restoredInviteCode['uses'])
@@ -2642,9 +2642,9 @@ def settings_dbRestore():
                                                    int(restoredInvitedViewer['channelID']), 0, None)
                     invite.id = int(restoredInvitedViewer['id'])
                     invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'],
-                                                                  '%Y-%m-%d %H:%M:%S.%f')
+                                                                  '%Y-%m-%d %H:%M:%S')
                     invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
-                                                                   '%Y-%m-%d %H:%M:%S.%f')
+                                                                   '%Y-%m-%d %H:%M:%S')
                     if 'inviteCode' in restoredInvitedViewer:
                         if restoredInvitedViewer['inviteCode'] != None:
                             invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
@@ -2665,7 +2665,7 @@ def settings_dbRestore():
                         comment = comments.videoComments(int(restoredComment['userID']), restoredComment['comment'],
                                                          int(restoredComment['videoID']))
                         comment.id = int(restoredComment['id'])
-                        comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                        comment.timestamp = datetime.datetime.strptime(restoredComment['timestamp'], '%Y-%m-%d %H:%M:%S')
                         db.session.add(comment)
                     else:
                         flash("Error Restoring Video Comment: ID# " + str(restoredComment['id']), "error")
