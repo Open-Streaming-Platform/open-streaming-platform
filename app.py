@@ -1703,6 +1703,7 @@ def upload_vid():
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
+        newLog(4, "File Upload Successful - Username:" + current_user.username)
 
         runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
@@ -1718,7 +1719,7 @@ def upload_vid():
                              "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
                              "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
 
-    newLog(4, "File Upload Successful - Username:" + current_user.username)
+
     db.session.close()
     flash("Video upload complete")
     return redirect(url_for('view_vid_page', videoID=newVideo.id))
