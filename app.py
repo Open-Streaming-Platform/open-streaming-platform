@@ -2,7 +2,7 @@
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response, session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered, confirm_instructions_sent
@@ -2792,7 +2792,8 @@ def settings_dbRestore():
                 themeData = json.load(f)
 
             flash("Database Restored from Backup", "success")
-            return redirect(url_for('admin_page', page="backup"))
+            session.clear()
+            return redirect(url_for('main_page', page="backup"))
 
     else:
         if settings.settings.query.all() != []:
