@@ -45,7 +45,7 @@
             <p>TBD</p>
             <h5 id="01">Transcoding</h5>
             <p>
-                <em>Transcoding</em> or <em>adaptive streaming</em> is possible with OSP. It can be enabled globally in the admin settings. However, this feature uses the CPU of the server to re-encode the streams and requires a lot of CPU power. It's possible to utilize GPUs instead by changeing the encoder used by ffmpeg in the <code>nginx-osp.conf</code>. Enabling transcoding will increase the stream latency to 15-20 seconds.
+                <em>Transcoding</em> or <em>adaptive streaming</em> is possible with OSP. It can be enabled globally in the admin settings. However, this feature uses the CPU of the server to re-encode the streams and requires a lot of CPU power. It's possible to utilize GPUs instead by changing the encoder used by ffmpeg in the <code>nginx-osp.conf</code>. Enabling transcoding will increase the stream latency. It may be necessary to increase the playlist length (see <a href="#03">Latency</a>).
             </p>
             <h5 id="01">Latency</h5>
             <p>
