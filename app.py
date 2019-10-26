@@ -276,6 +276,7 @@ def init_db_values():
 
         app.config['SERVER_NAME'] = None
         app.config['SECURITY_EMAIL_SENDER'] = sysSettings.smtpSendAs
+        app.config['MAIL_DEFAULT_SENDER'] = sysSettings.smtpSendAs
         app.config['MAIL_SERVER'] = sysSettings.smtpAddress
         app.config['MAIL_PORT'] = sysSettings.smtpPort
         app.config['MAIL_USE_SSL'] = sysSettings.smtpSSL
@@ -2179,6 +2180,7 @@ def admin_page():
             app.config.update(
                 SERVER_NAME=None,
                 SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
                 MAIL_SERVER=sysSettings.smtpAddress,
                 MAIL_PORT=sysSettings.smtpPort,
                 MAIL_USE_SSL=sysSettings.smtpSSL,
@@ -2410,6 +2412,7 @@ def settings_dbRestore():
                 app.config.update(
                     SERVER_NAME=None,
                     SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                    MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
                     MAIL_SERVER=sysSettings.smtpAddress,
                     MAIL_PORT=sysSettings.smtpPort,
                     MAIL_USE_TLS=sysSettings.smtpTLS,
@@ -3120,6 +3123,7 @@ def initialSetup():
                 app.config.update(
                     SERVER_NAME=None,
                     SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
+                    MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
                     MAIL_SERVER=sysSettings.smtpAddress,
                     MAIL_PORT=sysSettings.smtpPort,
                     MAIL_USE_TLS=sysSettings.smtpTLS,
