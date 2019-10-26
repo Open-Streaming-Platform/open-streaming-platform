@@ -7,15 +7,17 @@
 {% block body %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h1 id="top">Help</h1>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <ul class="list-unstyled">
                 <li><a href="#0">Streaming to OSP</a></li>
                 <ul>
                     <li><a href="#00">With OBS</a></li>
                     <li><a href="#01">With ffmpeg</a></li>
+                    <li><a href="#02">Transcoding</a></li>
+                    <li><a href="#03">Latency</a></li>
                 </ul>
                 <li><a href="#1">Webhooks</a></li>
                 <ul>
@@ -30,42 +32,58 @@
                 <li><a href="#5">Channel Protection</a></li>
             </ul>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="0">Streaming to OSP</h3>
-            <p>meep</p>
+            <p>
+                In order to stream to OSP, a channel with a valid stream key is needed. After creating a channel, the streaming program must be set to the corresponding URL<br>
+                <code class="ml-4">rtmp://{{sysSettings.siteAddress}}/stream/&lt;steam-key&gt;</code><br>
+                Note that only registered users with the <em>streamer</em> role are able to stream to OSP.
+            </p>
             <h5 id="00">With OBS</h5>
-            <p>meep</p>
+            <p>TBD</p>
             <h5 id="01">With ffmpeg</h5>
-            <p>meep</p>
+            <p>TBD</p>
+            <h5 id="01">Transcoding</h5>
+            <p>
+                <em>Transcoding</em> or <em>adaptive streaming</em> is possible with OSP. It can be enabled globally in the admin settings. However, this feature uses the CPU of the server to re-encode the streams and requires a lot of CPU power. It's possible to utilize GPUs instead by changeing the encoder used by ffmpeg in the <code>nginx-osp.conf</code>. Enabling transcoding will increase the stream latency to 15-20 seconds.
+            </p>
+            <h5 id="01">Latency</h5>
+            <p>
+                OSP uses HLS to serve RTMP streams to clients. This brings a certain latency by design. The default configuration of nginx is fine-tuned to reduce the latency as far as possible while providing stable HLS streams. For this configuration it is imporant that the encoder sends a keyframe every second! The latency should be 4.5 to 5 seconds.<br>
+                If streams are buffering, it's most likely because of a suboptimal network connection. In this case, increase the <code>hls_playlist_length</code> in the <code>nginx-rtmp.conf</code>. The latency will increase with a longer playlist length.
+            </p>
+            <p>
+                RTMP capable players (e.g. <a href="https://www.videolan.org">VLC</a>) can access the RTMP stream directly. The URL is available in the <em>share</em> dialog below the stream. The latency of the RTMP stream should be 1 to 2 seconds.
+            </p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="1">Webhooks</h3>
-            <p>meep</p>
+            <p>TBD</p>
             <h5 id="10">Examples</h5>
-            <p>meep</p>
+            <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="2">API</h3>
-            <p>meep</p>
+            <p>TBD</p>
             <h5 id="20">Examples</h5>
-            <p>meep</p>
+            <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="3">Clips</h3>
-            <p>meep</p>
+            <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="4">Video uploads</h3>
-            <p>meep</p>
+            <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-10 mx-auto">
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h3 id="5">Channel protection</h3>
-            <p>meep</p>
+            <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
     </div>
