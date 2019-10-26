@@ -366,7 +366,7 @@ def formatSiteAddress(systemAddress):
             return systemAddress
 
 def getVidLength(input_video):
-    result = subprocess.check_output(['ffprobe', '-i', input_video, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=%s' % ("p=0")])
+    result = subprocess.check_output(['ffprobe', '-i', input_video, '-show_entries', 'format=duration', '-loglevel', '8', '-of', 'csv=%s' % ("p=0")])
     return float(result)
 
 def get_Video_Upvotes(videoID):
