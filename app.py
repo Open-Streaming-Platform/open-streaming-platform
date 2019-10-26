@@ -522,18 +522,20 @@ def processWebhookVariables(payload, **kwargs):
 def processSubscriptions(channelID, subject, message):
     sysSettings = settings.settings.query.first()
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
-    newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
-    with mail.connect() as conn:
-        for sub in subscriptionQuery:
-            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
-            if userQuery != None:
-                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
-                msg = Message(subject, recipients=[userQuery.email])
-                msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-                msg.body = finalMessage
-                msg.html = finalMessage
-                conn.send(msg)
-    return True
+    if subscriptionQuery != []:
+        newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
+        with mail.connect() as conn:
+            for sub in subscriptionQuery:
+                userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+                if userQuery != None:
+                    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                    msg = Message(subject, recipients=[userQuery.email])
+                    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+                    msg.body = finalMessage
+                    msg.html = finalMessage
+                    conn.send(msg)
+        return True
+    return False
 
 def prepareHubJSON():
     topicQuery = topics.topics.query.all()
