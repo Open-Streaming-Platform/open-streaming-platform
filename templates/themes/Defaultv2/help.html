@@ -22,6 +22,10 @@
                 <li><a href="#1">Webhooks</a></li>
                 <ul>
                     <li><a href="#10">Examples</a></li>
+                    <ul>
+                        <li><a href="#100">Discord</a></li>
+                        <li><a href="#101">Rocket.Chat</a></li>
+                    </ul>
                 </ul>
                 <li><a href="#2">API</a></li>
                 <ul>
@@ -33,24 +37,27 @@
             </ul>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="0">Streaming to OSP</h3>
+            <h2 id="0">Streaming to OSP</h2>
             <p>
                 In order to stream to OSP, a channel with a valid stream key is needed. After creating a channel, the streaming program must be set to the corresponding URL<br>
-                <code class="ml-4">rtmp://{{sysSettings.siteAddress}}/stream/&lt;steam-key&gt;</code><br>
+                <code class="text-success ml-4">rtmp://{{sysSettings.siteAddress}}/stream/&lt;steam-key&gt;</code><br>
                 Note that only registered users with the <em>streamer</em> role are able to stream to OSP.
             </p>
-            <h5 id="00">With OBS</h5>
+            <h4 id="00">With OBS</h4>
             <p>TBD</p>
-            <h5 id="01">With ffmpeg</h5>
+            <h4 id="01">With ffmpeg</h4>
             <p>TBD</p>
-            <h5 id="01">Transcoding</h5>
+            <h4 id="01">Transcoding</h4>
             <p>
-                <em>Transcoding</em> or <em>adaptive streaming</em> is possible with OSP. It can be enabled globally in the admin settings. However, this feature uses the CPU of the server to re-encode the streams and requires a lot of CPU power. It's possible to utilize GPUs instead by changing the encoder used by ffmpeg in the <code>nginx-osp.conf</code>. Enabling transcoding will increase the stream latency. It may be necessary to increase the playlist length (see <a href="#03">Latency</a>).
+                <em>Transcoding</em> or <em>adaptive streaming</em> is possible with OSP. It can be enabled globally in the admin settings. However, this feature uses the CPU of the server to re-encode the streams and requires a lot of CPU power. It's possible to utilize GPUs instead by changing the encoder used by ffmpeg in the <code class="text-success">osp-rtmp.conf</code>. Enabling transcoding will increase the stream latency. It may be necessary to increase the playlist length (see <a href="#03">Latency</a>).
             </p>
-            <h5 id="01">Latency</h5>
+            <p>
+                By default, nginx has been configured to transcode 1080p, 720p, 480p, & 360p. You can optimize how streams are transcoded by editing the <code class="text-success">osp-rtmp.conf</code> file and following the instructions <a href="https://licson.net/post/setting-up-adaptive-streaming-with-nginx/">here</a>.
+            </p>
+            <h4 id="01">Latency</h4>
             <p>
                 OSP uses HLS to serve RTMP streams to clients. This brings a certain latency by design. The default configuration of nginx is fine-tuned to reduce the latency as far as possible while providing stable HLS streams. For this configuration it is imporant that the encoder sends a keyframe every second! The latency should be 4.5 to 5 seconds.<br>
-                If streams are buffering, it's most likely because of a suboptimal network connection. In this case, increase the <code>hls_playlist_length</code> in the <code>nginx-rtmp.conf</code>. The latency will increase with a longer playlist length.
+                If streams are buffering, it's most likely because of a suboptimal network connection. In this case, increase the <code class="text-success">hls_playlist_length</code> in the <code class="text-success">osp-rtmp.conf</code>. The latency will increase with a longer playlist length.
             </p>
             <p>
                 RTMP capable players (e.g. <a href="https://www.videolan.org">VLC</a>) can access the RTMP stream directly. The URL is available in the <em>share</em> dialog below the stream. The latency of the RTMP stream should be 1 to 2 seconds.
@@ -58,31 +65,130 @@
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="1">Webhooks</h3>
-            <p>TBD</p>
-            <h5 id="10">Examples</h5>
+            <h2 id="1">Webhooks</h2>
+            <p>
+                OSP can send HTTP requests (GET,POST,PUT,DELETE) to notify other services about various triggers. Webhooks can be set globally in the admin settings and per channel by users. The HTTP requests are entirely definable (see <a href="#10">Examples</a> below).<br>
+            </p>
+            <p>
+                Currently supported triggers:
+            </p>
+            <ul>
+                <li>At the Start of a Live Stream</li>
+                <li>At the End of a Live Stream</li>
+                <li>On a New Viewer Joining a Live Stream</li>
+                <li>On a Stream Upvote</li>
+                <li>On a Stream Metadata Change (Name/Topic)</li>
+                <li>On a Stream Chat Message</li>
+                <li>On Posting of a New Video to a Channel</li>
+                <li>On a New Video Comment</li>
+                <li>On a Video Upvote</li>
+                <li>On a Video Metadata Change (Name/Topic)</li>
+            </ul>
+            <p>
+                When defining a webhook payload, various variables can be set which will be replaced with live data at the time the webhook is run. Webhook variables are defined as the following:
+            </p>
+            <ul>
+                <li>%channelname%</li>
+                <li>%channelurl%</li>
+                <li>%channeltopic%</li>
+                <li>%channelimage%</li>
+                <li>%streamer%</li>
+                <li>%channeldescription%</li>
+                <li>%streamname%</li>
+                <li>%streamurl%</li>
+                <li>%streamtopic%</li>
+                <li>%streamimage%</li>
+                <li>%user%</li>
+                <li>%userpicture%</li>
+                <li>%videoname%</li>
+                <li>%videodate%</li>
+                <li>%videodescription%</li>
+                <li>%videotopic%</li>
+                <li>%videourl%</li>
+                <li>%videothumbnail%</li>
+                <li>%comment%</li>
+            </ul>
+            <h4 id="10">Examples</h4>
+            <h5 id="100">Discord</h5>
+            <p>
+                Type: <b>POST</b><br>
+                Trigger event: <b>Stream start</b>
+            </p>
+            <p>
+                <b>Header</b>
+            </p>
+            <pre class="px-2 mx-5"><code>
+{
+    "Content-Type": "application/json"
+}
+            </code></pre>
+            <p>
+                <b>Payload</b>
+            </p>
+            <pre class="px-2 m-5"><code>
+{
+    "content": "%channelname% went live on OSP Test",
+    "username": "OSP Bot",
+    "embeds": [
+        {
+            "title": "%streamurl%",
+            "url": "%streamurl%",
+            "color": 6570404,
+            "image": {
+            "url": "%channelimage%"
+        },
+        "author": {
+            "name": "%streamer% is now streaming"
+        },
+        "fields": [
+            {
+                "name": "Channel",
+                "value": "%channelname%",
+                "inline": true
+            },
+            {
+                "name": "Topic",
+                "value": "%streamtopic%",
+                "inline": true
+            },
+            {
+                "name": "Stream Name",
+                "value": "%streamname%",
+                "inline": true
+            },
+            {
+                "name": "Description",
+                "value": "%channeldescription%",
+                "inline": true
+            }
+        ]
+        }
+    ]
+}
+            </code></pre>
+            <h5 id="101">Rocket.Chat</h5>
             <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="2">API</h3>
+            <h2 id="2">API</h2>
             <p>TBD</p>
-            <h5 id="20">Examples</h5>
-            <p>TBD</p>
-            <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
-        </div>
-        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="3">Clips</h3>
+            <h4 id="20">Examples</h4>
             <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="4">Video uploads</h3>
+            <h2 id="3">Clips</h2>
             <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
-            <h3 id="5">Channel protection</h3>
+            <h2 id="4">Video uploads</h2>
+            <p>TBD</p>
+            <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
+        </div>
+        <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
+            <h2 id="5">Channel protection</h2>
             <p>TBD</p>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
