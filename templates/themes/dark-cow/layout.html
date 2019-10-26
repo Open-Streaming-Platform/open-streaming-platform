@@ -43,7 +43,7 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
         <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
-            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome;height:14px;" aria-label="Search" size="24">
+            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:FontAwesome;height:14px;" aria-label="Search" size="24">
         </form>
         <li class="nav-item">
           <a class="nav-link" href="/channels">Channels</a>
@@ -77,6 +77,7 @@
             {% endif %}
             <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API keys</a>
             {% endif %}
+            <a class="dropdown-item" href="/settings/user/subscriptions"><i class="fas fa-star"></i> Subscriptions</a>
             <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
             <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
           </div>
