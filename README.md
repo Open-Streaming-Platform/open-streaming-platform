@@ -65,6 +65,8 @@ OSP's Git Branches are setup in the following configuration
 ### Requirements
 * Ubuntu 18.04 or Later, Debian 10 or Later
 * Python 3.7 or later
+* MySQL 5.7.7 or later, if using MySQL instead of SQLite
+* SMTP Mail Server for Email Address Validation and Subscriptions
 
 ### Standard Install
 OSP has been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
@@ -217,6 +219,14 @@ systemctl start osp.service
 ```
 http://<ip or host>/
 ```
+
+### Database
+By default, OSP uses SQLite for its database.  However, in most cases it is recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.
+
+When configuring OSP to use MySQL, you must change the DB path in the /opt/osp/conf/config.py file to match the following format (Without Brackets):
+```
+dbLocation='mysql+pymysql://<dbUser>:<dbPassword>@<dbIP>:3306/<dbName>?charset=utf8'
+``` 
 
 ### Usage
 

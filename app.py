@@ -1715,11 +1715,13 @@ def upload_vid():
                    videotopic=get_topicName(newVideo.topic),
                    videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                    videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
-        processSubscriptions(ChannelQuery.id,
+        try:
+            processSubscriptions(ChannelQuery.id,
                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
                              "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
                              "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
-
+        except:
+            newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
     db.session.close()
     flash("Video upload complete")
@@ -3544,10 +3546,13 @@ def rec_Complete_handler():
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
-    processSubscriptions(requestedChannel.id,
+    try:
+        processSubscriptions(requestedChannel.id,
                          sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                          "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+    except:
+        newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
     while not os.path.exists(fullVidPath):
         time.sleep(1)
