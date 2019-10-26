@@ -102,7 +102,11 @@
                                             {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}}
                                             {% endif %}</a></span>
                                 </span>
-
+                                <span class="float-right">
+                                        <i class="fas fa-users mx-2"></i> {{channel.views}}<br />
+                                        <i class="fas fa-eye mx-2"></i> <span
+                                            id="currentViewers">{{channel.currentViewers}}</span>
+                                </span>
                                 <span class="float-right">
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop1" type="button"
@@ -145,11 +149,6 @@
                                         {% endif %}>
                                         <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                                     </button>
-                                </span>
-                                <span class="float-right">
-                                    <i class="fas fa-users mx-2"></i> {{channel.views}}<br />
-                                    <i class="fas fa-eye mx-2"></i> <span
-                                        id="currentViewers">{{channel.currentViewers}}</span>
                                 </span>
                             </div>
                         </div>
