@@ -25,7 +25,6 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 
 ## Planned Features:
- - Subscribe to a Channel and Get Notified on When a New Stream Starts.
  - Connect to the Open Streaming Platform Hub, an upcoming central service showing all videos, streams, and creators who opt-in to participate and connect their OSP Servers.
 
 ## Tech
