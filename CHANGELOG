@@ -21,6 +21,7 @@ Beta-3
 - Added a new configuration variable in the Admin Settings to specify if the site is being served by http or https
 - Added Server Admin logs for Events and framework for adding additional log entries in the future
 - Fixed Method for determining current viewers of a Live Stream, making the value more accurate
+- Upgraded FFMPEG to 4.2 as default for OSP Installs
 - Reworked the Nginx.conf file to split off the OSP specific into their own included osp-*.conf files to reduce the need of reworking the single file
 - Added HTTP2 Support to the default install of OSP.  Upgrading Users should run the Manual Install Procedures to Upgrade their Nginx systems to the most recent build to add support
 - Reworked Admin Pages to Return the the last Tab on Settings Changes
