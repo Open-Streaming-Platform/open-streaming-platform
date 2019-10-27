@@ -29,7 +29,7 @@
                 </ul>
                 <li><a href="#2">API</a></li>
                 <ul>
-                    <li><a href="#20">Examples</a></li>
+                    <li><a href="#21">Example</a></li>
                 </ul>
                 <li><a href="#3">Clips</a></li>
                 <li><a href="#4">Video Uploads</a></li>
@@ -172,9 +172,23 @@
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
             <h2 id="2">API</h2>
-            <p>TBD</p>
-            <h4 id="20">Examples</h4>
-            <p>TBD</p>
+            <p>
+                OSP provides a self-documenting API using <a href="https://swagger.io">swagger.io</a>. The API can be accessed at <a href="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/apiv1">{{sysSettings.siteAddress}}/apiv1</a>. For authenticated endpoints, an API key is needed, which can be created by users with the <em>streamer</em> role in the user menu to the top right. Requests to authenticated endpoints must have the <code class="text-success">'X-API-KEY':</code> header field set with a valid API key.
+            </p>
+            <h5 id="21">Example</h5>
+            <p>
+                In this example a chat message is sent to a chat channel endpoint.
+            </p>
+            <p>
+                Username: botname<br>
+                Message: beep bob<br>
+                Endpoint: channels/chat/72223bf3-be79-4a2a-88d9-c7bdce271f0e<br>
+                API key: d26de1eb2d48a784e109b29025632fc1a0211a2ffbede09672c8cf6f4321fb0000c49cb243e2d07e
+            </p>
+            <pre class="px-2 mx-5"><code>
+curl -X POST "http://localhost/apiv1/channels/chat/72223bf3-be79-4a2a-88d9-c7bdce271f0e?username=botname&message=beep%20bop" \
+-H  "accept: application/json" -H  "X-API-KEY: d26de1eb2d48a784e109b29025632fc1a0211a2ffbede09672c8cf6f4321fb0000c49cb243e2d07e"
+            </code></pre>
             <a href="#top"><i class="fas fa-arrow-circle-up"></i> top</a>
         </div>
         <div class="pt-4 col-sm-12 col-md-10 col-lg-8 mx-auto">
