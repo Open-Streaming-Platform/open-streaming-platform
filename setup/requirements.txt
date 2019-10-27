@@ -9,7 +9,7 @@ Flask-Migrate==2.5.2
 Flask-Principal==0.4.0
 flask-restplus==0.12.1
 Flask-Script==2.0.6
-Flask-Security==3.0.0
+git+https://github.com/mattupstate/flask-security
 Flask-SocketIO==4.1.0
 Flask-SQLAlchemy==2.4.0
 Flask-Uploads==0.2.1
@@ -37,3 +37,5 @@ Werkzeug==0.15.4
 WTForms==2.2.1
 requests==2.18.4
 flask-markdown==0.3
+xmltodict==0.12.0
+apscheduler==3.6.1

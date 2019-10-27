@@ -179,8 +179,15 @@ body {
 .chatpopout {
     overflow-y: auto;
     overflow-x: hidden;
-    height: 640px;
     padding: 5px 5px 5px 5px;
+    max-height: calc(100vh - 150px);
+}
+
+.chatpopout-nobar {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 5px 5px 5px 5px;
+    max-height: calc(100vh);
 }
 
 .chatBar-Item {
@@ -209,7 +216,8 @@ body {
 
 .chatbox {
     height: 540px;
-    width:425px;
+    width:100%;
+    margin-bottom:15px;
 }
 
 .chatbox textarea {
@@ -219,6 +227,22 @@ body {
 #chatside {
     border-left: 1px solid #eeeeee;
     width:475px;
+}
+
+.chatbox-popout {
+    height:100%;
+    width:100%;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.chat-popout-bottom {
+    height:100px;
+    position: fixed;
+    display: block;
+    bottom:25px;
+    width:100%;
+    padding-right:35px;
 }
 
 .streamcard-overlay {
@@ -242,13 +266,24 @@ body {
 .videoPanel{
     overflow-y: auto;
     max-height:90vh;
+    scrollbar-width: none;
 }
 
 .videoPanel::-webkit-scrollbar {
     width: 0 !important
 }
 
-
+.search {
+    -webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+    border-radius: 20px; /* (height/2) + border-width */
+    border-style: none;
+	border-width: 0px;
+    color: #333;
+    -webkit-appearance: none;
+	-moz-appearance: none;
+}
 
 @media screen and (min-width : 992px) and (max-width : 1854px) {
     .displayCard-other .card-data {

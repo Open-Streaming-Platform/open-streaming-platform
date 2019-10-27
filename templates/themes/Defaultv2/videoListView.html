@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+
 {% if channelData is defined %}
 <div class="container-fluid justify-content-center" style="width:100%">
     <div class="jumbotron shadow mt-2 p-3">
@@ -27,25 +28,59 @@
                     {% endif %}
                     {% if channelData.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                     <span>
-                        <p>{{channelData.description}}</p>
+                        <p>{{channelData.description|markdown}}</p>
                     </span><br>
-                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
+                    <span class="m-1">
+                        <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
+                    </span>
+                    <span class="m-1">
+                        {% if current_user.is_authenticated %}
+                        <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                        {% else %}
+                        <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
-{% if openStreams %}
 
-<div class="container-fluid p-2" id="index-videos-container">
+{% if streamerData is defined %}
+<div class="container-fluid justify-content-center" style="width:100%">
+    <div class="jumbotron shadow p-3">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
+                <div>
+                    <img class="shadow" src="/images/{{streamerData.pictureLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                <div class="h-100 viewerText">
+                    <h2 class="display-5"><i class="fas fa-user mr-2"></i> {{streamerData.username}}</h2>
+                    {% if streamerData.biography != None %}
+                    <span>
+                        <p>{{streamerData.biography|markdown}}</p>
+                    </span>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if openStreams %}
+<div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
             {% for stream in openStreams %}
             <div class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
-                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                        <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                             onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     </div>
                     <div class="card-data">
@@ -66,6 +101,7 @@
     </div>
 </div>
 {% endif %}
+
 {% if userChannels %}
 <div class="container-fluid p-2" id="index-live-container">
     <div class="row m-2">
@@ -78,7 +114,7 @@
                 {% for channel in userChannels %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
-                        <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
                             <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                             {{channel.topic|get_topicName}}<br>
@@ -101,6 +137,7 @@
     </div>
 </div>
 {% endif %}
+
 {% if recordedVids %}
 <div class="container-fluid p-2" id="index-videos-container">
     <div class="row m-2">
@@ -113,7 +150,7 @@
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                         <div>
-                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            <img class="shadow lazy zoom" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                         </div>
                         <div class="card-data">
@@ -135,8 +172,44 @@
     </div>
 </div>
 {% endif %}
-{% if not recordedVids and not userChannels and not openStreams and not channelData %}
-<div class="container-fluid p-2" id="index-videos-container">
+
+{% if clipsList %}
+<div class="container-fluid p-2" id="index-clips-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Clips</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for clip in clipsList %}
+                <div class="displayCard py-1 pr-1">
+                    <a href="/clip/{{clip.id}}">
+                        <div>
+                            <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
+                        </div>
+                        <div class="card-data">
+                            <div class="card-cut-text"><b>{{clip.clipName|limit_title}}</b></div>
+                            <i class="fas fa-video mr-2"></i> {{clip.recordedVideo.channel.channelName}}<br>
+                            <i class="fas fa-hashtag mr-2"></i> {{clip.recordedVideo.topic|get_topicName}}<br>
+                            {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                            <span class="displayCard-footer">
+                                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{clip.id|get_Clip_Upvotes}}</span>
+                                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clip.views}}</span>
+                                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clip.length|hms_format}}</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if not recordedVids and not userChannels and not openStreams and not channelData and not clipsList %}
+<div class="container-fluid p-2" id="index-empty-container">
     <div class="row m-2">
         <div class="col">
             <p>Nothing to see here.</p>
@@ -148,15 +221,30 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  var conn_options = {
+    'sync disconnect on unload': true
+  };
+
+  var socket = io();
+</script>
+
 <script>
-    $('#search').on('input', function () {
-        var query = document.getElementById("search").value.toLowerCase();
-        $('.streamcard').each(function () {
-            var $this = $(this);
-            if ($this.text().toLowerCase().indexOf(query) === -1)
-                $this.closest('.streamcard').hide();
-            else $this.closest('.streamcard').show();
-        });
-    });
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-outline-success";
+    }
+  });
 </script>
 {% endblock %}

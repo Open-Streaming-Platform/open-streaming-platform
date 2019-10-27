@@ -3,6 +3,7 @@ from .shared import db
 class settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     siteName = db.Column(db.String(255))
+    siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
     smtpAddress = db.Column(db.String(255))
     smtpPort = db.Column(db.Integer)
@@ -11,8 +12,6 @@ class settings(db.Model):
     smtpUsername = db.Column(db.String(255))
     smtpPassword = db.Column(db.String(255))
     smtpSendAs = db.Column(db.String(255))
-    allowRegistration = db.Column(db.Boolean)
-    requireConfirmedEmail = db.Column(db.Boolean)
     allowRecording = db.Column(db.Boolean)
     allowUploads = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
@@ -22,9 +21,14 @@ class settings(db.Model):
     systemTheme = db.Column(db.String(255))
     systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
+    serverMessage = db.Column(db.String(2048))
 
-    def __init__(self, siteName, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRegistration, requireConfirmedEmail, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
+    allowRegistration = db.Column(db.Boolean) # Moved to config.py
+    requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
+
+    def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
+        self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
         self.smtpAddress = smtpAddress
         self.smtpPort = smtpPort
@@ -33,8 +37,6 @@ class settings(db.Model):
         self.smtpUsername = smtpUsername
         self.smtpPassword = smtpPassword
         self.smtpSendAs = smtpSendAs
-        self.allowRegistration = allowRegistration
-        self.requireConfirmedEmail = requireConfirmedEmail
         self.allowRecording = allowRecording
         self.allowUploads = allowUploads
         self.adaptiveStreaming = adaptiveStreaming
@@ -44,6 +46,7 @@ class settings(db.Model):
         self.systemTheme = "Defaultv2"
         self.version = version
         self.systemLogo = "/static/img/logo.png"
+        self.serverMessage = ""
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -51,9 +54,11 @@ class settings(db.Model):
     def serialize(self):
         return {
             'siteName': self.siteName,
+            'siteProtocol': self.siteProtocol,
             'siteAddress': self.siteAddress,
+            'siteURI': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
-            'allowRegistration': self.allowRegistration,
+            'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,
             'allowComments': self.allowComments,

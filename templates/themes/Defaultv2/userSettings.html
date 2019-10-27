@@ -7,7 +7,7 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="col-12 col-md-9 col-lg-8 mx-auto">
                 <div class="card my-5">
                     <h5 class="card-header text-white bg-dark mb-3">
                         Settings
@@ -32,7 +32,11 @@
                                     <input type="password" id="password2" class="form-control" name="password2" placeholder="Confirm New Password">
                                 </div>
                                 <hr>
-
+                                <div class="form-group">
+                                    <label for="biography" class="col-form-label"><b>Biography</b></label>
+                                    <textarea class="form-control" name="biography" id="biography-{{current_user.id}}" value="" maxlength="2048">{{current_user.biography}}</textarea>
+                                </div>
+                                <hr>
                                 <b>User Picture</b><br>
                                 <div class="d-flex justify-content-center">
                                     <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
@@ -48,4 +52,9 @@
             </div>
         </div>
     </div>
+
+    <script>
+        var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+        var simplemde{{ current_user.id }} = new SimpleMDE({ element: document.getElementById("biography-{{current_user.id}}") });
+    </script>
 {% endblock %}

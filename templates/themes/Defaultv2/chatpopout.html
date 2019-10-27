@@ -5,7 +5,7 @@
     <title>{{stream.streamName}} - Chat</title>
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
-    <link rel=stylesheet type=text/css href="/static/css/Defaultv2-Light.css">
+    <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2-Light.css">
     <link rel=stylesheet type=text/css href="/static/css/shared.css">
     <link rel=stylesheet type=text/css href="/static/css/slider.css">
     <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
@@ -14,10 +14,17 @@
 </head>
 <body>
 <div class="col-12">
-  <div class="chatbox" style="margin-bottom:210px;">
-      <div id="chat" class="chatpopout"></div><br>
-      <input id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-      <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right">User List</button>
+  <div class="chatbox-popout">
+      <div class="h-100 d-flex flex-column">
+          <div id="chat" class="{% if hideBar != True %}chatpopout{% elif hideBar == True %}chatpopout-nobar{% endif %} flex-grow-1"></div> <br>
+          {% if hideBar == False %}
+          <div class="chat-popout-bottom">
+              <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+              <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
+              <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>
+          </div>
+          {% endif %}
+      </div>
   </div>
 </div>
 
@@ -53,6 +60,7 @@
         });
     </script>
 
+    {% if hideBar == False %}
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
@@ -77,9 +85,9 @@
             }
         });
     </script>
+    {% endif %}
 
     <script>
-
         socket.on('message', function(data) {
             var today = new Date();
             var h = today.getHours();
@@ -87,14 +95,15 @@
             var s = today.getSeconds();
             var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else if (data['flags'] === 'Bot')
             {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+            }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
-        }});
+        });
     </script>
 
     <script>

@@ -4,6 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="shortcut icon" href="/static/favicon.ico">
+  <link rel="manifest" href="/static/site.webmanifest">
 
   <link rel=stylesheet type=text/css href="/static/css/shared.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
@@ -12,10 +17,12 @@
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+  <link rel="stylesheet" href="/static/vendor/simplemde/css/simplemde.min.css">
   <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2-Dark.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+  <script src="/static/vendor/simplemde/js/simplemde.min.js"></script>
 
   {% block head %}
 
@@ -27,16 +34,18 @@
 
   <div class="main-navbar">
     <nav class="navbar  navbar-expand-lg navbar-light bg-dark">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
       <a class="navbar-brand" href="/">
         <img src="{{sysSettings.systemLogo}}" width="48" height="48" class="d-inline-block align-top" alt="">
         <span class="navbar-title"><b>{{sysSettings.siteName}}</b></span>
       </a>
-      <ul class="navbar-nav mr-auto"></ul>
+      <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto" id="main-navbar-options">
+          <form class="form-inline my-2 my-lg-0 mr-auto" action="/search" method="post">
+            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
+          </form>
           <li class="nav-item px-3">
             <a class="nav-link" href="/channels"><b>Channels</b></a>
           </li>
@@ -182,17 +191,22 @@
 
   {% endblock %}
 
-  </div>
-
-
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/popper/js/popper.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
   <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+  <script type="text/javascript">
+    Dropzone.autoDiscover = false;
+  </script>
   {% block scripts %}
 
   {% endblock %}
+
+  <script>
+    var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+  </script>
+
   <script type="application/javascript">
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)

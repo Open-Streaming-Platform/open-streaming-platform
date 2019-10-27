@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block body %}
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
@@ -18,8 +19,29 @@
             </div>
 
         {% for channel in channels %}
+        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelCard-{{channel.id}}')">
+            <div class="row">
+                <div class="ml-2 col-auto align-middle my-auto">
+                    <b><h3><i class="fas fa-bars"></i></h3></b>
+                </div>
+                <div class="col">
+                    <h5>{{channel.channelName}}</h5>
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <i class="fas fa-users"></i> {{channel.views}}</span>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <i class="fas fa-star"></i> {{channel.subscriptions|length}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <form action="/settings/channels" enctype=multipart/form-data method="post">
-            <div class="card m-2 shadow">
+            <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow" style="display:none;">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-xl-4 col-lg-6 col-md-12">
@@ -31,7 +53,7 @@
                                 <img src="/images/{{channel.imageLocation}}" class="stream-img card-img-top shadow" width="100%">
                             </div>
                             {% endif %}
-                            <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                            <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
 
                             <h4>Offline Stream Image</h4>
                             {% if channel.offlineImageLocation == None %}
@@ -41,7 +63,7 @@
                                 <img src="/images/{{channel.offlineImageLocation}}" class="stream-img card-img-top shadow" width="100%">
                             </div>
                             {% endif %}
-                            <input type=file name=offlinephoto class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                            <input type="file" name="offlinephoto" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
 
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-12">
@@ -56,6 +78,10 @@
                                     <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
+                                <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                             </div>
                             <hr>
                             <h4><b>Recording Options</b></h4>
@@ -86,6 +112,14 @@
                                 </div>
                                 <div class="col-6">
                                     <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-6">
+                                    <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -138,7 +172,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="description" class="col-form-label"><b>Description</b></label>
-                                <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{channel.description}}</textarea>
+                                <textarea class="form-control" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -177,11 +211,18 @@
                                         <div class="card">
                                             <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
                                             <div class="card-body">
-                                                <label for="newInviteCode" class="col-form-label"><b>Days Invite Code Valid</b></label>
-                                                <div class="input-group mb-3">
-                                                    <input name="nullField" id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    <div class="input-group-append">
-                                                        <button type="button" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                <div class="form-row">
+                                                    <div class="form-group col-12 col-lg-4">
+                                                        <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-2"><b>Invite Code</b></label>
+                                                        <input id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
+                                                    </div>
+                                                    <div class="form-group col-12 col-lg-4">
+                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Days Invite Code Valid</b></label>
+                                                        <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                    </div>
+                                                    <div class="form-group col-12 col-lg-4">
+                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Options</b></label><br>
+                                                        <input type="button" id="newInviteAddButton-{{channel.id}}" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')" value="Add">
                                                     </div>
                                                 </div>
                                                 <div id="inviteCodes">
@@ -225,11 +266,11 @@
                                                 <div class="form-row">
                                                     <div class="form-group col-md-6">
                                                       <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
-                                                      <input name="nullField" id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
+                                                      <input id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
                                                     </div>
                                                     <div class="form-group col-md-4">
                                                       <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
-                                                      <input name="nullField" id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                      <input id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
                                                     </div>
                                                     <div class="form-group col-md-2">
                                                         <label for="hiddenAnchorForButton" class="col-form-label"> </label>
@@ -336,6 +377,8 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden" id="type" name="type" value="change">
+                <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-12">
@@ -345,8 +388,6 @@
                     </div>
                 </div>
             </div>
-        <input type="hidden" id="type" name="type" value="change">
-        <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
         </form>
         {% endfor %}
         </div>
@@ -378,11 +419,11 @@
                     <div class="col-md-4"></div>
                     <div class="form-group col-md-12">
                         <label for="webhookHeader">Request Header</label>
-                        <textarea id="webhookHeader" class="form-control"></textarea>
+                        <textarea id="webhookHeader" class="form-control" maxlength="4096"></textarea>
                     </div>
                     <div class="form-group col-md-12">
                         <label for="webhookPayload">Payload</label>
-                        <textarea id="webhookPayload" class="form-control" cols=50 rows=25></textarea>
+                        <textarea id="webhookPayload" class="form-control" cols=50 rows=25 maxlength="4096"></textarea>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="webhookReqType">Type</label>
@@ -404,6 +445,7 @@
                              <option value=6>New Video</option>
                              <option value=7>Video Comment</option>
                              <option value=9>Video Name Change</option>
+                             <option value=10>Channel Subscription</option>
                         </select>
                     </div>
                     <input id="webhookChannelIDInput" type="hidden">
@@ -488,7 +530,7 @@
             <div class="col-12">
                 <div class="form-group">
                     <label for="description" class="col-form-label"><b>Description</b></label>
-                    <textarea class="form-control" name="description" id="description" value=""></textarea>
+                    <textarea class="form-control" name="description" id="description" value="" maxlength="2048"></textarea>
                 </div>
             </div>
         </div>
@@ -633,11 +675,7 @@ function updateChatPreview(channelID) {
 <script>
 function toggleDiv(divID) {
   var x = document.getElementById(divID);
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
+  $(x).slideToggle();
 }
 </script>
 
@@ -650,11 +688,22 @@ function toggleDiv(divID) {
 </script>
 
 <script>
+    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+
+    {% for channel in channels %}
+    var simplemde{{channel.id}} = new SimpleMDE({ element: document.getElementById("description-{{channel.id}}") });
+    {% endfor %}
+</script>
+
+<script>
     function generateInviteCode(channelID) {
+        var newInviteTextInput = document.getElementById('newInviteCodeText-' + channelID);
         var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
         var daysToExpire = newInviteElementInput.value;
-
-        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire});
+        var customInviteCode = newInviteTextInput.value;
+        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire, inviteCode: customInviteCode});
+        newInviteElementInput.value = null;
+        newInviteTextInput.value = "";
     }
 </script>
 
@@ -848,6 +897,9 @@ function toggleDiv(divID) {
           case 'Video Name Change':
             triggerVal = 9;
             break;
+          case 'Channel Subscription':
+            triggerVal = 10;
+            break;
           default:
             triggerVal = 0;
         }
@@ -939,6 +991,9 @@ function toggleDiv(divID) {
           case 9:
             triggerVal = 'Video Name Change';
             break;
+          case 'Channel Subscription':
+            triggerVal = 10;
+            break;
           default:
             triggerVal = 'Unknown';
         }
@@ -1004,6 +1059,9 @@ function toggleDiv(divID) {
             break;
           case 9:
             triggerVal = 'Video Name Change';
+            break;
+          case 'Channel Subscription':
+            triggerVal = 10;
             break;
           default:
             triggerVal = 'Unknown';

@@ -14,7 +14,7 @@
             {% for topic in topicsList %}
                 <div class="displayCard py-1 pr-2">
                     <a href="/topic/{{topic.id}}/">
-                    <img class="shadow lazy" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{topic.name}}</b></div>
                     </div>

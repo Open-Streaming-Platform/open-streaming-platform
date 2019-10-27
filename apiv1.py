@@ -17,6 +17,7 @@ from classes import upvotes
 from classes import apikey
 from classes import views
 from classes import settings
+#from classes import hubConnection
 from classes.shared import db
 from classes.shared import socketio
 
@@ -62,12 +63,22 @@ streamParserPut.add_argument('topicID', type=int)
 
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
+videoParserPut.add_argument('description', type=str)
 videoParserPut.add_argument('topicID', type=int)
+
+clipParserPut = reqparse.RequestParser()
+clipParserPut.add_argument('clipName', type=str)
+clipParserPut.add_argument('description', type=str)
+# TODO Add Clip Post Arguments
 
 chatParserPost = reqparse.RequestParser()
 chatParserPost.add_argument('username', type=str, required=True)
 chatParserPost.add_argument('message', type=str, required=True)
 chatParserPost.add_argument('userImage', type=str)
+
+hubConnectionPost = reqparse.RequestParser()
+hubConnectionPost.add_argument('verificationToken', type=str, required=True)
+hubConnectionPost.add_argument('serverToken', type=str, required=True)
 
 @api.route('/server')
 class api_1_Server(Resource):
@@ -287,7 +298,7 @@ class api_1_ListVideo(Resource):
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def put(self, videoID):
         """
-            Change a Video's Name or Topic
+            Change a Video's Name, Description, or Topic
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
@@ -305,6 +316,9 @@ class api_1_ListVideo(Resource):
                                     possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
                                     if possibleTopics != None:
                                         videoQuery.topic = int(args['topicID'])
+                            if 'description' in args:
+                                if args['description'] is not None:
+                                    videoQuery.description = args['description']
                             db.session.commit()
                             return {'results': {'message': 'Video Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
@@ -344,6 +358,80 @@ class api_1_ListVideo(Resource):
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+@api.route('/clips/')
+class api_1_ListClips(Resource):
+    def get(self):
+        """
+             Returns a List of All Saved Clips
+        """
+        clipsList = RecordedVideo.Clips.query.all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in clipsList]}
+
+@api.route('/clips/<int:clipID>')
+@api.doc(params={'clipID': 'ID Number for the Clip'})
+class api_1_ListClip(Resource):
+    def get(self, clipID):
+        """
+             Returns Info on a Single Saved Clip
+        """
+        clipList = RecordedVideo.Clips.query.filter_by(id=clipID).all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in clipList]}
+
+    @api.expect(clipParserPut)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def put(self, clipID):
+        """
+            Change a Clip's Name or Description
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                if requestAPIKey.isValid():
+                    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+                    if clipQuery != None:
+                        if clipQuery.recordedVideo.owningUser == requestAPIKey.userID:
+                            args = clipParserPut.parse_args()
+                            if 'clipName' in args:
+                                if args['clipName'] is not None:
+                                    clipQuery.clipName = args['clipName']
+                            if 'description' in args:
+                                if args['description'] is not None:
+                                    clipQuery.description = args['description']
+                            db.session.commit()
+                            return {'results': {'message': 'Clip Updated'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
+
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def delete(self, clipID):
+        """
+            Deletes a Clip
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey != None:
+                if requestAPIKey.isValid():
+                    clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+                    if clipQuery != None:
+                        if clipQuery.owningUser == requestAPIKey.userID:
+                            thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+
+                            if thumbnailPath != '/var/www/videos/':
+                                if path.exists(thumbnailPath) and clipQuery.thumbnailLocation != None and clipQuery.thumbnailLocation != "":
+                                    remove(thumbnailPath)
+                            upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
+                            for vote in upvoteQuery:
+                                db.session.delete(vote)
+
+                            db.session.delete(clipQuery)
+                            db.session.commit()
+                            return {'results': {'message': 'Clip Deleted'}}, 200
+        return {'results': {'message': 'Request Error'}}, 400
+
+
 @api.route('/topics/')
 class api_1_ListTopics(Resource):
     def get(self):
@@ -364,3 +452,19 @@ class api_1_ListTopic(Resource):
         topicList = topics.topics.query.filter_by(id=topicID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
+
+#@api.route('/hub/validateServer')
+#class api_1_hubValidateServer(Resource):
+#    """
+#        Endpoint for an OSP Hub Server to Validate the Connection to a Node
+#    """
+#    @api.expect(hubConnectionPost)
+#    def post(self):
+#        args = hubConnectionPost.parse_args()
+#        if 'verificationToken' in args:
+#            connectionQuery = hubConnection.hubConnection.query.filter_by(verificationToken=args['verificationToken']).first()
+#               if 'serverToken' in args:
+#                    connectionQuery.validateHub(args['serverToken'])
+#                    db.session.commit()
+#                    return {'results': {'message': 'Server Validated with OSP Hub'}}, 200
+#        return {'results': {'message': 'Request Error'}}, 400

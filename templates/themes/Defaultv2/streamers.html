@@ -15,7 +15,7 @@
             {% for streamer in streamerList %}
                 <div class="streamerCard py-1 pr-2">
                     <a href="/streamers/{{streamer.id}}/">
-                    <img class="shadow lazy" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <img class="shadow lazy zoom" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{streamer.username}}</b></div>
                     </div>

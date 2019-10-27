@@ -4,6 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="shortcut icon" href="/static/favicon.ico">
+  <link rel="manifest" href="/static/site.webmanifest">
   <link rel=stylesheet type=text/css href="/static/css/shared.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
   <link rel="stylesheet" href="/static/vendor/bootswatch-slate/css/bootstrap-slate.min.css">
@@ -12,9 +17,11 @@
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+  <link rel="stylesheet" href="/static/css/dark-cow/simplemde-theme-dark.min.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+  <script src="/static/vendor/simplemde/js/simplemde.min.js"></script>
 
 
   {% block head %}
@@ -35,17 +42,9 @@
 
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
-        <!-- Removed Search While Completing Theme
-        <div class="navbar-search-container">
-            <form class="form-inline flex-nowrap mx-lg-auto rounded p-2">
-              <div id="navbar-search" class="input-group">
-                <div class="input-group-prepend">
-                    <div class="input-group-text"><i class="fas fa-search"></i></div>
-                </div>
-                <input type="text" id="search" name="search" class="searchBar form-control " placeholder="Search">
-              </div>
-            </form>
-        </div>-->
+        <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
+            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:FontAwesome;height:14px;" aria-label="Search" size="24">
+        </form>
         <li class="nav-item">
           <a class="nav-link" href="/channels">Channels</a>
         </li>
@@ -59,17 +58,15 @@
         <li class="nav-item">
           <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
         </li>
-        {% if sysSettings.allowRegistration == True %}
         <li class="nav-item">
           <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
         </li>
-        {% endif %}
         {% else %}
         <li class="nav-item dropdown">
           <a class="nav-link profile-image dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <img width="34" height="34" class="userphoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
             {% if user.has_role('Admin') %}
             <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
             {% endif %}
@@ -80,6 +77,7 @@
             {% endif %}
             <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API keys</a>
             {% endif %}
+            <a class="dropdown-item" href="/settings/user/subscriptions"><i class="fas fa-star"></i> Subscriptions</a>
             <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
             <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
           </div>
@@ -179,7 +177,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
-            <button id="uploadbutton" type="submit" class="btn btn-info" disabled>Upload</button>
+            <button id="uploadbutton" type="submit" class="btn btn-success" disabled>Upload</button>
           </div>
         </form>
       </div>
@@ -201,6 +199,12 @@
   {% block scripts %}
 
   {% endblock %}
+
+  <scripts>
+    <script>
+    var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+  </script>
+  </scripts>
 
   <script type="application/javascript">
     function s4() {

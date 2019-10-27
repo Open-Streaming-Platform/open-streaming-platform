@@ -1,8 +1,21 @@
 FROM alpine:latest
 MAINTAINER David Lockwood
 
-ARG NGINX_VERSION=1.15.3
+ARG NGINX_VERSION=1.17.3
 ARG NGINX_RTMP_VERSION=1.2.1
+
+ARG DEFAULT_DB_URL="sqlite:///db/database.db"
+ARG DEFAULT_FLASK_SECRET="CHANGEME"
+ARG DEFAULT_FLASK_SALT="CHANGEME"
+ARG DEFAULT_OSP_ALLOWREGISTRATION="True"
+ARG DEFAULT_OSP_REQUIREVERIFICATION="True"
+ARG DEFAULT_TZ="ETC/UTC"
+
+ENV DB_URL=$DEFAULT_DB_URL
+ENV FLASK_SECRET=$DEFAULT_FLASK_SECRET
+ENV FLASK_SALT=$DEFAULT_FLASK_SALT
+ENV OSP_ALLOWREGISTRATION=$DEFAULT_OSP_ALLOWREGISTRATION
+ENV OSP_REQUIREVERIFICATION=$DEFAULT_OSP_REQUIREVERIFICATION
 
 EXPOSE 80/tcp
 EXPOSE 443/tcp
@@ -15,10 +28,15 @@ RUN apk add alpine-sdk \
   pcre-dev \
   libressl2.7-libcrypto \
   openssl-dev \
+  libffi-dev \
   wget \
   git \
   linux-headers \
   zlib-dev
+
+RUN apk add --no-cache tzdata
+
+ENV TZ=$DEFAULT_TZ
 
 RUN apk add --no-cache bash
 
@@ -48,25 +66,14 @@ RUN cd /tmp && \
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --with-http_ssl_module \
+  --with-http_v2_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
-
 # Configure NGINX
-RUN cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
-
-# Establish the Video and Image Directories
-RUN mkdir /var/www && \
-  mkdir /var/www/live && \
-  mkdir /var/www/videos && \
-  mkdir /var/www/live-rec && \
-  mkdir /var/www/live-adapt && \
-  mkdir /var/www/stream-thumb && \
-  mkdir /var/www/images  && \
-  mkdir /var/log/gunicorn && \
-  chown -R www-data:www-data /var/www && \
-  chown -R www-data:www-data /var/log/gunicorn
+RUN cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
+RUN cp /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
 
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python3 \
@@ -77,6 +84,7 @@ RUN apk add python3 \
 
 # Install OSP Dependancies
 RUN pip3 install -r /opt/osp/setup/requirements.txt
+RUN pip3 install cryptography
 
 # Upgrade PIP
 RUN pip3 install --upgrade pip
@@ -84,13 +92,11 @@ RUN pip3 install --upgrade pip
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
 
-# Copy the Default Config File
-RUN cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
-
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
-CMD supervisord --nodaemon --configuration /opt/osp/setup/supervisord.conf
+RUN chmod +x /opt/osp/setup/docker/entrypoint.sh
+ENTRYPOINT ["/bin/sh","-c", "/opt/osp/setup/docker/entrypoint.sh"]

@@ -17,27 +17,63 @@
             <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
                 <div class="h-100 viewerText">
                     <h2 class="display-5"><b><i class="fas fa-podcast"></i> {{channelData.channelName}}</b></h2>
-                    <a href="/streamers/{{channelData.owningUser}}/">
-                        <h2 class="display-5"><img width="34" height="34" class="userphoto" src="{{channelData.owningUser|get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{channelData.owningUser|get_userName}}</h2>
-                    </a>
                     {% if channelData.stream|length > 0 %}
                     <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
                     {% else %}
                     <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
                     {% endif %}
                     {% if channelData.protected %}<span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                    <i class="fas fa-star my-2 mr-2"></i> Subscribers: {{channelData.subscriptions|length}}<br>
+                    <a href="/streamers/{{channelData.owningUser}}/">
+                        <h2 class="display-5"><img width="34" height="34" class="userphoto" src="{{channelData.owningUser|get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{channelData.owningUser|get_userName}}</h2>
+                    </a>
                     <span>
-                        <p>{{channelData.description}}</p>
+                        <p>{{channelData.description|markdown}}</p>
                     </span><br>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
-                <span class="float-right"><a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a></span>
+                <span class="m-1">
+                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
+                </span>
+                <span class="m-1">
+                    {% if current_user.is_authenticated %}
+                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                    {% else %}
+                    <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                    {% endif %}
+                </span>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
+
+{% if streamerData is defined %}
+<div class="container-fluid justify-content-center" style="width:100%">
+    <div class="jumbotron shadow p-3">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
+                <div>
+                    <img class="shadow" src="/images/{{streamerData.pictureLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                <div class="h-100 viewerText">
+                    <h2 class="display-5"><i class="fas fa-user mr-2"></i> {{streamerData.username}}</h2>
+                    {% if streamerData.biography != None %}
+                    <span>
+                        <p>{{streamerData.biography|markdown}}</p>
+                    </span>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% if openStreams %}
 <div class="container-fluid p-2" id="index-live-container">
     <div class="row m-2">
@@ -100,7 +136,10 @@
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
                         {% if channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
                         <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a>
-                        <span class="float-right"><i class="fas fa-users mr-2"></i> {{channel.views}}</span>
+                        <span class="float-right">
+                            <i class="fas fa-users mr-2"></i> {{channel.views}}
+                            <i class="fas fa-star mx-2"></i> {{channel.subscriptions|length}}
+                        </span>
                     </div>
                 </div>
                 {% endfor %}
@@ -133,9 +172,9 @@
                         <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
                         <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a></span><br />
-                        <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
-                        <i class="fas fa-eye mx-2"></i> {{video.views}}</span>
-                        <i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}</span>
+                        <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}
+                        <i class="fas fa-eye mx-2"></i> {{video.views}}
+                        <i class="fas fa-comments mx-2"></i> {{video.id|get_Video_Comments}}
                         <span class="float-right"><i class="fas fa-clock mr-2"></i> {{video.length|hms_format}}</span>
                     </div>
                 </div>
@@ -145,7 +184,43 @@
     </div>
 </div>
 {% endif %}
-{% if not recordedVids and not userChannels and not openStreams and not channelData %}
+
+{% if clipsList %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Clips</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for clip in clipsList %}
+                <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
+                    <div class="video-card-header">
+                        <a href="/clip/{{clip.id}}">
+                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        </a>
+                    </div>
+                    <div class="video-card-body">
+                        <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/clip/{{clip.id}}"><b> {{clip.clipName|limit_title}}</b></a></span><br />
+                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.recordedVideo.channel.protected %}<span class="float-right"><span class="badge badge-info"><i
+                                    class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/"> {{clip.recordedVideo.channel.channelName}}</a>
+                        <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{clip.recordedVideo.videoDate|normalize_date}}</span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}"> {{clip.recordedVideo.owningUser|get_userName}}</a>
+                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{clip.recordedVideo.topic}}/"> {{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                        <i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}
+                        <i class="fas fa-eye mx-2"></i> {{clip.views}}
+                        <span class="float-right"><i class="fas fa-clock mr-2"></i> {{clip.length|hms_format}}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if not recordedVids and not userChannels and not openStreams and not channelData and not clipsList %}
 <div class="container-fluid p-2" id="index-videos-container">
     <div class="row m-2">
         <div class="col">
@@ -157,15 +232,30 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  var conn_options = {
+    'sync disconnect on unload': true
+  };
+
+  var socket = io();
+</script>
+
 <script>
-    $('#search').on('input', function () {
-        var query = document.getElementById("search").value.toLowerCase();
-        $('.streamcard').each(function () {
-            var $this = $(this);
-            if ($this.text().toLowerCase().indexOf(query) === -1)
-                $this.closest('.streamcard').hide();
-            else $this.closest('.streamcard').show();
-        });
-    });
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-outline-secondary";
+    }
+  });
 </script>
 {% endblock %}

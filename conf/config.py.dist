@@ -1,3 +1,15 @@
-dbLocation = 'sqlite:///db/database.db' # For MySQL Connections add ?charset=utf8mb4 for full Unicode Support
-secretKey = "Super-Sekrit"
-passwordSalt = "los-salt"
+# Set Database Location and Type
+# For MySQL Connections add ?charset=utf8mb4 for full Unicode Support
+dbLocation="sqlite:///db/database.db"
+
+# Flask Secret Key
+secretKey="CHANGEME"
+
+# Password Salt Value
+passwordSalt="CHANGEME"
+
+# Allow Users to Register with the OSP Server
+allowRegistration=True
+
+# Require Users to Confirm their Email Addresses
+requireEmailRegistration=True

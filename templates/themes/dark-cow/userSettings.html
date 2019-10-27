@@ -5,47 +5,60 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card my-5">
-                    <h5 class="card-header text-white bg-dark mb-3">
-                        Settings
-                    </h5>
-                    <div class="card-body text-left">
-                        <div class="card-text">
-                            <form action="/settings/user" enctype=multipart/form-data method="post">
-                                <div class="form-group">
-                                    <label for="userName"><b>User Name</b></label>
-                                    <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="emailAddress"><b>Email Address</b></label>
-                                    <input type="text" name="emailAddress" id="emailAddress" class="form-control" value="{{current_user.email}}" required>
-                                </div>
-                                <hr>
-                                <div class="form-group">
-                                    <label for="password"><b>Change Password</b></label>
-                                    <input type="password" id="password" class="form-control" name="password1" placeholder="New Password">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" id="password2" class="form-control" name="password2" placeholder="Confirm New Password">
-                                </div>
-                                <hr>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-7 mx-auto">
+            <div class="card my-5">
+                <h5 class="card-header text-white bg-dark mb-3">
+                    Settings
+                </h5>
+                <div class="card-body text-left">
+                    <div class="card-text">
+                        <form action="/settings/user" enctype=multipart/form-data method="post">
+                            <div class="form-group">
+                                <label for="userName"><b>User Name</b></label>
+                                <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="emailAddress"><b>Email Address</b></label>
+                                <input type="text" name="emailAddress" id="emailAddress" class="form-control" value="{{current_user.email}}" required>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="password"><b>Change Password</b></label>
+                                <input type="password" id="password" class="form-control" name="password1" placeholder="New Password">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="password2" class="form-control" name="password2" placeholder="Confirm New Password">
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="biography" class="col-form-label"><b>Biography</b></label>
+                                <textarea class="form-control" name="biography" id="biography-{{current_user.id}}" value="" maxlength="2048">{{current_user.biography}}</textarea>
+                            </div>
+                            <hr>
 
-                                <b>User Picture</b><br>
-                                <div class="d-flex justify-content-center">
-                                    <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-                                </div>
+                            <b>User Picture</b><br>
+                            <div class="d-flex justify-content-center">
+                                <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                            </div>
 
-                                <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-                                <hr>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
+                            <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+                            <hr>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+
+
+<script>
+    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+
+    var simplemde{{ current_user.id }} = new SimpleMDE({ element: document.getElementById("biography-{{current_user.id}}") });
+</script>
 {% endblock %}

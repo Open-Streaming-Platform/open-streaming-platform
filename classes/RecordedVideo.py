@@ -15,8 +15,9 @@ class RecordedVideo(db.Model):
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
-    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', lazy="joined")
-    comments = db.relationship('videoComments', backref='recordedVideo', lazy="joined")
+    upvotes = db.relationship('videoUpvotes', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
+    comments = db.relationship('videoComments', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
+    clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
         self.videoDate = videoDate
@@ -48,5 +49,44 @@ class RecordedVideo(db.Model):
             'length': self.length,
             'upvotes': self.get_upvotes(),
             'videoLocation': '/videos/' + self.videoLocation,
+            'thumbnailLocation': '/videos/' + self.thumbnailLocation,
+            'ClipIDs': [obj.id for obj in self.clips],
+        }
+
+class Clips(db.Model):
+    __tablename__ = "Clips"
+    id = db.Column(db.Integer, primary_key=True)
+    parentVideo = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
+    startTime = db.Column(db.Float)
+    endTime = db.Column(db.Float)
+    length = db.Column(db.Float)
+    views = db.Column(db.Integer)
+    clipName = db.Column(db.String(255))
+    description = db.Column(db.String(2048))
+    thumbnailLocation = db.Column(db.String(255))
+    upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
+
+    def __init__(self, parentVideo, startTime, endTime, clipName, description):
+        self.parentVideo = parentVideo
+        self.startTime = startTime
+        self.endTime = endTime
+        self.description = description
+        self.clipName = clipName
+        self.length = endTime-startTime
+        self.views = 0
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'parentVideo': self.parentVideo,
+            'startTime': self.startTime,
+            'endTime': self.endTime,
+            'length': self.length,
+            'name': self.clipName,
+            'description': self.description,
+            'views': self.views,
             'thumbnailLocation': '/videos/' + self.thumbnailLocation
         }

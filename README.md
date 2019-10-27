@@ -2,11 +2,11 @@
 
 [![N|Solid](https://imgur.com/qSbBiF3.jpg)](https://imgur.com/qSbBiF3.jpg)
 
+## Overview:
+
 **Open Streaming Platform (OSP) is an open-source, RTMP streamer software front-end for [Arut's NGINX RTMP Module](https://github.com/arut/nginx-rtmp-module).**
 
 OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.tv, and Youtube Live.
-
-**OSP is still considered Beta and is not complete**
 
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
@@ -39,6 +39,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Security] - Handle User Accounts, Login, and Registration
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
+* [Flask-Markdown] - Displaying Markdown in Jinja2 Templates
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
@@ -60,6 +61,13 @@ OSP's Git Branches are setup in the following configuration
 * **feature/(Name)** - In-progress Feature Builds to be merged with the Development Branch   
 
 ## Installation
+
+### Requirements
+* Ubuntu 18.04 or Later, Debian 10 or Later
+* Python 3.7 or later
+* MySQL 5.7.7 or later, or MariaDB > 10.1, if not using SQLite
+* SMTP Mail Server for Email Address Validation and Subscriptions
+* FFMPEG 3 or greater
 
 ### Standard Install
 OSP has been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
@@ -108,11 +116,23 @@ A Dockerfile has been provided for running OSP in a container.  However due to t
 
 This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 
+**Environment Variables**
+- DB_URL: Sets the SQLAlchemy URL String for the used DB.
+    - Default: ```"sqlite:///db/database.db"```
+    - See https://docs.sqlalchemy.org/en/13/core/engines.html
+- FLASK_SECRET: Flask Secret Key
+    - Format: ```"CHANGEME"```
+- FLASK_SALT: Flask User Salt Value
+    - Format: ```"CHANGEME"```
+- OSP_ALLOWREGISTRATION: Sets OSP to allow users to create accounts
+    - Default: ```True```
+- OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
+    - Default: ```True```
+
 **Recommended Volumes/Mount Points**
-* /var/www - Storage of Images, Streams, and Stored Video Files
-* /opt/osp/conf/config.py - DB configuration and Password Salt Settings
-* /opt/osp/db/database.db - Initial SQLite DB File
-* /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
+-  /var/www - Storage of Images, Streams, and Stored Video Files
+-  /opt/osp/db/ - SQLite DB Location (if used)
+-  /usr/local/nginx/conf - Contains the NginX Configuration files which can be altered to suit your needs (HTTPS without something like Traefik)
 
 ### Manual Install
 
@@ -140,20 +160,20 @@ apt-get install gunicorn3 uwsgi-plugin-python
 6: Download and Build NGINX and NGINX-RTMP
 ```
 cd /tmp
-wget "http://nginx.org/download/nginx-1.13.10.tar.gz"
-wget "https://github.com/arut/nginx-rtmp-module/archive/master.zip"
+wget "http://nginx.org/download/nginx-1.17.3.tar.gz"
+wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
 wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
-tar xvfz nginx-1.13.10.tar.gz
-unzip master.zip
+tar xvfz nginx-1.17.3.tar.gz
+unzip v1.2.1.zip
 tar xvfz zlib-1.2.11.tar.gz
-cd nginx-1.13.10
-./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master --with-zlib=../zlib-1.2.11
+cd nginx-1.17.3
+./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
 make
 make install
 ```
-7: Copy the NGINX conf file to the configuration directory
+7: Copy the NGINX conf files to the configuration directory
 ```
-cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 ```
 8: Copy the Gunicorn and NGINX SystemD files
 ```
@@ -181,21 +201,33 @@ chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
 chown -R www-data:www-data /var/log/gunicorn
 ```
-11: Install FFMPEG3
+11: Install FFMPEG4
 ```
-add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 apt-get update
 apt-get install ffmpeg -y
 ```
-12: Start NGINX and OSP
+12: Copy the Default Config File and Make Changes
+```
+cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+```
+13: Start NGINX and OSP
 ```
 systemctl start nginx-osp.service
 systemctl start osp.service
 ```
-13: Open the site in a browser and run through the First Time Setup
+14: Open the site in a browser and run through the First Time Setup
 ```
 http://<ip or host>/
 ```
+
+### Database
+By default, OSP uses SQLite for its database.  However, in most cases it is recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.
+
+When configuring OSP to use MySQL, you must change the DB path in the /opt/osp/conf/config.py file to match the following format (Without Brackets):
+```
+dbLocation='mysql+pymysql://<dbUser>:<dbPassword>@<dbIP>:3306/<dbName>?charset=utf8'
+``` 
 
 ### Usage
 
@@ -242,10 +274,9 @@ sudo pip3 install -r /opt/osp/setup/requirements.txt
 ```
 sudo chown -R www-data:www-data /opt/osp
 ```
-* Typically, it is recommended to upgrade to the newest nginx.conf file to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
+* Typically, it is recommended to upgrade to the newest Nginx .conf files to catch any new changes to the RTMP engine.  After copying make any changes needed to match your environment (TLS/SSL settings, RTMP engine customization)
 ```
-cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
-cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf
+cp /opt/osp/setup/nginx/osp-*.conf /usr/local/nginx/conf/
 sudo systemctl restart nginx
 ```
 
@@ -253,6 +284,10 @@ sudo systemctl restart nginx
 ```
 bash dbUpgrade.sh
 ```
+### Upgrading from Beta2 to Beta3
+Due to changes made with the way Nginx Conf files are handled and adding http2 support for Nginx, it is recommended to make a copy of your existing nginx.conf and transpose any settings to the new nginx.conf format. 
+After making a copy, rerun the osp-setup.sh file in /opt/osp/setup/ directory or rerun through steps 1,4,6,7, & 12 of the manual install before restarting the osp service. 
+
 ### Upgrading from Beta1 to Beta2
 It is recommended to replace your Nginx.conf file to take advantage of many changes made to the directory structure of OSP's video repository.
 

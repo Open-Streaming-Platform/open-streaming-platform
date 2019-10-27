@@ -1,51 +1,72 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 {% block head %}
-<title>{{sysSettings.siteName}} - {{title}}</title>
+<title>{{sysSettings.siteName}} - Search</title>
 
 {% endblock %}
 
 {% block body %}
-{% if channelData is defined %}
-<div class="container-fluid justify-content-center" style="width:100%">
-    <div class="jumbotron shadow mt-2 p-3">
-        <div class="row">
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
-                <div>
-                    <img class="shadow" src="/images/{{channelData.imageLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
-                </div>
-            </div>
-            <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12">
-                <div class="viewerText">
-                    <h2 class="display-5"><b>{{channelData.channelName}}</b></h2>
-                    <a href="/streamers/{{channelData.owningUser}}/">
-                        <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
+<div class="container-fluid p-2" id="index-title-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Search</b></div>
+    </div>
+</div>
+
+{% if streamerList != [] %}
+<div class="container-fluid p-2" id="index-streams-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Streamers</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="d-flex flex-wrap justify-content-start">
+            {% for streamer in streamerList %}
+                <div class="streamerCard py-1 pr-2">
+                    <a href="/streamers/{{streamer.id}}/">
+                    <img class="shadow lazy zoom" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{streamer.username}}</b></div>
+                    </div>
                     </a>
-                    {% if channelData.stream|length > 0 %}
-                    <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
-                    {% else %}
-                    <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
-                    {% endif %}
-                    {% if channelData.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-                    <span>
-                        <p>{{channelData.description}}</p>
-                    </span><br>
-                    <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary mt-2">View Live Channel</a>
                 </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 {% endif %}
-{% if openStreams %}
 
-<div class="container-fluid p-2" id="index-videos-container">
+{% if topicList != [] %}
+<div class="container-fluid p-2" id="index-topics-container">
+    <div class="row m-2">
+        <div class="index-live-title"><b>Topics</b></div>
+    </div>
     <div class="row mx-2">
         <div class="d-flex flex-wrap justify-content-start">
-            {% for stream in openStreams %}
+            {% for topic in topicList %}
+                <div class="displayCard py-1 pr-2">
+                    <a href="/topic/{{topic.id}}/">
+                    <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="card-data">
+                        <div class="card-cut-text"><b>{{topic.name}}</b></div>
+                    </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if streamList != [] %}
+<div class="row m-2">
+    <div class="index-live-title"><b>Channels</b></div>
+</div>
+<div class="container-fluid p-2" id="index-channels-container">
+    <div class="row mx-2">
+        <div class="d-flex flex-wrap justify-content-start">
+            {% for stream in streamList %}
             <div class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
-                        <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                        <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                             onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                     </div>
                     <div class="card-data">
@@ -66,19 +87,20 @@
     </div>
 </div>
 {% endif %}
-{% if userChannels %}
+
+{% if channelList != [] %}
 <div class="container-fluid p-2" id="index-live-container">
     <div class="row m-2">
-        <div class="index-live-title"><b>Channels by {{title}}</b></div>
+        <div class="index-live-title"><b>Channels</b></div>
     </div>
 
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
-                {% for channel in userChannels %}
+                {% for channel in channelList %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
-                        <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
                             <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
                             {{channel.topic|get_topicName}}<br>
@@ -101,7 +123,8 @@
     </div>
 </div>
 {% endif %}
-{% if recordedVids %}
+
+{% if videoList != [] %}
 <div class="container-fluid p-2" id="index-videos-container">
     <div class="row m-2">
         <div class="index-video-title"><b>Videos</b></div>
@@ -109,11 +132,11 @@
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
-                {% for video in recordedVids %}
+                {% for video in videoList %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                         <div>
-                            <img class="shadow lazy" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            <img class="shadow lazy zoom" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
                         </div>
                         <div class="card-data">
@@ -135,8 +158,44 @@
     </div>
 </div>
 {% endif %}
-{% if not recordedVids and not userChannels and not openStreams and not channelData %}
-<div class="container-fluid p-2" id="index-videos-container">
+
+{% if clipList != [] %}
+<div class="container-fluid p-2" id="index-clips-container">
+    <div class="row m-2">
+        <div class="index-video-title"><b>Clips</b></div>
+    </div>
+    <div class="row mx-2">
+        <div class="col-lg col-xs-12 col-sm-12">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for clip in clipList %}
+                <div class="displayCard py-1 pr-1">
+                    <a href="/clip/{{clip.id}}">
+                        <div>
+                            <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
+                        </div>
+                        <div class="card-data">
+                            <div class="card-cut-text"><b>{{clip.clipName|limit_title}}</b></div>
+                            <i class="fas fa-video mr-2"></i> {{clip.recordedVideo.channel.channelName}}<br>
+                            <i class="fas fa-hashtag mr-2"></i> {{clip.recordedVideo.topic|get_topicName}}<br>
+                            {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                            <span class="displayCard-footer">
+                                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{clip.id|get_Clip_Upvotes}}</span>
+                                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clip.views}}</span>
+                                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clip.length|hms_format}}</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if clipList == [] and channelList == [] and topicList == [] and streamerList == [] and videoList == [] and clipList == [] %}
+<div class="container-fluid p-2" id="index-empty-container">
     <div class="row m-2">
         <div class="col">
             <p>Nothing to see here.</p>
@@ -148,15 +207,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $('#search').on('input', function () {
-        var query = document.getElementById("search").value.toLowerCase();
-        $('.streamcard').each(function () {
-            var $this = $(this);
-            if ($this.text().toLowerCase().indexOf(query) === -1)
-                $this.closest('.streamcard').hide();
-            else $this.closest('.streamcard').show();
-        });
-    });
-</script>
+
 {% endblock %}
