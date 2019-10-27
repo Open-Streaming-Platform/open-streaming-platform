@@ -65,7 +65,7 @@ OSP's Git Branches are setup in the following configuration
 ### Requirements
 * Ubuntu 18.04 or Later, Debian 10 or Later
 * Python 3.7 or later
-* MySQL 5.7.7 or later, if using MySQL instead of SQLite
+* MySQL 5.7.7 or later, or MariaDB > 10.1, if not using SQLite
 * SMTP Mail Server for Email Address Validation and Subscriptions
 
 ### Standard Install
@@ -283,6 +283,10 @@ sudo systemctl restart nginx
 ```
 bash dbUpgrade.sh
 ```
+### Upgrading from Beta2 to Beta3
+Due to changes made with the way Nginx Conf files are handled and adding http2 support for Nginx, it is recommended to make a copy of your existing nginx.conf and transpose any settings to the new nginx.conf format. 
+After making a copy, rerun the osp-setup.sh file in /opt/osp/setup/ directory or rerun through steps 1,4,6,7, & 12 of the manual install before restarting the osp service. 
+
 ### Upgrading from Beta1 to Beta2
 It is recommended to replace your Nginx.conf file to take advantage of many changes made to the directory structure of OSP's video repository.
 
