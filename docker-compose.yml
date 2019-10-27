@@ -7,9 +7,15 @@ services:
       - '1935:1935'
       - '8585:80'
       - '8553:443'
+#     env:
+#       - DB_URL="sqlite:///db/database.db"
+#       - FLASK_SECRET="Super-Sekrit"
+#       - FLASK_SALT="SALT123"
+#       - OSP_ALLOWREGISTRATION=True
+#       - OSP_REQUIREVERIFICATION=True
+#       - TZ="ETC/UTC"
 #    volumes:
 #      - "./data/www:/var/www"
-#      - "./data/osp/conf/config.py:/opt/osp/conf/config.py"
 #      - "./data/osp/db/database.db:/opt/osp/db/database.db"
 #      - "./data/nginx/conf:/usr/local/nginx/conf"
 #    networks:
