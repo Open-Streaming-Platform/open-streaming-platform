@@ -85,7 +85,7 @@ sudo chown -R www-data:www-data /opt/osp
 sudo chown -R www-data:www-data /opt/osp/.git
 
 #Setup FFMPEG for recordings and Thumbnails
-sudo add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 sudo apt-get update
 sudo apt-get install ffmpeg -y
 

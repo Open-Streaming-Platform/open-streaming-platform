@@ -67,6 +67,7 @@ OSP's Git Branches are setup in the following configuration
 * Python 3.7 or later
 * MySQL 5.7.7 or later, or MariaDB > 10.1, if not using SQLite
 * SMTP Mail Server for Email Address Validation and Subscriptions
+* FFMPEG 3 or greater
 
 ### Standard Install
 OSP has been tested on Ubuntu 18.04 and Recent Debian Builds. The installation script may not work properly on other OS's.
@@ -200,9 +201,9 @@ chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
 chown -R www-data:www-data /var/log/gunicorn
 ```
-11: Install FFMPEG3
+11: Install FFMPEG4
 ```
-add-apt-repository ppa:jonathonf/ffmpeg-3 -y
+add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 apt-get update
 apt-get install ffmpeg -y
 ```
