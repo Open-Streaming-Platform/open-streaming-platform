@@ -1740,12 +1740,6 @@ def unsubscribe_page():
             db.session.commit()
     return emailAddress + " has been removed from all subscriptions"
 
-@app.route('/help')
-@login_required
-def help_page():
-    sysSettings = settings.settings.query.first()
-    return render_template(checkOverride('help.html'))
-
 @app.route('/settings/user', methods=['POST','GET'])
 @login_required
 def user_page():
