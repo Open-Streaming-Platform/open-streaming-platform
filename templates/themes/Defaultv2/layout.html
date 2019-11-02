@@ -47,20 +47,20 @@
             <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
           </form>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/channels"><b>Channels</b></a>
+            <a class="nav-link zoom" href="/channels"><b>Channels</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/topics"><b>Topics</b></a>
+            <a class="nav-link zoom" href="/topics"><b>Topics</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/streamers"><b>Streamers</b></a>
+            <a class="nav-link zoom" href="/streamers"><b>Streamers</b></a>
           </li>
           {% if user.is_authenticated == False %}
           <li class="nav-item px-3">
-            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a class="nav-link zoom" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
+            <a class="nav-link zoom" href="/register"><i class="far fa-id-card"></i> Register</a>
           </li>
           {% else %}
           <li class="nav-item dropdown px-3">
