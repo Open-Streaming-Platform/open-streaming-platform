@@ -3759,6 +3759,10 @@ def handle_new_viewer(streamData):
                        streamtopic=get_topicName(streamTopic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                        user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
+    else:
+        if current_user.is_authenticated:
+            if current_user.username not in streamUserList[channelLoc]:
+                streamUserList[channelLoc].append(current_user.username)
     db.session.commit()
     db.session.close()
 
