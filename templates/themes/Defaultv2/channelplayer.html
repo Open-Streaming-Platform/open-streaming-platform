@@ -287,6 +287,14 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+    function ignoreerror(message, url, linenumber)
+        {
+           console.log('JavaScript error: ' + message + ' on line ' + linenumber + ' for ' + url);
+           return true;
+        }
+    window.onerror=ignoreerror(message, url, linenumber);
+    </script>
 
     <script>
         var player = videojs('video', {
