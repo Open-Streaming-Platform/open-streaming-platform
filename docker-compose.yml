@@ -7,25 +7,26 @@ services:
       - '1935:1935'
       - '8585:80'
       - '8553:443'
-#     env:
-#       - DB_URL="sqlite:///db/database.db"
-#       - FLASK_SECRET="Super-Sekrit"
-#       - FLASK_SALT="SALT123"
-#       - OSP_ALLOWREGISTRATION=True
-#       - OSP_REQUIREVERIFICATION=True
-#       - TZ="ETC/UTC"
-#    volumes:
-#      - "./data/www:/var/www"
-#      - "./data/osp/db/database.db:/opt/osp/db/database.db"
-#      - "./data/nginx/conf:/usr/local/nginx/conf"
-#    networks:
-#      - traefik
-#    labels:
-#      # Uncomment traefik labels for reverse proxy front end.
-#      - "traefik.port=443"
-#      - "traefik.frontend.rule=Host:osp.example.com"
-#      - "traefik.backend=osp"
-#      - "traefik.docker.network=traefik"
-#      - "traefik.expose=true"
+#    env:
+#      - DB_URL="sqlite:///db/database.db"
+#      - FLASK_SECRET="Super-Sekrit"
+#      - FLASK_SALT="SALT123"
+#      - OSP_ALLOWREGISTRATION=True
+#      - OSP_REQUIREVERIFICATION=True
+#      - TZ="ETC/UTC"
+#   volumes:
+#     - "./data/www:/var/www"
+#     - "./data/osp/db/database.db:/opt/osp/db/database.db"
+#     - "./data/nginx/conf:/usr/local/nginx/conf"
+#   networks:
+#     - traefik
+#   labels:
+#     # Uncomment traefik labels for reverse proxy front end.
+#     - "traefik.port=443"
+#     - "traefik.frontend.rule=Host:osp.example.com"
+#     - "traefik.backend=osp"
+#     - "traefik.docker.network=traefik"
+#     - "traefik.expose=true"
+## Use some variant or this exact command to spin up your Traefik reverse proxy network: `docker network create -d bridge --subnet=10.5.0.10/16 traefik`
 #networks:
 #  traefik:
