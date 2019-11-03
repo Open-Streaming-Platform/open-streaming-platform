@@ -3692,6 +3692,9 @@ def handle_new_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
+    if requestedChannel.channelLoc not in streamSIDList:
+        streamSIDList[requestedChannel.channelLoc] = []
+
     userSID = request.sid
     if userSID not in streamSIDList[requestedChannel.channelLoc]:
         streamSIDList[requestedChannel.channelLoc].append(userSID)
@@ -3771,8 +3774,12 @@ def handle_leaving_viewer(streamData):
 
     userSID = request.sid
 
-    if userSID in streamSIDList[requestedChannel.channelLoc]:
-        streamSIDList[requestedChannel.channelLoc].remove(userSID)
+    if requestedChannel.channelLoc not in streamSIDList:
+        streamSIDList[requestedChannel.channelLoc] = []
+
+    else:
+        if userSID in streamSIDList[requestedChannel.channelLoc]:
+            streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
     currentViewers = len(streamSIDList[requestedChannel.channelLoc])
 
@@ -3811,8 +3818,7 @@ def handle_leaving_viewer(streamData):
     db.session.close()
 
 @socketio.on('disconnect')
-def disconnect(message):
-    logger.error(message)
+def disconnect():
 
     global streamSIDList
 
@@ -3822,7 +3828,6 @@ def disconnect(message):
         if userSID in streamSIDList[channel]:
             streamSIDList[channel].remove(userSID)
 
-    emit('message', {'msg': message['msg']})
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
@@ -3835,6 +3840,9 @@ def handle_viewer_total_request(streamData):
     global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+
+    if requestedChannel.channelLoc not in streamSIDList:
+        streamSIDList[requestedChannel.channelLoc] = []
 
     #viewers = requestedChannel.currentViewers
     viewers = len(streamSIDList[requestedChannel.channelLoc])
