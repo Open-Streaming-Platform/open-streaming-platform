@@ -287,12 +287,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-    window.onerror = function(message, url, linenumber) {
-	console.log('JavaScript error: ' + message + ' on line ' + linenumber + ' for ' + url);
-    return true;
-    }
-    </script>
 
     <script>
         var player = videojs('video', {
@@ -318,7 +312,11 @@
                        type: 'application/x-mpegURL'
                });
        });
-       player.play();
+        try {
+            player.play();
+        } catch (e) {
+            console.log(e);
+        }
     </script>
 
     <script>
