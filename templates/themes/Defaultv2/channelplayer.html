@@ -289,7 +289,6 @@
 {% block scripts %}
 
     <script>
-    try {
         var player = videojs('video', {
             autoplay: true,
             errorDisplay: false,
@@ -314,10 +313,7 @@
                });
        });
 
-            player.play();
-    } catch (e) {
-        console.log(e);
-    }
+       player.play();
     </script>
 
     <script>
