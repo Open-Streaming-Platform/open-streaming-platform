@@ -520,23 +520,31 @@ def processWebhookVariables(payload, **kwargs):
         payload = payload.replace(replacementValue, str(value))
     return payload
 
-def processSubscriptions(channelID, subject, message):
+@asynch
+def runSubscriptions(channelID, subject, message):
     sysSettings = settings.settings.query.first()
+    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
+    with mail.connect() as conn:
+        for sub in subscriptionQuery:
+            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+            if userQuery != None:
+                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                msg = Message(subject, recipients=[userQuery.email])
+                msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+                msg.body = finalMessage
+                msg.html = finalMessage
+                conn.send(msg)
+    return True
+
+def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     if subscriptionQuery != []:
         newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
-        with mail.connect() as conn:
-            for sub in subscriptionQuery:
-                userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
-                if userQuery != None:
-                    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
-                    msg = Message(subject, recipients=[userQuery.email])
-                    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-                    msg.body = finalMessage
-                    msg.html = finalMessage
-                    conn.send(msg)
-        return True
-    return False
+        try:
+            runSubscriptions(channelID, subject, message)
+        except:
+            newLog(0, "Subscriptions Failed due to possible misconfiguration")
+    return True
 
 def prepareHubJSON():
     topicQuery = topics.topics.query.all()
@@ -3550,13 +3558,9 @@ def rec_Complete_handler():
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
-    try:
-        processSubscriptions(requestedChannel.id,
-                         sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
+    processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                          "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
-    except:
-        newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
     while not os.path.exists(fullVidPath):
         time.sleep(1)
