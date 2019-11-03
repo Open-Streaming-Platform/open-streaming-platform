@@ -289,6 +289,7 @@
 {% block scripts %}
 
     <script>
+    try {
         var player = videojs('video', {
             autoplay: true,
             errorDisplay: false,
@@ -312,11 +313,11 @@
                        type: 'application/x-mpegURL'
                });
        });
-        try {
+
             player.play();
-        } catch (e) {
-            console.log(e);
-        }
+    } catch (e) {
+        console.log(e);
+    }
     </script>
 
     <script>
