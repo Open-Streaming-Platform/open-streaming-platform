@@ -43,7 +43,7 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
         <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
-            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:FontAwesome;height:14px;" aria-label="Search" size="24">
+          <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:FontAwesome;height:14px;" aria-label="Search" size="24">
         </form>
         <li class="nav-item">
           <a class="nav-link" href="/channels">Channels</a>
@@ -79,6 +79,8 @@
             {% endif %}
             <a class="dropdown-item" href="/settings/user/subscriptions"><i class="fas fa-star"></i> Subscriptions</a>
             <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
+            <a class="dropdown-item" href="https://openstreamingplatform.com/support"><i class="fas fa-question-circle"></i> Help</a>
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#aboutModal"><i class="fas fa-info-circle"></i> About</a>
             <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
           </div>
         </li>
@@ -111,6 +113,57 @@
   </div>
 
   <!-- Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="moveModalTitle">About OSP</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <img src="/static/img/logo.png">
+            <p class="pt-4">
+              Open Streamin Platform Version <b>{{sysSettings.version}}</b>
+            </p>
+          </div>
+          <div>
+            <table>
+              <tbody>
+                <tr>
+                  <td><i class="pr-2 fas fa-globe-europe"></i> Website</td>
+                  <td><a href="https://openstreamingplatform.com">openstreamingplatform.com</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-gitlab"></i> Code repository</td>
+                  <td><a href="https://gitlab.com/Deamos/flask-nginx-rtmp-manager/">Deamos/flask-nginx-rtmp-manager/</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-reddit"></i> Reddit</td>
+                  <td><a href="https://reddit.com/r/openstreamingplatform">/r/openstreamingplatform</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-discord"></i> Discord</td>
+                  <td><a href="https://discord.gg/Jp5rzbD">Open Streaming Platform</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center">
+            <p class="pt-4">
+              <i class="fab fa-osi"></i><br>
+              MIT License
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -202,8 +255,8 @@
 
   <scripts>
     <script>
-    var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
-  </script>
+      var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+    </script>
   </scripts>
 
   <script type="application/javascript">
@@ -212,7 +265,7 @@
         .toString(16)
         .substring(1);
     }
-    
+
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 
     function videouploadsocket() {
@@ -232,17 +285,17 @@
 
     var thumbnaildropper = new Dropzone(
       '#thumbnaildropper', {
-        acceptedFiles: 'image/png',
-        previewTemplate: '<div></div>',
-        clickable: '#thumbnailuploadbutton',
-        addRemoveLinks: true,
-        paramName: 'file',
-        chunking: true,
-        forceChunking: true,
-        url: '/upload/video-files',
-        maxFilesize: 5, // megabytes
-        chunkSize: 1000000 // bytes
-      }
+      acceptedFiles: 'image/png',
+      previewTemplate: '<div></div>',
+      clickable: '#thumbnailuploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/video-files',
+      maxFilesize: 5, // megabytes
+      chunkSize: 1000000 // bytes
+    }
     );
     thumbnaildropper.on('sending', function (file, xhr, formData) {
       formData.append('ospfilename', videofilename + '.png');
@@ -270,18 +323,18 @@
 
     var videodropper = new Dropzone(
       '#videodropper', {
-        acceptedFiles: 'video/mp4',
-        createImageThumbnails: false,
-        previewTemplate: '<div></div>',
-        clickable: '#videouploadbutton',
-        addRemoveLinks: true,
-        paramName: 'file',
-        chunking: true,
-        forceChunking: true,
-        url: '/upload/video-files',
-        maxFilesize: 4096, // megabytes
-        chunkSize: 1000000, // bytes
-      }
+      acceptedFiles: 'video/mp4',
+      createImageThumbnails: false,
+      previewTemplate: '<div></div>',
+      clickable: '#videouploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/video-files',
+      maxFilesize: 4096, // megabytes
+      chunkSize: 1000000, // bytes
+    }
     );
     videodropper.on('sending', function (file, xhr, formData) {
       formData.append('ospfilename', videofilename + '.mp4');
