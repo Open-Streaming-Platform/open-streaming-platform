@@ -3,7 +3,7 @@
 cwd=$PWD
 
 # Get Dependancies
-sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip -y
+sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git -y
 
 # Setup Python
 sudo apt-get install python3 python3-pip gunicorn3 uwsgi-plugin-python -y
