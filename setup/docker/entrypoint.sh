@@ -34,5 +34,9 @@ python3 manage.py db init
 python3 manage.py db migrate
 python3 manage.py db upgrade
 cd /
+
+echo 'Fixing OSP Permissions Post Migration'
+chown -R www-data:www-data /opt/osp
+
 echo 'Starting OSP'
 supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf
