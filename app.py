@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from gevent import monkey
-monkey.patch_all()
+monkey.patch_all(thread=True)
 
 import git
 
@@ -109,7 +109,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app, async_mode="gevent", channel='ospsocket', message_queue='redis://localhost:6379/0')
+socketio = SocketIO(app, channel='ospsocket', message_queue='redis://localhost:6379/0')
 r = redis.Redis(host='localhost', port=6379, db=1)
 
 appDBVersion = 0.45
