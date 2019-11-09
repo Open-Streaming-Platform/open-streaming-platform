@@ -3880,7 +3880,7 @@ def handle_viewer_total_request(streamData):
 
     db.session.commit()
     db.session.close()
-    emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList})
+    emit('viewerTotalResponse', {'data': str(viewers), 'userList': list(streamUserList)})
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
