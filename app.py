@@ -109,7 +109,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app, logger=True, engineio_logger=False, message_queue='redis://')
+socketio = SocketIO(app, async_mode="gevent", logger=True, engineio_logger=False, message_queue='redis://')
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 appDBVersion = 0.45
