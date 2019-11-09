@@ -1,3 +1,7 @@
+Beta-4
+==============================================
+Added Worker Services for OSP Gunicorn to handle multiple concurrent users.
+
 Beta-3
 ==============================================
 - Added Implemented Video Clips - Set markers for videos to display only a section of a video you want to share.

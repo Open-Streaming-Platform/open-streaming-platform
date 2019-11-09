@@ -9,11 +9,15 @@ sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git 
 sudo apt-get install python3 python3-pip gunicorn3 uwsgi-plugin-python -y
 sudo pip3 install -r requirements.txt
 
+# Install Redis
+sudo apt-get install redis -y
+
 # Setup OSP Directory
 mkdir -p /opt/osp
 if cd ..
 then
         sudo cp -rf -R * /opt/osp
+        sudo cp -rf -R .git /opt/osp
 else
         echo "Unable to find installer directory. Aborting!"
         exit 1
@@ -62,9 +66,10 @@ fi
 
 if cd $cwd/gunicorn
 then
-        sudo cp osp.service /etc/systemd/system/
+        sudo cp osp.target /etc/systemd/system/
+        sudo cp osp-worker@.service
         sudo systemctl daemon-reload
-        sudo systemctl enable osp.service
+        sudo systemctl enable osp.target
 else
         echo "Unable to find downloaded Gunicorn config directory. Aborting."
         exit 1
@@ -96,4 +101,4 @@ sudo chown -R www-data:www-data /var/log/gunicorn
 # Start Nginx
 sudo systemctl start nginx-osp.service
 
-echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service"
+echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target"

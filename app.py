@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+from gevent import monkey
+monkey.patch_all()
 
 import git
 
@@ -62,7 +64,7 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-3c"
+version = "beta-4"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
@@ -106,7 +108,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app,logger=True, engineio_logger=False)
+socketio = SocketIO(app,logger=True, engineio_logger=False, message_queue='redis://')
 
 appDBVersion = 0.45
 
@@ -4389,4 +4391,4 @@ newLog("0", "OSP Started Up Successfully - version: " + str(version))
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
-    app.run()
+    socketio.run(app)

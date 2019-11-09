@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve OSP Workers on port %i
+After=network.target
+PartOf=osp.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/osp
+ExecStart=/usr/bin/gunicorn3 app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:%i --reload --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log
+
+[Install]
+WantedBy=multi-user.target
