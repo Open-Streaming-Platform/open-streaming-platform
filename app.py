@@ -3875,7 +3875,7 @@ def handle_viewer_total_request(streamData):
     viewers = len(streamSIDList[requestedChannel.channelLoc])
 
     streamUserList = r.smembers(channelLoc + '-streamUserList')
-    if streamUserList != None:
+    if streamUserList == None:
         streamUserList = []
 
     db.session.commit()
