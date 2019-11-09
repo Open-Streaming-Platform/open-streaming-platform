@@ -19,6 +19,7 @@ from flaskext.markdown import Markdown
 import xmltodict
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.utils import secure_filename
+import redis
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -109,6 +110,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 logger = logging.getLogger('gunicorn.error').handlers
 
 socketio = SocketIO(app,logger=True, engineio_logger=False, message_queue='redis://')
+r = redis.Redis(host='localhost', port=6379, db=0)
 
 appDBVersion = 0.45
 
@@ -160,7 +162,7 @@ patch_request_class(app)
 md = Markdown(app, extensions=['tables'])
 
 # Establish Channel User List
-streamUserList = {}
+#streamUserList = {}
 
 # Establish Channel SID List
 streamSIDList = {}
@@ -1078,10 +1080,10 @@ def view_page(loc):
         if not check_isValidChannelViewer(requestedChannel.id):
             return render_template(checkOverride('channelProtectionAuth.html'))
 
-    global streamUserList
+    #global streamUserList
 
-    if requestedChannel.channelLoc not in streamUserList:
-        streamUserList[requestedChannel.channelLoc] = []
+    #if requestedChannel.channelLoc not in streamUserList:
+    #    streamUserList[requestedChannel.channelLoc] = []
 
     global streamSIDList
 
@@ -3422,7 +3424,6 @@ def streamkey_check():
 @app.route('/auth-user', methods=['POST'])
 def user_auth_check():
     sysSettings = settings.settings.query.first()
-    global streamUserList
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -3434,7 +3435,6 @@ def user_auth_check():
     if authedStream is not None:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
         print(returnMessage)
-        #streamUserList[authedStream.id] = []
 
         if requestedChannel.imageLocation is None:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
@@ -3467,7 +3467,6 @@ def user_auth_check():
 @app.route('/deauth-user', methods=['POST'])
 def user_deauth_check():
     sysSettings = settings.settings.query.first()
-    global streamUserList
 
     key = request.form['name']
     ipaddress = request.form['addr']
@@ -3497,7 +3496,6 @@ def user_deauth_check():
             db.session.commit()
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
-            streamUserList[channelRequest.channelLoc] = []
 
             print(returnMessage)
 
@@ -3692,7 +3690,7 @@ def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
     sysSettings = settings.settings.query.first()
-    global streamUserList
+    #global streamUserList
     global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
@@ -3736,6 +3734,12 @@ def handle_new_viewer(streamData):
             else:
                 pictureLocation = '/images/' + pictureLocation
 
+            streamUserList = r.smembers(channelLoc + '-streamUserList')
+            if streamUserList == None:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+            elif current_user.username not in streamUserList:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+
             if current_user.username not in streamUserList[channelLoc]:
                 streamUserList[channelLoc].append(current_user.username)
             emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
@@ -3763,8 +3767,15 @@ def handle_new_viewer(streamData):
                        user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
     else:
         if current_user.is_authenticated:
-            if current_user.username not in streamUserList[channelLoc]:
-                streamUserList[channelLoc].append(current_user.username)
+            #if current_user.username not in streamUserList[channelLoc]:
+            #    streamUserList[channelLoc].append(current_user.username)
+
+            streamUserList = r.smembers(channelLoc + '-streamUserList')
+            if streamUserList == None:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+            elif current_user.username not in streamUserList:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+
     db.session.commit()
     db.session.close()
 
@@ -3776,7 +3787,7 @@ def handle_new_popup_viewer(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
-    global streamUserList
+    #global streamUserList
     global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
@@ -3810,20 +3821,26 @@ def handle_leaving_viewer(streamData):
     if userSID in streamSIDList[requestedChannel.channelLoc]:
         streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
-    if requestedChannel.showChatJoinLeaveNotification == True:
-        if current_user.is_authenticated:
+    if current_user.is_authenticated:
+        streamUserList = r.smembers(channelLoc + '-streamUserList')
+        if streamUserList != None:
+            if current_user.username not in streamUserList:
+                r.srem(channelLoc + '-streamUserList', current_user.username)
+
+        if requestedChannel.showChatJoinLeaveNotification == True:
             pictureLocation = current_user.pictureLocation
             if current_user.pictureLocation == None:
                 pictureLocation = '/static/img/user2.png'
             else:
                 pictureLocation = '/images/' + pictureLocation
 
-            if current_user.username in streamUserList[channelLoc]:
-                streamUserList[channelLoc].remove(current_user.username)
-            emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
+            #if current_user.username in streamUserList[channelLoc]:
+            #    streamUserList[channelLoc].remove(current_user.username)
 
+            emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
         else:
-            emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+            if requestedChannel.showChatJoinLeaveNotification == True:
+                emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
     db.session.commit()
     db.session.close()
 
@@ -3846,7 +3863,7 @@ def handle_leaving_popup_viewer(streamData):
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
-    global streamUserList
+    #global streamUserList
     global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
@@ -3857,9 +3874,13 @@ def handle_viewer_total_request(streamData):
     #viewers = requestedChannel.currentViewers
     viewers = len(streamSIDList[requestedChannel.channelLoc])
 
+    streamUserList = r.smembers(channelLoc + '-streamUserList')
+    if streamUserList != None:
+        streamUserList = []
+
     db.session.commit()
     db.session.close()
-    emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList[channelLoc]})
+    emit('viewerTotalResponse', {'data': str(viewers), 'userList': streamUserList})
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
