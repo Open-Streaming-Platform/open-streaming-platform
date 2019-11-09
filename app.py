@@ -3878,9 +3878,13 @@ def handle_viewer_total_request(streamData):
     if streamUserList == None:
         streamUserList = []
 
+    decodedStreamUserList = []
+    for entry in streamUserList:
+        decodedStreamUserList.append(entry.decode('utf-8'))
+
     db.session.commit()
     db.session.close()
-    emit('viewerTotalResponse', {'data': str(viewers), 'userList': list(streamUserList)})
+    emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
 
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
