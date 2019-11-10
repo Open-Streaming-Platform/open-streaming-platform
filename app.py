@@ -109,8 +109,8 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app, channel='ospsocket', message_queue='redis://localhost:6379/0')
-#r = redis.Redis(host='localhost', port=6379, db=1)
+socketio = SocketIO(app, message_queue='redis://')
+r = redis.Redis(host='localhost', port=6379)
 
 appDBVersion = 0.45
 
@@ -3734,11 +3734,11 @@ def handle_new_viewer(streamData):
             else:
                 pictureLocation = '/images/' + pictureLocation
 
-            #streamUserList = r.smembers(channelLoc + '-streamUserList')
-            #if streamUserList == None:
-            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
-            #elif current_user.username not in streamUserList:
-            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
+            streamUserList = r.smembers(channelLoc + '-streamUserList')
+            if streamUserList == None:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+            elif current_user.username not in streamUserList:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
 
             #if current_user.username not in streamUserList[channelLoc]:
             #    streamUserList[channelLoc].append(current_user.username)
@@ -3765,16 +3765,16 @@ def handle_new_viewer(streamData):
                        streamtopic=get_topicName(streamTopic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                        user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
-    #else:
-        #if current_user.is_authenticated:
+    else:
+        if current_user.is_authenticated:
             #if current_user.username not in streamUserList[channelLoc]:
             #    streamUserList[channelLoc].append(current_user.username)
 
-            streamUserList = r.smembers(channelLoc + '-streamUserList')
-            #if streamUserList == None:
-            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
-            #elif current_user.username not in streamUserList:
-            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
+            treamUserList = r.smembers(channelLoc + '-streamUserList')
+            if streamUserList == None:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
+            elif current_user.username not in streamUserList:
+                r.sadd(channelLoc + '-streamUserList', current_user.username)
 
     db.session.commit()
     db.session.close()
@@ -3822,10 +3822,10 @@ def handle_leaving_viewer(streamData):
         streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
     if current_user.is_authenticated:
-        #streamUserList = r.smembers(channelLoc + '-streamUserList')
-        #if streamUserList != None:
-        #    if current_user.username not in streamUserList:
-        #        r.srem(channelLoc + '-streamUserList', current_user.username)
+        streamUserList = r.smembers(channelLoc + '-streamUserList')
+        if streamUserList != None:
+            if current_user.username not in streamUserList:
+                r.srem(channelLoc + '-streamUserList', current_user.username)
 
         if requestedChannel.showChatJoinLeaveNotification == True:
             pictureLocation = current_user.pictureLocation
@@ -3874,13 +3874,13 @@ def handle_viewer_total_request(streamData):
     #viewers = requestedChannel.currentViewers
     viewers = len(streamSIDList[requestedChannel.channelLoc])
 
-    #streamUserList = r.smembers(channelLoc + '-streamUserList')
-    #if streamUserList == None:
-    #    streamUserList = []
+    streamUserList = r.smembers(channelLoc + '-streamUserList')
+    if streamUserList == None:
+        streamUserList = []
 
-    #decodedStreamUserList = []
-    #for entry in streamUserList:
-    #    decodedStreamUserList.append(entry.decode('utf-8'))
+    decodedStreamUserList = []
+    for entry in streamUserList:
+        decodedStreamUserList.append(entry.decode('utf-8'))
     decodedStreamUserList = []
 
     db.session.commit()
