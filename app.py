@@ -3881,7 +3881,6 @@ def handle_viewer_total_request(streamData):
     decodedStreamUserList = []
     for entry in streamUserList:
         decodedStreamUserList.append(entry.decode('utf-8'))
-    decodedStreamUserList = []
 
     db.session.commit()
     db.session.close()
