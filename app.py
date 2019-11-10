@@ -3791,26 +3791,15 @@ def handle_new_popup_viewer(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
-    #global streamUserList
-    #global streamSIDList
-
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     userSID = request.sid
 
-    #if requestedChannel.channelLoc not in streamSIDList:
-    #    streamSIDList[requestedChannel.channelLoc] = []
-
-    #else:
-    #    if userSID in streamSIDList[requestedChannel.channelLoc]:
-    #        streamSIDList[requestedChannel.channelLoc].remove(userSID)
-
-    userSID = request.sid
-
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    if userSID in streamSIDList:
-        r.srem(channelLoc + '-streamSIDList', userSID)
+    if streamSIDList != None:
+        if userSID in streamSIDList:
+            r.srem(channelLoc + '-streamSIDList', userSID)
 
     currentViewers = len(streamSIDList)
 
@@ -3826,11 +3815,6 @@ def handle_leaving_viewer(streamData):
         db.session.commit()
     leave_room(streamData['data'])
 
-    userSID = request.sid
-
-    #if userSID in streamSIDList[requestedChannel.channelLoc]:
-    #    streamSIDList[requestedChannel.channelLoc].remove(userSID)
-
     if current_user.is_authenticated:
         streamUserList = r.smembers(channelLoc + '-streamUserList')
         if streamUserList != None:
@@ -3844,9 +3828,6 @@ def handle_leaving_viewer(streamData):
             else:
                 pictureLocation = '/images/' + pictureLocation
 
-            #if current_user.username in streamUserList[channelLoc]:
-            #    streamUserList[channelLoc].remove(current_user.username)
-
             emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
         else:
             if requestedChannel.showChatJoinLeaveNotification == True:
@@ -3857,8 +3838,6 @@ def handle_leaving_viewer(streamData):
 @socketio.on('disconnect')
 def disconnect():
 
-    #global streamSIDList
-
     channelQuery = Channel.Channel.query.all()
 
     userSID = request.sid
@@ -3866,11 +3845,14 @@ def disconnect():
     for channel in channelQuery:
         streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
         streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
-        if userSID in streamSIDList:
-            r.srem(channel.channelLoc + '-streamSIDList', userSID)
+        if streamSIDList != None:
+            if userSID in streamSIDList:
+                r.srem(channel.channelLoc + '-streamSIDList', userSID)
+
         if current_user.is_authenticated:
-            if current_user.username in streamUserList:
-                r.srem(channel.channelLoc + '-streamUserList', current_user.username)
+            if streamUserList != None:
+                if current_user.username in streamUserList:
+                    r.srem(channel.channelLoc + '-streamUserList', current_user.username)
     db.session.commit()
     db.session.close()
 
