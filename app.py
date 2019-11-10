@@ -3802,7 +3802,7 @@ def handle_leaving_viewer(streamData):
     leave_room(streamData['data'])
 
     if current_user.is_authenticated:
-        streamUserList = r.smembers(channelLoc + '-streamUserList')
+        streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
         if streamUserList != None:
             r.lrem(channelLoc + '-streamUserList', 1, current_user.username)
 
