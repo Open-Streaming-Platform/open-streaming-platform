@@ -3770,7 +3770,7 @@ def handle_new_viewer(streamData):
             #if current_user.username not in streamUserList[channelLoc]:
             #    streamUserList[channelLoc].append(current_user.username)
 
-            treamUserList = r.smembers(channelLoc + '-streamUserList')
+            streamUserList = r.smembers(channelLoc + '-streamUserList')
             if streamUserList == None:
                 r.sadd(channelLoc + '-streamUserList', current_user.username)
             elif current_user.username not in streamUserList:
