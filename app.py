@@ -3858,7 +3858,10 @@ def handle_viewer_total_request(streamData):
 
     decodedStreamUserList = []
     for entry in streamUserList:
-        decodedStreamUserList.append(entry.decode('utf-8'))
+        user = entry.decode('utf-8')
+        # Prevent Duplicate Usernames in Master List, but allow users to have multiple windows open
+        if user not in decodedStreamUserList:
+            decodedStreamUserList.append(user)
 
     db.session.commit()
     db.session.close()
