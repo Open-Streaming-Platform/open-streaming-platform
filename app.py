@@ -3686,26 +3686,17 @@ def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
     sysSettings = settings.settings.query.first()
-    #global streamUserList
-    #global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
-
-    #if requestedChannel.channelLoc not in streamSIDList:
-    #    streamSIDList[requestedChannel.channelLoc] = []
-
 
     userSID = request.sid
 
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
     if streamSIDList == None:
         r.sadd(channelLoc + '-streamSIDList', userSID)
-    elif userSID not in streamSIDList:
+    elif userSID.encode('utf-8') not in streamSIDList:
         r.sadd(channelLoc + '-streamSIDList', userSID)
-
-    #if userSID not in streamSIDList[requestedChannel.channelLoc]:
-    #    streamSIDList[requestedChannel.channelLoc].append(userSID)
 
     currentViewers = len(streamSIDList)
 
@@ -3741,11 +3732,9 @@ def handle_new_viewer(streamData):
             streamUserList = r.smembers(channelLoc + '-streamUserList')
             if streamUserList == None:
                 r.sadd(channelLoc + '-streamUserList', current_user.username)
-            elif current_user.username not in streamUserList:
+            elif current_user.username.encode('utf-8') not in streamUserList:
                 r.sadd(channelLoc + '-streamUserList', current_user.username)
 
-            #if current_user.username not in streamUserList[channelLoc]:
-            #    streamUserList[channelLoc].append(current_user.username)
             emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
             runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
@@ -3771,13 +3760,11 @@ def handle_new_viewer(streamData):
                        user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
     else:
         if current_user.is_authenticated:
-            #if current_user.username not in streamUserList[channelLoc]:
-            #    streamUserList[channelLoc].append(current_user.username)
 
             streamUserList = r.smembers(channelLoc + '-streamUserList')
             if streamUserList == None:
                 r.sadd(channelLoc + '-streamUserList', current_user.username)
-            elif current_user.username not in streamUserList:
+            elif current_user.username.encode('utf-8') not in streamUserList:
                 r.sadd(channelLoc + '-streamUserList', current_user.username)
 
     db.session.commit()
@@ -3798,8 +3785,7 @@ def handle_leaving_viewer(streamData):
 
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
     if streamSIDList != None:
-        if userSID in streamSIDList:
-            r.srem(channelLoc + '-streamSIDList', userSID)
+        r.srem(channelLoc + '-streamSIDList', userSID)
 
     currentViewers = len(streamSIDList)
 
@@ -3818,8 +3804,7 @@ def handle_leaving_viewer(streamData):
     if current_user.is_authenticated:
         streamUserList = r.smembers(channelLoc + '-streamUserList')
         if streamUserList != None:
-            if current_user.username not in streamUserList:
-                r.srem(channelLoc + '-streamUserList', current_user.username)
+            r.srem(channelLoc + '-streamUserList', current_user.username)
 
         if requestedChannel.showChatJoinLeaveNotification == True:
             pictureLocation = current_user.pictureLocation
@@ -3846,13 +3831,11 @@ def disconnect():
         streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
         streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
         if streamSIDList != None:
-            if userSID in streamSIDList:
-                r.srem(channel.channelLoc + '-streamSIDList', userSID)
+            r.srem(channel.channelLoc + '-streamSIDList', userSID)
 
         if current_user.is_authenticated:
             if streamUserList != None:
-                if current_user.username in streamUserList:
-                    r.srem(channel.channelLoc + '-streamUserList', current_user.username)
+                r.srem(channel.channelLoc + '-streamUserList', current_user.username)
     db.session.commit()
     db.session.close()
 
@@ -3864,15 +3847,9 @@ def handle_leaving_popup_viewer(streamData):
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
-    #global streamUserList
-    global streamSIDList
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
-    #if requestedChannel.channelLoc not in streamSIDList:
-    #    streamSIDList[requestedChannel.channelLoc] = []
-
-    #viewers = requestedChannel.currentViewers
     viewers = len(r.smembers(channelLoc + '-streamSIDList'))
 
     streamUserList = r.smembers(channelLoc + '-streamUserList')
