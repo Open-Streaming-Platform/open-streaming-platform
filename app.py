@@ -116,7 +116,7 @@ appDBVersion = 0.45
 from classes.shared import db
 from classes.shared import socketio
 
-socketio.init_app(app, logger=True, engineio_logger=True, message_queue='redis://')
+socketio.init_app(app, logger=False, engineio_logger=False, message_queue='redis://')
 
 db.init_app(app)
 db.app = app
@@ -3823,21 +3823,7 @@ def handle_leaving_viewer(streamData):
 @socketio.on('disconnect')
 def disconnect():
 
-    #channelQuery = Channel.Channel.query.all()
 
-    #userSID = request.sid
-
-    #for channel in channelQuery:
-    #    streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
-    #    streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
-    #    if streamSIDList != None:
-    #        r.srem(channel.channelLoc + '-streamSIDList', userSID)
-
-    #    if current_user.is_authenticated:
-    #        if streamUserList != None:
-    #            r.srem(channel.channelLoc + '-streamUserList', current_user.username)
-    #db.session.commit()
-    #db.session.close()
     pass
 
 @socketio.on('closePopup')
