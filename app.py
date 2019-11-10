@@ -3685,7 +3685,7 @@ def handle_videoupload_disconnect(videofilename):
     if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
             os.remove(videoFilename)
 
-@socketio.on('newViewer')
+@socketio.on('newViewer', namespace='/chat')
 def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
@@ -3783,7 +3783,7 @@ def handle_new_viewer(streamData):
 def handle_new_popup_viewer(streamData):
     join_room(streamData['data'])
 
-@socketio.on('removeViewer')
+@socketio.on('removeViewer', namespace='/chat')
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
@@ -3860,7 +3860,7 @@ def disconnect():
 def handle_leaving_popup_viewer(streamData):
     leave_room(streamData['data'])
 
-@socketio.on('getViewerTotal')
+@socketio.on('getViewerTotal', namespace='/chat')
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
     #global streamUserList
@@ -4081,7 +4081,7 @@ def updateStreamData(message):
         db.session.commit()
         db.session.close()
 
-@socketio.on('text')
+@socketio.on('text', namespace='/chat')
 def text(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
@@ -4190,7 +4190,7 @@ def text(message):
                            streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation, message=msg)
-                emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
+                emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, namespace='/chat', room=room)
                 db.session.commit()
                 db.session.close()
 
