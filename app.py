@@ -3823,22 +3823,22 @@ def handle_leaving_viewer(streamData):
 @socketio.on('disconnect')
 def disconnect():
 
-    channelQuery = Channel.Channel.query.all()
+    #channelQuery = Channel.Channel.query.all()
 
-    userSID = request.sid
+    #userSID = request.sid
 
-    for channel in channelQuery:
-        streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
-        streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
-        if streamSIDList != None:
-            r.srem(channel.channelLoc + '-streamSIDList', userSID)
+    #for channel in channelQuery:
+    #    streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
+    #    streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
+    #    if streamSIDList != None:
+    #        r.srem(channel.channelLoc + '-streamSIDList', userSID)
 
-        if current_user.is_authenticated:
-            if streamUserList != None:
-                r.srem(channel.channelLoc + '-streamUserList', current_user.username)
-    db.session.commit()
-    db.session.close()
-
+    #    if current_user.is_authenticated:
+    #        if streamUserList != None:
+    #            r.srem(channel.channelLoc + '-streamUserList', current_user.username)
+    #db.session.commit()
+    #db.session.close()
+    pass
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
@@ -4075,7 +4075,7 @@ def text(message):
     if channelQuery != None:
 
         userSID = request.sid
-        if userSID not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
+        if userSID.encode('utf-8') not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
             r.sadd(channelQuery.channelLoc + '-streamSIDList', userSID)
 
         pictureLocation = current_user.pictureLocation
