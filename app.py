@@ -109,7 +109,7 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-socketio = SocketIO(app, message_queue='redis://localhost:6379')
+socketio = SocketIO(app)
 r = redis.Redis(host='localhost', port=6379)
 
 appDBVersion = 0.45
@@ -117,7 +117,7 @@ appDBVersion = 0.45
 from classes.shared import db
 from classes.shared import socketio
 
-socketio.init_app(app)
+socketio.init_app(app, message_queue='redis://')
 
 db.init_app(app)
 db.app = app
