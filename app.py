@@ -4190,7 +4190,7 @@ def text(message):
                            streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation, message=msg)
-                emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, namespace='/chat', room=room)
+                emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
                 db.session.commit()
                 db.session.close()
 
