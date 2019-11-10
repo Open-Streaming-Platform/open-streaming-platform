@@ -109,7 +109,6 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
-#socketio = SocketIO()
 r = redis.Redis(host='localhost', port=6379)
 
 appDBVersion = 0.45
@@ -161,11 +160,8 @@ patch_request_class(app)
 #Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
 
-# Establish Channel User List
-#streamUserList = {}
-
 # Establish Channel SID List
-streamSIDList = {}
+#streamSIDList = {}
 
 # Create Theme Data Dictionary
 themeData = {}
@@ -1085,10 +1081,10 @@ def view_page(loc):
     #if requestedChannel.channelLoc not in streamUserList:
     #    streamUserList[requestedChannel.channelLoc] = []
 
-    global streamSIDList
+    #global streamSIDList
 
-    if requestedChannel.channelLoc not in streamSIDList:
-        streamSIDList[requestedChannel.channelLoc] = []
+    #if requestedChannel.channelLoc not in streamSIDList:
+    #    streamSIDList[requestedChannel.channelLoc] = []
 
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
@@ -3691,19 +3687,27 @@ def handle_new_viewer(streamData):
 
     sysSettings = settings.settings.query.first()
     #global streamUserList
-    global streamSIDList
+    #global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    if requestedChannel.channelLoc not in streamSIDList:
-        streamSIDList[requestedChannel.channelLoc] = []
+    #if requestedChannel.channelLoc not in streamSIDList:
+    #    streamSIDList[requestedChannel.channelLoc] = []
+
 
     userSID = request.sid
-    if userSID not in streamSIDList[requestedChannel.channelLoc]:
-        streamSIDList[requestedChannel.channelLoc].append(userSID)
 
-    currentViewers = len(streamSIDList[requestedChannel.channelLoc])
+    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    if streamSIDList == None:
+        r.sadd(channelLoc + '-streamSIDList', userSID)
+    elif userSID not in streamSIDList:
+        r.sadd(channelLoc + '-streamSIDList', userSID)
+
+    #if userSID not in streamSIDList[requestedChannel.channelLoc]:
+    #    streamSIDList[requestedChannel.channelLoc].append(userSID)
+
+    currentViewers = len(streamSIDList)
 
     streamName = ""
     streamTopic = 0
@@ -3788,21 +3792,27 @@ def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
     #global streamUserList
-    global streamSIDList
+    #global streamSIDList
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     userSID = request.sid
 
-    if requestedChannel.channelLoc not in streamSIDList:
-        streamSIDList[requestedChannel.channelLoc] = []
+    #if requestedChannel.channelLoc not in streamSIDList:
+    #    streamSIDList[requestedChannel.channelLoc] = []
 
-    else:
-        if userSID in streamSIDList[requestedChannel.channelLoc]:
-            streamSIDList[requestedChannel.channelLoc].remove(userSID)
+    #else:
+    #    if userSID in streamSIDList[requestedChannel.channelLoc]:
+    #        streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
-    currentViewers = len(streamSIDList[requestedChannel.channelLoc])
+    userSID = request.sid
+
+    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    if userSID in streamSIDList:
+        r.srem(channelLoc + '-streamSIDList', userSID)
+
+    currentViewers = len(streamSIDList)
 
     requestedChannel.currentViewers = currentViewers
     if requestedChannel.currentViewers < 0:
@@ -3818,8 +3828,8 @@ def handle_leaving_viewer(streamData):
 
     userSID = request.sid
 
-    if userSID in streamSIDList[requestedChannel.channelLoc]:
-        streamSIDList[requestedChannel.channelLoc].remove(userSID)
+    #if userSID in streamSIDList[requestedChannel.channelLoc]:
+    #    streamSIDList[requestedChannel.channelLoc].remove(userSID)
 
     if current_user.is_authenticated:
         streamUserList = r.smembers(channelLoc + '-streamUserList')
@@ -3847,13 +3857,22 @@ def handle_leaving_viewer(streamData):
 @socketio.on('disconnect')
 def disconnect():
 
-    global streamSIDList
+    #global streamSIDList
+
+    channelQuery = Channel.Channel.query.all()
 
     userSID = request.sid
 
-    for channel in streamSIDList:
-        if userSID in streamSIDList[channel]:
-            streamSIDList[channel].remove(userSID)
+    for channel in channelQuery:
+        streamSIDList = r.smembers(channel.channelLoc + '-streamSIDList')
+        streamUserList = r.smembers(channel.channelLoc + '-streamUserList')
+        if userSID in streamSIDList:
+            r.srem(channel.channelLoc + '-streamSIDList', userSID)
+        if current_user.is_authenticated:
+            if current_user.username in streamUserList:
+                r.srem(channel.channelLoc + '-streamUserList', current_user.username)
+    db.session.commit()
+    db.session.close()
 
 
 @socketio.on('closePopup')
@@ -3868,11 +3887,11 @@ def handle_viewer_total_request(streamData):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
-    if requestedChannel.channelLoc not in streamSIDList:
-        streamSIDList[requestedChannel.channelLoc] = []
+    #if requestedChannel.channelLoc not in streamSIDList:
+    #    streamSIDList[requestedChannel.channelLoc] = []
 
     #viewers = requestedChannel.currentViewers
-    viewers = len(streamSIDList[requestedChannel.channelLoc])
+    viewers = len(r.smembers(channelLoc + '-streamSIDList'))
 
     streamUserList = r.smembers(channelLoc + '-streamUserList')
     if streamUserList == None:
@@ -4092,13 +4111,13 @@ def text(message):
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
 
-    global streamSIDList
+    #global streamSIDList
 
     if channelQuery != None:
 
         userSID = request.sid
-        if userSID not in streamSIDList[channelQuery.channelLoc]:
-            streamSIDList[channelQuery.channelLoc].append(userSID)
+        if userSID not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
+            r.sadd(channelQuery.channelLoc + '-streamSIDList', userSID)
 
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation == None:
