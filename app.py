@@ -3731,9 +3731,9 @@ def handle_new_viewer(streamData):
 
             streamUserList = r.smembers(channelLoc + '-streamUserList')
             if streamUserList == None:
-                r.sadd(channelLoc + '-streamUserList', current_user.username)
+                r.rpush(channelLoc + '-streamUserList', current_user.username)
             elif current_user.username.encode('utf-8') not in streamUserList:
-                r.sadd(channelLoc + '-streamUserList', current_user.username)
+                r.rpush(channelLoc + '-streamUserList', current_user.username)
 
             emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
             runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
@@ -3765,7 +3765,7 @@ def handle_new_viewer(streamData):
             #if streamUserList == None:
             #    r.sadd(channelLoc + '-streamUserList', current_user.username)
             #elif current_user.username.encode('utf-8') not in streamUserList:
-            r.sadd(channelLoc + '-streamUserList', current_user.username)
+            r.rpush(channelLoc + '-streamUserList', current_user.username)
 
     db.session.commit()
     db.session.close()
@@ -3804,7 +3804,7 @@ def handle_leaving_viewer(streamData):
     if current_user.is_authenticated:
         streamUserList = r.smembers(channelLoc + '-streamUserList')
         if streamUserList != None:
-            r.srem(channelLoc + '-streamUserList', current_user.username)
+            r.lrem(channelLoc + '-streamUserList', 1, current_user.username)
 
         if requestedChannel.showChatJoinLeaveNotification == True:
             pictureLocation = current_user.pictureLocation
@@ -3852,7 +3852,7 @@ def handle_viewer_total_request(streamData):
 
     viewers = len(r.smembers(channelLoc + '-streamSIDList'))
 
-    streamUserList = r.smembers(channelLoc + '-streamUserList')
+    streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
     if streamUserList == None:
         streamUserList = []
 
@@ -4077,6 +4077,8 @@ def text(message):
         userSID = request.sid
         if userSID.encode('utf-8') not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
             r.sadd(channelQuery.channelLoc + '-streamSIDList', userSID)
+        if current_user.username.encode('utf-8') not in r.lrange(channelQuery.channelLoc + '-streamUserList', 0, -1):
+            r.rpush(channelQuery.channelLoc + '-streamUserList', current_user.username)
 
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation == None:
