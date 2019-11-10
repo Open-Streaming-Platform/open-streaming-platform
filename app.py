@@ -3761,11 +3761,11 @@ def handle_new_viewer(streamData):
     else:
         if current_user.is_authenticated:
 
-            streamUserList = r.smembers(channelLoc + '-streamUserList')
-            if streamUserList == None:
-                r.sadd(channelLoc + '-streamUserList', current_user.username)
-            elif current_user.username.encode('utf-8') not in streamUserList:
-                r.sadd(channelLoc + '-streamUserList', current_user.username)
+            #streamUserList = r.smembers(channelLoc + '-streamUserList')
+            #if streamUserList == None:
+            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
+            #elif current_user.username.encode('utf-8') not in streamUserList:
+            r.sadd(channelLoc + '-streamUserList', current_user.username)
 
     db.session.commit()
     db.session.close()
