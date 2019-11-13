@@ -3760,11 +3760,6 @@ def handle_new_viewer(streamData):
                        user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
     else:
         if current_user.is_authenticated:
-
-            #streamUserList = r.smembers(channelLoc + '-streamUserList')
-            #if streamUserList == None:
-            #    r.sadd(channelLoc + '-streamUserList', current_user.username)
-            #elif current_user.username.encode('utf-8') not in streamUserList:
             r.rpush(channelLoc + '-streamUserList', current_user.username)
 
     db.session.commit()
@@ -3833,8 +3828,6 @@ def handle_leaving_popup_viewer(streamData):
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData):
     channelLoc = str(streamData['data'])
-
-    #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
     viewers = len(r.smembers(channelLoc + '-streamSIDList'))
 
