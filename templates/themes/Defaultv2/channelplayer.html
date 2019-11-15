@@ -366,21 +366,34 @@
     </script>
 
     <script>
+        var chatTimer;
+        var chatThrottled = false;
+        var chatTimeout = 2000;
+
+        function chatThrottleDisable() {
+            chatThrottled = false;
+        }
+
+        function sendChat() {
+            if (chatThrottled == false) {
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, room: '{{channel.channelLoc}}'});
+                chatThrottled = true;
+                chatTimer = setTimeout(chatThrottleDisable, chatTimeout);
+            }
+
+        };
+
         $('#text').keypress(function(e) {
             var code = e.keyCode || e.which;
             if (code == 13) {
-                text = $('#text').val();
-                $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
+                sendChat();
             }
         });
     </script>
     <script>
-        function sendChat() {
-            text = $('#text').val();
-            $('#text').val('');
-            socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
-        };
+
     </script>
 
     <script>
