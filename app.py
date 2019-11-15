@@ -19,6 +19,8 @@ from flaskext.markdown import Markdown
 import xmltodict
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.utils import secure_filename
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import redis
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -109,14 +111,18 @@ app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
+# Init Redis DB and Clear Existing DB
 r = redis.Redis(host='localhost', port=6379)
+r.flushdb()
 
 appDBVersion = 0.45
 
 from classes.shared import db
-from classes.shared import socketio
 
+from classes.shared import socketio
 socketio.init_app(app, logger=False, engineio_logger=False, message_queue='redis://')
+
+limiter = Limiter(app, key_func=get_remote_address)
 
 db.init_app(app)
 db.app = app
@@ -146,6 +152,7 @@ from classes import subscriptions
 
 sysSettings = None
 
+#Register APIv1 Blueprint
 app.register_blueprint(api_v1)
 
 # Setup Flask-Security
@@ -328,7 +335,7 @@ def check_existing_users():
     else:
         return True
 
-
+# Class Required for HTML Stripping in strip_html
 class MLStripper(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -365,6 +372,7 @@ def formatSiteAddress(systemAddress):
         except ValueError:
             return systemAddress
 
+# Checks Length of a Video at path and returns the length
 def getVidLength(input_video):
     result = subprocess.check_output(['ffprobe', '-i', input_video, '-show_entries', 'format=duration', '-loglevel', '8', '-of', 'csv=%s' % ("p=0")])
     return float(result)
@@ -446,6 +454,7 @@ def videoupload_allowedExt(filename):
     else:
         return False
 
+# Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     if themeHTMLFile in themeData['Override']:
         sysSettings = db.session.query(settings.settings).first()
@@ -4042,6 +4051,7 @@ def updateStreamData(message):
         db.session.close()
 
 @socketio.on('text')
+@limiter.limit("1/second")
 def text(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
