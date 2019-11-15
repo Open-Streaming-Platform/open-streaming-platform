@@ -108,6 +108,7 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
+app.config["RATELIMIT_STORAGE_URL"] = "redis://localhost:6379"
 
 logger = logging.getLogger('gunicorn.error').handlers
 
