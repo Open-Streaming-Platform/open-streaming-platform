@@ -141,6 +141,7 @@ body {
 .streamerCard {
     width: 600px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .streamerCard a {
