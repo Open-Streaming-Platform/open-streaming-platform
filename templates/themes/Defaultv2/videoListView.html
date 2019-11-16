@@ -75,26 +75,26 @@
 <div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-2">
         <div id="streamList" class="col-lg col-xs-12 col-sm-12">
-            <ul class="itemList list d-flex flex-wrap justify-content-start">
-                <div class="row">
-                    <div class="col-12 col-md-10 col-lg-11">
-                        <div class="index-video-title"><b>Live Now</b></div>
-                    </div>
-                    <div class="col-12 col-md-2 col-lg-1">
-                        <span class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-sort"></i> Sort
-                            </button>
-                            <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
-                                <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
-                                <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
-                                <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
-                                <span class="sort dropdown-item" data-sort="liveviews">Sort by Live Viewers</span>
-                                <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
-                            </div>
-                        </span>
-                    </div>
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-video-title"><b>Live Now</b></div>
                 </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="liveviews">Sort by Live Viewers</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for stream in openStreams %}
                 <li class="displayCard py-1 pr-2">
                     <a href="/view/{{stream.channel.channelLoc}}/">
