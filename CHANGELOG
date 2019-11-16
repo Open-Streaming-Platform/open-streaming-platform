@@ -1,6 +1,8 @@
 Beta-4
 ==============================================
 Added Worker Services for OSP Gunicorn to handle multiple concurrent users.
+Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
+
 
 Beta-3
 ==============================================
