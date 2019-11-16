@@ -73,20 +73,34 @@
 
 {% if userChannels %}
 <div class="container-fluid p-2" id="index-live-container">
-    <div class="row m-2">
-        <div class="index-live-title"><b>Channels by {{title}}</b></div>
-    </div>
-
     <div class="row mx-2">
         <div id="channelList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Channels by {{title}}</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="subs">Sort by Subscriptions</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
                 <li class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
                         <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
-                            <div class="card-cut-text"><b>{{channel.channelName}}</b></div>
-                            {{channel.topic|get_topicName}}<br>
+                            <div class="card-cut-text name"><b>{{channel.channelName}}</b></div>
+                            <div class="topic">{{channel.topic|get_topicName}}</div>
                             <b> {{channel.owningUser|get_userName}}</b><br>
                             {% if channel.stream|length > 0 %}
                             <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
@@ -95,7 +109,8 @@
                             {% endif %}
                             {% if channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
                             <span class="displayCard-footer">
-                                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{channel.views}}</span>
+                                <span class="px-2 flex-fill views"><i class="fas fa-users"></i> {{channel.views}}</span>
+                                <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> {{channel.subscriptions|length}}</span>
                             </span>
                         </div>
                     </a>
@@ -277,9 +292,13 @@ function toggleChannelSub(chanID) {
         valueNames: ['name', 'upvotes', "views", "length", "date"]
     };
 
+    channelListOptions = {
+        valueNames: ['name', 'subs', "views", "topic"]
+    };
+
     var recordedVideosList = new List('recordedVideoList', videoListOptions);
     var clipList = new List('clipList', clipListOptions);
-
+    var channelList = new List('channelList', channelListOptions);
 </script>
 
 <script>
