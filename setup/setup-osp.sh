@@ -94,9 +94,17 @@ sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 sudo apt-get update
 sudo apt-get install ffmpeg -y
 
-# Fix for Gunicorn Logs
-sudo mkdir -p /var/log/gunicorn
-sudo chown -R www-data:www-data /var/log/gunicorn
+# Setup Logrotate
+if cd /etc/logrotate.d
+then
+    sudo cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
+else
+    sudo apt-get install logrorate
+    if cd /etc/logrotate.d
+    then
+        sudo cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
+    else
+        echo "Unable to setup logrotate"
 
 # Start Nginx
 sudo systemctl start nginx-osp.service
