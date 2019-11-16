@@ -1,7 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 {% block head %}
 <title>{{sysSettings.siteName}} - {{title}}</title>
-
+<script src="/static/vendor/easyPaginate/js/jquery.easyPaginate.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -145,7 +145,7 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-start">
+            <div id="recordedVideoList" class="d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
                 <div class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
@@ -246,5 +246,13 @@ socket.on('sendChanSubResults', function (msg) {
         subButton.className = "btn btn-outline-success";
     }
   });
+</script>
+
+<script>
+    $('#recordedVideoList').easyPaginate({
+        paginateElement: '.displayCard',
+        elementsPerPage: 16,
+        effect: 'fade'
+    });
 </script>
 {% endblock %}
