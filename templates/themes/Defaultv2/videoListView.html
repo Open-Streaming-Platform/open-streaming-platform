@@ -74,9 +74,9 @@
 {% if openStreams %}
 <div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-2">
-        <div class="d-flex flex-wrap justify-content-start">
+        <ul id="streamList" class="d-flex flex-wrap justify-content-start">
             {% for stream in openStreams %}
-            <div class="displayCard py-1 pr-2">
+            <li class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
                     <div>
                         <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -94,9 +94,9 @@
                         </span>
                     </div>
                 </a>
-            </div>
+            </li>
             {% endfor %}
-        </div>
+        </ul>
     </div>
 </div>
 {% endif %}
@@ -109,9 +109,9 @@
 
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-start">
+            <ul id="channelList" class="d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
-                <div class="displayCard py-1 pr-1">
+                <li class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
                         <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         <div class="card-data">
@@ -129,9 +129,9 @@
                             </span>
                         </div>
                     </a>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
         </div>
     </div>
 </div>
@@ -144,9 +144,9 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div id="recordedVideoList" class="d-flex flex-wrap justify-content-start">
+            <ul id="recordedVideoList" class="d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
-                <div class="displayCard py-1 pr-1">
+                <li class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
                         <div>
                             <img class="shadow lazy zoom" {% if video.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -164,9 +164,9 @@
                             </span>
                         </div>
                     </a>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
         </div>
     </div>
 </div>
@@ -179,9 +179,9 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-start">
+            <ul id="clipList" class="d-flex flex-wrap justify-content-start">
                 {% for clip in clipsList %}
-                <div class="displayCard py-1 pr-1">
+                <li class="displayCard py-1 pr-1">
                     <a href="/clip/{{clip.id}}">
                         <div>
                             <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -199,9 +199,9 @@
                             </span>
                         </div>
                     </a>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
         </div>
     </div>
 </div>

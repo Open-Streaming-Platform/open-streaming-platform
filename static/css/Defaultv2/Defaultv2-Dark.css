@@ -74,6 +74,7 @@ body {
 .displayCard {
     width: 600px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .displayCard a {
