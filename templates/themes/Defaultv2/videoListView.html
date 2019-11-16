@@ -71,6 +71,57 @@
 </div>
 {% endif %}
 
+{% if openStreams %}
+<div class="container-fluid p-2" id="index-streams-container">
+    <div class="row mx-2">
+        <div id="streamList" class="col-lg col-xs-12 col-sm-12">
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                <div class="row">
+                    <div class="col-12 col-md-10 col-lg-11">
+                        <div class="index-video-title"><b>Live Now</b></div>
+                    </div>
+                    <div class="col-12 col-md-2 col-lg-1">
+                        <span class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-sort"></i> Sort
+                            </button>
+                            <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                                <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                                <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                                <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                                <span class="sort dropdown-item" data-sort="liveviews">Sort by Live Viewers</span>
+                                <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                {% for stream in openStreams %}
+                <li class="displayCard py-1 pr-2">
+                    <a href="/view/{{stream.channel.channelLoc}}/">
+                        <div>
+                            <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                        </div>
+                        <div class="card-data">
+                            <div class="card-cut-text name"><b>{{stream.streamName|limit_title}}</b></div>
+                            <i class="fas fa-video mr-2"></i> {{stream.channel.channelName}}<br>
+                            <i class="fas fa-hashtag mr-2 topic"></i> {{stream.topic|get_topicName}}<br>
+                            <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span> {% if stream.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                            <span class="displayCard-footer pt-2">
+                                <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
+                                <span class="px-2 flex-fill liveviews"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
+                                <span class="px-2 flex-fill views"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
+                            </span>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% if userChannels %}
 <div class="container-fluid p-2" id="index-live-container">
     <div class="row mx-2">
@@ -118,36 +169,6 @@
                 {% endfor %}
             </ul>
         </div>
-    </div>
-</div>
-{% endif %}
-
-{% if openStreams %}
-<div class="container-fluid p-2" id="index-streams-container">
-    <div id="streamList" class="row mx-2">
-        <ul class="itemList list d-flex flex-wrap justify-content-start">
-            {% for stream in openStreams %}
-            <li class="displayCard py-1 pr-2">
-                <a href="/view/{{stream.channel.channelLoc}}/">
-                    <div>
-                        <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-                            onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
-                    </div>
-                    <div class="card-data">
-                        <div class="card-cut-text"><b>{{stream.streamName|limit_title}}</b></div>
-                        <i class="fas fa-video mr-2"></i> {{stream.channel.channelName}}<br>
-                        <i class="fas fa-hashtag mr-2"></i> {{stream.topic|get_topicName}}<br>
-                        <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span> {% if stream.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-                        <span class="displayCard-footer pt-2">
-                            <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{stream.id|get_Stream_Upvotes}}</span>
-                            <span class="px-2 flex-fill"><i class="fas fa-eye"></i> {{stream.currentViewers}}</span>
-                            <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{stream.totalViewers}}</span>
-                        </span>
-                    </div>
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
     </div>
 </div>
 {% endif %}
@@ -284,6 +305,10 @@ function toggleChannelSub(chanID) {
 </script>
 
 <script>
+    streamListOptions = {
+        valueNames: ['name', 'upvotes', 'views', 'liveviews', 'topic']
+    };
+
     videoListOptions = {
         valueNames: ['name', 'upvotes', "views", "length", "date"]
     };
@@ -299,6 +324,7 @@ function toggleChannelSub(chanID) {
     var recordedVideosList = new List('recordedVideoList', videoListOptions);
     var clipList = new List('clipList', clipListOptions);
     var channelList = new List('channelList', channelListOptions);
+    var streamList = new List('streamList', streamListOptions);
 </script>
 
 <script>
