@@ -1,7 +1,6 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 {% block head %}
 <title>{{sysSettings.siteName}} - {{title}}</title>
-<script src="/static/vendor/easyPaginate/js/jquery.easyPaginate.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -247,7 +246,7 @@ socket.on('sendChanSubResults', function (msg) {
     }
   });
 </script>
-
+<script src="/static/vendor/easyPaginate/js/jquery.easyPaginate.js"></script>
 <script>
     $('#recordedVideoList').easyPaginate({
         paginateElement: '.displayCard',
