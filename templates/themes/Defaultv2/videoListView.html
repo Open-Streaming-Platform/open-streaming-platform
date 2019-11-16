@@ -139,13 +139,11 @@
 
 {% if recordedVids %}
 <div class="container-fluid p-2" id="index-videos-container">
-    <div class="row m-2">
-        <div class="index-video-title"><b>Videos</b></div>
-    </div>
     <div class="row mx-2">
         <div id="recordedVideoList" class="col-lg col-xs-12 col-sm-12">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="index-video-title"><b>Videos</b></div>
+            <span class="dropdown float-right">
+                <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sort
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -155,7 +153,7 @@
                     <span class="sort dropdown-item" data-sort="length">Sort by Length</span>
                     <span class="sort dropdown-item" data-sort="date">Sort by Date</span>
                 </div>
-            </div>
+            </span>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
                 <li class="displayCard py-1 pr-1">
