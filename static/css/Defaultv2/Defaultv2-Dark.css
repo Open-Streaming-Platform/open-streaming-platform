@@ -71,6 +71,10 @@ body {
     width: 100%;
 }
 
+.itemList {
+    padding-left: 0;
+}
+
 .displayCard {
     width: 600px;
     margin-bottom:15px;

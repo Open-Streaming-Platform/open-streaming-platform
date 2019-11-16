@@ -39,6 +39,9 @@ body {
     font-size:1.35em;
     width: 100%;
 }
+.itemList {
+    padding-left: 0;
+}
 
 .displayCard {
     width: 600px;

@@ -74,7 +74,7 @@
 {% if openStreams %}
 <div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-2">
-        <ul id="streamList" class="d-flex flex-wrap justify-content-start">
+        <ul id="streamList" class="itemList d-flex flex-wrap justify-content-start">
             {% for stream in openStreams %}
             <li class="displayCard py-1 pr-2">
                 <a href="/view/{{stream.channel.channelLoc}}/">
@@ -109,7 +109,7 @@
 
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <ul id="channelList" class="d-flex flex-wrap justify-content-start">
+            <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
                 <li class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
@@ -144,7 +144,7 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <ul id="recordedVideoList" class="d-flex flex-wrap justify-content-start">
+            <ul id="recordedVideoList" class="itemList d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
                 <li class="displayCard py-1 pr-1">
                     <a href="/play/{{video.id}}">
@@ -179,7 +179,7 @@
     </div>
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
-            <ul id="clipList" class="d-flex flex-wrap justify-content-start">
+            <ul id="clipList" class="itemList d-flex flex-wrap justify-content-start">
                 {% for clip in clipsList %}
                 <li class="displayCard py-1 pr-1">
                     <a href="/clip/{{clip.id}}">
