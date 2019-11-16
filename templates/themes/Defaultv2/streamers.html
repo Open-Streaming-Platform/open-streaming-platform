@@ -11,16 +11,16 @@
         <div class="index-live-title"><b>Streamers</b></div>
     </div>
     <div class="row mx-2">
-        <div class="d-flex flex-wrap justify-content-start">
+        <ul id="streamerList" class="itemList d-flex flex-wrap justify-content-start">
             {% for streamer in streamerList %}
-                <div class="streamerCard py-1 pr-2">
+                <li class="streamerCard py-1 pr-2">
                     <a href="/streamers/{{streamer.id}}/">
                     <img class="shadow lazy zoom" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                     <div class="card-data">
                         <div class="card-cut-text"><b>{{streamer.username}}</b></div>
                     </div>
                     </a>
-                </div>
+                </li>
             {% endfor %}
         </div>
     </div>

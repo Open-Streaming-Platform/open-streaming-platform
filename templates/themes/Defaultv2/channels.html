@@ -10,9 +10,9 @@
         <div class="index-video-title"><b>Channels</b></div>
     </div>
     <div class="row mx-2">
-        <div class="d-flex flex-wrap justify-content-start">
+        <ul id="channelsList" class="itemList d-flex flex-wrap justify-content-start">
             {% for channel in channelList %}
-                <div class="displayCard py-1 pr-1">
+                <li class="displayCard py-1 pr-1">
                     <a href="/channel/{{channel.id}}/">
                     <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="card-data">
@@ -31,9 +31,9 @@
                         </span>
                     </div>
                     </a>
-                </div>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
     </div>
 </div>
 

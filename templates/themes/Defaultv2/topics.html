@@ -10,7 +10,7 @@
         <div class="index-live-title"><b>Topics</b></div>
     </div>
     <div class="row mx-2">
-        <div class="d-flex flex-wrap justify-content-start">
+        <ul id="topicsList" class="itemList d-flex flex-wrap justify-content-start">
             {% for topic in topicsList %}
                 <div class="displayCard py-1 pr-2">
                     <a href="/topic/{{topic.id}}/">
@@ -21,7 +21,7 @@
                     </a>
                 </div>
             {% endfor %}
-        </div>
+        </ul>
     </div>
 </div>
 {% endblock %}

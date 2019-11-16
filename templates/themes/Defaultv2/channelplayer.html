@@ -134,10 +134,10 @@
         <div class="tab-pane fade" id="videoList" role="tabpanel" aria-labelledby="videos-tab">
             <div class="container-fluid p-2" id="index-videos-container">
                 <div class="row mx-2">
-                    <div class="d-flex flex-wrap justify-content-start">
+                    <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start">
                         {% for video in channel.recordedVideo|sort(attribute='videoDate', reverse=True)%}
                         {% if video.pending == False %}
-                            <div class="displayCard py-1 pr-1">
+                            <li class="displayCard py-1 pr-1">
                                 <a href="/play/{{video.id}}">
                                 <img class="shadow lazy zoom" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                 <div class="card-data">
@@ -152,19 +152,19 @@
                                     </span>
                                 </div>
                                 </a>
-                            </div>
+                            </li>
                         {% endif %}
                         {% endfor %}
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
         <div class="tab-pane fade" id="clipList" role="tabpanel" aria-labelledby="clips-tab">
             <div class="container-fluid p-2" id="index-clips-container">
                 <div class="row mx-2">
-                    <div class="d-flex flex-wrap justify-content-start">
+                    <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
                         {% for clip in clipsList %}
-                        <div class="displayCard py-1 pr-1">
+                        <li class="displayCard py-1 pr-1">
                             <a href="/clip/{{clip.id}}">
                                 <div>
                                     <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
@@ -182,9 +182,9 @@
                                     </span>
                                 </div>
                             </a>
-                        </div>
+                        </li>
                         {% endfor %}
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
