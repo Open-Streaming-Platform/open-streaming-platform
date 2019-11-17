@@ -345,20 +345,27 @@ body {
         margin-bottom: 5px;
     }
 
-    .displayCard img{
+    .displayCard .displayCard-thumbnail img {
         width: 100%;
         height: initial;
+        object-fit: contain;
+        overflow: hidden;
+        background-color: black;
     }
 
     .displayCard .card-data {
+        position: relative;
+        top: -10px;
         margin-left:0px;
         float: left;
         font-size:1em;
     }
-    .displayCard .card-data .displayCard-footer {
-        font-size:1em;
-        top: initial;
+
+    .displayCard .card-data img {
+        position: relative;
+        top: -18px;
     }
+
 
     .displayCard-other {
         width: 100%;
