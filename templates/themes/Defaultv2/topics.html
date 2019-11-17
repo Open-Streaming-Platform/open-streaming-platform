@@ -6,28 +6,48 @@
 
 {% block body %}
 <div class="container-fluid p-2" id="index-videos-container">
-    <div class="row m-2">
-        <div class="index-live-title"><b>Topics</b></div>
-    </div>
     <div class="row mx-2">
-        <ul id="topicsList" class="itemList d-flex flex-wrap justify-content-start">
-            {% for topic in topicsList %}
-                <div class="displayCard py-1 pr-2">
-                    <a href="/topic/{{topic.id}}/">
-                    <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <div class="card-data">
-                        <div class="card-cut-text"><b>{{topic.name}}</b></div>
-                    </div>
-                    </a>
+        <div id="topicsList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Topics</b></div>
                 </div>
-            {% endfor %}
-        </ul>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for topic in topicsList %}
+                    <li class="displayCard py-1 pr-2">
+                        <a href="/topic/{{topic.id}}/">
+                        <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        <div class="card-data">
+                            <div class="card-cut-text name"><b>{{topic.name}}</b></div>
+                        </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+    topicListOptions = {
+        valueNames: ['name']
+    };
 
+    var topicList = new List('topicsList', streamerListOptions);
+</script>
 {% endblock %}
 
 
