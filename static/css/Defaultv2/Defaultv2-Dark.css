@@ -56,7 +56,7 @@ body {
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 260px;
+  width: 254px;
   height: 1.35em;
   white-space: nowrap;
 }
@@ -70,41 +70,65 @@ body {
     font-size:1.35em;
     width: 100%;
 }
-
 .itemList {
     padding-left: 0;
 }
 
 .displayCard {
-    width: 600px;
+    width: 314px;
     margin-bottom:15px;
     list-style-type:none;
 }
 
 .displayCard a {
-    color: white;
+    color: black;
 }
 
-.displayCard img {
+.displayCard .displayCard-thumbnail img {
     width: 310px;
     height: 175px;
     object-fit: contain;
     overflow: hidden;
     background-color: black;
-    float: left;
+}
+
+.displayCard .video-badges {
+  position: relative;
+  top:30px;
+  height: 30px;
+  margin-top: -30px;
+}
+
+.displayCard .displayCard-counts {
+  position: relative;
+  background-color: rgba(40, 40, 40, 0.65);
+  top:-25px;
+  height:25px;
+  margin-bottom:-25px;
+}
+
+.displayCard .displayCard-counts i {
+  color:#1D60DB;
 }
 
 .displayCard .card-data {
-    margin-left:15px;
-    float: left;
-    font-size:1.10em;
+    width:100%;
+    margin-top:10px;
+    font-size:1.15em;
 }
 
-.displayCard .card-data .displayCard-footer {
-    font-size:1em;
-    position:relative;
-    left: -10px;
-    top: 45px;
+.card-data img {
+  width:48px;
+  height:48px;
+  float:left;
+}
+
+.card-data .metadata {
+  float:left;
+  position:relative;
+  top:-18px;
+  height:18px;
+  margin-bottom:-18px;
 }
 
 .displayCard-other {
@@ -113,7 +137,7 @@ body {
 }
 
 .displayCard-other a {
-    color: white;
+    color: black;
 }
 
 .displayCard-other img {
