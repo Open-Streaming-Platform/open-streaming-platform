@@ -124,9 +124,14 @@ hr {
     color: #fff;
 }
 
+.itemList {
+    padding-left: 0;
+}
+
 .displayCard {
     width: 600px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .displayCard a {
@@ -187,6 +192,7 @@ hr {
 .streamerCard {
     width: 600px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .streamerCard a {
