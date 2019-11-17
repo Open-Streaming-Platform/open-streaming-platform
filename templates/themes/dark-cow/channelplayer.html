@@ -205,7 +205,7 @@
                                 </a>
                             </div>
                             <div class="video-card-body">
-                                <i class="fas fa-tv mr-2"></i><span class="video-title name"><a href="/play/{{video.id}}"><b>{{video.channelName|limit_title}}</b></a></span><br />
+                                <a href="/play/{{video.id}}"><i class="fas fa-tv mr-2"></i><span class="video-title name"><b>{{video.channelName|limit_title}}</b></span></a><br />
                                 {% if video.channel.protected %}
                                     <span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i>Protected</span></span>
                                 {% endif %}
@@ -228,54 +228,50 @@
             </div>
         </div>
         <div class="tab-pane fade" id="clipList" role="tabpanel" aria-labelledby="clips-tab">
-            <div class="row">
+            <div class="row mx-2">
                 <div id="clipsList" class="col-lg-12 col-xs-12 col-sm-12">
-                    <div class="videoPanel">
-                        <div class="player ml-2">
-                            <div class="row">
-                                <div class="col-12 col-md-10 col-lg-11"></div>
-                                <div class="col-12 col-md-2 col-lg-1">
-                                    <span class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-sort"></i> Sort
-                                        </button>
-                                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
-                                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
-                                            <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
-                                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
-                                            <span class="sort dropdown-item" data-sort="length">Sort by Length</span>
-                                            <span class="sort dropdown-item" data-sort="date">Sort by Date</span>
-                                        </div>
-                                    </span>
+                    <div class="row">
+                        <div class="col-12 col-md-10 col-lg-11"></div>
+                        <div class="col-12 col-md-2 col-lg-1">
+                            <span class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-sort"></i> Sort
+                                </button>
+                                <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                                    <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                                    <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                                    <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                                    <span class="sort dropdown-item" data-sort="length">Sort by Length</span>
+                                    <span class="sort dropdown-item" data-sort="date">Sort by Date</span>
                                 </div>
-                            </div>
-                            <ul class="itemList list d-flex flex-wrap justify-content-start">
-                                {% for clip in clipsList %}
-                                <li class="video-card bg-dark mx-4" style="max-width: 20rem;">
-                                    <div class="video-card-header">
-                                        <a href="/clip/{{clip.id}}">
-                                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                                        </a>
-                                    </div>
-                                    <div class="video-card-body">
-                                        <i class="fas fa-tv mr-2"></i><span class="video-title name"><a href="/clip/{{clip.id}}"><b>{{clip.clipName|limit_title}}</b></a></span><br />
-                                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i>Clip</span></span>
-                                        {% if clip.recordedVideo.channel.protected %}
-                                            <span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i>Protected</span></span>
-                                        {% endif %}<br />
-                                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/">{{clip.recordedVideo.channel.channelName}}</a>
-                                        <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</span><br />
-                                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}">{{clip.recordedVideo.owningUser|get_userName}}</a>
-                                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.recordedVideo.topic}}/">{{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
-                                        <span class="upvotes"><i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
-                                        <span class="views"><i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
-                                        <span class="float-right length"><i class="fas fa-clock mr-2"></i>{{clip.length|hms_format}}</span>
-                                    </div>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                            </span>
                         </div>
                     </div>
+                    <ul class="itemList list d-flex flex-wrap justify-content-start">
+                        {% for clip in clipsList %}
+                        <li class="video-card bg-dark mx-4" style="max-width: 20rem;">
+                            <div class="video-card-header">
+                                <a href="/clip/{{clip.id}}">
+                                    <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                </a>
+                            </div>
+                            <div class="video-card-body">
+                                <a href="/clip/{{clip.id}}"><i class="fas fa-tv mr-2"></i><span class="video-title name"><b>{{clip.clipName|limit_title}}</b></span></a><br />
+                                <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i>Clip</span></span>
+                                {% if clip.recordedVideo.channel.protected %}
+                                    <span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i>Protected</span></span>
+                                {% endif %}<br />
+                                <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/">{{clip.recordedVideo.channel.channelName}}</a>
+                                <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</span><br />
+                                <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}">{{clip.recordedVideo.owningUser|get_userName}}</a>
+                                <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.recordedVideo.topic}}/">{{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                                <span class="upvotes"><i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
+                                <span class="views"><i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
+                                <span class="float-right length"><i class="fas fa-clock mr-2"></i>{{clip.length|hms_format}}</span>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
