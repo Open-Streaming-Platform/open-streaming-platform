@@ -2225,6 +2225,12 @@ def admin_page():
                 if hasJSON:
                     themeList.append(theme)
 
+            # Import Theme Data into Theme Dictionary
+            with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
+                global themeData
+
+                themeData = json.load(f)
+
             newLog(1, "User " + current_user.username + " altered System Settings")
 
             return redirect(url_for('admin_page', page="settings"))
