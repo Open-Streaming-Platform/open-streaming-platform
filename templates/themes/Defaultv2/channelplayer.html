@@ -153,7 +153,7 @@
                             {% for video in channel.recordedVideo|sort(attribute='videoDate', reverse=True)%}
                             {% if video.pending == False %}
 
-                            <li class="displayCard zoom m-2">
+                            <li class="displayCard zoom mx-4 my-3">
                               <a href="/play/{{video.id}}">
                                 <div class="displayCard-thumbnail">
                                   <div class="video-badges">
@@ -211,7 +211,7 @@
                     </div>
                     <ul class="itemList list d-flex flex-wrap justify-content-start">
                         {% for clip in clipsList %}
-                        <li class="displayCard zoom m-2">
+                        <li class="displayCard zoom mx-4 my-3">
                           <a href="/clip/{{clip.id}}">
                             <div class="displayCard-thumbnail">
                               <div class="video-badges">
