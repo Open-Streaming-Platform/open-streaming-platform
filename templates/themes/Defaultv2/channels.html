@@ -32,25 +32,31 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for channel in channelList %}
-                    <li class="displayCard py-1 pr-1">
-                        <a href="/channel/{{channel.id}}/">
-                        <img class="shadow lazy zoom" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                        <div class="card-data">
-                            <div class="card-cut-text name"><b>{{channel.channelName}}</b></div>
-                            <span class="topic"><i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}</span><br>
-                            <span class="username"><i class="fas fa-user-circle mr-2"></i> {{channel.owningUser|get_userName}}</span><br>
-                            {% if channel.stream|length > 0 %}
-                                <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
-                            {% else %}
-                                <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
-                            {% endif %}
-                            {% if channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-                            <span class="displayCard-footer">
-                                <span class="px-2 flex-fill views"><i class="fas fa-users"></i> {{channel.views}}</span>
-                                <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> {{channel.subscriptions|length}}</span>
+                    <li class="displayCard zoom m-2">
+                      <a href="/channel/{{channel.id}}/">
+                        <div class="displayCard-thumbnail">
+                          <div class="video-badges">
+                            {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
+                            {% if channel.protected %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                          </div>
+                          <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                          <div class="displayCard-counts">
+                            <span class="displayCard-left align-left" style="color:white;">
                             </span>
+                            <span class="displayCard-right" style="float:right;color:white;">
+                              <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> <b>{{channel.subscriptions|length}}</b></span>
+                              <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{channel.views}}</b></span>
+                            </span>
+                          </div>
                         </div>
-                        </a>
+                        <div class="card-data">
+                          <img src="https://osptest.divby0.net/images/9b688ab8-a8f4-46ba-ac29-96cdb7413c79.png">
+                          <div class="metadata">
+                            <div class="card-cut-text name ml-2"><b>{{channel.channelName}}</b></div>
+                            <div class="card-cut-text topic ml-2">{{channel.topic|get_topicName}}</div>
+                          </div>
+                        </div>
+                      </a>
                     </li>
                 {% endfor %}
             </ul>
