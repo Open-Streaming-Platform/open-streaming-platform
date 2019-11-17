@@ -334,7 +334,7 @@ body {
     .card-cut-text {
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 360px;
+      width: 250px;
       height: 1.35em;
       white-space: nowrap;
     }
