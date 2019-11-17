@@ -25,13 +25,16 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for topic in topicsList %}
-                    <li class="displayCard py-1 pr-2">
-                        <a href="/topic/{{topic.id}}/">
-                        <img class="shadow lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                        <div class="card-data">
-                            <div class="card-cut-text name"><b>{{topic.name}}</b></div>
+                    <li class="displayCard zoom m-2">
+                      <a href="/topic/{{topic.id}}/">
+                        <div class="displayCard-thumbnail">
+                          <div class="video-badges"></div>
+                          <img class="shadow lazy" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
-                        </a>
+                        <div class="card-data my-2">
+                          <div class="card-cut-text name"><b>{{topic.name}}</b></div>
+                        </div>
+                      </a>
                     </li>
                 {% endfor %}
             </ul>
