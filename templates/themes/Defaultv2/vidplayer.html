@@ -142,9 +142,9 @@
         <div class="index-video-title mb-2"><b>Other Videos</b></div>
           <ul class="itemList list d-flex flex-wrap justify-content-start">
             {% for vid in randomRecorded[:4] %}
-            <li class="displayCard zoom mx-4 my-3">
+            <li class="displayCard mx-4 my-3">
                 <a href="/play/{{vid.id}}">
-                  <div class="displayCard-thumbnail">
+                  <div class="displayCard-thumbnail zoom">
                     <div class="video-badges">
                       {% if vid.channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                     </div>

@@ -25,9 +25,9 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for topic in topicsList %}
-                    <li class="displayCard zoom mx-4 my-3">
+                    <li class="displayCard mx-4 my-3">
                       <a href="/topic/{{topic.id}}/">
-                        <div class="displayCard-thumbnail">
+                        <div class="displayCard-thumbnail zoom">
                           <div class="video-badges"></div>
                           <img class="shadow lazy" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>

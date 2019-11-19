@@ -96,9 +96,9 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for stream in openStreams %}
-                <li class="displayCard zoom mx-4 my-3">
+                <li class="displayCard mx-4 my-3">
                   <a href="/view/{{stream.channel.channelLoc}}/">
-                    <div class="displayCard-thumbnail">
+                    <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
                         {% if stream.channel.protected %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
@@ -154,9 +154,9 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for channel in userChannels %}
-                <li class="displayCard zoom mx-4 my-3">
+                <li class="displayCard mx-4 my-3">
                   <a href="/channel/{{channel.id}}/">
-                    <div class="displayCard-thumbnail">
+                    <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
                         {% if channel.protected %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
@@ -212,9 +212,9 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for video in recordedVids %}
-                <li class="displayCard zoom mx-4 my-3">
+                <li class="displayCard mx-4 my-3">
                   <a href="/play/{{video.id}}">
-                    <div class="displayCard-thumbnail">
+                    <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         {% if video.channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
@@ -271,9 +271,9 @@
             </div>
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for clip in clipsList %}
-                <li class="displayCard zoom mx-4 my-3">
+                <li class="displayCard mx-4 my-3">
                   <a href="/clip/{{clip.id}}">
-                    <div class="displayCard-thumbnail">
+                    <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
