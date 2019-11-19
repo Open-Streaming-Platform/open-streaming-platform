@@ -33,9 +33,9 @@
 <div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-4">
         <div class="index-video-title"><b>Live Now</b></div>
-        % if streamList == [] %}
+        {% if streamList == [] %}
         No Live Streams Online...
-        {{% endif %}
+        {% endif %}
     </div>
     <div class="row">
         <ul id="streamList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%"><!--Manually Defined Due to Mobile Strangeness-->
