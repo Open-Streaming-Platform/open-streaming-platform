@@ -37,7 +37,7 @@
         No Live Streams Online...
         {% endif %}
     </div>
-    <div class="row">
+    <div class="row mx-2">
         <ul id="streamList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%"><!--Manually Defined Due to Mobile Strangeness-->
             {% for stream in streamList %}
             <li class="displayCard zoom mx-4 my-3">
@@ -76,7 +76,7 @@
     <div class="row mx-4">
         <div class="index-video-title"><b>Videos</b></div>
     </div>
-    <div class="row">
+    <div class="row mx-2">
         <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start">
             {% for video in randomRecorded %}
                 <li class="displayCard zoom mx-4 my-3">
@@ -115,7 +115,7 @@
     <div class="row mx-4">
         <div class="index-video-title"><b>Clips</b></div>
     </div>
-    <div class="row">
+    <div class="row mx-2">
         <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
             {% for clip in randomClips %}
             <li class="displayCard zoom mx-4 my-3">
