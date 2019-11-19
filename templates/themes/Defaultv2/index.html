@@ -37,17 +37,17 @@
         No Live Streams Online...
         {% endif %}
     </div>
-    <div class="row mx-2">
+    <div class="row mx-1">
         <ul id="streamList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%"><!--Manually Defined Due to Mobile Strangeness-->
             {% for stream in streamList %}
-            <li class="displayCard zoom mx-4 my-3">
+            <li class="displayCard mx-4 my-3">
               <a href="/view/{{stream.channel.channelLoc}}/">
                 <div class="displayCard-thumbnail">
                   <div class="video-badges">
                     <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
                     {% if stream.channel.protected %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                   </div>
-                  <img class="shadow lazy" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                  <img class="shadow lazy zoom" {% if stream.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                   <div class="displayCard-counts">
                     <span class="displayCard-left align-left" style="color:white;">
                       <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{stream.id|get_Stream_Upvotes}}</b></span>
@@ -76,16 +76,16 @@
     <div class="row mx-4">
         <div class="index-video-title"><b>Videos</b></div>
     </div>
-    <div class="row mx-2">
+    <div class="row mx-1">
         <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start">
             {% for video in randomRecorded %}
-                <li class="displayCard zoom mx-4 my-3">
+                <li class="displayCard mx-4 my-3">
                   <a href="/play/{{video.id}}">
                     <div class="displayCard-thumbnail">
                       <div class="video-badges">
                         {% if video.channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                      <img class="shadow lazy zoom" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
                           <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{video.id|get_Video_Upvotes}}</b></span>
@@ -115,16 +115,16 @@
     <div class="row mx-4">
         <div class="index-video-title"><b>Clips</b></div>
     </div>
-    <div class="row mx-2">
+    <div class="row mx-1">
         <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
             {% for clip in randomClips %}
-            <li class="displayCard zoom mx-4 my-3">
+            <li class="displayCard mx-4 my-3">
               <a href="/clip/{{clip.id}}">
                 <div class="displayCard-thumbnail">
                   <div class="video-badges">
                     {% if clip.recordedVideo.channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                   </div>
-                  <img class="shadow lazy" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                  <img class="shadow lazy zoom" {% if clip.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                             onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                   <div class="displayCard-counts">
                     <span class="displayCard-left align-left" style="color:white;">
