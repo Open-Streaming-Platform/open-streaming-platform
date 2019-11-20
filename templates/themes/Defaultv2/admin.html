@@ -179,19 +179,19 @@
                                   </select>
                                   <hr>
                                   Allow Users to Record:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" {% if sysSettings.allowRecording == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" autocomplete="new-password" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                                   <br>
                                   Allow Users to Upload Video:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="uploadSelect" name="uploadSelect" {% if sysSettings.allowUploads == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="uploadSelect" name="uploadSelect" autocomplete="new-password" {% if sysSettings.allowUploads == True %} checked {% endif %}>
                                   <br>
                                   Enable Adaptive Streaming (Can Cause Significant CPU Usage Per Stream)<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="adaptiveStreaming" name="adaptiveStreaming" {% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="adaptiveStreaming" name="adaptiveStreaming" autocomplete="new-password" {% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
                                   <br>
                                   Display Empty Channels, Streamers, and Topics<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="showEmptyTables" name="showEmptyTables" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="showEmptyTables" name="showEmptyTables" autocomplete="new-password" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
                                   <br>
                                   Globally Allow Comments (Can be Disabled on a Per Video Basis)<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="allowComments" name="allowComments" {% if sysSettings.allowComments == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="allowComments" name="allowComments" autocomplete="new-password" {% if sysSettings.allowComments == True %} checked {% endif %}>
                               </div>
                               <div class="col-sm-12 col-md-6">
                                   <h4><i class="fas fa-envelope"></i> Email Settings</h4>
@@ -199,16 +199,16 @@
                                   <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:springgreen;"></i> Email Test was Successful!</div>
                                   <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
                                   <br>
-                                  SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
-                                  SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
-                                  SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                                  SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
-                                  SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
+                                  SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required autocomplete="new-password">
+                                  SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required autocomplete="new-password">
+                                  SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required autocomplete="new-password">
+                                  SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}" autocomplete="new-password">
+                                  SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" autocomplete="new-password">
                                   SMTP SSL:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" autocomplete="new-password" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
                                   <br>
                                   SMTP TLS:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" autocomplete="new-password" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
                                   <hr>
                                   <h4><i class="fas fa-stream"></i> Other</h4>
                                   <div class="form-group">
@@ -406,26 +406,26 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <label for="username">Username</label>
-                                            <input type="text" name="username" id="username" class="form-control" required>
+                                            <input type="text" name="username" id="username" class="form-control" required autocomplete="new-password">
                                         </div>
                                     </div>
                                     <br>
                                     <div class="row">
                                         <div class="col-12">
                                             <label for="emailaddress">Email Address</label>
-                                            <input type="text" name="emailaddress" id="emailaddress" class="form-control" required>
+                                            <input type="text" name="emailaddress" id="emailaddress" class="form-control" required autocomplete="new-password">
                                         </div>
                                     </div>
                                     <br>
                                     <div class="row">
                                         <div class="col-12">
                                             <label for="password1">Password</label>
-                                            <input type="password" name="password1" id="password1" class="form-control" required>
+                                            <input type="password" name="password1" id="password1" class="form-control" required autocomplete="new-password">
                                         </div>
                                         <br>
                                         <div class="col-12">
                                             <label for="password2">Confirm Password</label>
-                                            <input type="password" name="password2" id="password2" class="form-control" required>
+                                            <input type="password" name="password2" id="password2" class="form-control" required autocomplete="new-password">
                                         </div>
                                     </div>
                                     <br>
@@ -453,7 +453,7 @@
                                   <div class="card-header">
                                     <div class="row">
                                       <div class="col-4">
-                                        <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required>
+                                        <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required autocomplete="new-password">
                                       </div>
                                       <div class="col-8">
                                           <div class="float-right">
@@ -467,7 +467,7 @@
                                     <img width="284px" height="155px" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                     <br><br>
                                     <div class="custom-file">
-                                      <input type="file" class="custom-file-input" name=photo id="photo">
+                                      <input type="file" class="custom-file-input" name=photo id="photo" autocomplete="new-password">
                                       <label class="custom-file-label" for="photo">Upload a Photo</label>
                                     </div>
                                     <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
@@ -494,7 +494,7 @@
                               <div class="container">
                                 <div class="row">
                                     <div class="col-12">
-                                        <input type="text" name="name" id="name" class="form-control" required>
+                                        <input type="text" name="name" id="name" class="form-control" required autocomplete="new-password">
                                     </div>
                                 </div>
                                 <br>
@@ -622,7 +622,7 @@
                                         <form action="/settings/admin/hub" method="post">
                                             <div class="input-group">
                                                 <input type="hidden" name="action" id="hubaction" value="addHub">
-                                                <input type="text" name="hubServerAddress" class="form-control disabled" disabled>
+                                                <input type="text" name="hubServerAddress" class="form-control disabled" disabled autocomplete="new-password">
                                                 <div class="input-group-append">
                                                     <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
                                                 </div>
@@ -631,7 +631,7 @@
                                         <br>
                                         {% for hubServer in hubServers %}
                                         <div class="input-group">
-                                            <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly>
+                                            <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly autocomplete="new-password">
                                             <div class="input-group-append">
                                                 <a href="/settings/admin/hub?action=deleteServer&serverID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                             </div>
