@@ -3883,7 +3883,7 @@ def handle_upvote_total_request(streamData):
         channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
         if channelQuery.stream != []:
             stream = channelQuery.stream[0]
-            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count
+            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count()
             try:
                 myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
             except:
