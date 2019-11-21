@@ -3778,7 +3778,7 @@ def handle_new_viewer(streamData):
         if current_user.is_authenticated:
             r.rpush(channelLoc + '-streamUserList', current_user.username)
 
-    handle_viewer_total_request(streamData)
+    handle_viewer_total_request(streamData, room=streamData['data'])
 
     db.session.commit()
     db.session.close()
@@ -3831,7 +3831,7 @@ def handle_leaving_viewer(streamData):
             if requestedChannel.showChatJoinLeaveNotification == True:
                 emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
 
-        handle_viewer_total_request(streamData)
+    handle_viewer_total_request(streamData, room=streamData['data'])
 
     db.session.commit()
     db.session.close()
@@ -3847,7 +3847,7 @@ def handle_leaving_popup_viewer(streamData):
     leave_room(streamData['data'])
 
 @socketio.on('getViewerTotal')
-def handle_viewer_total_request(streamData):
+def handle_viewer_total_request(streamData, room=None):
     channelLoc = str(streamData['data'])
 
     viewers = len(r.smembers(channelLoc + '-streamSIDList'))
@@ -3865,8 +3865,10 @@ def handle_viewer_total_request(streamData):
 
     db.session.commit()
     db.session.close()
-    emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
-
+    if room == None:
+        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
+    else:
+        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList}, room=room)
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
     loc = streamData['loc']
