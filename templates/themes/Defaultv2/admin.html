@@ -546,18 +546,18 @@
                                   </div>
                                   <div class="card-body">
                                     <div class="row">
-                                      <div class="col-xl-2 displayCard"><img class="channel-img" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></div>
-                                      <div class="col-xl-3">
+                                      <div class="col-md-4 col-12 displayCard"><img class="channel-img" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></div>
+                                      <div class="col-md-3 col-12>
                                         <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
                                         <i class="fas fa-user"></i> {{channel.owningUser|get_userName}} <br>
                                         <i class="fas fa-terminal"></i> {{channel.channelLoc}} <br>
                                         <i class="fas fa-eye"></i> {{channel.views}} <br>
                                         <i class="fas fa-hdd"></i> {{channel.channelLoc|get_diskUsage}} <br>
                                       </div>
-                                      <div class="col-xl-4">
+                                      <div class="col-md-4 col-12">
                                         <i class="fas fa-paragraph"></i> {{channel.description}}<br>
                                       </div>
-                                      <div class="col-xl-2">
+                                      <div class="col-md-1 col-12">
                                         <i class="fas fa-comment"></i> <span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span> <br>
                                         <i class="fas fa-save"></i> <span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span> <br>
                                         <i class="fas fa-comments"></i> <span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span> <br>
