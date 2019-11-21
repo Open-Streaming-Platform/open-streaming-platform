@@ -199,6 +199,11 @@ body {
     width:99%;
     display:block;
 }
+
+.channel-img{
+    width:100%;
+}
+
 .dropzone {
     display: none;
 }
