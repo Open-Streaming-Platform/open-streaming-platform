@@ -3778,6 +3778,8 @@ def handle_new_viewer(streamData):
         if current_user.is_authenticated:
             r.rpush(channelLoc + '-streamUserList', current_user.username)
 
+    handle_viewer_total_request(streamData)
+
     db.session.commit()
     db.session.close()
 
@@ -3828,6 +3830,9 @@ def handle_leaving_viewer(streamData):
         else:
             if requestedChannel.showChatJoinLeaveNotification == True:
                 emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+
+        handle_viewer_total_request(streamData)
+
     db.session.commit()
     db.session.close()
 
@@ -3878,7 +3883,7 @@ def handle_upvote_total_request(streamData):
         channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
         if channelQuery.stream != []:
             stream = channelQuery.stream[0]
-            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
+            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count
             try:
                 myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
             except:
@@ -3886,29 +3891,28 @@ def handle_upvote_total_request(streamData):
 
     elif vidType == 'video':
         loc = int(loc)
-        totalQuery = upvotes.videoUpvotes.query.filter_by(videoID=loc).all()
+        totalQuery = upvotes.videoUpvotes.query.filter_by(videoID=loc).count()
         try:
             myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
         except:
             pass
     elif vidType == "comment":
         loc = int(loc)
-        totalQuery = upvotes.commentUpvotes.query.filter_by(commentID=loc).all()
+        totalQuery = upvotes.commentUpvotes.query.filter_by(commentID=loc).count()
         try:
             myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=loc).first()
         except:
             pass
     elif vidType == "clip":
         loc = int(loc)
-        totalQuery = upvotes.clipUpvotes.query.filter_by(clipID=loc).all()
+        totalQuery = upvotes.clipUpvotes.query.filter_by(clipID=loc).count()
         try:
             myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
         except:
             pass
 
     if totalQuery != None:
-        for vote in totalQuery:
-            totalUpvotes = totalUpvotes + 1
+        totalUpvotes = totalQuery
     if myVoteQuery != None:
         myUpvote = True
 

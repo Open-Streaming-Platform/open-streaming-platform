@@ -477,15 +477,16 @@
         })
     </script>
 
-    <script>
+    <!--<script>
         setInterval(function() {
           socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
         },5000 );
-    </script>
+    </script>-->
 
     <script>
         socket.on('connect', function() {
             socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
+            socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
         });
     </script>
 
