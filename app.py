@@ -3644,6 +3644,7 @@ def test_email(info):
         results = sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
         db.session.close()
         emit('testEmailResults', {'results': str(results)}, broadcast=False)
+        return 'OK'
 
 @socketio.on('toggleChannelSubscription')
 def toggle_chanSub(payload):
@@ -3683,6 +3684,7 @@ def toggle_chanSub(payload):
                 db.session.close()
                 emit('sendChanSubResults', {'state': subState}, broadcast=False)
     db.session.close()
+    return 'OK'
 
 @socketio.on('cancelUpload')
 def handle_videoupload_disconnect(videofilename):
@@ -3696,6 +3698,8 @@ def handle_videoupload_disconnect(videofilename):
             os.remove(thumbnailFilename)
     if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
             os.remove(videoFilename)
+
+    return 'OK'
 
 @socketio.on('newViewer')
 def handle_new_viewer(streamData):
@@ -3782,10 +3786,12 @@ def handle_new_viewer(streamData):
 
     db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
     join_room(streamData['data'])
+    return 'OK'
 
 @socketio.on('removeViewer')
 def handle_leaving_viewer(streamData):
@@ -3835,16 +3841,16 @@ def handle_leaving_viewer(streamData):
 
     db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('disconnect')
 def disconnect():
-
-
-    pass
+    return 'OK'
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
     leave_room(streamData['data'])
+    return 'OK'
 
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData, room=None):
@@ -3869,6 +3875,7 @@ def handle_viewer_total_request(streamData, room=None):
         emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
     else:
         emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList}, room=room)
+    return 'OK'
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
     loc = streamData['loc']
@@ -3921,6 +3928,7 @@ def handle_upvote_total_request(streamData):
     db.session.commit()
     db.session.close()
     emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote), 'type': vidType, 'loc': loc})
+    return 'OK'
 
 @socketio.on('changeUpvote')
 def handle_upvoteChange(streamData):
@@ -3973,6 +3981,7 @@ def handle_upvoteChange(streamData):
             db.session.delete(myVoteQuery)
         db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):
@@ -3992,6 +4001,7 @@ def newScreenShot(message):
             tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
             emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
             db.session.close()
+    return 'OK'
 
 @socketio.on('setScreenShot')
 def setScreenShot(message):
@@ -4030,7 +4040,7 @@ def setScreenShot(message):
             except OSError:
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
-
+    return 'OK'
 
 @socketio.on('updateStreamData')
 def updateStreamData(message):
@@ -4062,6 +4072,7 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
+    return 'OK'
 
 @socketio.on('text')
 @limiter.limit("1/second")
@@ -4190,7 +4201,7 @@ def text(message):
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
             db.session.commit()
             db.session.close()
-
+    return 'OK'
 
 @socketio.on('getServerResources')
 def get_resource_usage(message):
@@ -4199,6 +4210,7 @@ def get_resource_usage(message):
     diskUsage = psutil.disk_usage('/')[3]
 
     emit('serverResources', {'cpuUsage':cpuUsage,'memoryUsage':memoryUsage, 'diskUsage':diskUsage})
+    return 'OK'
 
 @socketio.on('generateInviteCode')
 def generateInviteCode(message):
@@ -4226,6 +4238,7 @@ def generateInviteCode(message):
     else:
         pass
     db.session.close()
+    return 'OK'
 
 @socketio.on('deleteInviteCode')
 def deleteInviteCode(message):
@@ -4244,6 +4257,7 @@ def deleteInviteCode(message):
         emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
 
     db.session.close()
+    return 'OK'
 
 @socketio.on('addUserChannelInvite')
 def addUserChannelInvite(message):
@@ -4270,6 +4284,7 @@ def addUserChannelInvite(message):
                 db.session.commit()
                 db.session.close()
     db.session.close()
+    return 'OK'
 
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
@@ -4282,6 +4297,7 @@ def deleteInvitedUser(message):
             db.session.commit()
             emit('invitedUserDeleteAck', {'inviteID': str(inviteID)}, broadcast=False)
     db.session.close()
+    return 'OK'
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -4293,7 +4309,7 @@ def deleteInvitedUser(message):
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
     db.session.commit()
     db.session.close()
-
+    return 'OK'
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
@@ -4332,6 +4348,7 @@ def addChangeWebhook(message):
                 emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
     db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
@@ -4345,6 +4362,7 @@ def deleteWebhook(message):
                 db.session.delete(webhookQuery)
                 db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('submitGlobalWebhook')
 def addChangeGlobalWebhook(message):
@@ -4377,6 +4395,7 @@ def addChangeGlobalWebhook(message):
                 emit('changeGlobalWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id}, broadcast=False)
     db.session.commit()
     db.session.close()
+    return 'OK'
 
 @socketio.on('deleteGlobalWebhook')
 def deleteGlobalWebhook(message):
@@ -4388,6 +4407,7 @@ def deleteGlobalWebhook(message):
             db.session.delete(webhookQuery)
             db.session.commit()
     db.session.close()
+    return 'OK'
 
 # Start App Initiation
 try:
