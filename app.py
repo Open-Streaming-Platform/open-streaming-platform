@@ -174,6 +174,9 @@ md = Markdown(app, extensions=['tables'])
 # Create Theme Data Dictionary
 themeData = {}
 
+# Create In-Memory Invite Cache to Prevent High CPU Usage for Polling Channel Permissions during Streams
+inviteCache = {}
+
 #----------------------------------------------------------------------------#
 # Functions
 #----------------------------------------------------------------------------#
@@ -399,18 +402,31 @@ def get_Video_Comments(videoID):
     return result
 
 def check_isValidChannelViewer(channelID):
+    global inviteCache
+
     if current_user.is_authenticated:
-        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
-        if channelQuery.owningUser is current_user.id:
+        # Verify if a Cached Entry Exists
+        cachedResult = checkInviteCache(channelID)
+        if cachedResult is True:
             return True
         else:
-            inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
-            for invite in inviteQuery:
-                if invite.isValid():
-                    return True
-                else:
-                    db.session.delete(invite)
-                    db.session.commit()
+            channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+            if channelQuery.owningUser is current_user.id:
+                if channelID not in inviteCache:
+                    inviteCache[channelID] = {}
+                inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.now()}
+                return True
+            else:
+                inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
+                for invite in inviteQuery:
+                    if invite.isValid():
+                        if channelID not in inviteCache:
+                            inviteCache[channelID] = {}
+                        inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.now()}
+                        return True
+                    else:
+                        db.session.delete(invite)
+                        db.session.commit()
     return False
 
 def check_isCommentUpvoted(commentID):
@@ -437,6 +453,20 @@ def check_isUserValidRTMPViewer(userID,channelID):
                     else:
                         db.session.delete(invite)
                         db.session.commit()
+    return False
+
+# Handles the Invite Cache to cut down on SQL Calls
+def checkInviteCache(channelID):
+    global inviteCache
+
+    if current_user.is_authenticated:
+        if channelID in inviteCache:
+            if current_user.id in inviteCache[channelID]:
+                if inviteCache[channelID][current_user.id]["invited"] == True:
+                    if datetime.datetime.now() < inviteCache[channelID][current_user.id]["invited"]["timestamp"] + datetime.timedelta(minutes=10):
+                        return True
+                    else:
+                        inviteCache[channelID].pop(current_user.id, None)
     return False
 
 def table2Dict(table):
