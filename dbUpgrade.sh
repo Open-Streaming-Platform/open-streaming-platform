@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cd /opt/osp
-sudo service osp stop
+sudo systemctl stop osp.target
 python3 manage.py db migrate
 python3 manage.py db upgrade
-sudo service osp start
+sudo systemctl start osp.target
