@@ -689,7 +689,7 @@ scheduler.start()
 def inject_user_info():
     return dict(user=current_user)
 
-@app.context_process
+@app.context_processor
 def inject_notifications():
     notifications = []
     if current_user.is_authenticated:
