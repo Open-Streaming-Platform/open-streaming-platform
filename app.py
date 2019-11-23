@@ -1320,6 +1320,15 @@ def vid_clip_page(loc):
 
             redirectID = newClipQuery.id
             newLog(6, "New Clip Created - ID #" + str(redirectID))
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id), sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+
+
             db.session.commit()
             db.session.close()
             flash("Clip Created", "success")
@@ -1775,6 +1784,14 @@ def upload_vid():
                    videotopic=get_topicName(newVideo.topic),
                    videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                    videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+
+        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
+        for sub in subscriptionQuery:
+            # Create Notification for Channel Subs
+            newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id), sub.userID)
+            db.session.add(newNotification)
+        db.session.commit()
+
         try:
             processSubscriptions(ChannelQuery.id,
                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
@@ -3500,6 +3517,13 @@ def user_auth_check():
                    streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
                    streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
+        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+        for sub in subscriptionQuery:
+            # Create Notification for Channel Subs
+            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc), sub.userID)
+            db.session.add(newNotification)
+        db.session.commit()
+
         try:
             processSubscriptions(requestedChannel.id,
                              sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
@@ -3612,6 +3636,13 @@ def rec_Complete_handler():
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
+    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+    for sub in subscriptionQuery:
+        # Create Notification for Channel Subs
+        newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id), sub.userID)
+        db.session.add(newNotification)
+    db.session.commit()
+
     processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                          "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
@@ -3689,6 +3720,7 @@ def test_email(info):
         return 'OK'
 
 @socketio.on('toggleChannelSubscription')
+@limiter.limit("10/minute")
 def toggle_chanSub(payload):
     if current_user.is_authenticated:
         sysSettings = settings.settings.query.first()
@@ -3713,6 +3745,11 @@ def toggle_chanSub(payload):
                         pictureLocation = '/static/img/user2.png'
                     else:
                         pictureLocation = '/images/' + pictureLocation
+
+                    # Create Notification for Channel Owner on New Subs
+                    newNotification = notifications.userNotification(current_user.username + " has subscribed to " + channelQuery.channelName, "/channel/" + str(channelQuery.id), channelQuery.owningUser)
+                    db.session.add(newNotification)
+                    db.session.commit()
 
                     runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
@@ -3973,6 +4010,7 @@ def handle_upvote_total_request(streamData):
     return 'OK'
 
 @socketio.on('changeUpvote')
+@limiter.limit("10/minute")
 def handle_upvoteChange(streamData):
     loc = streamData['loc']
     vidType = str(streamData['vidType'])
@@ -3987,20 +4025,32 @@ def handle_upvoteChange(streamData):
             if myVoteQuery == None:
                 newUpvote = upvotes.streamUpvotes(current_user.id, stream.id)
                 db.session.add(newUpvote)
+
+                # Create Notification for Channel Owner on New Like
+                newNotification = notifications.userNotification(current_user.username + " liked your live stream in " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), channelQuery.owningUser)
+                db.session.add(newNotification)
+
             else:
                 db.session.delete(myVoteQuery)
             db.session.commit()
 
     elif vidType == 'video':
         loc = int(loc)
-        myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
+        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc).first()
+        if videoQuery != None:
+            myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
 
-        if myVoteQuery == None:
-            newUpvote = upvotes.videoUpvotes(current_user.id, loc)
-            db.session.add(newUpvote)
-        else:
-            db.session.delete(myVoteQuery)
-        db.session.commit()
+            if myVoteQuery == None:
+                newUpvote = upvotes.videoUpvotes(current_user.id, loc)
+                db.session.add(newUpvote)
+
+                # Create Notification for Video Owner on New Like
+                newNotification = notifications.userNotification(current_user.username + " liked your video titled" + videoQuery.channelName, "/play/" + str(videoQuery.id), videoQuery.owningUser)
+                db.session.add(newNotification)
+
+            else:
+                db.session.delete(myVoteQuery)
+            db.session.commit()
     elif vidType == "comment":
         loc = int(loc)
         videoCommentQuery = comments.videoComments.query.filter_by(id=loc).first()
@@ -4009,19 +4059,31 @@ def handle_upvoteChange(streamData):
             if myVoteQuery == None:
                 newUpvote = upvotes.commentUpvotes(current_user.id, videoCommentQuery.id)
                 db.session.add(newUpvote)
+
+                # Create Notification for Video Owner on New Like
+                newNotification = notifications.userNotification(current_user.username + " liked your comment on a video", "/play/" + str(videoCommentQuery.videoID), videoCommentQuery.userID)
+                db.session.add(newNotification)
+
             else:
                 db.session.delete(myVoteQuery)
             db.session.commit()
     elif vidType == 'clip':
         loc = int(loc)
-        myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=loc).first()
+        if clipQuery != None:
+            myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
 
-        if myVoteQuery == None:
-            newUpvote = upvotes.clipUpvotes(current_user.id, loc)
-            db.session.add(newUpvote)
-        else:
-            db.session.delete(myVoteQuery)
-        db.session.commit()
+            if myVoteQuery == None:
+                newUpvote = upvotes.clipUpvotes(current_user.id, loc)
+                db.session.add(newUpvote)
+
+                # Create Notification for Clip Owner on New Like
+                newNotification = notifications.userNotification(current_user.username + " liked your clip", "/clip/" + str(clipQuery.id), clipQuery.recordedVideo.owningUser)
+                db.session.add(newNotification)
+
+            else:
+                db.session.delete(myVoteQuery)
+            db.session.commit()
     db.session.close()
     return 'OK'
 
