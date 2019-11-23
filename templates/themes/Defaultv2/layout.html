@@ -46,25 +46,25 @@
           <form class="form-inline my-2 my-lg-0 mr-auto" action="/search" method="post">
             <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
           </form>
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/channels"><b><i class="fas fa-tv"></i> Channels</b></a>
           </li>
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/topics"><b><i class="fas fa-hashtag"></i> Topics</b></a>
           </li>
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
           </li>
           {% if user.is_authenticated == False %}
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
           </li>
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/register"><i class="far fa-id-card"></i> Register</a>
           </li>
           {% else %}
-          <li class="nav-item dropdown pl-3 pr-1">
-            <a class="nav-link" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
+          <li class="nav-item dropdown pl-2 pr-1">
+            <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
             <ul class="dropdown-menu shadow" style="width:460px;left:-390px;">
                 <li class="head text-light bg-dark" style="padding:5px 15px;border-radius: 3px 3px 0px 0px;position:relative;margin-bottom:-10px;top:-10px;">
                   <div class="row">
@@ -99,7 +99,7 @@
                 </li>
             </ul>
           </li>
-          <li class="nav-item dropdown px-3">
+          <li class="nav-item dropdown px-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
             </a>
