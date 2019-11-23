@@ -3,6 +3,7 @@ from uuid import uuid4
 from datetime import datetime
 
 class userNotification(db.Model):
+    __tablename__ = "userNotification"
     id = db.Column(db.Integer,primary_key=True)
     notificationID = db.Column(db.String(255), unique=True)
     timestamp = db.Column(db.DateTime)
