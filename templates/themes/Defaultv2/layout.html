@@ -47,13 +47,13 @@
             <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
           </form>
           <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/channels"><b>Channels</b></a>
+            <a class="nav-link zoom" href="/channels"><b><i class="fas fa-tv"></i> Channels</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/topics"><b>Topics</b></a>
+            <a class="nav-link zoom" href="/topics"><b><i class="fas fa-hashtag"></i> Topics</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/streamers"><b>Streamers</b></a>
+            <a class="nav-link zoom" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
           </li>
           {% if user.is_authenticated == False %}
           <li class="nav-item px-3">
@@ -63,6 +63,12 @@
             <a class="nav-link zoom" href="/register"><i class="far fa-id-card"></i> Register</a>
           </li>
           {% else %}
+          <li class="nav-item dropdown px-3">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i> Notifications</b></a>
+            Coming Soon
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownNotificationLink">
+            </div>
+          </li>
           <li class="nav-item dropdown px-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
