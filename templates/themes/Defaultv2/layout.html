@@ -76,7 +76,7 @@
                 </li>
                 {% if notifications != [] %}
                   {% for entry in notifications %}
-                  <li class="notification-box" style="padding: 10px 10px;border-bottom: 1px solid;">
+                  <li class="notification-box" style="padding: 5px 15px;">
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
                         {{entry.message}}
@@ -87,7 +87,9 @@
                 {% else %}
                   <li class="notification-box" style="padding: 10px 10px;border-bottom: 1px solid;">
                     <div class="row">
-                      No Notifications
+                      <div class="col-lg-12 col-sm-12 col-12">
+                        No New Notifications
+                      </div>
                     </div>
                   </li>
                 {% endif %}
