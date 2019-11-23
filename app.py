@@ -698,7 +698,7 @@ def inject_notifications():
             if entry.read is False:
                 notifications.append(entry)
         notifications.sort(key=lambda x: x.timestamp, reverse=True)
-    return dict(notifications=notifications)
+    return dict(notifications=notifications[:5])
 
 
 @app.context_processor
