@@ -150,6 +150,7 @@ from classes import webhook
 #from classes import hubConnection
 from classes import logs
 from classes import subscriptions
+from classes import notifications
 
 sysSettings = None
 
