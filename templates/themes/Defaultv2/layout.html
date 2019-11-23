@@ -66,6 +66,14 @@
           <li class="nav-item dropdown px-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i> Notifications</b></a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownNotificationLink">
+              {% if notifications != [] %}
+                {% for entry in notifications %}
+                  {{entry.message}}
+                  <hr>
+                {% for %}
+              {% else %}
+                No Notifications
+              {% endif %}
             </div>
           </li>
           <li class="nav-item dropdown px-3">

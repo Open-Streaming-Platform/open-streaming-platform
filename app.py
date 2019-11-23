@@ -689,6 +689,16 @@ scheduler.start()
 def inject_user_info():
     return dict(user=current_user)
 
+@app.context_process
+def inject_notifications():
+    notifications = []
+    if current_user.is_authenticated:
+        for entry in current_user.notifications:
+            if entry.read is False:
+                notifications.append(entry)
+        notifications.sort(key=lambda x: x.timestamp, reverse=True)
+    return dict(notifications=notifications)
+
 
 @app.context_processor
 def inject_sysSettings():
