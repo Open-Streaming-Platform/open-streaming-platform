@@ -463,7 +463,7 @@ def checkInviteCache(channelID):
         if channelID in inviteCache:
             if current_user.id in inviteCache[channelID]:
                 if inviteCache[channelID][current_user.id]["invited"] == True:
-                    if datetime.datetime.now() < inviteCache[channelID][current_user.id]["invited"]["timestamp"] + datetime.timedelta(minutes=10):
+                    if datetime.datetime.now() < inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
                         return True
                     else:
                         inviteCache[channelID].pop(current_user.id, None)
