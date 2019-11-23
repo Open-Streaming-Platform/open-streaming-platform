@@ -3163,6 +3163,7 @@ def initialSetup():
             user_datastore.create_user(email=email, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
+            user.confirmed_at = datetime.datetime.now()
             user_datastore.add_role_to_user(user, 'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
             user_datastore.add_role_to_user(user, 'User')
