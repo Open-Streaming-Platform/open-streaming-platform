@@ -65,16 +65,27 @@
           {% else %}
           <li class="nav-item dropdown px-3">
             <a class="nav-link" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownNotificationLink">
-              {% if notifications != [] %}
-                {% for entry in notifications %}
-                  {{entry.message}}
-                  <hr>
-                {% endfor %}
-              {% else %}
-                No Notifications
-              {% endif %}
-            </div>
+            <ul class="dropdown-menu">
+                <li class="head text-light bg-dark">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-12">
+                      <span>Notifications {{notifications|count}}</span>
+                      <a href="" class="float-right text-light">Mark all as read</a>
+                    </div>
+                  </div>
+                </li>
+                {% if notifications != [] %}
+                  {% for entry in notifications %}
+                  <li class="notification-box" style="padding: 10px 10px;border-bottom: 1px solid;">
+                    <div class="row">
+                      {{entry.message}}
+                    </div>
+                  </li>
+                  {% endfor %}
+                {% else %}
+                  No Notifications
+                {% endif %}
+            </ul>
           </li>
           <li class="nav-item dropdown px-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
