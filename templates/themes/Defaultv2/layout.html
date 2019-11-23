@@ -65,8 +65,8 @@
           {% else %}
           <li class="nav-item dropdown pl-3 pr-1">
             <a class="nav-link" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
-            <ul class="dropdown-menu" style="width:460px;">
-                <li class="head text-light bg-dark" style="padding:5px 15px;border-radius: 3px 3px 0px 0px;">
+            <ul class="dropdown-menu" style="width:460px;position:relative;left:-250px;">
+                <li class="head text-light bg-dark" style="padding:5px 15px;border-radius: 3px 3px 0px 0px;top:-10px;">
                   <div class="row">
                     <div class="col-lg-12 col-sm-12 col-12">
                       <span>Notifications ({{notifications|count}})</span>
@@ -83,7 +83,11 @@
                   </li>
                   {% endfor %}
                 {% else %}
-                  No Notifications
+                  <li class="notification-box" style="padding: 10px 10px;border-bottom: 1px solid;">
+                    <div class="row">
+                      No Notifications
+                    </div>
+                  </li>
                 {% endif %}
             </ul>
           </li>
