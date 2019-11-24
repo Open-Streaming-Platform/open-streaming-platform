@@ -3297,7 +3297,7 @@ def search_page():
 @login_required
 @app.route('/notifications')
 def notification_page():
-    notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id).order_by(notifications.userNotification.timestamp.desc())
+    notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
     return render_template(checkOverride('notifications.html'), notificationList=notificationQuery)
 
 ### Start Video / Stream Handler Routes
