@@ -75,7 +75,7 @@
                   <div class="row">
                     <div class="col-lg-12 col-sm-12 col-12">
                       <span>Notifications <span class="badge badge-light" id="notificationCountMenu">{{notifications|count}}</span></span>
-                      <a href="" class="float-right text-light">Mark all as read</a>
+                      <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllNotifications(); return false;">Mark all as read</a>
                     </div>
                   </div>
                 </li>
@@ -473,6 +473,17 @@
       notificationCount = notificationCount - 1;
 
       socket.emit('markNotificationAsRead', { data: notificationID });
+    }
+
+    function clearAllNotifications() {
+      var ids = $('.notificationBody .notification-box').map(function(){
+        return $(this).attr('id');
+        }).get();
+      array.forEach(function (item, index) {
+        if (item != 'notification-empty') {
+          clearNotification(item);
+        }
+      });
     }
 
   </script>
