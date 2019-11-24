@@ -33,7 +33,7 @@ body {
   content: "";
   position: absolute;
   top:-15px;
-  right:32px;
+  right:30px;
   border-left: 14px solid transparent;
   border-right: 14px solid transparent;
   border-bottom: 20px solid #343a40;

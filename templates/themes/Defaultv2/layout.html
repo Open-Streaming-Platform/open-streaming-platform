@@ -64,12 +64,14 @@
           </li>
           {% else %}
           <li class="nav-item dropdown pl-2 pr-1">
-            <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
+            <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <b><i class="fas fa-bell"></i></b> {% if count(notifications) > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}
+            </a>
             <ul class="dropdown-menu notificationDropdownMenu shadow">
                 <li class="head text-light bg-dark">
                   <div class="row">
                     <div class="col-lg-12 col-sm-12 col-12">
-                      <span>Notifications ({{notifications|count}})</span>
+                      <span>Notifications <span class="badge badge-light">{{notifications|count}}</span></span>
                       <a href="" class="float-right text-light">Mark all as read</a>
                     </div>
                   </div>
@@ -80,7 +82,7 @@
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
                         <div>{{entry.message}}</div>
-                        <small class="text-warning">{{entry.timestamp|normalize_date}}</small>
+                        <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                       </div>
                     </div>
                   </li>
