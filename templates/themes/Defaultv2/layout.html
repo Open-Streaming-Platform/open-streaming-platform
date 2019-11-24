@@ -83,8 +83,12 @@
                   {% for entry in notifications %}
                   <li class="notification-box" id="notification-{{entry.notificationID}}">
                     <div class="row">
-                      <div class="col-lg-12 col-sm-12 col-12">
-                        <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('notification-{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span><div>{{entry.message}}</div>
+                      <div class="col-lg-1 col-sm-1 col-1">
+                        <img width="30" height="30" class="userPhoto rounded" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                      </div>
+                      <div class="col-lg-11 col-sm-11 col-11">
+                        <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                        <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
                         <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                       </div>
                     </div>
@@ -105,7 +109,7 @@
           </li>
           <li class="nav-item dropdown px-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
+              <img width="30" height="30" class="userPhoto rounded" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               {% if user.has_role('Admin') %}
@@ -442,7 +446,7 @@
     var notificationCount = {{notifications|count}};
 
     function clearNotification(notificationID) {
-      var notification = document.getElementById(notificationID);
+      var notification = document.getElementById('notification-' + notificationID);
       notification.parentNode.removeChild(notification);
 
       var newCount = notificationCount - 1;

@@ -32,6 +32,9 @@ body {
 .notificationDropdownMenu {
     width:460px;
     left:-390px;
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: none;
 }
 
 .notificationDropdownMenu::before {
