@@ -1324,7 +1324,8 @@ def vid_clip_page(loc):
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id), sub.userID)
+                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
+                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
                 db.session.add(newNotification)
             db.session.commit()
 
@@ -1788,7 +1789,8 @@ def upload_vid():
         subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
         for sub in subscriptionQuery:
             # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id), sub.userID)
+            newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
+                                                             "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
             db.session.add(newNotification)
         db.session.commit()
 
@@ -3520,7 +3522,8 @@ def user_auth_check():
         subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
         for sub in subscriptionQuery:
             # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc), sub.userID)
+            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
+                                                             "/images/" + requestedChannel.owner.pictureLocation, sub.userID)
             db.session.add(newNotification)
         db.session.commit()
 
@@ -3639,7 +3642,8 @@ def rec_Complete_handler():
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
     for sub in subscriptionQuery:
         # Create Notification for Channel Subs
-        newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id), sub.userID)
+        newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
+                                                         "/images/" + requestedChannel.owner.pictureLocation, sub.userID)
         db.session.add(newNotification)
     db.session.commit()
 
@@ -3747,7 +3751,7 @@ def toggle_chanSub(payload):
                         pictureLocation = '/images/' + pictureLocation
 
                     # Create Notification for Channel Owner on New Subs
-                    newNotification = notifications.userNotification(current_user.username + " has subscribed to " + channelQuery.channelName, "/channel/" + str(channelQuery.id), channelQuery.owningUser)
+                    newNotification = notifications.userNotification(current_user.username + " has subscribed to " + channelQuery.channelName, "/channel/" + str(channelQuery.id), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
                     db.session.add(newNotification)
                     db.session.commit()
 
@@ -4027,7 +4031,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Channel Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your live stream in " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), channelQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your live stream in " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4045,7 +4049,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your video titled" + videoQuery.channelName, "/play/" + str(videoQuery.id), videoQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your video titled" + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4061,7 +4065,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your comment on a video", "/play/" + str(videoCommentQuery.videoID), videoCommentQuery.userID)
+                newNotification = notifications.userNotification(current_user.username + " liked your comment on a video", "/play/" + str(videoCommentQuery.videoID), "/images/" + current_user.pictureLocation, videoCommentQuery.userID)
                 db.session.add(newNotification)
 
             else:
@@ -4078,7 +4082,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Clip Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your clip", "/clip/" + str(clipQuery.id), clipQuery.recordedVideo.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your clip", "/clip/" + str(clipQuery.id), "/images/" + current_user.pictureLocation, clipQuery.recordedVideo.owningUser)
                 db.session.add(newNotification)
 
             else:
