@@ -81,10 +81,10 @@
                 </li>
                 {% if notifications != [] %}
                   {% for entry in notifications %}
-                  <li class="notification-box">
+                  <li class="notification-box" id="notification-{{entry.notificationID}}">
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
-                        <span class="float-right"><i class="fas fa-times"></i></span><div>{{entry.message}}</div>
+                        <span class="float-right"><a href="" onclick="clearNotification({{entry.notificationID}});"><i class="fas fa-times"></i></a></span><div>{{entry.message}}</div>
                         <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                       </div>
                     </div>
@@ -432,6 +432,13 @@
     }
   </script>
 
+  <script>
+    function clearNotification(notificationID) {
+      var notification = document.getElementById('notification-' + notificationID);
+      notification.parentNode.removeChild(notification);
+    }
+
+  </script>
 
 </body>
 
