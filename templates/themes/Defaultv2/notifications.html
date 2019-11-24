@@ -13,16 +13,17 @@
                     Notifications <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllNotifications(); return false;">Mark all as read</a>
                 </h5>
                 <div class="card-body">
-                    <ul class="notificationDropdownMenu shadow">
+                    <ul class="notificationCardList">
                         <div class="notificationBody">
                             {% if notificationList != [] %}
                               {% for entry in notificationList %}
                               <li class="notification-box" id="notification-{{entry.notificationID}}">
                                 <div class="row">
+                                  <div class="col-lg-1 col-sm-1 col-1">{% if entry.read == True %}<div class="unreadItemIndicator">{% endif %}</div></div>
                                   <div class="col-lg-1 col-sm-1 col-1">
                                     <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
                                   </div>
-                                  <div class="col-lg-11 col-sm-11 col-11">
+                                  <div class="col-lg-10 col-sm-10 col-10">
                                     <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
                                     <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
                                     <small class="text-primary">{{entry.timestamp|normalize_date}}</small>

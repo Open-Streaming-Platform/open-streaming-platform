@@ -32,7 +32,6 @@ body {
 .notificationDropdownMenu {
     width:460px;
     left:-390px;
-
 }
 
 .notificationDropdownMenu::before {
@@ -78,6 +77,17 @@ body {
     position: relative;
     top:8px;
     left:-3px;
+}
+
+.notificationCardList {
+    list-style-type:none;
+}
+
+.unreadItemIndicator {
+    border-left: 4px solid green;
+    height:100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .card-cut-text {
