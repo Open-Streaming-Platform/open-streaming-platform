@@ -479,7 +479,7 @@
       var ids = $('.notificationBody .notification-box').map(function(){
         return $(this).attr('id');
         }).get();
-      array.forEach(function (item, index) {
+      ids.forEach(function (item, index) {
         if (item != 'notification-empty') {
           clearNotification(item);
         }
