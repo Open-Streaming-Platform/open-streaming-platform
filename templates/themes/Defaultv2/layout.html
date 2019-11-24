@@ -63,10 +63,10 @@
             <a class="nav-link zoom" href="/register"><i class="far fa-id-card"></i> Register</a>
           </li>
           {% else %}
-          <li class="nav-item px-2 .d-block .d-md-none">
+          <li class="nav-item px-2 d-block d-md-none">
             <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
           </li>
-          <li class="nav-item dropdown pl-2 pr-1 .d-none .d-md-block">
+          <li class="nav-item dropdown pl-2 pr-1 d-none d-md-block">
             <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}
             </a>
@@ -84,7 +84,7 @@
                   <li class="notification-box">
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
-                        <div>{{entry.message}}</div><span class="float-right"><i class="fas fa-times"></i></span>
+                        <span class="float-right"><i class="fas fa-times"></i></span><div>{{entry.message}}</div>
                         <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                       </div>
                     </div>
