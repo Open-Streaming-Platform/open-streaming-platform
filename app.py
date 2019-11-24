@@ -4517,6 +4517,16 @@ def deleteGlobalWebhook(message):
     db.session.close()
     return 'OK'
 
+@socketio.on('markNotificationAsRead')
+def markUserNotificationRead(message):
+    notificationID = message['data']
+    notificationQuery = notifications.userNotification.query.filter_by(notificationID=notificationID, userID=current_user.id).first()
+    if notificationQuery != None:
+        db.session.delete(notificationQuery)
+    db.session.commit()
+    db.session.close()
+    return 'OK'
+
 # Start App Initiation
 try:
     init_db_values()

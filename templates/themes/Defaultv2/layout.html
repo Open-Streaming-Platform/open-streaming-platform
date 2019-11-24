@@ -466,6 +466,8 @@
       notificationCountNav.innerText = newCount;
       notificationCountMenu.innerText = newCount;
       notificationCount = notificationCount - 1;
+
+      socket.emit('markNotificationAsRead', { data: notificationID });
     }
 
   </script>
