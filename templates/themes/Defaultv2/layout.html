@@ -433,6 +433,12 @@
   </script>
 
   <script>
+    $('.notificationDropdownMenu').click(function(e) {
+      e.stopPropagation();
+    });
+  </script>
+
+  <script>
     function clearNotification(notificationID) {
       var notification = document.getElementById('notification-' + notificationID);
       notification.parentNode.removeChild(notification);
