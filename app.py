@@ -1514,6 +1514,11 @@ def comments_vid_page(videoID):
             else:
                 pictureLocation = '/images/' + pictureLocation
 
+            newNotification = notifications.userNotification(get_userName(current_user.id) + " commented on your video - " + recordedVid.channelName, '/play/' + str(recordedVid.id),
+                                                                 "/images/" + current_user.pictureLocation, recordedVid.owningUser)
+            db.session.add(newNotification)
+            db.session.commit()
+
             runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
                        channeltopic=get_topicName(recordedVid.channel.topic),
