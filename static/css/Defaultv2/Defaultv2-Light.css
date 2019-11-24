@@ -70,6 +70,12 @@ body {
     border-radius: 0px 0px 3px 3px;
 }
 
+.notificationImg {
+    position: relative;
+    top:8px;
+    left:-3px;
+}
+
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;

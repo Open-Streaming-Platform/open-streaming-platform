@@ -84,7 +84,7 @@
                   <li class="notification-box" id="notification-{{entry.notificationID}}">
                     <div class="row">
                       <div class="col-lg-1 col-sm-1 col-1">
-                        <img width="30" height="30" class="userPhoto rounded" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                        <img width="30" height="30" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
                       </div>
                       <div class="col-lg-11 col-sm-11 col-11">
                         <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
