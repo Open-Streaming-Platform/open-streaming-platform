@@ -481,6 +481,7 @@
         }).get();
       ids.forEach(function (item, index) {
         if (item != 'notification-empty') {
+          item = item.replace('notification-','');
           clearNotification(item);
         }
       });
