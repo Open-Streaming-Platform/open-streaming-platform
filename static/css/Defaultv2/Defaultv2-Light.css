@@ -85,9 +85,7 @@ body {
 
 .unreadItemIndicator {
     border-left: 4px solid green;
-    height:100%;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-bottom: 16px;
 }
 
 .card-cut-text {
