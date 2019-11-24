@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <ul class="notificationDropdownMenu shadow">
                         <div class="notificationBody">
-                            {% if notifications != [] %}
+                            {% if notificationList != [] %}
                               {% for entry in notificationList %}
                               <li class="notification-box" id="notification-{{entry.notificationID}}">
                                 <div class="row">
@@ -31,7 +31,7 @@
                               </li>
                               {% endfor %}
                             {% endif %}
-                            <li class="notification-box" id="notification-empty" {% if notifications != [] %} style="display:none;" {% endif %}>
+                            <li class="notification-box" id="notification-empty" {% if notificationList != [] %} style="display:none;" {% endif %}>
                             <div class="row">
                               <div class="col-lg-12 col-sm-12 col-12">
                                 <div>No New Notifications</div>
