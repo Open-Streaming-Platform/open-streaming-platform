@@ -4522,7 +4522,7 @@ def markUserNotificationRead(message):
     notificationID = message['data']
     notificationQuery = notifications.userNotification.query.filter_by(notificationID=notificationID, userID=current_user.id).first()
     if notificationQuery != None:
-        db.session.delete(notificationQuery)
+        notificationQuery.read = True
     db.session.commit()
     db.session.close()
     return 'OK'
