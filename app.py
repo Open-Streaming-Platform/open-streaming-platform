@@ -4049,7 +4049,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your video titled" + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your video titled " + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
