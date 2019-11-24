@@ -449,6 +449,11 @@
     var notificationCount = {{notifications|count}};
 
     function clearNotification(notificationID) {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
       var notification = document.getElementById('notification-' + notificationID);
       notification.parentNode.removeChild(notification);
 
