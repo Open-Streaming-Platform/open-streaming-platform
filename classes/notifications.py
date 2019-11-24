@@ -9,14 +9,16 @@ class userNotification(db.Model):
     timestamp = db.Column(db.DateTime)
     message = db.Column(db.String(1024))
     link = db.Column(db.String(1024))
+    image = db.Column(db.String(256))
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     read = db.Column(db.Boolean)
 
-    def __init__(self, message, link, userID):
+    def __init__(self, message, link, image, userID):
         self.notificationID = str(uuid4())
         self.timestamp = datetime.now()
         self.message = message
         self.link = link
+        self.image = image
         self.userID = userID
         self.read = False
 
