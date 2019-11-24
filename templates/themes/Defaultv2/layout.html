@@ -64,17 +64,17 @@
           </li>
           {% else %}
           <li class="nav-item px-2 d-block d-lg-none">
-            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
+            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span id="notificationCountMobile" class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
           </li>
           <li class="nav-item dropdown pl-2 pr-1 d-none d-lg-block">
             <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}
+              <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger" id="notificationCountNav">{{notifications|count}}</span>{% endif %}
             </a>
             <ul class="dropdown-menu notificationDropdownMenu shadow">
                 <li class="head text-light bg-dark">
                   <div class="row">
                     <div class="col-lg-12 col-sm-12 col-12">
-                      <span>Notifications <span class="badge badge-light">{{notifications|count}}</span></span>
+                      <span>Notifications <span class="badge badge-light" id="notificationCountMenu">{{notifications|count}}</span></span>
                       <a href="" class="float-right text-light">Mark all as read</a>
                     </div>
                   </div>
@@ -436,12 +436,27 @@
     $('.notificationDropdownMenu').click(function(e) {
       e.stopPropagation();
     });
-  </script>
 
-  <script>
+    var notificationCountMobile = document.getElementById("notificationCountMobile");
+    var notificationCountNav = document.getElementById("notificationCountNav");
+    var notificationCountMenu = document.getElementById("notificationCountMenu");
+    var notificationCount = {{notifications|count}};
+
     function clearNotification(notificationID) {
       var notification = document.getElementById(notificationID);
       notification.parentNode.removeChild(notification);
+
+      var newCount = notificationCount - 1;
+      if (newCount <= 0) {
+        notificationCountMobile.style.display = "none";
+        notificationCountNav.style.display = "none";
+        newCount = 0;
+      }
+
+      notificationCountMobile.innerText = newCount;
+      notificationCountNav.innerText = newCount;
+      notificationCountMenu.innerText = newCount;
+
     }
 
   </script>
