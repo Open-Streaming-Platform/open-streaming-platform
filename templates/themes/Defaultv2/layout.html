@@ -64,7 +64,7 @@
           </li>
           {% else %}
           <li class="nav-item px-2 d-block d-md-none">
-            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
+            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
           </li>
           <li class="nav-item dropdown pl-2 pr-1 d-none d-md-block">
             <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -100,7 +100,7 @@
                   </li>
                 {% endif %}
                 <li class="footer bg-dark text-center">
-                  <a href="" class="text-light">View All</a>
+                  <a href="/notifications" class="text-light">View All</a>
                 </li>
             </ul>
           </li>
