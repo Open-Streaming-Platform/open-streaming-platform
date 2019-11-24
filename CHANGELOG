@@ -1,7 +1,13 @@
 Beta-4
 ==============================================
-Added Worker Services for OSP Gunicorn to handle multiple concurrent users.
-Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
+- Added Worker Services on local ports (5000-5010) for OSP Gunicorn to handle multiple concurrent users
+    * Note: OSP must now be started and stopped using systemctl start/stop/restart osp.target
+- Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
+- Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
+- Added Video, Clip, Channel, and Stream Sorting
+- Reformated Display Cards to v3
+- Fixed issue where Defaultv2-Dark's Popout Chat retained the Defaultv2-Light's theme
+- Moved Gunicorn Logs to /opt/osp/logs
 
 
 Beta-3
