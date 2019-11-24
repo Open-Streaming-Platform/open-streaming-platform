@@ -65,7 +65,7 @@
           {% else %}
           <li class="nav-item dropdown pl-2 pr-1">
             <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <b><i class="fas fa-bell"></i></b> {% if count(notifications) > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}
+              <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger">{{notifications|count}}</span>{% endif %}
             </a>
             <ul class="dropdown-menu notificationDropdownMenu shadow">
                 <li class="head text-light bg-dark">
