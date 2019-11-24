@@ -4031,7 +4031,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Channel Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your live stream in " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your live stream - " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4049,7 +4049,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your video titled " + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your video - " + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4082,7 +4082,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Clip Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your clip", "/clip/" + str(clipQuery.id), "/images/" + current_user.pictureLocation, clipQuery.recordedVideo.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your clip - " + clipQuery.clipName, "/clip/" + str(clipQuery.id), "/images/" + current_user.pictureLocation, clipQuery.recordedVideo.owningUser)
                 db.session.add(newNotification)
 
             else:
