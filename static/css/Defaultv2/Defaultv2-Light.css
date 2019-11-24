@@ -22,6 +22,44 @@ body {
     color:black;
 }
 
+.notificationDropdownMenu {
+    width:460px;
+    left:-390px;
+}
+
+.notificationDropdownMenu::before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  top:-15px;
+  right:32px;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 20px solid #343a40;
+  z-index: -1;
+}
+
+.notificationDropdownMenu .head {
+    padding:5px 15px;
+    border-radius: 3px 3px 0px 0px;
+    position:relative;
+    margin-bottom:-10px;
+    top:-10px;
+}
+
+.notificationDropdownMenu .notification-box {
+    padding: 5px 15px;
+}
+
+.notificationDropdownMenu .footer {
+    padding: 5px 15px;
+    position:relative;
+    top:10px;
+    margin-top:-10px;
+    border-radius: 0px 0px 3px 3px;
+}
+
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;

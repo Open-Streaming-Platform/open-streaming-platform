@@ -65,8 +65,8 @@
           {% else %}
           <li class="nav-item dropdown pl-2 pr-1">
             <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b><i class="fas fa-bell"></i></b></a>
-            <ul class="dropdown-menu shadow" style="width:460px;left:-390px;">
-                <li class="head text-light bg-dark" style="padding:5px 15px;border-radius: 3px 3px 0px 0px;position:relative;margin-bottom:-10px;top:-10px;">
+            <ul class="dropdown-menu notificationDropdownMenu shadow">
+                <li class="head text-light bg-dark">
                   <div class="row">
                     <div class="col-lg-12 col-sm-12 col-12">
                       <span>Notifications ({{notifications|count}})</span>
@@ -76,7 +76,7 @@
                 </li>
                 {% if notifications != [] %}
                   {% for entry in notifications %}
-                  <li class="notification-box" style="padding: 5px 15px;">
+                  <li class="notification-box">
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
                         <div>{{entry.message}}</div>
@@ -86,7 +86,7 @@
                   </li>
                   {% endfor %}
                 {% else %}
-                  <li class="notification-box" style="padding: 10px 10px;">
+                  <li class="notification-box">
                     <div class="row">
                       <div class="col-lg-12 col-sm-12 col-12">
                         <div>No New Notifications</div>
@@ -94,7 +94,7 @@
                     </div>
                   </li>
                 {% endif %}
-                <li class="footer bg-dark text-center" style="padding: 5px 15px;position:relative;top:10px;margin-top:-10px;border-radius: 0px 0px 3px 3px;">
+                <li class="footer bg-dark text-center">
                   <a href="" class="text-light">View All</a>
                 </li>
             </ul>
