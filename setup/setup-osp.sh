@@ -34,7 +34,7 @@ then
         sudo tar xvfz zlib-1.2.11.tar.gz
         if cd nginx-1.17.3
         then
-                ./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
+                ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
                 sudo make install
         else
                 echo "Unable to Build Nginx! Aborting."
