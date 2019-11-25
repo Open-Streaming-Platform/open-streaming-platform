@@ -3300,128 +3300,75 @@ def notification_page():
     notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
     return render_template(checkOverride('notifications.html'), notificationList=notificationQuery)
 
-### Start Video / Stream Handler Routes
+@app.route('/auth', methods=["GET","POST"])
+def auth_check():
+    originalURI = ""
+    if 'X-Original-URI' in request.headers:
+        originalURI = request.headers['X-Original-URI']
 
-@app.route('/videos/<string:channelID>/<path:filename>')
-def video_sender(channelID, filename):
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            del response.headers["Content-Type"]
-            db.session.close()
-            return response
-        else:
-            return abort(401)
-    else:
-        redirect_path = "/osp-videos/" + str(channelID) + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        del response.headers["Content-Type"]
-        db.session.close()
-        return response
+        requestGroup = originalURI[1:].split('/')
 
-@app.route('/stream-thumb/<path:filename>')
-def live_thumb_sender(filename):
-    channelID = str(filename)[:-4]
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-streamthumbs" + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            db.session.close()
-            return response
-        else:
-            return abort(401)
-    else:
-        redirect_path = "/osp-streamthumbs" + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        db.session.close()
-        return response
+        if requestGroup[0] == 'videos' or requestGroup[0] == 'live' or requestGroup[0] == 'live-rec':
+            # Format /videos/<string:channelID>/<path:filename>
+            channelID = requestGroup[1]
+            channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+            if channelQuery.protected:
+                if check_isValidChannelViewer(channelQuery.id):
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.close()
+                    return abort(401)
+            else:
+                return 'OK'
+        elif requestGroup[0] == 'stream-thumb':
+            # Format /stream-thumb/<path:filename>
+            filename = requestGroup[1]
+            channelID = str(filename)[:-4]
+            channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+            if channelQuery.protected:
+                if check_isValidChannelViewer(channelQuery.id):
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.close()
+                    return abort(401)
+            else:
+                return 'OK'
+        elif requestGroup[0] == 'live-adapt':
+            # Format /live-adapt/<path:filename> or /live-adapt/<string:channelID>/<path:filename>
+            if len(requestGroup) == 2:
+                filename = requestGroup[1]
+                channelID = str(filename)[:-5]
+                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+                if channelQuery.protected:
+                    if check_isValidChannelViewer(channelQuery.id):
+                        db.session.close()
+                        return 'OK'
+                    else:
+                        db.session.close()
+                        return abort(401)
+                else:
+                    db.session.close()
+                    return 'OK'
+            elif len(requestGroup) == 3:
+                channelID = requestGroup[1]
+                parsedPath = channelID.split("_")
+                channelloc = parsedPath[0]
 
-@app.route('/live-adapt/<path:filename>')
-def live_adapt_stream_image_sender(filename):
-    channelID = str(filename)[:-5]
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-liveadapt" + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            db.session.close()
-            return response
-        else:
-            return abort(401)
-    else:
-        redirect_path = "/osp-liveadapt" + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        db.session.close()
-        return response
+                channelQuery = Channel.Channel.query.filter_by(channelLoc=channelloc).first()
 
-@app.route('/live-adapt/<string:channelID>/<path:filename>')
-def live_adapt_stream_directory_sender(channelID, filename):
-    parsedPath = channelID.split("_")
-    channelloc = parsedPath[0]
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelloc).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            db.session.close()
-            return response
-        else:
-            return abort(401)
-    else:
-        redirect_path = "/osp-liveadapt" + "/" + str(channelID) + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        db.session.close()
-        return response
-
-@app.route('/live/<string:channelID>/<path:filename>')
-def live_stream_directory_sender(channelID, filename):
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            db.session.close()
-            return response
-
-        else:
-            return abort(401)
-    else:
-        redirect_path = "/osp-live" + "/" + str(channelID) + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        db.session.close()
-        return response
-
-@app.route('/live-rec/<string:channelID>/<path:filename>')
-def live_rec_stream_directory_sender(channelID, filename):
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
-    if channelQuery.protected:
-        if check_isValidChannelViewer(channelQuery.id):
-            redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
-            response = make_response("")
-            response.headers["X-Accel-Redirect"] = redirect_path
-            db.session.close()
-            return response
-        else:
-            abort(401)
-    else:
-        redirect_path = "/osp-liverec" + "/" + str(channelID) + "/" + filename
-        response = make_response("")
-        response.headers["X-Accel-Redirect"] = redirect_path
-        db.session.close()
-        return response
+                if channelQuery.protected:
+                    if check_isValidChannelViewer(channelQuery.id):
+                        db.session.close()
+                        return 'OK'
+                    else:
+                        db.session.close()
+                        abort(401)
+                else:
+                    db.session.close()
+                    return 'OK'
+    abort(400)
 
 ### Start NGINX-RTMP Authentication Functions
 
