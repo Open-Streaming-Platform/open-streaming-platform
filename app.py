@@ -2589,8 +2589,8 @@ def settings_dbRestore():
                 db.session.delete(sub)
             db.session.commit()
 
-            if 'channelSubs' in restoreDict:
-                for restoredChannelSub in restoreDict['channelSubs']:
+            if 'channel_subs' in restoreDict:
+                for restoredChannelSub in restoreDict['channel_subs']:
                     channelID = int(restoredChannelSub['channelID'])
                     userID = int(restoredChannelSub['userID'])
 
