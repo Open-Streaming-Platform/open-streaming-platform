@@ -2668,14 +2668,15 @@ def settings_dbRestore():
                                         restoredAPIKey['description'], 0)
                     key.id = int(restoredAPIKey['id'])
                     key.key = restoredAPIKey['key']
-                    try:
-                        key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
-                    try:
-                        key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
+                    if restoredAPIKey['expiration'] != "None":
+                        try:
+                            key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            key.createdOn = datetime.datetime.strptime(restoredAPIKey['createdOn'], '%Y-%m-%d %H:%M:%S.%f')
+                        try:
+                            key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            key.expiration = datetime.datetime.strptime(restoredAPIKey['expiration'], '%Y-%m-%d %H:%M:%S.%f')
                     db.session.add(key)
                 else:
                     flash("Error Restoring API Key: ID# " + str(restoredAPIKey['id']), "error")
