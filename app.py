@@ -159,7 +159,7 @@ app.register_blueprint(api_v1)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
-security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm)
+security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
 # Setup Flask-Uploads
 photos = UploadSet('photos', IMAGES)
