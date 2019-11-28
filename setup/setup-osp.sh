@@ -110,6 +110,7 @@ else
         sudo cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
     else
         echo "Unable to setup logrotate"
+    fi
 fi
 # Start Nginx
 sudo systemctl start nginx-osp.service
