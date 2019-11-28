@@ -12,6 +12,9 @@ sudo pip3 install -r requirements.txt
 # Install Redis
 sudo apt-get install redis -y
 
+# Install LDAP Requirements
+sudo apt-get install libldap2-dev openldap-devel
+
 # Setup OSP Directory
 mkdir -p /opt/osp
 if cd ..
@@ -69,7 +72,7 @@ fi
 if cd $cwd/gunicorn
 then
         sudo cp osp.target /etc/systemd/system/
-        sudo cp osp-worker@.service
+        sudo cp osp-worker@.service /etc/systemd/system/
         sudo systemctl daemon-reload
         sudo systemctl enable osp.target
 else
