@@ -13,7 +13,7 @@ sudo pip3 install -r requirements.txt
 sudo apt-get install redis -y
 
 # Install LDAP Requirements
-sudo apt-get install libldap2-dev openldap-devel
+sudo apt-get install libldap2-dev libldap-dev
 
 # Setup OSP Directory
 mkdir -p /opt/osp
