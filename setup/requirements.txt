@@ -41,3 +41,4 @@ xmltodict==0.12.0
 apscheduler==3.6.1
 redis==3.3.11
 flask-limiter==1.1.0
+gunicorn==20.0.4
