@@ -30,7 +30,7 @@ then
         sudo wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
         sudo wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
         sudo wget "https://github.com/kvspb/nginx-auth-ldap/archive/v0.1.tar.gz"
-        sudo tar xvfz 0.1.tar.gz
+        sudo tar xvfz v0.1.tar.gz
         sudo tar xvfz nginx-1.17.3.tar.gz
         sudo unzip v1.2.1.zip
         sudo tar xvfz zlib-1.2.11.tar.gz
