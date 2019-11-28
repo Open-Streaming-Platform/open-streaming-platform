@@ -5,6 +5,7 @@ sudo pip3 uninstall gunicorn -y
 cd ..
 sudo cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
 sudo bash setup-osp.sh
+sudo pip3 install gunicorn
 cd ..
 sudo python3 manage.py db init
 sudo bash dbUpgrade.sh
