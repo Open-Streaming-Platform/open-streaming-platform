@@ -110,5 +110,4 @@ else
 
 # Start Nginx
 sudo systemctl start nginx-osp.service
-
 echo "OSP Install Completed! Please copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target"
