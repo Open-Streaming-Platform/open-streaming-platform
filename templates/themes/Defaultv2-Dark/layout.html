@@ -47,13 +47,13 @@
             <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
           </form>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/channels"><b>Channels</b></a>
+            <a class="nav-link" href="/channels"><b><i class="fas fa-tv"></i> Channels</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/topics"><b>Topics</b></a>
+            <a class="nav-link" href="/topics"><b><i class="fas fa-hashtag"></i> Topics</b></a>
           </li>
           <li class="nav-item px-3">
-            <a class="nav-link" href="/streamers"><b>Streamers</b></a>
+            <a class="nav-link" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
           </li>
           {% if user.is_authenticated == False %}
           <li class="nav-item px-3">
@@ -65,6 +65,53 @@
           </li>
           {% endif %}
           {% else %}
+          <li class="nav-item px-2 d-block d-lg-none">
+            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span id="notificationCountMobile" class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
+          </li>
+          <li class="nav-item dropdown pl-2 pr-1 d-none d-lg-block">
+            <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger" id="notificationCountNav">{{notifications|count}}</span>{% endif %}
+            </a>
+            <ul class="dropdown-menu notificationDropdownMenu shadow">
+                <li class="head text-light bg-dark">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-12">
+                      <span>Notifications <span class="badge badge-light" id="notificationCountMenu">{{notifications|count}}</span></span>
+                      <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllNotifications(); return false;">Mark all as read</a>
+                    </div>
+                  </div>
+                </li>
+                <div class="notificationBody">
+                    {% if notifications != [] %}
+                      {% for entry in notifications %}
+                      <li class="notification-box" id="notification-{{entry.notificationID}}">
+                        <div class="row">
+                          <div class="col-lg-1 col-sm-1 col-1">
+                            <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                          </div>
+                          <div class="col-lg-11 col-sm-11 col-11">
+                            <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                            <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
+                            <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
+                          </div>
+                        </div>
+                      </li>
+                      {% endfor %}
+                    {% endif %}
+                    <li class="notification-box" id="notification-empty" {% if notifications != [] %} style="display:none;" {% endif %}>
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 col-12">
+                        <div>No New Notifications</div>
+                      </div>
+                    </div>
+                    </li>
+                </div>
+
+                <li class="footer bg-dark text-center">
+                  <a href="/notifications" class="text-light">View All</a>
+                </li>
+            </ul>
+          </li>
           <li class="nav-item dropdown px-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
@@ -340,6 +387,56 @@
     }
   </script>
 
+  <script>
+    $('.notificationDropdownMenu').click(function(e) {
+      e.stopPropagation();
+    });
+
+    var notificationCountMobile = document.getElementById("notificationCountMobile");
+    var notificationCountNav = document.getElementById("notificationCountNav");
+    var notificationCountMenu = document.getElementById("notificationCountMenu");
+    var notificationCount = {{notifications|count}};
+
+    function clearNotification(notificationID) {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
+      var notification = document.getElementById('notification-' + notificationID);
+      notification.parentNode.removeChild(notification);
+
+      var newCount = notificationCount - 1;
+      if (newCount <= 0) {
+        var emptyNotificationBar = document.getElementById("notification-empty");
+
+        notificationCountMobile.style.display = "none";
+        notificationCountNav.style.display = "none";
+        emptyNotificationBar.style.display = "block";
+        newCount = 0;
+      }
+
+      notificationCountMobile.innerText = newCount;
+      notificationCountNav.innerText = newCount;
+      notificationCountMenu.innerText = newCount;
+      notificationCount = notificationCount - 1;
+
+      socket.emit('markNotificationAsRead', { data: notificationID });
+    }
+
+    function clearAllNotifications() {
+      var ids = $('.notificationBody .notification-box').map(function(){
+        return $(this).attr('id');
+        }).get();
+      ids.forEach(function (item, index) {
+        if (item != 'notification-empty') {
+          item = item.replace('notification-','');
+          clearNotification(item);
+        }
+      });
+    }
+
+  </script>
 
 </body>
 
