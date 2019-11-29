@@ -48,6 +48,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
 * [[Animista](http://animista.net/)] - Awesome CSS Animation Generator
+* [List.js] - Handling List Sorting and Pagination
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
@@ -157,6 +158,7 @@ pip3 install -r /opt/osp/setup/requirements.txt
 apt-get install gunicorn3 uwsgi-plugin-python
 ```
 6: Download and Build NGINX and NGINX-RTMP
+* Nginx may require --with-cc-opt="-Wimplicit-fallthrough=0" added to ./configure to build on Debian and >= Ubuntu 18.10 to build
 ```
 cd /tmp
 wget "http://nginx.org/download/nginx-1.17.3.tar.gz"
@@ -177,13 +179,14 @@ cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 8: Copy the Gunicorn and NGINX SystemD files
 ```
 cp /opt/osp/setup/nginx/nginx-osp.service /lib/systemd/system/nginx-osp.service
-cp /opt/osp/setup/gunicorn/osp.service /lib/systemd/system/osp.service
+cp /opt/osp/setup/gunicorn/osp-worker@.service /lib/systemd/system/osp-worker@.service
+cp /opt/osp/setup/gunicorn/osp.target /lib/systemd/system/osp.target
 ```
 9: Reload SystemD
 ```
 systemctl daemon-reload
 systemctl enable nginx-osp.service
-systemctl enable osp.service
+systemctl enable osp.target
 ```
 10: Make the Required OSP Directories and Set Ownership
 ```
@@ -194,11 +197,9 @@ mkdir /var/www/live-rec
 mkdir /var/www/images
 mkdir /var/www/live-adapt
 mkdir /var/stream-thumb
-mkdir /var/log/gunicorn
 chown -R www-data:www-data /var/www
 chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
-chown -R www-data:www-data /var/log/gunicorn
 ```
 11: Install FFMPEG4
 ```
@@ -210,10 +211,14 @@ apt-get install ffmpeg -y
 ```
 cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 ```
+13: Setup Log Rotation
+```
+cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
+```
 13: Start NGINX and OSP
 ```
 systemctl start nginx-osp.service
-systemctl start osp.service
+systemctl start osp.target
 ```
 14: Open the site in a browser and run through the First Time Setup
 ```
@@ -283,6 +288,13 @@ sudo systemctl restart nginx
 ```
 bash dbUpgrade.sh
 ```
+### Upgrading from Beta3 to Beta4
+OSP has added multiple processes to handle load balancing.  Please run the beta3tobeta4.sh script to migrate to the new process structure.
+```
+cd /opt/osp/setup/other
+sudo bash beta3tobeta4.sh
+```
+
 ### Upgrading from Beta2 to Beta3
 Due to changes made with the way Nginx Conf files are handled and adding http2 support for Nginx, it is recommended to make a copy of your existing nginx.conf and transpose any settings to the new nginx.conf format. 
 After making a copy, rerun the osp-setup.sh file in /opt/osp/setup/ directory or rerun through steps 1,4,6,7, & 12 of the manual install before restarting the osp service. 
