@@ -90,7 +90,7 @@
                             <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
                           </div>
                           <div class="col-lg-11 col-sm-11 col-11">
-                            <span class="float-right text-dark"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times "></i></a></span>
+                            <span class="float-right "><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times text-dark"></i></a></span>
                             <a href="{{entry.link}}"><div class="text-dark">{{entry.message}}</div></a>
                             <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                           </div>
