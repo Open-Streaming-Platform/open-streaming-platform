@@ -108,12 +108,19 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
-app.config["RATELIMIT_STORAGE_URL"] = "redis://localhost:6379"
+if config.redisPassword != '':
+    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
+else:
+    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 
 logger = logging.getLogger('gunicorn.error').handlers
 
 # Init Redis DB and Clear Existing DB
-r = redis.Redis(host='localhost', port=6379)
+if config.redisPassword != '':
+    r = redis.Redis(host=config.redisHost, port=config.redisPort)
+else:
+    r = redis.Redis(host=config.redisHost, port=config.redisPort, password=config.redisPassword)
+
 r.flushdb()
 
 appDBVersion = 0.45
@@ -121,7 +128,10 @@ appDBVersion = 0.45
 from classes.shared import db
 
 from classes.shared import socketio
-socketio.init_app(app, logger=False, engineio_logger=False, message_queue='redis://')
+if config.redisPassword != '':
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort))
+else:
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort))
 
 limiter = Limiter(app, key_func=get_remote_address)
 
