@@ -2,12 +2,18 @@ Beta-4
 ==============================================
 - Added Worker Services on local ports (5000-5010) for OSP Gunicorn to handle multiple concurrent users
     * Note: OSP must now be started and stopped using systemctl start/stop/restart osp.target
+- Passed Authentication Validation to Nginx instead of passing through Gunicorn First.
+    * Note: This will require a new recompile of Nginx by using the setup script or compiling manually as well as updating the osp-redirects.conf and nginx.conf
+- Moved Async Processing to use Redis.
+    * Note: New Configuration Variables have been added to the config.py file which are required.
 - Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
-- Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
+- Added Notifications for Various Events such as New Streams, New Videos, New Comments, Likes, etc
 - Added Video, Clip, Channel, and Stream Sorting
+- Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
 - Reformated Display Cards to v3
 - Fixed issue where Defaultv2-Dark's Popout Chat retained the Defaultv2-Light's theme
 - Moved Gunicorn Logs to /opt/osp/logs
+- Fixed Issue where Channel Subscriptions were not being restored from backups
 
 
 Beta-3
