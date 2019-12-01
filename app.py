@@ -179,9 +179,6 @@ patch_request_class(app)
 #Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
 
-# Establish Channel SID List
-#streamSIDList = {}
-
 # Create Theme Data Dictionary
 themeData = {}
 
@@ -778,7 +775,7 @@ def hms_format(seconds):
 @app.template_filter('get_topicName')
 def get_topicName(topicID):
     topicQuery = topics.topics.query.filter_by(id=int(topicID)).first()
-    if topicQuery == None:
+    if topicQuery is None:
         return "None"
     return topicQuery.name
 
