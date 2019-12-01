@@ -441,9 +441,9 @@ def check_isCommentUpvoted(commentID):
     if current_user.is_authenticated:
         commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
         if commentQuery != None:
+            db.session.close()
             return True
-        else:
-            return False
+    db.session.close()
     return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
@@ -452,15 +452,18 @@ def check_isUserValidRTMPViewer(userID,channelID):
         channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
         if channelQuery is not None:
             if channelQuery.owningUser is userQuery.id:
+                db.session.close()
                 return True
             else:
                 inviteQuery = invites.invitedViewer.query.filter_by(userID=userQuery.id, channelID=channelID).all()
                 for invite in inviteQuery:
                     if invite.isValid():
+                        db.session.close()
                         return True
                     else:
                         db.session.delete(invite)
                         db.session.commit()
+                        db.session.close()
     return False
 
 # Handles the Invite Cache to cut down on SQL Calls
@@ -472,9 +475,11 @@ def checkInviteCache(channelID):
             if current_user.id in inviteCache[channelID]:
                 if inviteCache[channelID][current_user.id]["invited"] == True:
                     if datetime.datetime.now() < inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
+                        db.session.close()
                         return True
                     else:
                         inviteCache[channelID].pop(current_user.id, None)
+    db.session.close()
     return False
 
 def table2Dict(table):
@@ -561,6 +566,7 @@ def runWebhook(channelID, triggerType, **kwargs):
                 newLog(8, "Processing Webhook for ID #" + str(hook.id) + " - Destination:" + str(url))
     db.session.commit()
     db.session.close()
+    return True
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
