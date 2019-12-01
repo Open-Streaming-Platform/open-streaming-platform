@@ -5,7 +5,7 @@ dbLocation="sqlite:///db/database.db"
 # Redis Configuration
 redisHost="localhost" # Default localhost
 redisPort=6379 # Default 6379
-redisPassword=None # Default None
+redisPassword='' # Default ''
 
 # Flask Secret Key
 secretKey="CHANGEME"

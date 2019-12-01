@@ -18,6 +18,12 @@ echo 'Setting up OSP Configuration'
 
 export DB_URL
 echo "dbLocation='$DB_URL'" > /opt/osp/conf/config.py
+export REDIS_HOST
+echo "redisHost='$REDIS_HOST'" >> /opt/osp/conf/config.py
+export REDIS_PORT
+echo "redisPort=$REDIS_PORT" >> /opt/osp/conf/config.py
+export REDIS_PASSWORD
+echo "redisPassword='$REDIS_PASSWORD'" >> /opt/osp/conf/config.py
 export FLASK_SECRET
 echo "secretKey='$FLASK_SECRET'" >> /opt/osp/conf/config.py
 export FLASK_SALT
