@@ -56,6 +56,7 @@ channelParserPost.add_argument('description', type=str, required=True)
 channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
+channelParserPost.add_argument('commentsEnabled', type=bool, required=True)
 
 streamParserPut = reqparse.RequestParser()
 streamParserPut.add_argument('streamName', type=str)
@@ -114,7 +115,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'],args['description'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'],args['description'])
                     db.session.add(newChannel)
                     db.session.commit()
 
