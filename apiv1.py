@@ -115,7 +115,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'],args['description'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'], args['description'])
                     db.session.add(newChannel)
                     db.session.commit()
 
@@ -222,8 +222,8 @@ class api_1_ChannelChat(Resource):
                         if 'userImage' in args:
                             if args['userImage'] is not None:
                                 userImage = args['userImage']
-                    socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
-                    return {'results': {'message': 'Message Posted'}}, 200
+                        socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
+                        return {'results': {'message': 'Message Posted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
