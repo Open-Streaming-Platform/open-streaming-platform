@@ -1834,7 +1834,7 @@ def unsubscribe_page():
             for sub in subscriptionQuery:
                 db.session.delete(sub)
             db.session.commit()
-    return emailAddress + " has been removed from all subscriptions"
+        return emailAddress + " has been removed from all subscriptions"
 
 @app.route('/settings/user', methods=['POST','GET'])
 @login_required
@@ -2962,7 +2962,7 @@ def settings_channels_page():
 
     elif request.method == 'POST':
 
-        type = request.form['type']
+        requestType = request.form['type']
         channelName = strip_html(request.form['channelName'])
         topic = request.form['channeltopic']
         description = strip_html(request.form['description'])
@@ -2991,7 +2991,7 @@ def settings_channels_page():
         if 'channelProtection' in request.form:
             protection = True
 
-        if type == 'new':
+        if requestType == 'new':
 
             newUUID = str(uuid.uuid4())
 
@@ -3006,7 +3006,7 @@ def settings_channels_page():
             db.session.add(newChannel)
             db.session.commit()
 
-        elif type == 'change':
+        elif requestType == 'change':
             streamKey = request.form['streamKey']
             origStreamKey = request.form['origStreamKey']
 
