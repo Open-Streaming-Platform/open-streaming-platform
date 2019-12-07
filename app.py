@@ -342,7 +342,7 @@ def newLog(logType, message):
 def check_existing_users():
     existingUserQuery = Sec.User.query.all()
 
-    if existingUserQuery == []:
+    if not existingUserQuery:
         return False
     else:
         return True
@@ -473,7 +473,7 @@ def checkInviteCache(channelID):
     if current_user.is_authenticated:
         if channelID in inviteCache:
             if current_user.id in inviteCache[channelID]:
-                if inviteCache[channelID][current_user.id]["invited"] == True:
+                if inviteCache[channelID][current_user.id]["invited"]:
                     if datetime.datetime.now() < inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
                         db.session.close()
                         return True
@@ -546,7 +546,7 @@ def runWebhook(channelID, triggerType, **kwargs):
     webhookQueue.append(globalWebhookQuery)
 
     for queue in webhookQueue:
-        if queue != []:
+        if queue:
             for hook in queue:
                 url = hook.endpointURL
                 payload = processWebhookVariables(hook.requestPayload, **kwargs)
@@ -592,7 +592,7 @@ def runSubscriptions(channelID, subject, message):
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
-    if subscriptionQuery != []:
+    if subscriptionQuery:
         newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
         try:
             runSubscriptions(channelID, subject, message)
@@ -910,7 +910,7 @@ def user_registered_sighandler(app, user, confirm_token):
     user_datastore.add_role_to_user(user, default_role)
     runWebhook("ZZZ", 20, user=user.username)
     newLog(1, "A New User has Registered - Username:" + str(user.username))
-    if config.requireEmailRegistration == True:
+    if config.requireEmailRegistration:
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
     db.session.commit()
 
@@ -962,7 +962,7 @@ def main_page():
 @app.route('/channels')
 def channels_page():
     sysSettings = settings.settings.query.first()
-    if sysSettings.showEmptyTables == True:
+    if sysSettings.showEmptyTables:
         channelList = Channel.Channel.query.all()
     else:
         channelList = []
@@ -1015,7 +1015,7 @@ def channel_view_link_page(channelLoc):
 @app.route('/topics')
 def topic_page():
     sysSettings = settings.settings.query.first()
-    if sysSettings.showEmptyTables == True:
+    if sysSettings.showEmptyTables:
         topicsList = topics.topics.query.all()
     else:
         topicIDList = []
@@ -1061,7 +1061,7 @@ def streamers_page():
     sysSettings = settings.settings.query.first()
     streamerIDs = []
 
-    if sysSettings.showEmptyTables == True:
+    if sysSettings.showEmptyTables:
         for channel in db.session.query(Channel.Channel.owningUser).distinct():
             if channel.owningUser not in streamerIDs:
                 streamerIDs.append(channel.owningUser)
@@ -1172,7 +1172,7 @@ def view_page(loc):
         chatOnly = request.args.get("chatOnly")
 
         if chatOnly == "True" or chatOnly == "true":
-            if requestedChannel.chatEnabled == True:
+            if requestedChannel.chatEnabled:
                 hideBar = False
 
                 hideBarReq = request.args.get("hideBar")
@@ -1673,7 +1673,7 @@ def clip_change_page(clipID):
 @roles_required('Streamer')
 def upload():
     sysSettings = settings.settings.query.first()
-    if sysSettings.allowUploads == False:
+    if not sysSettings.allowUploads:
         db.session.close()
         return ("Video Uploads Disabled", 501)
     if request.files['file']:
@@ -1725,7 +1725,7 @@ def upload():
 @roles_required('Streamer')
 def upload_vid():
     sysSettings = settings.settings.query.first()
-    if sysSettings.allowUploads == False:
+    if not sysSettings.allowUploads:
         db.session.close()
         flash("Video Upload Disabled", "error")
         return redirect(url_for('main_page'))
@@ -2076,7 +2076,7 @@ def admin_page():
                     userID = int(request.args.get("userID"))
                     userQuery = Sec.User.query.filter_by(id=userID).first()
                     if userQuery != None:
-                        if userQuery.active == True:
+                        if userQuery.active:
                             userQuery.active = False
                             newLog(1, "User " + current_user.username + " Disabled User " + userQuery.username)
                             flash("User Disabled")
@@ -2120,7 +2120,7 @@ def admin_page():
         except:
             pass
 
-        if validGitRepo == True:
+        if validGitRepo:
             try:
                 remoteSHA = None
                 if repo != None:
@@ -2460,13 +2460,13 @@ def admin_page():
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():
     validRestoreAttempt = False
-    if settings.settings.query.all() == []:
+    if not settings.settings.query.all():
         validRestoreAttempt = True
     elif current_user.is_authenticated:
         if current_user.has_role("Admin"):
             validRestoreAttempt = True
 
-    if validRestoreAttempt == True:
+    if validRestoreAttempt:
 
         restoreJSON = None
         if 'restoreData' in request.files:
@@ -2477,6 +2477,11 @@ def settings_dbRestore():
             restoreDict = json.loads(restoreJSON)
 
             ## Restore Settings
+
+            meta = db.metadata
+            for table in reversed(meta.sorted_tables):
+                db.session.execute(table.delete())
+            db.session.commit()
 
             serverSettings = settings.settings(restoreDict['settings'][0]['siteName'],
                                                restoreDict['settings'][0]['siteProtocol'],
@@ -2906,7 +2911,7 @@ def settings_dbRestore():
             return redirect(url_for('main_page', page="backup"))
 
     else:
-        if settings.settings.query.all() != []:
+        if settings.settings.query.all():
             flash("Invalid Restore Attempt","error")
             return redirect(url_for('main_page'))
         else:
@@ -3402,7 +3407,7 @@ def streamkey_check():
         if userQuery != None:
             if userQuery.has_role('Streamer'):
 
-                if userQuery.active == False:
+                if not userQuery.active:
                     returnMessage = {'time': str(currentTime), 'status': 'Unauthorized User - User has been Disabled', 'key': str(key), 'ipAddress': str(ipaddress)}
                     print(returnMessage)
                     return abort(400)
@@ -3414,7 +3419,7 @@ def streamkey_check():
 
                 externalIP = socket.gethostbyname(validAddress)
                 existingStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).all()
-                if existingStreamQuery != []:
+                if existingStreamQuery:
                     for stream in existingStreamQuery:
                         db.session.delete(stream)
                     db.session.commit()
@@ -3428,7 +3433,7 @@ def streamkey_check():
                 db.session.commit()
 
                 if channelRequest.record is False:
-                    if sysSettings.adaptiveStreaming == True:
+                    if sysSettings.adaptiveStreaming:
                         return redirect('rtmp://' + externalIP + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
                         return redirect('rtmp://' + externalIP + '/stream-data/' + channelRequest.channelLoc, code=302)
@@ -3436,7 +3441,7 @@ def streamkey_check():
 
                     userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
                     existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
-                    if existingRecordingQuery != []:
+                    if existingRecordingQuery:
                         for recording in existingRecordingQuery:
                             db.session.delete(recording)
                             db.session.commit()
@@ -3444,7 +3449,7 @@ def streamkey_check():
                     newRecording = RecordedVideo.RecordedVideo(userCheck.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments)
                     db.session.add(newRecording)
                     db.session.commit()
-                    if sysSettings.adaptiveStreaming == True:
+                    if sysSettings.adaptiveStreaming:
                         return redirect('rtmp://' + externalIP + '/streamrec-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
                         return redirect('rtmp://' + externalIP + '/streamrec-data/' + channelRequest.channelLoc, code=302)
@@ -3795,7 +3800,7 @@ def handle_new_viewer(streamData):
 
     join_room(streamData['data'])
 
-    if requestedChannel.showChatJoinLeaveNotification == True:
+    if requestedChannel.showChatJoinLeaveNotification:
         if current_user.is_authenticated:
             pictureLocation = current_user.pictureLocation
             if current_user.pictureLocation == None:
@@ -3879,7 +3884,7 @@ def handle_leaving_viewer(streamData):
         if streamUserList != None:
             r.lrem(channelLoc + '-streamUserList', 1, current_user.username)
 
-        if requestedChannel.showChatJoinLeaveNotification == True:
+        if requestedChannel.showChatJoinLeaveNotification:
             pictureLocation = current_user.pictureLocation
             if current_user.pictureLocation == None:
                 pictureLocation = '/static/img/user2.png'
@@ -3888,7 +3893,7 @@ def handle_leaving_viewer(streamData):
 
             emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
         else:
-            if requestedChannel.showChatJoinLeaveNotification == True:
+            if requestedChannel.showChatJoinLeaveNotification:
                 emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
 
     handle_viewer_total_request(streamData, room=streamData['data'])
@@ -3944,7 +3949,7 @@ def handle_upvote_total_request(streamData):
     if vidType == 'stream':
         loc = str(loc)
         channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
-        if channelQuery.stream != []:
+        if channelQuery.stream:
             stream = channelQuery.stream[0]
             totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count()
             try:
@@ -3993,7 +3998,7 @@ def handle_upvoteChange(streamData):
     if vidType == 'stream':
         loc = str(loc)
         channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
-        if channelQuery.stream != []:
+        if channelQuery.stream:
             stream = channelQuery.stream[0]
             myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
 
@@ -4249,7 +4254,7 @@ def text(message):
                 streamName = None
                 streamTopic = None
 
-                if channelQuery.stream != []:
+                if channelQuery.stream:
                     streamName = channelQuery.stream[0].streamName
                     streamTopic = channelQuery.stream[0].topic
                 else:
