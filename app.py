@@ -2552,8 +2552,6 @@ def settings_dbRestore():
                                            password=restoredUser['password'])
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=restoredUser['username']).first()
-                for roleEntry in restoreDict['roles'][user.username]:
-                    user_datastore.add_role_to_user(user, roleEntry)
                 user.pictureLocation = restoredUser['pictureLocation']
                 user.active = eval(restoredUser['active'])
                 user.biography = restoredUser['biography']
