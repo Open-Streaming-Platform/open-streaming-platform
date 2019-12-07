@@ -2554,7 +2554,6 @@ def settings_dbRestore():
                 user = Sec.User.query.filter_by(username=restoredUser['username']).first()
                 for roleEntry in restoreDict['roles'][user.username]:
                     user_datastore.add_role_to_user(user, roleEntry)
-                user.id = int(restoredUser['id'])
                 user.pictureLocation = restoredUser['pictureLocation']
                 user.active = eval(restoredUser['active'])
                 user.biography = restoredUser['biography']
@@ -2563,6 +2562,9 @@ def settings_dbRestore():
                         user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S')
                     except ValueError:
                         user.confirmed_at = datetime.datetime.strptime(restoredUser['confirmed_at'], '%Y-%m-%d %H:%M:%S.%f')
+                db.session.commit()
+                user = Sec.User.query.filter_by(username=restoredUser['username']).first()
+                user.id = int(restoredUser['id'])
                 db.session.commit()
 
             ## Restore Topics
