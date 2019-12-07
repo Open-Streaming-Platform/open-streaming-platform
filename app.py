@@ -2483,6 +2483,9 @@ def settings_dbRestore():
                 db.session.execute(table.delete())
             db.session.commit()
 
+            for role in restoreDict['role']:
+                user_datastore.find_or_create_role(name=role['name'], description=role['description'])
+
             serverSettings = settings.settings(restoreDict['settings'][0]['siteName'],
                                                restoreDict['settings'][0]['siteProtocol'],
                                                restoreDict['settings'][0]['siteAddress'],
