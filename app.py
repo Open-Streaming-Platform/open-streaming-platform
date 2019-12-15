@@ -718,8 +718,9 @@ def inject_notifications():
 def inject_sysSettings():
     db.session.commit()
     sysSettings = db.session.query(settings.settings).first()
+    allowRegistration = config.allowRegistration
 
-    return dict(sysSettings=sysSettings)
+    return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 
 #----------------------------------------------------------------------------#
 # Template Filters

@@ -58,9 +58,11 @@
         <li class="nav-item">
           <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
         </li>
+        {% if allowRegistration %}
         <li class="nav-item">
           <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
         </li>
+        {% endif %}
         {% else %}
         <li class="nav-item px-2 d-block d-lg-none">
           <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span id="notificationCountMobile" class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
