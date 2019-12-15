@@ -5,6 +5,7 @@ monkey.patch_all(thread=True)
 import git
 
 from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response, session
+from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
 from flask_security.signals import user_registered, confirm_instructions_sent
@@ -86,7 +87,8 @@ if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20, "pool_pre_ping": True}
 else:
     pass
-
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_COOKIE_NAME'] = 'ospSession'
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
 app.config['SECURITY_PASSWORD_SALT'] = config.passwordSalt
@@ -138,6 +140,8 @@ limiter = Limiter(app, key_func=get_remote_address)
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
+
+Session(app)
 
 #----------------------------------------------------------------------------#
 # Modal Imports
