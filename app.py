@@ -83,7 +83,7 @@ if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
     app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
     app.config['MYSQL_DATABASE_CHARSET'] = "utf8"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20}
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20, "pool_pre_ping": True}
 else:
     pass
 
