@@ -3332,7 +3332,7 @@ def notification_page():
     notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
     return render_template(checkOverride('notifications.html'), notificationList=notificationQuery)
 
-@app.route('/auth', methods=["GET","POST"])
+@app.route('/auth', methods=["POST"])
 def auth_check():
     originalURI = ""
     if 'X-Original-URI' in request.headers:
@@ -3347,12 +3347,12 @@ def auth_check():
             if channelQuery.protected:
                 if check_isValidChannelViewer(channelQuery.id):
                     db.session.close()
-                    return 'OK'
+                    return ('OK',200)
                 else:
                     db.session.close()
                     return abort(401)
             else:
-                return 'OK'
+                return ('OK',200)
         elif requestGroup[0] == 'stream-thumb':
             # Format /stream-thumb/<path:filename>
             filename = requestGroup[1]
@@ -3361,12 +3361,12 @@ def auth_check():
             if channelQuery.protected:
                 if check_isValidChannelViewer(channelQuery.id):
                     db.session.close()
-                    return 'OK'
+                    return ('OK',200)
                 else:
                     db.session.close()
                     return abort(401)
             else:
-                return 'OK'
+                return ('OK',200)
         elif requestGroup[0] == 'live-adapt':
             # Format /live-adapt/<path:filename> or /live-adapt/<string:channelID>/<path:filename>
             if len(requestGroup) == 2:
@@ -3376,13 +3376,13 @@ def auth_check():
                 if channelQuery.protected:
                     if check_isValidChannelViewer(channelQuery.id):
                         db.session.close()
-                        return 'OK'
+                        return ('OK',200)
                     else:
                         db.session.close()
                         return abort(401)
                 else:
                     db.session.close()
-                    return 'OK'
+                    return ('OK',200)
             elif len(requestGroup) == 3:
                 channelID = requestGroup[1]
                 parsedPath = channelID.split("_")
@@ -3393,13 +3393,14 @@ def auth_check():
                 if channelQuery.protected:
                     if check_isValidChannelViewer(channelQuery.id):
                         db.session.close()
-                        return 'OK'
+                        return ('OK',200)
                     else:
                         db.session.close()
                         abort(401)
                 else:
                     db.session.close()
-                    return 'OK'
+                    return ('OK',200)
+    db.session.close()
     abort(400)
 
 ### Start NGINX-RTMP Authentication Functions
@@ -3526,7 +3527,7 @@ def user_auth_check():
             newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
         db.session.close()
-        return 'OK'
+        return ('OK',200)
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
@@ -3583,7 +3584,7 @@ def user_deauth_check():
                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
                        streamtopic=get_topicName(stream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelRequest.channelLoc + ".png"))
-        return 'OK'
+        return ('OK',200)
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closure Failure - No Such Stream', 'key': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
@@ -3648,7 +3649,7 @@ def rec_Complete_handler():
         db.session.commit()
 
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @app.route('/playbackAuth', methods=['POST'])
 def playback_auth_handler():
@@ -3659,7 +3660,7 @@ def playback_auth_handler():
 
         if streamQuery.protected is False:
             db.session.close()
-            return 'OK'
+            return ('OK',200)
         else:
             username = request.form['username']
             secureHash = request.form['hash']
@@ -3674,11 +3675,11 @@ def playback_auth_handler():
                     if isValid is True:
                         if streamQuery.owningUser == requestedUser.id:
                             db.session.close()
-                            return 'OK'
+                            return ('OK',200)
                         else:
                             if check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
                                 db.session.close()
-                                return 'OK'
+                                return ('OK',200)
     db.session.close()
     return abort(400)
 
@@ -3710,7 +3711,7 @@ def test_email(info):
         results = sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
         db.session.close()
         emit('testEmailResults', {'results': str(results)}, broadcast=False)
-        return 'OK'
+        return ('OK',200)
 
 @socketio.on('toggleChannelSubscription')
 @limiter.limit("10/minute")
@@ -3756,7 +3757,7 @@ def toggle_chanSub(payload):
                 db.session.close()
                 emit('sendChanSubResults', {'state': subState}, broadcast=False)
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('cancelUpload')
 def handle_videoupload_disconnect(videofilename):
@@ -3771,7 +3772,7 @@ def handle_videoupload_disconnect(videofilename):
     if os.path.exists(videoFilename) and time.time() - os.stat(videoFilename).st_mtime > 5:
             os.remove(videoFilename)
 
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('newViewer')
 def handle_new_viewer(streamData):
@@ -3858,12 +3859,12 @@ def handle_new_viewer(streamData):
 
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('openPopup')
 def handle_new_popup_viewer(streamData):
     join_room(streamData['data'])
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('removeViewer')
 def handle_leaving_viewer(streamData):
@@ -3913,16 +3914,16 @@ def handle_leaving_viewer(streamData):
 
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('disconnect')
 def disconnect():
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('closePopup')
 def handle_leaving_popup_viewer(streamData):
     leave_room(streamData['data'])
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('getViewerTotal')
 def handle_viewer_total_request(streamData, room=None):
@@ -3947,7 +3948,7 @@ def handle_viewer_total_request(streamData, room=None):
         emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
     else:
         emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList}, room=room)
-    return 'OK'
+    return ('OK',200)
 @socketio.on('getUpvoteTotal')
 def handle_upvote_total_request(streamData):
     loc = streamData['loc']
@@ -4000,7 +4001,7 @@ def handle_upvote_total_request(streamData):
     db.session.commit()
     db.session.close()
     emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote), 'type': vidType, 'loc': loc})
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('changeUpvote')
 @limiter.limit("10/minute")
@@ -4078,7 +4079,7 @@ def handle_upvoteChange(streamData):
                 db.session.delete(myVoteQuery)
             db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):
@@ -4098,7 +4099,7 @@ def newScreenShot(message):
             tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
             emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
             db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('setScreenShot')
 def setScreenShot(message):
@@ -4137,7 +4138,7 @@ def setScreenShot(message):
             except OSError:
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('updateStreamData')
 def updateStreamData(message):
@@ -4169,7 +4170,7 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('text')
 @limiter.limit("1/second")
@@ -4298,7 +4299,7 @@ def text(message):
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
             db.session.commit()
             db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('getServerResources')
 def get_resource_usage(message):
@@ -4307,7 +4308,7 @@ def get_resource_usage(message):
     diskUsage = psutil.disk_usage('/')[3]
 
     emit('serverResources', {'cpuUsage':cpuUsage,'memoryUsage':memoryUsage, 'diskUsage':diskUsage})
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('generateInviteCode')
 def generateInviteCode(message):
@@ -4335,7 +4336,7 @@ def generateInviteCode(message):
     else:
         pass
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('deleteInviteCode')
 def deleteInviteCode(message):
@@ -4354,7 +4355,7 @@ def deleteInviteCode(message):
         emit('inviteCodeDeleteFail', {'code': 'fail', 'channelID': 'fail'}, broadcast=False)
 
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('addUserChannelInvite')
 def addUserChannelInvite(message):
@@ -4381,7 +4382,7 @@ def addUserChannelInvite(message):
                 db.session.commit()
                 db.session.close()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('deleteInvitedUser')
 def deleteInvitedUser(message):
@@ -4394,7 +4395,7 @@ def deleteInvitedUser(message):
             db.session.commit()
             emit('invitedUserDeleteAck', {'inviteID': str(inviteID)}, broadcast=False)
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -4406,7 +4407,7 @@ def deleteInvitedUser(message):
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
@@ -4445,7 +4446,7 @@ def addChangeWebhook(message):
                 emit('changeWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id, 'channelID': channelID}, broadcast=False)
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('deleteWebhook')
 def deleteWebhook(message):
@@ -4459,7 +4460,7 @@ def deleteWebhook(message):
                 db.session.delete(webhookQuery)
                 db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('submitGlobalWebhook')
 def addChangeGlobalWebhook(message):
@@ -4492,7 +4493,7 @@ def addChangeGlobalWebhook(message):
                 emit('changeGlobalWebhookAck', {'webhookName': webhookName, 'requestURL': webhookEndpoint, 'requestHeader': webhookHeader, 'requestPayload': webhookPayload, 'requestType': webhookReqType, 'requestTrigger': webhookTrigger, 'requestID': existingWebhookQuery.id}, broadcast=False)
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('deleteGlobalWebhook')
 def deleteGlobalWebhook(message):
@@ -4504,7 +4505,7 @@ def deleteGlobalWebhook(message):
             db.session.delete(webhookQuery)
             db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 @socketio.on('markNotificationAsRead')
 def markUserNotificationRead(message):
@@ -4514,7 +4515,7 @@ def markUserNotificationRead(message):
         notificationQuery.read = True
     db.session.commit()
     db.session.close()
-    return 'OK'
+    return ('OK',200)
 
 # Start App Initiation
 try:
