@@ -3336,7 +3336,7 @@ def notification_page():
     notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
     return render_template(checkOverride('notifications.html'), notificationList=notificationQuery)
 
-@app.route('/auth', methods=["POST"])
+@app.route('/auth', methods=["POST","GET"])
 def auth_check():
     originalURI = ""
     if 'X-Original-URI' in request.headers:
