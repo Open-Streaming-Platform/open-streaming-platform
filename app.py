@@ -2920,6 +2920,15 @@ def settings_dbRestore():
                         db.session.add(upvote)
                     else:
                         flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
+            # Logic to Check the DB Version
+            dbVersionQuery = dbVersion.dbVersion.query.first()
+
+            if dbVersionQuery == None:
+                newDBVersion = dbVersion.dbVersion(appDBVersion)
+                db.session.add(newDBVersion)
+                db.session.commit()
+
             db.session.commit()
 
             # Import Theme Data into Theme Dictionary
