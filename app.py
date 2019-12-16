@@ -2753,16 +2753,17 @@ def settings_dbRestore():
                 db.session.delete(view)
             db.session.commit()
 
-            for restoredView in restoreDict['views']:
-                if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
-                    view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
-                    view.id = int(restoredView['id'])
-                    try:
-                        view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
-                    db.session.add(view)
-            db.session.commit()
+            if 'restoreVideos' in request.form:
+                for restoredView in restoreDict['views']:
+                    if not (int(restoredView['viewType']) == 1 and 'restoreVideos' not in request.form):
+                        view = views.views(int(restoredView['viewType']), int(restoredView['itemID']))
+                        view.id = int(restoredView['id'])
+                        try:
+                            view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            view.date = datetime.datetime.strptime(restoredView['date'], '%Y-%m-%d %H:%M:%S.%f')
+                        db.session.add(view)
+                db.session.commit()
 
             ## Restores Invites
             oldInviteCode = invites.inviteCode.query.all()
@@ -2885,14 +2886,17 @@ def settings_dbRestore():
                 else:
                     flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
             db.session.commit()
-            for restoredUpvote in restoreDict['stream_upvotes']:
-                if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
-                    upvote = upvotes.streamUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
-                    upvote.id = int(restoredUpvote['id'])
-                    db.session.add(upvote)
-                else:
-                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+
+            if 'restoreVideos' in request.form:
+                for restoredUpvote in restoreDict['stream_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['streamID'] != "None":
+                        upvote = upvotes.streamUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['streamID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
             db.session.commit()
+
             if 'restoreVideos' in request.form:
                 for restoredUpvote in restoreDict['video_upvotes']:
                     if restoredUpvote['userID'] != "None" and restoredUpvote['videoID'] != "None":
@@ -2908,13 +2912,14 @@ def settings_dbRestore():
                         db.session.add(upvote)
                     flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
                 db.session.commit()
-            for restoredUpvote in restoreDict['comment_upvotes']:
-                if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
-                    upvote = upvotes.commentUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
-                    upvote.id = int(restoredUpvote['id'])
-                    db.session.add(upvote)
-                else:
-                    flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
+            if 'restoreVideos' in request.form:
+                for restoredUpvote in restoreDict['comment_upvotes']:
+                    if restoredUpvote['userID'] != "None" and restoredUpvote['commentID'] != "None":
+                        upvote = upvotes.commentUpvotes(int(restoredUpvote['userID']), int(restoredUpvote['commentID']))
+                        upvote.id = int(restoredUpvote['id'])
+                        db.session.add(upvote)
+                    else:
+                        flash("Error Restoring Upvote: ID# " + str(restoredUpvote['id']), "error")
             db.session.commit()
 
             # Import Theme Data into Theme Dictionary
