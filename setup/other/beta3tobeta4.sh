@@ -9,5 +9,6 @@ sudo pip3 install gunicorn
 sudo pip3 uninstall flask-security
 sudo pip3 install flask-security-too
 cd ..
+sudo mkdir -p /opt/osp/cache
 sudo python3 manage.py db init
 sudo bash dbUpgrade.sh
