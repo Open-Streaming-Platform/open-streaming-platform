@@ -2,7 +2,6 @@
 echo 'Placing Configuration Files'
 cp -R -u -p /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 cp -u -p /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
-cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
 echo 'Setting up Directories'
 mkdir -p /var/www && \
   mkdir -p /var/www/live && \
