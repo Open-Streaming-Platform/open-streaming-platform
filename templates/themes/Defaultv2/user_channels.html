@@ -85,7 +85,6 @@
                               <span class="ml-5"><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</span>
                               <span class="ml-5"><i class="far fa-comment-alt"></i> {{video.comments|length}}</span>
                             </h5><br>
-                            <h5>Published?</h5>
                           </div>
                         </div>
                       </li>
@@ -95,8 +94,8 @@
             </div>
             <div id="settingsWindow-{{channel.id}}" style="display:none;">
                 <form action="/settings/channels" enctype=multipart/form-data method="post">
-                    <div id="channelCard-{{channel.id}}" class="card mb-2 shadow">
-                        <div class="card-body">
+                    <div id="channelCard-{{channel.id}}" class="m-2">
+                        <div>
                             <div class="row">
                                 <div class="col-xl-4 col-lg-6 col-md-12">
                                     <h4>Channel Image</h4>
@@ -423,7 +422,7 @@
                         </div>
                         <input type="hidden" id="type" name="type" value="change">
                         <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
-                        <div class="card-footer">
+                        <div>
                             <div class="row">
                                 <div class="col-12">
                                     <input type="submit" class="btn btn-success" value="&#128393; Edit">
