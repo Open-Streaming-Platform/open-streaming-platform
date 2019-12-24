@@ -12,7 +12,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
+        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 mx-auto">
             <div class="row m-2">
                 <div class="index-live-title"><b>Your Channels</b></div>
                 <span class="float-right"><button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
@@ -50,10 +50,7 @@
           </div>
           <div class="col-11">
             <div id="statWindow-{{channel.id}}" style="display:block;">
-                <div id="statChart-{{channel.id}}" style="display:none;">
-                    <hr>
-                    <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
-                </div>
+                <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
             </div>
             <div id="videoWindow-{{channel.id}}" style="display:none;">
                 <div class="my-4 mx-3"><h4>Video List</h4></div>
@@ -81,8 +78,8 @@
                           <div class="col mt-2">
                             <h4>{{video.name}}</h4>
                             <h5><i class="fas fa-hashtag mr-2"></i>{{video.topic|get_topicName}}</h5>
-                            <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate}}</h5>
-                            <h5><i class="far fa-clock mr-1"></i>{{video.length}}</h5>
+                            <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
+                            <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
                             <h5>
                               <i class="fas fa-users"></i> {{video.views}}
                               <span class="ml-5"><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</span>
@@ -98,7 +95,7 @@
             </div>
             <div id="settingsWindow-{{channel.id}}" style="display:none;">
                 <form action="/settings/channels" enctype=multipart/form-data method="post">
-                    <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow" style="display:none;">
+                    <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-4 col-lg-6 col-md-12">
