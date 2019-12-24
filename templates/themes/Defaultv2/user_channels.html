@@ -814,8 +814,7 @@
 <script>
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
-        videoDeleteButton = document.getElementById("videoDeleteButton");
-        videoDeleteButton.attr("onclick","deleteVideo(" + videoID + ")");
+        $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
     });
 
     function deleteVideo(videoID) {
