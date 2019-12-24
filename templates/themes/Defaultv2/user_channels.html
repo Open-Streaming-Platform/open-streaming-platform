@@ -57,11 +57,11 @@
                 <div class="row mx-2">
                     <ul id="videoList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
                       {% for video in channel.recordedVideo %}
-                      <li class="channelVideoCard shadow m-1">
+                      <li class="channelVideoCard shadow m-2">
                         <div class="row">
                           <div class="col-auto m-2">
                             <div class="mb-2" style="width:270px;">
-                              <img class="shadow" src="https://demo.openstreamingplatform.com/videos/0a88ff26-f0cf-42f3-8ae4-9606d7093281/0a88ff26-f0cf-42f3-8ae4-9606d7093281-1574042853_20191118_020733.png" style="max-width:100%;max-height:100%;">
+                              <img class="shadow" src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
                             </div>
                             <div>
                               <button type="button" class="btn btn-success btn-block shadow">Upload Thumbnail</button>
@@ -76,7 +76,7 @@
                             </div>
                           </div>
                           <div class="col mt-2">
-                            <h4>{{video.name}}</h4>
+                            <h4>{{video.channelName}}</h4>
                             <h5><i class="fas fa-hashtag mr-2"></i>{{video.topic|get_topicName}}</h5>
                             <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
                             <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
@@ -95,7 +95,7 @@
             </div>
             <div id="settingsWindow-{{channel.id}}" style="display:none;">
                 <form action="/settings/channels" enctype=multipart/form-data method="post">
-                    <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow">
+                    <div id="channelCard-{{channel.id}}" class="card mb-2 shadow">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-xl-4 col-lg-6 col-md-12">
