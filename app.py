@@ -735,6 +735,124 @@ def deleteVideo(videoID):
         return True
     return False
 
+def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments):
+
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+
+        recordedVidQuery.channelName = strip_html(newVideoName)
+        recordedVidQuery.topic = newVideoTopic
+        recordedVidQuery.description = strip_html(description)
+        recordedVidQuery.allowComments = allowComments
+
+        if recordedVidQuery.channel.imageLocation is None:
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+        else:
+            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
+
+        runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
+                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
+                   channeltopic=get_topicName(recordedVidQuery.channel.topic),
+                   channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
+                   channeldescription=recordedVidQuery.channel.description, videoname=recordedVidQuery.channelName,
+                   videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
+                   videotopic=get_topicName(recordedVidQuery.topic),
+                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
+                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
+        db.session.commit()
+        newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
+        return True
+    return False
+
+def moveVideo(videoID, newChannel):
+
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
+        if newChannelQuery != None:
+            recordedVidQuery.channelID = newChannelQuery.id
+            coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
+            if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
+                try:
+                    os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc)
+                except OSError:
+                    newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
+                        newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
+                    flash("Error Moving Video - Unable to Create Directory", "error")
+                    return False
+            shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation,
+                        "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
+            recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
+            if (recordedVidQuery.thumbnailLocation != None) and (
+            os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
+                coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
+                shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,
+                            "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
+            for clip in recordedVidQuery.clips:
+                coreThumbnail = (clip.thumbnailLocation.split("/")[2])
+                if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
+                    try:
+                        os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips')
+                    except OSError:
+                        newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
+                            newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
+                        flash("Error Moving Video - Unable to Create Clips Directory", "error")
+                        return False
+                newClipLocation = "/var/www/videos/" + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                shutil.move("/var/www/videos/" + clip.thumbnailLocation, newClipLocation)
+                clip.thumbnailLocation = newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+
+            db.session.commit()
+            newLog(4, "Video ID #" + str(recordedVidQuery.id) + "Moved to Channel ID" + str(
+                newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
+            return True
+    return False
+
+def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
+
+    # TODO Add Webhook for Clip Creation
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
+    sysSettings = settings.settings.query.first()
+
+    if recordedVidQuery != None:
+        if clipStop > clipStart:
+            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
+            db.session.add(newClip)
+            db.session.commit()
+
+            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
+
+            videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
+            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
+
+            newClipQuery.thumbnailLocation = clipThumbNailLocation
+
+            fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
+
+            if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
+                os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
+
+            processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+
+            redirectID = newClipQuery.id
+            newLog(6, "New Clip Created - ID #" + str(redirectID))
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
+                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
+                db.session.add(newNotification)
+
+            db.session.commit()
+            db.session.close()
+            return True, redirectID
+    return False, None
 
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
@@ -1352,151 +1470,59 @@ def view_vid_page(videoID):
         flash("No Such Video at URL","error")
         return redirect(url_for("main_page"))
 
-@app.route('/play/<loc>/clip', methods=['POST'])
+@app.route('/play/<videoID>/clip', methods=['POST'])
 @login_required
-def vid_clip_page(loc):
-    # TODO Add Webhook for Clip Creation
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
+def vid_clip_page(videoID):
 
-    if recordedVidQuery != None:
-        clipStart = float(request.form['clipStartTime'])
-        clipStop = float(request.form['clipStopTime'])
-        clipName = str(request.form['clipName'])
-        clipDescription = str(request.form['clipDescription'])
+    clipStart = float(request.form['clipStartTime'])
+    clipStop = float(request.form['clipStopTime'])
+    clipName = str(request.form['clipName'])
+    clipDescription = str(request.form['clipDescription'])
 
-        if clipStop > clipStart:
-            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
-            db.session.add(newClip)
-            db.session.commit()
+    result = createClip(videoID, clipStart, clipStop, clipName, clipDescription)
 
-            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
+    if result[0] is True:
+        flash("Clip Created", "success")
+        return redirect(url_for("view_clip_page", clipID=result[1]))
+    else:
+        flash("Unable to create Clip", "error")
+        return redirect(url_for("view_vid_page", videoID=videoID))
 
-            videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
-            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
-
-            newClipQuery.thumbnailLocation = clipThumbNailLocation
-
-            fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
-
-            if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
-                os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
-
-            result = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-
-            redirectID = newClipQuery.id
-            newLog(6, "New Clip Created - ID #" + str(redirectID))
-
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
-                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
-                db.session.add(newNotification)
-            db.session.commit()
-
-
-            db.session.commit()
-            db.session.close()
-            flash("Clip Created", "success")
-
-            return redirect(url_for("view_clip_page", clipID=redirectID))
-        else:
-            flash("Invalid Start/Stop Time for Clip", "error")
-    flash("Invalid Video ID", "error")
-    return redirect(url_for("view_vid_page", videoID=loc))
-
-@app.route('/play/<loc>/move', methods=['POST'])
+@app.route('/play/<videoID>/move', methods=['POST'])
 @login_required
-def vid_move_page(loc):
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(loc), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
+def vid_move_page(videoID):
 
-    if recordedVidQuery != None:
-        newChannel = int(request.form['moveToChannelID'])
-        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
-        if newChannelQuery != None:
-            recordedVidQuery.channelID = newChannelQuery.id
-            coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
-            if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
-                try:
-                    os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc)
-                except OSError:
-                    newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-                    flash("Error Moving Video - Unable to Create Directory","error")
-                    return redirect(url_for("main_page"))
-            shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation, "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
-            recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
-            if (recordedVidQuery.thumbnailLocation != None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
-                coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
-                shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,"/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
-                recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
-            for clip in recordedVidQuery.clips:
-                coreThumbnail = (clip.thumbnailLocation.split("/")[2])
-                if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
-                    try:
-                        os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips')
-                    except OSError:
-                        newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-                        flash("Error Moving Video - Unable to Create Clips Directory", "error")
-                        return redirect(url_for("main_page"))
-                newClipLocation = "/var/www/videos/" + newChannelQuery.channelLoc +"/clips/" + coreThumbnail
-                shutil.move("/var/www/videos/" + clip.thumbnailLocation, newClipLocation)
-                clip.thumbnailLocation = newChannelQuery.channelLoc +"/clips/" + coreThumbnail
+    videoID = videoID
+    newChannel = int(request.form['moveToChannelID'])
 
-            db.session.commit()
-            newLog(4, "Video ID #" + str(recordedVidQuery.id) + "Moved to Channel ID" + str(newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-            flash("Video Moved to Another Channel", "success")
-            return redirect(url_for('view_vid_page', videoID=loc))
+    result = moveVideo(videoID, newChannel)
+    if result is True:
+        flash("Video Moved to Another Channel", "success")
+        return redirect(url_for('view_vid_page', videoID=videoID))
+    else:
+        flash("Error Moving Video", "error")
+        return redirect(url_for("main_page"))
 
-    flash("Error Moving Video", "error")
-    return redirect(url_for("main_page"))
-
-@app.route('/play/<loc>/change', methods=['POST'])
+@app.route('/play/<videoID>/change', methods=['POST'])
 @login_required
-def vid_change_page(loc):
+def vid_change_page(videoID):
 
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc, owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
+    newVideoName = strip_html(request.form['newVidName'])
+    newVideoTopic = request.form['newVidTopic']
+    description = request.form['description']
 
-    if recordedVidQuery != None:
+    allowComments = False
+    if 'allowComments' in request.form:
+        allowComments = True
 
-        newVidName = strip_html(request.form['newVidName'])
-        newVidTopic = request.form['newVidTopic']
-        description = request.form['description']
+    result = changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
 
-        allowComments = False
-        if 'allowComments' in request.form:
-            allowComments = True
-
-        if recordedVidQuery is not None:
-            recordedVidQuery.channelName = strip_html(newVidName)
-            recordedVidQuery.topic = newVidTopic
-            recordedVidQuery.description = strip_html(description)
-            recordedVidQuery.allowComments = allowComments
-
-            if recordedVidQuery.channel.imageLocation is None:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-            else:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
-
-            runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
-                       channeltopic=get_topicName(recordedVidQuery.channel.topic),
-                       channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
-                       channeldescription=recordedVidQuery.channel.description, videoname=recordedVidQuery.channelName,
-                       videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
-                       videotopic=get_topicName(recordedVidQuery.topic),
-                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
-                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
-            db.session.commit()
-            newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
-
-        return redirect(url_for('view_vid_page', videoID=loc))
+    if result is True:
+        flash("Changed Video Metadata", "success")
+        return redirect(url_for('view_vid_page', videoID=videoID))
     else:
         flash("Error Changing Video Metadata", "error")
         return redirect(url_for("main_page"))
-
 
 @app.route('/play/<videoID>/delete')
 @login_required
