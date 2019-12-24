@@ -72,7 +72,7 @@
                               <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal"><i class="fas fa-edit"></i></button>
                               <button class="btn btn-primary shadow"><i class="fas fa-camera"></i></button>
                               <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal"><i class="fas fa-share-alt"></i></button>
-                              <button class="btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoID="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
+                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoID="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
                           </div>
                           <div class="col mt-2">
@@ -811,8 +811,8 @@
 </script>
 
 <script>
-    $('#videoDeleteModal').on('show.bs.modal', function(e) {
-        var videoID = $(e.relatedTarget).data('videoID');
+    $(document).on("click", ".videoDeleteModalButton", function () {
+        var videoID = $(this).data('videoID');
         videoDeleteLink = document.getElementById("deleteVideoHREF");
         videoDeleteLink.href = "/settings/channels/videoDelete/" + videoID;
     });
