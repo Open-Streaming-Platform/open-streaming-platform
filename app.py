@@ -688,6 +688,54 @@ def processHubConnection(connection, payload):
 #        results.append(processHubConnection(connection, jsonPayload))
 #    return results
 
+def deleteVideo(videoID):
+    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+
+    if current_user.id == recordedVid.owningUser and recordedVid.videoLocation != None:
+        filePath = '/var/www/videos/' + recordedVid.videoLocation
+        thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
+
+        if filePath != '/var/www/videos/':
+            if os.path.exists(filePath) and (recordedVid.videoLocation != None or recordedVid.videoLocation != ""):
+                os.remove(filePath)
+                if os.path.exists(thumbnailPath):
+                    os.remove(thumbnailPath)
+
+        # Delete Clips Attached to Video
+        for clip in recordedVid.clips:
+            thumbnailPath = '/var/www/videos/' + clip.thumbnailLocation
+
+            if thumbnailPath != '/var/www/videos/':
+                if os.path.exists(thumbnailPath) and (clip.thumbnailLocation != None or clip.thumbnailLocation != ""):
+                    os.remove(thumbnailPath)
+            db.session.delete(clip)
+
+        # Delete Upvotes Attached to Video
+        upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
+
+        for vote in upvoteQuery:
+            db.session.delete(vote)
+
+        # Delete Comments Attached to Video
+        commentQuery = comments.videoComments.query.filter_by(videoID=recordedVid.id).all()
+
+        for comment in commentQuery:
+            db.session.delete(comment)
+
+        # Delete Views Attached to Video
+        viewQuery = views.views.query.filter_by(viewType=1, itemID=recordedVid.id).all()
+
+        for view in viewQuery:
+            db.session.delete(view)
+
+        db.session.delete(recordedVid)
+
+        db.session.commit()
+        newLog(4, "Video Deleted - ID #" + str(videoID))
+        return True
+    return False
+
+
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 
@@ -1454,50 +1502,10 @@ def vid_change_page(loc):
 @login_required
 def delete_vid_page(videoID):
 
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    result = deleteVideo(videoID)
 
-    if current_user.id == recordedVid.owningUser and recordedVid.videoLocation != None:
-        filePath = '/var/www/videos/' + recordedVid.videoLocation
-        thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
-
-        if filePath != '/var/www/videos/':
-            if os.path.exists(filePath) and (recordedVid.videoLocation != None or recordedVid.videoLocation != ""):
-                os.remove(filePath)
-                if os.path.exists(thumbnailPath):
-                    os.remove(thumbnailPath)
-
-        # Delete Clips Attached to Video
-        for clip in recordedVid.clips:
-            thumbnailPath = '/var/www/videos/' + clip.thumbnailLocation
-
-            if thumbnailPath != '/var/www/videos/':
-                if os.path.exists(thumbnailPath) and (clip.thumbnailLocation != None or clip.thumbnailLocation != ""):
-                    os.remove(thumbnailPath)
-            db.session.delete(clip)
-
-        # Delete Upvotes Attached to Video
-        upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
-
-        for vote in upvoteQuery:
-            db.session.delete(vote)
-
-        # Delete Comments Attached to Video
-        commentQuery = comments.videoComments.query.filter_by(videoID=recordedVid.id).all()
-
-        for comment in commentQuery:
-            db.session.delete(comment)
-
-        # Delete Views Attached to Video
-        viewQuery = views.views.query.filter_by(viewType=1, itemID=recordedVid.id).all()
-
-        for view in viewQuery:
-            db.session.delete(view)
-
-        db.session.delete(recordedVid)
-
-        db.session.commit()
+    if result is True:
         flash("Video deleted")
-        newLog(4, "Video Deleted - ID #" + str(videoID))
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Video")
