@@ -447,7 +447,7 @@ def check_isCommentUpvoted(commentID):
         if commentQuery != None:
             db.session.close()
             return True
-    db.session.close()
+    #db.session.close()
     return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
