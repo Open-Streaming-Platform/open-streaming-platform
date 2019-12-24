@@ -72,7 +72,7 @@
                               <button class="btn btn-primary shadow"><i class="fas fa-edit"></i></button>
                               <button class="btn btn-primary shadow"><i class="fas fa-camera"></i></button>
                               <button class="btn btn-primary shadow"><i class="fas fa-share-alt"></i></button>
-                              <button class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></button>
+                              <button class="btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoID="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
                           </div>
                           <div class="col mt-2">
@@ -440,7 +440,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
@@ -508,7 +507,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -591,6 +589,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="videoDeleteModal" tabindex="-1" role="dialog" aria-labelledby="videoDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalTitle">Confirm Video Deletion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this video?</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <a id="deleteVideoHREF" href="/play/{{video.id}}/delete" class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function CopyAPI(divVal) {
       var copyText = document.getElementById(divVal);
@@ -613,6 +632,14 @@
         document.execCommand("copy");
         document.body.removeChild(dummy);
     }
+</script>
+
+<script>
+    $('#videoDeleteModal').on('show.bs.modal', function(e) {
+        var videoID = $(e.relatedTarget).data('videoID');
+        videoDeleteLink = document.getElementById("deleteVideoHREF");
+        videoDeleteLink.href = "/settings/channels/videoDelete/" + videoID;
+    });
 </script>
 
 <script>
