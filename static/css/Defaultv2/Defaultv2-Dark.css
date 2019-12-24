@@ -133,6 +133,11 @@ body {
     padding-left: 0;
 }
 
+.channelVideoCard {
+  list-style-type:none;
+  width: 700px;
+}
+
 .displayCard {
     width: 310px;
     margin-bottom:15px;
