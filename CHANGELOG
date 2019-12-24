@@ -11,12 +11,16 @@ Beta-4
 - Added Video, Clip, Channel, and Stream Sorting
 - Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
 - Reformated Display Cards to v3
+- Reworked User Channel Screen
+- Added Per Channel Video Control from the User Channel Screen
 - Fixed issue where Defaultv2-Dark's Popout Chat retained the Defaultv2-Light's theme
 - Moved Gunicorn Logs to /opt/osp/logs
 - Fixed Issue where Channel Subscriptions were not being restored from backups
 - Fixed Variables causing Type Confusion
 - Movement of References to Prevent Calls before they are Referenced
 - Fixed Issue where Creating a Channel via APIv1 caused an error
+- Fixed an issue where Video Comments may cause an error preventing the video from being viewable
+
 
 
 Beta-3
