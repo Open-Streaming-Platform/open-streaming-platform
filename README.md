@@ -39,6 +39,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Flask-Markdown] - Displaying Markdown in Jinja2 Templates
+* [Easy-MDE] - Markdown Interface for TextAreas
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy

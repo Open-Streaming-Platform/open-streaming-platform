@@ -482,10 +482,10 @@
 </script>
 
 <script>
-  var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
-  var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+  var simplemde = new easyMDE({ element: document.getElementById("commentText") });
+  var simplemde2 = new easyMDE({ element: document.getElementById("description") });
   {% if video.owningUser == current_user.id %}
-  var simplemde3 = new SimpleMDE({ element: document.getElementById("clipDescription") });
+  var simplemde3 = new easyMDE({ element: document.getElementById("clipDescription") });
   {% endif %}
 </script>
 

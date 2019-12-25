@@ -812,7 +812,7 @@
 </script>
 
 <script>
-    var simplemdeVideoEditor = new SimpleMDE({ element: document.getElementById("editVideoDescription") });
+    var easymdeVideoEditor = new easyMDE({ element: document.getElementById("editVideoDescription") });
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -834,7 +834,7 @@
     });
 
     $(document).on("click", ".videoEditModalButton", function () {
-       simplemdeVideoEditor.value("");
+       easymdeVideoEditor.value("");
 
        var videoID = $(this).data('videoid');
        var videoName = document.getElementById('vidName-' + videoID).innerText;
@@ -851,7 +851,7 @@
 
        $("#editVideoTopic").value = videoTopic;
 
-       simplemdeVideoEditor.value(videoDescription);
+       easymdeVideoEditor.value(videoDescription);
 
 
 
@@ -993,10 +993,10 @@ function openChannelWindow(divID, windowName) {
 </script>
 
 <script>
-    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+    var newChanMDE = new easyMDE({ element: document.getElementById("description") });
 
     {% for channel in channels %}
-    var simplemde{{channel.id}} = new SimpleMDE({ element: document.getElementById("description-{{channel.id}}") });
+    var easymde{{channel.id}} = new easyMDE({ element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 </script>
 
