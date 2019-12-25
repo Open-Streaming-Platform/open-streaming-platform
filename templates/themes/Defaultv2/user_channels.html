@@ -856,10 +856,11 @@
 
        document.getElementById("editVideoDescription").value = videoDescription;
        easymdeVideoEditor.value(videoDescription);
-       easymdeVideoEditor.codemirror.refresh();
 
+    });
 
-
+    $('#videoEditModal').on('shown.bs.modal', function () {
+        easymdeVideoEditor.codemirror.refresh();
     });
 
 </script>
