@@ -812,7 +812,7 @@
 </script>
 
 <script>
-    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription") });
+    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription"), forceSync: true });
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
