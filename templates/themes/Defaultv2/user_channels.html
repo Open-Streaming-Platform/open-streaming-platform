@@ -820,6 +820,7 @@
     function deleteVideo(videoID) {
         var videoEntry = document.getElementById('video-' + videoID);
         videoEntry.parentNode.removeChild(videoEntry);
+        socket.emit('deleteVideo', {videoID: videoID});
     }
 </script>
 

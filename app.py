@@ -4400,6 +4400,19 @@ def deleteInvitedUser(message):
     db.session.close()
     return 'OK'
 
+@socketio.on('deleteVideo')
+def deleteVideoSocketIO(message):
+    if current_user.is_authenticated:
+        videoID = int(message['videoID'])
+        result = deleteVideo(videoID)
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
+
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
     newUsername = message['username']
