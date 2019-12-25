@@ -835,8 +835,8 @@
        var videoID = $(this).data('videoid');
        var videoName = document.getElementById('vidName-' + videoID).innerText;
        var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
-       var videoDescription = document.getElementById('vidDescription' + videoID).innerText;
-       var videoAllowComments = document.getElementById('vidAllowComments' + videoID).innerText;
+       var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
+       var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
 
        $("#editVideoName").attr("value",videoName);
        $("#editVideotopic").attr("value",videoTopic);
