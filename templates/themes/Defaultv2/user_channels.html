@@ -843,12 +843,16 @@
 
 
        $("#editVideoID").attr("value", videoID);
-       $("#editVideoName").attr("value",videoName);
+       $("#editVideoName").value = videoName;
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
            var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
            videoAllowCommentCheckBox.checked = true;
            videoAllowCommentCheckBox.parentElement.classList.remove("off");
+       } else {
+           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
+           videoAllowCommentCheckBox.checked = false;
+           videoAllowCommentCheckBox.parentElement.classList.add("off");
        }
 
        $("#editVideoTopic").val(videoTopic);
@@ -874,13 +878,8 @@
         document.getElementById("vidDescription-" + videoID).innerText = editVideoDescriptionInput.value;
         document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.value;
 
-        editVideoIDInput.value = "";
-        editVideoNameInput.value = "";
-        editVideoTopicInput.value = "";
         editVideoDescriptionInput.value = "";
         easymdeVideoEditor.value("");
-        editVideoAllowCommentsInput.value = "";
-        editVideoAllowCommentsInput.parentElement.classList.add("off");
         var doc = easymdeVideoEditor.codemirror.getDoc();
         doc.setValue(doc.getValue());
     }
