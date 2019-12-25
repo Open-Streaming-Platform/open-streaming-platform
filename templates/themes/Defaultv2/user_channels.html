@@ -733,7 +733,7 @@
        </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" value="Save Changes">
+        <input type="button" id="editVideoSubmit" class="btn btn-primary" data-dismiss="modal" onclick="editVideoSubmit();" value="Save Changes">
       </div>
     </div>
   </div>
@@ -859,6 +859,31 @@
        doc.setValue(doc.getValue());
 
     });
+
+    function editVideoSubmit() {
+        var editVideoIDInput = document.getElementById("editVideoID");
+        var editVideoNameInput = document.getElementById("editVideoName");
+        var editVideoTopicInput = document.getElementById("editVideoTopic");
+        var editVideoDescriptionInput = document.getElementById("editVideoDescription");
+        var editVideoAllowCommentsInput = document.getElementById("editVideoAllowComments");
+
+        var videoID = editVideoIDInput.value;
+
+        document.getElementById("vidName-" + videoID).innerText = editVideoNameInput.value;
+        document.getElementById("vidTopic-" + videoID).innerText = editVideoTopicInput.value;
+        document.getElementById("vidDescription-" + videoID).innerText = editVideoDescriptionInput.value;
+        document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.value;
+
+        editVideoIDInput.value = "";
+        editVideoNameInput.value = "";
+        editVideoTopicInput.value = "";
+        editVideoDescriptionInput.value = "";
+        easymdeVideoEditor.value = "";
+        editVideoAllowCommentsInput.value = "";
+        editVideoAllowCommentsInput.parentElement.classList.add("off");
+        var doc = easymdeVideoEditor.codemirror.getDoc();
+        doc.setValue(doc.getValue());
+    }
 
 </script>
 
