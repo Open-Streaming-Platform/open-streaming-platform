@@ -847,10 +847,12 @@
        $("#editVideoName").attr("value",videoName);
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
-           document.getElementById("editVideoAllowComments").checked = true;
+           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
+           videoAllowCommentCheckBox.checked = true;
+           videoAllowCommentCheckBox.parentElement.classList.remove("off");
        }
 
-       $("#editVideoTopic").value = videoTopic;
+       $("#editVideoTopic").val(videoTopic);
 
        document.getElementById("editVideoDescription").value = videoDescription;
        easymdeVideoEditor.value(videoDescription);
