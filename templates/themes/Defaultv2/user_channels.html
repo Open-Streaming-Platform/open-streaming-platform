@@ -834,7 +834,6 @@
     });
 
     $(document).on("click", ".videoEditModalButton", function () {
-       easymdeVideoEditor.value("");
 
        var videoID = $(this).data('videoid');
        var videoName = document.getElementById('vidName-' + videoID).innerText;
@@ -842,15 +841,18 @@
        var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
        var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
 
+
+
        $("#editVideoID").attr("value", videoID);
        $("#editVideoName").attr("value",videoName);
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
-           $("#editVideoAllowComments").prop('checked', true);
+           document.getElementById("editVideoAllowComments").checked = true;
        }
 
        $("#editVideoTopic").value = videoTopic;
 
+       document.getElementById("editVideoDescription").value = videoDescription;
        easymdeVideoEditor.value(videoDescription);
 
 
