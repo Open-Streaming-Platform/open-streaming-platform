@@ -859,9 +859,9 @@
 
     });
 
-    $('#videoEditModal').on('shown.bs.modal', function () {
+    setTimeout(function() {
         easymdeVideoEditor.codemirror.refresh();
-    });
+    },1);
 
 </script>
 
