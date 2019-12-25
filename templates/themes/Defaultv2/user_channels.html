@@ -859,10 +859,11 @@
 
     });
 
-    setTimeout(function() {
-        easymdeVideoEditor.codemirror.refresh();
-    },1);
-
+    $(document).on('show.bs.modal', '#videoEditModal', function (e) {
+        setTimeout(function() {
+            easymdeVideoEditor.codemirror.refresh();
+        },1);
+    });
 </script>
 
 
