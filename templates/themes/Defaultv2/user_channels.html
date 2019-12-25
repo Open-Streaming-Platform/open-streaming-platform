@@ -842,7 +842,7 @@
        $("#editVideotopic").attr("value",videoTopic);
        $("#editVideoDescription").attr("value",videoDescription);
 
-       if (videoAllowComments == "true" or videoAllowComments == "True") {
+       if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
            $("#editVideoAllowComments").attr('checked', true);
        }
 
