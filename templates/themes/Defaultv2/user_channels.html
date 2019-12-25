@@ -842,8 +842,8 @@
        var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
 
 
-       $("#editVideoID").attr("value", videoID);
-       $("#editVideoName").attr("value", videoName);
+       $("#editVideoID").val(videoID);
+       $("#editVideoName").val(videoName);
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
            var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
@@ -883,19 +883,6 @@
         var doc = easymdeVideoEditor.codemirror.getDoc();
         doc.setValue(doc.getValue());
     }
-
-    $("#videoEditModal").on("shown.bs.modal", function () {
-        var doc = easymdeVideoEditor.codemirror.getDoc();
-        doc.setValue(doc.getValue());
-    });
-
-    $("#videoEditModal").on("hide.bs.modal", function () {
-        editVideoDescriptionInput.value = "";
-        easymdeVideoEditor.value("");
-        var doc = easymdeVideoEditor.codemirror.getDoc();
-        doc.setValue(doc.getValue());
-    });
-
 
 </script>
 
