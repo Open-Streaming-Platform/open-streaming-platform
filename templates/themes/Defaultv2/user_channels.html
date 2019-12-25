@@ -855,13 +855,11 @@
 
        document.getElementById("editVideoDescription").value = videoDescription;
        easymdeVideoEditor.value(videoDescription);
+       var doc = easymdeVideoEditor.codemirror.getDoc();
+       doc.setValue(doc.getValue());
 
     });
 
-    $(document).on('show.bs.modal', '#videoEditModal', function (e) {
-        var doc = easymdeVideoEditor.codemirror.getDoc();
-        doc.setValue(doc.getValue());
-    });
 </script>
 
 
