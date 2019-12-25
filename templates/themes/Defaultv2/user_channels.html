@@ -711,7 +711,7 @@
           <input type="text" class="form-control" value="" id="editVideoName" name="newVidName" required>
           <br>
           <h5>Video Topic:</h5>
-          <select class="form-control" name="newVidTopic" id="editVideotopic" required>
+          <select class="form-control" name="newVidTopic" id="editVideoTopic" required>
             {% for topic in topics %}
             <option value={{topic.id}}>{{topic.name}}</option>
             {% endfor %}
@@ -839,7 +839,7 @@
        var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
 
        $("#editVideoName").attr("value",videoName);
-       $("#editVideotopic").attr("value",videoTopic);
+       $("#editVideoTopic").attr("value",videoTopic);
        $("#editVideoDescription").attr("value",videoDescription);
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
