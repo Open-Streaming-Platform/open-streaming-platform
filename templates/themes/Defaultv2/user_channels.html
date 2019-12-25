@@ -69,17 +69,20 @@
                             <div class="mt-2">
                               <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal"><i class="fas fa-arrow-circle-right"></i></button>
                               <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoClipModal"><i class="fas fa-cut"></i></button>
-                              <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal"><i class="fas fa-edit"></i></button>
+                              <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}"><i class="fas fa-edit"></i></button>
                               <button class="btn btn-primary shadow"><i class="fas fa-camera"></i></button>
                               <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}"><i class="fas fa-share-alt"></i></button>
                               <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
                           </div>
                           <div class="col mt-2">
-                            <h4><a href="/play/{{video.id}}">{{video.channelName}}</a></h4>
+                            <h4><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h4>
                             <h5><i class="fas fa-hashtag mr-2"></i>{{video.topic|get_topicName}}</h5>
                             <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
                             <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
+                            <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
+                            <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
+                            <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
                             <h5>
                               <i class="fas fa-users"></i> {{video.views}}
                               <span class="ml-5"><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</span>
@@ -703,14 +706,12 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="" method="post">
-        <div class="modal-body">
-
+      <div class="modal-body">
           <h5>Name of the Video:</h5>
           <input type="text" class="form-control" value="" name="newVidName" required>
           <br>
           <h5>Video Topic:</h5>
-          <select class="form-control" name="newVidTopic" id="channeltopic" required>
+          <select class="form-control" name="newVidTopic" id="editVideotopic" required>
             {% for topic in topics %}
             <option value={{topic.id}}>{{topic.name}}</option>
             {% endfor %}
@@ -718,23 +719,22 @@
           <br>
           <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>
-            <textarea class="form-control" name="description" id="description" value="" maxlength="2048"></textarea>
+            <textarea class="form-control" name="description" id="editVideoDescription" value="" maxlength="2048"></textarea>
           </div>
           <div class="form-group row">
             <div class="col-8">
               <label for="allowComments" class="col-form-label"><b>Allow Comments on This Video</b></label>
             </div>
             <div class="col-4">
-              <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments">
+              <input type="checkbox" data-toggle="toggle" id="editVideoAllowComments" name="allowComments">
             </div>
+            <input type="hidden" id="editVideoID" value="">
           </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Save Changes">
-        </div>
-      </form>
+       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save Changes">
+      </div>
     </div>
   </div>
 </div>
@@ -829,6 +829,23 @@
         $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
         $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
         $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID);
+    });
+
+    $(document).on("click", ".videoEditModalButton", function (){
+       var videoID = $(this).data('videoid');
+       var videoName = document.getElementById('vidName-' + videoID);
+       var videoTopic = document.getElementById('vidTopic-' + videoID);
+       var videoDescription = document.getElementById('vidDescription' + videoID);
+       var videoAllowComments = document.getElementById('vidAllowComments' + videoID);
+
+       $("#newVidName").attr("value",videoName);
+       $("#editVideotopic").attr("value",videoTopic);
+       $("#editVideoDescription").attr("value",videoDescription);
+
+       if (videoAllowComments == "true" or videoAllowComments == "True") {
+           $("#editVideoAllowComments").attr('checked', true);
+       }
+
     });
 
 </script>
