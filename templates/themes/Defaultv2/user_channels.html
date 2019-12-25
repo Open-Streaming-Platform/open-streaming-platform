@@ -812,7 +812,7 @@
 </script>
 
 <script>
-    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription"), forceSync: true });
+    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -840,7 +840,6 @@
        var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
        var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
        var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
-
 
 
        $("#editVideoID").attr("value", videoID);
