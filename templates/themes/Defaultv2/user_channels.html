@@ -812,7 +812,7 @@
 </script>
 
 <script>
-
+    var simplemdeVideoEditor = new SimpleMDE({ element: document.getElementById("editVideoDescription") });
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -834,6 +834,8 @@
     });
 
     $(document).on("click", ".videoEditModalButton", function () {
+       simplemdeVideoEditor.value("");
+
        var videoID = $(this).data('videoid');
        var videoName = document.getElementById('vidName-' + videoID).innerText;
        var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
@@ -849,7 +851,6 @@
 
        $("#editVideoTopic").value = videoTopic;
 
-       var simplemdeVideoEditor = new SimpleMDE({ element: document.getElementById("editVideoDescription") });
        simplemdeVideoEditor.value(videoDescription);
 
 
