@@ -845,7 +845,7 @@
        $("#editVideoID").val(videoID);
        $("#editVideoName").val(videoName);
 
-       if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
+       if ((videoAllowComments == "true") || (videoAllowComments == "True") || (videoAllowComments == "on")) {
            var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
            videoAllowCommentCheckBox.checked = true;
            videoAllowCommentCheckBox.parentElement.classList.remove("off");
