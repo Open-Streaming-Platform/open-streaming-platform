@@ -812,7 +812,7 @@
 </script>
 
 <script>
-    var simplemde = new SimpleMDE({ element: document.getElementById("editVideoDescription") });
+    var simplemdeVideoEditor = new SimpleMDE({ element: document.getElementById("editVideoDescription") });
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -843,8 +843,7 @@
        $("#editVideoID").attr("value", videoID);
        $("#editVideoName").attr("value",videoName);
        $("#editVideoTopic select").val(videoTopic);
-       $("#editVideoTopic").attr("value",videoTopic);
-       $("textarea[id='editVideoDescription']").val(videoDescription);
+       simplemdeVideoEditor.value(videoDescription);
 
        if ((videoAllowComments == "true") || (videoAllowComments == "True")) {
            $("#editVideoAllowComments").prop('checked', true);
