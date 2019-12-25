@@ -708,7 +708,7 @@
       </div>
       <div class="modal-body">
           <h5>Name of the Video:</h5>
-          <input type="text" class="form-control" value="" name="newVidName" required>
+          <input type="text" class="form-control" value="" id="editVideoName" name="newVidName" required>
           <br>
           <h5>Video Topic:</h5>
           <select class="form-control" name="newVidTopic" id="editVideotopic" required>
@@ -831,14 +831,14 @@
         $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID);
     });
 
-    $(document).on("click", ".videoEditModalButton", function (){
+    $(document).on("click", ".videoEditModalButton", function () {
        var videoID = $(this).data('videoid');
-       var videoName = document.getElementById('vidName-' + videoID);
-       var videoTopic = document.getElementById('vidTopic-' + videoID);
-       var videoDescription = document.getElementById('vidDescription' + videoID);
-       var videoAllowComments = document.getElementById('vidAllowComments' + videoID);
+       var videoName = document.getElementById('vidName-' + videoID).innerText;
+       var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
+       var videoDescription = document.getElementById('vidDescription' + videoID).innerText;
+       var videoAllowComments = document.getElementById('vidAllowComments' + videoID).innerText;
 
-       $("#newVidName").attr("value",videoName);
+       $("#editVideoName").attr("value",videoName);
        $("#editVideotopic").attr("value",videoTopic);
        $("#editVideoDescription").attr("value",videoDescription);
 
