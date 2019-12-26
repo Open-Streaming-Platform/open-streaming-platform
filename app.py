@@ -4416,7 +4416,7 @@ def deleteVideoSocketIO(message):
 def editVideoSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        videoName = message['videoName']
+        videoName = strip_html(message['videoName'])
         videoTopic = int(message['videoTopic'])
         videoDescription = message['videoDescription']
         videoAllowComments = False
