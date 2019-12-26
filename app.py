@@ -4412,6 +4412,25 @@ def deleteVideoSocketIO(message):
     else:
         return abort(401)
 
+@socketio.on('editVideo')
+def editVideoSocketIO(message):
+    if current_user.is_authenticated:
+        videoID = int(message['videoID'])
+        videoName = message['videoName']
+        videoTopic = int(message['videoTopic'])
+        videoDescription = message['videoDescription']
+        videoAllowComments = False
+        if message['videoAllowComments'] == "True":
+            videoAllowComments = True
+
+        result = changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
