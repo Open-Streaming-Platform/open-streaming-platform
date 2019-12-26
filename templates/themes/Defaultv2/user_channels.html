@@ -883,6 +883,13 @@
         easymdeVideoEditor.value("");
         var doc = easymdeVideoEditor.codemirror.getDoc();
         doc.setValue(doc.getValue());
+
+        var allowComments = "False";
+        if (editVideoAllowCommentsInput.value == "on") {
+            allowComments = "True";
+        }
+
+        socket.emit('deleteVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: editVideoDescriptionInput.value, videoAllowComments: allowComments });
     }
 
 </script>
