@@ -77,7 +77,7 @@
                           </div>
                           <div class="col mt-2">
                             <h4><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h4>
-                            <h5><i class="fas fa-hashtag mr-2"></i>{{video.topic|get_topicName}}</h5>
+                            <h5><i class="fas fa-hashtag mr-2"></i><span id="vidTopicText-{{video.id}}">{{video.topic|get_topicName}}</span></h5>
                             <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
                             <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
                             <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
@@ -875,6 +875,7 @@
 
         document.getElementById("vidName-" + videoID).innerText = editVideoNameInput.value;
         document.getElementById("vidTopic-" + videoID).innerText = editVideoTopicInput.value;
+        document.getElementById("vidTopicName-" + videoID).innerText = editVideoTopicInput.text();
         document.getElementById("vidDescription-" + videoID).innerText = editVideoDescriptionInput.value;
         document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.value;
 
