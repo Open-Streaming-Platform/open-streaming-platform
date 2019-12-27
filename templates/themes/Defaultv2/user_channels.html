@@ -68,7 +68,7 @@
                             </div>
                             <div class="mt-2">
                               <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal"><i class="fas fa-arrow-circle-right"></i></button>
-                              <button class="btn btn-primary shadow" data-toggle="modal" data-target="#videoClipModal"><i class="fas fa-cut"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-cut"></i></button>
                               <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}"><i class="fas fa-edit"></i></button>
                               <button class="btn btn-primary shadow"><i class="fas fa-camera"></i></button>
                               <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}"><i class="fas fa-share-alt"></i></button>
@@ -811,8 +811,45 @@
     }
 </script>
 
+<script src="/static/vendor/videojs/js/video.js"></script>
+
+<script>
+  var clipplayer = videojs('videoClip', { autoplay: false });
+</script>
+
+<script>
+  function openClipModal(videoID,videoLocation) {
+    player.pause();
+
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = null;
+
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = null;
+
+    var clipDescriptionInput = document.getElementById('clipDescription');
+    clipDescriptionInput.value = null;
+
+    clipplayer.src(videoLocation);
+
+    $("#videoClipModal").modal();
+  }
+
+  function setClipStart() {
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = clipplayer.currentTime()
+  }
+
+  function setClipStop() {
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = clipplayer.currentTime()
+  }
+
+</script>
+
 <script>
     var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
+    var easymdeVideoClip = new EasyMDE({ element: document.getElementById("clipDescription")});
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -894,6 +931,8 @@
 
         socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
     }
+
+
 
 </script>
 
