@@ -4420,7 +4420,7 @@ def editVideoSocketIO(message):
         videoTopic = int(message['videoTopic'])
         videoDescription = message['videoDescription']
         videoAllowComments = False
-        if message['videoAllowComments'] == "True":
+        if message['videoAllowComments'] == "True" or message['videoAllowComments'] == True:
             videoAllowComments = True
 
         result = changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)

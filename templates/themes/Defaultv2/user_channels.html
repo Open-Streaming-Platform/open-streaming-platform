@@ -874,11 +874,12 @@
 
         var topicInputText = editVideoTopicInput.options[editVideoTopicInput.selectedIndex].text;
 
+        var videoDescription = easymdeVideoEditor.value()
 
         document.getElementById("vidName-" + videoID).innerText = editVideoNameInput.value;
         document.getElementById("vidTopic-" + videoID).innerText = editVideoTopicInput.value;
         document.getElementById("vidTopicText-" + videoID).innerText = topicInputText;
-        document.getElementById("vidDescription-" + videoID).innerText = easymdeVideoEditor.value();
+        document.getElementById("vidDescription-" + videoID).innerText = videoDescription;
         document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.checked;
 
         editVideoDescriptionInput.value = "";
@@ -887,11 +888,11 @@
         doc.setValue(doc.getValue());
 
         var allowComments = "False";
-        if (editVideoAllowCommentsInput.checked == "true") {
+        if (editVideoAllowCommentsInput.checked) {
             allowComments = "True";
         }
 
-        socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: easymdeVideoEditor.value(), videoAllowComments: allowComments });
+        socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
     }
 
 </script>
