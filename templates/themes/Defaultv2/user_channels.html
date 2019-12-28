@@ -962,9 +962,11 @@
         var destinationChannelInput = document.getElementById('moveToChannelInput');
         var destinationChannel = destinationChannelInput.options[destinationChannelInput.selectedIndex].value;
 
+        $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
+
         socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
 
-         $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
+
 
     }
 
