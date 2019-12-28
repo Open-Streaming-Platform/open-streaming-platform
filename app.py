@@ -4431,6 +4431,21 @@ def editVideoSocketIO(message):
     else:
         return abort(401)
 
+@socketio.on('createClip')
+def createclipSocketIO(message):
+    if current_user.is_authenticated:
+        videoID = int(message['videoID'])
+        clipName = strip_html(message['clipName'])
+        clipDescription = message['clipDescription']
+        startTime = message['clipStart']
+        stopTime = message['clipStop']
+        result = createClip(videoID, startTime, stopTime, clipName, clipDescription)
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
