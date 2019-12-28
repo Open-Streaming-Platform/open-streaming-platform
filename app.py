@@ -4440,7 +4440,7 @@ def createclipSocketIO(message):
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
         result = createClip(videoID, startTime, stopTime, clipName, clipDescription)
-        if result is True:
+        if result[0] is True:
             return 'OK'
         else:
             return abort(500)

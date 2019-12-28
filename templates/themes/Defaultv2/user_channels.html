@@ -940,8 +940,8 @@
         var videoID = document.getElementById("clipVideoID").value;
         var clipName = document.getElementById("clipName").value;
         var clipDescription = easymdeVideoClip.value();
-        var clipStart = document.getElementById("clipStartTime");
-        var clipStop = document.getElementById("clipStopTime");
+        var clipStart = document.getElementById("clipStartTime").value;
+        var clipStop = document.getElementById("clipStopTime").value;
 
         socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
     }
