@@ -4437,8 +4437,8 @@ def createclipSocketIO(message):
         videoID = int(message['videoID'])
         clipName = strip_html(message['clipName'])
         clipDescription = message['clipDescription']
-        startTime = message['clipStart']
-        stopTime = message['clipStop']
+        startTime = float(message['clipStart'])
+        stopTime = float(message['clipStop'])
         result = createClip(videoID, startTime, stopTime, clipName, clipDescription)
         if result is True:
             return 'OK'
