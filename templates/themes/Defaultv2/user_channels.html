@@ -686,6 +686,7 @@
             <br>
             <input id="clipName" name="clipName" class="form-control" placeholder="Clip Name" maxlength="255" required><br>
             <textarea id="clipDescription" name="clipDescription" class="form-control" placeholder="Description of the Clip" maxlength="2048"></textarea>
+            <input id="clipVideoID" type="hidden">
           </div>
         </div>
         <div class="modal-footer">
@@ -831,6 +832,8 @@
     clipDescriptionInput.value = null;
 
     clipplayer.src(videoLocation);
+
+    document.getElementById("clipVideoID").value = videoID;
 
     $("#videoClipModal").modal();
   }
