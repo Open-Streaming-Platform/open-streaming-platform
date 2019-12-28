@@ -4447,6 +4447,20 @@ def createclipSocketIO(message):
     else:
         return abort(401)
 
+@socketio.on('moveVideo')
+def moveVideoSocketIO(message):
+    if current_user.is_authenticated:
+        videoID = int(message['videoID'])
+        newChannel = int(message['destinationChannel'])
+
+        result = moveVideo(videoID, newChannel)
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
     newUsername = message['username']
