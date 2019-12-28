@@ -831,15 +831,15 @@
     var clipName = document.getElementById('clipName');
     clipName = null;
 
-    var clipDescriptionInput = document.getElementById('clipDescription');
-    clipDescriptionInput.value = null;
-    easymdeVideoClip.value(null);
-
     clipplayer.src(videoLocation);
 
     document.getElementById("clipVideoID").value = videoID;
 
     $("#videoClipModal").modal();
+
+    var clipDescriptionInput = document.getElementById('clipDescription');
+    clipDescriptionInput.value = null;
+    easymdeVideoClip.value("");
   }
 
   function setClipStart() {
