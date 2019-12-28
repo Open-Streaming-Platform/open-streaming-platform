@@ -829,7 +829,7 @@
     stopInput.value = null;
 
     var clipName = document.getElementById('clipName');
-    clipName = null;
+    clipName.value = null;
 
     clipplayer.src(videoLocation);
 
@@ -840,6 +840,7 @@
     var clipDescriptionInput = document.getElementById('clipDescription');
     clipDescriptionInput.value = null;
     easymdeVideoClip.value("");
+    easymdeVideoClip.codemirror.refresh();
   }
 
   function setClipStart() {
