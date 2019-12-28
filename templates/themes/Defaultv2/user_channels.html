@@ -828,8 +828,12 @@
     var stopInput = document.getElementById('clipStopTime');
     stopInput.value = null;
 
+    var clipName = document.getElementById('clipName');
+    clipName = null;
+
     var clipDescriptionInput = document.getElementById('clipDescription');
     clipDescriptionInput.value = null;
+    easymdeVideoClip.value(null);
 
     clipplayer.src(videoLocation);
 
