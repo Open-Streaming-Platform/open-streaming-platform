@@ -4465,7 +4465,7 @@ def moveVideoSocketIO(message):
 def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(videoID=videoID, owningUser=current_user.id).first()
+        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
         if videoQuery != None:
             thumbnailFilename = message['thumbnailFilename']
             if thumbnailFilename != "" or thumbnailFilename != None:
