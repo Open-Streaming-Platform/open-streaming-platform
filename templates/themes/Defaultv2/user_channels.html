@@ -942,11 +942,11 @@
 
   function newScreenShot() {
     window.whereYouAt = ssplayer.currentTime();
-    socket.emit('newScreenShot', { loc: document.getElementById('videossID'), timeStamp: window.whereYouAt });
+    socket.emit('newScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
   }
 
   function setScreenShot() {
-    socket.emit('setScreenShot', { loc: document.getElementById('videossID'), timeStamp: window.whereYouAt });
+    socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
   }
 
 </script>
