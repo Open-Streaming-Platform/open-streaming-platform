@@ -949,9 +949,10 @@
 
   function setScreenShot() {
     socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
+    var videoID = document.getElementById('videossID').value;
     ssplayer.pause();
     setTimeout(function() {
-        document.getElementById('videoThumb-' + document.getElementById('videossID').value).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
+        document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
         }, 4000)
   }
 
