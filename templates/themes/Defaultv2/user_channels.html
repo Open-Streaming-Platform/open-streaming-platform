@@ -71,7 +71,7 @@
                               <button class="videoMoveModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal" data-videoid="{{video.id}}"><i class="fas fa-arrow-circle-right"></i></button>
                               <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-cut"></i></button>
                               <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}"><i class="fas fa-edit"></i></button>
-                              <button class="btn btn-primary shadow"><i class="fas fa-camera"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-camera"></i></button>
                               <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}"><i class="fas fa-share-alt"></i></button>
                               <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
@@ -827,6 +827,40 @@
   </div>
 </div>
 
+<div class="modal fade" id="videoNewSSModal" tabindex="-1" role="dialog" aria-labelledby="newSSModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newSSModalTitle">Capture New Video Thumbnail</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+          <div class="player w-100">
+            <video id="videoSSClip" class="shadow video-js vjs-big-play-centered" controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <div>
+            <h5>Use this picture?</h5>
+            <img id="newScreenShotImg" class="shadow" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+          </div>
+          <input type="hidden" id="videossID">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" onclick="setScreenShot()" class="btn btn-success" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function CopyAPI(divVal) {
       var copyText = document.getElementById(divVal);
@@ -855,6 +889,7 @@
 
 <script>
   var clipplayer = videojs('videoClip', { autoplay: false });
+  var ssplayer = videojs('videoSSClip', { autoplay: false });
 </script>
 
 <script>
@@ -890,6 +925,17 @@
   function setClipStop() {
     var stopInput = document.getElementById('clipStopTime');
     stopInput.value = clipplayer.currentTime()
+  }
+
+  function openSSModal(videoID,videoLocation) {
+    ssplayer.pause();
+
+    ssplayer.src(videoLocation);
+
+    document.getElementById("videossID").value = videoID;
+
+    $("#videoNewSSModal").modal();
+
   }
 
 </script>
