@@ -1027,7 +1027,9 @@
         socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'} );
         var thumbnailDiv = document.getElementById('videoThumb-' + videoID);
         var thumbnailURL = thumbnailDiv.src;
-        thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
+        setTimeout(function() {
+            thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
+        }, 4000)
     }
 
 </script>
