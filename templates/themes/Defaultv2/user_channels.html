@@ -851,8 +851,8 @@
           <div>
             <h5>Use this picture?</h5>
             <img id="newScreenShotImg" class="shadow" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
-          </div>
-          <button class="btn btn-success" onclick="newScreenShot();">Capture Screenshot</button>
+          </div><br>
+          <button class="btn btn-block btn-success" onclick="newScreenShot();">Capture Screenshot</button>
           <input type="hidden" id="videossID">
       </div>
       <div class="modal-footer">
@@ -942,13 +942,8 @@
 
   function newScreenShot() {
     window.whereYouAt = ssplayer.currentTime();
-    console.log(window.whereYouAt);
     socket.emit('newScreenShot', { loc: document.getElementById('videossID'), timeStamp: window.whereYouAt });
   }
-
-  socket.on('checkScreenShot', function (msg) {
-    document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-  });
 
   function setScreenShot() {
     socket.emit('setScreenShot', { loc: document.getElementById('videossID'), timeStamp: window.whereYouAt });
@@ -1238,6 +1233,9 @@ function openChannelWindow(divID, windowName) {
 
 <script>
 
+    socket.on('checkScreenShot', function (msg) {
+        document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
+    });
 
     socket.on('disconnect', function () {
       socket.emit('cancelUpload', { data: videofilename });
