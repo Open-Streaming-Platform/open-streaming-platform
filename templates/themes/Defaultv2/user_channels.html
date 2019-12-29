@@ -1017,6 +1017,9 @@
         var videoID = $(this).data('videoid');
         videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
         document.getElementById('videoThumbnailID').value = videoID;
+        document.getElementById('videothumbnailFilenameDisplay').value = '';
+        document.getElementById('videothumbnailFilename').value = '';
+
     });
 
     function saveUploadedThumbnail() {
