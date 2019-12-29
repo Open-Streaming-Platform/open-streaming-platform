@@ -950,6 +950,9 @@
   function setScreenShot() {
     socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
     ssplayer.pause();
+    setTimeout(function() {
+        document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
+        }, 4000)
   }
 
 </script>
@@ -1238,16 +1241,6 @@ function openChannelWindow(divID, windowName) {
 
     socket.on('checkScreenShot', function (msg) {
         document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-    });
-
-    socket.on('updatedVideoThumbnail', function (msg) {
-        console.log("Received Video Thumbnail Update");
-        var videoID = msg['videoID'];
-        var videoThumbnailLocation = msg['imageLocation'];
-         setTimeout(function() {
-            document.getElementById('videoThumb-' + videoID).src = videoThumbnailLocation + '?t=' + new Date().getTime();
-        }, 4000)
-
     });
 
     socket.on('disconnect', function () {

@@ -4124,8 +4124,6 @@ def setScreenShot(message):
                 except OSError:
                     pass
                 result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-                emit('updatedVideoThumbnail', {'videoID': str(videoQuery.id), 'imageLocation': fullthumbnailLocation}, broadcast=False)
-
 
     elif 'clipID' in message:
         clipID = message['clipID']
