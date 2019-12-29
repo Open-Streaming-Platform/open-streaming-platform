@@ -936,6 +936,8 @@
 
     document.getElementById("videossID").value = videoID;
 
+    document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg"
+
     $("#videoNewSSModal").modal();
 
   }
@@ -1235,6 +1237,15 @@ function openChannelWindow(divID, windowName) {
 
     socket.on('checkScreenShot', function (msg) {
         document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
+    });
+
+    socket.on('updatedVideoThumbnail', function (msg) {
+        var videoID = msg['videoID'];
+        var videoThumbnailLocation = msg['imageLocation'];
+         setTimeout(function() {
+            document.getElementById('videoThumb-' + videoID).src = videoThumbnailLocation + '?t=' + new Date().getTime();
+        }, 4000)
+
     });
 
     socket.on('disconnect', function () {
