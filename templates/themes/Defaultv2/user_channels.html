@@ -949,6 +949,7 @@
 
   function setScreenShot() {
     socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
+    ssplayer.pause();
   }
 
 </script>
@@ -1240,6 +1241,7 @@ function openChannelWindow(divID, windowName) {
     });
 
     socket.on('updatedVideoThumbnail', function (msg) {
+        console.log("Received Video Thumbnail Update");
         var videoID = msg['videoID'];
         var videoThumbnailLocation = msg['imageLocation'];
          setTimeout(function() {
