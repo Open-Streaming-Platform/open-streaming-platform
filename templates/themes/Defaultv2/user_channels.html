@@ -49,7 +49,7 @@
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');"><h2><i class="fas fa-cog"></i></h2></a></div>
             </div>
           </div>
-          <div class="col-11">
+          <div class="col-8 col-sm-10 col-lg-11">
             <div id="statWindow-{{channel.id}}" style="display:block;">
                 <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
             </div>
@@ -58,7 +58,7 @@
                 <div class="row mx-2">
                     <ul id="videoList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
                       {% for video in channel.recordedVideo %}
-                      <li id="video-{{video.id}}" class="channelVideoCard shadow m-2">
+                      <li id="video-{{video.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
                         <div class="row">
                           <div class="col-auto m-2">
                             <div class="mb-2" style="width:270px;">

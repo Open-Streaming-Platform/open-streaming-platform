@@ -508,6 +508,10 @@ body {
         top: initial;
     }
 
+    .channelVideoCard {
+        width:100%;
+    }
+
 }
 
 
