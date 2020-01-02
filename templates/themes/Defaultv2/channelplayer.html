@@ -171,7 +171,7 @@
                                   </div>
                                 </div>
                                 <div class="card-data">
-                                  <img src="/images/{{video.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                                  <img class="rounded" src="/images/{{video.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                                   <div class="metadata">
                                     <div class="card-cut-text name ml-2"><b>{{video.channelName|limit_title}}</b></div>
                                     <div class="card-cut-text topic ml-2">{{video.topic|get_topicName}}</div>
@@ -230,7 +230,7 @@
                               </div>
                             </div>
                             <div class="card-data">
-                              <img src="/images/{{clip.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                              <img class="rounded" src="/images/{{clip.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                               <div class="metadata">
                                 <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
                                 <div class="card-cut-text topic ml-2">{{clip.recordedVideo.topic|get_topicName}}</div>
@@ -457,12 +457,12 @@
             var s = today.getSeconds();
             var message = data['msg'];
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else if (data['flags'] === 'Bot')
             {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });
