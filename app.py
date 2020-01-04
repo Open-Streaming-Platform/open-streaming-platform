@@ -1134,7 +1134,7 @@ def main_page():
         sysSettings = settings.settings.query.first()
         activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False).order_by(func.random()).limit(16)
+        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.order_by(func.random()).limit(16)
 
@@ -1161,7 +1161,7 @@ def channel_view_page(chanID):
     if channelData != None:
 
         openStreams = Stream.Stream.query.filter_by(linkedChannel=chanID).all()
-        recordedVids = RecordedVideo.RecordedVideo.query.filter_by(channelID=chanID, pending=False).all()
+        recordedVids = RecordedVideo.RecordedVideo.query.filter_by(channelID=chanID, pending=False, published=True).all()
 
         # Sort Video to Show Newest First
         recordedVids.sort(key=lambda x: x.videoDate, reverse=True)
@@ -1223,7 +1223,7 @@ def topic_view_page(topicID):
     sysSettings = settings.settings.query.first()
     topicID = int(topicID)
     streamsQuery = Stream.Stream.query.filter_by(topic=topicID).all()
-    recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(topic=topicID, pending=False).all()
+    recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(topic=topicID, pending=False, published=True).all()
 
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
@@ -1279,7 +1279,7 @@ def streamers_view_page(userID):
                 for stream in channel.stream:
                     streams.append(stream)
 
-            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False).all()
+            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False, published=True).all()
 
             # Sort Video to Show Newest First
             recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
@@ -1385,7 +1385,7 @@ def view_page(loc):
             else:
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, channelID=requestedChannel.id).order_by(func.random()).limit(16)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True, channelID=requestedChannel.id).order_by(func.random()).limit(16)
 
             clipsList = []
             for vid in requestedChannel.recordedVideo:
@@ -1423,6 +1423,12 @@ def view_vid_page(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
     if recordedVid != None:
+
+        if recordedVid.published is False:
+            if current_user.is_authenticated:
+                if current_user != recordedVid.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Video at URL", "error")
+                    return redirect(url_for("main_page"))
 
         if recordedVid.channel.protected:
             if not check_isValidChannelViewer(recordedVid.channel.id):

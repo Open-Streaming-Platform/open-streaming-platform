@@ -151,7 +151,7 @@
                         </div>
                         <ul class="itemList list d-flex flex-wrap justify-content-start">
                             {% for video in channel.recordedVideo|sort(attribute='videoDate', reverse=True)%}
-                            {% if video.pending == False %}
+                            {% if video.pending == False and video.published == True %}
 
                             <li class="displayCard mx-4 my-3">
                               <a href="/play/{{video.id}}">
