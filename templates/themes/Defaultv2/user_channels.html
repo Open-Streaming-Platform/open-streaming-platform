@@ -46,6 +46,7 @@
             <div class="h-100">
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');"><h2><i class="fas fa-th-large"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');"><h2><i class="fas fa-video"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');"><h2><i class="fas fa-cut"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');"><h2><i class="fas fa-cog"></i></h2></a></div>
             </div>
           </div>
@@ -93,6 +94,47 @@
                                 </div>
                                 <div class="col-6">
                                     <input type="checkbox" data-toggle="toggle" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div id="clipWindow-{{channel.id}}" style="display:none;">
+                <div class="my-4 mx-3"><h4>Video List</h4></div>
+                <div class="row mx-2">
+                    <ul id="clipList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+                      {% for clip in channel.recordedVideo.clips %}
+                      <li id="clip-{{video.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+                        <div class="row">
+                          <div class="col-auto m-2 pt-3">
+                            <div class="mb-2" style="width:270px;">
+                              <img class="shadow lazy" id="clipThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+                            </div>
+                            <div class="mt-2">
+                              <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-videoid="{{clip.id}}"><i class="fas fa-edit"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSClipModal('{{clip.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-camera"></i></button>
+                              <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipShareModal" data-videoid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-videoid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                          </div>
+                          <div class="col mt-2">
+                            <h4><a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a></h4>
+                            <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.parentVideo.topic|get_topicName}}</span></h5>
+                            <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.parentVideo.videoDate|normalize_date}}</h5>
+                            <h5><i class="far fa-clock mr-1"></i>{{clip.length|hms_format}}</h5>
+                            <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
+                            <h5><i class="fas fa-users"></i> {{clip.views}}</h5>
+                            <h5><i class="far fa-thumbs-up"></i> {{clip.upvotes|length}}</h5>
+                            <div class="form-group row">
+                                <div class="col-6">
+                                    <label for="clipPublished-{{clip.id}}" class="col-form-label"><b>Published? </b></label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="checkbox" data-toggle="toggle" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
                                 </div>
                             </div>
                           </div>
@@ -969,13 +1011,10 @@
     ssplayer.pause();
     setTimeout(function() {
         document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
-        }, 4000)
+        }, 4000);
     createNewBSAlert("Thumbnail Updated", "Success");
   }
 
-</script>
-
-<script>
     var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
     var easymdeVideoClip = new EasyMDE({ element: document.getElementById("clipDescription")});
 
@@ -1122,10 +1161,6 @@
         socket.emit('togglePublished', {videoID: videoID});
     }
 
-</script>
-
-
-<script>
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();

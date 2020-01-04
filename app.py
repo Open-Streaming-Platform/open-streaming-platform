@@ -287,6 +287,10 @@ def init_db_values():
         for vid in videoQuery:
             vid.published = True
             db.session.commit()
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=None).all()
+        for clip in clipQuery:
+            clip.published = True
+            db.session.commit()
         channelQuery = Channel.Channel.query.filter_by(autoPublish=None).all()
         for chan in channelQuery:
             chan.autoPublish = True
