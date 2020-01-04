@@ -952,6 +952,7 @@
     setTimeout(function() {
         document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
         }, 4000)
+    createNewBSAlert("Thumbnail Updated", "Success");
   }
 
 </script>
@@ -969,6 +970,7 @@
         var videoEntry = document.getElementById('video-' + videoID);
         videoEntry.parentNode.removeChild(videoEntry);
         socket.emit('deleteVideo', {videoID: videoID});
+        createNewBSAlert("Video Deleted", "Success");
     }
 
     $(document).on("click", ".videoShareModalButton", function () {
@@ -1039,6 +1041,7 @@
         }
 
         socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
+        createNewBSAlert("Video Metadata Edited", "Success");
     }
 
     function createVideoClipSubmit() {
@@ -1050,6 +1053,7 @@
         var clipStop = document.getElementById("clipStopTime").value;
 
         socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
+        createNewBSAlert("Clip Created", "Success");
     }
 
     $(document).on("click", ".videoMoveModalButton", function () {
@@ -1066,6 +1070,7 @@
         $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
 
         socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
+        createNewBSAlert("Video Moved", "Success");
     }
 
     function s4() {
@@ -1092,6 +1097,7 @@
         setTimeout(function() {
             thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
         }, 4000)
+        createNewBSAlert("Thumbnail Updated", "Success");
     }
 
 </script>
@@ -1332,6 +1338,7 @@ function openChannelWindow(divID, windowName) {
         socket.emit('deleteInviteCode', {code: code});
         var inviteCodeRow = document.getElementById('inviteCodeRow-' + code);
         inviteCodeRow.parentNode.removeChild(inviteCodeRow);
+        createNewBSAlert("Invite Code Removed", "Success");
     }
 </script>
 
@@ -1340,6 +1347,7 @@ function openChannelWindow(divID, windowName) {
         socket.emit('deleteInvitedUser', {inviteID: inviteID});
         var inviteUserRow = document.getElementById('invitedUserRow-' + inviteID);
         inviteUserRow.parentNode.removeChild(inviteUserRow);
+        createNewBSAlert("Invite Removed", "Success");
     }
 </script>
 
@@ -1348,6 +1356,7 @@ function openChannelWindow(divID, windowName) {
         socket.emit('deleteWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
+        createNewBSAlert("Webhook Deleted", "Success");
     }
 </script>
 
@@ -1431,6 +1440,7 @@ function openChannelWindow(divID, windowName) {
         addedDateCell.appendChild(document.createTextNode(addedDate));
         expirationDateCell.appendChild(document.createTextNode(expiration));
         buttonCell.innerHTML = buttonText;
+        createNewBSAlert("Invite Created", "Success");
     });
 
 </script>
@@ -1604,6 +1614,7 @@ function openChannelWindow(divID, windowName) {
             break;
           default:
             triggerVal = 'Unknown';
+
         }
 
 
@@ -1614,6 +1625,7 @@ function openChannelWindow(divID, windowName) {
         requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
         requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
         buttonCell.innerHTML = buttonText;
+        createNewBSAlert("Webhook Added", "Success");
 
     });
     </script>
@@ -1681,6 +1693,7 @@ function openChannelWindow(divID, windowName) {
         requestTypeCell.innerText = webhookRequestType;
         requestHeaderCell.innerText = webhookHeader;
         requestPayloadCell.innerText = webhookPayload;
+        createNewBSAlert("Webhook Edited", "Success");
     });
     </script>
 
