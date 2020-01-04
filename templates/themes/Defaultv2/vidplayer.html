@@ -30,6 +30,11 @@
             {% else %}
             <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
             {% endif %}
+            {% if video.published == False %}
+            <span class="badge badge-warning">
+              <i class="fas fa-video-slash"></i> Unpublished
+            </span>
+            {% endif %}
           </span>
           {% if video.channel.protected %}
           <span class="float-right">
