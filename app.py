@@ -4497,6 +4497,26 @@ def moveVideoSocketIO(message):
     else:
         return abort(401)
 
+@socketio.on('togglePublished')
+def togglePublishedSocketIO(message):
+    if current_user.is_authenticated:
+        videoID = int(message['videoID'])
+        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=current_user.id, id=videoID).first()
+        if videoQuery != None:
+            videoQuery.published = not videoQuery.published
+
+            db.session.commit()
+            db.session.close()
+            return 'OK'
+        else:
+            db.session.commit()
+            db.session.close()
+            return abort(500)
+    else:
+        db.session.commit()
+        db.session.close()
+        return abort(401)
+
 @socketio.on('saveUploadedThumbnail')
 def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:

@@ -92,7 +92,7 @@
                                     <label for="published-{{video.id}}" class="col-form-label"><b>Published? </b></label>
                                 </div>
                                 <div class="col-6">
-                                    <input type="checkbox" data-toggle="toggle" id="published-{{video.id}}" name="publishedSelect" {% if video.published == True %} checked {% endif %}>
+                                    <input type="checkbox" data-toggle="toggle" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
                                 </div>
                             </div>
                           </div>
@@ -1116,6 +1116,10 @@
             thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
         }, 4000)
         createNewBSAlert("Thumbnail Updated", "Success");
+    }
+
+    function togglePublished(videoID) {
+        socket.emit('togglePublished', {videoID: videoID});
     }
 
 </script>
