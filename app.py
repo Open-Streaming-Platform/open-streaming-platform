@@ -3516,7 +3516,7 @@ def user_auth_check():
         for sub in subscriptionQuery:
             # Create Notification for Channel Subs
             newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
-                                                             "/images/" + requestedChannel.owner.pictureLocation, sub.userID)
+                                                             "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
             db.session.add(newNotification)
         db.session.commit()
 
@@ -3636,7 +3636,7 @@ def rec_Complete_handler():
     for sub in subscriptionQuery:
         # Create Notification for Channel Subs
         newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
-                                                         "/images/" + requestedChannel.owner.pictureLocation, sub.userID)
+                                                         "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
         db.session.add(newNotification)
     db.session.commit()
 
