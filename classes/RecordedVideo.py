@@ -15,11 +15,12 @@ class RecordedVideo(db.Model):
     thumbnailLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
+    published = db.Column(db.Boolean)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     comments = db.relationship('videoComments', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
 
-    def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments):
+    def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments, published):
         self.videoDate = videoDate
         self.owningUser = owningUser
         self.channelID = channelID
@@ -28,6 +29,7 @@ class RecordedVideo(db.Model):
         self.views = views
         self.videoLocation = videoLocation
         self.pending = True
+        self.published = published
         self.allowComments = allowComments
 
     def __repr__(self):

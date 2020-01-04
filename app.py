@@ -282,6 +282,16 @@ def init_db_values():
             chan.defaultStreamName = ""
             db.session.commit()
 
+        # Fix for Videos and Channels that were created before Publishing Option
+        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
+        for vid in videoQuery:
+            vid.published = True
+            db.session.commit()
+        channelQuery = Channel.Channel.query.filter_by(autoPublish=None).all()
+        for chan in channelQuery:
+            chan.autoPublish = True
+            db.session.commit()
+
         #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
         #if hubQuery == None:
         #    newHub = hubConnection.hubServers(hubURL)
@@ -1827,37 +1837,47 @@ def upload_vid():
         db.session.add(newVideo)
         db.session.commit()
 
+        if ChannelQuery.autoPublish is True:
+            newVideo.published = True
+        else:
+            newVideo.published = False
+        db.session.commit()
+
+
+
         if ChannelQuery.imageLocation is None:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
         newLog(4, "File Upload Successful - Username:" + current_user.username)
 
-        runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
-                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
-                   channeltopic=get_topicName(ChannelQuery.topic),
-                   channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
-                   channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
-                   videodate=newVideo.videoDate, videodescription=newVideo.description,
-                   videotopic=get_topicName(newVideo.topic),
-                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
-                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
+        if ChannelQuery.autoPublish is True:
 
-        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
-        for sub in subscriptionQuery:
-            # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
-                                                             "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
-            db.session.add(newNotification)
-        db.session.commit()
+            runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
+                       channeltopic=get_topicName(ChannelQuery.topic),
+                       channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
+                       channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
+                       videodate=newVideo.videoDate, videodescription=newVideo.description,
+                       videotopic=get_topicName(newVideo.topic),
+                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
+                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
 
-        try:
-            processSubscriptions(ChannelQuery.id,
-                             sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
-                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
-                             "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
-        except:
-            newLog(0, "Subscriptions Failed due to possible misconfiguration")
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
+                                                                 "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+
+            try:
+                processSubscriptions(ChannelQuery.id,
+                                 sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
+                                 "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
+                                 "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
+            except:
+                newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
     db.session.close()
     flash("Video upload complete")
@@ -2646,6 +2666,7 @@ def settings_dbRestore():
                     channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
+                    channel.autoPublish = restoredChannel['autoPublish']
 
                     db.session.add(channel)
                 else:
@@ -2702,6 +2723,7 @@ def settings_dbRestore():
                             video.length = float(restoredVideo['length'])
                         video.thumbnailLocation = restoredVideo['thumbnailLocation']
                         video.pending = eval(restoredVideo['pending'])
+                        video.published = eval(restoredVideo['published'])
                         db.session.add(video)
                     else:
                         flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
@@ -3037,10 +3059,15 @@ def settings_channels_page():
         topic = request.form['channeltopic']
         description = strip_html(request.form['description'])
 
+
         record = False
 
         if 'recordSelect' in request.form and sysSettings.allowRecording is True:
             record = True
+
+        autoPublish = False
+        if 'autoPublish' in request.form:
+            autoPublish = True
 
         chatEnabled = False
 
@@ -3104,6 +3131,7 @@ def settings_channels_page():
                 requestedChannel.chatTextColor = chatTextColor
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
+                requestedChannel.autoPublish = autoPublish
 
                 if 'photo' in request.files:
                     file = request.files['photo']
@@ -3616,6 +3644,12 @@ def rec_Complete_handler():
     fullVidPath = '/var/www/videos/' + videoPath
 
     pendingVideo.pending = False
+
+    if requestedChannel.autoPublish is True:
+        pendingVideo.published = True
+    else:
+        pendingVideo.published = False
+
     db.session.commit()
 
     if requestedChannel.imageLocation is None:
@@ -3623,7 +3657,8 @@ def rec_Complete_handler():
     else:
         channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
-    runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
+    if requestedChannel.autoPublish is True:
+        runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                channeltopic=get_topicName(requestedChannel.topic),
                channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
@@ -3632,15 +3667,15 @@ def rec_Complete_handler():
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
 
-    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
-    for sub in subscriptionQuery:
-        # Create Notification for Channel Subs
-        newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
-                                                         "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
-        db.session.add(newNotification)
-    db.session.commit()
+        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+        for sub in subscriptionQuery:
+            # Create Notification for Channel Subs
+            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
+                                                             "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+            db.session.add(newNotification)
+        db.session.commit()
 
-    processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
+        processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                          "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
 
