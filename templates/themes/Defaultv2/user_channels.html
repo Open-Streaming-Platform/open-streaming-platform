@@ -84,11 +84,9 @@
                             <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
                             <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
                             <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
-                            <h5>
-                              <i class="fas fa-users"></i> {{video.views}}
-                              <span class="ml-5"><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</span>
-                              <span class="ml-5"><i class="far fa-comment-alt"></i> {{video.comments|length}}</span>
-                            </h5><br>
+                            <h5><i class="fas fa-users"></i> {{video.views}}</h5>
+                            <h5><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</h5>
+                            <h5><i class="far fa-comment-alt"></i> {{video.comments|length}}</h5>
                           </div>
                         </div>
                       </li>
