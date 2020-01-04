@@ -1464,7 +1464,7 @@ def view_vid_page(videoID):
 
         if isEmbedded == None or isEmbedded == "False":
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id).order_by(func.random()).limit(12)
+            randomRecorded = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.id != recordedVid.id, RecordedVideo.RecordedVideo.published == True).order_by(func.random()).limit(12)
 
             subState = False
             if current_user.is_authenticated:
