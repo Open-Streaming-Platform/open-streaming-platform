@@ -4513,34 +4513,37 @@ def togglePublishedSocketIO(message):
         videoID = int(message['videoID'])
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=current_user.id, id=videoID).first()
         if videoQuery != None:
-            videoQuery.published = not videoQuery.published
+            newState = not videoQuery.published
+            videoQuery.published = newState
 
             if videoQuery.channel.imageLocation is None:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + videoQuery.channel.imageLocation)
 
-            runWebhook(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
-                       channeltopic=get_topicName(videoQuery.channel.topic),
-                       channelimage=channelImage, streamer=get_userName(videoQuery.channel.owningUser),
-                       channeldescription=videoQuery.channel.description, videoname=videoQuery.channelName,
-                       videodate=videoQuery.videoDate, videodescription=videoQuery.description,
-                       videotopic=get_topicName(videoQuery.topic),
-                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(videoQuery.id)),
-                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + videoQuery.thumbnailLocation))
+            if newState is True:
 
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=videoQuery.channel.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(videoQuery.channel.owningUser) + " has posted a new video to " + videoQuery.channel.channelName + " titled " + videoQuery.channelName, '/play/' + str(videoQuery.id), "/images/" + str(videoQuery.channel.owner.pictureLocation), sub.userID)
-                db.session.add(newNotification)
-            db.session.commit()
+                runWebhook(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
+                           channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
+                           channeltopic=get_topicName(videoQuery.channel.topic),
+                           channelimage=channelImage, streamer=get_userName(videoQuery.channel.owningUser),
+                           channeldescription=videoQuery.channel.description, videoname=videoQuery.channelName,
+                           videodate=videoQuery.videoDate, videodescription=videoQuery.description,
+                           videotopic=get_topicName(videoQuery.topic),
+                           videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(videoQuery.id)),
+                           videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + videoQuery.thumbnailLocation))
 
-            processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
-                                 sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + videoQuery.channel.channelName + " has posted a new video titled <u>" +
-                                 videoQuery.channelName + "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" +
-                                 str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>")
+                subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=videoQuery.channel.id).all()
+                for sub in subscriptionQuery:
+                    # Create Notification for Channel Subs
+                    newNotification = notifications.userNotification(get_userName(videoQuery.channel.owningUser) + " has posted a new video to " + videoQuery.channel.channelName + " titled " + videoQuery.channelName, '/play/' + str(videoQuery.id), "/images/" + str(videoQuery.channel.owner.pictureLocation), sub.userID)
+                    db.session.add(newNotification)
+                db.session.commit()
+
+                processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
+                                     sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + videoQuery.channel.channelName + " has posted a new video titled <u>" +
+                                     videoQuery.channelName + "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" +
+                                     str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>")
 
             db.session.commit()
             db.session.close()
