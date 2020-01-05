@@ -4616,7 +4616,7 @@ def changeClipMetadataSocketIO(message):
     else:
         return abort(401)
 
-socketio.on('deleteClip')
+@socketio.on('deleteClip')
 def deleteClipSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message['clipID'])
