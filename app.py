@@ -884,6 +884,24 @@ def changeClipMetadata(clipID, name, description):
             return True
     return False
 
+def deleteClip(clipID):
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+
+    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery != None:
+        thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+
+        if thumbnailPath != '/var/www/videos/':
+            if os.path.exists(thumbnailPath) and (thumbnailPath != None or thumbnailPath != ""):
+                os.remove(thumbnailPath)
+
+        db.session.delete(clipQuery)
+
+        db.session.commit()
+        newLog(6, "Clip Deleted - ID #" + str(clipID))
+        return True
+    else:
+        return False
+
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 
@@ -1703,19 +1721,9 @@ def view_clip_page(clipID):
 @login_required
 def delete_clip_page(clipID):
 
-    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+    result = deleteClip(int(clipID))
 
-    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery != None:
-        thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
-
-        if thumbnailPath != '/var/www/videos/':
-            if os.path.exists(thumbnailPath) and (thumbnailPath != None or thumbnailPath != ""):
-                os.remove(thumbnailPath)
-
-        db.session.delete(clipQuery)
-
-        db.session.commit()
-        newLog(6,"Clip Deleted - ID #" + str(clipID))
+    if result is True:
         flash("Clip deleted")
         return redirect(url_for('main_page'))
     else:
@@ -4608,6 +4616,19 @@ def changeClipMetadataSocketIO(message):
     else:
         return abort(401)
 
+socketio.on('deleteClip')
+def deleteClipSocketIO(message):
+    if current_user.is_authenticated:
+        clipID = int(message['clipID'])
+
+        result = deleteClip(clipID)
+
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):

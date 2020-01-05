@@ -950,6 +950,28 @@
   </div>
 </div>
 
+<div class="modal fade" id="clipDeleteModal" tabindex="-1" role="dialog" aria-labelledby="clipDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clipDeleteModalTitle">Confirm Clip Deletion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this clip?</h5>
+        <input type="hidden" id="clipDeleteIDSelector" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button id="clipDeleteButton" type="button" class="btn btn-danger" data-dismiss="modal" onclick="">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function CopyAPI(divVal) {
       var copyText = document.getElementById(divVal);
@@ -1053,11 +1075,23 @@
         $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
     });
 
+    $(document).on("click", ".clipDeleteModalButton", function () {
+        var clipID = $(this).data('clipid');
+        $("#clipDeleteButton").attr("onclick","deleteClip(" + clipID + ")");
+    });
+
     function deleteVideo(videoID) {
         var videoEntry = document.getElementById('video-' + videoID);
         videoEntry.parentNode.removeChild(videoEntry);
         socket.emit('deleteVideo', {videoID: videoID});
         createNewBSAlert("Video Deleted", "Success");
+    }
+
+    function deleteClip(clipID) {
+        var clipEntry = document.getElementById('clip-' + clipID);
+        clipEntry.parentNode.removeChild(clipEntry);
+        socket.emit('deleteClip', {clipID: clipID});
+        createNewBSAlert("Clip Deleted", "Success");
     }
 
     $(document).on("click", ".videoShareModalButton", function () {
