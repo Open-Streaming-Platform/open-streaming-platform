@@ -923,6 +923,36 @@
   </div>
 </div>
 
+<div class="modal fade" id="clipEditModal" tabindex="-1" role="dialog" aria-labelledby="clipEditModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clipEditModalTitle">Edit Clip Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/clip/{{clip.id}}/change" method="post">
+        <div class="modal-body">
+
+          <h5>Name of the Clip:</h5>
+          <input type="text" class="form-control" id="editClipName" value="" name="newVidName" required>
+          <br>
+          <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="editClipDescription" value="" maxlength="2048"></textarea>
+          </div>
+            <input type="hidden" id="editClipID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <input type="button" class="btn btn-primary" data-dismiss="modal" value="Save Changes">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
     function CopyAPI(divVal) {
       var copyText = document.getElementById(divVal);
@@ -1019,6 +1049,7 @@
 
     var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
     var easymdeVideoClip = new EasyMDE({ element: document.getElementById("clipDescription")});
+    var easymdeClipEditor = new EasyMDE({ element: document.getElementById("clipEditDescription")});
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -1046,6 +1077,24 @@
         $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
         $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
         $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID);
+    });
+
+    $(document).on("click", ".clipEditModalButton", function () {
+
+       var clipID = $(this).data('clipid');
+       var clipName = document.getElementById('clipName-' + clipID).innerText;
+       var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
+
+
+       $("#editClipID").val(clipID);
+       $("#editClipName").val(clipName);
+
+
+       document.getElementById("editClipDescription").value = clipDescription;
+       easymdeClipEditor.value(clipDescription);
+       var doc = easymdeClipEditor.codemirror.getDoc();
+       doc.setValue(doc.getValue());
+
     });
 
     $(document).on("click", ".videoEditModalButton", function () {
