@@ -1092,12 +1092,9 @@
     clipssplayer.pause();
 
     clipssplayer.src(videoLocation);
+    clipssplayer.load();
 
-    clipssplayer.play();
-
-    clipssplayer.currentTime(startTime);
-
-    clipssplayer.pause();
+    clipssplayer.on('loadedmetadata', function() {this.currentTime(startTime)});
 
     document.getElementById("clipssID").value = clipID;
 
