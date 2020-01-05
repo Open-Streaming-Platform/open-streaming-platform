@@ -944,7 +944,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="button" class="btn btn-primary" data-dismiss="modal" value="Save Changes">
+          <input type="button" class="btn btn-primary" data-dismiss="modal" onclick="editClipSubmit()" value="Save Changes">
         </div>
     </div>
   </div>
@@ -1093,6 +1093,26 @@
        doc.setValue(doc.getValue());
 
     });
+
+    function editClipSubmit() {
+        var editClipIDInput = document.getElementById("editClipID").value;
+        var editClipNameInput = document.getElementById("editClipName").value;
+        var editClipDescriptionInput = document.getElementById("clipEditDescription");
+
+        var clipDescription = easymdeClipEditor.value();
+
+        editClipDescriptionInput.value = "";
+        easymdeClipEditor.value("");
+        var doc = easymdeClipEditor.codemirror.getDoc();
+        doc.setValue(doc.getValue());
+
+        document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
+        document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
+
+        createNewBSAlert("Clip Metadata Edited", "Sucess");
+
+        socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipIDInput, clipDescription: clipDescription});
+    }
 
     $(document).on("click", ".videoEditModalButton", function () {
 

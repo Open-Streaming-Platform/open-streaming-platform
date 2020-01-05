@@ -868,6 +868,22 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             return True, redirectID
     return False, None
 
+def changeClipMetadata(clipID, name, description):
+    # TODO Add Webhook for Clip Metadata Change
+
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+
+    if clipQuery != None:
+        if clipQuery.recordedVideo.owningUser == current_user.id:
+
+            clipQuery.clipName = strip_html(name)
+            clipQuery.description = strip_html(description)
+
+            db.session.commit()
+            newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
+            return True
+    return False
+
 app.jinja_env.globals.update(check_isValidChannelViewer=check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=check_isCommentUpvoted)
 
@@ -1709,26 +1725,16 @@ def delete_clip_page(clipID):
 @app.route('/clip/<clipID>/change', methods=['POST'])
 @login_required
 def clip_change_page(clipID):
-    # TODO Add Webhook for Clip Metadata Change
 
-    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-    sysSettings = settings.settings.query.first()
+    result = changeClipMetadata(int(clipID), request.form['newVideoName'], request.form['description'])
 
-    if clipQuery != None:
-        if clipQuery.recordedVideo.owningUser == current_user.id:
+    if result is True:
+        flash("Updated Clip Metadata","success")
+        return redirect(url_for('view_clip_page', clipID=clipID))
 
-            newClipName = request.form['newVidName']
-            description = request.form['description']
-
-            clipQuery.clipName = strip_html(newClipName)
-            clipQuery.description = strip_html(description)
-
-            db.session.commit()
-            newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
-            return redirect(url_for('view_clip_page', clipID=clipID))
-
-    flash("Error Changing Clip Metadata", "error")
-    return redirect(url_for("main_page"))
+    else:
+        flash("Error Changing Clip Metadata", "error")
+        return redirect(url_for("main_page"))
 
 @app.route('/upload/video-files', methods=['GET', 'POST'])
 @login_required
@@ -4585,6 +4591,23 @@ def saveUploadedThumbnailSocketIO(message):
             db.session.close()
             return abort(401)
     return abort(401)
+
+@socketio.on('editClip')
+def changeClipMetadataSocketIO(message):
+    if current_user.is_authenticated:
+        clipID = int(message['clipID'])
+        clipName = message['clipName']
+        clipDescription = message['clipDescription']
+
+        result = changeClipMetadata(clipID, clipName, clipDescription)
+
+        if result is True:
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
