@@ -124,8 +124,8 @@
                           </div>
                           <div class="col mt-2">
                             <h4><a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a></h4>
-                            <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.parentVideo.topic|get_topicName}}</span></h5>
-                            <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.parentVideo.videoDate|normalize_date}}</h5>
+                            <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.recordedVideo.topic|get_topicName}}</span></h5>
+                            <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</h5>
                             <h5><i class="far fa-clock mr-1"></i>{{clip.length|hms_format}}</h5>
                             <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
                             <h5><i class="fas fa-users"></i> {{clip.views}}</h5>
