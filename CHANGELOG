@@ -9,6 +9,9 @@ Beta-4
 - Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
 - Added Notifications for Various Events such as New Streams, New Videos, New Comments, Likes, etc
 - Added Video, Clip, Channel, and Stream Sorting
+- Added the ability to Publish and Unpublish Videos and Clips
+- Added an option to Channels to Autopublish Videos (Enabled by Default)
+- Switched from Flask Security to Flask-Security-Too
 - Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
 - Reformated Display Cards to v3
 - Reworked User Channel Screen
@@ -17,6 +20,7 @@ Beta-4
 - Moved Gunicorn Logs to /opt/osp/logs
 - Fixed Issue where Channel Subscriptions were not being restored from backups
 - Fixed Variables causing Type Confusion
+- Fixed Issue where Video and Clip Thumbnails were being generated based on the current video player timestamp, instead of the timestamp of the last captured screenshot
 - Movement of References to Prevent Calls before they are Referenced
 - Fixed Issue where Creating a Channel via APIv1 caused an error
 - Fixed an issue where Video Comments may cause an error preventing the video from being viewable
