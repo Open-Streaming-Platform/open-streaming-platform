@@ -1349,6 +1349,11 @@
         socket.emit('togglePublished', {videoID: videoID});
     }
 
+    function togglePublishedClip(clipID) {
+        socket.emit('togglePublishedClip', {clipID: clipID});
+    }
+
+
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
