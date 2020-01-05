@@ -4579,6 +4579,36 @@ def togglePublishedSocketIO(message):
         db.session.close()
         return abort(401)
 
+@socketio.on('togglePublishedClip')
+def togglePublishedClipSocketIO(message):
+    if current_user.is_authenticated:
+        clipID = int(message['clipID'])
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+
+        if clipQuery != None and current_user.id == clipQuery.recordedVideo.owningUser:
+            newState = not clipQuery.published
+            clipQuery.published = newState
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=clipQuery.recordedVideo.channel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
+                                                                 clipQuery.recordedVideo.channel.channelName + " titled " + clipQuery.clipName,'/clip/' +
+                                                                 str(clipQuery.id),"/images/" + clipQuery.recordedVideo.channel.owner.pictureLocation, sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+            db.session.close()
+            return 'OK'
+        else:
+            db.session.commit()
+            db.session.close()
+            return abort(500)
+    else:
+        db.session.commit()
+        db.session.close()
+        return abort(401)
+
+
 @socketio.on('saveUploadedThumbnail')
 def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:
