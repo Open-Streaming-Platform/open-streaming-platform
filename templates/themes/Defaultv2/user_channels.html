@@ -1109,9 +1109,9 @@
         document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
         document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
 
-        createNewBSAlert("Clip Metadata Edited", "Sucess");
+        createNewBSAlert("Clip Metadata Edited", "Success");
 
-        socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipIDInput, clipDescription: clipDescription});
+        socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription});
     }
 
     $(document).on("click", ".videoEditModalButton", function () {
