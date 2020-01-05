@@ -107,7 +107,8 @@
                 <div class="my-4 mx-3"><h4>Clip List</h4></div>
                 <div class="row mx-2">
                     <ul id="clipList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
-                      {% for clip in channel.recordedVideo.clips %}
+                      {% for video in channel.recordedVideo %}
+                      {% for clip in video %}
                       <li id="clip-{{clip.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
                         <div class="row">
                           <div class="col-auto m-2 pt-3">
@@ -140,6 +141,7 @@
                           </div>
                         </div>
                       </li>
+                      {% endfor %}
                       {% endfor %}
                     </ul>
                 </div>
