@@ -32,6 +32,11 @@
             <span class="badge badge-primary">
               <i class="fas fa-cut"></i><span class="d-none d-sm-none d-md-inline"> Clip</span>
             </span>
+            {% if clip.published == False %}
+            <span class="badge badge-warning">
+              <i class="fas fa-video-slash"></i> Unpublished
+            </span>
+            {% endif %}
             {% if video.channel.protected %}
               <span class="badge badge-warning">
                 <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>

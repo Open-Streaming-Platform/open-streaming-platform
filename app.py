@@ -1174,7 +1174,7 @@ def main_page():
 
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
 
-        randomClips = RecordedVideo.Clips.query.order_by(func.random()).limit(16)
+        randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
 
         return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
 
@@ -1207,7 +1207,8 @@ def channel_view_page(chanID):
         clipsList = []
         for vid in recordedVids:
             for clip in vid.clips:
-                clipsList.append(clip)
+                if clip.published is True:
+                    clipsList.append(clip)
 
         clipsList.sort(key=lambda x: x.views, reverse=True)
 
@@ -1269,7 +1270,8 @@ def topic_view_page(topicID):
     clipsList = []
     for vid in recordedVideoQuery:
         for clip in vid.clips:
-            clipsList.append(clip)
+            if clip.published is True:
+                clipsList.append(clip)
 
     clipsList.sort(key=lambda x: x.views, reverse=True)
 
@@ -1325,7 +1327,8 @@ def streamers_view_page(userID):
             clipsList = []
             for vid in recordedVideoQuery:
                 for clip in vid.clips:
-                    clipsList.append(clip)
+                    if clip.published is True:
+                        clipsList.append(clip)
 
             clipsList.sort(key=lambda x: x.views, reverse=True)
 
@@ -1358,16 +1361,6 @@ def view_page(loc):
     if requestedChannel.protected:
         if not check_isValidChannelViewer(requestedChannel.id):
             return render_template(checkOverride('channelProtectionAuth.html'))
-
-    #global streamUserList
-
-    #if requestedChannel.channelLoc not in streamUserList:
-    #    streamUserList[requestedChannel.channelLoc] = []
-
-    #global streamSIDList
-
-    #if requestedChannel.channelLoc not in streamSIDList:
-    #    streamSIDList[requestedChannel.channelLoc] = []
 
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
@@ -1428,7 +1421,8 @@ def view_page(loc):
             clipsList = []
             for vid in requestedChannel.recordedVideo:
                 for clip in vid.clips:
-                    clipsList.append(clip)
+                    if clip.published is True:
+                        clipsList.append(clip)
             clipsList.sort(key=lambda x: x.views, reverse=True)
 
             subState = False
@@ -1672,6 +1666,15 @@ def view_clip_page(clipID):
     if clipQuery != None:
 
         recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=clipQuery.recordedVideo.id).first()
+
+        if clipQuery.published is False:
+            if current_user.is_authenticated:
+                if current_user != clipQuery.recordedVideo.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Video at URL", "error")
+                    return redirect(url_for("main_page"))
+            else:
+                flash("No Such Video at URL", "error")
+                return redirect(url_for("main_page"))
 
         if recordedVid.channel.protected:
             if not check_isValidChannelViewer(clipQuery.recordedVideo.channel.id):
@@ -3422,8 +3425,8 @@ def search_page():
         streamList = Stream.Stream.query.filter(Stream.Stream.streamName.contains(search)).all()
 
         clipList = []
-        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).all()
-        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).all()
+        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).filter(RecordedVideo.Clips.published == True).all()
+        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).filter(RecordedVideo.Clips.published == True).all()
         for clip in clipList1:
             clipList.append(clip)
         for clip in clipList2:

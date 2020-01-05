@@ -365,7 +365,7 @@ class api_1_ListClips(Resource):
         """
              Returns a List of All Saved Clips
         """
-        clipsList = RecordedVideo.Clips.query.all()
+        clipsList = RecordedVideo.Clips.query.filter_by(published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipsList]}
 
@@ -376,7 +376,7 @@ class api_1_ListClip(Resource):
         """
              Returns Info on a Single Saved Clip
         """
-        clipList = RecordedVideo.Clips.query.filter_by(id=clipID).all()
+        clipList = RecordedVideo.Clips.query.filter_by(id=clipID, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipList]}
 
