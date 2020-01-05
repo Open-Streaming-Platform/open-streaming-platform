@@ -4163,7 +4163,10 @@ def newScreenShot(message):
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
             tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
-            emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
+            if 'clip' in message:
+                emit('checkClipScreenShot', {'thumbnailLocation': tempLocation, 'timestamp': timeStamp}, broadcast=False)
+            else:
+                emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
             db.session.close()
     return 'OK'
 

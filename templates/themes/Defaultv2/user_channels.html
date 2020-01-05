@@ -117,7 +117,7 @@
                             </div>
                             <div class="mt-2">
                               <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
-                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '/videos/{{clip.recordedVideo.videoLocation}}', {{clip.startTime}});"><i class="fas fa-camera"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.recordedVideo.videoLocation}}', {{clip.startTime}});"><i class="fas fa-camera"></i></button>
                               <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
                               <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
@@ -914,6 +914,7 @@
           </div><br>
           <button class="btn btn-block btn-success" onclick="newScreenShot();">Capture Screenshot</button>
           <input type="hidden" id="videossID">
+          <input type="hidden" id="SSTimestamp">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
@@ -999,6 +1000,8 @@
           </div><br>
           <button class="btn btn-block btn-success" onclick="newClipScreenShot();">Capture Screenshot</button>
           <input type="hidden" id="clipssID">
+          <input type="hidden" id="clipvideossID">
+          <input type="hidden" id="clipSSTimestamp">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
@@ -1088,7 +1091,7 @@
 
   }
 
-  function openClipSSModal(clipID,videoLocation, startTime) {
+  function openClipSSModal(clipID, videoID, videoLocation, startTime) {
     clipssplayer.pause();
 
     clipssplayer.src(videoLocation);
@@ -1097,6 +1100,7 @@
     clipssplayer.on('loadedmetadata', function() {this.currentTime(startTime)});
 
     document.getElementById("clipssID").value = clipID;
+    document.getElementById("clipvideossID").value = videoID;
 
     document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
 
@@ -1105,16 +1109,37 @@
   }
 
   function newScreenShot() {
+    ssplayer.pause();
     window.whereYouAt = ssplayer.currentTime();
+    document.getElementById("SSTimestamp").value = window.whereYouAt;
     socket.emit('newScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
   }
 
+  function newClipScreenShot() {
+    clipssplayer.pause();
+    window.whereYouAt = clipssplayer.currentTime();
+    document.getElementById("clipSSTimestamp").value = window.whereYouAt;
+    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, timeStamp: window.whereYouAt, clip:true });
+  }
+
   function setScreenShot() {
-    socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
+    var timestamp = document.getElementById("SSTimestamp").value;
+    socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: timestamp });
     var videoID = document.getElementById('videossID').value;
     ssplayer.pause();
     setTimeout(function() {
         document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
+        }, 4000);
+    createNewBSAlert("Thumbnail Updated", "Success");
+  }
+
+  function setClipScreenShot() {
+    var timestamp = document.getElementById("clipSSTimestamp").value;
+    socket.emit('setScreenShot', { clipID: document.getElementById('clipssID').value, timeStamp: timestamp });
+    var clipID = document.getElementById('clipssID').value;
+    clipssplayer.pause();
+    setTimeout(function() {
+        document.getElementById('clipThumb-' + clipID).src = document.getElementById('clipThumb-' + clipID).src + '?t=' + new Date().getTime();
         }, 4000);
     createNewBSAlert("Thumbnail Updated", "Success");
   }
@@ -1466,6 +1491,10 @@ function openChannelWindow(divID, windowName) {
 
     socket.on('checkScreenShot', function (msg) {
         document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
+    });
+
+    socket.on('checkClipScreenShot', function (msg) {
+        document.getElementById("newClipScreenShotImg").src = msg['thumbnailLocation'];
     });
 
     socket.on('disconnect', function () {
