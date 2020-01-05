@@ -4592,13 +4592,15 @@ def togglePublishedClipSocketIO(message):
             newState = not clipQuery.published
             clipQuery.published = newState
 
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=clipQuery.recordedVideo.channel.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
-                                                                 clipQuery.recordedVideo.channel.channelName + " titled " + clipQuery.clipName,'/clip/' +
-                                                                 str(clipQuery.id),"/images/" + clipQuery.recordedVideo.channel.owner.pictureLocation, sub.userID)
-                db.session.add(newNotification)
+            if newState is True:
+
+                subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=clipQuery.recordedVideo.channel.id).all()
+                for sub in subscriptionQuery:
+                    # Create Notification for Channel Subs
+                    newNotification = notifications.userNotification(get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
+                                                                     clipQuery.recordedVideo.channel.channelName + " titled " + clipQuery.clipName,'/clip/' +
+                                                                     str(clipQuery.id),"/images/" + clipQuery.recordedVideo.channel.owner.pictureLocation, sub.userID)
+                    db.session.add(newNotification)
             db.session.commit()
             db.session.close()
             return 'OK'
