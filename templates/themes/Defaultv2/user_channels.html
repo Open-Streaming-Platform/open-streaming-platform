@@ -116,10 +116,10 @@
                               <img class="shadow lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
                             </div>
                             <div class="mt-2">
-                              <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-videoid="{{clip.id}}"><i class="fas fa-edit"></i></button>
+                              <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
                               <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSClipModal('{{clip.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
-                              <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipShareModal" data-videoid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
-                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-videoid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
+                              <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+                              <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
                           </div>
                           <div class="col mt-2">
@@ -1038,6 +1038,14 @@
         $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
         $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
         $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID);
+    });
+
+    $(document).on("click", ".clipShareModalButton", function () {
+        var clipID = $(this).data('clipid');
+        $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "','facebook-share-dialog','width=626,height=436');return false;");
+        $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
+        $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
+        $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID);
     });
 
     $(document).on("click", ".videoEditModalButton", function () {
