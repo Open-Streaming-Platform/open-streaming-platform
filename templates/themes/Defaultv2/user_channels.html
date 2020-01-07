@@ -1467,10 +1467,12 @@ function openChannelWindow(divID, windowName) {
     var openWindow = document.getElementById(windowName + '-' + divID);
     var statWindow = document.getElementById('statWindow-' + divID);
     var videoWindow = document.getElementById('videoWindow-' + divID);
+    var clipWindow = document.getElementById('clipWindow-' + divID);
     var settingsWindow = document.getElementById('settingsWindow-' + divID);
 
     statWindow.style.display = 'none';
     videoWindow.style.display = 'none';
+    clipWindow.style.display = 'none';
     settingsWindow.style.display = 'none';
 
     openWindow.style.display = 'block';
