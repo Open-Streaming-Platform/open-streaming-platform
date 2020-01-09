@@ -1822,7 +1822,9 @@ def upload_vid():
         db.session.close()
         return redirect(url_for('main_page'))
 
-    newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments)
+    videoPublishState = ChannelQuery.autoPublish
+
+    newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments, videoPublishState)
 
     videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
     videoPath = '/var/www/videos/' + videoLoc
@@ -2736,7 +2738,7 @@ def settings_dbRestore():
                                                             restoredVideo['videoLocation'],
                                                             datetime.datetime.strptime(restoredVideo['videoDate'],
                                                                                        '%Y-%m-%d %H:%M:%S'),
-                                                            eval(restoredVideo['allowComments']))
+                                                            eval(restoredVideo['allowComments']), eval(restoredVideo['published']))
                         except ValueError:
                             video = RecordedVideo.RecordedVideo(int(restoredVideo['owningUser']),
                                                                 int(restoredVideo['channelID']),
@@ -2746,7 +2748,7 @@ def settings_dbRestore():
                                                                 restoredVideo['videoLocation'],
                                                                 datetime.datetime.strptime(restoredVideo['videoDate'],
                                                                                            '%Y-%m-%d %H:%M:%S.%f'),
-                                                                eval(restoredVideo['allowComments']))
+                                                                eval(restoredVideo['allowComments']), eval(restoredVideo['published']))
                         video.id = int(restoredVideo['id'])
                         video.description = restoredVideo['description']
                         if restoredVideo['length'] != "None":
@@ -3522,7 +3524,7 @@ def streamkey_check():
                             db.session.delete(recording)
                             db.session.commit()
 
-                    newRecording = RecordedVideo.RecordedVideo(userCheck.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments)
+                    newRecording = RecordedVideo.RecordedVideo(userCheck.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
                     db.session.add(newRecording)
                     db.session.commit()
                     if sysSettings.adaptiveStreaming:
