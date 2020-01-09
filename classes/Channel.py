@@ -27,7 +27,7 @@ class Channel(db.Model):
     defaultStreamName = db.Column(db.String(255))
     autoPublish = db.Column(db.Boolean)
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="subquery")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
     inviteCodes = db.relationship('inviteCode', backref='channel', cascade="all, delete-orphan", lazy="joined")
     invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="joined")
