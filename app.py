@@ -459,7 +459,7 @@ def check_isCommentUpvoted(commentID):
     if current_user.is_authenticated:
         commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
         if commentQuery != None:
-            db.session.close()
+            #db.session.close()
             return True
     #db.session.close()
     return False
@@ -470,7 +470,7 @@ def check_isUserValidRTMPViewer(userID,channelID):
         channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
         if channelQuery is not None:
             if channelQuery.owningUser is userQuery.id:
-                db.session.close()
+                #db.session.close()
                 return True
             else:
                 inviteQuery = invites.invitedViewer.query.filter_by(userID=userQuery.id, channelID=channelID).all()
@@ -3456,15 +3456,15 @@ def auth_check():
         if channelQuery != None:
             if channelQuery.protected:
                 if check_isValidChannelViewer(channelQuery.id):
-                    db.session.close()
+                    #db.session.close()
                     return 'OK'
                 else:
-                    db.session.close()
+                    #db.session.close()
                     return abort(401)
             else:
                 return 'OK'
 
-    db.session.close()
+    #db.session.close()
     abort(400)
 
 ### Start NGINX-RTMP Authentication Functions
