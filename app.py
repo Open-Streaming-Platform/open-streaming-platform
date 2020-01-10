@@ -1431,6 +1431,8 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
+            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+
             return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
