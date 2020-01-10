@@ -1401,6 +1401,8 @@ def view_page(loc):
         db.session.add(newView)
         db.session.commit()
 
+        requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+
         if isEmbedded == None or isEmbedded == "False":
 
             secureHash = None
@@ -1430,8 +1432,6 @@ def view_page(loc):
                 chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id, userID=current_user.id).first()
                 if chanSubQuery is not None:
                     subState = True
-
-            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
             return render_template(checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
