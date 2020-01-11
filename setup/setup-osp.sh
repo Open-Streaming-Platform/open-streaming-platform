@@ -11,6 +11,8 @@ sudo pip3 install -r requirements.txt
 
 # Install Redis
 sudo apt-get install redis -y
+sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf
+sudo systemctl restart redis
 
 # Setup OSP Directory
 mkdir -p /opt/osp
