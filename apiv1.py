@@ -280,7 +280,7 @@ class api_1_ListVideos(Resource):
         """
              Returns a List of All Recorded Videos
         """
-        videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, publiished=True).all()
+        videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
