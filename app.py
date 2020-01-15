@@ -525,7 +525,6 @@ def checkOverride(themeHTMLFile):
         return "themes/Defaultv2/" + themeHTMLFile
 
 def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
-    server = None
     sslContext = None
     if smtpSSL is True:
         import ssl
