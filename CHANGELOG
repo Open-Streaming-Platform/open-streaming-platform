@@ -19,6 +19,7 @@ Beta-4
 - Added Per Channel Video Control from the User Channel Screen
 - Fixed issue where Defaultv2-Dark's Popout Chat retained the Defaultv2-Light's theme
 - Moved Gunicorn Logs to /opt/osp/logs
+- Updated Flask-SocketIO to 4.2.1
 - Fixed Issue where Channel Subscriptions were not being restored from backups
 - Fixed Variables causing Type Confusion
 - Fixed Issue where Video and Clip Thumbnails were being generated based on the current video player timestamp, instead of the timestamp of the last captured screenshot
