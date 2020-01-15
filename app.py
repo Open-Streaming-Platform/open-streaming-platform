@@ -18,7 +18,7 @@ from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 import xmltodict
-from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
