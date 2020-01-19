@@ -192,6 +192,9 @@ hr {
     list-style-type:none;
 }
 
+.card {
+    display: block;
+}
 .displayCard a {
 }
 

@@ -16,8 +16,9 @@
 
 <script>
   function newScreenShot() {
+    player.pause();
     window.whereYouAt = player.currentTime();
-    console.log(window.whereYouAt);
+    document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
     socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
   }
 </script>
@@ -281,6 +282,7 @@
       <div class="modal-body">
         <h5>Use this picture?</h5>
         <img id="newScreenShotImg" src="">
+        <input type="hidden" id="thumbnailTimestamp">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
@@ -557,7 +559,8 @@
 
 <script>
   function setScreenShot() {
-    socket.emit('setScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
+    var timestamp = document.getElementById("thumbnailTimestamp").value;
+    socket.emit('setScreenShot', { loc: '{{video.id}}', timeStamp: timestamp });
   }
 </script>
 
