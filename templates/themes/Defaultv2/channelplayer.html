@@ -36,7 +36,7 @@
                   </span>
                   <span class="float-right mt-2">
                       <span id="liveIndicatorBadge" class="badge badge-secondary"><b><i class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-inline"> Offline</span></b></span>
-                    {% if channel.protected %}
+                    {% if channel.protected and sysSettings.protectionEnabled %}
                       <span class="badge badge-warning float-right mr-1 align-bottom"><i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span></span>
                     {% endif %}
                   </span>
@@ -157,7 +157,7 @@
                               <a href="/play/{{video.id}}">
                                 <div class="displayCard-thumbnail zoom">
                                   <div class="video-badges">
-                                    {% if channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                                    {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                                   </div>
                                   <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                                   <div class="displayCard-counts">
@@ -215,9 +215,9 @@
                           <a href="/clip/{{clip.id}}">
                             <div class="displayCard-thumbnail zoom">
                               <div class="video-badges">
-                                {% if channel.protected %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                                {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                               </div>
-                              <img class="shadow lazy" {% if channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                              <img class="shadow lazy" {% if channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                         onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                               <div class="displayCard-counts">
                                 <span class="displayCard-left align-left" style="color:white;">

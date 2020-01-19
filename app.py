@@ -258,6 +258,10 @@ def init_db_values():
         if sysSettings.serverMessage is None:
             sysSettings.serverMessage = ""
             db.session.commit()
+        # Sets Protection System Setting if None Exists:
+        if sysSettings.protectionEnabled is None:
+            sysSettings.protectionEnabled = True
+            db.session.commit()
         # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
         channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
         for chan in channelQuery:
@@ -1358,7 +1362,7 @@ def view_page(loc):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
-    if requestedChannel.protected:
+    if requestedChannel.protected and sysSettings.protectionEnabled:
         if not check_isValidChannelViewer(requestedChannel.id):
             return render_template(checkOverride('channelProtectionAuth.html'))
 
@@ -1467,7 +1471,7 @@ def view_vid_page(videoID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("main_page"))
 
-        if recordedVid.channel.protected:
+        if recordedVid.channel.protected and sysSettings.protectionEnabled:
             if not check_isValidChannelViewer(recordedVid.channel.id):
                 return render_template(checkOverride('channelProtectionAuth.html'))
 
@@ -1678,7 +1682,7 @@ def view_clip_page(clipID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("main_page"))
 
-        if recordedVid.channel.protected:
+        if recordedVid.channel.protected and sysSettings.protectionEnabled:
             if not check_isValidChannelViewer(clipQuery.recordedVideo.channel.id):
                 return render_template(checkOverride('channelProtectionAuth.html'))
 
@@ -2306,6 +2310,7 @@ def admin_page():
             allowComments = False
             smtpTLS = False
             smtpSSL = False
+            protectionEnabled = False
 
             if 'recordSelect' in request.form:
                 recordSelect = True
@@ -2327,6 +2332,9 @@ def admin_page():
 
             if 'smtpSSL' in request.form:
                 smtpSSL = True
+
+            if 'enableProtection' in request.form:
+                protectionEnabled = True
 
             systemLogo = None
             if 'photo' in request.files:
@@ -2359,6 +2367,7 @@ def admin_page():
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
             sysSettings.serverMessage = serverMessage
+            sysSettings.protectionEnabled = protectionEnabled
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
 
@@ -2598,6 +2607,7 @@ def settings_dbRestore():
             serverSettings.id = int(restoreDict['settings'][0]['id'])
             serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
             serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
+            serverSettings.protectionEnabled = restoreDict['settings'][0]['protectionEnabled']
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
 
@@ -3449,6 +3459,10 @@ def notification_page():
 
 @app.route('/auth', methods=["POST","GET"])
 def auth_check():
+
+    sysSettings = settings.settings.query.first()
+    if sysSettings.protectionEnabled is False:
+        return 'OK'
 
     channelID = ""
     if 'X-Channel-ID' in request.headers:

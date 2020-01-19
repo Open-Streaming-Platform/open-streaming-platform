@@ -315,10 +315,10 @@
                                 <div class="col-12">
                                     <div class="row">
                                         <div class="col-4">
-                                            <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h5></a>
+                                            <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b>{% if sysSettings.protectionEnabled == False %} - (Disabled) {% endif %}</h5></a>
                                         </div>
                                         <div class="col-2">
-                                            <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small">
+                                            <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small" {% if sysSettings.protectionEnabled == False %} disabled {% endif %}>
                                         </div>
                                     </div>
                                     <div id="channelProtection-{{channel.id}}" style="display:none;">

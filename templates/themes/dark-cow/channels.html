@@ -43,7 +43,7 @@
                             {% endif %}
                         </span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
-                        {% if channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
+                        {% if channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
                         <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/"><span class="topic">{{channel.topic|get_topicName}}</span></a>
                         <span class="float-right">
                             <i class="fas fa-users mr-2"></i> <span class="views">{{channel.views}}</span>
