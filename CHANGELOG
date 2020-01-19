@@ -12,6 +12,7 @@ Beta-4
 - Added the ability to Publish and Unpublish Videos and Clips
 - Added an option to Channels to Autopublish Videos (Enabled by Default)
 - Added Recommended Profile Picture Resolution
+- Added Switch to Enable/Disable the Channel Protection system due to the slight overhead on pulling videos and images. System default on new installs will be disabled. Existing installs will be enabled on upgrade.
 - Switched from Flask Security to Flask-Security-Too
 - Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
 - Reformated Display Cards to v3
