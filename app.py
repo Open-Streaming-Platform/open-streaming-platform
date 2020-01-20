@@ -2710,7 +2710,7 @@ def settings_dbRestore():
                     channel.showChatJoinLeaveNotification = eval(restoredChannel['showChatJoinLeaveNotification'])
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
-                    channel.autoPublish = restoredChannel['autoPublish']
+                    channel.autoPublish = eval(restoredChannel['autoPublish'])
 
                     db.session.add(channel)
                 else:
