@@ -123,7 +123,7 @@ if config.redisPassword != '':
 else:
     r = redis.Redis(host=config.redisHost, port=config.redisPort, password=config.redisPassword)
 
-#r.flushdb()
+r.flushdb()
 
 appDBVersion = 0.45
 
