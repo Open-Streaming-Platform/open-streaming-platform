@@ -2607,7 +2607,7 @@ def settings_dbRestore():
             serverSettings.id = int(restoreDict['settings'][0]['id'])
             serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
             serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
-            serverSettings.protectionEnabled = restoreDict['settings'][0]['protectionEnabled']
+            serverSettings.protectionEnabled = eval(restoreDict['settings'][0]['protectionEnabled'])
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
 
