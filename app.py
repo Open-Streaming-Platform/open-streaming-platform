@@ -2786,7 +2786,7 @@ def settings_dbRestore():
                         newClip.id = int(restoredClip['id'])
                         newClip.views = int(restoredClip['views'])
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']
-                        newClip.published = restoredClip['published']
+                        newClip.published = eval(restoredClip['published'])
                         db.session.add(newClip)
                     else:
                         flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
