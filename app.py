@@ -1012,7 +1012,10 @@ def get_topicName(topicID):
 @app.template_filter('get_userName')
 def get_userName(userID):
     userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    return userQuery.username
+    if userQuery is None:
+        return "Unknown User"
+    else:
+        return userQuery.username
 
 @app.template_filter('get_Video_Upvotes')
 def get_Video_Upvotes_Filter(videoID):
@@ -2095,6 +2098,11 @@ def admin_page():
                         commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
                         for comment in commentQuery:
                             db.session.delete(comment)
+                        db.session.commit()
+
+                        inviteQuery = invites.invitedViewer.query.filter_by(userID=int(userID)).all()
+                        for invite in inviteQuery:
+                            db.session.delete(invite)
                         db.session.commit()
 
                         channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
