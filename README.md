@@ -150,46 +150,54 @@ sudo apt-get install python3 python3-pip
 ```
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev
 ```
-4: Install Python Dependencies
+4: Install Redis and Configure
+```
+sudo apt-get install redis -y
+sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf
+sudo systemctl restart redis
+```
+5: Install Python Dependencies
 ```
 pip3 install -r /opt/osp/setup/requirements.txt
 ```
-5: Install Gunicorn and the uWSGI plugins
+6: Install Gunicorn and the uWSGI plugins
 ```
 apt-get install gunicorn3 uwsgi-plugin-python
 ```
-6: Download and Build NGINX and NGINX-RTMP
+7: Download and Build NGINX and NGINX-RTMP
 * Nginx may require --with-cc-opt="-Wimplicit-fallthrough=0" added to ./configure to build on Debian and >= Ubuntu 18.10 to build
 ```
 cd /tmp
 wget "http://nginx.org/download/nginx-1.17.3.tar.gz"
 wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
 wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
+wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz"
 tar xvfz nginx-1.17.3.tar.gz
 unzip v1.2.1.zip
 tar xvfz zlib-1.2.11.tar.gz
+sudo tar xvfz master.tar.gz
 cd nginx-1.17.3
-./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
+./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11
 make
 make install
 ```
-7: Copy the NGINX conf files to the configuration directory
+8: Copy the NGINX conf files to the configuration directory
 ```
 cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 ```
-8: Copy the Gunicorn and NGINX SystemD files
+9: Copy the Gunicorn and NGINX SystemD files
 ```
 cp /opt/osp/setup/nginx/nginx-osp.service /lib/systemd/system/nginx-osp.service
 cp /opt/osp/setup/gunicorn/osp-worker@.service /lib/systemd/system/osp-worker@.service
 cp /opt/osp/setup/gunicorn/osp.target /lib/systemd/system/osp.target
 ```
-9: Reload SystemD
+10: Reload SystemD
 ```
 systemctl daemon-reload
 systemctl enable nginx-osp.service
 systemctl enable osp.target
 ```
-10: Make the Required OSP Directories and Set Ownership
+11: Make the Required OSP Directories and Set Ownership
 ```
 mkdir /var/www
 mkdir /var/www/live
@@ -202,32 +210,35 @@ chown -R www-data:www-data /var/www
 chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
 ```
-11: Install FFMPEG4
+12: Install FFMPEG4
 ```
 add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 apt-get update
 apt-get install ffmpeg -y
 ```
-12: Copy the Default Config File and Make Changes
+13: Copy the Default Config File and Make Changes
 ```
 cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 ```
-13: Setup Log Rotation
+14: Setup Log Rotation
 ```
+sudo apt-get install logrotate
 cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
 ```
-13: Start NGINX and OSP
+14: Start NGINX and OSP
 ```
 systemctl start nginx-osp.service
 systemctl start osp.target
 ```
-14: Open the site in a browser and run through the First Time Setup
+15: Open the site in a browser and run through the First Time Setup
 ```
 http://<ip or host>/
 ```
 
 ### Database
-By default, OSP uses SQLite for its database.  However, in most cases it is recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.
+By default, OSP uses SQLite for its database.  However, for production it is highly recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.  Running the default SQLite Configuration will lead to slowdowns over time.
+
+If you need to migrate from SQLite to MySQL, you can take a backup of the database, change the configuration file to MySQL, and then restore the backup.
 
 When configuring OSP to use MySQL, you must change the DB path in the /opt/osp/conf/config.py file to match the following format (Without Brackets):
 ```
