@@ -80,8 +80,8 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-http_v2_module \
   --with-http_auth_request_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
-  --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
-  --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42
+  --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} \
+  --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX
