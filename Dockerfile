@@ -70,7 +70,7 @@ RUN cd /tmp && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
 RUN cd /tmp && \
-  wget sudo wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
+  wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
   tar xxf master.tar.gz
 
 # Compile NGINX with the NGINX-RTMP Module
