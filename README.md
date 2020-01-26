@@ -129,6 +129,9 @@ This accomplished easily by using a reverse proxy in Docker such as Traefik.  Ho
     - Default: ```True```
 - OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
     - Default: ```True```
+- REDIS_HOST: Sets the Redis Instance IP/Hostname
+- REDIS_PORT: Sets the Redis Instance Port
+- REDIS_PASSWORD: Sets the Redis Instance Password, if needed
 
 **Recommended Volumes/Mount Points**
 -  /var/www - Storage of Images, Streams, and Stored Video Files
