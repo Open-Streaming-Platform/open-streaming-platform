@@ -117,6 +117,8 @@ A Dockerfile has been provided for running OSP in a container.  However due to t
 
 This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 
+An external Redis server is required to handling asynchronous communications between the internal gunicorn worker instances.
+
 **Environment Variables**
 - DB_URL: Sets the SQLAlchemy URL String for the used DB.
     - Default: ```"sqlite:///db/database.db"```
@@ -129,8 +131,9 @@ This accomplished easily by using a reverse proxy in Docker such as Traefik.  Ho
     - Default: ```True```
 - OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
     - Default: ```True```
-- REDIS_HOST: Sets the Redis Instance IP/Hostname
+- REDIS_HOST: Sets the Redis Instance IP/Hostname (REQUIRED)
 - REDIS_PORT: Sets the Redis Instance Port
+    - Default: ```6379```
 - REDIS_PASSWORD: Sets the Redis Instance Password, if needed
 
 **Recommended Volumes/Mount Points**
