@@ -69,13 +69,19 @@ RUN cd /tmp && \
   wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
+RUN cd /tmp && \
+  wget sudo wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
+  tar xxf master.tar.gz
+
 # Compile NGINX with the NGINX-RTMP Module
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
   ./configure \
   --with-http_ssl_module \
   --with-http_v2_module \
+  --with-http_auth_request_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} && \
+  --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 # Configure NGINX
