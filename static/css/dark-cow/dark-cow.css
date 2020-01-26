@@ -186,6 +186,11 @@ hr {
     padding-left: 0;
 }
 
+.channelVideoCard {
+  list-style-type:none;
+  width: 700px;
+}
+
 .displayCard {
     width: 600px;
     margin-bottom:15px;
