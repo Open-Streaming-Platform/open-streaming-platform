@@ -112,9 +112,10 @@ app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 if config.redisPassword != '':
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
+    app.config["SESSION_REDIS"] = config.redisHost + ":" + str(config.redisPort)
 else:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
-
+    app.config["SESSION_REDIS"] = config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 logger = logging.getLogger('gunicorn.error').handlers
 
 # Init Redis DB and Clear Existing DB
