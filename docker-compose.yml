@@ -1,5 +1,10 @@
 version: '3.4'
 services:
+  redis:
+    image: redis
+    container_name: ospredis
+    expose:
+      - 6379
   app:
     build: .
     restart: always
@@ -7,7 +12,10 @@ services:
       - '1935:1935'
       - '8585:80'
       - '8553:443'
-#     env:
+    env:
+      - REDIS_HOST="ospredis"
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=""
 #       - DB_URL="sqlite:///db/database.db"
 #       - FLASK_SECRET="Super-Sekrit"
 #       - FLASK_SALT="SALT123"
