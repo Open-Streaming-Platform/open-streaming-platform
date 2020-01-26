@@ -6,6 +6,7 @@ Beta-4
     * Note: This will require a new recompile of Nginx by using the setup script or compiling manually as well as updating the osp-redirects.conf and nginx.conf
 - Moved Async Processing to use Redis.
     * Note: New Configuration Variables have been added to the config.py file which are required.
+    * Note: Redis is not included in the Docker Image and must be installed in a separate container or server for OSP to work
 - Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
 - Added Notifications for Various Events such as New Streams, New Videos, New Comments, Likes, etc
 - Added Video, Clip, Channel, and Stream Sorting
