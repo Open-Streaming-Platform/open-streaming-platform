@@ -3535,12 +3535,12 @@ def streamkey_check():
                 db.session.add(newStream)
                 db.session.commit()
 
-                if channelRequest.record is False:
+                if channelRequest.record is False or sysSettings.allowRecording is False:
                     if sysSettings.adaptiveStreaming:
                         return redirect('rtmp://' + externalIP + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
                         return redirect('rtmp://' + externalIP + '/stream-data/' + channelRequest.channelLoc, code=302)
-                elif channelRequest.record is True:
+                elif channelRequest.record is True and sysSettings.allowRecording is True:
 
                     userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
                     existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
@@ -3556,6 +3556,11 @@ def streamkey_check():
                         return redirect('rtmp://' + externalIP + '/streamrec-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
                         return redirect('rtmp://' + externalIP + '/streamrec-data/' + channelRequest.channelLoc, code=302)
+                else:
+                    returnMessage = {'time': str(currentTime), 'status': 'Streaming Error due to mismatched settings', 'key': str(key), 'ipAddress': str(ipaddress)}
+                    print(returnMessage)
+                    db.session.close()
+                    return abort(400)
             else:
                 returnMessage = {'time': str(currentTime), 'status': 'Unauthorized User - Missing Streamer Role', 'key': str(key), 'ipAddress': str(ipaddress)}
                 print(returnMessage)
