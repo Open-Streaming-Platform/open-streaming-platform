@@ -76,12 +76,29 @@
     </script>
 
     <script>
-        $('#text').keypress(function (e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
+        var chatTimer;
+        var chatThrottled = false;
+        var chatTimeout = 2000;
+
+        function chatThrottleDisable() {
+            chatThrottled = false;
+        }
+
+        function sendChat() {
+            if (chatThrottled == false) {
                 text = $('#text').val();
                 $('#text').val('');
-                socket.emit('text', { msg: text, room: '{{channel.channelLoc}}' });
+                socket.emit('text', {msg: text, room: '{{channel.channelLoc}}'});
+                chatThrottled = true;
+                chatTimer = setTimeout(chatThrottleDisable, chatTimeout);
+            }
+
+        };
+
+        $('#text').keypress(function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                sendChat();
             }
         });
     </script>

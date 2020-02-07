@@ -5,7 +5,7 @@
     <title>{{stream.streamName}} - Chat</title>
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
-    <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2-Light.css">
+    <link rel=stylesheet type=text/css href="/static/css/Defaultv2/{{sysSettings.systemTheme}}.css">
     <link rel=stylesheet type=text/css href="/static/css/shared.css">
     <link rel=stylesheet type=text/css href="/static/css/slider.css">
     <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
@@ -76,12 +76,29 @@
     </script>
 
     <script>
+        var chatTimer;
+        var chatThrottled = false;
+        var chatTimeout = 2000;
+
+        function chatThrottleDisable() {
+            chatThrottled = false;
+        }
+
+        function sendChat() {
+            if (chatThrottled == false) {
+                text = $('#text').val();
+                $('#text').val('');
+                socket.emit('text', {msg: text, room: '{{channel.channelLoc}}'});
+                chatThrottled = true;
+                chatTimer = setTimeout(chatThrottleDisable, chatTimeout);
+            }
+
+        };
+
         $('#text').keypress(function(e) {
             var code = e.keyCode || e.which;
             if (code == 13) {
-                text = $('#text').val();
-                $('#text').val('');
-                socket.emit('text', {msg: text, room:'{{channel.channelLoc}}' });
+                sendChat();
             }
         });
     </script>
@@ -95,12 +112,12 @@
             var s = today.getSeconds();
             var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
             if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else if (data['flags'] === 'Bot')
             {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
             } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
+                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px" onerror="this.src=\'/static/img/user2.png\';"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
             }
             $('#chat').animate({ scrollTop: 1000000 }, "fast");
         });

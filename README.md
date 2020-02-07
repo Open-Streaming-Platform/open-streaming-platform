@@ -39,6 +39,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Flask Uploads] - Manage User Uploads, such as Pictures
 * [Flask-RestPlus] - Handling and Documentation of the OSP API
 * [Flask-Markdown] - Displaying Markdown in Jinja2 Templates
+* [Easy-MDE] - Markdown Interface for TextAreas
 * [Bootstrap] - For Building responsive, mobile-first projects on the web 
 * [Bootstrap-Toggle] - Used to Build Toggle Buttons with Bootstrap
 * [NGINX] - Open-Source, high-performance HTTP server and reverse proxy
@@ -48,6 +49,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 * [Video.js] - Handles the HTML5 Video Playback of HLS video streams and MP4 Files
 * [Font Awesome] - Interface Icons and Such
 * [[Animista](http://animista.net/)] - Awesome CSS Animation Generator
+* [List.js] - Handling List Sorting and Pagination
 
 And OSP itself is open source with a [public repository](https://gitlab.com/Deamos/flask-nginx-rtmp-manager) on Gitlab.
 
@@ -115,6 +117,8 @@ A Dockerfile has been provided for running OSP in a container.  However due to t
 
 This accomplished easily by using a reverse proxy in Docker such as Traefik.  However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 
+An external Redis server is required to handling asynchronous communications between the internal gunicorn worker instances.
+
 **Environment Variables**
 - DB_URL: Sets the SQLAlchemy URL String for the used DB.
     - Default: ```"sqlite:///db/database.db"```
@@ -127,6 +131,10 @@ This accomplished easily by using a reverse proxy in Docker such as Traefik.  Ho
     - Default: ```True```
 - OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
     - Default: ```True```
+- REDIS_HOST: Sets the Redis Instance IP/Hostname (REQUIRED)
+- REDIS_PORT: Sets the Redis Instance Port
+    - Default: ```6379```
+- REDIS_PASSWORD: Sets the Redis Instance Password, if needed
 
 **Recommended Volumes/Mount Points**
 -  /var/www - Storage of Images, Streams, and Stored Video Files
@@ -148,44 +156,54 @@ sudo apt-get install python3 python3-pip
 ```
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev
 ```
-4: Install Python Dependencies
+4: Install Redis and Configure
+```
+sudo apt-get install redis -y
+sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf
+sudo systemctl restart redis
+```
+5: Install Python Dependencies
 ```
 pip3 install -r /opt/osp/setup/requirements.txt
 ```
-5: Install Gunicorn and the uWSGI plugins
+6: Install Gunicorn and the uWSGI plugins
 ```
 apt-get install gunicorn3 uwsgi-plugin-python
 ```
-6: Download and Build NGINX and NGINX-RTMP
+7: Download and Build NGINX and NGINX-RTMP
+* Nginx may require --with-cc-opt="-Wimplicit-fallthrough=0" added to ./configure to build on Debian and >= Ubuntu 18.10 to build
 ```
 cd /tmp
 wget "http://nginx.org/download/nginx-1.17.3.tar.gz"
 wget "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
 wget "http://www.zlib.net/zlib-1.2.11.tar.gz"
+wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz"
 tar xvfz nginx-1.17.3.tar.gz
 unzip v1.2.1.zip
 tar xvfz zlib-1.2.11.tar.gz
+sudo tar xvfz master.tar.gz
 cd nginx-1.17.3
-./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --with-zlib=../zlib-1.2.11
+./configure --with-http_ssl_module --with-http_v2_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11
 make
 make install
 ```
-7: Copy the NGINX conf files to the configuration directory
+8: Copy the NGINX conf files to the configuration directory
 ```
 cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 ```
-8: Copy the Gunicorn and NGINX SystemD files
+9: Copy the Gunicorn and NGINX SystemD files
 ```
 cp /opt/osp/setup/nginx/nginx-osp.service /lib/systemd/system/nginx-osp.service
-cp /opt/osp/setup/gunicorn/osp.service /lib/systemd/system/osp.service
+cp /opt/osp/setup/gunicorn/osp-worker@.service /lib/systemd/system/osp-worker@.service
+cp /opt/osp/setup/gunicorn/osp.target /lib/systemd/system/osp.target
 ```
-9: Reload SystemD
+10: Reload SystemD
 ```
 systemctl daemon-reload
 systemctl enable nginx-osp.service
-systemctl enable osp.service
+systemctl enable osp.target
 ```
-10: Make the Required OSP Directories and Set Ownership
+11: Make the Required OSP Directories and Set Ownership
 ```
 mkdir /var/www
 mkdir /var/www/live
@@ -194,34 +212,39 @@ mkdir /var/www/live-rec
 mkdir /var/www/images
 mkdir /var/www/live-adapt
 mkdir /var/stream-thumb
-mkdir /var/log/gunicorn
 chown -R www-data:www-data /var/www
 chown -R www-data:www-data /opt/osp
 chown -R www-data:www-data /opt/osp/.git
-chown -R www-data:www-data /var/log/gunicorn
 ```
-11: Install FFMPEG4
+12: Install FFMPEG4
 ```
 add-apt-repository ppa:jonathonf/ffmpeg-4 -y
 apt-get update
 apt-get install ffmpeg -y
 ```
-12: Copy the Default Config File and Make Changes
+13: Copy the Default Config File and Make Changes
 ```
 cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
 ```
-13: Start NGINX and OSP
+14: Setup Log Rotation
+```
+sudo apt-get install logrotate
+cp /opt/osp/setup/logrotate/* /etc/logrotate.d/
+```
+14: Start NGINX and OSP
 ```
 systemctl start nginx-osp.service
-systemctl start osp.service
+systemctl start osp.target
 ```
-14: Open the site in a browser and run through the First Time Setup
+15: Open the site in a browser and run through the First Time Setup
 ```
 http://<ip or host>/
 ```
 
 ### Database
-By default, OSP uses SQLite for its database.  However, in most cases it is recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.
+By default, OSP uses SQLite for its database.  However, for production it is highly recommended to setup MySQL to act as the DB for OSP.  MySQL 5.7.7 or greater is recommended, due to keysize limits.  Running the default SQLite Configuration will lead to slowdowns over time.
+
+If you need to migrate from SQLite to MySQL, you can take a backup of the database, change the configuration file to MySQL, and then restore the backup.
 
 When configuring OSP to use MySQL, you must change the DB path in the /opt/osp/conf/config.py file to match the following format (Without Brackets):
 ```
@@ -283,6 +306,13 @@ sudo systemctl restart nginx
 ```
 bash dbUpgrade.sh
 ```
+### Upgrading from Beta3 to Beta4
+OSP has added multiple processes to handle load balancing.  Please run the beta3tobeta4.sh script to migrate to the new process structure.
+```
+cd /opt/osp/setup/other
+sudo bash beta3tobeta4.sh
+```
+
 ### Upgrading from Beta2 to Beta3
 Due to changes made with the way Nginx Conf files are handled and adding http2 support for Nginx, it is recommended to make a copy of your existing nginx.conf and transpose any settings to the new nginx.conf format. 
 After making a copy, rerun the osp-setup.sh file in /opt/osp/setup/ directory or rerun through steps 1,4,6,7, & 12 of the manual install before restarting the osp service. 
@@ -304,6 +334,12 @@ After completion, your original nginx.conf file will be renamed to nginx.conf.ol
 - /unban <username> - Unbans a user who has been banned
 - /mute - Places a Chat Channel on Mute
 - /unmute - Removes a Mute Placed on a Chat Channel
+
+### Channel Protection
+OSP offers the ability to require authentication to view Channel Streams, Videos, and Clips.  By default, this setting is **disabled** to reduce overhead.  When enabled, OSP verified that users are authorized to view all media, which can cause a delay while the system queries access.
+
+To enable Channel Protections, go to the Admin Page -> Settings and turn on "Enable Channel Protections".  Once this setting has been enabled Channel Owners can enable protection on their channels and require viewers have been explicitly invited or have an invite code, that has been generated by the channel owner.
+
 
 ### Webhooks
 Webhooks allow you to send a notification out to other services using a GET/POST/PUT/DELETE request which can be defined on a per channel basis depending on various triggers.

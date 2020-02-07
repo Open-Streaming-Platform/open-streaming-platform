@@ -2,7 +2,6 @@
 echo 'Placing Configuration Files'
 cp -R -u -p /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 cp -u -p /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
-cp /opt/osp/setup/config.py.dist /opt/osp/conf/config.py
 echo 'Setting up Directories'
 mkdir -p /var/www && \
   mkdir -p /var/www/live && \
@@ -18,6 +17,12 @@ echo 'Setting up OSP Configuration'
 
 export DB_URL
 echo "dbLocation='$DB_URL'" > /opt/osp/conf/config.py
+export REDIS_HOST
+echo "redisHost='$REDIS_HOST'" >> /opt/osp/conf/config.py
+export REDIS_PORT
+echo "redisPort=$REDIS_PORT" >> /opt/osp/conf/config.py
+export REDIS_PASSWORD
+echo "redisPassword='$REDIS_PASSWORD'" >> /opt/osp/conf/config.py
 export FLASK_SECRET
 echo "secretKey='$FLASK_SECRET'" >> /opt/osp/conf/config.py
 export FLASK_SALT

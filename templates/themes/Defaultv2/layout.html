@@ -17,12 +17,12 @@
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
-  <link rel="stylesheet" href="/static/vendor/simplemde/css/simplemde.min.css">
-  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2-Light.css">
+  <link rel="stylesheet" href="/static/vendor/easymde/css/easymde.min.css">
+  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
-  <script src="/static/vendor/simplemde/js/simplemde.min.js"></script>
+  <script src="/static/vendor/easymde/js/easymde.min.js"></script>
 
   {% block head %}
 
@@ -46,26 +46,75 @@
           <form class="form-inline my-2 my-lg-0 mr-auto" action="/search" method="post">
             <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
           </form>
-          <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/channels"><b>Channels</b></a>
+          <li class="nav-item px-2">
+            <a class="nav-link zoom" href="/channels"><b><i class="fas fa-tv"></i> Channels</b></a>
           </li>
-          <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/topics"><b>Topics</b></a>
+          <li class="nav-item px-2">
+            <a class="nav-link zoom" href="/topics"><b><i class="fas fa-hashtag"></i> Topics</b></a>
           </li>
-          <li class="nav-item px-3">
-            <a class="nav-link zoom" href="/streamers"><b>Streamers</b></a>
+          <li class="nav-item px-2">
+            <a class="nav-link zoom" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
           </li>
           {% if user.is_authenticated == False %}
-          <li class="nav-item px-3">
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
           </li>
-          <li class="nav-item px-3">
+          {% if allowRegistration == True %}
+          <li class="nav-item px-2">
             <a class="nav-link zoom" href="/register"><i class="far fa-id-card"></i> Register</a>
           </li>
+          {% endif %}
           {% else %}
-          <li class="nav-item dropdown px-3">
+          <li class="nav-item px-2 d-block d-lg-none">
+            <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span id="notificationCountMobile" class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
+          </li>
+          <li class="nav-item dropdown pl-2 pr-1 d-none d-lg-block">
+            <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger" id="notificationCountNav">{{notifications|count}}</span>{% endif %}
+            </a>
+            <ul class="dropdown-menu notificationDropdownMenu shadow">
+                <li class="head text-light bg-dark">
+                  <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-12">
+                      <span>Notifications <span class="badge badge-light" id="notificationCountMenu">{{notifications|count}}</span></span>
+                      <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllNotifications(); return false;">Mark all as read</a>
+                    </div>
+                  </div>
+                </li>
+                <div class="notificationBody">
+                    {% if notifications != [] %}
+                      {% for entry in notifications %}
+                      <li class="notification-box" id="notification-{{entry.notificationID}}">
+                        <div class="row">
+                          <div class="col-lg-1 col-sm-1 col-1">
+                            <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                          </div>
+                          <div class="col-lg-11 col-sm-11 col-11">
+                            <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                            <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
+                            <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
+                          </div>
+                        </div>
+                      </li>
+                      {% endfor %}
+                    {% endif %}
+                    <li class="notification-box" id="notification-empty" {% if notifications != [] %} style="display:none;" {% endif %}>
+                    <div class="row">
+                      <div class="col-lg-12 col-sm-12 col-12">
+                        <div>No New Notifications</div>
+                      </div>
+                    </div>
+                    </li>
+                </div>
+
+                <li class="footer bg-dark text-center">
+                  <a href="/notifications" class="text-light">View All</a>
+                </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown px-2">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
+              <img width="30" height="30" class="userPhoto rounded" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               {% if user.has_role('Admin') %}
@@ -128,7 +177,7 @@
           <div class="text-center">
             <img src="/static/img/logo.png">
             <p class="pt-4">
-              Open Streamin Platform Version <b>{{sysSettings.version}}</b>
+              Open Streaming Platform Version <b>{{sysSettings.version}}</b>
             </p>
           </div>
           <div>
@@ -248,6 +297,7 @@
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
   <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+  <script src="/static/vendor/listjs/js/list.min.js"></script>
   <script type="text/javascript">
     Dropzone.autoDiscover = false;
   </script>
@@ -256,7 +306,7 @@
   {% endblock %}
 
   <script>
-    var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+    var uploadmde = new EasyMDE({ element: document.getElementById("videoDescription") });
   </script>
 
   <script type="application/javascript">
@@ -388,6 +438,75 @@
       $('#thumbnailuploadprogress').width("0%");
       $('#videouploadprogress').width("0%");
     }
+  </script>
+
+  <script>
+    $('.notificationDropdownMenu').click(function(e) {
+      e.stopPropagation();
+    });
+
+    var notificationCountMobile = document.getElementById("notificationCountMobile");
+    var notificationCountNav = document.getElementById("notificationCountNav");
+    var notificationCountMenu = document.getElementById("notificationCountMenu");
+    var notificationCount = {{notifications|count}};
+
+    function clearNotification(notificationID) {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
+      var notification = document.getElementById('notification-' + notificationID);
+      notification.parentNode.removeChild(notification);
+
+      var newCount = notificationCount - 1;
+      if (newCount <= 0) {
+        var emptyNotificationBar = document.getElementById("notification-empty");
+
+        notificationCountMobile.style.display = "none";
+        notificationCountNav.style.display = "none";
+        emptyNotificationBar.style.display = "block";
+        newCount = 0;
+      }
+
+      notificationCountMobile.innerText = newCount;
+      notificationCountNav.innerText = newCount;
+      notificationCountMenu.innerText = newCount;
+      notificationCount = notificationCount - 1;
+
+      socket.emit('markNotificationAsRead', { data: notificationID });
+    }
+
+    function clearAllNotifications() {
+      var ids = $('.notificationBody .notification-box').map(function(){
+        return $(this).attr('id');
+        }).get();
+      ids.forEach(function (item, index) {
+        if (item != 'notification-empty') {
+          item = item.replace('notification-','');
+          clearNotification(item);
+        }
+      });
+    }
+
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function hideDiv(divID) {
+      $('#' + divID).removeClass("show");
+      $('#' + divID).addClass("hide");
+    }
+
+    function createNewBSAlert(message,category) {
+      var randomID = getRandomInt(1,9000);
+      $('#toastDiv').append('<div class="toast fade show" id="toast-' + randomID + '" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">' +
+              '<div class="toast-header"><strong class="mr-auto"><span class="toast-box"> </span><span style="margin-left:5px;">' + category + '</span> </strong>' +
+              '<button type="button" class="ml-2 mb-1 close" onclick="hideDiv(\'toast-' + randomID + '\')" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="toast-body">' + message + '</div></div>')
+    }
+
   </script>
 
 

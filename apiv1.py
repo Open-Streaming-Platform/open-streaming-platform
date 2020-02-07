@@ -56,6 +56,7 @@ channelParserPost.add_argument('description', type=str, required=True)
 channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
+channelParserPost.add_argument('commentsEnabled', type=bool, required=True)
 
 streamParserPut = reqparse.RequestParser()
 streamParserPut.add_argument('streamName', type=str)
@@ -114,7 +115,7 @@ class api_1_ListChannels(Resource):
             if requestAPIKey != None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
-                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'],args['description'])
+                    newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'], args['description'])
                     db.session.add(newChannel)
                     db.session.commit()
 
@@ -221,8 +222,8 @@ class api_1_ChannelChat(Resource):
                         if 'userImage' in args:
                             if args['userImage'] is not None:
                                 userImage = args['userImage']
-                    socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
-                    return {'results': {'message': 'Message Posted'}}, 200
+                        socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
+                        return {'results': {'message': 'Message Posted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 @api.route('/streams/')
 class api_1_ListStreams(Resource):
@@ -279,7 +280,7 @@ class api_1_ListVideos(Resource):
         """
              Returns a List of All Recorded Videos
         """
-        videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False).all()
+        videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
@@ -290,7 +291,7 @@ class api_1_ListVideo(Resource):
         """
              Returns Info on a Single Recorded Video
         """
-        videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).all()
+        videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
     @api.expect(videoParserPut)
@@ -364,7 +365,7 @@ class api_1_ListClips(Resource):
         """
              Returns a List of All Saved Clips
         """
-        clipsList = RecordedVideo.Clips.query.all()
+        clipsList = RecordedVideo.Clips.query.filter_by(published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipsList]}
 
@@ -375,7 +376,7 @@ class api_1_ListClip(Resource):
         """
              Returns Info on a Single Saved Clip
         """
-        clipList = RecordedVideo.Clips.query.filter_by(id=clipID).all()
+        clipList = RecordedVideo.Clips.query.filter_by(id=clipID, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipList]}
 

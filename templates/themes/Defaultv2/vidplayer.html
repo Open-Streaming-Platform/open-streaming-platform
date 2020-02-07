@@ -30,8 +30,13 @@
             {% else %}
             <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
             {% endif %}
+            {% if video.published == False %}
+            <span class="badge badge-warning">
+              <i class="fas fa-video-slash"></i> Unpublished
+            </span>
+            {% endif %}
           </span>
-          {% if video.channel.protected %}
+          {% if video.channel.protected and sysSettings.protectionEnabled %}
           <span class="float-right">
             <span class="badge badge-warning">
               <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
@@ -139,26 +144,38 @@
     </div>
     <div class="col-lg-4 col-sm-12 col-xs-12">
       <div class="row m-2">
-        <div class="index-video-title mb-2"><b>Other Videos</b></div>
-        {% for vid in randomRecorded[:4] %}
-        <div class="displayCard-other pb-1 pr-1">
-          <a href="/play/{{vid.id}}">
-            <img class="shadow lazy zoom" {% if vid.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-              onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{vid.thumbnailLocation}}">
-            <div class="card-data">
-              <div class="card-cut-text"><b>{{vid.channelName|limit_title}}</b></div>
-              <i class="fas fa-video mr-2"></i> {{vid.channel.channelName}}<br>
-              <i class="fas fa-hashtag mr-2"></i> {{vid.topic|get_topicName}}<br>
-              {% if vid.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-              <span class="displayCard-footer">
-                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{vid.id|get_Video_Upvotes}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{vid.views}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{vid.length|hms_format}}</span>
-              </span>
-            </div>
-          </a>
-        </div>
-        {% endfor %}
+        <div class="index-video-title mb-2 mx-2"><b>Other Videos</b></div>
+          <ul class="itemList list d-flex flex-wrap justify-content-start">
+            {% for vid in randomRecorded[:4] %}
+            <li class="displayCard mx-4 my-3">
+                <a href="/play/{{vid.id}}">
+                  <div class="displayCard-thumbnail zoom">
+                    <div class="video-badges">
+                      {% if vid.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                    </div>
+                    <img class="shadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div class="displayCard-counts">
+                      <span class="displayCard-left align-left" style="color:white;">
+                        <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{vid.id|get_Video_Upvotes}}</b></span>
+                      </span>
+                      <span class="displayCard-right" style="float:right;color:white;">
+                        <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{vid.views}}</b></span>
+                        <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{vid.length|hms_format}}</b></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="card-data">
+                    <img class="rounded" src="/images/{{vid.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <div class="metadata">
+                      <div class="card-cut-text name ml-2"><b>{{vid.channelName|limit_title}}</b></div>
+                      <div class="card-cut-text topic ml-2">{{vid.topic|get_topicName}}</div>
+                      <span class="date" style="display:none;">{{vid.videoDate|normalize_date}}</span>
+                    </div>
+                  </div>
+                </a>
+            </li>
+            {% endfor %}
+          </ul>
       </div>
     </div>
   </div>
@@ -178,7 +195,7 @@
       <form action="/play/{{video.id}}/change" method="post">
         <div class="modal-body">
 
-          <h5>Name of the Stream:</h5>
+          <h5>Name of the Video:</h5>
           <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
           <br>
           <h5>Stream Topic:</h5>
@@ -194,13 +211,12 @@
           </div>
           <div class="form-group row">
             <div class="col-8">
-              <label for="chatSelect" class="col-form-label"><b>Allow Comments on This Video</b></label>
+              <label for="allowComments" class="col-form-label"><b>Allow Comments on This Video</b></label>
             </div>
             <div class="col-4">
               <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if video.allowComments == True %} checked {% endif %}>
             </div>
           </div>
-
 
         </div>
         <div class="modal-footer">
@@ -246,8 +262,10 @@
       <div class="modal-body">
         <h5>Use this picture?</h5>
         <img id="newScreenShotImg" src="">
+        <input type="hidden" id="thumbnailTimestamp">
       </div>
       <div class="modal-footer">
+
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
         <button type="button" onclick="setScreenShot()" class="btn btn-success" data-dismiss="modal">Save</button>
       </div>
@@ -447,10 +465,10 @@
 </script>
 
 <script>
-    var simplemde = new SimpleMDE({ element: document.getElementById("commentText") });
-    var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+    var easymde = new EasyMDE({ element: document.getElementById("commentText") });
+    var easymde2 = new EasyMDE({ element: document.getElementById("description") });
     {% if video.owningUser == current_user.id %}
-    var simplemde3 = new SimpleMDE({ element: document.getElementById("clipDescription") });
+    var easymde3 = new EasyMDE({ element: document.getElementById("clipDescription") });
     {% endif %}
 </script>
 
@@ -534,8 +552,9 @@
 
 <script>
   function newScreenShot() {
+    player.pause();
     window.whereYouAt = player.currentTime();
-    console.log(window.whereYouAt);
+    document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
     socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
   }
 </script>
@@ -550,7 +569,8 @@
 
 <script>
   function setScreenShot() {
-    socket.emit('setScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt });
+    var timestamp = document.getElementById("thumbnailTimestamp").value;
+    socket.emit('setScreenShot', { loc: '{{video.id}}', timeStamp: timestamp });
   }
 </script>
 

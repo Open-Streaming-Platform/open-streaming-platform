@@ -6,10 +6,10 @@ class logs(db.Model):
     message = db.Column(db.String(1024))
     type = db.Column(db.Integer)
 
-    def __init__(self, timestamp, message, type):
+    def __init__(self, timestamp, message, logType):
         self.timestamp = timestamp
         self.message = message
-        self.type = type
+        self.type = logType
 
     def __repr__(self):
         return '<id %r>' % self.id

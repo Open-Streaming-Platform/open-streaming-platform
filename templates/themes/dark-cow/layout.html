@@ -14,20 +14,20 @@
   <link rel="stylesheet" href="/static/vendor/bootswatch-slate/css/bootstrap-slate.min.css">
   <link rel=stylesheet type=text/css href="/static/css/dark-cow/dark-cow.css">
   <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
-  <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
   <link rel="stylesheet" href="/static/css/dark-cow/simplemde-theme-dark.min.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
-  <script src="/static/vendor/simplemde/js/simplemde.min.js"></script>
-
-
+  <script src="/static/vendor/easymde/js/easymde.min.js"></script>
+  
+  
   {% block head %}
-
+  
   {% endblock %}
-
+  
 </head>
 
 <body>
@@ -39,7 +39,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
+    
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
         <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
@@ -58,10 +58,59 @@
         <li class="nav-item">
           <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
         </li>
+        {% if allowRegistration %}
         <li class="nav-item">
           <a class="nav-link" href="/register"><i class="far fa-id-card"></i> Register</a>
         </li>
+        {% endif %}
         {% else %}
+        <li class="nav-item px-2 d-block d-lg-none">
+          <a class="nav-link zoom" href="/notifications"><i class="fas fa-bell"></i> Notifications {% if notifications|count > 0 %}<span id="notificationCountMobile" class="badge badge-danger">{{notifications|count}}</span>{% endif %}</a>
+        </li>
+        <li class="nav-item dropdown pl-2 pr-1 d-none d-lg-block">
+          <a class="nav-link zoom" href="#" id="navbarDropdownNotificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <b><i class="fas fa-bell"></i></b> {% if notifications|count > 0 %}<span class="badge badge-danger" id="notificationCountNav">{{notifications|count}}</span>{% endif %}
+          </a>
+          <ul class="dropdown-menu notificationDropdownMenu shadow">
+            <li class="head text-light bg-dark">
+              <div class="row">
+                <div class="col-lg-12 col-sm-12 col-12">
+                  <span>Notifications <span class="badge badge-light" id="notificationCountMenu">{{notifications|count}}</span></span>
+                  <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllNotifications(); return false;">Mark all as read</a>
+                </div>
+              </div>
+            </li>
+            <div class="notificationBody">
+              {% if notifications != [] %}
+              {% for entry in notifications %}
+              <li class="notification-box" id="notification-{{entry.notificationID}}">
+                <div class="row">
+                  <div class="col-lg-1 col-sm-1 col-1">
+                    <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                  </div>
+                  <div class="col-lg-11 col-sm-11 col-11">
+                    <span class="float-right"><a href="javascript:void(0);" onclick="clearNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                    <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
+                    <small class="">{{entry.timestamp|normalize_date}}</small>
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+              {% endif %}
+              <li class="notification-box" id="notification-empty" {% if notifications != [] %} style="display:none;" {% endif %}>
+                <div class="row">
+                  <div class="col-lg-12 col-sm-12 col-12">
+                    <div>No New Notifications</div>
+                  </div>
+                </div>
+              </li>
+            </div>
+            
+            <li class="footer bg-dark text-center">
+              <a href="/notifications" class="text-light">View All</a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item dropdown">
           <a class="nav-link profile-image dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <img width="34" height="34" class="userphoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
@@ -88,7 +137,7 @@
       </ul>
     </div>
   </nav>
-
+  
   <div style="position: absolute; top: 65px; right: 70px;z-index:9999999;" id="toastDiv">
     {%- with messages = get_flashed_messages(with_categories=true) -%}
     {% if messages %}
@@ -111,7 +160,7 @@
     {% endif %}
     {%- endwith %}
   </div>
-
+  
   <!-- Modal -->
   <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -168,8 +217,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
-          <div class="modal-header">
-            <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+          <div class="modal-header bg-dark">
+            <h5 class="modal-title text-white" id="moveModalTitle">Upload a video</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="canceluploads()">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -187,7 +236,7 @@
                 {% endfor %}
               </select>
             </div>
-
+            
             <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
             <!-- hidden dropzone -->
             <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
@@ -200,11 +249,11 @@
                 <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
               </div>
             </div>
-
+            
             <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-info" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
-
+            
             <span>Video file <span id="videouploadstatus"></span></span>
             <!-- hidden dropzone -->
             <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
@@ -217,16 +266,16 @@
                 <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
               </div>
             </div>
-
+            
             <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="videouploadprogress" class="progress-bar progress-bar-success bg-info" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
-
+            
             <div class="form-group">
               <label for="videoDescription">Video description</label>
               <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
             </div>
-
+            
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
@@ -236,44 +285,45 @@
       </div>
     </div>
   </div>
-
+  
   {% block body %}
-
+  
   {% endblock %}
-
+  
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/popper/js/popper.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
   <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+  <script src="/static/vendor/listjs/js/list.min.js"></script>
   <script type="text/javascript">
     Dropzone.autoDiscover = false;     
   </script>
   {% block scripts %}
-
+  
   {% endblock %}
-
+  
   <scripts>
     <script>
-      var uploadmde = new SimpleMDE({ element: document.getElementById("videoDescription") });
+      var uploadmde = new EasyMDE({ element: document.getElementById("videoDescription") });
     </script>
   </scripts>
-
+  
   <script type="application/javascript">
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
+      .toString(16)
+      .substring(1);
     }
-
+    
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-
+    
     function videouploadsocket() {
       var conn_options = {
         'sync disconnect on unload': true
       };
       var socket = io();
-
+      
       socket.on('disconnect', function () {
         socket.emit('cancelUpload', { data: videofilename });
       });
@@ -282,9 +332,9 @@
         return null;
       });
     }
-
+    
     var thumbnaildropper = new Dropzone(
-      '#thumbnaildropper', {
+    '#thumbnaildropper', {
       acceptedFiles: 'image/png',
       previewTemplate: '<div></div>',
       clickable: '#thumbnailuploadbutton',
@@ -309,86 +359,136 @@
       document.getElementById('thumbnailFilename').value = videofilename + '.png';
       document.getElementById('thumbnailFilenameDisplay').value = file.name;
       videouploadsocket();
-
+      
     });
     thumbnaildropper.on("success", function (file) {
       document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
-      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = 'Upload complete';
-
-    });
-    thumbnaildropper.on('error', function (file, response) {
-      document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
-      document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response;
-    });
-
-    var videodropper = new Dropzone(
+        document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = 'Upload complete';
+        
+      });
+      thumbnaildropper.on('error', function (file, response) {
+        document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
+        document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response;
+      });
+      
+      var videodropper = new Dropzone(
       '#videodropper', {
-      acceptedFiles: 'video/mp4',
-      createImageThumbnails: false,
-      previewTemplate: '<div></div>',
-      clickable: '#videouploadbutton',
-      addRemoveLinks: true,
-      paramName: 'file',
-      chunking: true,
-      forceChunking: true,
-      url: '/upload/video-files',
-      maxFilesize: 4096, // megabytes
-      chunkSize: 1000000, // bytes
-    }
-    );
-    videodropper.on('sending', function (file, xhr, formData) {
-      formData.append('ospfilename', videofilename + '.mp4');
-    });
-    videodropper.on("uploadprogress", function (file, progress, bytesSent) {
-      progress = Math.floor(bytesSent / file.size * 100);
-      $('#videouploadprogress').width(progress + "%");
-      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = '<b>' + progress + '%</b>';
-    });
-    videodropper.on("addedfile", function (file) {
-      document.getElementById('videoFilename').value = videofilename + '.mp4';
-      document.getElementById('videoFilenameDisplay').value = file.name;
-      videouploadsocket();
-    });
-    videodropper.on("success", function (file) {
-      $('#uploadbutton').removeAttr('disabled');
-      document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-check">';
-      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = 'Upload complete';
-    });
-    videodropper.on('error', function (file, response) {
-      document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-      document.getElementById('videoFilenameDisplay').value = 'Error: ' + response
-    });
-  </script>
-
-  <script>
-    $(document).ready(function () {
-      $('.toast').toast('show');
-      document.getElementById("uploadform").reset();
-    });
-  </script>
-
-  <script>
-    var lazyLoadInstance = new LazyLoad({
-      elements_selector: ".lazy"
-    });
-  </script>
-
-  <script>
-    function canceluploads() {
-      videodropper.removeAllFiles(true);
-      thumbnaildropper.removeAllFiles(true);
-      document.getElementById("uploadform").reset();
-      document.getElementById('videouploadstatus').innerHTML = "";
-      document.getElementById('videouploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
-      document.getElementById('thumbnailuploadstatus').innerHTML = "";
-      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
-      $('#uploadbutton').attr('disabled');
-      $('#thumbnailuploadprogress').width("0%");
-      $('#videouploadprogress').width("0%");
-    }
-  </script>
-
-</body>
-
-
-</html>
+        acceptedFiles: 'video/mp4',
+        createImageThumbnails: false,
+        previewTemplate: '<div></div>',
+        clickable: '#videouploadbutton',
+        addRemoveLinks: true,
+        paramName: 'file',
+        chunking: true,
+        forceChunking: true,
+        url: '/upload/video-files',
+        maxFilesize: 4096, // megabytes
+        chunkSize: 1000000, // bytes
+      }
+      );
+      videodropper.on('sending', function (file, xhr, formData) {
+        formData.append('ospfilename', videofilename + '.mp4');
+      });
+      videodropper.on("uploadprogress", function (file, progress, bytesSent) {
+        progress = Math.floor(bytesSent / file.size * 100);
+        $('#videouploadprogress').width(progress + "%");
+        document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = '<b>' + progress + '%</b>';
+      });
+      videodropper.on("addedfile", function (file) {
+        document.getElementById('videoFilename').value = videofilename + '.mp4';
+        document.getElementById('videoFilenameDisplay').value = file.name;
+        videouploadsocket();
+      });
+      videodropper.on("success", function (file) {
+        $('#uploadbutton').removeAttr('disabled');
+        document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-check">';
+          document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = 'Upload complete';
+        });
+        videodropper.on('error', function (file, response) {
+          document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+          document.getElementById('videoFilenameDisplay').value = 'Error: ' + response
+        });
+      </script>
+      
+      <script>
+        $(document).ready(function () {
+          $('.toast').toast('show');
+          document.getElementById("uploadform").reset();
+        });
+      </script>
+      
+      <script>
+        var lazyLoadInstance = new LazyLoad({
+          elements_selector: ".lazy"
+        });
+      </script>
+      
+      <script>
+        function canceluploads() {
+          videodropper.removeAllFiles(true);
+          thumbnaildropper.removeAllFiles(true);
+          document.getElementById("uploadform").reset();
+          document.getElementById('videouploadstatus').innerHTML = "";
+          document.getElementById('videouploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+          document.getElementById('thumbnailuploadstatus').innerHTML = "";
+          document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+          $('#uploadbutton').attr('disabled');
+          $('#thumbnailuploadprogress').width("0%");
+          $('#videouploadprogress').width("0%");
+        }
+      </script>
+      <script>
+        $('.notificationDropdownMenu').click(function(e) {
+          e.stopPropagation();
+        });
+        
+        var notificationCountMobile = document.getElementById("notificationCountMobile");
+        var notificationCountNav = document.getElementById("notificationCountNav");
+        var notificationCountMenu = document.getElementById("notificationCountMenu");
+        var notificationCount = {{notifications|count}};
+        
+        function clearNotification(notificationID) {
+          var conn_options = {
+            'sync disconnect on unload': true
+          };
+          var socket = io();
+          
+          var notification = document.getElementById('notification-' + notificationID);
+          notification.parentNode.removeChild(notification);
+          
+          var newCount = notificationCount - 1;
+          if (newCount <= 0) {
+            var emptyNotificationBar = document.getElementById("notification-empty");
+            
+            notificationCountMobile.style.display = "none";
+            notificationCountNav.style.display = "none";
+            emptyNotificationBar.style.display = "block";
+            newCount = 0;
+          }
+          
+          notificationCountMobile.innerText = newCount;
+          notificationCountNav.innerText = newCount;
+          notificationCountMenu.innerText = newCount;
+          notificationCount = notificationCount - 1;
+          
+          socket.emit('markNotificationAsRead', { data: notificationID });
+        }
+        
+        function clearAllNotifications() {
+          var ids = $('.notificationBody .notification-box').map(function(){
+            return $(this).attr('id');
+          }).get();
+          ids.forEach(function (item, index) {
+            if (item != 'notification-empty') {
+              item = item.replace('notification-','');
+              clearNotification(item);
+            }
+          });
+        }
+        
+      </script>
+      
+    </body>
+    
+    
+    </html>

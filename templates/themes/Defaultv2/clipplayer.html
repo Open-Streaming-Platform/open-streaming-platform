@@ -32,7 +32,12 @@
             <span class="badge badge-primary">
               <i class="fas fa-cut"></i><span class="d-none d-sm-none d-md-inline"> Clip</span>
             </span>
-            {% if video.channel.protected %}
+            {% if clip.published == False %}
+            <span class="badge badge-warning">
+              <i class="fas fa-video-slash"></i> Unpublished
+            </span>
+            {% endif %}
+            {% if video.channel.protected and sysSettings.protectionEnabled %}
               <span class="badge badge-warning">
                 <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
               </span>
@@ -96,26 +101,39 @@
     </div>
     <div class="col-lg-4 col-sm-12 col-xs-12">
       <div class="row m-2">
-        <div class="index-video-title mb-2"><b>Other Clips</b></div>
-        {% for clipEntry in randomClips[:4] %}
-        <div class="displayCard-other pb-1 pr-1">
-          <a href="/clip/{{clipEntry.id}}">
-            <img class="shadow lazy zoom" {% if clipEntry.recordedVideo.channel.protected %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-              onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clipEntry.thumbnailLocation}}">
-            <div class="card-data">
-              <div class="card-cut-text"><b>{{clipEntry.clipName|limit_title}}</b></div>
-              {{clipEntry.recordedVideo.channel.channelName}}<br>
-              {{clipEntry.recordedVideo.topic|get_topicName}}<br>
-              {% if clipEntry.recordedVideo.channel.protected %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
-              <span class="displayCard-footer">
-                <span class="px-2 flex-fill"><i class="fas fa-thumbs-up"></i> {{clipEntry.id|get_Video_Upvotes}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-users"></i> {{clipEntry.views}}</span>
-                <span class="px-2 flex-fill"><i class="fas fa-clock"></i> {{clipEntry.length|hms_format}}</span>
-              </span>
-            </div>
-          </a>
-        </div>
-        {% endfor %}
+        <div class="index-video-title mb-2 mx-2"><b>Other Clips</b></div>
+          <ul class="itemList list d-flex flex-wrap justify-content-start">
+              {% for clipEntry in randomClips[:4] %}
+              <li class="displayCard mx-4 my-3">
+                <a href="/clip/{{clipEntry.id}}">
+                  <div class="displayCard-thumbnail zoom">
+                    <div class="video-badges">
+                      {% if clipEntry.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                    </div>
+                    <img class="shadow lazy" {% if clipEntry.recordedVideo.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                              onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clipEntry.thumbnailLocation}}">
+                    <div class="displayCard-counts">
+                      <span class="displayCard-left align-left" style="color:white;">
+                        <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{clipEntry.id|get_Clip_Upvotes}}</b></span>
+                      </span>
+                      <span class="displayCard-right" style="float:right;color:white;">
+                        <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{clipEntry.views}}</b></span>
+                        <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{clipEntry.length|hms_format}}</b></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="card-data">
+                    <img class="rounded" src="/images/{{clipEntry.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <div class="metadata">
+                      <div class="card-cut-text name ml-2"><b>{{clipEntry.clipName|limit_title}}</b></div>
+                      <div class="card-cut-text topic ml-2">{{clipEntry.recordedVideo.topic|get_topicName}}</div>
+                      <span class="date" style="display:none;">{{clipEntry.recordedVideo.videoDate|normalize_date}}</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              {% endfor %}
+          </ul>
       </div>
     </div>
   </div>
@@ -186,6 +204,7 @@
       <div class="modal-body">
         <h5>Use this picture?</h5>
         <img id="newScreenShotImg" src="">
+        <input type="hidden" id="thumbnailTimestamp">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
@@ -280,7 +299,7 @@
 </script>
 
 <script>
-    var simplemde2 = new SimpleMDE({ element: document.getElementById("description") });
+    var easymde2 = new EasyMDE({ element: document.getElementById("description") });
 </script>
 
 <script>
@@ -359,8 +378,9 @@
 
 <script>
   function newScreenShot() {
+    player.pause();
     window.whereYouAt = player.currentTime();
-    console.log(window.whereYouAt);
+    document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
     socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
   }
 </script>
@@ -375,7 +395,8 @@
 
 <script>
   function setScreenShot() {
-    socket.emit('setScreenShot', {timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
+    var timestamp = document.getElementById("thumbnailTimestamp").value;
+    socket.emit('setScreenShot', {timeStamp: timestamp, clipID: '{{clip.id}}' });
   }
 </script>
 

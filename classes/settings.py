@@ -14,6 +14,7 @@ class settings(db.Model):
     smtpSendAs = db.Column(db.String(255))
     allowRecording = db.Column(db.Boolean)
     allowUploads = db.Column(db.Boolean)
+    protectionEnabled = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
     background = db.Column(db.String(255))
     showEmptyTables = db.Column(db.Boolean)
@@ -47,6 +48,7 @@ class settings(db.Model):
         self.version = version
         self.systemLogo = "/static/img/logo.png"
         self.serverMessage = ""
+        self.protectionEnabled = False
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -62,5 +64,6 @@ class settings(db.Model):
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,
             'allowComments': self.allowComments,
-            'version': self.version
+            'version': self.version,
+            'protectionEnabled': self.protectionEnabled
         }

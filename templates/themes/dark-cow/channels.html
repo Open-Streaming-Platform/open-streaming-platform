@@ -5,21 +5,36 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid p-2" id="index-videos-container">
-    <div class="row m-2">
-        <div class="index-video-title"><b>Channels</b></div>
-    </div>
+<div class="container-fluid p-2" id="index-channels-container">
     <div class="row mx-2">
-        <div class="col-lg col-xs-12 col-sm-12">
-            <div class="d-flex flex-wrap justify-content-around">
+        <div id="channelList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Channels</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="subs">Sort by Subscriptions</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-around">
                 {% for channel in channelList %}
-                <div class="channel-card bg-dark mb-3" style="max-width: 20rem;">
+                <li class="channel-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="channel-card-header">
                         <a href="/channel/{{channel.id}}/">
                             <img class="shadow lazy" height="180" width="320" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
                     </div>
                     <div class="channel-card-body">
-                        <i class="fas fa-podcast mr-2"></i><span class="video-title"><a href="/channel/{{channel.id}}/"><b> {{channel.channelName}}</b></a></span>
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{channel.id}}/"><span class="video-title name"><b> {{channel.channelName}}</b></span></a>
                         <span class="float-right">
                             {% if channel.stream|length > 0 %}
                             <span class="badge badge-danger">Live</span>
@@ -28,16 +43,16 @@
                             {% endif %}
                         </span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamers/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
-                        {% if channel.protected %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
-                        <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a>
+                        {% if channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
+                        <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/"><span class="topic">{{channel.topic|get_topicName}}</span></a>
                         <span class="float-right">
-                            <i class="fas fa-users mr-2"></i> {{channel.views}}
-                            <i class="fas fa-star mx-2"></i> {{channel.subscriptions|length}}
+                            <i class="fas fa-users mr-2"></i> <span class="views">{{channel.views}}</span>
+                            <i class="fas fa-star mx-2"></i> <span class="subs">{{channel.subscriptions|length}}</span>
                         </span>
                     </div>
-                </div>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
         </div>
     </div>
 </div>
@@ -45,5 +60,11 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+    channelListOptions = {
+        valueNames: ['name', 'username', 'subs', "views", "topic"]
+    };
 
+    var channelList = new List('channelList', channelListOptions);
+</script>
 {% endblock %}

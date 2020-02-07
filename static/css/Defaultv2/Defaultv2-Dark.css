@@ -32,6 +32,65 @@ body {
     color:white;
 }
 
+.notificationDropdownMenu {
+    width:460px;
+    left:-390px;
+}
+
+.notificationDropdownMenu::before {
+  width: 0;
+  height: 0;
+  content: "";
+  position: absolute;
+  top:-15px;
+  right:30px;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 20px solid #343a40;
+  z-index: -1;
+}
+
+.notificationDropdownMenu .head {
+    padding:5px 15px;
+    border-radius: 3px 3px 0px 0px;
+    position:relative;
+    margin-bottom:-10px;
+    top:-10px;
+}
+
+.notificationDropdownMenu .notificationBody {
+    max-height: 350px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.notificationDropdownMenu .notification-box {
+    padding: 5px 15px;
+}
+
+.notificationDropdownMenu .footer {
+    padding: 5px 15px;
+    position:relative;
+    top:10px;
+    margin-top:-10px;
+    border-radius: 0px 0px 3px 3px;
+}
+
+.notificationImg {
+    position: relative;
+    top:8px;
+    left:-3px;
+}
+
+.notificationCardList {
+    list-style-type:none;
+}
+
+.unreadItemIndicator {
+    border-left: 4px solid green;
+    padding-bottom: 16px;
+}
+
 .modal-content {
     background-color: #303030;
 }
@@ -56,7 +115,7 @@ body {
 .card-cut-text {
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 260px;
+  width: 254px;
   height: 1.35em;
   white-space: nowrap;
 }
@@ -70,36 +129,71 @@ body {
     font-size:1.35em;
     width: 100%;
 }
+.itemList {
+    padding-left: 0;
+}
+
+.channelVideoCard {
+  list-style-type:none;
+  width: 700px;
+}
 
 .displayCard {
-    width: 600px;
+    width: 310px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .displayCard a {
-    color: white;
+    color: black;
 }
 
-.displayCard img {
+.displayCard .displayCard-thumbnail img {
     width: 310px;
     height: 175px;
     object-fit: contain;
     overflow: hidden;
     background-color: black;
-    float: left;
+}
+
+.displayCard .video-badges {
+  position: relative;
+  top:30px;
+  height: 30px;
+  margin-top: -30px;
+}
+
+.displayCard .displayCard-counts {
+  position: relative;
+  background-color: rgba(40, 40, 40, 0.65);
+  top:-25px;
+  height:25px;
+  margin-bottom:-25px;
+}
+
+.displayCard .displayCard-counts i {
+  color:#1D60DB;
 }
 
 .displayCard .card-data {
-    margin-left:15px;
-    float: left;
-    font-size:1.10em;
+    width:100%;
+    margin-top:10px;
+    font-size:1.15em;
+    color: white;
 }
 
-.displayCard .card-data .displayCard-footer {
-    font-size:1em;
-    position:relative;
-    left: -10px;
-    top: 45px;
+.card-data img {
+  width:48px;
+  height:48px;
+  float:left;
+}
+
+.card-data .metadata {
+  float:left;
+  position:relative;
+  top:-18px;
+  height:18px;
+  margin-bottom:-18px;
 }
 
 .displayCard-other {
@@ -108,7 +202,7 @@ body {
 }
 
 .displayCard-other a {
-    color: white;
+    color: black;
 }
 
 .displayCard-other img {
@@ -136,6 +230,7 @@ body {
 .streamerCard {
     width: 600px;
     margin-bottom:15px;
+    list-style-type:none;
 }
 
 .streamerCard a {
@@ -168,6 +263,11 @@ body {
     width:99%;
     display:block;
 }
+
+.channel-img{
+    width:100%;
+}
+
 .dropzone {
     display: none;
 }
@@ -247,7 +347,7 @@ body {
 }
 
 .chatbox {
-    height: 540px;
+    height:100%;
     width:100%;
     margin-bottom:15px;
 }
@@ -334,7 +434,7 @@ body {
     .card-cut-text {
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 360px;
+      width: 250px;
       height: 1.35em;
       white-space: nowrap;
     }
@@ -345,19 +445,25 @@ body {
         margin-bottom: 5px;
     }
 
-    .displayCard img{
+    .displayCard .displayCard-thumbnail img {
         width: 100%;
         height: initial;
+        object-fit: contain;
+        overflow: hidden;
+        background-color: black;
     }
 
     .displayCard .card-data {
+        position: relative;
+        top: -10px;
         margin-left:0px;
         float: left;
         font-size:1em;
     }
-    .displayCard .card-data .displayCard-footer {
-        font-size:1em;
-        top: initial;
+
+    .displayCard .card-data img {
+        position: relative;
+        top: -18px;
     }
 
     .displayCard-other {
@@ -400,6 +506,10 @@ body {
     .streamerCard .card-data .streamerCard-footer {
         font-size:1em;
         top: initial;
+    }
+
+    .channelVideoCard {
+        width:100%;
     }
 
 }

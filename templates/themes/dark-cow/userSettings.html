@@ -39,6 +39,7 @@
                             <hr>
 
                             <b>User Picture</b><br>
+                            <small style="color:red;">Recommended Resolution: 128x128</small><br>
                             <div class="d-flex justify-content-center">
                                 <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                             </div>
@@ -57,8 +58,8 @@
 
 
 <script>
-    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+    var newChanMDE = new EasyMDE({ element: document.getElementById("description") });
 
-    var simplemde{{ current_user.id }} = new SimpleMDE({ element: document.getElementById("biography-{{current_user.id}}") });
+    var simplemde{{ current_user.id }} = new EasyMDE({ element: document.getElementById("biography-{{current_user.id}}") });
 </script>
 {% endblock %}

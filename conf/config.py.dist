@@ -2,6 +2,11 @@
 # For MySQL Connections add ?charset=utf8mb4 for full Unicode Support
 dbLocation="sqlite:///db/database.db"
 
+# Redis Configuration
+redisHost="localhost" # Default localhost
+redisPort=6379 # Default 6379
+redisPassword='' # Default ''
+
 # Flask Secret Key
 secretKey="CHANGEME"
 

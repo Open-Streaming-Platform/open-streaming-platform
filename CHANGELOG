@@ -1,3 +1,36 @@
+Beta-4
+==============================================
+- Added Worker Services on local ports (5000-5010) for OSP Gunicorn to handle multiple concurrent users
+    * Note: OSP must now be started and stopped using systemctl start/stop/restart osp.target
+- Passed Authentication Validation to Nginx instead of passing through Gunicorn First.
+    * Note: This will require a new recompile of Nginx by using the setup script or compiling manually as well as updating the osp-redirects.conf and nginx.conf
+- Moved Async Processing to use Redis.
+    * Note: New Configuration Variables have been added to the config.py file which are required.
+    * Note: Redis is not included in the Docker Image and must be installed in a separate container or server for OSP to work
+- Added Stream Chat Restriction of 1 Message / 2 Seconds to prevent chat spam or flooding
+- Added Notifications for Various Events such as New Streams, New Videos, New Comments, Likes, etc
+- Added Video, Clip, Channel, and Stream Sorting
+- Added the ability to Publish and Unpublish Videos and Clips
+- Added an option to Channels to Autopublish Videos (Enabled by Default)
+- Added Recommended Profile Picture Resolution
+- Added Switch to Enable/Disable the Channel Protection system due to the slight overhead on pulling videos and images. System default on new installs will be disabled. Existing installs will be enabled on upgrade.
+- Switched from Flask Security to Flask-Security-Too
+- Fixed Issue where Themes would not load properly after changing in settings, but would work on a restart
+- Reformated Display Cards to v3
+- Reworked User Channel Screen
+- Added Per Channel Video Control from the User Channel Screen
+- Fixed issue where Defaultv2-Dark's Popout Chat retained the Defaultv2-Light's theme
+- Moved Gunicorn Logs to /opt/osp/logs
+- Updated Flask-SocketIO to 4.2.1
+- Fixed Issue where Channel Subscriptions were not being restored from backups
+- Fixed Variables causing Type Confusion
+- Fixed Issue where Video and Clip Thumbnails were being generated based on the current video player timestamp, instead of the timestamp of the last captured screenshot
+- Movement of References to Prevent Calls before they are Referenced
+- Fixed Issue where Creating a Channel via APIv1 caused an error
+- Fixed an issue where Video Comments may cause an error preventing the video from being viewable
+
+
+
 Beta-3
 ==============================================
 - Added Implemented Video Clips - Set markers for videos to display only a section of a video you want to share.

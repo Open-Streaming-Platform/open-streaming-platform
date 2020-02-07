@@ -5,6 +5,7 @@
 
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 
 {% endblock %}
 
@@ -12,17 +13,17 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-10 col-xl-8 mx-auto">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mx-auto">
             <div class="row m-2">
                 <div class="index-live-title"><b>Your Channels</b></div>
                 <span class="float-right"><button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
             </div>
 
         {% for channel in channels %}
-        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelCard-{{channel.id}}')">
+        <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelDash-{{channel.id}}')">
             <div class="row">
                 <div class="ml-2 col-auto align-middle my-auto">
-                    <b><h3><i class="fas fa-bars"></i></h3></b>
+                    <b><h2><i class="fas fa-bars"></i></h2></b>
                 </div>
                 <div class="col">
                     <h5>{{channel.channelName}}</h5>
@@ -31,7 +32,7 @@
                             <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}
                         </div>
                         <div class="col-12 col-md-4">
-                            <i class="fas fa-users"></i> {{channel.views}}</span>
+                            <i class="fas fa-users"></i> {{channel.views}}
                         </div>
                         <div class="col-12 col-md-4">
                             <i class="fas fa-star"></i> {{channel.subscriptions|length}}
@@ -40,360 +41,468 @@
                 </div>
             </div>
         </div>
-        <form action="/settings/channels" enctype=multipart/form-data method="post">
-            <div id="channelCard-{{channel.id}}" class="card mx-2 mb-2 shadow" style="display:none;">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <h4>Channel Image</h4>
-                            {% if channel.imageLocation == None %}
-                            <img src="/static/img/video-placeholder.jpg" width="100%">
-                            {% else %}
+        <div class="row" id="channelDash-{{channel.id}}" style="z-index:-1;display:none;">
+          <div class="ml-4 col-auto shadow">
+            <div class="h-100">
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');"><h2><i class="fas fa-th-large"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');"><h2><i class="fas fa-video"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');"><h2><i class="fas fa-cut"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');"><h2><i class="fas fa-cog"></i></h2></a></div>
+            </div>
+          </div>
+          <div class="col-8 col-sm-10 col-lg-11">
+            <div id="statWindow-{{channel.id}}" style="display:block;">
+                <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
+            </div>
+            <div id="videoWindow-{{channel.id}}" style="display:none;">
+                <div class="my-4 mx-3"><h4>Video List</h4></div>
+                <div class="row mx-2">
+                    <ul id="videoList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+                      {% for video in channel.recordedVideo %}
+                      <li id="video-{{video.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+                        <div class="row">
+                          <div class="col-auto m-2 pt-3">
+                            <div class="mb-2" style="width:270px;">
+                              <img class="shadow lazy" id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+                            </div>
                             <div>
-                                <img src="/images/{{channel.imageLocation}}" class="stream-img card-img-top shadow" width="100%">
+                                <button type="button" class="btn btn-success btn-block shadow videoThumbnailUploadModalButton" data-toggle="modal" data-target="#videoThumbnailUploadModal" data-videoid="{{video.id}}">Upload Thumbnail</button>
                             </div>
-                            {% endif %}
-                            <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-
-                            <h4>Offline Stream Image</h4>
-                            {% if channel.offlineImageLocation == None %}
-                            <img src="/static/img/video-placeholder.jpg" width="100%">
-                            {% else %}
-                            <div>
-                                <img src="/images/{{channel.offlineImageLocation}}" class="stream-img card-img-top shadow" width="100%">
+                            <div class="mt-2">
+                              <button class="videoMoveModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal" data-videoid="{{video.id}}"><i class="fas fa-arrow-circle-right"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-cut"></i></button>
+                              <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}"><i class="fas fa-edit"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-camera"></i></button>
+                              <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}"><i class="fas fa-share-alt"></i></button>
+                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
-                            {% endif %}
-                            <input type="file" name="offlinephoto" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-
+                          </div>
+                          <div class="col mt-2">
+                            <h4><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h4>
+                            <h5><i class="fas fa-hashtag mr-2"></i><span id="vidTopicText-{{video.id}}">{{video.topic|get_topicName}}</span></h5>
+                            <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
+                            <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
+                            <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
+                            <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
+                            <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
+                            <h5><i class="fas fa-users"></i> {{video.views}}</h5>
+                            <h5><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</h5>
+                            <h5><i class="far fa-comment-alt"></i> {{video.comments|length}}</h5>
+                            <div class="form-group row">
+                                <div class="col-6">
+                                    <label for="published-{{video.id}}" class="col-form-label"><b>Published? </b></label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="checkbox" data-toggle="toggle" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
+                                </div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12">
-                            <div class="form-group">
-                                <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
-                                <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div id="clipWindow-{{channel.id}}" style="display:none;">
+                <div class="my-4 mx-3"><h4>Clip List</h4></div>
+                <div class="row mx-2">
+                    <ul id="clipList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+                      {% for video in channel.recordedVideo %}
+                      {% for clip in video.clips %}
+                      <li id="clip-{{clip.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+                        <div class="row">
+                          <div class="col-auto m-2 pt-3">
+                            <div class="mb-2" style="width:270px;">
+                              <img class="shadow lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
                             </div>
-                            <div class="form-group">
-                                <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
-                                <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                                    {% for topic in topics %}
-                                    <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
-                                    {% endfor %}
-                                </select>
+                            <div class="mt-2">
+                              <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.recordedVideo.videoLocation}}', {{clip.startTime}});"><i class="fas fa-camera"></i></button>
+                              <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+                              <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
-                            <div class="form-group">
-                                <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
-                                <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
-                            </div>
-                            <hr>
-                            <h4><b>Recording Options</b></h4>
-                            {% if sysSettings.allowRecording == True %}
+                          </div>
+                          <div class="col mt-2">
+                            <h4><a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a></h4>
+                            <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.recordedVideo.topic|get_topicName}}</span></h5>
+                            <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</h5>
+                            <h5><i class="far fa-clock mr-1"></i>{{clip.length|hms_format}}</h5>
+                            <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
+                            <h5><i class="fas fa-users"></i> {{clip.views}}</h5>
+                            <h5><i class="far fa-thumbs-up"></i> {{clip.upvotes|length}}</h5>
                             <div class="form-group row">
                                 <div class="col-6">
-                                    <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                                    <label for="clipPublished-{{clip.id}}" class="col-form-label"><b>Published? </b></label>
                                 </div>
                                 <div class="col-6">
-                                    <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                    <input type="checkbox" data-toggle="toggle" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
                                 </div>
                             </div>
-                            {% endif %}
-
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatSelect" class="col-form-label"><b>Allow Comments on Recorded Videos</b></label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
-                                </div>
-                            </div>
-                            <hr>
-                            <h4><b>Chat Options</b></h4>
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
-                                </div>
-                                <div class="col-6">
-                                    <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                        {% for background in channelChatBGOptions %}
-                                        <option value="{{background['value']}}" {% if channel.chatBG == background['value'] %} selected {% endif %}>{{background['name']}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatAnimation-{{channel.id}}" class="col-form-label"><b>Chat Animation </b></label>
-                                </div>
-                                <div class="col-6">
-                                    <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                        {% for anim in channelChatAnimationOptions %}
-                                        <option value="{{anim['value']}}" {% if channel.chatAnimation == anim['value'] %} selected {% endif %}>{{anim['name']}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-6">
-                                    <label for="chatTextColor-{{channel.id}}" class="col-form-label"><b>Chat Text Color </b></label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
-                                </div>
-                            </div>
-                            <h5>Chat Preview</h5>
-                            <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
-                                <div class="charBar-Item-Image">
-                                    <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
-                                </div>
-                                <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
-                                    <b>{{current_user.username}}</b> 12:00
-                                    <br>This is just a test
-                                </div>
-                            </div>
-
+                          </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label for="description" class="col-form-label"><b>Description</b></label>
-                                <textarea class="form-control" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
-                                    </div>
-                                    <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
+                      </li>
+                      {% endfor %}
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div id="settingsWindow-{{channel.id}}" style="display:none;">
+                <form action="/settings/channels" enctype=multipart/form-data method="post">
+                    <div id="channelCard-{{channel.id}}" class="my-2 ml-2">
+                        <div>
                             <div class="row">
-                                <div class="col-4">
-                                    <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b></h5></a>
+                                <div class="col-xl-4 col-lg-6 col-md-12">
+                                    <h4>Channel Image</h4>
+                                    {% if channel.imageLocation == None %}
+                                    <img src="/static/img/video-placeholder.jpg" width="100%">
+                                    {% else %}
+                                    <div>
+                                        <img src="/images/{{channel.imageLocation}}" class="stream-img card-img-top shadow" width="100%">
+                                    </div>
+                                    {% endif %}
+                                    <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+
+                                    <h4>Offline Stream Image</h4>
+                                    {% if channel.offlineImageLocation == None %}
+                                    <img src="/static/img/video-placeholder.jpg" width="100%">
+                                    {% else %}
+                                    <div>
+                                        <img src="/images/{{channel.offlineImageLocation}}" class="stream-img card-img-top shadow" width="100%">
+                                    </div>
+                                    {% endif %}
+                                    <input type="file" name="offlinephoto" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+
                                 </div>
-                                <div class="col-2">
-                                    <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small">
+                                <div class="col-xl-6 col-lg-6 col-md-12">
+                                    <div class="form-group">
+                                        <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
+                                        <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
+                                        <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                                            {% for topic in topics %}
+                                            <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
+                                        <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
+                                    </div>
+                                    <hr>
+                                    <h4><b>Recording Options</b></h4>
+                                    {% if sysSettings.allowRecording == True %}
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatSelect" class="col-form-label"><b>Allow Comments on Recorded Videos</b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    <h4><b>Publishing Options</b></h4>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="publishSelect" class="col-form-label"><b>Automatically Publish New Videos </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+
+                                    <hr>
+                                    <h4><b>Chat Options</b></h4>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
+                                                {% for background in channelChatBGOptions %}
+                                                <option value="{{background['value']}}" {% if channel.chatBG == background['value'] %} selected {% endif %}>{{background['name']}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatAnimation-{{channel.id}}" class="col-form-label"><b>Chat Animation </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
+                                                {% for anim in channelChatAnimationOptions %}
+                                                <option value="{{anim['value']}}" {% if channel.chatAnimation == anim['value'] %} selected {% endif %}>{{anim['name']}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="chatTextColor-{{channel.id}}" class="col-form-label"><b>Chat Text Color </b></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
+                                        </div>
+                                    </div>
+                                    <h5>Chat Preview</h5>
+                                    <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
+                                        <div class="charBar-Item-Image">
+                                            <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
+                                        </div>
+                                        <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
+                                            <b>{{current_user.username}}</b> 12:00
+                                            <br>This is just a test
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-                            <div id="channelProtection-{{channel.id}}" style="display:none;">
-                                <hr>
-
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="card">
-                                            <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
-                                            <div class="card-body">
-                                                <div class="form-row">
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-2"><b>Invite Code</b></label>
-                                                        <input id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
-                                                    </div>
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Days Invite Code Valid</b></label>
-                                                        <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    </div>
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Options</b></label><br>
-                                                        <input type="button" id="newInviteAddButton-{{channel.id}}" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')" value="Add">
-                                                    </div>
-                                                </div>
-                                                <div id="inviteCodes">
-                                                    <div class="table-responsive">
-                                                        <table id="inviteCodeTable-{{channel.id}}" class="table table-borderless" width="100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Invite Code</th>
-                                                                    <th>Expiration Date</th>
-                                                                    <th>Uses</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for code in channel.inviteCodes %}
-                                                            <tr id="inviteCodeRow-{{code.code}}">
-                                                                <td>
-                                                                    <div class="input-group mb-3">
-                                                                        <div class="input-group-prepend">
-                                                                            <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
-                                                                            <button type="button" class="btn btn-success" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
-                                                                        </div>
-                                                                        <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
-                                                                    </div>
-                                                                </td>
-                                                                <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
-                                                                <td>{{code.uses}}</td>
-                                                                <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                            </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="description" class="col-form-label"><b>Description</b></label>
+                                        <textarea class="form-control" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
                                             </div>
+                                            <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
+                                            </div>
+
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b>{% if sysSettings.protectionEnabled == False %} - (Disabled) {% endif %}</h5></a>
+                                        </div>
+                                        <div class="col-2">
+                                            <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small" {% if sysSettings.protectionEnabled == False %} disabled {% endif %}>
+                                        </div>
+                                    </div>
+                                    <div id="channelProtection-{{channel.id}}" style="display:none;">
                                         <hr>
-                                        <div class="card">
-                                            <div class="card-header"><h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6></div>
-                                            <div class="card-body">
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-6">
-                                                      <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
-                                                      <input id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                      <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
-                                                      <input id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    </div>
-                                                    <div class="form-group col-md-2">
-                                                        <label for="hiddenAnchorForButton" class="col-form-label"> </label>
-                                                        <input type="hidden" id="hiddenAnchorForButton" class="form-control">
-                                                        <div class="input-group-append">
-                                                            <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
+                                                    <div class="card-body">
+                                                        <div class="form-row">
+                                                            <div class="form-group col-12 col-lg-4">
+                                                                <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-2"><b>Invite Code</b></label>
+                                                                <input id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
+                                                            </div>
+                                                            <div class="form-group col-12 col-lg-4">
+                                                                <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Days Invite Code Valid</b></label>
+                                                                <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                            </div>
+                                                            <div class="form-group col-12 col-lg-4">
+                                                                <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Options</b></label><br>
+                                                                <input type="button" id="newInviteAddButton-{{channel.id}}" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')" value="Add">
+                                                            </div>
+                                                        </div>
+                                                        <div id="inviteCodes">
+                                                            <div class="table-responsive">
+                                                                <table id="inviteCodeTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Invite Code</th>
+                                                                            <th>Expiration Date</th>
+                                                                            <th>Uses</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {% for code in channel.inviteCodes %}
+                                                                    <tr id="inviteCodeRow-{{code.code}}">
+                                                                        <td>
+                                                                            <div class="input-group mb-3">
+                                                                                <div class="input-group-prepend">
+                                                                                    <button type="button" class="btn btn-primary" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','code')"><i class="fas fa-copy"></i></button>
+                                                                                    <button type="button" class="btn btn-success" onclick="CopyInviteCode('inviteCodeRO-{{code.code}}','link')"><i class="fas fa-link"></i></button>
+                                                                                </div>
+                                                                                <input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-{{code.code}}" value="{{code.code}}" readonly aria-describedby="inviteCodeRO required">
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>{{code.expiration|normalize_date}} {% if code.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                        <td>{{code.uses}}</td>
+                                                                        <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode('{{code.code}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="invitedUsers">
-                                                    <div class="table-responsive">
-                                                        <table id="invitedUsersTable-{{channel.id}}" class="table table-borderless" width="100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>User</th>
-                                                                    <th>Date Added</th>
-                                                                    <th>Expiration Date</th>
-                                                                    <th>Used Code</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {% for user in channel.invitedViewers %}
-                                                                <tr id="invitedUserRow-{{user.id}}">
-                                                                    <td>{{user.userID|get_userName}}</td>
-                                                                    <td>{{user.addedDate|normalize_date}}</td>
-                                                                    <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
-                                                                    <td>{{user.usedCode.code}}</td>
-                                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                                </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
+                                                <hr>
+                                                <div class="card">
+                                                    <div class="card-header"><h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6></div>
+                                                    <div class="card-body">
+                                                        <div class="form-row">
+                                                            <div class="form-group col-md-6">
+                                                              <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
+                                                              <input id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
+                                                            </div>
+                                                            <div class="form-group col-md-4">
+                                                              <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
+                                                              <input id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
+                                                            </div>
+                                                            <div class="form-group col-md-2">
+                                                                <label for="hiddenAnchorForButton" class="col-form-label"> </label>
+                                                                <input type="hidden" id="hiddenAnchorForButton" class="form-control">
+                                                                <div class="input-group-append">
+                                                                    <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="invitedUsers">
+                                                            <div class="table-responsive">
+                                                                <table id="invitedUsersTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>User</th>
+                                                                            <th>Date Added</th>
+                                                                            <th>Expiration Date</th>
+                                                                            <th>Used Code</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for user in channel.invitedViewers %}
+                                                                        <tr id="invitedUserRow-{{user.id}}">
+                                                                            <td>{{user.userID|get_userName}}</td>
+                                                                            <td>{{user.addedDate|normalize_date}}</td>
+                                                                            <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
+                                                                            <td>{{user.usedCode.code}}</td>
+                                                                            <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <hr>
                                     </div>
                                 </div>
-
-                                <hr>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
-                            <div id="webhook-{{channel.id}}" style="display:none;">
-                                 <hr>
-                                 <div class="row">
-                                    <div class="col-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
-                                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
-                                                </h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div id="webhookList">
-                                                    <div class="table-responsive">
-                                                        <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Webhook Name</th>
-                                                                    <th>Trigger</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {% for webhook in channel.webhooks %}
-                                                                <tr id="webhookTableRow-{{webhook.id}}">
-                                                                    <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
-                                                                    <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
-                                                                    <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
-                                                                    <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
-                                                                    <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
-                                                                    <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
-                                                                    <td>
-                                                                        <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
-                                                                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
-                                                                    </td>
-                                                                </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
+                            <div class="row">
+                                <div class="col-12">
+                                    <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
+                                    <div id="webhook-{{channel.id}}" style="display:none;">
+                                         <hr>
+                                         <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
+                                                            <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
+                                                        </h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div id="webhookList">
+                                                            <div class="table-responsive">
+                                                                <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Webhook Name</th>
+                                                                            <th>Trigger</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for webhook in channel.webhooks %}
+                                                                        <tr id="webhookTableRow-{{webhook.id}}">
+                                                                            <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                                            <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                                            <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                                            <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                                            <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                                            <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                         </div>
+                                         <hr>
                                     </div>
-                                 </div>
-                                 <hr>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="type" name="type" value="change">
+                        <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
+                        <div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <input type="submit" class="btn btn-success" value="&#128393; Edit">
+                                    <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"> Delete</i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="javascript:void(0)" onclick="toggleDiv('statChart-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Viewer Statistics</b></h5></a>
-                            <div id="statChart-{{channel.id}}" style="display:none;">
-                                <hr>
-                                <canvas id="viewershipChart-{{channel.id}}" width="400" height="400"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <input type="hidden" id="type" name="type" value="change">
-                <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col-12">
-                            <input type="submit" class="btn btn-success" value="&#128393; Edit">
-                            <a href="/settings/channels?action=delete&streamkey={{channel.streamKey}}" class="btn btn-danger"><i class="far fa-trash-alt"> Delete</i></a>
-                        </div>
-                    </div>
-                </div>
+                </form>
             </div>
-        </form>
+          </div>
+        </div>
         {% endfor %}
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -462,7 +571,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -545,6 +653,364 @@
   </div>
 </div>
 
+<div class="modal fade" id="videoMoveModal" tabindex="-1" role="dialog" aria-labelledby="videoMoveModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="videoMoveModalTitle">Move to Another Channel</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h5>Move this Video to Channel:</h5>
+
+          <select id="moveToChannelInput" name="moveToChannelID" class="form-control">
+            <option disabled selected value>-- Select Destination Channel --</option>
+            {% for chan in current_user.channels %}
+            <option value="{{chan.id}}">{{chan.channelName}}</option>
+            {% endfor %}
+          </select>
+          <input type="hidden" id="moveVideoID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="moveVideoSubmit();">Move</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoThumbnailUploadModal" tabindex="-1" role="dialog" aria-labelledby="videoThumbnailUploadModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="videoThumbnailUploadModalTitle">Upload a New Thumbnail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h5>Upload a New Thumbnail for this Video:</h5>
+          <img id="videothumbnailuploadpreview" class="shadow" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+          <span>Thumbnail <span id="videothumbnailuploadstatus"></span></span>
+          <!-- hidden dropzone -->
+          <div class="dropzone" id="videothumbnaildropper" enctype="multipart/form-data"></div>
+          <div class="form-group row">
+            <div class="col-2 my-auto">
+              <button id="videothumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+            </div>
+            <div class="col-10">
+              <input class="form-control pl-2 form-control" id="videothumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+              <input type="hidden" class="form-control pl-2 form-control" id="videothumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+            </div>
+          </div>
+
+          <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="videothumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+          </div>
+          <input type="hidden" id="videoThumbnailID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="saveUploadedThumbnail();">Save</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoDeleteModal" tabindex="-1" role="dialog" aria-labelledby="videoDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="videoDeleteModalTitle">Confirm Video Deletion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this video?</h5>
+        <input type="hidden" id="videoDeleteIDSelector" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button id="videoDeleteButton" type="button" class="btn btn-danger" data-dismiss="modal" onclick="">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoClipModal" tabindex="-1" role="dialog" aria-labelledby="videoClipModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clipModalTitle">Create a Video Clip</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="player w-100">
+            <video id="videoClip" class="shadow video-js vjs-big-play-centered" controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <br>
+          <div id="clipTimeSelect">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
+                  </div>
+                  <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly required>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                  </div>
+                  <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly required>
+                </div>
+              </div>
+            </div>
+            <br>
+            <input id="clipName" name="clipName" class="form-control" placeholder="Clip Name" maxlength="255" required><br>
+            <textarea id="clipDescription" name="clipDescription" class="form-control" placeholder="Description of the Clip" maxlength="2048"></textarea>
+            <input id="clipVideoID" type="hidden">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="createVideoClipSubmit();">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoEditModal" tabindex="-1" role="dialog" aria-labelledby="videoEditModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalTitle">Edit Video Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <h5>Name of the Video:</h5>
+          <input type="text" class="form-control" value="" id="editVideoName" name="newVidName" required>
+          <br>
+          <h5>Video Topic:</h5>
+          <select class="form-control" name="newVidTopic" id="editVideoTopic" required>
+            {% for topic in topics %}
+            <option value={{topic.id}}>{{topic.name}}</option>
+            {% endfor %}
+          </select>
+          <br>
+          <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="editVideoDescription" value="" maxlength="2048"></textarea>
+          </div>
+          <div class="form-group row">
+            <div class="col-8">
+              <label for="allowComments" class="col-form-label"><b>Allow Comments on This Video</b></label>
+            </div>
+            <div class="col-4">
+              <input type="checkbox" data-toggle="toggle" id="editVideoAllowComments" name="allowComments">
+            </div>
+            <input type="hidden" id="editVideoID" value="">
+          </div>
+       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="button" id="editVideoSubmit" class="btn btn-primary" data-dismiss="modal" onclick="editVideoSubmit();" value="Save Changes">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoShareModal" tabindex="-1" role="dialog" aria-labelledby="videoShareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="videoShareModalTitle">Share a Video/Stream</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div style="margin: 0 auto;width: 99%; text-align: center;">
+          <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
+            onclick="">Share on Facebook</button>
+          <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
+            onclick="">Share on Twitter</button>
+        </div>
+        <br>
+        <div class="form-group row">
+          <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyAPI('embedURLInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="embedURLInput" type="text" value="" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyAPI('linkShareInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="linkShareInput" type="text" value="" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="videoNewSSModal" tabindex="-1" role="dialog" aria-labelledby="newSSModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newSSModalTitle">Capture New Video Thumbnail</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+          <div class="player w-100">
+            <video id="videoSSClip" class="shadow video-js vjs-big-play-centered" controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <hr>
+          <div>
+            <h5>Use this picture?</h5>
+            <img id="newScreenShotImg" class="shadow" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+          </div><br>
+          <button class="btn btn-block btn-success" onclick="newScreenShot();">Capture Screenshot</button>
+          <input type="hidden" id="videossID">
+          <input type="hidden" id="SSTimestamp">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" onclick="setScreenShot()" class="btn btn-success" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clipEditModal" tabindex="-1" role="dialog" aria-labelledby="clipEditModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clipEditModalTitle">Edit Clip Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <div class="modal-body">
+          <h5>Name of the Clip:</h5>
+          <input type="text" class="form-control" id="editClipName" value="" name="newVidName" required>
+          <br>
+          <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="clipEditDescription" value="" maxlength="2048"></textarea>
+          </div>
+            <input type="hidden" id="editClipID">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <input type="button" class="btn btn-primary" data-dismiss="modal" onclick="editClipSubmit()" value="Save Changes">
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clipDeleteModal" tabindex="-1" role="dialog" aria-labelledby="clipDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="clipDeleteModalTitle">Confirm Clip Deletion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this clip?</h5>
+        <input type="hidden" id="clipDeleteIDSelector" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button id="clipDeleteButton" type="button" class="btn btn-danger" data-dismiss="modal" onclick="">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clipNewSSModal" tabindex="-1" role="dialog" aria-labelledby="newClipSSModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newClipSSModalTitle">Capture New Clip Thumbnail</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+          <div class="player w-100">
+            <video id="clipSS" class="shadow video-js vjs-big-play-centered" controls preload="auto" data-setup='{"fluid": true}'>
+              <source src="" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <hr>
+          <div>
+            <h5>Use this picture?</h5>
+            <img id="newClipScreenShotImg" class="shadow" src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+          </div><br>
+          <button class="btn btn-block btn-success" onclick="newClipScreenShot();">Capture Screenshot</button>
+          <input type="hidden" id="clipssID">
+          <input type="hidden" id="clipvideossID">
+          <input type="hidden" id="clipSSTimestamp">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" onclick="setClipScreenShot()" class="btn btn-success" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function CopyAPI(divVal) {
       var copyText = document.getElementById(divVal);
@@ -569,7 +1035,325 @@
     }
 </script>
 
+<script src="/static/vendor/videojs/js/video.js"></script>
+
 <script>
+  var clipplayer = videojs('videoClip', { autoplay: false });
+  var ssplayer = videojs('videoSSClip', { autoplay: false });
+  var clipssplayer = videojs('clipSS', {autoplay: false});
+</script>
+
+<script>
+  function openClipModal(videoID,videoLocation) {
+    clipplayer.pause();
+
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = null;
+
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = null;
+
+    var clipName = document.getElementById('clipName');
+    clipName.value = null;
+
+    clipplayer.src(videoLocation);
+
+    document.getElementById("clipVideoID").value = videoID;
+
+    $("#videoClipModal").modal();
+
+    var clipDescriptionInput = document.getElementById('clipDescription');
+    clipDescriptionInput.value = null;
+    easymdeVideoClip.value("");
+    easymdeVideoClip.codemirror.refresh();
+  }
+
+  function setClipStart() {
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = clipplayer.currentTime()
+  }
+
+  function setClipStop() {
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = clipplayer.currentTime()
+  }
+
+  function openSSModal(videoID,videoLocation) {
+    ssplayer.pause();
+
+    ssplayer.src(videoLocation);
+
+    document.getElementById("videossID").value = videoID;
+
+    document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
+
+    $("#videoNewSSModal").modal();
+
+  }
+
+  function openClipSSModal(clipID, videoID, videoLocation, startTime) {
+    clipssplayer.pause();
+
+    clipssplayer.src(videoLocation);
+    clipssplayer.load();
+
+    clipssplayer.on('loadedmetadata', function() {this.currentTime(startTime)});
+
+    document.getElementById("clipssID").value = clipID;
+    document.getElementById("clipvideossID").value = videoID;
+
+    document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
+
+    $("#clipNewSSModal").modal();
+
+  }
+
+  function newScreenShot() {
+    ssplayer.pause();
+    window.whereYouAt = ssplayer.currentTime();
+    document.getElementById("SSTimestamp").value = window.whereYouAt;
+    socket.emit('newScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
+  }
+
+  function newClipScreenShot() {
+    clipssplayer.pause();
+    window.whereYouAt = clipssplayer.currentTime();
+    document.getElementById("clipSSTimestamp").value = window.whereYouAt;
+    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, timeStamp: window.whereYouAt, clip:true });
+  }
+
+  function setScreenShot() {
+    var timestamp = document.getElementById("SSTimestamp").value;
+    socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: timestamp });
+    var videoID = document.getElementById('videossID').value;
+    ssplayer.pause();
+    setTimeout(function() {
+        document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
+        }, 4000);
+    createNewBSAlert("Thumbnail Updated", "Success");
+  }
+
+  function setClipScreenShot() {
+    var timestamp = document.getElementById("clipSSTimestamp").value;
+    socket.emit('setScreenShot', { clipID: document.getElementById('clipssID').value, timeStamp: timestamp });
+    var clipID = document.getElementById('clipssID').value;
+    clipssplayer.pause();
+    setTimeout(function() {
+        document.getElementById('clipThumb-' + clipID).src = document.getElementById('clipThumb-' + clipID).src + '?t=' + new Date().getTime();
+        }, 4000);
+    createNewBSAlert("Thumbnail Updated", "Success");
+  }
+
+    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
+    var easymdeVideoClip = new EasyMDE({ element: document.getElementById("clipDescription")});
+    var easymdeClipEditor = new EasyMDE({ element: document.getElementById("clipEditDescription")});
+
+    $(document).on("click", ".videoDeleteModalButton", function () {
+        var videoID = $(this).data('videoid');
+        $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
+    });
+
+    $(document).on("click", ".clipDeleteModalButton", function () {
+        var clipID = $(this).data('clipid');
+        $("#clipDeleteButton").attr("onclick","deleteClip(" + clipID + ")");
+    });
+
+    function deleteVideo(videoID) {
+        var videoEntry = document.getElementById('video-' + videoID);
+        videoEntry.parentNode.removeChild(videoEntry);
+        socket.emit('deleteVideo', {videoID: videoID});
+        createNewBSAlert("Video Deleted", "Success");
+    }
+
+    function deleteClip(clipID) {
+        var clipEntry = document.getElementById('clip-' + clipID);
+        clipEntry.parentNode.removeChild(clipEntry);
+        socket.emit('deleteClip', {clipID: clipID});
+        createNewBSAlert("Clip Deleted", "Success");
+    }
+
+    $(document).on("click", ".videoShareModalButton", function () {
+        var videoID = $(this).data('videoid');
+        $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "','facebook-share-dialog','width=626,height=436');return false;");
+        $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
+        $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
+        $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID);
+    });
+
+    $(document).on("click", ".clipShareModalButton", function () {
+        var clipID = $(this).data('clipid');
+        $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "','facebook-share-dialog','width=626,height=436');return false;");
+        $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
+        $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
+        $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID);
+    });
+
+    $(document).on("click", ".clipEditModalButton", function () {
+
+       var clipID = $(this).data('clipid');
+       var clipName = document.getElementById('clipName-' + clipID).innerText;
+       var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
+
+
+       $("#editClipID").val(clipID);
+       $("#editClipName").val(clipName);
+
+
+       document.getElementById("clipEditDescription").value = clipDescription;
+       easymdeClipEditor.value(clipDescription);
+       var doc = easymdeClipEditor.codemirror.getDoc();
+       doc.setValue(doc.getValue());
+
+    });
+
+    function editClipSubmit() {
+        var editClipIDInput = document.getElementById("editClipID").value;
+        var editClipNameInput = document.getElementById("editClipName").value;
+        var editClipDescriptionInput = document.getElementById("clipEditDescription");
+
+        var clipDescription = easymdeClipEditor.value();
+
+        editClipDescriptionInput.value = "";
+        easymdeClipEditor.value("");
+        var doc = easymdeClipEditor.codemirror.getDoc();
+        doc.setValue(doc.getValue());
+
+        document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
+        document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
+
+        createNewBSAlert("Clip Metadata Edited", "Success");
+
+        socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription});
+    }
+
+    $(document).on("click", ".videoEditModalButton", function () {
+
+       var videoID = $(this).data('videoid');
+       var videoName = document.getElementById('vidName-' + videoID).innerText;
+       var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
+       var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
+       var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
+
+
+       $("#editVideoID").val(videoID);
+       $("#editVideoName").val(videoName);
+
+       if ((videoAllowComments == "true") || (videoAllowComments == "True") || (videoAllowComments == "on")) {
+           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
+           videoAllowCommentCheckBox.checked = true;
+           videoAllowCommentCheckBox.parentElement.classList.remove("off");
+       } else {
+           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
+           videoAllowCommentCheckBox.checked = false;
+           videoAllowCommentCheckBox.parentElement.classList.add("off");
+       }
+
+       $("#editVideoTopic").val(videoTopic);
+
+       document.getElementById("editVideoDescription").value = videoDescription;
+       easymdeVideoEditor.value(videoDescription);
+       var doc = easymdeVideoEditor.codemirror.getDoc();
+       doc.setValue(doc.getValue());
+
+    });
+
+    function editVideoSubmit() {
+        var editVideoIDInput = document.getElementById("editVideoID");
+        var editVideoNameInput = document.getElementById("editVideoName");
+        var editVideoTopicInput = document.getElementById("editVideoTopic");
+        var editVideoDescriptionInput = document.getElementById("editVideoDescription");
+        var editVideoAllowCommentsInput = document.getElementById("editVideoAllowComments");
+        var videoID = editVideoIDInput.value;
+
+        var topicInputText = editVideoTopicInput.options[editVideoTopicInput.selectedIndex].text;
+
+        var videoDescription = easymdeVideoEditor.value();
+
+        document.getElementById("vidName-" + videoID).innerText = editVideoNameInput.value;
+        document.getElementById("vidTopic-" + videoID).innerText = editVideoTopicInput.value;
+        document.getElementById("vidTopicText-" + videoID).innerText = topicInputText;
+        document.getElementById("vidDescription-" + videoID).innerText = videoDescription;
+        document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.checked;
+
+        editVideoDescriptionInput.value = "";
+        easymdeVideoEditor.value("");
+        var doc = easymdeVideoEditor.codemirror.getDoc();
+        doc.setValue(doc.getValue());
+
+        var allowComments = "False";
+        if (editVideoAllowCommentsInput.checked) {
+            allowComments = "True";
+        }
+
+        socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
+        createNewBSAlert("Video Metadata Edited", "Success");
+    }
+
+    function createVideoClipSubmit() {
+        clipplayer.pause();
+        var videoID = document.getElementById("clipVideoID").value;
+        var clipName = document.getElementById("clipName").value;
+        var clipDescription = easymdeVideoClip.value();
+        var clipStart = document.getElementById("clipStartTime").value;
+        var clipStop = document.getElementById("clipStopTime").value;
+
+        socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
+        createNewBSAlert("Clip Created", "Success");
+    }
+
+    $(document).on("click", ".videoMoveModalButton", function () {
+        var videoID = $(this).data('videoid');
+        document.getElementById('moveVideoID').value=videoID;
+        document.getElementById('moveToChannelInput').selectedIndex =0;
+    });
+
+    function moveVideoSubmit() {
+        var videoID = document.getElementById('moveVideoID').value;
+        var destinationChannelInput = document.getElementById('moveToChannelInput');
+        var destinationChannel = destinationChannelInput.options[destinationChannelInput.selectedIndex].value;
+
+        $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
+
+        socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
+        createNewBSAlert("Video Moved", "Success");
+    }
+
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+
+    $(document).on("click", ".videoThumbnailUploadModalButton", function () {
+        document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
+        var videoID = $(this).data('videoid');
+        videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+        document.getElementById('videoThumbnailID').value = videoID;
+        document.getElementById('videothumbnailFilenameDisplay').value = '';
+        document.getElementById('videothumbnailFilename').value = '';
+
+    });
+
+    function saveUploadedThumbnail() {
+        var videoID = document.getElementById('videoThumbnailID').value;
+        socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'} );
+        var thumbnailDiv = document.getElementById('videoThumb-' + videoID);
+        var thumbnailURL = thumbnailDiv.src;
+        setTimeout(function() {
+            thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
+        }, 4000);
+        createNewBSAlert("Thumbnail Updated", "Success");
+    }
+
+    function togglePublished(videoID) {
+        socket.emit('togglePublished', {videoID: videoID});
+    }
+
+    function togglePublishedClip(clipID) {
+        socket.emit('togglePublishedClip', {clipID: clipID});
+    }
+
+
     function guid() {
           return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
@@ -672,11 +1456,28 @@ function updateChatPreview(channelID) {
     chatPreviewBox.style.display = "block";
 }
 </script>
+
 <script>
 function toggleDiv(divID) {
   var x = document.getElementById(divID);
   $(x).slideToggle();
 }
+
+function openChannelWindow(divID, windowName) {
+    var openWindow = document.getElementById(windowName + '-' + divID);
+    var statWindow = document.getElementById('statWindow-' + divID);
+    var videoWindow = document.getElementById('videoWindow-' + divID);
+    var clipWindow = document.getElementById('clipWindow-' + divID);
+    var settingsWindow = document.getElementById('settingsWindow-' + divID);
+
+    statWindow.style.display = 'none';
+    videoWindow.style.display = 'none';
+    clipWindow.style.display = 'none';
+    settingsWindow.style.display = 'none';
+
+    openWindow.style.display = 'block';
+}
+
 </script>
 
 <script type="text/javascript" charset="utf-8">
@@ -687,11 +1488,80 @@ function toggleDiv(divID) {
     var socket = io();
 </script>
 
+<script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+
+<script type="text/javascript">
+    Dropzone.autoDiscover = false;
+</script>
+
 <script>
-    var newChanMDE = new SimpleMDE({ element: document.getElementById("description") });
+
+    socket.on('checkScreenShot', function (msg) {
+        document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
+    });
+
+    socket.on('checkClipScreenShot', function (msg) {
+        document.getElementById("newClipScreenShotImg").src = msg['thumbnailLocation'];
+    });
+
+    socket.on('disconnect', function () {
+      socket.emit('cancelUpload', { data: videofilename });
+    });
+    window.addEventListener("beforeunload", function (e) {
+      socket.emit('cancelUpload', { data: videofilename });
+      return null;
+    });
+
+    $('#videoThumbnailUploadModal').on('hidden.bs.modal', function () {
+        socket.emit('cancelUpload', { data: videofilename });
+    });
+
+    var uploadthumbnaildropper = new Dropzone(
+      '#videothumbnaildropper', {
+      acceptedFiles: 'image/png',
+      previewTemplate: '<div></div>',
+      clickable: '#videothumbnailuploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/video-files',
+      maxFilesize: 5, // megabytes
+      chunkSize: 1000000 // bytes
+    }
+    );
+    uploadthumbnaildropper.on('sending', function (file, xhr, formData) {
+      formData.append('ospfilename', videofilename + '.png');
+    });
+    uploadthumbnaildropper.on("uploadprogress", function (file, progress, bytesSent) {
+      progress = Math.floor(bytesSent / file.size * 100);
+      $('#videothumbnailuploadprogress').width(progress + "%");
+      document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = '<b>' + progress + '%</b>';
+    });
+    uploadthumbnaildropper.on("addedfile", function (file) {
+      document.getElementById('videothumbnailFilename').value = videofilename + '.png';
+      document.getElementById('videothumbnailFilenameDisplay').value = file.name;
+      videouploadsocket();
+
+    });
+    uploadthumbnaildropper.on("success", function (file) {
+      document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
+      document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = 'Upload complete';
+      document.getElementById('videothumbnailuploadpreview').src = '/videos/temp/' + videofilename + '.png';
+
+    });
+    uploadthumbnaildropper.on('error', function (file, response) {
+      document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
+      document.getElementById('videothumbnailFilenameDisplay').value = 'Error: ' + response;
+    });
+
+</script>
+
+<script>
+    var newChanMDE = new EasyMDE({ element: document.getElementById("description") });
 
     {% for channel in channels %}
-    var simplemde{{channel.id}} = new SimpleMDE({ element: document.getElementById("description-{{channel.id}}") });
+    var easymde{{channel.id}} = new EasyMDE({ element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 </script>
 
@@ -724,6 +1594,7 @@ function toggleDiv(divID) {
         socket.emit('deleteInviteCode', {code: code});
         var inviteCodeRow = document.getElementById('inviteCodeRow-' + code);
         inviteCodeRow.parentNode.removeChild(inviteCodeRow);
+        createNewBSAlert("Invite Code Removed", "Success");
     }
 </script>
 
@@ -732,6 +1603,7 @@ function toggleDiv(divID) {
         socket.emit('deleteInvitedUser', {inviteID: inviteID});
         var inviteUserRow = document.getElementById('invitedUserRow-' + inviteID);
         inviteUserRow.parentNode.removeChild(inviteUserRow);
+        createNewBSAlert("Invite Removed", "Success");
     }
 </script>
 
@@ -740,6 +1612,7 @@ function toggleDiv(divID) {
         socket.emit('deleteWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
+        createNewBSAlert("Webhook Deleted", "Success");
     }
 </script>
 
@@ -823,6 +1696,7 @@ function toggleDiv(divID) {
         addedDateCell.appendChild(document.createTextNode(addedDate));
         expirationDateCell.appendChild(document.createTextNode(expiration));
         buttonCell.innerHTML = buttonText;
+        createNewBSAlert("Invite Created", "Success");
     });
 
 </script>
@@ -996,6 +1870,7 @@ function toggleDiv(divID) {
             break;
           default:
             triggerVal = 'Unknown';
+
         }
 
 
@@ -1006,6 +1881,7 @@ function toggleDiv(divID) {
         requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
         requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
         buttonCell.innerHTML = buttonText;
+        createNewBSAlert("Webhook Added", "Success");
 
     });
     </script>
@@ -1073,6 +1949,7 @@ function toggleDiv(divID) {
         requestTypeCell.innerText = webhookRequestType;
         requestHeaderCell.innerText = webhookHeader;
         requestPayloadCell.innerText = webhookPayload;
+        createNewBSAlert("Webhook Edited", "Success");
     });
     </script>
 
