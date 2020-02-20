@@ -227,13 +227,14 @@ def init_db_values():
             db.session.add(newTopic)
     db.session.commit()
 
+    # Note: for a freshly installed system, sysSettings is None!
     sysSettings = settings.settings.query.first()
 
-    if sysSettings.version != version:
-        sysSettings.version = version
-        db.session.commit()
-
     if sysSettings is not None:
+        # Set/Update the system version attribute
+        if sysSettings.version is None or sysSettings.version != version:
+            sysSettings.version = version
+            db.session.commit()
         # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
         if sysSettings.systemTheme is None or sysSettings.systemTheme == "Default":
             sysSettings.systemTheme = "Defaultv2"
@@ -523,7 +524,7 @@ def videoupload_allowedExt(filename):
 
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
-    if themeHTMLFile in themeData['Override']:
+    if themeHTMLFile in themeData.get('Override',[]):
         sysSettings = db.session.query(settings.settings).first()
         return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
     else:
