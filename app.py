@@ -3588,43 +3588,49 @@ def user_auth_check():
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=key).first()
 
-    authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    if requestedChannel is not None:
+        authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    if authedStream is not None:
-        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
-        print(returnMessage)
+        if authedStream is not None:
+            returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
+            print(returnMessage)
 
-        if requestedChannel.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            if requestedChannel.imageLocation is None:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
+            runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
+                       streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
+                                                                 "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+
+            try:
+                processSubscriptions(requestedChannel.id,
+                                 sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
+                                 "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
+                                 " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
+                                 + "'>" + requestedChannel.channelName + "</a></p>")
+            except:
+                newLog(0, "Subscriptions Failed due to possible misconfiguration")
+
+            db.session.close()
+            return 'OK'
         else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
-
-        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
-                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
-                   streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
-                   streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
-
-        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
-        for sub in subscriptionQuery:
-            # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
-                                                             "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
-            db.session.add(newNotification)
-        db.session.commit()
-
-        try:
-            processSubscriptions(requestedChannel.id,
-                             sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
-                             " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
-                             + "'>" + requestedChannel.channelName + "</a></p>")
-        except:
-            newLog(0, "Subscriptions Failed due to possible misconfiguration")
-
-        db.session.close()
-        return 'OK'
+            returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
+            print(returnMessage)
+            db.session.close()
+            return abort(400)
     else:
-        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
+        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. Channel Loc does not match Channel', 'channelName': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         db.session.close()
         return abort(400)
