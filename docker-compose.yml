@@ -12,7 +12,7 @@ services:
       - '1935:1935'
       - '8585:80'
       - '8553:443'
-    env:
+    environment:
       - REDIS_HOST="ospredis"
       - REDIS_PORT=6379
       - REDIS_PASSWORD=""
