@@ -68,7 +68,7 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-4"
+version = "beta-4b"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
