@@ -439,6 +439,11 @@ hr {
     left:3px;
 }
 
+.channeldescription p{
+    white-space: pre-wrap;
+}
+
+
 #videoWindow {
     display: flex;
     justify-content: center;

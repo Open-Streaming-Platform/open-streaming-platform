@@ -105,8 +105,10 @@
                             <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
                         </div>
                      </div>
-                     <div class="row m-2">
-                        {% if channel.description != None %}<span><p>{{channel.description|markdown}}</p></span> {% else %}No Description Available {% endif %}
+                     <div class="row m-2" style="white-space: pre-wrap;">
+                        <div class="channeldescription">{% if channel.description != None %}<p>
+                            {{channel.description|markdown}}</p> {% else %}No Description Available {% endif %}
+                        </div>
                      </div>
                 </div>
             </div>
