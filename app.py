@@ -4482,7 +4482,7 @@ def addUserChannelInvite(message):
         if invitedUserQuery is not None:
             previouslyInvited = False
             for invite in invitedUserQuery.invites:
-                if invite.channelID is not channelID:
+                if invite.channelID is channelID:
                     previouslyInvited = True
 
             if not previouslyInvited:
