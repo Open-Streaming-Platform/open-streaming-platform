@@ -1866,15 +1866,18 @@ def upload_vid():
 
     if thumbnailFilename != "":
         thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[
+            0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
     else:
         thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[
+            0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
         subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc
 
-    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
     gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
 
 
