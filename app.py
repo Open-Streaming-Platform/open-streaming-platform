@@ -4223,15 +4223,22 @@ def setScreenShot(message):
             if videoQuery is not None and videoQuery.owningUser == current_user.id:
                 videoLocation = '/var/www/videos/' + videoQuery.videoLocation
                 newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
+                newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
                 videoQuery.thumbnailLocation = newThumbnailLocation
                 fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+                newGifFullThumbnailLocation = '/var/www/videos/' + newGifThumbnailLocation
                 db.session.commit()
                 db.session.close()
                 try:
                     os.remove(fullthumbnailLocation)
                 except OSError:
                     pass
+                try:
+                    os.remove(newGifFullThumbnailLocation)
+                except OSError:
+                    pass
                 result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+                result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
 
     elif 'clipID' in message:
         clipID = message['clipID']
