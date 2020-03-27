@@ -3121,7 +3121,7 @@ def settings_channels_page():
             record = True
 
         autoPublish = False
-        if 'autoPublish' in request.form:
+        if 'publishSelect' in request.form:
             autoPublish = True
 
         chatEnabled = False
