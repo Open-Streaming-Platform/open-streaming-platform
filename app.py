@@ -869,7 +869,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
 
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
+            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
             redirectID = newClipQuery.id
             newLog(6, "New Clip Created - ID #" + str(redirectID))
@@ -1886,7 +1886,7 @@ def upload_vid():
         newVideo.thumbnailLocation = thumbnailLoc
 
     newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
-    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', '/var/www/videos/' + newGifFullThumbnailLocation])
+    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', '/var/www/videos/' + newGifFullThumbnailLocation])
     newVideo.gifLocation = newGifFullThumbnailLocation
 
     if request.form['videoTitle'] != "":
@@ -4271,7 +4271,7 @@ def setScreenShot(message):
                 except OSError:
                     pass
                 result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-                gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
+                gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
 
     elif 'clipID' in message:
         clipID = message['clipID']
@@ -4307,7 +4307,7 @@ def setScreenShot(message):
             db.session.commit()
             db.session.close()
 
-            gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
+            gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
 
     return 'OK'
 
