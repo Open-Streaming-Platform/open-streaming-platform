@@ -13,6 +13,7 @@ class RecordedVideo(db.Model):
     length = db.Column(db.Float)
     videoLocation = db.Column(db.String(255))
     thumbnailLocation = db.Column(db.String(255))
+    gifLocation = db.Column(db.String(255))
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     published = db.Column(db.Boolean)
@@ -52,6 +53,7 @@ class RecordedVideo(db.Model):
             'upvotes': self.get_upvotes(),
             'videoLocation': '/videos/' + self.videoLocation,
             'thumbnailLocation': '/videos/' + self.thumbnailLocation,
+            'gifLocation': '/videos/' + self.gifLocation,
             'ClipIDs': [obj.id for obj in self.clips],
         }
 
@@ -66,6 +68,7 @@ class Clips(db.Model):
     clipName = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     thumbnailLocation = db.Column(db.String(255))
+    gifLocation = db.Column(db.String(255))
     published = db.Column(db.Boolean)
     upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
 
@@ -92,5 +95,6 @@ class Clips(db.Model):
             'name': self.clipName,
             'description': self.description,
             'views': self.views,
-            'thumbnailLocation': '/videos/' + self.thumbnailLocation
+            'thumbnailLocation': '/videos/' + self.thumbnailLocation,
+            'gifLocation': '/videos/' + self.gifLocation
         }

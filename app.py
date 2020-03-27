@@ -813,13 +813,14 @@ def moveVideo(videoID, newChannel):
             if (recordedVidQuery.thumbnailLocation is not None) and (
             os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
                 coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
-                coreThumbnailGif = coreThumbnail.split(".")[0] + ".gif"
+                coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split("_", 1)[1]
                 shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,
                             "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
-                if os.path.exists("/var/www/videos/" + recordedVidQuery.channel.channelLoc + "/" + recordedVidQuery.channel.channelLoc + "_" + coreThumbnailGif):
-                    shutil.move("/var/www/videos/" + recordedVidQuery.channel.channelLoc + "/" + recordedVidQuery.channel.channelLoc + "_" + coreThumbnailGif,
+                if (recordedVidQuery.gifLocation is not None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.gifLocation)):
+                    shutil.move("/var/www/videos/" + recordedVidQuery.gifLocation,
                                 "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
                 recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
+                recordedVidQuery.gifLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif
             for clip in recordedVidQuery.clips:
                 coreThumbnail = (clip.thumbnailLocation.split("/")[2])
                 if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
@@ -1866,20 +1867,19 @@ def upload_vid():
 
     if thumbnailFilename != "":
         thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
-        newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[
-            0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
     else:
         thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
-        newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[
-            0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+
         subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc
 
-    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
-
+    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', '/var/www/videos/' + newGifFullThumbnailLocation])
+    newVideo.gifLocation = newGifFullThumbnailLocation
 
     if request.form['videoTitle'] != "":
         newVideo.channelName = strip_html(request.form['videoTitle'])
@@ -3719,10 +3719,12 @@ def rec_Complete_handler():
 
     videoPath = path.replace('/tmp/',requestedChannel.channelLoc + '/')
     imagePath = videoPath.replace('.flv','.png')
+    gifPath = videoPath.replace('.flv', '.gif')
     videoPath = videoPath.replace('.flv','.mp4')
 
     pendingVideo.thumbnailLocation = imagePath
     pendingVideo.videoLocation = videoPath
+    pendingVideo.gifLocation = gifPath
 
     fullVidPath = '/var/www/videos/' + videoPath
 
@@ -4240,6 +4242,10 @@ def setScreenShot(message):
                 videoQuery.thumbnailLocation = newThumbnailLocation
                 fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
                 newGifFullThumbnailLocation = '/var/www/videos/' + newGifThumbnailLocation
+
+                videoQuery.thumbnailLocation = newThumbnailLocation
+                videoQuery.gifLocation = newGifThumbnailLocation
+
                 db.session.commit()
                 db.session.close()
                 try:
