@@ -713,12 +713,15 @@ def deleteVideo(videoID):
     if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
         filePath = '/var/www/videos/' + recordedVid.videoLocation
         thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
+        gifPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".gif"
 
         if filePath != '/var/www/videos/':
             if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
                 os.remove(filePath)
                 if os.path.exists(thumbnailPath):
                     os.remove(thumbnailPath)
+                if os.path.exists(gifPath):
+                    os.remove(gifPath)
 
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
@@ -810,8 +813,12 @@ def moveVideo(videoID, newChannel):
             if (recordedVidQuery.thumbnailLocation is not None) and (
             os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
                 coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
+                coreThumbnailGif = coreThumbnail.split(".")[0] + ".gif"
                 shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,
                             "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                if os.path.exists("/var/www/videos/" + recordedVidQuery.channel.channelLoc + "/" + recordedVidQuery.channel.channelLoc + "_" + coreThumbnailGif):
+                    shutil.move("/var/www/videos/" + recordedVidQuery.channel.channelLoc + "/" + recordedVidQuery.channel.channelLoc + "_" + coreThumbnailGif,
+                                "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
                 recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
             for clip in recordedVidQuery.clips:
                 coreThumbnail = (clip.thumbnailLocation.split("/")[2])
@@ -4238,7 +4245,7 @@ def setScreenShot(message):
                 except OSError:
                     pass
                 result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-                result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
+                gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
 
     elif 'clipID' in message:
         clipID = message['clipID']
