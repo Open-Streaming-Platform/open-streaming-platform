@@ -2800,7 +2800,8 @@ def settings_dbRestore():
                         video.pending = eval(restoredVideo['pending'])
                         video.published = eval(restoredVideo['published'])
                         if 'gifLocation' in restoredVideo:
-                            video.gifLocation = restoredVideo['gifLocation']
+                            if restoredVideo['gifLocation'] != "None":
+                                video.gifLocation = restoredVideo['gifLocation']
                         db.session.add(video)
                     else:
                         flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
@@ -2821,7 +2822,8 @@ def settings_dbRestore():
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']
                         newClip.published = eval(restoredClip['published'])
                         if 'gifLocation' in restoredClip:
-                            newClip.gifLocation = restoredClip['gifLocation']
+                            if restoredClip['gifLocation'] != "None":
+                                newClip.gifLocation = restoredClip['gifLocation']
                         db.session.add(newClip)
                     else:
                         flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
