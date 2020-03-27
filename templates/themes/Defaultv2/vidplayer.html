@@ -153,7 +153,7 @@
                     <div class="video-badges">
                       {% if vid.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                     </div>
-                    <img class="shadow gif lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                     <div class="displayCard-counts">
                       <span class="displayCard-left align-left" style="color:white;">
                         <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{vid.id|get_Video_Upvotes}}</b></span>
