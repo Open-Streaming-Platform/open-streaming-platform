@@ -4278,8 +4278,6 @@ def setScreenShot(message):
             fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail
 
-            db.session.commit()
-            db.session.close()
             try:
                 os.remove(fullthumbnailLocation)
             except OSError:
