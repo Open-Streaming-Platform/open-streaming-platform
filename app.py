@@ -857,15 +857,19 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
+            clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
 
             newClipQuery.thumbnailLocation = clipThumbNailLocation
+            newClipQuery.gifLocation = clipGifLocation
 
             fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
+            fullgifLocation = '/var/www/videos/' + clipGifLocation
 
             if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
 
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
             redirectID = newClipQuery.id
             newLog(6, "New Clip Created - ID #" + str(redirectID))
@@ -903,10 +907,14 @@ def deleteClip(clipID):
 
     if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
         thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+        gifPath = '/var/www/videos/' + clipQuery.gifLocation
 
         if thumbnailPath != '/var/www/videos/':
             if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
                 os.remove(thumbnailPath)
+        if gifPath != '/var/www/videos/':
+            if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
+                os.remove(gifPath)
 
         db.session.delete(clipQuery)
 
@@ -4269,6 +4277,7 @@ def setScreenShot(message):
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
             fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail
+
             db.session.commit()
             db.session.close()
             try:
@@ -4276,6 +4285,23 @@ def setScreenShot(message):
             except OSError:
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
+
+            # Generate Gif
+            thumbnailLocation = clipQuery.gifLocation
+            fullthumbnailLocation = '/var/www/videos/' + thumbnailLocation
+            newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.gif'
+            fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
+            clipQuery.gifLocation = newClipThumbnail
+
+            db.session.commit()
+            db.session.close()
+            try:
+                os.remove(fullthumbnailLocation)
+            except OSError:
+                pass
+
+            gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
+
     return 'OK'
 
 @socketio.on('updateStreamData')
