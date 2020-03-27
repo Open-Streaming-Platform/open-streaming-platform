@@ -4287,18 +4287,21 @@ def setScreenShot(message):
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
 
             # Generate Gif
-            thumbnailLocation = clipQuery.gifLocation
-            fullthumbnailLocation = '/var/www/videos/' + thumbnailLocation
+            if clipQuery.gifLocation != None:
+                gifLocation = clipQuery.gifLocation
+                fullthumbnailLocation = '/var/www/videos/' + gifLocation
+
+                try:
+                    os.remove(fullthumbnailLocation)
+                except OSError:
+                    pass
+
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.gif'
             fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
             clipQuery.gifLocation = newClipThumbnail
 
             db.session.commit()
             db.session.close()
-            try:
-                os.remove(fullthumbnailLocation)
-            except OSError:
-                pass
 
             gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=480:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
 
