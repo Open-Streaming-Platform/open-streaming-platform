@@ -58,7 +58,8 @@ And OSP itself is open source with a [public repository](https://gitlab.com/Deam
 OSP's Git Branches are setup in the following configuration
 * **master** - Current Release Branch
 * **release/(Version)** - Previous Official Releases
-* **development** - Current Nightly Branch for OSP vNext
+* **development** - Current Semi-Stable Test Branch for OSP vNext
+* **nightly** - Current Nightly Test Branch for OSP vNext
 * **feature/(Name)** - In-progress Feature Builds to be merged with the Development Branch   
 
 ## Installation
@@ -304,7 +305,8 @@ sudo systemctl restart nginx
 
 * Run the DB Upgrade Script to Ensure the Database Schema is up-to-date
 ```
-bash dbUpgrade.sh
+sudo python3 manage.py db init **Only Needed One Time**
+sudo bash dbUpgrade.sh
 ```
 ### Upgrading from Beta3 to Beta4
 OSP has added multiple processes to handle load balancing.  Please run the beta3tobeta4.sh script to migrate to the new process structure.
