@@ -37,19 +37,53 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
-        var player = videojs('video', {autoplay: {{isAutoPlay}}, errorDisplay: false, liveui: true, liveTracker:true});
+        var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: true,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
+
+
+        player.ready(function() {
+               this.src({
+                       src: '{{streamURL}}',
+                       type: 'application/x-mpegURL'
+               });
+       });
+
+       player.play();
     </script>
 
     <script>
+        $(document).ready( function () {
+            monitor_vid(player);
+        });
+    </script>
+
+
+<script>
     //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
-    function monitor_vid(){
-        videoJSObj = videojs('video');
+    function monitor_vid(vidplayer){
+
+
+        videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
 
         videoWindowState = document.getElementsByTagName('video');
 
         videoContainer = document.getElementById('videoContainer');
         offlineWindow = document.getElementById('offlineImage');
+
 
         $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
             var channelList = data['results'][0];
@@ -85,8 +119,10 @@
                 try {
                     videoJSObj.pause();
                     videoJSObj.reset();
+
                     videoContainer.style.display = "none";
                     offlineWindow.style.display = "block";
+
                 } catch(e) {
                     console.log("OSP tried restarting the stream but had an issue:" + e)
                 }
@@ -96,7 +132,7 @@
     }
 
     setInterval(function() {
-        monitor_vid();
+        monitor_vid(player);
     }, 10000);
     </script>
 
