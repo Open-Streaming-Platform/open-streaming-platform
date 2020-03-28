@@ -37,6 +37,12 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
 
     <script>
+
+        if (typeof($) === 'undefined') {
+	        $ = parent.$;
+	        jQuery = parent.jQuery;
+        }
+
         var player = videojs('video', {
             autoplay: true,
             errorDisplay: false,
