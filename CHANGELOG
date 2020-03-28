@@ -8,6 +8,7 @@ Added Rollover Gifs for Videos, Clips, and Streams
 Fixes for not being able to change Channel AutoPublish Setting
 Added GZIP Compression for NGINX files
 Added TCP_NOPUSH for Sendfile in NGINX
+Fixed Embedded Streams not Displaying the "Offline" Image and Not recovering properly on a new Stream
 
 
 Beta-4a
