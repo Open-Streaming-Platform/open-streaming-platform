@@ -10,6 +10,8 @@ Added GZIP Compression for NGINX files
 Added TCP_NOPUSH for Sendfile in NGINX
 Fixed Embedded Streams not Displaying the "Offline" Image and Not recovering properly on a new Stream
 
+** Note: A DB Upgrade will be Required.  Follow DB Upgrade Procedures **
+** Note: You will need to replace your existing nginx.conf and osp-rtmp.conf files with the new files located in /opt/osp/setup/nginx **
 
 Beta-4a
 ==============================================
