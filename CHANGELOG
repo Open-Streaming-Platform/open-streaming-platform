@@ -1,3 +1,20 @@
+Beta-4b
+==============================================
+Added Check for if Channel Location is Invalid on Stream
+Fixes for Descriptions Not being Inline per Issue #129
+Fixes for libssl in Docker
+Fixes for being unable to give more than one channel invite to a user
+Added Rollover Gifs for Videos, Clips, and Streams
+Fixes for not being able to change Channel AutoPublish Setting
+Added GZIP Compression for NGINX files
+Added TCP_NOPUSH for Sendfile in NGINX
+
+
+Beta-4a
+==============================================
+- Fixes to Themes not loading on initial installs
+- Added --with-cc-opt="-Wimplicit-fallthrough=0" to setup script to allow building on newer gcc
+
 Beta-4
 ==============================================
 - Added Worker Services on local ports (5000-5010) for OSP Gunicorn to handle multiple concurrent users
