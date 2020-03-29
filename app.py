@@ -301,6 +301,12 @@ def init_db_values():
         for chan in channelQuery:
             chan.autoPublish = True
             db.session.commit()
+        # Fixes for Channels that do not have the restream settings initialized
+        channelQuery = Channel.Channel.query.filter_by(rtmpRestream=None).all()
+        for chan in channelQuery:
+            chan.rtmpRestream = False
+            chan.rtmpRestreamDestination = ""
+            db.session.commit()
 
         #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
         #if hubQuery == None:
@@ -3151,6 +3157,10 @@ def settings_channels_page():
         if 'publishSelect' in request.form:
             autoPublish = True
 
+        rtmpRestream = False
+        if 'rtmpRestream' in request.form:
+            rtmpRestream = True
+
         chatEnabled = False
 
         if 'chatSelect' in request.form:
@@ -3195,6 +3205,8 @@ def settings_channels_page():
 
             defaultstreamName = request.form['channelStreamName']
 
+            rtmpRestreamDestination = request.form['rtmpDestination']
+
             # TODO Validate ChatBG and chatAnimation
 
             requestedChannel = Channel.Channel.query.filter_by(streamKey=origStreamKey).first()
@@ -3214,6 +3226,8 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
+                requestedChannel.rtmpRestream = rtmpRestream
+                requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
 
                 if 'photo' in request.files:
                     file = request.files['photo']
