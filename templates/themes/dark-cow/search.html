@@ -40,7 +40,7 @@
                     <div class="row no-gutters">
                         <div class="video-card-header">
                             <a href="/view/{{stream.channel.channelLoc}}/">
-                                <img class="shadow lazy" {% if stream.channel.protected and sysSettings.protectionEnabled } src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                <img class="shadow gif lazy" {% if stream.channel.protected and sysSettings.protectionEnabled } src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                     onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
                         </div>
                         <div class="video-card-body ml-3">
@@ -216,7 +216,7 @@
                 <li class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/play/{{video.id}}">
-                            <img class="shadow lazy" {% if video.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                            <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" {% if video.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/videos/{{video.thumbnailLocation}}">
                         </a>
                     </div>
@@ -268,7 +268,7 @@
                 <li class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/clip/{{clip.id}}">
-                            <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </a>
                     </div>
                     <div class="video-card-body">

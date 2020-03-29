@@ -68,7 +68,7 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-4"
+version = "beta-4b"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
@@ -713,12 +713,15 @@ def deleteVideo(videoID):
     if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
         filePath = '/var/www/videos/' + recordedVid.videoLocation
         thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
+        gifPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".gif"
 
         if filePath != '/var/www/videos/':
             if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
                 os.remove(filePath)
                 if os.path.exists(thumbnailPath):
                     os.remove(thumbnailPath)
+                if os.path.exists(gifPath):
+                    os.remove(gifPath)
 
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
@@ -810,9 +813,14 @@ def moveVideo(videoID, newChannel):
             if (recordedVidQuery.thumbnailLocation is not None) and (
             os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
                 coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
+                coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split("_", 1)[1]
                 shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,
                             "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                if (recordedVidQuery.gifLocation is not None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.gifLocation)):
+                    shutil.move("/var/www/videos/" + recordedVidQuery.gifLocation,
+                                "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
                 recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
+                recordedVidQuery.gifLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif
             for clip in recordedVidQuery.clips:
                 coreThumbnail = (clip.thumbnailLocation.split("/")[2])
                 if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
@@ -849,15 +857,19 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
             videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
+            clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
 
             newClipQuery.thumbnailLocation = clipThumbNailLocation
+            newClipQuery.gifLocation = clipGifLocation
 
             fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
+            fullgifLocation = '/var/www/videos/' + clipGifLocation
 
             if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
 
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
             redirectID = newClipQuery.id
             newLog(6, "New Clip Created - ID #" + str(redirectID))
@@ -895,10 +907,14 @@ def deleteClip(clipID):
 
     if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
         thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+        gifPath = '/var/www/videos/' + clipQuery.gifLocation
 
         if thumbnailPath != '/var/www/videos/':
             if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
                 os.remove(thumbnailPath)
+        if gifPath != '/var/www/videos/':
+            if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
+                os.remove(gifPath)
 
         db.session.delete(clipQuery)
 
@@ -1859,14 +1875,19 @@ def upload_vid():
 
     if thumbnailFilename != "":
         thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+
         thumbnailPath = '/var/www/videos/' + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
     else:
         thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+
         subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc
 
+    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', '/var/www/videos/' + newGifFullThumbnailLocation])
+    newVideo.gifLocation = newGifFullThumbnailLocation
 
     if request.form['videoTitle'] != "":
         newVideo.channelName = strip_html(request.form['videoTitle'])
@@ -2778,6 +2799,9 @@ def settings_dbRestore():
                         video.thumbnailLocation = restoredVideo['thumbnailLocation']
                         video.pending = eval(restoredVideo['pending'])
                         video.published = eval(restoredVideo['published'])
+                        if 'gifLocation' in restoredVideo:
+                            if restoredVideo['gifLocation'] != "None":
+                                video.gifLocation = restoredVideo['gifLocation']
                         db.session.add(video)
                     else:
                         flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
@@ -2797,6 +2821,9 @@ def settings_dbRestore():
                         newClip.views = int(restoredClip['views'])
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']
                         newClip.published = eval(restoredClip['published'])
+                        if 'gifLocation' in restoredClip:
+                            if restoredClip['gifLocation'] != "None":
+                                newClip.gifLocation = restoredClip['gifLocation']
                         db.session.add(newClip)
                     else:
                         flash("Error Restoring Clip: ID# " + str(restoredClip['id']), "error")
@@ -3121,7 +3148,7 @@ def settings_channels_page():
             record = True
 
         autoPublish = False
-        if 'autoPublish' in request.form:
+        if 'publishSelect' in request.form:
             autoPublish = True
 
         chatEnabled = False
@@ -3588,43 +3615,49 @@ def user_auth_check():
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=key).first()
 
-    authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    if requestedChannel is not None:
+        authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    if authedStream is not None:
-        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
-        print(returnMessage)
+        if authedStream is not None:
+            returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
+            print(returnMessage)
 
-        if requestedChannel.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            if requestedChannel.imageLocation is None:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
+
+            runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
+                       streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
+                                                                 "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+
+            try:
+                processSubscriptions(requestedChannel.id,
+                                 sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
+                                 "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
+                                 " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
+                                 + "'>" + requestedChannel.channelName + "</a></p>")
+            except:
+                newLog(0, "Subscriptions Failed due to possible misconfiguration")
+
+            db.session.close()
+            return 'OK'
         else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
-
-        runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
-                   channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
-                   streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
-                   streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
-
-        subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
-        for sub in subscriptionQuery:
-            # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
-                                                             "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
-            db.session.add(newNotification)
-        db.session.commit()
-
-        try:
-            processSubscriptions(requestedChannel.id,
-                             sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
-                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
-                             " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
-                             + "'>" + requestedChannel.channelName + "</a></p>")
-        except:
-            newLog(0, "Subscriptions Failed due to possible misconfiguration")
-
-        db.session.close()
-        return 'OK'
+            returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
+            print(returnMessage)
+            db.session.close()
+            return abort(400)
     else:
-        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. No Authorized Stream Key', 'channelName': str(key), 'ipAddress': str(ipaddress)}
+        returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Failed Channel Auth. Channel Loc does not match Channel', 'channelName': str(key), 'ipAddress': str(ipaddress)}
         print(returnMessage)
         db.session.close()
         return abort(400)
@@ -3700,10 +3733,12 @@ def rec_Complete_handler():
 
     videoPath = path.replace('/tmp/',requestedChannel.channelLoc + '/')
     imagePath = videoPath.replace('.flv','.png')
+    gifPath = videoPath.replace('.flv', '.gif')
     videoPath = videoPath.replace('.flv','.mp4')
 
     pendingVideo.thumbnailLocation = imagePath
     pendingVideo.videoLocation = videoPath
+    pendingVideo.gifLocation = gifPath
 
     fullVidPath = '/var/www/videos/' + videoPath
 
@@ -4217,15 +4252,26 @@ def setScreenShot(message):
             if videoQuery is not None and videoQuery.owningUser == current_user.id:
                 videoLocation = '/var/www/videos/' + videoQuery.videoLocation
                 newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
+                newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
                 videoQuery.thumbnailLocation = newThumbnailLocation
                 fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
+                newGifFullThumbnailLocation = '/var/www/videos/' + newGifThumbnailLocation
+
+                videoQuery.thumbnailLocation = newThumbnailLocation
+                videoQuery.gifLocation = newGifThumbnailLocation
+
                 db.session.commit()
                 db.session.close()
                 try:
                     os.remove(fullthumbnailLocation)
                 except OSError:
                     pass
+                try:
+                    os.remove(newGifFullThumbnailLocation)
+                except OSError:
+                    pass
                 result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+                gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
 
     elif 'clipID' in message:
         clipID = message['clipID']
@@ -4237,13 +4283,32 @@ def setScreenShot(message):
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
             fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail
-            db.session.commit()
-            db.session.close()
+
             try:
                 os.remove(fullthumbnailLocation)
             except OSError:
                 pass
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
+
+            # Generate Gif
+            if clipQuery.gifLocation != None:
+                gifLocation = clipQuery.gifLocation
+                fullthumbnailLocation = '/var/www/videos/' + gifLocation
+
+                try:
+                    os.remove(fullthumbnailLocation)
+                except OSError:
+                    pass
+
+            newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.gif'
+            fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
+            clipQuery.gifLocation = newClipThumbnail
+
+            db.session.commit()
+            db.session.close()
+
+            gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
+
     return 'OK'
 
 @socketio.on('updateStreamData')
@@ -4476,7 +4541,7 @@ def addUserChannelInvite(message):
         if invitedUserQuery is not None:
             previouslyInvited = False
             for invite in invitedUserQuery.invites:
-                if invite.channelID is not channelID:
+                if invite.channelID is channelID:
                     previouslyInvited = True
 
             if not previouslyInvited:

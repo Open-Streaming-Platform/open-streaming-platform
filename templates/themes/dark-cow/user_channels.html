@@ -64,7 +64,7 @@
                         <div class="row">
                           <div class="col-auto m-2 pt-3">
                             <div class="mb-2" style="width:270px;">
-                              <img class="lazy" id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+                              <img class="lazy {% if video.gifLocation != None %}gif{% endif %} " id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
                             </div>
                             <div>
                                 <button type="button" class="btn btn-primary btn-block videoThumbnailUploadModalButton" data-toggle="modal" data-target="#videoThumbnailUploadModal" data-videoid="{{video.id}}">Upload Thumbnail</button>
@@ -114,7 +114,7 @@
                         <div class="row">
                           <div class="col-auto m-2 pt-3">
                             <div class="mb-2" style="width:270px;">
-                              <img class="lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+                              <img class="lazy {% if clip.gifLocation != None %}gif{% endif %} " id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
                             </div>
                             <div class="mt-2">
                               <button class="clipEditModalButton btn btn-primary" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>

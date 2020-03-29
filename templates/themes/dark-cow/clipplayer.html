@@ -98,7 +98,7 @@
           <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
             <div class="video-card-header">
               <a href="/clip/{{clipEntry.id}}">
-                <img class="shadow lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clipEntry.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                <img class="shadow {% if clipEntry.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" width="100%" data-src="/videos/{{clipEntry.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
               </a>
             </div>
             <div class="video-card-body">
