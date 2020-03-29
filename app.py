@@ -190,6 +190,9 @@ themeData = {}
 # Create In-Memory Invite Cache to Prevent High CPU Usage for Polling Channel Permissions during Streams
 inviteCache = {}
 
+# Build Channel Restream Subprocess Dictionary
+restreamSubprocesses = {}
+
 #----------------------------------------------------------------------------#
 # Functions
 #----------------------------------------------------------------------------#
@@ -3663,6 +3666,20 @@ def user_auth_check():
             except:
                 newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
+            # Begin RTMP Restream Function
+            if requestedChannel.rtmpRestream is True:
+                inputLocation = ""
+                if requestedChannel.protected and sysSettings.protectionEnabled:
+                    owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
+                    secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
+                    username = owningUser.username
+                    inputLocation = 'rtmp://' + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+                else:
+                    inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
+
+                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", "3500k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
+                restreamSubprocesses[requestedChannel.channelLoc] = p
+
             db.session.close()
             return 'OK'
         else:
@@ -3707,6 +3724,16 @@ def user_deauth_check():
                 db.session.delete(vid)
             db.session.delete(stream)
             db.session.commit()
+
+            # End RTMP Restream Function
+            if channelRequest.rtmpRestream is True:
+                if channelRequest.channelLoc in restreamSubprocesses:
+                    p = restreamSubprocesses[channelRequest.channelLoc]
+                    p.kill()
+                    try:
+                        del restreamSubprocesses[channelRequest.channelLoc]
+                    except KeyError:
+                        pass
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
 
