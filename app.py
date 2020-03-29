@@ -4529,10 +4529,15 @@ def text(message):
 @socketio.on('getServerResources')
 def get_resource_usage(message):
     cpuUsage = psutil.cpu_percent(interval=1)
+    cpuLoad = psutil.getloadavg()
     memoryUsage = psutil.virtual_memory()[2]
+    memoryUsageTotal = round(float(psutil.virtual_memory[0])/1000000,2)
+    memoryUsageAvailable = round(float(psutil.virtual_memory[1])/1000000,2)
     diskUsage = psutil.disk_usage('/')[3]
+    diskTotal = round(float(psutil.disk_usage('/')[0])/1000000,2)
+    diskFree = round(float(psutil.disk_usage('/')[2]) / 1000000, 2)
 
-    emit('serverResources', {'cpuUsage':cpuUsage,'memoryUsage':memoryUsage, 'diskUsage':diskUsage})
+    emit('serverResources', {'cpuUsage':cpuUsage, 'cpuLoad': cpuLoad, 'memoryUsage':memoryUsage, 'memoryUsageTotal': memoryUsageTotal, 'memoryUsageAvailable': memoryUsageAvailable, 'diskUsage': diskUsage, 'diskTotal': diskTotal, 'diskFree': diskFree})
     return 'OK'
 
 @socketio.on('generateInviteCode')

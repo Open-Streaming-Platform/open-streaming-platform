@@ -111,15 +111,15 @@
                                 <div class="card">
                                     <div class="card-header"><i class="fas fa-chart-bar"></i> Resource Usage</div>
                                     <div class="card-body">
-                                        CPU<br>
+                                        CPU: <span id="cpuStats"></span><br>
                                         <div class="progress">
                                           <div id="cpuUsage" class="progress-bar bg-info" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
-                                        Memory<br>
+                                        Memory: <span id="memoryStats"></span><br>
                                         <div class="progress">
                                           <div id="memoryUsage" class="progress-bar bg-danger" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
-                                        Disk<br>
+                                        Disk: <span id="diskStats"></span><br>
                                         <div class="progress">
                                           <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div>
@@ -831,16 +831,18 @@
 
 <script>
     socket.on('serverResources', function(msg) {
-        console.log('Recieved:' + msg)
 
         $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage'] + '%');
         $('#cpuUsage').text(msg['cpuUsage'] + '%');
+        $('#cpuStats').innerHTML(msg['cpuLoad']);
 
         $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
         $('#memoryUsage').text(msg['memoryUsage'] + '%');
+        $('#memoryStats').innerHTML(msg['memoryUsageAvailable'] + 'GB / ' + msg['memoryUsageTotal'] + 'GB');
 
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%');
+        $('#diskStats').innerHTML(msg['diskFree'] + 'GB / ' + msg['diskTotal'] + 'GB');
 
     });
 </script>
