@@ -306,6 +306,12 @@
   {% endblock %}
 
   <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  <script>
     var uploadmde = new EasyMDE({ element: document.getElementById("videoDescription") });
   </script>
 
