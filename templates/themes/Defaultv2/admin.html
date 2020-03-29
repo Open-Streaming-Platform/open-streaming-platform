@@ -838,11 +838,11 @@
 
         $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
         $('#memoryUsage').text(msg['memoryUsage'] + '%');
-        $('#memoryStats').text(msg['memoryUsageAvailable'] + 'GB / ' + msg['memoryUsageTotal'] + 'GB');
+        $('#memoryStats').text(msg['memoryUsageAvailable'] + ' MB / ' + msg['memoryUsageTotal'] + ' MB');
 
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%');
-        $('#diskStats').text(msg['diskFree'] + 'GB / ' + msg['diskTotal'] + 'GB');
+        $('#diskStats').text(msg['diskFree'] + ' MB / ' + msg['diskTotal'] + ' MB');
 
     });
 </script>

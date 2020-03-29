@@ -4530,6 +4530,7 @@ def text(message):
 def get_resource_usage(message):
     cpuUsage = psutil.cpu_percent(interval=1)
     cpuLoad = psutil.getloadavg()
+    cpuLoad = cpuLoad[0] + ", " + cpuLoad[1] + ", " + cpuLoad[2]
     memoryUsage = psutil.virtual_memory()[2]
     memoryUsageTotal = round(float(psutil.virtual_memory()[0])/1000000,2)
     memoryUsageAvailable = round(float(psutil.virtual_memory()[1])/1000000,2)
