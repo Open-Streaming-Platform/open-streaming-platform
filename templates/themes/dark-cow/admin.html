@@ -209,7 +209,11 @@
                                   <hr>
                                   <h4><i class="fas fa-stream"></i> Other</h4>
                                   <div class="form-group">
-                                    <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label>
+                                    <label for="serverMessageTitle" class="col-form-label">Server Message Title</label><br>
+                                    <input type="text" id="serverMessageTitle" name="serverMessageTitle" class="form-control" value="{{sysSettings.serverMessageTitle}}" size="256">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label><br>
                                     <textarea class="form-control" name="serverMessage" id="serverMessage" value="" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
                                   </div>
                               </div>

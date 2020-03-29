@@ -311,6 +311,11 @@ def init_db_values():
             chan.rtmpRestreamDestination = ""
             db.session.commit()
 
+        # Fixes for Server Settings not having a Server Message Title
+        if sysSettings.serverMessageTitle is None:
+            sysSettings.serverMessageTitle = "Server Message"
+            db.session.commit()
+
         #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
         #if hubQuery == None:
         #    newHub = hubConnection.hubServers(hubURL)
@@ -2340,6 +2345,7 @@ def admin_page():
             smtpPort = request.form['smtpPort']
             smtpUser = request.form['smtpUser']
             smtpPassword = request.form['smtpPassword']
+            serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
 
@@ -2406,6 +2412,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
             if systemLogo is not None:
@@ -2650,6 +2657,8 @@ def settings_dbRestore():
             serverSettings.protectionEnabled = eval(restoreDict['settings'][0]['protectionEnabled'])
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
+            if 'serverMessageTitle' in restoreDict['settings'][0]:
+                serverSettings.serverMessageTitle = restoreDict['settings'][0]['serverMessageTitle']
 
             # Remove Old Settings
             oldSettings = settings.settings.query.all()
@@ -2751,6 +2760,10 @@ def settings_dbRestore():
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
                     channel.autoPublish = eval(restoredChannel['autoPublish'])
+                    if 'rtmpRestream' in restoredChannel:
+                        channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
+                    if 'rtmpRestreamDestination' in restoredChannel:
+                        channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
 
                     db.session.add(channel)
                 else:
