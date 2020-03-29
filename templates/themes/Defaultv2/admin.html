@@ -834,15 +834,15 @@
 
         $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage'] + '%');
         $('#cpuUsage').text(msg['cpuUsage'] + '%');
-        $('#cpuStats').innerHTML(msg['cpuLoad']);
+        $('#cpuStats').text(msg['cpuLoad']);
 
         $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
         $('#memoryUsage').text(msg['memoryUsage'] + '%');
-        $('#memoryStats').innerHTML(msg['memoryUsageAvailable'] + 'GB / ' + msg['memoryUsageTotal'] + 'GB');
+        $('#memoryStats').text(msg['memoryUsageAvailable'] + 'GB / ' + msg['memoryUsageTotal'] + 'GB');
 
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%');
-        $('#diskStats').innerHTML(msg['diskFree'] + 'GB / ' + msg['diskTotal'] + 'GB');
+        $('#diskStats').text(msg['diskFree'] + 'GB / ' + msg['diskTotal'] + 'GB');
 
     });
 </script>
