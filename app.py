@@ -315,6 +315,9 @@ def init_db_values():
         if sysSettings.serverMessageTitle is None:
             sysSettings.serverMessageTitle = "Server Message"
             db.session.commit()
+        if sysSettings.restreamMaxBitrate is None:
+            sysSettings.restreamMaxBitrate = 3500
+            db.session.commit()
 
         #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
         #if hubQuery == None:
@@ -2348,6 +2351,7 @@ def admin_page():
             serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
+            restreamMaxBitrate = request.form['restreamMaxBitrate']
 
             recordSelect = False
             uploadSelect = False
@@ -2415,6 +2419,8 @@ def admin_page():
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
+            sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
+
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
 
@@ -3690,7 +3696,7 @@ def user_auth_check():
                 else:
                     inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
 
-                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", "3500k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
+                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
                 restreamSubprocesses[requestedChannel.channelLoc] = p
 
             db.session.close()

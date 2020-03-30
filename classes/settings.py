@@ -22,6 +22,7 @@ class settings(db.Model):
     systemTheme = db.Column(db.String(255))
     systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
+    restreamMaxBitrate = db.Column(db.Integer)
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(2048))
 
@@ -50,6 +51,7 @@ class settings(db.Model):
         self.systemLogo = "/static/img/logo.png"
         self.serverMessageTitle = "Server Message"
         self.serverMessage = ""
+        self.restreamMaxBitrate = 3500
         self.protectionEnabled = False
 
     def __repr__(self):
