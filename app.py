@@ -3711,9 +3711,9 @@ def user_auth_check():
                     subprocessConstructor.append("-f")
                     subprocessConstructor.append("flv")
                     if sysSettings.adaptiveStreaming:
-                        subprocessConstructor.append(node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                        subprocessConstructor.append("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
                     else:
-                        subprocessConstructor.append(node + "/stream-data/" + requestedChannel.channelLoc)
+                        subprocessConstructor.append("rtmp" + node + "/stream-data/" + requestedChannel.channelLoc)
                 p = subprocess.Popen(subprocessConstructor)
                 edgeRestreamSubprocesses[requestedChannel.channelLoc] = p
 
