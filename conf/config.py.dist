@@ -18,3 +18,6 @@ allowRegistration=True
 
 # Require Users to Confirm their Email Addresses
 requireEmailRegistration=True
+
+# List any OSP Edge Nodes You Would Like to Use ex: ["ospEdge1.test.org", "ospEdge2.test.org"]
+OSPEdgeNodes = []

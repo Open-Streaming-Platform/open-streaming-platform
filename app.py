@@ -193,6 +193,9 @@ inviteCache = {}
 # Build Channel Restream Subprocess Dictionary
 restreamSubprocesses = {}
 
+# Build Edge Restream Subprocess Dictionary
+edgeRestreamSubprocesses = {}
+
 #----------------------------------------------------------------------------#
 # Functions
 #----------------------------------------------------------------------------#
@@ -3685,19 +3688,34 @@ def user_auth_check():
             except:
                 newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
+            inputLocation = ""
+            if requestedChannel.protected and sysSettings.protectionEnabled:
+                owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
+                secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
+                username = owningUser.username
+                inputLocation = 'rtmp://' + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+            else:
+                inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
+
             # Begin RTMP Restream Function
             if requestedChannel.rtmpRestream is True:
-                inputLocation = ""
-                if requestedChannel.protected and sysSettings.protectionEnabled:
-                    owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
-                    secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
-                    username = owningUser.username
-                    inputLocation = 'rtmp://' + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
-                else:
-                    inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
 
                 p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
                 restreamSubprocesses[requestedChannel.channelLoc] = p
+
+            # Start OSP Edge Nodes
+            if config.OSPEdgeNodes is not []:
+
+                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                for node in config.OSPEdgeNodes:
+                    subprocessConstructor.append("-f")
+                    subprocessConstructor.append("flv")
+                    if sysSettings.adaptiveStreaming:
+                        subprocessConstructor.append(node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                    else:
+                        subprocessConstructor.append(node + "/stream-data/" + requestedChannel.channelLoc)
+                p = subprocess.Popen(subprocessConstructor)
+                edgeRestreamSubprocesses[requestedChannel.channelLoc] = p
 
             db.session.close()
             return 'OK'
@@ -3753,6 +3771,14 @@ def user_deauth_check():
                         del restreamSubprocesses[channelRequest.channelLoc]
                     except KeyError:
                         pass
+
+            if channelRequest.channelLoc in edgeRestreamSubprocesses:
+                p = edgeRestreamSubprocesses[channelRequest.channelLoc]
+                p.kill()
+                try:
+                    del edgeRestreamSubprocesses[channelRequest.channelLoc]
+                except KeyError:
+                    pass
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
 
