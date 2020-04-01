@@ -59,7 +59,6 @@ sys.path.append('./classes')
 from html.parser import HTMLParser
 
 import logging
-
 import datetime
 
 from conf import config
@@ -195,6 +194,7 @@ restreamSubprocesses = {}
 
 # Build Edge Restream Subprocess Dictionary
 edgeRestreamSubprocesses = {}
+lastEdgeNodePosition = 0
 
 #----------------------------------------------------------------------------#
 # Functions
@@ -406,6 +406,19 @@ def strip_html(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
+
+def roundRobin(NodeList):
+    global lastEdgeNodePosition
+
+    NodeLength = len(NodeList)
+    nextPosition = lastEdgeNodePosition + 1
+    if nextPosition > (NodeLength-1):
+        nextPosition = 0
+
+    lastEdgeNodePosition = nextPosition
+
+    return NodeList[nextPosition]
+
 
 def asynch(func):
 
@@ -1412,12 +1425,22 @@ def view_page(loc):
     if requestedChannel is not None:
 
         streamURL = ''
-        if sysSettings.adaptiveStreaming is True:
-            streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
-        elif requestedChannel.record is True:
-            streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
-        elif requestedChannel.record is False:
-            streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+        if config.OSPEdgeNodes is []:
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            elif requestedChannel.record is True:
+                streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
+            elif requestedChannel.record is False:
+                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+        else:
+
+            # Handle Selecting the Node using Round Robin Logic
+            selectedNode = roundRobin(config.OSPEdgeNodes)
+
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = 'http://' + selectedNode + '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            else:
+                streamURL = 'http://' + selectedNode + '/live/' + requestedChannel.channelLoc + '/index.m3u8'
 
         requestedChannel.views = requestedChannel.views + 1
         if streamData is not None:
