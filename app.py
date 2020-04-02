@@ -3728,14 +3728,20 @@ def user_auth_check():
             # Start OSP Edge Nodes
             if config.OSPEdgeNodes is not []:
 
-                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2", "-f", "tee"]
+                teeMux = ""
+                nodeCount = 0
                 for node in config.OSPEdgeNodes:
-                    subprocessConstructor.append("-f")
-                    subprocessConstructor.append("flv")
+                    nodeCount = nodeCount + 1
+                    subTeeMux = "[f=flv]"
                     if sysSettings.adaptiveStreaming:
-                        subprocessConstructor.append("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                        subTeeMux = subTeeMux + ("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
                     else:
-                        subprocessConstructor.append("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
+                        subTeeMux = subTeeMux + ("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
+                    if nodeCount < len(config.OSPEdgeNodes):
+                        subTeeMux = subTeeMux + "|"
+                    teeMux = teeMux + subTeeMux
+                subprocessConstructor.append(teeMux)
                 p = subprocess.Popen(subprocessConstructor)
                 edgeRestreamSubprocesses[requestedChannel.channelLoc] = p
 
