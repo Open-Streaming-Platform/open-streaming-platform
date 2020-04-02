@@ -3731,13 +3731,12 @@ def user_auth_check():
 
                 for node in config.OSPEdgeNodes:
                     subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
-                    subprocessConstructor.append('-f')
-                    subprocessConstructor.append('flv')
+                    subprocessConstructor.append("-f")
+                    subprocessConstructor.append("flv")
                     if sysSettings.adaptiveStreaming:
-                        streamLoc = ("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                        subprocessConstructor.append("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
                     else:
-                        streamLoc = ("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
-                    subprocessConstructor.append(streamLoc)
+                        subprocessConstructor.append("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
 
                     p = subprocess.Popen(subprocessConstructor)
                     edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
