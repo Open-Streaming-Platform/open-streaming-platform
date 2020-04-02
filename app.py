@@ -110,6 +110,7 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
+app.config["CORS_ORIGINS"] = config.OSPEdgeNodes
 if config.redisPassword != '':
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
@@ -145,6 +146,7 @@ migrateObj = Migrate(app, db)
 Session(app)
 
 CORS(app)
+
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -1414,6 +1416,7 @@ def channel_stream_link_page(loc):
         return redirect(url_for("main_page"))
 
 @app.route('/view/<loc>/')
+@cross_origin()
 def view_page(loc):
     sysSettings = settings.settings.query.first()
 
