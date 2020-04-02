@@ -3727,23 +3727,21 @@ def user_auth_check():
 
             # Start OSP Edge Nodes
             if config.OSPEdgeNodes is not []:
+                edgeRestreamSubprocesses[requestedChannel.channelLoc] = []
 
-                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2", "-map", "0:v", "-map", "0:a", "-flags", "+global_header", "-f", "tee"]
-                teeMux = ''
-                nodeCount = 0
+                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+
                 for node in config.OSPEdgeNodes:
-                    nodeCount = nodeCount + 1
-                    subTeeMux = "[f=flv:onfail=ignore]"
+                    subprocessConstructor.append('-f')
+                    subprocessConstructor.append('flv')
                     if sysSettings.adaptiveStreaming:
-                        subTeeMux = subTeeMux + ("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                        streamLoc = ("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
                     else:
-                        subTeeMux = subTeeMux + ("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
-                    if nodeCount < len(config.OSPEdgeNodes):
-                        subTeeMux = subTeeMux + "|"
-                    teeMux = teeMux + subTeeMux
-                subprocessConstructor.append(teeMux)
-                p = subprocess.Popen(subprocessConstructor)
-                edgeRestreamSubprocesses[requestedChannel.channelLoc] = p
+                        streamLoc = ("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
+                    subprocessConstructor.append(streamLoc)
+
+                    p = subprocess.Popen(subprocessConstructor)
+                    edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
 
             db.session.close()
             return 'OK'
@@ -3801,8 +3799,8 @@ def user_deauth_check():
                         pass
 
             if channelRequest.channelLoc in edgeRestreamSubprocesses:
-                p = edgeRestreamSubprocesses[channelRequest.channelLoc]
-                p.kill()
+                for p in edgeRestreamSubprocesses[channelRequest.channelLoc]:
+                    p.kill()
                 try:
                     del edgeRestreamSubprocesses[channelRequest.channelLoc]
                 except KeyError:
