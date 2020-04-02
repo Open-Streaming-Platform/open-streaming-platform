@@ -144,7 +144,8 @@ migrateObj = Migrate(app, db)
 
 Session(app)
 
-CORS(app)
+CORS(app, send_wildcard=True)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 #----------------------------------------------------------------------------#
@@ -1415,7 +1416,7 @@ def channel_stream_link_page(loc):
         return redirect(url_for("main_page"))
 
 @app.route('/view/<loc>/')
-@cross_origin()
+@cross_origin(origin='*')
 def view_page(loc):
     sysSettings = settings.settings.query.first()
 
