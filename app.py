@@ -3729,7 +3729,7 @@ def user_auth_check():
             if config.OSPEdgeNodes is not []:
 
                 subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2", "-map", "0:v", "-map", "0:a", "-flags", "+global_header", "-f", "tee"]
-                teeMux = '"'
+                teeMux = ''
                 nodeCount = 0
                 for node in config.OSPEdgeNodes:
                     nodeCount = nodeCount + 1
@@ -3741,7 +3741,6 @@ def user_auth_check():
                     if nodeCount < len(config.OSPEdgeNodes):
                         subTeeMux = subTeeMux + "|"
                     teeMux = teeMux + subTeeMux
-                teeMux = teeMux + '"'
                 subprocessConstructor.append(teeMux)
                 p = subprocess.Popen(subprocessConstructor)
                 edgeRestreamSubprocesses[requestedChannel.channelLoc] = p
