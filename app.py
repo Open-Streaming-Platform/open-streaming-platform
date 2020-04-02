@@ -144,8 +144,14 @@ migrateObj = Migrate(app, db)
 
 Session(app)
 
-CORS(app, send_wildcard=True)
+CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+# TODO This is not the way I want it.  need to determine HTTP or HTTPS
+corsObj = []
+for node in config.OSPEdgeNodes:
+    corsObj.append("http://" + node)
+app.config['CORS_ORIGIN_WHITELIST'] = corsObj
 
 
 #----------------------------------------------------------------------------#
@@ -1416,7 +1422,7 @@ def channel_stream_link_page(loc):
         return redirect(url_for("main_page"))
 
 @app.route('/view/<loc>/')
-@cross_origin(origin='*')
+@cross_origin()
 def view_page(loc):
     sysSettings = settings.settings.query.first()
 
