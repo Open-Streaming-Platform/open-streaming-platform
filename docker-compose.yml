@@ -13,7 +13,7 @@ services:
       - '8585:80'
       - '8553:443'
     environment:
-      - REDIS_HOST="ospredis"
+      - REDIS_HOST=ospredis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=""
 #       - DB_URL="sqlite:///db/database.db"
