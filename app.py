@@ -3729,7 +3729,7 @@ def user_auth_check():
             # Start OSP Edge Nodes
             if config.OSPEdgeNodes is not []:
 
-                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1" "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
                 for node in config.OSPEdgeNodes:
                     subprocessConstructor.append("-f")
                     subprocessConstructor.append("flv")
