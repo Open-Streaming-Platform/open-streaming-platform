@@ -1435,12 +1435,11 @@ def view_page(loc):
         else:
 
             # Handle Selecting the Node using Round Robin Logic
-            selectedNode = roundRobin(config.OSPEdgeNodes)
 
             if sysSettings.adaptiveStreaming is True:
-                streamURL = 'http://' + selectedNode + '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+                streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
-                streamURL = 'http://' + selectedNode + '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+                streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
 
         requestedChannel.views = requestedChannel.views + 1
         if streamData is not None:
