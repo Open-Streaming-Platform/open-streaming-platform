@@ -434,6 +434,26 @@ Payload
 }
 ```
 
+### OSP Edge Nodes
+OSP Edge Nodes use the Open Streaming Platform Edge Streamer to offload stream viewers to separate servers.  To enable Edge Nodes, you will need to do the following:
+* Setup as many Edge Streamers as you need on separate servers and follow the setup instructions to configure the Master OSP Server.
+* Update the /usr/local/nginx/conf/osp-edge.conf file to include the IP Addresses of all Edge Streamer servers, per the example:
+```
+server 192.168.0.5;
+server 192.168.0.6;
+server 192.168.0.7;
+```
+* Edit your /opt/osp/conf/config.py file to include all IP Addresses of all Edge Streamer servers per the example:
+```
+# List any OSP Edge Nodes You Would Like to Use ex: ["ospEdge1.test.org", "ospEdge2.test.org"]
+OSPEdgeNodes = ["192.168.0.5", "192.168.0.6", "192.168.0.7"]
+```
+* Restart Nginx and OSP
+```
+sudo systemctl restart nginx-osp
+sudo systemctl restart osp.target
+```
+
 ### Adaptive Streaming
 While OSP now supports the ability to transcode to an adaptive stream for lower bandwidth users, this feature will use considerable CPU processing poweer and may slow down your OSP instance.  It is recommended only to use this feature when there is either few streams occurring or if your server has sufficient resources to handle the ability to transcode multiple streams.
 
