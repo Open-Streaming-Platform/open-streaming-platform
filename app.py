@@ -17,7 +17,6 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_cl
 from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
-from flask_cors import CORS, cross_origin
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
@@ -143,16 +142,6 @@ db.app = app
 migrateObj = Migrate(app, db)
 
 Session(app)
-
-CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-# TODO This is not the way I want it.  need to determine HTTP or HTTPS
-corsObj = []
-for node in config.OSPEdgeNodes:
-    corsObj.append("http://" + node)
-app.config['CORS_ORIGIN_WHITELIST'] = corsObj
-
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -1422,7 +1411,6 @@ def channel_stream_link_page(loc):
         return redirect(url_for("main_page"))
 
 @app.route('/view/<loc>/')
-@cross_origin()
 def view_page(loc):
     sysSettings = settings.settings.query.first()
 
