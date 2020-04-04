@@ -105,7 +105,7 @@ Change the following values from their Default:
 
 Restart the OSP service
 ```
-sudo systemctl restart osp
+sudo systemctl restart osp.target
 ```
 Open a Web Browser and configure OSP
 ```
