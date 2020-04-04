@@ -94,12 +94,12 @@ RUN apk add python3 \
   py3-gunicorn \
   uwsgi-python3
 
+# Upgrade PIP
+RUN pip3 install --upgrade pip
+
 # Install OSP Dependancies
 RUN pip3 install -r /opt/osp/setup/requirements.txt
 RUN pip3 install cryptography
-
-# Upgrade PIP
-RUN pip3 install --upgrade pip
 
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
