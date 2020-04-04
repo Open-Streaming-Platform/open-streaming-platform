@@ -77,7 +77,7 @@ app = Flask(__name__)
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
-
+app.config['WEB_ROOT'] = "/var/www/"
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
@@ -99,8 +99,8 @@ app.config['SECURITY_SEND_REGISTER_EMAIL'] = config.requireEmailRegistration
 app.config['SECURITY_CHANGABLE'] = True
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
 app.config['SECURITY_FLASH_MESSAGES'] = True
-app.config['UPLOADED_PHOTOS_DEST'] = '/var/www/images'
-app.config['UPLOADED_DEFAULT_DEST'] = '/var/www/images'
+app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
+app.config['UPLOADED_DEFAULT_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['SECURITY_POST_LOGIN_VIEW'] = 'main_page'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = 'main_page'
 app.config['SECURITY_MSG_EMAIL_ALREADY_ASSOCIATED'] = ("Username or Email Already Associated with an Account", "error")
@@ -108,7 +108,7 @@ app.config['SECURITY_MSG_INVALID_PASSWORD'] = ("Invalid Username or Password", "
 app.config['SECURITY_MSG_INVALID_EMAIL_ADDRESS'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
-app.config['VIDEO_UPLOAD_TEMPFOLDER'] = '/var/www/videos/temp'
+app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 if config.redisPassword != '':
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
@@ -309,11 +309,11 @@ def init_db_values():
         #    db.session.commit()
 
         # Create the stream-thumb directory if it does not exist
-        if not os.path.isdir("/var/www/stream-thumb"):
+        if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
             try:
-                os.mkdir("/var/www/stream-thumb")
+                os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
             except OSError:
-                flash("Unable to create /var/www/stream-thumb", "error")
+                flash("Unable to create <web-root>/stream-thumb", "error")
 
         sysSettings = settings.settings.query.first()
 
@@ -711,11 +711,12 @@ def deleteVideo(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
     if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
-        filePath = '/var/www/videos/' + recordedVid.videoLocation
-        thumbnailPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".png"
-        gifPath = '/var/www/videos/' + recordedVid.videoLocation[:-4] + ".gif"
+        videos_root = app.config['WEB_ROOT'] + 'videos/'
+        filePath = videos_root + recordedVid.videoLocation
+        thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
+        gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
 
-        if filePath != '/var/www/videos/':
+        if filePath != videos_root:
             if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
                 os.remove(filePath)
                 if os.path.exists(thumbnailPath):
@@ -725,9 +726,9 @@ def deleteVideo(videoID):
 
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
-            thumbnailPath = '/var/www/videos/' + clip.thumbnailLocation
+            thumbnailPath = videos_root + clip.thumbnailLocation
 
-            if thumbnailPath != '/var/www/videos/':
+            if thumbnailPath != videos_root:
                 if os.path.exists(thumbnailPath) and (
                         clip.thumbnailLocation is not None or clip.thumbnailLocation != ""):
                     os.remove(thumbnailPath)
@@ -797,42 +798,44 @@ def moveVideo(videoID, newChannel):
     if recordedVidQuery is not None:
         newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
         if newChannelQuery is not None:
+            videos_root = app.config['WEB_ROOT'] + 'videos/'
+
             recordedVidQuery.channelID = newChannelQuery.id
             coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
-            if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc):
+            if not os.path.isdir(videos_root + newChannelQuery.channelLoc):
                 try:
-                    os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc)
+                    os.mkdir(videos_root + newChannelQuery.channelLoc)
                 except OSError:
                     newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
                         newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
                     flash("Error Moving Video - Unable to Create Directory", "error")
                     return False
-            shutil.move("/var/www/videos/" + recordedVidQuery.videoLocation,
-                        "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
+            shutil.move(videos_root + recordedVidQuery.videoLocation,
+                        videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
             recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
             if (recordedVidQuery.thumbnailLocation is not None) and (
-            os.path.exists("/var/www/videos/" + recordedVidQuery.thumbnailLocation)):
+            os.path.exists(videos_root + recordedVidQuery.thumbnailLocation)):
                 coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
                 coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split("_", 1)[1]
-                shutil.move("/var/www/videos/" + recordedVidQuery.thumbnailLocation,
-                            "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
-                if (recordedVidQuery.gifLocation is not None) and (os.path.exists("/var/www/videos/" + recordedVidQuery.gifLocation)):
-                    shutil.move("/var/www/videos/" + recordedVidQuery.gifLocation,
-                                "/var/www/videos/" + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
+                shutil.move(videos_root + recordedVidQuery.thumbnailLocation,
+                            videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
+                if (recordedVidQuery.gifLocation is not None) and (os.path.exists(videos_root + recordedVidQuery.gifLocation)):
+                    shutil.move(videos_root + recordedVidQuery.gifLocation,
+                                videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
                 recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
                 recordedVidQuery.gifLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif
             for clip in recordedVidQuery.clips:
                 coreThumbnail = (clip.thumbnailLocation.split("/")[2])
-                if not os.path.isdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips'):
+                if not os.path.isdir(videos_root + newChannelQuery.channelLoc + '/clips'):
                     try:
-                        os.mkdir("/var/www/videos/" + newChannelQuery.channelLoc + '/clips')
+                        os.mkdir(videos_root + newChannelQuery.channelLoc + '/clips')
                     except OSError:
                         newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
                             newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
                         flash("Error Moving Video - Unable to Create Clips Directory", "error")
                         return False
-                newClipLocation = "/var/www/videos/" + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
-                shutil.move("/var/www/videos/" + clip.thumbnailLocation, newClipLocation)
+                newClipLocation = videos_root + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                shutil.move(videos_root + clip.thumbnailLocation, newClipLocation)
                 clip.thumbnailLocation = newChannelQuery.channelLoc + "/clips/" + coreThumbnail
 
             db.session.commit()
@@ -854,19 +857,20 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             db.session.commit()
 
             newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
+            videos_root = app.config['WEB_ROOT'] + 'videos/'
 
-            videoLocation = '/var/www/videos/' + recordedVidQuery.videoLocation
+            videoLocation = videos_root + recordedVidQuery.videoLocation
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
             clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
 
             newClipQuery.thumbnailLocation = clipThumbNailLocation
             newClipQuery.gifLocation = clipGifLocation
 
-            fullthumbnailLocation = '/var/www/videos/' + clipThumbNailLocation
-            fullgifLocation = '/var/www/videos/' + clipGifLocation
+            fullthumbnailLocation = videos_root + clipThumbNailLocation
+            fullgifLocation = videos_root + clipGifLocation
 
-            if not os.path.isdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips'):
-                os.mkdir("/var/www/videos/" + recordedVidQuery.channel.channelLoc + '/clips')
+            if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
+                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
 
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
@@ -904,15 +908,16 @@ def changeClipMetadata(clipID, name, description):
 
 def deleteClip(clipID):
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
-        thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
-        gifPath = '/var/www/videos/' + clipQuery.gifLocation
+        thumbnailPath = videos_root + clipQuery.thumbnailLocation
+        gifPath = videos_root + clipQuery.gifLocation
 
-        if thumbnailPath != '/var/www/videos/':
+        if thumbnailPath != videos_root:
             if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
                 os.remove(thumbnailPath)
-        if gifPath != '/var/www/videos/':
+        if gifPath != videos_root:
             if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
                 os.remove(gifPath)
 
@@ -1070,7 +1075,8 @@ def get_pictureLocation(userID):
 @app.template_filter('get_diskUsage')
 def get_diskUsage(channelLocation):
 
-    channelLocation = '/var/www/videos/' + channelLocation
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
+    channelLocation = videos_root + channelLocation
 
     total_size = 0
     for dirpath, dirnames, filenames in os.walk(channelLocation):
@@ -1478,6 +1484,7 @@ def view_page(loc):
 @app.route('/play/<videoID>')
 def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
@@ -1500,7 +1507,7 @@ def view_vid_page(videoID):
         recordedVid.channel.views = recordedVid.channel.views + 1
 
         if recordedVid.length is None:
-            fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
+            fullVidPath = videos_root + recordedVid.videoLocation
             duration = getVidLength(fullVidPath)
             recordedVid.length = duration
         db.session.commit()
@@ -1687,6 +1694,7 @@ def comments_vid_page(videoID):
 @app.route('/clip/<clipID>')
 def view_clip_page(clipID):
     sysSettings = settings.settings.query.first()
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 
@@ -1712,7 +1720,7 @@ def view_clip_page(clipID):
             clipQuery.recordedVideo.channel.views = clipQuery.recordedVideo.channel.views + 1
 
             if recordedVid.length is None:
-                fullVidPath = '/var/www/videos/' + recordedVid.videoLocation
+                fullVidPath = videos_root + recordedVid.videoLocation
                 duration = getVidLength(fullVidPath)
                 recordedVid.length = duration
             db.session.commit()
@@ -1778,14 +1786,16 @@ def clip_change_page(clipID):
 @login_required
 @roles_required('Streamer')
 def upload():
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
+
     sysSettings = settings.settings.query.first()
     if not sysSettings.allowUploads:
         db.session.close()
         return ("Video Uploads Disabled", 501)
     if request.files['file']:
 
-        if not os.path.exists('/var/www/videos/temp'):
-            os.makedirs('/var/www/videos/temp')
+        if not os.path.exists(videos_root + 'temp'):
+            os.makedirs(videos_root + 'temp')
 
         file = request.files['file']
 
@@ -1854,12 +1864,13 @@ def upload_vid():
     newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments, videoPublishState)
 
     videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
-    videoPath = '/var/www/videos/' + videoLoc
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
+    videoPath = videos_root + videoLoc
 
     if videoFilename != "":
-        if not os.path.isdir("/var/www/videos/" + ChannelQuery.channelLoc):
+        if not os.path.isdir(videos_root + ChannelQuery.channelLoc):
             try:
-                os.mkdir("/var/www/videos/" + ChannelQuery.channelLoc)
+                os.mkdir(videos_root + ChannelQuery.channelLoc)
             except OSError:
                 newLog(4, "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
                 flash("Error uploading video - Unable to create directory","error")
@@ -1876,17 +1887,17 @@ def upload_vid():
     if thumbnailFilename != "":
         thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
 
-        thumbnailPath = '/var/www/videos/' + thumbnailLoc
+        thumbnailPath = videos_root + thumbnailLoc
         shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
         newVideo.thumbnailLocation = thumbnailLoc
     else:
         thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
 
-        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', '/var/www/videos/' + videoLoc, '-s', '384x216', '-vframes', '1', '/var/www/videos/' + thumbnailLoc])
+        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1', videos_root + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc
 
     newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
-    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', '/var/www/videos/' + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', '/var/www/videos/' + newGifFullThumbnailLocation])
+    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', videos_root + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', videos_root + newGifFullThumbnailLocation])
     newVideo.gifLocation = newGifFullThumbnailLocation
 
     if request.form['videoTitle'] != "":
@@ -2049,6 +2060,7 @@ def user_addInviteCode():
 @login_required
 @roles_required('Admin')
 def admin_page():
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
     sysSettings = settings.settings.query.first()
     if request.method == 'GET':
         if request.args.get("action") is not None:
@@ -2099,9 +2111,9 @@ def admin_page():
                         db.session.delete(upvote)
 
 
-                    filePath = '/var/www/videos/' + channelQuery.channelLoc
+                    filePath = videos_root + channelQuery.channelLoc
 
-                    if filePath != '/var/www/videos/':
+                    if filePath != videos_root:
                         shutil.rmtree(filePath, ignore_errors=True)
 
                     newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
@@ -2151,9 +2163,9 @@ def admin_page():
                             for upvote in chan.upvotes:
                                 db.session.delete(upvote)
 
-                            filePath = '/var/www/videos/' + chan.channelLoc
+                            filePath = videos_root + chan.channelLoc
 
-                            if filePath != '/var/www/videos/':
+                            if filePath != videos_root:
                                 shutil.rmtree(filePath, ignore_errors=True)
 
                             db.session.delete(chan)
@@ -3093,6 +3105,7 @@ def settings_channels_page():
     sysSettings = settings.settings.query.first()
     channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'},{'name': 'Plain White', 'value': 'PlainWhite'}, {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'}, {'name': 'Terminal', 'value': 'Terminal'}, {'name': 'Lawrencium', 'value': 'Lawrencium'}, {'name': 'Lush', 'value': 'Lush'}, {'name': 'Transparent', 'value': 'Transparent'}]
     channelChatAnimationOptions = [{'name':'No Animation', 'value':'None'},{'name': 'Slide-in From Left', 'value': 'slide-in-left'}, {'name':'Slide-In Blurred From Left','value':'slide-in-blurred-left'}, {'name':'Fade-In', 'value': 'fade-in-fwd'}]
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     if request.method == 'GET':
         if request.args.get("action") is not None:
@@ -3104,8 +3117,8 @@ def settings_channels_page():
             if action == "delete":
                 if current_user.id == requestedChannel.owningUser:
 
-                    filePath = '/var/www/videos/' + requestedChannel.channelLoc
-                    if filePath != '/var/www/videos/':
+                    filePath = videos_root + requestedChannel.channelLoc
+                    if filePath != videos_root:
                         shutil.rmtree(filePath, ignore_errors=True)
 
                     channelVid = requestedChannel.recordedVideo
@@ -3740,7 +3753,8 @@ def rec_Complete_handler():
     pendingVideo.videoLocation = videoPath
     pendingVideo.gifLocation = gifPath
 
-    fullVidPath = '/var/www/videos/' + videoPath
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
+    fullVidPath = videos_root + videoPath
 
     pendingVideo.pending = False
 
@@ -4222,12 +4236,13 @@ def handle_upvoteChange(streamData):
 def newScreenShot(message):
     video = message['loc']
     timeStamp = message['timeStamp']
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     if video is not None:
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
         if videoQuery is not None and videoQuery.owningUser == current_user.id:
-            videoLocation = '/var/www/videos/' + videoQuery.videoLocation
-            thumbnailLocation = '/var/www/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png'
+            videoLocation = videos_root + videoQuery.videoLocation
+            thumbnailLocation = videos_root + videoQuery.channel.channelLoc + '/tempThumbnail.png'
             try:
                 os.remove(thumbnailLocation)
             except OSError:
@@ -4244,18 +4259,19 @@ def newScreenShot(message):
 @socketio.on('setScreenShot')
 def setScreenShot(message):
     timeStamp = message['timeStamp']
+    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
     if 'loc' in message:
         video = message['loc']
         if video is not None:
             videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
             if videoQuery is not None and videoQuery.owningUser == current_user.id:
-                videoLocation = '/var/www/videos/' + videoQuery.videoLocation
+                videoLocation = videos_root + videoQuery.videoLocation
                 newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
                 newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
                 videoQuery.thumbnailLocation = newThumbnailLocation
-                fullthumbnailLocation = '/var/www/videos/' + newThumbnailLocation
-                newGifFullThumbnailLocation = '/var/www/videos/' + newGifThumbnailLocation
+                fullthumbnailLocation = videos_root + newThumbnailLocation
+                newGifFullThumbnailLocation = videos_root + newGifThumbnailLocation
 
                 videoQuery.thumbnailLocation = newThumbnailLocation
                 videoQuery.gifLocation = newGifThumbnailLocation
@@ -4278,10 +4294,10 @@ def setScreenShot(message):
         clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
         if clipQuery is not None and current_user.id == clipQuery.recordedVideo.owningUser:
             thumbnailLocation = clipQuery.thumbnailLocation
-            fullthumbnailLocation = '/var/www/videos/' + thumbnailLocation
-            videoLocation = '/var/www/videos/' + clipQuery.recordedVideo.videoLocation
+            fullthumbnailLocation = videos_root + thumbnailLocation
+            videoLocation = videos_root + clipQuery.recordedVideo.videoLocation
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
-            fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
+            fullNewClipThumbnailLocation = videos_root + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail
 
             try:
@@ -4293,7 +4309,7 @@ def setScreenShot(message):
             # Generate Gif
             if clipQuery.gifLocation != None:
                 gifLocation = clipQuery.gifLocation
-                fullthumbnailLocation = '/var/www/videos/' + gifLocation
+                fullthumbnailLocation = videos_root + gifLocation
 
                 try:
                     os.remove(fullthumbnailLocation)
@@ -4301,7 +4317,7 @@ def setScreenShot(message):
                     pass
 
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.gif'
-            fullNewClipThumbnailLocation = '/var/www/videos/' + newClipThumbnail
+            fullNewClipThumbnailLocation = videos_root + newClipThumbnail
             clipQuery.gifLocation = newClipThumbnail
 
             db.session.commit()
@@ -4720,8 +4736,9 @@ def saveUploadedThumbnailSocketIO(message):
         if videoQuery is not None:
             thumbnailFilename = message['thumbnailFilename']
             if thumbnailFilename != "" or thumbnailFilename is not None:
+                videos_root = app.config['WEB_ROOT'] + 'videos/'
 
-                thumbnailPath = '/var/www/videos/' + videoQuery.thumbnailLocation
+                thumbnailPath = videos_root + videoQuery.thumbnailLocation
                 shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
                 db.session.commit()
                 db.session.close()
