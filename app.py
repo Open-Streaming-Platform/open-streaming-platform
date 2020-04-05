@@ -392,7 +392,7 @@ def newLog(logType, message):
 def check_existing_users():
     AdminQuery = Sec.Role.query.filter_by(name='Admin').first()
     if AdminQuery != None:
-        roleQuery = Sec.roles_users.query.filter_by(role_id=AdminQuery.id).first()
+        roleQuery = db.session.query(Sec.roles_users).filter_by(role_id=AdminQuery.id).one()
         if roleQuery is not None:
             activeUserQuery = Sec.User.query.filter_by(id=roleQuery.user_id, active=True).first()
             if activeUserQuery is not None:
