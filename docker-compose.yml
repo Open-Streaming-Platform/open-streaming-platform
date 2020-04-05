@@ -16,7 +16,7 @@ services:
       - REDIS_HOST=ospredis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=""
-#       - DB_URL="sqlite:///db/database.db"
+#       - DB_URL=sqlite:///db/database.db
 #       - FLASK_SECRET="Super-Sekrit"
 #       - FLASK_SALT="SALT123"
 #       - OSP_ALLOWREGISTRATION=True
