@@ -390,12 +390,14 @@ def newLog(logType, message):
     return True
 
 def check_existing_users():
-    existingUserQuery = Sec.User.query.all()
-
-    if not existingUserQuery:
-        return False
-    else:
-        return True
+    AdminQuery = Sec.Role.query.filter_by(name='Admin').first()
+    if AdminQuery != None:
+        roleQuery = Sec.roles_users.query.filter_by(role_id=AdminQuery.id).first()
+        if roleQuery is not None:
+            db.session.close()
+            return True
+    db.session.close()
+    return False
 
 # Class Required for HTML Stripping in strip_html
 class MLStripper(HTMLParser):
@@ -3403,6 +3405,13 @@ def initialSetup():
     firstRunCheck = check_existing_users()
 
     if firstRunCheck is False:
+
+        sysSettings = settings.settings.query.all()
+
+        for setting in sysSettings:
+            db.session.delete(setting)
+        db.session.commit()
+
         username = request.form['username']
         email = request.form['email']
         password1 = request.form['password1']
