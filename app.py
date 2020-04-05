@@ -3569,7 +3569,7 @@ def notification_page():
 @app.route('/auth', methods=["POST","GET"])
 def auth_check():
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = settings.settings.query.with_entities(settings.settings.protectionEnabled).first()
     if sysSettings.protectionEnabled is False:
         return 'OK'
 
