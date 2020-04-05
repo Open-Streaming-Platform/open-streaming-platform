@@ -1238,14 +1238,14 @@ def main_page():
         randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)\
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id)\
             .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, Channel.Channel.protected)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, Channel.Channel.protected, Channel.Channel.channelName)\
             .order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.filter_by(published=True)\
             .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id)\
             .join(Channel.Channel, Channel.Channel.id==RecordedVideo.RecordedVideo.channelID)\
             .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation)\
             .order_by(func.random()).limit(16)
 
         return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
