@@ -390,13 +390,8 @@ def newLog(logType, message):
     return True
 
 def check_existing_users():
-    AdminQuery = db.session.execute("select user.id from user inner join roles_users on user_id=user.id where role_id=1 AND active=true;")
-    #AdminQuery = Sec.Role.query.filter_by(name='Admin').first()
+    AdminQuery = db.session.execute('select user.username from user inner join roles_users on user_id=user.id inner join role on role.id=role_id where role.name="Admin" and user.active=true;')
     if AdminQuery != None:
-        #roleQuery = db.session.query(Sec.roles_users).filter_by(role_id=AdminQuery.id).one()
-        #if roleQuery is not None:
-            #activeUserQuery = Sec.User.query.with_entities(Sec.User.id).filter_by(id=roleQuery.user_id, active=True).first()
-            #if activeUserQuery is not None:
         db.session.close()
         return True
     db.session.close()
