@@ -510,9 +510,9 @@ def check_isCommentUpvoted(commentID):
     return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
-    userQuery = Sec.User.query.filter_by(id=userID).first()
+    userQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id).first()
     if userQuery is not None:
-        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
         if channelQuery is not None:
             if channelQuery.owningUser is userQuery.id:
                 #db.session.close()
