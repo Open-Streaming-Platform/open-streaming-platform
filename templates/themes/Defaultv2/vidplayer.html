@@ -131,7 +131,7 @@
                       class="far fa-thumbs-up"></i>
                     {% endif %}
                     <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
-                  {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
+                  {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
                   <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
                   {% endif %}
               </div>
@@ -421,7 +421,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      {% if user.is_authenticated == True %}
+      {% if current_user.is_authenticated == True %}
       <form action="/play/{{video.id}}/comment" method="post">
         <div class="modal-body">
           <div class="form-group">
