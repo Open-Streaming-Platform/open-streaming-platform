@@ -4480,7 +4480,8 @@ def text(message):
 
     #global streamSIDList
 
-    if channelQuery is not None:
+    if channelQuery is not []:
+        channelQuery = channelQuery[0]
 
         userSID = request.sid
         if userSID.encode('utf-8') not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
