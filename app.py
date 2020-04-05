@@ -1237,9 +1237,8 @@ def main_page():
         return render_template('/firstrun.html')
 
     else:
-        activeStreams = Stream.Stream.query.with_entities(Stream.Stream.id, Stream.Stream.currentViewers, Stream.Stream.totalViewers,
-                                                          Stream.Stream.streamName, Stream.Stream.topic, Stream.Stream.channel.channelLoc,
-                                                          Stream.Stream.channel.owner.pictureLocation, Stream.Stream.channel.protected).order_by(Stream.Stream.currentViewers).all()
+        activeStreams = Stream.Stream.query.join(Channel.Channel.channelLoc, Channel.Channel.channel.owner, Channel.Channel.protected)\
+            .with_entities(Stream.Stream.id, Stream.Stream.currentViewers, Stream.Stream.totalViewers, Stream.Stream.streamName, Stream.Stream.topic).order_by(Stream.Stream.currentViewers).all()
 
         randomRecorded = RecordedVideo.RecordedVideo.query.with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channel.protected,
                                                                          RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
