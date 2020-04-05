@@ -1239,7 +1239,10 @@ def main_page():
     else:
         activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
+        randomRecorded = db.session.execute(
+            'select RecordedVideo.id, RecordedVideo.channelName, RecordedVideo.topic, RecordedVideo.topic, RecordedVideo.videoDate, RecordedVideo.views, RecordedVideo.length, RecordedVideo.thumbnailLocation, Channel.protected, user.pictureLocation from RecordedVideo inner join Channel on RecordedVideo.channelID=Channel.id inner join user on Channel.owningUser=user.id ;')
+
+        #randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
 
