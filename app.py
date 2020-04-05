@@ -1235,7 +1235,10 @@ def main_page():
     else:
         activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
+        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.views,
+                                                                                                                  RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.thumbnailLocation,
+                                                                                                                  RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic,
+                                                                                                                  RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, Channel.Channel.protected).order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
 
