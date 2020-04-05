@@ -978,9 +978,9 @@ scheduler.start()
 # Context Processors
 #----------------------------------------------------------------------------#
 
-@app.context_processor
-def inject_user_info():
-    return dict(user=current_user)
+#@app.context_processor
+#def inject_user_info():
+#    return dict(user=current_user)
 
 @app.context_processor
 def inject_notifications():
