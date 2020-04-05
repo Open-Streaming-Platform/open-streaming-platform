@@ -4476,7 +4476,7 @@ def text(message):
     sysSettings = settings.settings.query.first()
 
     #channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
-    channelQuery = db.session.execute('select Channel.id, Channel.channelLoc, Channel.owningUser, Channel.channelMuted, Channel.channelName, Channel.imageLocation from Channel where Channel.channelLoc=' + room + ' LIMIT 1;')
+    channelQuery = db.session.execute('select Channel.id, Channel.channelLoc, Channel.owningUser, Channel.channelMuted, Channel.channelName, Channel.imageLocation from Channel where Channel.channelLoc="' + room + '" LIMIT 1;')
 
     #global streamSIDList
 
