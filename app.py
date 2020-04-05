@@ -1238,7 +1238,7 @@ def main_page():
 
     else:
         activeStreams = Stream.Stream.query.with_entities(Stream.Stream.id, Stream.Stream.currentViewers, Stream.Stream.totalViewers, Stream.Stream.streamName,
-                                                          Stream.Stream.topic).join(Channel.Channel.channelLoc, Channel.Channel.owner,Channel.Channel.protected).order_by(Stream.Stream.currentViewers).all()
+                                                          Stream.Stream.topic).join(Channel.Channel.channelLoc, Channel.Channel.protected).join(Sec.User.pictureLocation).order_by(Stream.Stream.currentViewers).all()
 
         randomRecorded = RecordedVideo.RecordedVideo.query.with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channel.protected,
                                                                          RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
