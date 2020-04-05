@@ -504,9 +504,7 @@ def check_isCommentUpvoted(commentID):
     if current_user.is_authenticated:
         commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
         if commentQuery is not None:
-            #db.session.close()
             return True
-    #db.session.close()
     return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
@@ -3587,7 +3585,7 @@ def auth_check():
     if 'X-Channel-ID' in request.headers:
         channelID = request.headers['X-Channel-ID']
 
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).with_entities(Channel.Channel.id, Channel.Channel.protected).first()
         if channelQuery is not None:
             if channelQuery.protected:
                 if check_isValidChannelViewer(channelQuery.id):
