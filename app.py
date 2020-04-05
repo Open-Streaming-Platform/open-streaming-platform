@@ -1237,10 +1237,16 @@ def main_page():
         return render_template('/firstrun.html')
 
     else:
-        sysSettings = settings.settings.query.first()
-        activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
+        activeStreams = Stream.Stream.query.with_entities(Stream.Stream.id, Stream.Stream.currentViewers, Stream.Stream.totalViewers,
+                                                          Stream.Stream.streamName, Stream.Stream.topic, Stream.Stream.channel.channelLoc,
+                                                          Stream.Stream.channel.owner.pictureLocation, Stream.Stream.channel.protected).order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
+        randomRecorded = RecordedVideo.RecordedVideo.query.with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channel.protected,
+                                                                         RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
+                                                                         RecordedVideo.RecordedVideo.channel.owner.pictureLocation,
+                                                                         RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic,
+                                                                         RecordedVideo.RecordedVideo.thumbnailLocation,
+                                                                         RecordedVideo.RecordedVideo.videoDate).filter_by(pending=False, published=True).order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
 
