@@ -17,6 +17,7 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_cl
 from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
+from flask_debugtoolbar import DebugToolbarExtension
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
@@ -73,6 +74,8 @@ version = "beta-4b"
 hubURL = "https://hub.openstreamingplatform.com"
 
 app = Flask(__name__)
+
+app.debug = config.debugMode
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
@@ -143,6 +146,8 @@ db.app = app
 migrateObj = Migrate(app, db)
 
 Session(app)
+
+toolbar = DebugToolbarExtension(app)
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -990,7 +995,7 @@ def inject_notifications():
 
 @app.context_processor
 def inject_sysSettings():
-    db.session.commit()
+
     sysSettings = db.session.query(settings.settings).first()
     allowRegistration = config.allowRegistration
 
