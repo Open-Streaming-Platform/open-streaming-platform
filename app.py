@@ -394,7 +394,7 @@ def check_existing_users():
     if AdminQuery != None:
         roleQuery = db.session.query(Sec.roles_users).filter_by(role_id=AdminQuery.id).one()
         if roleQuery is not None:
-            activeUserQuery = Sec.User.query.filter_by(id=roleQuery.user_id, active=True).first()
+            activeUserQuery = Sec.User.query.with_entities(Sec.User.id).filter_by(id=roleQuery.user_id, active=True).first()
             if activeUserQuery is not None:
                 db.session.close()
                 return True
