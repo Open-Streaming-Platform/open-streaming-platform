@@ -11,7 +11,7 @@ from flask_security.utils import hash_password
 from flask_security.signals import user_registered, confirm_instructions_sent
 from flask_security import utils
 from sqlalchemy.sql.expression import func
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, text
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail, Message
@@ -1237,15 +1237,11 @@ def main_page():
         return render_template('/firstrun.html')
 
     else:
-        activeStreams = Stream.Stream.query.with_entities(Stream.Stream.id, Stream.Stream.currentViewers, Stream.Stream.totalViewers, Stream.Stream.streamName,
-                                                          Stream.Stream.topic).join(Channel.Channel.channelLoc, Channel.Channel.protected, Channel.Channel.id==Stream.Stream.linkedChannel).join(Sec.User.pictureLocation, Channel.Channel.owningUser==Sec.User.id).order_by(Stream.Stream.currentViewers).all()
+        activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channel.protected,
-                                                                         RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
-                                                                         RecordedVideo.RecordedVideo.channel.owner.pictureLocation,
-                                                                         RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic,
-                                                                         RecordedVideo.RecordedVideo.thumbnailLocation,
-                                                                         RecordedVideo.RecordedVideo.videoDate).filter_by(pending=False, published=True).order_by(func.random()).limit(16)
+        randomRecorded = db.session.execute(text('select RecordedVideo.id, RecordedVideo.channelName, RecordedVideo.topic, RecordedVideo.topic, RecordedVideo.videoDate, RecordedVideo.views, RecordedVideo.length, RecordedVideo.thumbnailLocation, Channel.protected, user.pictureLocation from RecordedVideo inner join Channel on RecordedVideo.channelID=Channel.id inner join user on Channel.owningUser=user.id ;'))
+
+        #randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
 
         randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
 
