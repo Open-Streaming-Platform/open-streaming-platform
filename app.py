@@ -4475,7 +4475,8 @@ def text(message):
 
     sysSettings = settings.settings.query.first()
 
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
+    #channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
+    channelQuery = db.session.execute('select Channel.id, Channel.channelLoc, Channel.owningUser, Channel.channelMuted, Channel.channelName, Channel.imageLocation from Channel where Channel.channelLoc=' + room + ' LIMIT 1;')
 
     #global streamSIDList
 
@@ -4561,9 +4562,13 @@ def text(message):
                 streamName = None
                 streamTopic = None
 
+                streamQuery = db.session.execute('Select Stream.streamName, Stream.topic where Stream.linkedChannel=' + channelQuery.id + " Limit 1")
+
                 if channelQuery.stream:
-                    streamName = channelQuery.stream[0].streamName
-                    streamTopic = channelQuery.stream[0].topic
+                    #streamName = channelQuery.stream[0].streamName
+                    #streamTopic = channelQuery.stream[0].topic
+                    streamName = streamQuery[0].streamName
+                    streamTopic = streamQuery[0].streamTopic
                 else:
                     streamName = channelQuery.channelName
                     streamTopic = channelQuery.topic
