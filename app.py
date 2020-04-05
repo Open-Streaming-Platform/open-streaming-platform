@@ -481,7 +481,7 @@ def check_isValidChannelViewer(channelID):
         if cachedResult is True:
             return True
         else:
-            channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+            channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
             if channelQuery.owningUser is current_user.id:
                 if channelID not in inviteCache:
                     inviteCache[channelID] = {}
