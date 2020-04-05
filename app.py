@@ -829,7 +829,6 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
 def moveVideo(videoID, newChannel):
 
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
 
     if recordedVidQuery is not None:
         newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
@@ -882,7 +881,6 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
     # TODO Add Webhook for Clip Creation
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
 
     if recordedVidQuery is not None:
         if clipStop > clipStart:
@@ -1262,7 +1260,6 @@ def channels_page():
 
 @app.route('/channel/<int:chanID>/')
 def channel_view_page(chanID):
-    sysSettings = settings.settings.query.first()
     chanID = int(chanID)
     channelData = Channel.Channel.query.filter_by(id=chanID).first()
 
@@ -1329,7 +1326,6 @@ def topic_page():
 
 @app.route('/topic/<topicID>/')
 def topic_view_page(topicID):
-    sysSettings = settings.settings.query.first()
     topicID = int(topicID)
     streamsQuery = Stream.Stream.query.filter_by(topic=topicID).all()
     recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(topic=topicID, pending=False, published=True).all()
@@ -1375,7 +1371,6 @@ def streamers_page():
 
 @app.route('/streamers/<userID>/')
 def streamers_view_page(userID):
-    sysSettings = settings.settings.query.first()
     userID = int(userID)
 
     streamerQuery = Sec.User.query.filter_by(id=userID).first()
@@ -2017,7 +2012,6 @@ def unsubscribe_page():
 @login_required
 def user_page():
     if request.method == 'GET':
-        sysSettings = settings.settings.query.first()
         return render_template(checkOverride('userSettings.html'))
     elif request.method == 'POST':
         emailAddress = request.form['emailAddress']
@@ -2062,7 +2056,6 @@ def user_page():
 @app.route('/settings/user/subscriptions')
 @login_required
 def subscription_page():
-    sysSettings = settings.settings.query.first()
     channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
 
     return render_template(checkOverride('subscriptions.html'), channelSubList=channelSubList)
@@ -3381,7 +3374,6 @@ def settings_channels_page():
 @login_required
 @roles_required('Streamer')
 def settings_apikeys_page():
-    sysSettings = settings.settings.query.first()
     apiKeyQuery = apikey.apikey.query.filter_by(userID=current_user.id).all()
     return render_template(checkOverride('apikeys.html'),apikeys=apiKeyQuery)
 
