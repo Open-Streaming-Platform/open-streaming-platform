@@ -1250,10 +1250,10 @@ def main_page():
 def channels_page():
     sysSettings = settings.settings.query.first()
     if sysSettings.showEmptyTables:
-        channelList = Channel.Channel.query.join(Sec.User, Sec.User.id == Channel.Channel.owningUser).with_entities(Channel.Channel, Sec.User.username, Sec.User.pictureLocation.label("userPictureLocation")).all()
+        channelList = Channel.Channel.query.all()
     else:
         channelList = []
-        for channel in Channel.Channel.query.join(Sec.User, Sec.User.id == Channel.Channel.owningUser).with_entities(Channel.Channel, Sec.User.username, Sec.User.pictureLocation.label("userPictureLocation")).all():
+        for channel in Channel.Channel.query.all():
             if len(channel.recordedVideo) > 0:
                 channelList.append(channel)
     return render_template(checkOverride('channels.html'), channelList=channelList)
