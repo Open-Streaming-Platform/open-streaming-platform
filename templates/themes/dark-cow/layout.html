@@ -54,7 +54,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/streamers">Streamers</a>
         </li>
-        {% if user.is_authenticated == False %}
+        {% if current_user.is_authenticated == False %}
         <li class="nav-item">
           <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
         </li>
@@ -116,10 +116,10 @@
             <img width="34" height="34" class="userphoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            {% if user.has_role('Admin') %}
+            {% if current_user.has_role('Admin') %}
             <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
             {% endif %}
-            {% if user.has_role('Streamer') %}
+            {% if current_user.has_role('Streamer') %}
             <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My channels</a>
             {% if sysSettings.allowUploads == True %}
             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload video</a>

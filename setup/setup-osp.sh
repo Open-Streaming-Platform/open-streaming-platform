@@ -6,7 +6,7 @@ cwd=$PWD
 sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git -y
 
 # Setup Python
-sudo apt-get install python3 python3-pip uwsgi-plugin-python -y
+sudo apt-get install python3 python3-pip uwsgi-plugin-python python3-dev python3-setuptools python3-wheel -y
 sudo pip3 install -r requirements.txt
 
 # Install Redis

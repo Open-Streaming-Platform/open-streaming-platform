@@ -111,15 +111,15 @@
                                 <div class="card">
                                     <div class="card-header"><i class="fas fa-chart-bar"></i> Resource Usage</div>
                                     <div class="card-body">
-                                        CPU<br>
+                                        CPU: <span id="cpuStats"></span><br>
                                         <div class="progress">
                                           <div id="cpuUsage" class="progress-bar bg-info" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
-                                        Memory<br>
+                                        Memory: <span id="memoryStats"></span><br>
                                         <div class="progress">
                                           <div id="memoryUsage" class="progress-bar bg-danger" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div><br>
-                                        Disk<br>
+                                        Disk: <span id="diskStats"></span><br>
                                         <div class="progress">
                                           <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div>
@@ -178,6 +178,11 @@
                                       {% endfor %}
                                   </select>
                                   <hr>
+                                  <div class="form-group">
+                                    <label for="restreamMaxBitrate" class="col-form-label">Maximum Bitrate for RTMP Restreams (Kb/s)</label><br>
+                                    <input type="number" id="restreamMaxBitrate" name="restreamMaxBitrate" class="form-control" value="{{sysSettings.restreamMaxBitrate}}">
+                                  </div>
+                                  <hr>
                                   Allow Users to Record:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" autocomplete="new-password" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                                   <br>
@@ -214,6 +219,10 @@
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" autocomplete="new-password" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
                                   <hr>
                                   <h4><i class="fas fa-stream"></i> Other</h4>
+                                  <div class="form-group">
+                                    <label for="serverMessageTitle" class="col-form-label">Server Message Title</label><br>
+                                    <input type="text" id="serverMessageTitle" name="serverMessageTitle" class="form-control" value="{{sysSettings.serverMessageTitle}}" size="256">
+                                  </div>
                                   <div class="form-group">
                                     <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label>
                                     <textarea class="form-control" name="serverMessage" id="serverMessage" value="" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
@@ -827,16 +836,18 @@
 
 <script>
     socket.on('serverResources', function(msg) {
-        console.log('Recieved:' + msg)
 
         $('#cpuUsage').attr('aria-valuenow', msg['cpuUsage']).css('width',msg['cpuUsage'] + '%');
         $('#cpuUsage').text(msg['cpuUsage'] + '%');
+        $('#cpuStats').text(msg['cpuLoad']);
 
         $('#memoryUsage').attr('aria-valuenow', msg['memoryUsage']).css('width',msg['memoryUsage'] + '%');
         $('#memoryUsage').text(msg['memoryUsage'] + '%');
+        $('#memoryStats').text(msg['memoryUsageAvailable'] + ' MB / ' + msg['memoryUsageTotal'] + ' MB');
 
         $('#diskUsage').attr('aria-valuenow', msg['diskUsage']).css('width',msg['diskUsage'] + '%');
         $('#diskUsage').text(msg['diskUsage'] + '%');
+        $('#diskStats').text(msg['diskFree'] + ' MB / ' + msg['diskTotal'] + ' MB');
 
     });
 </script>

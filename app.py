@@ -11,12 +11,13 @@ from flask_security.utils import hash_password
 from flask_security.signals import user_registered, confirm_instructions_sent
 from flask_security import utils
 from sqlalchemy.sql.expression import func
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, text
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
+from flask_debugtoolbar import DebugToolbarExtension
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
@@ -59,7 +60,6 @@ sys.path.append('./classes')
 from html.parser import HTMLParser
 
 import logging
-
 import datetime
 
 from conf import config
@@ -75,6 +75,8 @@ hubURL = "https://hub.openstreamingplatform.com"
 
 app = Flask(__name__)
 
+app.debug = config.debugMode
+
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 app.config['WEB_ROOT'] = "/var/www/"
@@ -82,7 +84,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
-    app.config['SQLALCHEMY_POOL_RECYCLE'] = 1600
+    app.config['SQLALCHEMY_POOL_RECYCLE'] = 600
+    app.config['SQLALCHEMY_POOL_TIMEOUT'] = 1200
     app.config['MYSQL_DATABASE_CHARSET'] = "utf8"
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20, "pool_pre_ping": True}
 else:
@@ -144,6 +147,8 @@ migrateObj = Migrate(app, db)
 
 Session(app)
 
+toolbar = DebugToolbarExtension(app)
+
 #----------------------------------------------------------------------------#
 # Modal Imports
 #----------------------------------------------------------------------------#
@@ -189,6 +194,13 @@ themeData = {}
 
 # Create In-Memory Invite Cache to Prevent High CPU Usage for Polling Channel Permissions during Streams
 inviteCache = {}
+
+# Build Channel Restream Subprocess Dictionary
+restreamSubprocesses = {}
+
+# Build Edge Restream Subprocess Dictionary
+edgeRestreamSubprocesses = {}
+lastEdgeNodePosition = 0
 
 #----------------------------------------------------------------------------#
 # Functions
@@ -301,6 +313,20 @@ def init_db_values():
         for chan in channelQuery:
             chan.autoPublish = True
             db.session.commit()
+        # Fixes for Channels that do not have the restream settings initialized
+        channelQuery = Channel.Channel.query.filter_by(rtmpRestream=None).all()
+        for chan in channelQuery:
+            chan.rtmpRestream = False
+            chan.rtmpRestreamDestination = ""
+            db.session.commit()
+
+        # Fixes for Server Settings not having a Server Message Title
+        if sysSettings.serverMessageTitle is None:
+            sysSettings.serverMessageTitle = "Server Message"
+            db.session.commit()
+        if sysSettings.restreamMaxBitrate is None:
+            sysSettings.restreamMaxBitrate = 3500
+            db.session.commit()
 
         #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
         #if hubQuery == None:
@@ -364,12 +390,12 @@ def newLog(logType, message):
     return True
 
 def check_existing_users():
-    existingUserQuery = Sec.User.query.all()
-
-    if not existingUserQuery:
-        return False
-    else:
+    AdminQuery = db.session.execute('select user.username from user inner join roles_users on user_id=user.id inner join role on role.id=role_id where role.name="Admin" and user.active=true;')
+    if AdminQuery != None:
+        db.session.close()
         return True
+    db.session.close()
+    return False
 
 # Class Required for HTML Stripping in strip_html
 class MLStripper(HTMLParser):
@@ -386,6 +412,19 @@ def strip_html(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
+
+def roundRobin(NodeList):
+    global lastEdgeNodePosition
+
+    NodeLength = len(NodeList)
+    nextPosition = lastEdgeNodePosition + 1
+    if nextPosition > (NodeLength-1):
+        nextPosition = 0
+
+    lastEdgeNodePosition = nextPosition
+
+    return NodeList[nextPosition]
+
 
 def asynch(func):
 
@@ -442,7 +481,7 @@ def check_isValidChannelViewer(channelID):
         if cachedResult is True:
             return True
         else:
-            channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+            channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
             if channelQuery.owningUser is current_user.id:
                 if channelID not in inviteCache:
                     inviteCache[channelID] = {}
@@ -465,15 +504,13 @@ def check_isCommentUpvoted(commentID):
     if current_user.is_authenticated:
         commentQuery = upvotes.commentUpvotes.query.filter_by(commentID=int(commentID), userID=current_user.id).first()
         if commentQuery is not None:
-            #db.session.close()
             return True
-    #db.session.close()
     return False
 
 def check_isUserValidRTMPViewer(userID,channelID):
-    userQuery = Sec.User.query.filter_by(id=userID).first()
+    userQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id).first()
     if userQuery is not None:
-        channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
         if channelQuery is not None:
             if channelQuery.owningUser is userQuery.id:
                 #db.session.close()
@@ -525,7 +562,7 @@ def videoupload_allowedExt(filename):
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     if themeHTMLFile in themeData.get('Override',[]):
-        sysSettings = db.session.query(settings.settings).first()
+        sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme).first()
         return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
     else:
         return "themes/Defaultv2/" + themeHTMLFile
@@ -793,7 +830,6 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
 def moveVideo(videoID, newChannel):
 
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
 
     if recordedVidQuery is not None:
         newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
@@ -848,7 +884,6 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
     # TODO Add Webhook for Clip Creation
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
 
     if recordedVidQuery is not None:
         if clipStop > clipStart:
@@ -944,9 +979,9 @@ scheduler.start()
 # Context Processors
 #----------------------------------------------------------------------------#
 
-@app.context_processor
-def inject_user_info():
-    return dict(user=current_user)
+#@app.context_processor
+#def inject_user_info():
+#    return dict(user=current_user)
 
 @app.context_processor
 def inject_notifications():
@@ -961,7 +996,7 @@ def inject_notifications():
 
 @app.context_processor
 def inject_sysSettings():
-    db.session.commit()
+
     sysSettings = db.session.query(settings.settings).first()
     allowRegistration = config.allowRegistration
 
@@ -1200,12 +1235,20 @@ def main_page():
         return render_template('/firstrun.html')
 
     else:
-        sysSettings = settings.settings.query.first()
         activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).order_by(func.random()).limit(16)
+        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)\
+            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id)\
+            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, Channel.Channel.protected, Channel.Channel.channelName)\
+            .order_by(func.random()).limit(16)
 
-        randomClips = RecordedVideo.Clips.query.filter_by(published=True).order_by(func.random()).limit(16)
+        randomClips = RecordedVideo.Clips.query.filter_by(published=True)\
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id)\
+            .join(Channel.Channel, Channel.Channel.id==RecordedVideo.RecordedVideo.channelID)\
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation)\
+            .order_by(func.random()).limit(16)
 
         return render_template(checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
 
@@ -1223,7 +1266,6 @@ def channels_page():
 
 @app.route('/channel/<int:chanID>/')
 def channel_view_page(chanID):
-    sysSettings = settings.settings.query.first()
     chanID = int(chanID)
     channelData = Channel.Channel.query.filter_by(id=chanID).first()
 
@@ -1290,7 +1332,6 @@ def topic_page():
 
 @app.route('/topic/<topicID>/')
 def topic_view_page(topicID):
-    sysSettings = settings.settings.query.first()
     topicID = int(topicID)
     streamsQuery = Stream.Stream.query.filter_by(topic=topicID).all()
     recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(topic=topicID, pending=False, published=True).all()
@@ -1336,7 +1377,6 @@ def streamers_page():
 
 @app.route('/streamers/<userID>/')
 def streamers_view_page(userID):
-    sysSettings = settings.settings.query.first()
     userID = int(userID)
 
     streamerQuery = Sec.User.query.filter_by(id=userID).first()
@@ -1398,12 +1438,21 @@ def view_page(loc):
     if requestedChannel is not None:
 
         streamURL = ''
-        if sysSettings.adaptiveStreaming is True:
-            streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
-        elif requestedChannel.record is True:
-            streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
-        elif requestedChannel.record is False:
-            streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+        if config.OSPEdgeNodes is []:
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            elif requestedChannel.record is True:
+                streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
+            elif requestedChannel.record is False:
+                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+        else:
+
+            # Handle Selecting the Node using Round Robin Logic
+
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            else:
+                streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
 
         requestedChannel.views = requestedChannel.views + 1
         if streamData is not None:
@@ -1974,7 +2023,6 @@ def unsubscribe_page():
 @login_required
 def user_page():
     if request.method == 'GET':
-        sysSettings = settings.settings.query.first()
         return render_template(checkOverride('userSettings.html'))
     elif request.method == 'POST':
         emailAddress = request.form['emailAddress']
@@ -2019,7 +2067,6 @@ def user_page():
 @app.route('/settings/user/subscriptions')
 @login_required
 def subscription_page():
-    sysSettings = settings.settings.query.first()
     channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
 
     return render_template(checkOverride('subscriptions.html'), channelSubList=channelSubList)
@@ -2343,8 +2390,10 @@ def admin_page():
             smtpPort = request.form['smtpPort']
             smtpUser = request.form['smtpUser']
             smtpPassword = request.form['smtpPassword']
+            serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
+            restreamMaxBitrate = request.form['restreamMaxBitrate']
 
             recordSelect = False
             uploadSelect = False
@@ -2409,8 +2458,11 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
+            sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
+
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
 
@@ -2653,6 +2705,8 @@ def settings_dbRestore():
             serverSettings.protectionEnabled = eval(restoreDict['settings'][0]['protectionEnabled'])
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
+            if 'serverMessageTitle' in restoreDict['settings'][0]:
+                serverSettings.serverMessageTitle = restoreDict['settings'][0]['serverMessageTitle']
 
             # Remove Old Settings
             oldSettings = settings.settings.query.all()
@@ -2754,6 +2808,10 @@ def settings_dbRestore():
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
                     channel.autoPublish = eval(restoredChannel['autoPublish'])
+                    if 'rtmpRestream' in restoredChannel:
+                        channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
+                    if 'rtmpRestreamDestination' in restoredChannel:
+                        channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
 
                     db.session.add(channel)
                 else:
@@ -3164,6 +3222,10 @@ def settings_channels_page():
         if 'publishSelect' in request.form:
             autoPublish = True
 
+        rtmpRestream = False
+        if 'rtmpSelect' in request.form:
+            rtmpRestream = True
+
         chatEnabled = False
 
         if 'chatSelect' in request.form:
@@ -3208,6 +3270,8 @@ def settings_channels_page():
 
             defaultstreamName = request.form['channelStreamName']
 
+            rtmpRestreamDestination = request.form['rtmpDestination']
+
             # TODO Validate ChatBG and chatAnimation
 
             requestedChannel = Channel.Channel.query.filter_by(streamKey=origStreamKey).first()
@@ -3227,6 +3291,8 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
+                requestedChannel.rtmpRestream = rtmpRestream
+                requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
 
                 if 'photo' in request.files:
                     file = request.files['photo']
@@ -3321,7 +3387,6 @@ def settings_channels_page():
 @login_required
 @roles_required('Streamer')
 def settings_apikeys_page():
-    sysSettings = settings.settings.query.first()
     apiKeyQuery = apikey.apikey.query.filter_by(userID=current_user.id).all()
     return render_template(checkOverride('apikeys.html'),apikeys=apiKeyQuery)
 
@@ -3349,6 +3414,13 @@ def initialSetup():
     firstRunCheck = check_existing_users()
 
     if firstRunCheck is False:
+
+        sysSettings = settings.settings.query.all()
+
+        for setting in sysSettings:
+            db.session.delete(setting)
+        db.session.commit()
+
         username = request.form['username']
         email = request.form['email']
         password1 = request.form['password1']
@@ -3510,7 +3582,7 @@ def notification_page():
 @app.route('/auth', methods=["POST","GET"])
 def auth_check():
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = settings.settings.query.with_entities(settings.settings.protectionEnabled).first()
     if sysSettings.protectionEnabled is False:
         return 'OK'
 
@@ -3518,7 +3590,7 @@ def auth_check():
     if 'X-Channel-ID' in request.headers:
         channelID = request.headers['X-Channel-ID']
 
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).with_entities(Channel.Channel.id, Channel.Channel.protected).first()
         if channelQuery is not None:
             if channelQuery.protected:
                 if check_isValidChannelViewer(channelQuery.id):
@@ -3662,6 +3734,37 @@ def user_auth_check():
             except:
                 newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
+            inputLocation = ""
+            if requestedChannel.protected and sysSettings.protectionEnabled:
+                owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
+                secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
+                username = owningUser.username
+                inputLocation = 'rtmp://' + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+            else:
+                inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
+
+            # Begin RTMP Restream Function
+            if requestedChannel.rtmpRestream is True:
+
+                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
+                restreamSubprocesses[requestedChannel.channelLoc] = p
+
+            # Start OSP Edge Nodes
+            if config.OSPEdgeNodes is not []:
+                edgeRestreamSubprocesses[requestedChannel.channelLoc] = []
+
+                for node in config.OSPEdgeNodes:
+                    subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                    subprocessConstructor.append("-f")
+                    subprocessConstructor.append("flv")
+                    if sysSettings.adaptiveStreaming:
+                        subprocessConstructor.append("rtmp://" + node + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                    else:
+                        subprocessConstructor.append("rtmp://" + node + "/stream-data/" + requestedChannel.channelLoc)
+
+                    p = subprocess.Popen(subprocessConstructor)
+                    edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
+
             db.session.close()
             return 'OK'
         else:
@@ -3706,6 +3809,24 @@ def user_deauth_check():
                 db.session.delete(vid)
             db.session.delete(stream)
             db.session.commit()
+
+            # End RTMP Restream Function
+            if channelRequest.rtmpRestream is True:
+                if channelRequest.channelLoc in restreamSubprocesses:
+                    p = restreamSubprocesses[channelRequest.channelLoc]
+                    p.kill()
+                    try:
+                        del restreamSubprocesses[channelRequest.channelLoc]
+                    except KeyError:
+                        pass
+
+            if channelRequest.channelLoc in edgeRestreamSubprocesses:
+                for p in edgeRestreamSubprocesses[channelRequest.channelLoc]:
+                    p.kill()
+                try:
+                    del edgeRestreamSubprocesses[channelRequest.channelLoc]
+                except KeyError:
+                    pass
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closed', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName':str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
 
@@ -4491,10 +4612,16 @@ def text(message):
 @socketio.on('getServerResources')
 def get_resource_usage(message):
     cpuUsage = psutil.cpu_percent(interval=1)
+    cpuLoad = psutil.getloadavg()
+    cpuLoad = str(cpuLoad[0]) + ", " + str(cpuLoad[1]) + ", " + str(cpuLoad[2])
     memoryUsage = psutil.virtual_memory()[2]
+    memoryUsageTotal = round(float(psutil.virtual_memory()[0])/1000000,2)
+    memoryUsageAvailable = round(float(psutil.virtual_memory()[1])/1000000,2)
     diskUsage = psutil.disk_usage('/')[3]
+    diskTotal = round(float(psutil.disk_usage('/')[0])/1000000,2)
+    diskFree = round(float(psutil.disk_usage('/')[2]) / 1000000, 2)
 
-    emit('serverResources', {'cpuUsage':cpuUsage,'memoryUsage':memoryUsage, 'diskUsage':diskUsage})
+    emit('serverResources', {'cpuUsage':str(cpuUsage), 'cpuLoad': cpuLoad, 'memoryUsage': memoryUsage, 'memoryUsageTotal': str(memoryUsageTotal), 'memoryUsageAvailable': str(memoryUsageAvailable), 'diskUsage': diskUsage, 'diskTotal': str(diskTotal), 'diskFree': str(diskFree)})
     return 'OK'
 
 @socketio.on('generateInviteCode')
@@ -4915,4 +5042,4 @@ newLog("0", "OSP Started Up Successfully - version: " + str(version))
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
-    socketio.run(app)
+    socketio.run(app, Debug=config.debugMode)

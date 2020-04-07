@@ -1,3 +1,10 @@
+Beta-5
+==============================================
+Added RTMP Restreaming to 1 Destination per Channel
+Added specific values to Resource Statatistics on the Admin Dashboard Page
+Added the ability to change the Server MOTD Title from the Admin page
+Added Support for the OSP Edge Streamer Server
+
 Beta-4b
 ==============================================
 Added Check for if Channel Location is Invalid on Stream
