@@ -5025,4 +5025,4 @@ newLog("0", "OSP Started Up Successfully - version: " + str(version))
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
-    socketio.run(app)
+    socketio.run(app, Debug=config.debugMode)
