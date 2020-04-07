@@ -1250,10 +1250,10 @@ def main_page():
 def channels_page():
     sysSettings = settings.settings.query.first()
     if sysSettings.showEmptyTables:
-        channelList = Channel.Channel.query.all()
+        channelList = Channel.Channel.query.joinedload(Sec.User).all()
     else:
         channelList = []
-        for channel in Channel.Channel.query.all():
+        for channel in Channel.Channel.query.joinedload(Sec.User).all():
             if len(channel.recordedVideo) > 0:
                 channelList.append(channel)
     return render_template(checkOverride('channels.html'), channelList=channelList)
