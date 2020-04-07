@@ -20,7 +20,7 @@ then
         sudo pip3 install -r requirements.txt
 else
         echo "Installing for Debian - based"
-        web_root = "/var/www"
+        web_root = '/var/www'
         http_user='www-data'
         # Get Dependancies
         sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git -y
