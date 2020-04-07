@@ -28,13 +28,13 @@ class Channel(db.Model):
     autoPublish = db.Column(db.Boolean)
     rtmpRestream = db.Column(db.Boolean)
     rtmpRestreamDestination = db.Column(db.String(4096))
-    stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
-    inviteCodes = db.relationship('inviteCode', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    subscriptions = db.relationship('channelSubs', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
+    recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
+    upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="dynamic")
+    inviteCodes = db.relationship('inviteCode', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
+    invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
+    subscriptions = db.relationship('channelSubs', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
+    webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="dynamic")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
