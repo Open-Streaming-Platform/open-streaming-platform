@@ -270,7 +270,7 @@
                                             <tr id="edgeTableRow-{{node.id}}">
                                                 <td>{{node.address}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
-                                                           {% if node.active == True %} checked {% endif %} onclick="toggleActiveEdge({{node.id}});"></td>
+                                                           {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge({{node.id}});"></td>
                                                 <td>{{node.status}}</td>
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
