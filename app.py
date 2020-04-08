@@ -2571,7 +2571,7 @@ def admin_page():
             newEdge = settings.edgeStreamer(address)
 
             try:
-                edgeXML = requests.get(address + ":9000/stat").text
+                edgeXML = requests.get("http://" + address + ":9000/stat").text
                 edgeDict = xmltodict.parse(edgeXML)
                 if "nginx_rtmp_version" in edgeDict:
                     newEdge.status = 1
