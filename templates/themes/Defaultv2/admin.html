@@ -252,7 +252,9 @@
                             <div class="card">
                                 <div class="card-header">
                                     List of OSP Edge Streamer Nodes
-                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span>
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span><br>
+                                    <note style="color:red;">*** A Reload of NGINX is required after any chances for OSP Streaming to work ***</note><br>
+                                    <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#reloadNginxModal"><i class="fas fa-power-off"></i> Reload Nginx</button>
                                 </div>
                                 <div class="body">
                                     <div class="table-responsive">
@@ -313,6 +315,38 @@
                             <input type="submit" class="btn btn-success" value="Add">
                           </div>
                           </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="reloadNginxModal" tabindex="-1" role="dialog" aria-labelledby="reloadNginxModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="reloadNginxModalTitle">Reload Nginx</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    Restarting the Nginx Service Requires Sudo Access on the OSP Server.  Please provide the required username and password below and click restart.<br>
+                                    <div class="form-group col-md-12">
+                                        <label for="sudoUser">Sudo Username:</label>
+                                        <input type="text" id="sudoUser" class="form-control">
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="sudoPassword">Password:</label>
+                                        <input type="text" id="sudoPassword" class="form-control">
+                                    </div>
+                                </div>
+                                <br>
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="button" class="btn btn-danger" data-dismiss="modal" value="Restart" onclick="reloadNginx();">
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1021,6 +1055,14 @@
 <script>
     function toggleActiveEdge(edgeID) {
         socket.emit('toggleOSPEdge', {edgeID: edgeID});
+    }
+</script>
+
+<script>
+    function reloadNginx() {
+        var user = document.getElementById("sudoUser").value;
+        var pass = document.getElementById("sudoPassword").value;
+        socket.emit('reloadNginx', {username: user, password:pass})
     }
 </script>
 

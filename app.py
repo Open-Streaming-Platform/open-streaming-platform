@@ -199,6 +199,7 @@ inviteCache = {}
 restreamSubprocesses = {}
 
 # Build Edge Restream Subprocess Dictionary
+activeEdgeNodes = []
 edgeRestreamSubprocesses = {}
 
 #----------------------------------------------------------------------------#
@@ -5079,6 +5080,13 @@ def markUserNotificationRead(message):
     db.session.close()
     return 'OK'
 
+@socketio.on('reloadNginx')
+def nginxReload(message):
+    if current_user.has_role('Admin'):
+        os.system("echo " + message['password'] + "| sudo -S -u " + message['username'] + "systemctl reload nginx-osp")
+        return 'OK'
+    else:
+        return abort(401)
 # Start App Initiation
 try:
     init_db_values()
