@@ -252,6 +252,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     List of OSP Edge Streamer Nodes
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewEdgeModal();"><i class="fas fa-plus"></i></button></span>
                                 </div>
                                 <div class="body">
                                     <div class="table-responsive">
@@ -271,6 +272,36 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="modal fade" id="newEdgeModal" tabindex="-1" role="dialog" aria-labelledby="newEdgeModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newEdgeModalTitle">Add a New Edge Streamer Node</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label for="edgeAddress">Full Qualified Domain Name or IP Address:</label>
+                                        <input type="text" name="address" id="edgeAddress" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                              </div>
+                              <input type="hidden" value="edgeNode" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-webhooks" id="webhooksSettings">
