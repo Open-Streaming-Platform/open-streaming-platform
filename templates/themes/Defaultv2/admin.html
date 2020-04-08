@@ -269,7 +269,8 @@
                                             {% for node in edgeNodes %}
                                             <tr id="edgeTableRow-{{node.id}}">
                                                 <td>{{node.address}}</td>
-                                                <td>{{node.active}}</td>
+                                                <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
+                                                           {% if node.active == True %} checked {% endif %} onclick="toggleActiveEdge({{node.id}});"></td>
                                                 <td>{{node.status}}</td>
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
@@ -1014,6 +1015,12 @@
         socket.emit('deleteOSPEdge', {edgeID: edgeID});
         var edgeTableRow = document.getElementById('edgeTableRow-' + edgeID);
         edgeTableRow.parentNode.removeChild(edgeTableRow);
+    }
+</script>
+
+<script>
+    function toggleActiveEdge(edgeID) {
+        socket.emit('toggleOSPEdge', {edgeID: edgeID});
     }
 </script>
 
