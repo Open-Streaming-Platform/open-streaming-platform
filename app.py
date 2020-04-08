@@ -2573,7 +2573,7 @@ def admin_page():
             try:
                 edgeXML = requests.get("http://" + address + ":9000/stat").text
                 edgeDict = xmltodict.parse(edgeXML)
-                if "nginx_rtmp_version" in edgeDict:
+                if "nginx_rtmp_version" in edgeDict['rtmp']:
                     newEdge.status = 1
                     db.session.add(newEdge)
                     db.session.commit()
