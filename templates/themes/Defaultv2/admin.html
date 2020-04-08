@@ -337,7 +337,7 @@
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="sudoPassword">Password:</label>
-                                        <input type="text" id="sudoPassword" class="form-control">
+                                        <input type="password" id="sudoPassword" class="form-control">
                                     </div>
                                 </div>
                                 <br>
@@ -1060,9 +1060,9 @@
 
 <script>
     function reloadNginx() {
-        var user = document.getElementById("sudoUser").value;
-        var pass = document.getElementById("sudoPassword").value;
-        socket.emit('reloadNginx', {username: user, password:pass})
+        var sudoUser = document.getElementById("sudoUser").value;
+        var sudoPass = document.getElementById("sudoPassword").value;
+        socket.emit('reloadNginx', {username: sudoUser, password:sudoPass})
     }
 </script>
 
