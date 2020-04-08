@@ -4926,6 +4926,20 @@ def deleteInvitedUser(message):
     db.session.close()
     return 'OK'
 
+@socketio.on('deleteOSPEdge')
+def deleteEdgeNode(message):
+    if current_user.has_role('Admin'):
+        edgeID = int(message['edgeID'])
+        edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
+        if edgeNodeQuery is not None:
+            db.session.delete(edgeNodeQuery)
+            db.session.commit()
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
 
