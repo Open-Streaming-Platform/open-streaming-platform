@@ -2551,6 +2551,13 @@ def admin_page():
             db.session.commit()
             return redirect(url_for('admin_page', page="topics"))
 
+        elif settingType == "edgeNode":
+            address = request.form['address']
+            newEdge = settings.edgeStreamer(address)
+            db.session.add(newEdge)
+            db.session.commit()
+            return redirect(url_for('admin_page', page="ospedge"))
+
         elif settingType == "newuser":
 
             password = request.form['password1']

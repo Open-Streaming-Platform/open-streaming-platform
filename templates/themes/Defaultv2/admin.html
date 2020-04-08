@@ -296,7 +296,9 @@
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         <label for="edgeAddress">Full Qualified Domain Name or IP Address:</label>
-                                        <input type="text" name="address" id="edgeAddress" class="form-control" required autocomplete="new-password">
+                                        <input type="text" name="address" id="edgeAddress" class="form-control"
+                                               pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})$|^((([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9]))$"
+                                               required autocomplete="new-password">
                                     </div>
                                 </div>
                                 <br>
