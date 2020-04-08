@@ -21,6 +21,9 @@
                     <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'webhooks' %} active {% endif %}" role="tab" id="admin-nav-webhooks" href="#webhooksSettings" data-toggle="pill" aria-controls="webhooks-nav-settings" aria-selected="false">Webhooks</a>
                 </li>
                 <li class="nav-item">
@@ -239,6 +242,9 @@
                               </div>
                           </div>
                       </form>
+                </div>
+                <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">
+
                 </div>
                 <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-webhooks" id="webhooksSettings">
                 <h5>Global Webhooks</h5>
