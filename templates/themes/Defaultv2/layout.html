@@ -233,7 +233,7 @@
             <div class="form-group">
               <label for="uploadToChannelID">Channel</label>
               <select name="uploadToChannelID" class="form-control">
-                {% for chan in current_user.channels %}
+                {% for chan in ownedChannels %}
                 <option value="{{chan.id}}">{{chan.channelName}}</option>
                 {% endfor %}
               </select>

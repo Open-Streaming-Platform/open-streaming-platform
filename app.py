@@ -1002,6 +1002,16 @@ def inject_sysSettings():
 
     return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 
+@app.context_processor
+def inject_ownedChannels():
+    if current_user.is_authenticated:
+        if current_user.has_role("Streamer"):
+            ownedChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).with_entities(Channel.Channel.id, Channel.Channel.channelLoc, Channel.Channel.channelName).all()
+
+            return dict(ownedChannels=ownedChannels)
+    else:
+        return dict(ownedChannels=[])
+
 #----------------------------------------------------------------------------#
 # Template Filters
 #----------------------------------------------------------------------------#
