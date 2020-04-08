@@ -304,7 +304,7 @@
         <div class="modal-body">
           <h5>Move this Video to Channel:</h5>
           <select name="moveToChannelID" class="form-control">
-            {% for chan in current_user.channels %}
+            {% for chan in ownedChannels %}
             {% if chan.id != video.channelID %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
             {% endif %}
