@@ -244,7 +244,34 @@
                       </form>
                 </div>
                 <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">
-
+                    <h5>
+                        OSP Edge Streamer Nodes
+                    </h5>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    List of OSP Edge Streamer Nodes
+                                </div>
+                                <div class="body">
+                                    <div class="table-responsive">
+                                        <table id="edgeTable" class="table table-borderless" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Edge Streamer Address</th>
+                                                    <th>Active?</th>
+                                                    <th>Status</th>
+                                                    <th>Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-webhooks" id="webhooksSettings">
                 <h5>Global Webhooks</h5>
