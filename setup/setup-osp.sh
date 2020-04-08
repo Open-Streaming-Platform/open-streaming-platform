@@ -15,7 +15,7 @@ then
         echo "Installing for Arch"
         web_root='/srv/http'
         http_user='http'
-        sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python ffmpeg --needed 
+        sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed
 
         sudo pip3 install -r requirements.txt
 else
@@ -23,7 +23,7 @@ else
         web_root = '/var/www'
         http_user='www-data'
         # Get Dependancies
-        sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git -y
+        sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y
 
         # Setup Python
         sudo apt-get install python3 python3-pip uwsgi-plugin-python -y
