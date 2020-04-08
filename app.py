@@ -200,7 +200,6 @@ restreamSubprocesses = {}
 
 # Build Edge Restream Subprocess Dictionary
 edgeRestreamSubprocesses = {}
-lastEdgeNodePosition = 0
 
 #----------------------------------------------------------------------------#
 # Functions
@@ -412,19 +411,6 @@ def strip_html(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
-
-def roundRobin(NodeList):
-    global lastEdgeNodePosition
-
-    NodeLength = len(NodeList)
-    nextPosition = lastEdgeNodePosition + 1
-    if nextPosition > (NodeLength-1):
-        nextPosition = 0
-
-    lastEdgeNodePosition = nextPosition
-
-    return NodeList[nextPosition]
-
 
 def asynch(func):
 
