@@ -5083,7 +5083,7 @@ def markUserNotificationRead(message):
 @socketio.on('reloadNginx')
 def nginxReload(message):
     if current_user.has_role('Admin'):
-        os.system("echo " + message['password'] + "| sudo -S -u " + message['username'] + "systemctl reload nginx-osp")
+        os.system("echo " + message['password'] + "| sudo -S -u " + message['username'] + " systemctl reload nginx-osp")
         return 'OK'
     else:
         return abort(401)
