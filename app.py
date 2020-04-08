@@ -2323,6 +2323,7 @@ def admin_page():
         channelList = Channel.Channel.query.all()
         streamList = Stream.Stream.query.all()
         topicsList = topics.topics.query.all()
+        edgeNodes = settings.edgeStreamer.query.all()
 
         # 30 Days Viewer Stats
         viewersTotal = 0
@@ -2371,7 +2372,7 @@ def admin_page():
 
         return render_template(checkOverride('admin.html'), appDBVer=appDBVer, userList=userList, roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList, repoSHA=repoSHA,repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay, viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData, globalHooks=globalWebhookQuery,
-                               logsList=logsList, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
