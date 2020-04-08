@@ -2569,8 +2569,19 @@ def admin_page():
         elif settingType == "edgeNode":
             address = request.form['address']
             newEdge = settings.edgeStreamer(address)
-            db.session.add(newEdge)
-            db.session.commit()
+
+            try:
+                edgeXML = requests.get(address + ":9000/stat").text
+                edgeDict = xmltodict.parse(edgeXML)
+                if "nginx_rtmp_version" in edgeDict:
+                    newEdge.status = 1
+                    db.session.add(newEdge)
+                    db.session.commit()
+            except:
+                newEdge.status = 0
+                db.session.add(newEdge)
+                db.session.commit()
+
             return redirect(url_for('admin_page', page="ospedge"))
 
         elif settingType == "newuser":
