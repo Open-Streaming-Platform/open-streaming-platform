@@ -580,6 +580,18 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
     newLog(1, "Test Email Successful for " + str(smtpServer))
     return True
 
+def rebuildOSPEdgeConf():
+    try:
+        os.remove('conf/osp-edge.conf')
+    except OSError:
+        pass
+    f = open("conf/osp-edge.conf", "w")
+    ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True)
+    for edge in ospEdgeQuery:
+        f.write("server " + edge.address + ";\n")
+    f.close()
+    return True
+
 @asynch
 def runWebhook(channelID, triggerType, **kwargs):
     webhookQueue = []
@@ -4934,6 +4946,7 @@ def toggleEdgeNode(message):
         if edgeNodeQuery is not None:
             edgeNodeQuery.active = not edgeNodeQuery.active
             db.session.commit()
+            rebuildOSPEdgeConf()
             return 'OK'
         else:
             return abort(500)
@@ -4948,6 +4961,7 @@ def deleteEdgeNode(message):
         if edgeNodeQuery is not None:
             db.session.delete(edgeNodeQuery)
             db.session.commit()
+            rebuildOSPEdgeConf()
             return 'OK'
         else:
             return abort(500)
