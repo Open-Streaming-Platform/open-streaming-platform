@@ -4941,7 +4941,7 @@ def deleteInvitedUser(message):
     db.session.close()
     return 'OK'
 
-@socketio.on('toggleActiveEdge')
+@socketio.on('toggleOSPEdge')
 def toggleEdgeNode(message):
     if current_user.has_role('Admin'):
         edgeID = int(message['edgeID'])
