@@ -645,13 +645,9 @@ def runSubscription(subject, destination, message):
         finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
         msg = Message(subject=subject, recipients=[destination])
         msg.sender = sysSettings.smtpSendAs
-        msg.body = "Testing Without Txt"
+        msg.body = finalMessage
         msg.html = finalMessage
-        try:
-            mail.send(msg)
-        except Exception as e:
-            newLog(2, "Subscription Email to " + destination + "failed due to the following error: " + str(e) )
-            return False
+        mail.send(msg)
         return True
 
 def processSubscriptions(channelID, subject, message):
@@ -664,8 +660,7 @@ def processSubscriptions(channelID, subject, message):
             userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
             if userQuery is not None:
                 result = runSubscription(subject, userQuery.email, message)
-                if result is True:
-                    subCount = subCount + 1
+                subCount = subCount + 1
         newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     return True
 
