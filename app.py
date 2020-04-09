@@ -4240,6 +4240,10 @@ def handle_leaving_viewer(streamData):
 
 @socketio.on('disconnect')
 def disconnect():
+    userSID = request.sid
+    roomList=rooms(userSID)
+    print(roomList)
+
     return 'OK'
 
 @socketio.on('closePopup')
