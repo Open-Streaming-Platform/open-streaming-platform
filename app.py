@@ -1449,7 +1449,7 @@ def view_page(loc):
     if requestedChannel is not None:
 
         streamURL = ''
-        if config.OSPEdgeNodes is []:
+        if settings.edgeStreamer.query.filter_by(active=True).all() is []:
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
             elif requestedChannel.record is True:
