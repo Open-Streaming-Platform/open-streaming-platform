@@ -1449,7 +1449,8 @@ def view_page(loc):
     if requestedChannel is not None:
 
         streamURL = ''
-        if settings.edgeStreamer.query.filter_by(active=True).all() is []:
+        edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
+        if edgeQuery == []:
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
             elif requestedChannel.record is True:
@@ -1457,9 +1458,7 @@ def view_page(loc):
             elif requestedChannel.record is False:
                 streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
         else:
-
             # Handle Selecting the Node using Round Robin Logic
-
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
