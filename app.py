@@ -644,7 +644,7 @@ def runSubscription(subject, destination, message):
         sysSettings = settings.settings.query.first()
         finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
         msg = Message(subject=subject, recipients=[destination])
-        msg.sender = sysSettings.smtpSendAs
+        msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
         msg.body = finalMessage
         msg.html = finalMessage
         mail.send(msg)
