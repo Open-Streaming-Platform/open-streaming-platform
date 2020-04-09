@@ -986,14 +986,14 @@ scheduler.start()
 
 @app.context_processor
 def inject_notifications():
-    notifications = []
+    notificationList = []
     if current_user.is_authenticated:
         userNotificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id).all()
         for entry in userNotificationQuery:
             if entry.read is False:
-                notifications.append(entry)
-        notifications.sort(key=lambda x: x.timestamp, reverse=True)
-    return dict(notifications=notifications)
+                notificationList.append(entry)
+        notificationList.sort(key=lambda x: x.timestamp, reverse=True)
+    return dict(notifications=notificationList)
 
 
 @app.context_processor
