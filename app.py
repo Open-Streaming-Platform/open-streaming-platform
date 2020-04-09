@@ -643,12 +643,15 @@ def runSubscriptions(channelID, subject, message):
         for sub in subscriptionQuery:
             userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
             if userQuery is not None:
-                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
-                msg = Message(subject, recipients=[userQuery.email])
-                msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-                msg.body = finalMessage
-                msg.html = finalMessage
-                conn.send(msg)
+                try:
+                    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                    msg = Message(subject, recipients=[userQuery.email])
+                    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+                    msg.body = finalMessage
+                    msg.html = finalMessage
+                    conn.send(msg)
+                except Exception as e:
+                    newLog(2, "Subscription failure due to " + str(e))
     return True
 
 def processSubscriptions(channelID, subject, message):
