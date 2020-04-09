@@ -640,18 +640,19 @@ def processWebhookVariables(payload, **kwargs):
 
 @asynch
 def runSubscription(subject, destination, message):
-    sysSettings = settings.settings.query.first()
-    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
-    msg = Message(subject=subject, recipients=[destination])
-    msg.sender = sysSettings.smtpSendAs
-    msg.body = "Testing Without Txt"
-    msg.html = finalMessage
-    try:
-        mail.send(msg)
-    except Exception as e:
-        newLog(2, "Subscription Email to " + destination + "failed due to the following error: " + str(e) )
-        return False
-    return True
+    with app.app_context():
+        sysSettings = settings.settings.query.first()
+        finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
+        msg = Message(subject=subject, recipients=[destination])
+        msg.sender = sysSettings.smtpSendAs
+        msg.body = "Testing Without Txt"
+        msg.html = finalMessage
+        try:
+            mail.send(msg)
+        except Exception as e:
+            newLog(2, "Subscription Email to " + destination + "failed due to the following error: " + str(e) )
+            return False
+        return True
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
