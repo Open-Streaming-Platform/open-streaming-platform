@@ -370,17 +370,20 @@ def init_db_values():
 
         ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
         if config.dbLocation[:6] != "sqlite":
-            dbEngine = db.engine
-            dbConnection = dbEngine.connect()
-            dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'" % dbEngine.url.database)
+            try:
+                dbEngine = db.engine
+                dbConnection = dbEngine.connect()
+                dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'" % dbEngine.url.database)
 
-            sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
+                sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
 
-            results = dbConnection.execute(sql)
-            for row in results:
-                sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
-                db.Connection.execute(sql)
-            db.close()
+                results = dbConnection.execute(sql)
+                for row in results:
+                    sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
+                    db.Connection.execute(sql)
+                db.close()
+            except:
+                pass
         ## End DB UT8MB4 Fixes
 
 def newLog(logType, message):
