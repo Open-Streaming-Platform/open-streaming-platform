@@ -2733,6 +2733,8 @@ def settings_dbRestore():
             serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
             serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
             serverSettings.protectionEnabled = eval(restoreDict['settings'][0]['protectionEnabled'])
+            if 'restreamMaxBitrate' in restoreDict['settings'][0]:
+                serverSettings.restreamMaxBitrate = restoreDict['settings'][0]['restreamMaxBitrate']
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
             if 'serverMessageTitle' in restoreDict['settings'][0]:
@@ -2771,6 +2773,20 @@ def settings_dbRestore():
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
 
                 mail = Mail(app)
+
+            ## Restore Edge Nodes
+            oldEdgeNodes = settings.edgeStreamer.query.all()
+            for node in oldEdgeNodes:
+                db.session.delete(node)
+            db.session.commit()
+
+            if 'edgeStreamer' in restoreDict:
+                for node in restoreDict['edgeStreamer']:
+                    restoredNode = settings.edgeStreamer(node['address'])
+                    restoredNode.status = int(node['status'])
+                    restoredNode.active = eval(node['active'])
+                    db.session.add(restoredNode)
+                    db.session.commit()
 
             ## Restores Users
             oldUsers = Sec.User.query.all()
