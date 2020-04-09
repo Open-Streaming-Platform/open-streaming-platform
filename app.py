@@ -639,31 +639,32 @@ def processWebhookVariables(payload, **kwargs):
     return payload
 
 @asynch
-def runSubscriptions(channelID, subject, message):
+def runSubscription(subject, destination, message):
     sysSettings = settings.settings.query.first()
-    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=int(channelID)).all()
-    subCount = 0
-    for sub in subscriptionQuery:
-        subCount = subCount + 1
-        userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
-        if userQuery is not None:
-            finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
-            msg = Message(subject=subject, recipients=[userQuery.email])
-            msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-            msg.body = finalMessage
-            msg.html = finalMessage
-            mail.send(msg)
-    newLog(2, "Sent " + str(subCount) + " subscription Emails for Channel ID: " + str(channelID))
+    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
+    msg = Message(subject=subject, recipients=[destination])
+    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+    msg.body = finalMessage
+    msg.html = finalMessage
+    try:
+        mail.send(msg)
+    except:
+        return False
     return True
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     if subscriptionQuery:
         newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
-        try:
-            runSubscriptions(channelID, subject, message)
-        except:
-            newLog(0, "Subscriptions Failed due to possible misconfiguration")
+
+        subCount = 0
+        for sub in subscriptionQuery:
+            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+            if userQuery is not None:
+                result = runSubscription(subject, userQuery.email, message)
+                if result is True:
+                    subCount = subCount + 1
+        newLog(2, "Processed " + str(subCount) + "out of " + str(len(subscriptionQuery)) + "Email Subscriptions for Channel ID: " + str(channelID) )
     return True
 
 def prepareHubJSON():
