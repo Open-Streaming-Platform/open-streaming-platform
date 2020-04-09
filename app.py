@@ -3795,7 +3795,7 @@ def user_auth_check():
             # Begin RTMP Restream Function
             if requestedChannel.rtmpRestream is True:
 
-                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"])
+                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 restreamSubprocesses[requestedChannel.channelLoc] = p
 
             # Start OSP Edge Nodes
@@ -3813,7 +3813,7 @@ def user_auth_check():
                     else:
                         subprocessConstructor.append("rtmp://" + node.address + "/stream-data/" + requestedChannel.channelLoc)
 
-                    p = subprocess.Popen(subprocessConstructor)
+                    p = subprocess.Popen(subprocessConstructor, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
 
             db.session.close()
