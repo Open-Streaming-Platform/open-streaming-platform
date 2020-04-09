@@ -3785,7 +3785,8 @@ def user_auth_check():
                 edgeRestreamSubprocesses[requestedChannel.channelLoc] = []
 
                 for node in ospEdgeNodeQuery:
-                    subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                    #subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy", "-c:v", "libx264", "-g", "1", "-keyint_min", "1", "-x264opts", "no-scenecut", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"]
+                    subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy"]
                     subprocessConstructor.append("-f")
                     subprocessConstructor.append("flv")
                     if sysSettings.adaptiveStreaming:
