@@ -68,7 +68,7 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-4b"
+version = "beta-5"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
@@ -818,7 +818,7 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                    channeltopic=get_topicName(recordedVidQuery.channel.topic),
                    channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
-                   channeldescription=recordedVidQuery.channel.description, videoname=recordedVidQuery.channelName,
+                   channeldescription=str(recordedVidQuery.channel.description), videoname=recordedVidQuery.channelName,
                    videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
                    videotopic=get_topicName(recordedVidQuery.topic),
                    videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
@@ -1720,12 +1720,12 @@ def comments_vid_page(videoID):
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
                        channeltopic=get_topicName(recordedVid.channel.topic),
                        channelimage=channelImage, streamer=get_userName(recordedVid.channel.owningUser),
-                       channeldescription=recordedVid.channel.description, videoname=recordedVid.channelName,
+                       channeldescription=str(recordedVid.channel.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
                        videotopic=get_topicName(recordedVid.topic),
                        videourl=(sysSettings.siteProtocol +sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
-                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation), comment=comment)
+                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)), comment=comment)
             flash('Comment Added', "success")
             newLog(4, "Video Comment Added by " + current_user.username + "to Video ID #" + str(recordedVid.id))
 
@@ -1992,7 +1992,7 @@ def upload_vid():
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
                        channeltopic=get_topicName(ChannelQuery.topic),
                        channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
-                       channeldescription=ChannelQuery.description, videoname=newVideo.channelName,
+                       channeldescription=str(ChannelQuery.description), videoname=newVideo.channelName,
                        videodate=newVideo.videoDate, videodescription=newVideo.description,
                        videotopic=get_topicName(newVideo.topic),
                        videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
@@ -3743,7 +3743,7 @@ def user_auth_check():
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
             runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
-                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=requestedChannel.description,
+                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=str(requestedChannel.description),
                        streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
@@ -3872,11 +3872,11 @@ def user_deauth_check():
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
                        channeltopic=channelRequest.topic,
                        channelimage=channelImage, streamer=get_userName(channelRequest.owningUser),
-                       channeldescription=channelRequest.description,
+                       channeldescription=str(channelRequest.description),
                        streamname=stream.streamName,
                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
                        streamtopic=get_topicName(stream.topic),
-                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelRequest.channelLoc + ".png"))
+                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + str(channelRequest.channelLoc) + ".png"))
         return 'OK'
     else:
         returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Stream Closure Failure - No Such Stream', 'key': str(key), 'ipAddress': str(ipaddress)}
@@ -3927,10 +3927,10 @@ def rec_Complete_handler():
                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                channeltopic=get_topicName(requestedChannel.topic),
                channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-               channeldescription=requestedChannel.description, videoname=pendingVideo.channelName,
+               channeldescription=str(requestedChannel.description), videoname=pendingVideo.channelName,
                videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=get_topicName(pendingVideo.topic),
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
-               videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + pendingVideo.thumbnailLocation))
+               videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(pendingVideo.thumbnailLocation)))
 
         subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
         for sub in subscriptionQuery:
@@ -4044,16 +4044,16 @@ def toggle_chanSub(payload):
                         pictureLocation = '/images/' + pictureLocation
 
                     # Create Notification for Channel Owner on New Subs
-                    newNotification = notifications.userNotification(current_user.username + " has subscribed to " + channelQuery.channelName, "/channel/" + str(channelQuery.id), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
+                    newNotification = notifications.userNotification(current_user.username + " has subscribed to " + channelQuery.channelName, "/channel/" + str(channelQuery.id), "/images/" + str(current_user.pictureLocation), channelQuery.owningUser)
                     db.session.add(newNotification)
                     db.session.commit()
 
                     runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                                channeltopic=get_topicName(channelQuery.topic),
-                               channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                               channeldescription=channelQuery.description,
-                               user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation)
+                               channelimage=str(channelImage), streamer=get_userName(channelQuery.owningUser),
+                               channeldescription=str(channelQuery.description),
+                               user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation))
                 else:
                     db.session.delete(currentSubscription)
                 db.session.commit()
@@ -4136,19 +4136,19 @@ def handle_new_viewer(streamData):
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                        channeltopic=requestedChannel.topic,
                        channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                       channeldescription=requestedChannel.description,
+                       channeldescription=str(requestedChannel.description),
                        streamname=streamName,
                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                        streamtopic=get_topicName(streamTopic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation))
+                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
         else:
             emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
             runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                        channeltopic=requestedChannel.topic,
                        channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                       channeldescription=requestedChannel.description,
+                       channeldescription=str(requestedChannel.description),
                        streamname=streamName,
                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                        streamtopic=get_topicName(streamTopic),
@@ -4324,7 +4324,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Channel Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your live stream - " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), "/images/" + current_user.pictureLocation, channelQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your live stream - " + channelQuery.channelName, "/view/" + str(channelQuery.channelLoc), "/images/" + str(current_user.pictureLocation), channelQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4342,7 +4342,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your video - " + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + current_user.pictureLocation, videoQuery.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your video - " + videoQuery.channelName, "/play/" + str(videoQuery.id), "/images/" + str(current_user.pictureLocation), videoQuery.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4358,7 +4358,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Video Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your comment on a video", "/play/" + str(videoCommentQuery.videoID), "/images/" + current_user.pictureLocation, videoCommentQuery.userID)
+                newNotification = notifications.userNotification(current_user.username + " liked your comment on a video", "/play/" + str(videoCommentQuery.videoID), "/images/" + str(current_user.pictureLocation), videoCommentQuery.userID)
                 db.session.add(newNotification)
 
             else:
@@ -4375,7 +4375,7 @@ def handle_upvoteChange(streamData):
                 db.session.add(newUpvote)
 
                 # Create Notification for Clip Owner on New Like
-                newNotification = notifications.userNotification(current_user.username + " liked your clip - " + clipQuery.clipName, "/clip/" + str(clipQuery.id), "/images/" + current_user.pictureLocation, clipQuery.recordedVideo.owningUser)
+                newNotification = notifications.userNotification(current_user.username + " liked your clip - " + clipQuery.clipName, "/clip/" + str(clipQuery.id), "/images/" + str(current_user.pictureLocation), clipQuery.recordedVideo.owningUser)
                 db.session.add(newNotification)
 
             else:
@@ -4502,7 +4502,7 @@ def updateStreamData(message):
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                    channeltopic=channelQuery.topic,
                    channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                   channeldescription=channelQuery.description,
+                   channeldescription=str(channelQuery.description),
                    streamname=stream.streamName,
                    streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                    streamtopic=get_topicName(stream.topic),
@@ -4618,7 +4618,7 @@ def text(message):
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                            channeltopic=get_topicName(channelQuery.topic),
                            channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
-                           channeldescription=channelQuery.description,
+                           channeldescription=str(channelQuery.description),
                            streamname=streamName,
                            streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                            streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
@@ -4824,11 +4824,11 @@ def togglePublishedSocketIO(message):
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
                            channeltopic=get_topicName(videoQuery.channel.topic),
                            channelimage=channelImage, streamer=get_userName(videoQuery.channel.owningUser),
-                           channeldescription=videoQuery.channel.description, videoname=videoQuery.channelName,
-                           videodate=videoQuery.videoDate, videodescription=videoQuery.description,
+                           channeldescription=str(videoQuery.channel.description), videoname=videoQuery.channelName,
+                           videodate=videoQuery.videoDate, videodescription=str(videoQuery.description),
                            videotopic=get_topicName(videoQuery.topic),
                            videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(videoQuery.id)),
-                           videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + videoQuery.thumbnailLocation))
+                           videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(videoQuery.thumbnailLocation)))
 
                 subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=videoQuery.channel.id).all()
                 for sub in subscriptionQuery:
@@ -4871,7 +4871,7 @@ def togglePublishedClipSocketIO(message):
                     # Create Notification for Channel Subs
                     newNotification = notifications.userNotification(get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
                                                                      clipQuery.recordedVideo.channel.channelName + " titled " + clipQuery.clipName,'/clip/' +
-                                                                     str(clipQuery.id),"/images/" + clipQuery.recordedVideo.channel.owner.pictureLocation, sub.userID)
+                                                                     str(clipQuery.id),"/images/" + str(clipQuery.recordedVideo.channel.owner.pictureLocation), sub.userID)
                     db.session.add(newNotification)
             db.session.commit()
             db.session.close()
