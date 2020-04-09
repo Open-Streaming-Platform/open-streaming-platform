@@ -584,7 +584,7 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
 def rebuildOSPEdgeConf():
     f = open("conf/osp-edge.conf", "w")
     ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-    f.write("upstream ospEdge_nodes {\n")
+    f.write("upstream ospedge_nodes {\n")
     f.write("ip_hash;\n")
     if ospEdgeQuery != []:
         for edge in ospEdgeQuery:
