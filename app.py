@@ -639,33 +639,29 @@ def processWebhookVariables(payload, **kwargs):
     return payload
 
 @asynch
-def runSubscription(subject, destination, message):
-    with app.app_context():
-        sysSettings = settings.settings.query.first()
-        finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
-        msg = Message(subject=subject, recipients=[destination])
-        msg.sender = sysSettings.smtpSendAs
-        msg.body = "Testing Without Txt"
-        msg.html = finalMessage
-        try:
-            mail.send(msg)
-        except Exception as e:
-            newLog(2, "Subscription Email to " + destination + "failed due to the following error: " + str(e) )
-            return False
-        return True
+def send_async_email(app, msg):
+    with app.app.context():
+        mail.send(msg)
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
     if subscriptionQuery:
         newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
 
+        sysSettings = settings.settings.query.first()
+
         subCount = 0
         for sub in subscriptionQuery:
             userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
             if userQuery is not None:
-                result = runSubscription(subject, userQuery.email, message)
-                if result is True:
-                    subCount = subCount + 1
+                finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + userQuery.email + "'>Unsubscribe</a></p></body></html>"
+                msg = Message(subject=subject, recipients=[userQuery.email])
+                msg.sender = sysSettings.smtpSendAs
+                msg.body = "Testing Without Txt"
+                msg.html = finalMessage
+                send_async_email(app, msg)
+
+                subCount = subCount + 1
         newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     return True
 
