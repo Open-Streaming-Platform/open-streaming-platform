@@ -4151,31 +4151,34 @@ def handle_new_viewer(streamData):
                 r.rpush(channelLoc + '-streamUserList', current_user.username)
 
             emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
-            runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                       channeltopic=requestedChannel.topic,
-                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                       channeldescription=str(requestedChannel.description),
-                       streamname=streamName,
-                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                       streamtopic=get_topicName(streamTopic),
-                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
         else:
             emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-            runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                       channeltopic=requestedChannel.topic,
-                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
-                       channeldescription=str(requestedChannel.description),
-                       streamname=streamName,
-                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                       streamtopic=get_topicName(streamTopic),
-                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
-                       user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
+
     else:
         if current_user.is_authenticated:
             r.rpush(channelLoc + '-streamUserList', current_user.username)
+
+    if current_user.is_authenticated:
+        pictureLocation = current_user.pictureLocation
+        if current_user.pictureLocation is None:
+            pictureLocation = '/static/img/user2.png'
+        else:
+            pictureLocation = '/images/' + pictureLocation
+
+        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeldescription=str(requestedChannel.description), streamname=streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                   streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
+    else:
+        runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeldescription=str(requestedChannel.description), streamname=streamName,
+                   streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
+                   streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
 
     handle_viewer_total_request(streamData, room=streamData['data'])
 
@@ -4240,9 +4243,6 @@ def handle_leaving_viewer(streamData):
 
 @socketio.on('disconnect')
 def disconnect():
-    userSID = request.sid
-    roomList=rooms(userSID)
-    print(roomList)
 
     return 'OK'
 
