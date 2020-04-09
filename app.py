@@ -648,7 +648,8 @@ def runSubscription(subject, destination, message):
     msg.html = finalMessage
     try:
         mail.send(msg)
-    except:
+    except Exception as e:
+        newLog(2, "Subscription Email to " + destination + "failed due to the following error: " + str(e) )
         return False
     return True
 
@@ -664,7 +665,7 @@ def processSubscriptions(channelID, subject, message):
                 result = runSubscription(subject, userQuery.email, message)
                 if result is True:
                     subCount = subCount + 1
-        newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + "Email Subscriptions for Channel ID: " + str(channelID) )
+        newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     return True
 
 def prepareHubJSON():
