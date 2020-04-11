@@ -4569,6 +4569,9 @@ def text(message):
                     command = commandArray[0]
                     target = commandArray[1]
                     msg = 'Test Received - Success: ' + command + ":" + target
+            elif msg == ('/sidlist'):
+                if current_user.has_role('Admin'):
+                    msg = str((r.smembers(channelQuery.channelLoc + '-streamSIDList')))
             elif msg.startswith('/mute'):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
                     channelQuery.channelMuted = True
