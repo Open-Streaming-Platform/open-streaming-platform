@@ -1038,7 +1038,7 @@
 
     socket.on('edgeNodeCheckResults', function (msg) {
         var edgeID = msg['edgeID'];
-        var edgeStatus = number(msg['status']);
+        var edgeStatus = Number(msg['status']);
         var nodeStatusDiv = document.getElementById('nodeStatus-' + edgeID);
 
         var newSpan;
