@@ -588,7 +588,7 @@ def rebuildOSPEdgeConf():
     f = open("conf/osp-edge.conf", "w")
     ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
     f.write("upstream ospedge_nodes {\n")
-    f.write("ip_hash;\n")
+    f.write("sticky expires=8h;\n")
     if ospEdgeQuery != []:
         for edge in ospEdgeQuery:
             f.write("server " + edge.address + ";\n")
