@@ -12,6 +12,7 @@ Added Contributed UFW and Telegraf configuration files
 Added Tooltips to Contol buttons on Video View Page
 Fixed an issue where video uploads without a channel created would generate an error
 Fixed missing menu items for Subscriptions and About in Defaultv2-Dark
+Tied Channel User counts to Session Cookie IDs, preventing Socket ID bouncing from causing Double numbers
 
 Beta-4b
 ==============================================
