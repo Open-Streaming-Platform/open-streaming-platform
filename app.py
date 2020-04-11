@@ -4198,7 +4198,7 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    userSID = request.sid
+    userSID = request.cookies.get('ospSession')
 
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
     if streamSIDList is not None:
@@ -4550,7 +4550,7 @@ def text(message):
 
     if channelQuery is not None:
 
-        userSID = request.sid
+        userSID = request.cookies.get('ospSession')
         if userSID.encode('utf-8') not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
             r.sadd(channelQuery.channelLoc + '-streamSIDList', userSID)
         if current_user.username.encode('utf-8') not in r.lrange(channelQuery.channelLoc + '-streamUserList', 0, -1):
