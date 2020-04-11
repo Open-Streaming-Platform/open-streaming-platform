@@ -4984,7 +4984,7 @@ def deleteInvitedUser(message):
 
 @socketio.on('checkEdge')
 def checkEdgeNode(message):
-    if current_user.had_role('Admin'):
+    if current_user.has_role('Admin'):
         edgeID = int(message['edgeID'])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
