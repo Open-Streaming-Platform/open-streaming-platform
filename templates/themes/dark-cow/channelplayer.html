@@ -420,7 +420,7 @@
             'sync disconnect on unload': true
         };
 
-        var socket = io();
+        var socket = io("/", {reconnection: true, forceNew: false});
     </script>
 
     <script>
