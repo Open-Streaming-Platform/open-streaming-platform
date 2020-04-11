@@ -266,7 +266,7 @@
                                                 <td>{{node.address}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
                                                            {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');"></td>
-                                                <td><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 %}badge-success{% endif %}">
+                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 %}badge-success{% endif %}">
                                                     {% if node.status == 0 %} Offline
                                                     {% elif node.status == 1 %} Online
                                                     {% endif %}
@@ -274,6 +274,7 @@
 
                                                 </td>
                                                 <td>
+                                                    <button type="button" class="btn btn-sm btn-primary" onclick="checkEdge('{{node.id}}')"><i class="fas fa-sync-alt"></i></button>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
                                                 </td>
                                             </tr>
@@ -977,12 +978,32 @@
         var edgeTableRow = document.getElementById('edgeTableRow-' + edgeID);
         edgeTableRow.parentNode.removeChild(edgeTableRow);
     }
-</script>
 
-<script>
     function toggleActiveEdge(edgeID) {
         socket.emit('toggleOSPEdge', {edgeID: edgeID});
     }
+
+    function checkEdge(edgeID) {
+        socket.emit('checkEdge', {edgeID: edgeID});
+    }
+
+
+    socket.on('edgeNodeCheckResults', function (msg) {
+        var edgeID = msg['edgeID'];
+        var edgeStatus = number(msg['status']);
+        var nodeStatusDiv = document.getElementById('nodeStatus-' + edgeID);
+
+        var newSpan;
+
+        if (edgeStatus == 0) {
+            newSpan = '<span class="badge badge-danger">Offline</span>';
+        } else if (edgeStatus == 1) {
+            newSpan = '<span class="badge badge-success">Online</span>';
+        }
+
+        nodeStatusDiv.innerHTML = newSpan;
+    });
+
 </script>
 
 <script>
