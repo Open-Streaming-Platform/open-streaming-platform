@@ -3586,7 +3586,7 @@ def rtmpStat_page(node):
     else:
         nodeQuery = settings.edgeStreamer.query.filter_by(address=node).first()
         if nodeQuery is not None:
-            r = requests.get('http://' + node.address + ":9000/stat").text
+            r = requests.get('http://' + nodeQuery.address + ":9000/stat").text
 
     if r is not None:
         data = None
