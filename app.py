@@ -4571,7 +4571,7 @@ def text(message):
                     msg = 'Test Received - Success: ' + command + ":" + target
             elif msg == ('/sidlist'):
                 if current_user.has_role('Admin'):
-                    msg = str((r.smembers(channelQuery.channelLoc + '-streamSIDList')))
+                    msg = str((r.smembers(channelQuery.channelLoc + '-streamSIDList'))) + request.namespace
             elif msg.startswith('/mute'):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
                     channelQuery.channelMuted = True
