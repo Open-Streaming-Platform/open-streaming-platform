@@ -385,7 +385,7 @@
             'sync disconnect on unload':true
         };
 
-        var socket = io();
+        var socket = io(window.location, {reconnection: true, forceNew: false});
     </script>
 
     <script>
