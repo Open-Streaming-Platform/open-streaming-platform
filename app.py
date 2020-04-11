@@ -3575,6 +3575,29 @@ def initialSetup():
 
     return redirect(url_for('main_page'))
 
+
+@app.route('/rtmpstat/<node>')
+@login_required
+@roles_required('Admin')
+def rtmpStat_page(node):
+    r = None
+    if node == "localhost":
+        r = requests.get("http://127.0.0.1:9000/stat").text
+    else:
+        nodeQuery = settings.edgeStreamer.query.filter_by(address=node).first()
+        if nodeQuery is not None:
+            r = requests.get('http://' + node.address + ":9000/stat").text
+
+    if r is not None:
+        data = None
+        try:
+            data = xmltodict.parse(r)
+            data = json.dumps(data)
+        except:
+            return abort(500)
+        return (data)
+    return abort(500)
+
 @app.route('/search', methods=["POST"])
 def search_page():
     if 'term' in request.form:
