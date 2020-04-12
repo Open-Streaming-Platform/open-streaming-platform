@@ -6,7 +6,7 @@ Added the ability to change the Server MOTD Title from the Admin page
 Added Support for the OSP Edge Streamer Server
 Added New Roles for Uploaders and Recorders.  Will need to be added to users who already have Streamer Rights
 Added a link to the raw Nginx-RTMP stats on the Admin page for the master node.
-Significant SQL Refectoring to reduce delays and latency.  May affect variables used in custom themes as not all variables are passed on to Jinja2
+Significant SQL Refactoring to reduce delays and latency.  May affect variables used in custom themes as not all variables are passed on to Jinja2
 Updated Setup Script to support Arch Linux
 Added Postgres SQL dependencies for Standard Install and Docker
 Changed the default help page to the new Wiki site at https://wiki.openstreamingplaftform.com
