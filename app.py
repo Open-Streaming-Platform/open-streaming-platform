@@ -1468,11 +1468,9 @@ def view_page(loc):
         if edgeQuery == []:
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
-            #elif requestedChannel.record is True and requestedChannel.owner.has_role("Recorder") and sysSettings.allowRecording is True:
-            #    streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
-            #elif requestedChannel.record is False or requestedChannel.owner.has_role("Recorder") is False or sysSettings.allowRecording is False :
-            #    streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
-            else:
+            elif requestedChannel.record is True and requestedChannel.owner.has_role("Recorder") and sysSettings.allowRecording is True:
+                streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
+            elif requestedChannel.record is False or requestedChannel.owner.has_role("Recorder") is False or sysSettings.allowRecording is False :
                 streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
         else:
             # Handle Selecting the Node using Round Robin Logic
