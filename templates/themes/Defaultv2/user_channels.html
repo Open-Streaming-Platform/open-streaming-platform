@@ -195,7 +195,7 @@
                                     {% if sysSettings.allowRecording == True %}
                                     <div class="form-group row">
                                         <div class="col-6">
-                                            <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                                            <label for="recordSelect" class="col-form-label"><b>Record Video </b> {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
                                         </div>
                                         <div class="col-6">
                                             <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
