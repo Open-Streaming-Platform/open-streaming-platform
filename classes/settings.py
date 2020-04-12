@@ -75,13 +75,15 @@ class settings(db.Model):
 class edgeStreamer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(1024))
+    port = db.Column(db.Integer)
     active = db.Column(db.Boolean)
     status = db.Column(db.Integer)
 
-    def __init__(self, address):
+    def __init__(self, address, port):
         self.address = address
         self.active = False
         self.status = 0
+        self.port = port
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -90,6 +92,7 @@ class edgeStreamer(db.Model):
         return {
             'id': self.id,
             'address': self.address,
+            'customPort': self.customPort,
             'active': self.active,
             'status': self.status
         }

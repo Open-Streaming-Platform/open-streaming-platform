@@ -596,7 +596,10 @@ def rebuildOSPEdgeConf():
     f.write("sticky expires=8h;\n")
     if ospEdgeQuery != []:
         for edge in ospEdgeQuery:
-            f.write("server " + edge.address + ";\n")
+            if edge.port == 80:
+                f.write("server " + edge.address + ";\n")
+            else:
+                f.write("server " + edge.address + ":" + edge.port +";\n" )
     else:
         f.write("server 127.0.0.1;\n")
     f.write("}")
@@ -2578,7 +2581,8 @@ def admin_page():
 
         elif settingType == "edgeNode":
             address = request.form['address']
-            newEdge = settings.edgeStreamer(address)
+            port = request.form['edgePort']
+            newEdge = settings.edgeStreamer(address, port)
 
             try:
                 edgeXML = requests.get("http://" + address + ":9000/stat").text
@@ -2792,7 +2796,7 @@ def settings_dbRestore():
 
             if 'edgeStreamer' in restoreDict:
                 for node in restoreDict['edgeStreamer']:
-                    restoredNode = settings.edgeStreamer(node['address'])
+                    restoredNode = settings.edgeStreamer(node['address'], node['port'])
                     restoredNode.status = int(node['status'])
                     restoredNode.active = eval(node['active'])
                     db.session.add(restoredNode)
