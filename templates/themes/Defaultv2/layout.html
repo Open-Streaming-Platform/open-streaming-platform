@@ -123,7 +123,7 @@
               {% if current_user.has_role('Streamer') %}
               <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My Channels</a>
               {% if sysSettings.allowUploads == True %}
-                {% if current_user.had_role('Uploader') %}
+                {% if current_user.has_role('Uploader') %}
                   <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload Video</a>
                 {% endif %}
               {% endif %}
