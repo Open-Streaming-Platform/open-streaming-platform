@@ -5,6 +5,7 @@ Added specific values to Resource Statatistics on the Admin Dashboard Page
 Added the ability to change the Server MOTD Title from the Admin page
 Added Support for the OSP Edge Streamer Server
 Added New Roles for Uploaders and Recorders.  Will need to be added to users who already have Streamer Rights
+Added a link to the raw Nginx-RTMP stats on the Admin page for the master node.
 Significant SQL Refectoring to reduce delays and latency.  May affect variables used in custom themes as not all variables are passed on to Jinja2
 Updated Setup Script to support Arch Linux
 Added Postgres SQL dependencies for Standard Install and Docker
@@ -14,6 +15,8 @@ Added Tooltips to Contol buttons on Video View Page
 Fixed an issue where video uploads without a channel created would generate an error
 Fixed missing menu items for Subscriptions and About in Defaultv2-Dark
 Tied Channel User counts to Session Cookie IDs, preventing Socket ID bouncing from causing Double numbers
+Fixed an Issue where missing values could cause webhooks to not send
+Fixed issues where Emails would not be sent for Subscriptions and Registration
 
 Beta-4b
 ==============================================
