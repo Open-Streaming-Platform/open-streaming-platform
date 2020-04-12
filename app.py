@@ -602,7 +602,7 @@ def rebuildOSPEdgeConf():
             if edge.port == 80:
                 f.write("server " + edge.address + ";\n")
             else:
-                f.write("server " + edge.address + ":" + edge.port +";\n" )
+                f.write("server " + edge.address + ":" + str(edge.port) +";\n" )
     else:
         f.write("server 127.0.0.1;\n")
     f.write("}")
