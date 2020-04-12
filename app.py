@@ -365,7 +365,10 @@ def init_db_values():
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
 
         # Initialize the OSP Edge Configuration - Mostly for Docker
-        rebuildOSPEdgeConf()
+        try:
+            rebuildOSPEdgeConf()
+        except:
+            print("Error Rebuilding Edge Config")
 
         # Import Theme Data into Theme Dictionary
         with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
