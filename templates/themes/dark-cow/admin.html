@@ -468,6 +468,10 @@
                                           <div class="dropdown-menu">
                                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
                                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                              {% if user.has_role('Streamer') %}
+                                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                                              {% endif %}
                                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                                             </div><br>
                                             {% for role in user.roles %}

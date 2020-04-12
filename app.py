@@ -230,6 +230,8 @@ def init_db_values():
     user_datastore.find_or_create_role(name='Admin', description='Administrator')
     user_datastore.find_or_create_role(name='User', description='User')
     user_datastore.find_or_create_role(name='Streamer', description='Streamer')
+    user_datastore.find_or_create_role(name='Recorder', description='Recorder')
+    user_datastore.find_or_create_role(name='Uploader', description='Uploader')
 
     topicList = [("Other","None")]
     for topic in topicList:
@@ -1850,7 +1852,7 @@ def clip_change_page(clipID):
 
 @app.route('/upload/video-files', methods=['GET', 'POST'])
 @login_required
-@roles_required('Streamer')
+@roles_required('Uploader')
 def upload():
     videos_root = app.config['WEB_ROOT'] + 'videos/'
 
@@ -1904,7 +1906,7 @@ def upload():
 
 @app.route('/upload/video-details', methods=['POST'])
 @login_required
-@roles_required('Streamer')
+@roles_required('Uploader')
 def upload_vid():
     sysSettings = settings.settings.query.first()
     if not sysSettings.allowUploads:
@@ -2090,6 +2092,7 @@ def subscription_page():
 
 @app.route('/settings/user/addInviteCode')
 @login_required
+@roles_required('Streamer')
 def user_addInviteCode():
     if 'inviteCode' in request.args:
         inviteCode = request.args.get("inviteCode")
@@ -3211,6 +3214,7 @@ def settings_dbRestore():
 
 @app.route('/settings/channels', methods=['POST','GET'])
 @login_required
+@roles_required('Streamer')
 def settings_channels_page():
     sysSettings = settings.settings.query.first()
     channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'},{'name': 'Plain White', 'value': 'PlainWhite'}, {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'}, {'name': 'Terminal', 'value': 'Terminal'}, {'name': 'Lawrencium', 'value': 'Lawrencium'}, {'name': 'Lush', 'value': 'Lush'}, {'name': 'Transparent', 'value': 'Transparent'}]
@@ -3532,6 +3536,8 @@ def initialSetup():
             user.confirmed_at = datetime.datetime.now()
             user_datastore.add_role_to_user(user, 'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
+            user_datastore.add_role_to_user(user, 'Recorder')
+            user_datastore.add_role_to_user(user, 'Uploader')
             user_datastore.add_role_to_user(user, 'User')
 
             serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)

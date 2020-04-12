@@ -120,9 +120,11 @@
             <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
             {% endif %}
             {% if current_user.has_role('Streamer') %}
-            <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My channels</a>
+              <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My channels</a>
             {% if sysSettings.allowUploads == True %}
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload video</a>
+              {% if current_user.has_role('Uploader') %}
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload video</a>
+              {% endif %}
             {% endif %}
             <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API keys</a>
             {% endif %}
