@@ -1462,9 +1462,9 @@ def view_page(loc):
         if edgeQuery == []:
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
-            elif requestedChannel.record is True:
+            elif requestedChannel.record is True and requestedChannel.owner.has_role("Recorder") and sysSettings.allowRecording is True:
                 streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
-            elif requestedChannel.record is False:
+            elif requestedChannel.record is False or requestedChannel.owner.has_role("Recorder") is False or sysSettings.allowRecording is False :
                 streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
         else:
             # Handle Selecting the Node using Round Robin Logic
@@ -3729,12 +3729,12 @@ def streamkey_check():
                 db.session.add(newStream)
                 db.session.commit()
 
-                if channelRequest.record is False or sysSettings.allowRecording is False:
+                if channelRequest.record is False or sysSettings.allowRecording is False or userQuery.has_role("Recorder") is False:
                     if sysSettings.adaptiveStreaming:
                         return redirect('rtmp://' + externalIP + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
                         return redirect('rtmp://' + externalIP + '/stream-data/' + channelRequest.channelLoc, code=302)
-                elif channelRequest.record is True and sysSettings.allowRecording is True:
+                elif channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
 
                     userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
                     existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()

@@ -198,7 +198,7 @@
                                             <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
                                         </div>
                                         <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
                                         </div>
                                     </div>
                                     <div class="form-group row">
