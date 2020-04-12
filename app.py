@@ -2022,9 +2022,10 @@ def upload_vid():
             except:
                 newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
+    videoID = newVideo.id
     db.session.close()
     flash("Video upload complete")
-    return redirect(url_for('view_vid_page', videoID=newVideo.id))
+    return redirect(url_for('view_vid_page', videoID=videoID))
 
 @app.route('/unsubscribe')
 def unsubscribe_page():
