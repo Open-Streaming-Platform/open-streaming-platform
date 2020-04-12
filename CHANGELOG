@@ -4,6 +4,7 @@ Added RTMP Restreaming to 1 Destination per Channel
 Added specific values to Resource Statatistics on the Admin Dashboard Page
 Added the ability to change the Server MOTD Title from the Admin page
 Added Support for the OSP Edge Streamer Server
+Added New Roles for Uploaders and Recorders.  Will need to be added to users who already have Streamer Rights
 Significant SQL Refectoring to reduce delays and latency.  May affect variables used in custom themes as not all variables are passed on to Jinja2
 Updated Setup Script to support Arch Linux
 Added Postgres SQL dependencies for Standard Install and Docker
