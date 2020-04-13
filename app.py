@@ -598,7 +598,7 @@ def rebuildOSPEdgeConf():
     f.write('split_clients "${remote_addr}AAA" $ospedge_node {\n')
     if ospEdgeQuery != []:
         for edge in ospEdgeQuery:
-            if edge.port == 80:
+            if edge.port == 80 or edge.port == 443:
                 f.write(str(edge.loadPct) + "% " + edge.address + ";\n")
             else:
                 f.write(str(edge.loadPct) + "% " + edge.address + ":" + str(edge.port) +";\n" )
