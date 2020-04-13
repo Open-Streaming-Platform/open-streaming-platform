@@ -595,16 +595,15 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
 def rebuildOSPEdgeConf():
     f = open("conf/osp-edge.conf", "w")
     ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-    f.write("upstream ospedge_nodes {\n")
-    f.write("sticky expires=8h;\n")
+    f.write('split_clients "${remote_addr}AAA" $ospedge_node {\n')
     if ospEdgeQuery != []:
         for edge in ospEdgeQuery:
             if edge.port == 80:
-                f.write("server " + edge.address + ";\n")
+                f.write(str(edge.loadPct) + "% " + edge.address + ";\n")
             else:
-                f.write("server " + edge.address + ":" + str(edge.port) +";\n" )
+                f.write(str(edge.loadPct) + "% " + edge.address + ":" + str(edge.port) +";\n" )
     else:
-        f.write("server 127.0.0.1;\n")
+        f.write("100% 127.0.0.1;\n")
     f.write("}")
     f.close()
     return True
@@ -2585,7 +2584,8 @@ def admin_page():
         elif settingType == "edgeNode":
             address = request.form['address']
             port = request.form['edgePort']
-            newEdge = settings.edgeStreamer(address, port)
+            loadPct = request.form['edgeLoad']
+            newEdge = settings.edgeStreamer(address, port, loadPct)
 
             try:
                 edgeXML = requests.get("http://" + address + ":9000/stat").text
@@ -2799,7 +2799,7 @@ def settings_dbRestore():
 
             if 'edgeStreamer' in restoreDict:
                 for node in restoreDict['edgeStreamer']:
-                    restoredNode = settings.edgeStreamer(node['address'], node['port'])
+                    restoredNode = settings.edgeStreamer(node['address'], node['port'], node['loadPct'])
                     restoredNode.status = int(node['status'])
                     restoredNode.active = eval(node['active'])
                     db.session.add(restoredNode)
