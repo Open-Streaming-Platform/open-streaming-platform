@@ -39,7 +39,7 @@ RUN apk add alpine-sdk \
   git \
   linux-headers \
   zlib-dev \
-  libpq-dev
+  postgresql-dev
 
 RUN apk add --no-cache tzdata
 
