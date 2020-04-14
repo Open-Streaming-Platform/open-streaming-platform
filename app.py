@@ -402,7 +402,7 @@ def newLog(logType, message):
 
 def check_existing_users():
     AdminQuery = db.session.execute('select user.username from user inner join roles_users on user_id=user.id inner join role on role.id=role_id where role.name="Admin" and user.active=true;')
-    if AdminQuery != None:
+    if AdminQuery != None and AdminQuery != []:
         db.session.close()
         return True
     db.session.close()
