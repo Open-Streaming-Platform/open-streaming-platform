@@ -400,9 +400,9 @@ def newLog(logType, message):
     db.session.commit()
     return True
 
-def check_existing_users():
-    AdminQuery = db.session.execute('select user.username from user inner join roles_users on user_id=user.id inner join role on role.id=role_id where role.name="Admin" and user.active=true;')
-    if AdminQuery != None and AdminQuery != []:
+def check_existing_settings():
+    settingsQuery = settings.settings.query.all()
+    if settingsQuery != None and settingsQuery != []:
         db.session.close()
         return True
     db.session.close()
@@ -1254,7 +1254,7 @@ def shutdown_session(exception=None):
 @app.route('/')
 def main_page():
 
-    firstRunCheck = check_existing_users()
+    firstRunCheck = check_existing_settings()
 
     if firstRunCheck is False:
         return render_template('/firstrun.html')
