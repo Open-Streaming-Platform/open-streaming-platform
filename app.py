@@ -402,11 +402,12 @@ def newLog(logType, message):
 
 def check_existing_settings():
     settingsQuery = settings.settings.query.all()
-    if settingsQuery != None and settingsQuery != []:
+    if settingsQuery != []:
         db.session.close()
         return True
-    db.session.close()
-    return False
+    else:
+        db.session.close()
+        return False
 
 # Class Required for HTML Stripping in strip_html
 class MLStripper(HTMLParser):
