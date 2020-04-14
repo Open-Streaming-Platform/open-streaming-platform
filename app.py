@@ -129,7 +129,7 @@ else:
 
 r.flushdb()
 
-appDBVersion = 0.45
+appDBVersion = 0.50
 
 from classes.shared import db
 
@@ -5180,8 +5180,10 @@ def markUserNotificationRead(message):
     return 'OK'
 
 # Start App Initiation
-init_db_values()
-
+try:
+    init_db_values()
+except:
+    print("DB Load Fail due to Upgrade or Issues")
 mail = Mail(app)
 newLog("0", "OSP Started Up Successfully - version: " + str(version))
 
