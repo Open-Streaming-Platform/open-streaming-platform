@@ -3476,7 +3476,7 @@ def settings_apikeys_post_page(action):
 
 @app.route('/settings/initialSetup', methods=['POST'])
 def initialSetup():
-    firstRunCheck = check_existing_users()
+    firstRunCheck = check_existing_settings()
 
     if firstRunCheck is False:
 
