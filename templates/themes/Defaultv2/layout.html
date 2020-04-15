@@ -82,7 +82,7 @@
                   </div>
                 </li>
                 <div class="notificationBody">
-                    {% if notifications != [] %}
+                    {% if notifications != [] and notifications != None %}
                       {% for entry in notifications %}
                       <li class="notification-box" id="notification-{{entry.notificationID}}">
                         <div class="row">
