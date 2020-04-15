@@ -8,7 +8,8 @@ echo Setting Ownership of /opt/osp to www-data
 sudo chown -R www-data:www-data /opt/osp >> $loglocation
 echo Performing DB Migration
 sudo python3 manage.py db init >> $loglocation
+cd /opt/osp >> $loglocation
 sudo bash dbUpgrade.sh >> $loglocation
 sudo systemctl restart osp.target >> $loglocation
-sudo systemctl restart nginx >> $loglocation
+sudo systemctl restart nginx-osp >> $loglocation
 echo Upgrade Completed.  Please check $loglocation for any errors.
