@@ -57,43 +57,43 @@
       <div class="row m-2">
         <div class="video-buttons-row">
           <span class="float-md-left">
-            <a href="{{streamURL}}" class="btn btn-primary shadow" download>
+            <a href="{{streamURL}}" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Download Video" download >
               <i class="fas fa-download"></i>
             </a>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#commentModal" {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
-              <i class="fas fa-comment"></i>
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Add a Comment"  {% if video.allowComments == False or sysSettings.allowComments == False %} disabled aria-disabled="true" {% endif %}>
+              <span data-toggle="modal" data-target="#commentModal"><i class="fas fa-comment"></i></span>
             </button>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
-              <i class="fas fa-share-alt"></i>
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Share or Embed">
+              <span data-toggle="modal" data-target="#shareModal"><i class="fas fa-share-alt"></i></span>
             </button>
             {% if video.owningUser == current_user.id %}
-            <button type="button" class="btn btn-primary shadow" onclick="newScreenShot();">
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Change Thumbnail" onclick="newScreenShot();">
               <i class="fas fa-camera"></i>
             </button>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#moveModal">
-              <i class="fas fa-arrow-circle-right"></i>
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Move to Another Channel">
+              <span data-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i></span>
             </button>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal()">
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Create Clip" onclick="openClipModal()">
               <i class="fas fa-cut"></i>
             </button>
-            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
-              <i class="fas fa-edit"></i>
+            <button type="button" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Edit Video">
+              <span data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i></span>
             </button>
-            <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
-              <i class="fas fa-trash-alt"></i>
+            <button type="button" class="btn btn-danger shadow" data-toggle="tooltip" data-placement="top" title="Delete Video">
+              <span data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></span>
             </button>
             {% endif %}
           </span>
           <span class="d-none d-md-inline float-right">
             <i class="fas fa-users mr-2"></i> {{video.views}}
-            <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+            <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
             </button>
           </span>
         </div>
         <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
           <i class="fas fa-users mr-2"></i> {{video.views}}
-          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
             <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
           </button>
         </div>
@@ -131,7 +131,7 @@
                       class="far fa-thumbs-up"></i>
                     {% endif %}
                     <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
-                  {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
+                  {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
                   <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
                   {% endif %}
               </div>
@@ -288,7 +288,7 @@
           <h5>Move this Video to Channel:</h5>
 
           <select name="moveToChannelID" class="form-control">
-            {% for chan in current_user.channels %}
+            {% for chan in ownedChannels %}
             {% if chan.id != video.channelID %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
             {% endif %}
@@ -421,7 +421,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      {% if user.is_authenticated == True %}
+      {% if current_user.is_authenticated == True %}
       <form action="/play/{{video.id}}/comment" method="post">
         <div class="modal-body">
           <div class="form-group">

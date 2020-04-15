@@ -1,39 +1,79 @@
 version: '3.4'
 services:
+  db:
+    image: mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - ./data/mariadb/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=internalanyway0u4F4C7gBF
+      - MYSQL_PASSWORD=internalanywayDSfagWgmUUnF
+      - MYSQL_DATABASE=osp
+      - MYSQL_USER=osp
+    networks:
+      internal:
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=internalanyway0u4F4C7gBF --execute \"SHOW DATABASES;\""
+      interval: 1m
+      timeout: 1s
+      retries: 5
+      start_period: 30s
+
   redis:
     image: redis
-    container_name: ospredis
     expose:
       - 6379
+    networks:
+      internal:
+
   app:
     build: .
-    restart: always
+    restart: unless-stopped
     ports:
       - '1935:1935'
       - '8585:80'
       - '8553:443'
     environment:
-      - REDIS_HOST="ospredis"
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=""
-#       - DB_URL="sqlite:///db/database.db"
-#       - FLASK_SECRET="Super-Sekrit"
-#       - FLASK_SALT="SALT123"
-#       - OSP_ALLOWREGISTRATION=True
-#       - OSP_REQUIREVERIFICATION=True
-#       - TZ="ETC/UTC"
-#    volumes:
-#      - "./data/www:/var/www"
-#      - "./data/osp/db/database.db:/opt/osp/db/database.db"
-#      - "./data/nginx/conf:/usr/local/nginx/conf"
-#    networks:
-#      - traefik
-#    labels:
-#      # Uncomment traefik labels for reverse proxy front end.
-#      - "traefik.port=443"
-#      - "traefik.frontend.rule=Host:osp.example.com"
-#      - "traefik.backend=osp"
-#      - "traefik.docker.network=traefik"
-#      - "traefik.expose=true"
-#networks:
-#  traefik:
+      - REDIS_PASSWORD=
+      - DB_URL=mysql+pymysql://osp:internalanywayDSfagWgmUUnF@db/osp
+      - FLASK_SECRET=CHANGEME
+      - FLASK_SALT=CHANGEME
+      # - OSP_ALLOWREGISTRATION=True
+      # - OSP_REQUIREVERIFICATION=True
+      # - TZ=ETC/UTC
+    volumes:
+      - "./data/www:/var/www"
+      - "./data/nginx/conf:/usr/local/nginx/conf"
+    tmpfs:
+      - /var/www/live
+      - /var/www/live-rec
+      - /var/www/live-adapt
+      - /var/www/stream-thumb
+    networks:
+      internal:
+      ## if you use traefik, also add this container to its network.
+      # traefik:
+    ## LABELS can enable traefik, if you use it.
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.osp.rule=Host(`example.com`)"
+    #   - "traefik.http.routers.osp.entrypoints=websecure"
+    #   - "traefik.http.routers.osp.tls.certresolver=myhttpchallenge"
+    #   - "traefik.docker.network=traefik"
+    depends_on:
+      - db
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/apiv1/server"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  internal:
+  ## if you use traefik, also enable it here.
+  # traefik:
+  #   external: true

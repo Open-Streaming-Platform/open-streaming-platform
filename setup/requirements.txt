@@ -9,7 +9,7 @@ Flask-Migrate==2.5.2
 Flask-Principal==0.4.0
 flask-restplus==0.12.1
 Flask-Script==2.0.6
-Flask-Security-Too==3.3.2
+Flask-Security-Too==3.3.3
 Flask-SocketIO==4.2.1
 Flask-SQLAlchemy==2.4.0
 Flask-Uploads==0.2.1
@@ -43,3 +43,5 @@ redis==3.3.11
 flask-limiter==1.1.0
 gunicorn==20.0.4
 flask-session==0.3.1
+flask-debugtoolbar==0.11.0
+psycopg2==2.8.5

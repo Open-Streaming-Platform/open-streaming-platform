@@ -55,7 +55,7 @@
           <li class="nav-item px-3">
             <a class="nav-link" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
           </li>
-          {% if user.is_authenticated == False %}
+          {% if current_user.is_authenticated == False %}
           <li class="nav-item px-3">
             <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
           </li>
@@ -117,18 +117,22 @@
               <img width="30" height="30" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';"> {{current_user.username}}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              {% if user.has_role('Admin') %}
+              {% if current_user.has_role('Admin') %}
               <a class="dropdown-item" href="/settings/admin"><i class="fas fa-server"></i> Admin</a>
               {% endif %}
-              {% if user.has_role('Streamer') %}
+              {% if current_user.has_role('Streamer') %}
               <a class="dropdown-item" href="/settings/channels"><i class="fas fa-video"></i> My Channels</a>
               {% if sysSettings.allowUploads == True %}
-              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload Video</a>
+                {% if current_user.has_role('Uploader') %}
+                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#uploadModal"><i class="fas fa-upload"></i> Upload Video</a>
+                {% endif %}
               {% endif %}
               <a class="dropdown-item" href="/settings/api"><i class="fas fa-key"></i> API Keys</a>
               {% endif %}
+              <a class="dropdown-item" href="/settings/user/subscriptions"><i class="fas fa-star"></i> Subscriptions</a>
               <a class="dropdown-item" href="/settings/user"><i class="fas fa-cogs"></i> Settings</a>
               <a class="dropdown-item" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#aboutModal"><i class="fas fa-info-circle"></i> About</a>
               <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
             </div>
           </li>
@@ -179,8 +183,8 @@
             </div>
             <div class="form-group">
               <label for="uploadToChannelID">Channel</label>
-              <select name="uploadToChannelID" class="form-control">
-                {% for chan in current_user.channels %}
+              <select name="uploadToChannelID" class="form-control" required>
+                {% for chan in ownedChannels %}
                 <option value="{{chan.id}}">{{chan.channelName}}</option>
                 {% endfor %}
               </select>

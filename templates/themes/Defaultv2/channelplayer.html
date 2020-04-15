@@ -63,7 +63,7 @@
                 <div class="videoPanel">
                      <div class="player ml-2">
                          <div id="videoContainer">
-                             <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true}'>
+                             <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls preload="auto" data-setup='{"fluid": true, "liveui": true}'>
                                 <p class="vjs-no-js">
                                   To view this video please enable JavaScript, and consider upgrading to a web browser that
                                   <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
@@ -385,7 +385,7 @@
             'sync disconnect on unload':true
         };
 
-        var socket = io();
+        var socket = io("/", {reconnection: true, forceNew: false});
     </script>
 
     <script>
@@ -476,11 +476,11 @@
         })
     </script>
 
-    <!--<script>
+    <script>
         setInterval(function() {
           socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
         },5000 );
-    </script>-->
+    </script>
 
     <script>
         socket.on('connect', function() {

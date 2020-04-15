@@ -26,6 +26,8 @@ class Channel(db.Model):
     showChatJoinLeaveNotification = db.Column(db.Boolean)
     defaultStreamName = db.Column(db.String(255))
     autoPublish = db.Column(db.Boolean)
+    rtmpRestream = db.Column(db.Boolean)
+    rtmpRestreamDestination = db.Column(db.String(4096))
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -54,6 +56,8 @@ class Channel(db.Model):
         self.showChatJoinLeaveNotification = True
         self.defaultStreamName = ""
         self.autoPublish = True
+        self.rtmpRestream = False
+        self.rtmpRestreamDestination = ""
 
     def __repr__(self):
         return '<id %r>' % self.id

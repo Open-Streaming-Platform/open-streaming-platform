@@ -190,15 +190,27 @@
                                         <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
                                         <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                                     </div>
+                                    <div class="form-group">
+                                        <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                            <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <hr>
                                     <h4><b>Recording Options</b></h4>
                                     {% if sysSettings.allowRecording == True %}
                                     <div class="form-group row">
                                         <div class="col-6">
-                                            <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                                            <label for="recordSelect" class="col-form-label"><b>Record Video </b> {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
                                         </div>
                                         <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %}>
+                                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -217,6 +229,18 @@
                                         <div class="col-6">
                                             <input type="checkbox" data-toggle="toggle" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
                                         </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="rtmpSelect" class="col-form-label"><b>Restream to another RTMP Server </b> - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></label>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" data-toggle="toggle" id="rtmpSelect" name="rtmpSelect" {% if channel.rtmpRestream == True %} checked {% endif %}>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rtmpDestination" class="col-form-label"><b>Restream RTMP Server URL</b></label>
+                                        <input type="text" class="form-control" name="rtmpDestination" id="rtmpDestination" value="{{channel.rtmpRestreamDestination}}">
                                     </div>
                                     {% endif %}
 
@@ -290,23 +314,6 @@
                                     <div class="form-group">
                                         <label for="description" class="col-form-label"><b>Description</b></label>
                                         <textarea class="form-control" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
-                                            </div>
-                                            <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
-                                            </div>
-
-                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -132,7 +132,7 @@
                     {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}" class="far fa-thumbs-up"></i>
                       {% endif %}
                       <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
-                    {% if video.owningUser == current_user.id or user.has_role('Admin') or comment.userID == current_user.id %}
+                    {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
                     <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" data-toggle="modal" data-target="#deleteCommentModal">
                       <i class="fas fa-trash-alt"></i>
                     </button>
@@ -304,7 +304,7 @@
         <div class="modal-body">
           <h5>Move this Video to Channel:</h5>
           <select name="moveToChannelID" class="form-control">
-            {% for chan in current_user.channels %}
+            {% for chan in ownedChannels %}
             {% if chan.id != video.channelID %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
             {% endif %}
@@ -432,7 +432,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      {% if user.is_authenticated == True %}
+      {% if current_user.is_authenticated == True %}
       <form action="/play/{{video.id}}/comment" method="post">
         <div class="modal-body">
           <div class="form-group">

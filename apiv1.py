@@ -174,8 +174,9 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery != None:
-                        filePath = '/var/www/videos/' + channelQuery.channelLoc
-                        if filePath != '/var/www/videos/':
+                        videos_root = app.config['WEB_ROOT'] + 'videos/'
+                        filePath = videos_root + channelQuery.channelLoc
+                        if filePath != videos_root:
                             shutil.rmtree(filePath, ignore_errors=True)
 
                         channelVid = channelQuery.recordedVideo
@@ -336,10 +337,12 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery != None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            filePath = '/var/www/videos/' + videoQuery.videoLocation
-                            thumbnailPath = '/var/www/videos/' + videoQuery.videoLocation[:-4] + ".png"
+                            videos_root = app.config['WEB_ROOT'] + 'videos/'
 
-                            if filePath != '/var/www/videos/':
+                            filePath = videos_root + videoQuery.videoLocation
+                            thumbnailPath = videos_root + videoQuery.videoLocation[:-4] + ".png"
+
+                            if filePath != videos_root:
                                 if path.exists(filePath) and (
                                         videoQuery.videoLocation != None or videoQuery.videoLocation != ""):
                                     remove(filePath)
@@ -418,9 +421,10 @@ class api_1_ListClip(Resource):
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
                     if clipQuery != None:
                         if clipQuery.owningUser == requestAPIKey.userID:
-                            thumbnailPath = '/var/www/videos/' + clipQuery.thumbnailLocation
+                            videos_root = app.config['WEB_ROOT'] + 'videos/'
+                            thumbnailPath = videos_root + clipQuery.thumbnailLocation
 
-                            if thumbnailPath != '/var/www/videos/':
+                            if thumbnailPath != videos_root:
                                 if path.exists(thumbnailPath) and clipQuery.thumbnailLocation != None and clipQuery.thumbnailLocation != "":
                                     remove(thumbnailPath)
                             upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()

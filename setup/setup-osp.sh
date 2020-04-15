@@ -2,15 +2,37 @@
 
 cwd=$PWD
 
-# Get Dependancies
-sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip git -y
+archu=$( uname -r | grep -i "arch")
+if [[ "$archu" = *"arch"* ]]
+then
+	arch=true
+else
+	arch=false
+fi
 
-# Setup Python
-sudo apt-get install python3 python3-pip uwsgi-plugin-python -y
-sudo pip3 install -r requirements.txt
+if  $arch
+then
+        echo "Installing for Arch"
+        web_root='/srv/http'
+        http_user='http'
+        sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed
 
-# Install Redis
-sudo apt-get install redis -y
+        sudo pip3 install -r requirements.txt
+else
+        echo "Installing for Debian - based"
+        web_root = '/var/www'
+        http_user='www-data'
+        # Get Dependancies
+        sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y
+
+        # Setup Python
+        sudo apt-get install python3 python3-pip uwsgi-plugin-python -y
+        sudo pip3 install -r requirements.txt
+
+        # Install Redis
+        sudo apt-get install redis -y
+fi
+
 sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf
 sudo systemctl restart redis
 
@@ -80,23 +102,26 @@ else
 fi
 
 # Create HLS directory
-sudo mkdir -p /var/www
-sudo mkdir -p /var/www/live
-sudo mkdir -p /var/www/videos
-sudo mkdir -p /var/www/live-rec
-sudo mkdir -p /var/www/images
-sudo mkdir -p /var/www/live-adapt
-sudo mkdir -p /var/www/stream-thumb
+sudo mkdir -p "$web_root"
+sudo mkdir -p "$web_root/live"
+sudo mkdir -p "$web_root/videos"
+sudo mkdir -p "$web_root/live-rec"
+sudo mkdir -p "$web_root/images"
+sudo mkdir -p "$web_root/live-adapt"
+sudo mkdir -p "$web_root/stream-thumb"
 
-sudo chown -R www-data:www-data /var/www
+sudo chown -R "$http_user:$http_user" "$web_root"
 
-sudo chown -R www-data:www-data /opt/osp
-sudo chown -R www-data:www-data /opt/osp/.git
+sudo chown -R "$http_user:$http_user" /opt/osp
+sudo chown -R "$http_user:$http_user" /opt/osp/.git
 
 #Setup FFMPEG for recordings and Thumbnails
-sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
-sudo apt-get update
-sudo apt-get install ffmpeg -y
+if [ "$arch" = "false" ]
+then
+        sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
+        sudo apt-get update
+        sudo apt-get install ffmpeg -y
+fi
 
 # Setup Logrotate
 if cd /etc/logrotate.d

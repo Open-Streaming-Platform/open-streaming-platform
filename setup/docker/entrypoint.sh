@@ -31,6 +31,7 @@ export OSP_ALLOWREGISTRATION
 echo "allowRegistration=$OSP_ALLOWREGISTRATION" >> /opt/osp/conf/config.py
 export OSP_REQUIREVERIFICATION
 echo "requireEmailRegistration=$OSP_REQUIREVERIFICATION" >> /opt/osp/conf/config.py
+echo "debugMode=False" >> /opt/osp/conf/config.py
 
 chown -R www-data:www-data /opt/osp/conf/config.py
 echo 'Performing DB Migrations'
