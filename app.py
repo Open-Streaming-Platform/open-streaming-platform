@@ -1028,6 +1028,8 @@ def inject_ownedChannels():
             ownedChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).with_entities(Channel.Channel.id, Channel.Channel.channelLoc, Channel.Channel.channelName).all()
 
             return dict(ownedChannels=ownedChannels)
+        else:
+            return dict(ownedChannels=[])
     else:
         return dict(ownedChannels=[])
 
