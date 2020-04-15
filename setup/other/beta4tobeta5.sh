@@ -10,6 +10,7 @@ echo Upgrading Dependencies
 sudo pip3 install -r /opt/osp/setup/requirements.txt >> $loglocation
 echo Performing DB Migration
 cd /opt/osp >> $loglocation
+echo debugMode=False >> /opt/osp/conf/config.py
 sudo python3 manage.py db init >> $loglocation
 sudo bash dbUpgrade.sh >> $loglocation
 sudo systemctl restart osp.target >> $loglocation

@@ -217,6 +217,7 @@
       </div>
     </div>
   </div>
+  {% if current_user.has_role("Uploader") %}
   <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -235,9 +236,11 @@
             <div class="form-group">
               <label for="uploadToChannelID">Channel</label>
               <select name="uploadToChannelID" class="form-control" required>
+                {% if ownedChannels != None %}
                 {% for chan in ownedChannels %}
                 <option value="{{chan.id}}">{{chan.channelName}}</option>
                 {% endfor %}
+                {% endif %}
               </select>
             </div>
 
@@ -289,6 +292,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   {% block body %}
 
