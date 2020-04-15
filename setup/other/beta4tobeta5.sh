@@ -6,6 +6,8 @@ echo Replacing Nginx Conf Files
 sudo cp /opt/osp/setup/nginx/*.conf /usr/local/nginx/conf/
 echo Setting Ownership of /opt/osp to www-data
 sudo chown -R www-data:www-data /opt/osp >> $loglocation
+echo Upgrading Dependencies
+sudo pip3 install -r /opt/osp/setup/requirements.txt >> $loglocation
 echo Performing DB Migration
 cd /opt/osp >> $loglocation
 sudo python3 manage.py db init >> $loglocation
