@@ -702,7 +702,7 @@
                                 <div class="card shadow searchable">
                                   <div class="card-header">
                                       <span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></span>
-                                      <div class="float-right"><button type="button" class="btn btn-sm btn-error" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></div>
+                                      <div class="float-right"><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></div>
                                   </div>
                                   <div class="card-body">
                                     <div class="row">
@@ -739,7 +739,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                              <button type="button" class="btn btn-error" value="Delete" onclick="deleteStream()" data-dismiss="modal"></button>
+                              <button type="button" class="btn btn-danger" onclick="deleteStream()" data-dismiss="modal">Delete</button>
                           </div>
                           </form>
                         </div>
