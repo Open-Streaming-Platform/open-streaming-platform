@@ -7,22 +7,23 @@
 
 {% block body %}
 
-<form id="form">
     User <input type="text" id="username">
     Password <input type="password" id="password">
-    <button type="button" id="submit"></button>
-</form>
+    <button id="submit">Log in</button>
+{% endblock %}
 
+{% block scripts %}
 <script src="/static/vendor/jsxc/jsxc.bundle.js"></script>
 <script>
-let jsxc = new JSXC();
+var jsxc = new JSXC();
 
 $('#submit').click(function(){
-  let username = $('#username').val();
-  let password = $('#password').val();
+  console.log("Starting");
+  var username = $('#username').val();
+  var password = $('#password').val();
 
-  let url = '/http-bind/';
-  let jid = username + '@localhost';
+  var url = '/http-bind/';
+  var jid = username + '@localhost';
 
   jsxc.start(url, jid , password);
 });
