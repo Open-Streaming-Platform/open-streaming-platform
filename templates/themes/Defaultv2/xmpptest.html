@@ -10,28 +10,21 @@
 <form id="form">
     User <input type="text" id="username">
     Password <input type="password" id="password">
-    <button type="submit"></button>
+    <button type="button" id="submit"></button>
 </form>
 
 <script src="/static/vendor/jsxc/jsxc.bundle.js"></script>
 <script>
-    $(function() {
-    let jsxc = new JSXC({
-        loadConnectionOptions: function(username, password) {
-            return Promise.resolve({
-                xmpp: {
-                url: '/http-bind/',
-                domain: 'localhost',
-                }
-            });
-        }
-    });
+let jsxc = new JSXC();
 
-    let formElement = $('#form');
-    let usernameElement = $('#username');
-    let passwordElement = $('#password');
+$('#submit').click(function(){
+  let username = $('#username').val();
+  let password = $('#password').val();
 
-    jsxc.watchForm(formElement, usernameElement, passwordElement);
+  let url = '/http-bind/';
+  let jid = username + '@localhost';
+
+  jsxc.start(url, jid , password);
 });
 </script>
 
