@@ -5077,6 +5077,23 @@ def deleteEdgeNode(message):
     else:
         return abort(401)
 
+@socketio.on('deleteStream')
+def deleteActiveStream(message):
+    if current_user.has_role('Admin'):
+        streamID = int(message['streamID'])
+        streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+        if streamQuery is not None:
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(pending=True, channelID=streamQuery.linkedChannel).all()
+            for pending in pendingVideo:
+                db.session.delete(pending)
+            db.session.delete(streamQuery)
+            db.session.commit()
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
 
