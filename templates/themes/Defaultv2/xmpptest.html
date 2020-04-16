@@ -1,0 +1,39 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - XMPP</title>
+<link href="/static/vendor/jsxc/styles/jsxc.bundle.css" media="all" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block body %}
+
+<form id="form">
+    User <input type="text" id="username">
+    Password <input type="password" id="password">
+    <button type="submit"></button>
+</form>
+
+<script src="/static/vendor/jsxc/jsxc.bundle.js"></script>
+<script>
+    $(function() {
+    let jsxc = new JSXC({
+        loadConnectionOptions: function(username, password) {
+            return Promise.resolve({
+                xmpp: {
+                url: '/http-bind/',
+                domain: 'localhost',
+                }
+            });
+        }
+    });
+
+    let formElement = $('#form');
+    let usernameElement = $('#username');
+    let passwordElement = $('#password');
+
+    jsxc.watchForm(formElement, usernameElement, passwordElement);
+});
+</script>
+
+
+{% endblock %}

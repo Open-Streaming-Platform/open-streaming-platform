@@ -1257,6 +1257,10 @@ def shutdown_session(exception=None):
 # Route Controllers.
 #----------------------------------------------------------------------------#
 
+@app.route('/xmpp')
+def xmppTest():
+    return render_template(checkOverride('xmpptest.html'))
+
 @app.route('/')
 def main_page():
 
