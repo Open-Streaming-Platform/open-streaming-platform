@@ -44,5 +44,8 @@ cd /
 echo 'Fixing OSP Permissions Post Migration'
 chown -R www-data:www-data /opt/osp
 
+echo 'Attempting initial provisioning by environment variables (if needed)'
+python3 /opt/osp/setup/docker/env_initial_setup.py &
+
 echo 'Starting OSP'
 supervisord --nodaemon --configuration /opt/osp/setup/docker/supervisord.conf

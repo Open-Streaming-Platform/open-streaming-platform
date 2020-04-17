@@ -68,10 +68,11 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-5"
+version = "beta-5a"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
+coreNginxRTMPAddress = "127.0.0.1"
 
 app = Flask(__name__)
 
@@ -3745,9 +3746,9 @@ def streamkey_check():
 
                 if channelRequest.record is False or sysSettings.allowRecording is False or userQuery.has_role("Recorder") is False:
                     if sysSettings.adaptiveStreaming:
-                        return redirect('rtmp://' + externalIP + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
+                        return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
-                        return redirect('rtmp://' + externalIP + '/stream-data/' + channelRequest.channelLoc, code=302)
+                        return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data/' + channelRequest.channelLoc, code=302)
                 elif channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
 
                     userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
@@ -3761,9 +3762,9 @@ def streamkey_check():
                     db.session.add(newRecording)
                     db.session.commit()
                     if sysSettings.adaptiveStreaming:
-                        return redirect('rtmp://' + externalIP + '/streamrec-data-adapt/' + channelRequest.channelLoc, code=302)
+                        return redirect('rtmp://' + coreNginxRTMPAddress + '/streamrec-data-adapt/' + channelRequest.channelLoc, code=302)
                     else:
-                        return redirect('rtmp://' + externalIP + '/streamrec-data/' + channelRequest.channelLoc, code=302)
+                        return redirect('rtmp://' + coreNginxRTMPAddress + '/streamrec-data/' + channelRequest.channelLoc, code=302)
                 else:
                     returnMessage = {'time': str(currentTime), 'status': 'Streaming Error due to mismatched settings', 'key': str(key), 'ipAddress': str(ipaddress)}
                     print(returnMessage)
@@ -3834,9 +3835,9 @@ def user_auth_check():
                 owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
                 secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
                 username = owningUser.username
-                inputLocation = 'rtmp://' + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+                inputLocation = 'rtmp://' + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
             else:
-                inputLocation = "rtmp://" + sysSettings.siteAddress + ":1935/live/" + requestedChannel.channelLoc
+                inputLocation = "rtmp://" + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc
 
             # Begin RTMP Restream Function
             if requestedChannel.rtmpRestream is True:
@@ -5071,6 +5072,23 @@ def deleteEdgeNode(message):
             db.session.delete(edgeNodeQuery)
             db.session.commit()
             rebuildOSPEdgeConf()
+            return 'OK'
+        else:
+            return abort(500)
+    else:
+        return abort(401)
+
+@socketio.on('deleteStream')
+def deleteActiveStream(message):
+    if current_user.has_role('Admin'):
+        streamID = int(message['streamID'])
+        streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+        if streamQuery is not None:
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(pending=True, channelID=streamQuery.linkedChannel).all()
+            for pending in pendingVideo:
+                db.session.delete(pending)
+            db.session.delete(streamQuery)
+            db.session.commit()
             return 'OK'
         else:
             return abort(500)
