@@ -1,3 +1,8 @@
+Beta-5a
+==============================================
+Corrected an Error where having Video Recordings disabled at a system level caused an error in changing User Channel Settings
+Added the ability for Admins to delete Live Stream entries for when a stream may get stuck
+
 Beta-5
 ==============================================
 Added RTMP Restreaming to 1 Destination per Channel
