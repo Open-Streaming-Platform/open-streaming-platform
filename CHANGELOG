@@ -2,6 +2,7 @@ Beta-5a
 ==============================================
 Corrected an Error where having Video Recordings disabled at a system level caused an error in changing User Channel Settings
 Added the ability for Admins to delete Live Stream entries for when a stream may get stuck
+Starting work to disconnect Nginx-RTMP Domain/IP hard requirement for Streaming to function.  SysSettings.siteAddress will no longer cause Stream Failures if incorrect.
 
 Beta-5
 ==============================================
