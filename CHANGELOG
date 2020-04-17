@@ -1,3 +1,10 @@
+Beta-5a
+==============================================
+Corrected an Error where having Video Recordings disabled at a system level caused an error in changing User Channel Settings
+Added the ability for Admins to delete Live Stream entries for when a stream may get stuck
+Starting work to disconnect Nginx-RTMP Domain/IP hard requirement for Streaming to function.  SysSettings.siteAddress will no longer cause Stream Failures if incorrect.
+Added ability to set environment variables to configure the Docker OSP container without having to use the First Run Setup
+
 Beta-5
 ==============================================
 Added RTMP Restreaming to 1 Destination per Channel

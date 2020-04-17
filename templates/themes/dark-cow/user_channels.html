@@ -205,7 +205,7 @@
                                     </div>
                                     <hr>
                                     <h4><b>Recording Options</b></h4>
-                                    {% if sysSettings.allowRecording == True %}
+                                    {% if sysSettings.allowRecording == False %} Recording Disabled at Server Level {% endif %}
                                     <div class="form-group row">
                                         <div class="col-6">
                                             <label for="recordSelect" class="col-form-label"><b>Record Video </b> {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
@@ -243,7 +243,6 @@
                                         <label for="rtmpDestination" class="col-form-label"><b>Restream RTMP Server URL</b></label>
                                         <input type="text" class="form-control" name="rtmpDestination" id="rtmpDestination" value="{{channel.rtmpRestreamDestination}}">
                                     </div>
-                                    {% endif %}
 
 
                                     <hr>
