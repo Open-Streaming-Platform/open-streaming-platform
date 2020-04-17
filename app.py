@@ -4169,12 +4169,14 @@ def handle_new_viewer(streamData):
     streamTopic = 0
 
     requestedChannel.currentViewers = currentViewers
+    db.session.commit()
 
     if stream is not None:
         stream.currentViewers = currentViewers
         db.session.commit()
         streamName = stream.streamName
         streamTopic = stream.topic
+
     else:
         streamName = requestedChannel.channelName
         streamTopic = requestedChannel.topic
@@ -4310,6 +4312,15 @@ def handle_viewer_total_request(streamData, room=None):
     streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
     if streamUserList is None:
         streamUserList = []
+
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    if channelQuery != None:
+        channelQuery.currentViewers = viewers
+        for stream in channelQuery.stream:
+            stream.currentViewers = viewers
+        db.session.commit()
+
+
 
     decodedStreamUserList = []
     for entry in streamUserList:
