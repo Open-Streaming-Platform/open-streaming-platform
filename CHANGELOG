@@ -1,3 +1,7 @@
+Beta-5b
+==============================================
+Added CORS header for APIv1 Endpoint
+
 Beta-5a
 ==============================================
 Corrected an Error where having Video Recordings disabled at a system level caused an error in changing User Channel Settings
