@@ -18,6 +18,7 @@ from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_cors import CORS
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
@@ -147,6 +148,8 @@ db.app = app
 migrateObj = Migrate(app, db)
 
 Session(app)
+
+cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 toolbar = DebugToolbarExtension(app)
 
