@@ -241,6 +241,7 @@ while true; do
       if [[ ! -d .git ]]; then
         result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
       else
+        git fetch > /dev/null
         BRANCH=$(git rev-parse --abbrev-ref HEAD)
         CURRENTCOMMIT=$(git rev-parse HEAD)
         REMOTECOMMIT=$(git rev-parse origin/$BRANCH)
@@ -253,8 +254,21 @@ while true; do
           response=$?
           case $response in
              0 )
-               git stash > /dev/null
-               git pull > /dev/null
+               UPGRADELOG="/opt/osp/logs/upgrade.log"
+               echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
+               git stash > $UPGRADELOG
+               git pull >> $UPGRADELOG
+               echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
+               systemctl stop osp.target >> $UPGRADELOG
+               echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+               python3 manage.py db init >> $UPGRADELOG
+               echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+               python3 manage.py db migrate >> $UPGRADELOG
+               echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+               python3 manage.py db upgrade >> $UPGRADELOG
+               echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
+               systemctl start osp.target >> $UPGRADELOG
+               echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
                result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT")
                ;;
              1 )
