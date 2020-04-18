@@ -250,7 +250,7 @@ while true; do
           result=$(echo "OSP is up-to-date on Branch $BRANCH")
         else
           dialog --title "Upgrade to Latest Build" \
-                 --yesno "Would you like to update your current install to the new commit?\n\nCurrent:$BRANCH/$VERSION$CURRENTCOMMIT\nRepository:$BRANCH/$NEWVERSION$REMOTECOMMIT" 10 60
+                 --yesno "Would you like to update your current install to the new commit?\n\nCurrent:$BRANCH/$VERSION$CURRENTCOMMIT\nRepository:$BRANCH/$NEWVERSION$REMOTECOMMIT" 20 80
           response=$?
           case $response in
              0 )
