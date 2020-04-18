@@ -1,6 +1,7 @@
 Beta-5b
 ==============================================
 Added CORS header for APIv1 Endpoint
+Fixed an issue with Redis Authentication where OSP would not use the Password to Connect
 Fixed issue with docker-compose where OSP was starting before the database had started
 Added new control script, osp-config.sh for Install/Reinstall/Restarting of Services/Upgrading
 Removed dbUpgrade.sh in favor of osp-config.sh
