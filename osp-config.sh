@@ -1,4 +1,5 @@
 #!/bin/bash
+# OSP Control Script
 
 VERSION=$(<version)
 
