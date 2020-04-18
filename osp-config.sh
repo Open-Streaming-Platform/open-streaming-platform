@@ -11,7 +11,7 @@ WIDTH=0
 display_result() {
   dialog --title "$1" \
     --no-collapse \
-    --msgbox "$result" 20 50
+    --msgbox "$result" 20 70
 }
 
 install_osp() {
@@ -269,7 +269,7 @@ while true; do
                echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
                systemctl start osp.target >> $UPGRADELOG
                echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
-               result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT")
+               result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at $UPGRADELOG")
                ;;
              1 )
                result=$(echo "Canceled Update to $BRANCH/$NEWVERSION$REMOTECOMMIT")
