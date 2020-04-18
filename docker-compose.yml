@@ -65,7 +65,7 @@ services:
     depends_on:
       - db
       - redis
-    entrypoint: ["/bin/bash", "-c", "/opt/osp/setup/docker/wait-for-it.sh", "db:3306", "--", "/opt/osp/setup/docker/entrypoint.sh"]
+    entrypoint: ["/opt/osp/setup/docker/wait-for-it.sh", "db:3306", "--", "/opt/osp/setup/docker/entrypoint.sh"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/apiv1/server"]
       interval: 1m
