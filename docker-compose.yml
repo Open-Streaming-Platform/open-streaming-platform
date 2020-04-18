@@ -65,6 +65,7 @@ services:
     depends_on:
       - db
       - redis
+    command: ["/opt/osp/setup/docker/wait-for-it.sh", "db:3306",
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/apiv1/server"]
       interval: 1m
