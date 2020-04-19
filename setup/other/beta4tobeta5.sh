@@ -12,7 +12,8 @@ echo Performing DB Migration
 cd /opt/osp >> $loglocation
 echo debugMode=False >> /opt/osp/conf/config.py
 sudo python3 manage.py db init >> $loglocation
-sudo bash dbUpgrade.sh >> $loglocation
+sudo python3 manage.py db migrate >> $loglocation
+sudo python3 manage.py db upgrade >> $loglocation
 sudo systemctl restart osp.target >> $loglocation
 sudo systemctl restart nginx-osp >> $loglocation
 echo Upgrade Completed.  Please check $loglocation for any errors.

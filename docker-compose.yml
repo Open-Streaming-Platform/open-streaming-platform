@@ -65,12 +65,7 @@ services:
     depends_on:
       - db
       - redis
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/apiv1/server"]
-      interval: 1m
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+    entrypoint: ["/opt/osp/setup/docker/wait-for-it.sh", "db:3306", "-t", "60", "--", "/opt/osp/setup/docker/entrypoint.sh"]
 
 networks:
   internal:

@@ -474,7 +474,7 @@
                                                                             <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                                             <td>
                                                                                 <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
-                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                                                                             </td>
                                                                         </tr>
                                                                         {% endfor %}
@@ -511,7 +511,26 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="confirmDeleteWebhookModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteWebhookModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteWebhookModalTitle">Delete Webhook</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          Are you sure you want to delete the webhook?
+          <input id="deleteWebhookID" type="hidden">
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteWebhook();">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
@@ -1614,9 +1633,14 @@ function openChannelWindow(divID, windowName) {
         createNewBSAlert("Invite Removed", "Success");
     }
 </script>
-
 <script>
-    function deleteWebhook(webhookID) {
+    function deleteWebhookModal(webhookID) {
+        document.getElementById('deleteWebhookID').value = webhookID;
+        $('#confirmDeleteWebhookModal').modal('show');
+    }
+
+    function deleteWebhook() {
+        var webhookID = document.getElementById('deleteWebhookID').value;
         socket.emit('deleteWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
@@ -1838,7 +1862,7 @@ function openChannelWindow(divID, windowName) {
         requestHeaderCell.style.display = 'none';
         requestPayloadCell.style.display = 'none';
 
-        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
+        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
 
         var triggerVal = 'Unknown';
 

@@ -18,6 +18,7 @@ from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_cors import CORS
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
@@ -68,7 +69,7 @@ from conf import config
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 
-version = "beta-5a"
+version = "beta-5b"
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
@@ -114,7 +115,7 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
-if config.redisPassword != '':
+if config.redisPassword == '' or config.redisPassword is None:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
@@ -147,6 +148,8 @@ db.app = app
 migrateObj = Migrate(app, db)
 
 Session(app)
+
+cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 toolbar = DebugToolbarExtension(app)
 
@@ -4166,12 +4169,14 @@ def handle_new_viewer(streamData):
     streamTopic = 0
 
     requestedChannel.currentViewers = currentViewers
+    db.session.commit()
 
     if stream is not None:
         stream.currentViewers = currentViewers
         db.session.commit()
         streamName = stream.streamName
         streamTopic = stream.topic
+
     else:
         streamName = requestedChannel.channelName
         streamTopic = requestedChannel.topic
@@ -4307,6 +4312,15 @@ def handle_viewer_total_request(streamData, room=None):
     streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
     if streamUserList is None:
         streamUserList = []
+
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    if channelQuery != None:
+        channelQuery.currentViewers = viewers
+        for stream in channelQuery.stream:
+            stream.currentViewers = viewers
+        db.session.commit()
+
+
 
     decodedStreamUserList = []
     for entry in streamUserList:
