@@ -328,7 +328,7 @@ if [ $# -eq 0 ]
           ;;
         5 )
           upgrade_db
-          results=$(Database Upgrade Complete)
+          results=$(echo "Database Upgrade Complete!")
           display_result "Upgrade Results"
           ;;
       esac
