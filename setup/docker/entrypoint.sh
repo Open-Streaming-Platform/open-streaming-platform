@@ -36,7 +36,10 @@ echo "debugMode=False" >> /opt/osp/conf/config.py
 chown -R www-data:www-data /opt/osp/conf/config.py
 echo 'Performing DB Migrations'
 cd /opt/osp
-python3 manage.py db init
+
+if [[ ! -d /opt/osp/migrations ]]; then
+    python3 manage.py db init
+fi
 python3 manage.py db migrate
 python3 manage.py db upgrade
 cd /

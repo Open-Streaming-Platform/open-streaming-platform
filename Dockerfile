@@ -105,6 +105,9 @@ RUN pip3 install cryptography
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
 
+# Setup Wait-For-It Script
+RUN chmod +x /opt/osp/setup/docker/wait-for-it.sh
+
 # Install Supervisor
 RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
