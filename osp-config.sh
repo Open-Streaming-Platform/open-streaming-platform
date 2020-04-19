@@ -282,6 +282,7 @@ if [ $# -eq 0 ]
               case $response in
                  0 )
                    upgrade_osp
+                   version=$NEWVERSION
                    result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
                    ;;
                  1 )
