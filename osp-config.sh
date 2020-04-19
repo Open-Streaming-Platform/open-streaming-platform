@@ -268,7 +268,7 @@ if [ $# -eq 0 ]
           if [[ ! -d .git ]]; then
             result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
           else
-            git fetch /dev/null
+            git fetch /dev/null > /dev/null
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
             CURRENTCOMMIT=$(git rev-parse HEAD)
             REMOTECOMMIT=$(git rev-parse origin/$BRANCH)
