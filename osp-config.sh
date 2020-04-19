@@ -14,6 +14,24 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+upgrade_osp() {
+   UPGRADELOG="/opt/osp/logs/upgrade.log"
+   echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
+   git stash > $UPGRADELOG
+   git pull >> $UPGRADELOG
+   echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
+   systemctl stop osp.target >> $UPGRADELOG
+   echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+   python3 manage.py db init >> $UPGRADELOG
+   echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+   python3 manage.py db migrate >> $UPGRADELOG
+   echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+   python3 manage.py db upgrade >> $UPGRADELOG
+   echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
+   systemctl start osp.target >> $UPGRADELOG
+   echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
+}
+
 install_osp() {
   cwd=$PWD
   installLog=$cwd/install.log
@@ -173,111 +191,127 @@ install_osp() {
   sudo mv $installLog /opt/osp/logs >> /dev/null
 }
 
-while true; do
-  exec 3>&1
-  selection=$(dialog \
-    --backtitle "Open Streaming Platform - $VERSION" \
-    --title "Menu" \
-    --clear \
-    --cancel-label "Exit" \
-    --menu "Please select:" $HEIGHT $WIDTH 4 \
-    "1" "Install/Reinstall OSP" \
-    "2" "Restart Nginx" \
-    "3" "Restart OSP" \
-    "4" "Upgrade to Latest Build" \
-    2>&1 1>&3)
-  exit_status=$?
-  exec 3>&-
-  case $exit_status in
-    $DIALOG_CANCEL)
-      clear
-      echo "Program terminated."
-      exit
-      ;;
-    $DIALOG_ESC)
-      clear
-      echo "Program aborted." >&2
-      exit 1
-      ;;
-  esac
-  case $selection in
-    0 )
-      clear
-      echo "Program terminated."
-      ;;
-    1 )
-      install_osp
-      result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nInstall Log can be found at /opt/osp/logs/install.log")
-      display_result "Install OSP"
-      ;;
-    2 )
-      systemctl restart nginx-osp
-      restartStatus=$(systemctl is-active nginx-osp)
-      if [[ $restartStatus -eq Active ]]; then
-        result=$(echo Nginx Restarted Successfully!)
-      else
-        result=$(echo Nginx Failed to Restart!)
-      fi
-      display_result "Restart Nginx"
-      ;;
-    3 )
-      systemctl restart osp.target
-      worker5000=$(systemctl is-active osp-worker@5000)
-      worker5001=$(systemctl is-active osp-worker@5001)
-      worker5002=$(systemctl is-active osp-worker@5002)
-      worker5003=$(systemctl is-active osp-worker@5003)
-      worker5004=$(systemctl is-active osp-worker@5004)
-      worker5005=$(systemctl is-active osp-worker@5005)
-      worker5006=$(systemctl is-active osp-worker@5006)
-      worker5007=$(systemctl is-active osp-worker@5007)
-      worker5008=$(systemctl is-active osp-worker@5008)
-      worker5009=$(systemctl is-active osp-worker@5009)
-      worker5010=$(systemctl is-active osp-worker@5010)
-      result=$(echo "Worker 5000: $worker5000\nWorker 5001: $worker5001\nWorker 5002: $worker5002\nWorker 5003: $worker5003\nWorker 5004: $worker5004\nWorker 5005: $worker5005\nWorker 5006: $worker5006 \nWorker 5007: $worker5007 \nWorker 5008: $worker5008 \nWorker 5009: $worker5009\nWorker 5010: $worker5010")
-      display_result "OSP Worker Status after Restart"
-      ;;
-    4 )
-      gitStatus=$(git branch)
-      if [[ ! -d .git ]]; then
-        result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
-      else
-        git fetch > /dev/null
-        BRANCH=$(git rev-parse --abbrev-ref HEAD)
-        CURRENTCOMMIT=$(git rev-parse HEAD)
-        REMOTECOMMIT=$(git rev-parse origin/$BRANCH)
-        NEWVERSION=$(curl -s https://gitlab.com/Deamos/flask-nginx-rtmp-manager/-/raw/$BRANCH/version)
-        if [[ $CURRENTCOMMIT -eq $REMOTECOMMIT ]]; then
-          result=$(echo "OSP is up-to-date on Branch $BRANCH")
-        else
-          dialog --title "Upgrade to Latest Build" \
-                 --yesno "Would you like to update your current install to the new commit?\n\nCurrent:$BRANCH/$VERSION$CURRENTCOMMIT\nRepository:$BRANCH/$NEWVERSION$REMOTECOMMIT" 20 80
-          response=$?
-          case $response in
-             0 )
-               UPGRADELOG="/opt/osp/logs/upgrade.log"
-               echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
-               git stash > $UPGRADELOG
-               git pull >> $UPGRADELOG
-               echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
-               systemctl stop osp.target >> $UPGRADELOG
-               echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-               python3 manage.py db init >> $UPGRADELOG
-               echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-               python3 manage.py db migrate >> $UPGRADELOG
-               echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-               python3 manage.py db upgrade >> $UPGRADELOG
-               echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
-               systemctl start osp.target >> $UPGRADELOG
-               echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
-               result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at $UPGRADELOG")
-               ;;
-             1 )
-               result=$(echo "Canceled Update to $BRANCH/$NEWVERSION$REMOTECOMMIT")
-               ;;
-          esac
-        fi
-      fi
-      display_result "Upgrade Results"
-      ;;
-  esac
-done
+##########################################################
+# Start Main Script Execution
+##########################################################
+
+if [ $# -eq 0 ]
+  then
+    while true; do
+      exec 3>&1
+      selection=$(dialog \
+        --backtitle "Open Streaming Platform - $VERSION" \
+        --title "Menu" \
+        --clear \
+        --cancel-label "Exit" \
+        --menu "Please select:" $HEIGHT $WIDTH 4 \
+        "1" "Install/Reinstall OSP" \
+        "2" "Restart Nginx" \
+        "3" "Restart OSP" \
+        "4" "Upgrade to Latest Build" \
+        2>&1 1>&3)
+      exit_status=$?
+      exec 3>&-
+      case $exit_status in
+        $DIALOG_CANCEL)
+          clear
+          echo "Program terminated."
+          exit
+          ;;
+        $DIALOG_ESC)
+          clear
+          echo "Program aborted." >&2
+          exit 1
+          ;;
+      esac
+      case $selection in
+        0 )
+          clear
+          echo "Program terminated."
+          ;;
+        1 )
+          install_osp
+          result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nInstall Log can be found at /opt/osp/logs/install.log")
+          display_result "Install OSP"
+          ;;
+        2 )
+          systemctl restart nginx-osp
+          restartStatus=$(systemctl is-active nginx-osp)
+          if [[ $restartStatus -eq Active ]]; then
+            result=$(echo Nginx Restarted Successfully!)
+          else
+            result=$(echo Nginx Failed to Restart!)
+          fi
+          display_result "Restart Nginx"
+          ;;
+        3 )
+          systemctl restart osp.target
+          worker5000=$(systemctl is-active osp-worker@5000)
+          worker5001=$(systemctl is-active osp-worker@5001)
+          worker5002=$(systemctl is-active osp-worker@5002)
+          worker5003=$(systemctl is-active osp-worker@5003)
+          worker5004=$(systemctl is-active osp-worker@5004)
+          worker5005=$(systemctl is-active osp-worker@5005)
+          worker5006=$(systemctl is-active osp-worker@5006)
+          worker5007=$(systemctl is-active osp-worker@5007)
+          worker5008=$(systemctl is-active osp-worker@5008)
+          worker5009=$(systemctl is-active osp-worker@5009)
+          worker5010=$(systemctl is-active osp-worker@5010)
+          result=$(echo "Worker 5000: $worker5000\nWorker 5001: $worker5001\nWorker 5002: $worker5002\nWorker 5003: $worker5003\nWorker 5004: $worker5004\nWorker 5005: $worker5005\nWorker 5006: $worker5006 \nWorker 5007: $worker5007 \nWorker 5008: $worker5008 \nWorker 5009: $worker5009\nWorker 5010: $worker5010")
+          display_result "OSP Worker Status after Restart"
+          ;;
+        4 )
+          gitStatus=$(git branch)
+          if [[ ! -d .git ]]; then
+            result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
+          else
+            git fetch > /dev/null
+            BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            CURRENTCOMMIT=$(git rev-parse HEAD)
+            REMOTECOMMIT=$(git rev-parse origin/$BRANCH)
+            NEWVERSION=$(curl -s https://gitlab.com/Deamos/flask-nginx-rtmp-manager/-/raw/$BRANCH/version)
+            if [[ $CURRENTCOMMIT -eq $REMOTECOMMIT ]]; then
+              result=$(echo "OSP is up-to-date on Branch $BRANCH")
+            else
+              dialog --title "Upgrade to Latest Build" \
+                     --yesno "Would you like to update your current install to the new commit?\n\nCurrent:$BRANCH/$VERSION$CURRENTCOMMIT\nRepository:$BRANCH/$NEWVERSION$REMOTECOMMIT" 20 80
+              response=$?
+              case $response in
+                 0 )
+                   upgrade_osp
+                   result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
+                   ;;
+                 1 )
+                   result=$(echo "Canceled Update to $BRANCH/$NEWVERSION$REMOTECOMMIT")
+                   ;;
+              esac
+            fi
+          fi
+          display_result "Upgrade Results"
+          ;;
+      esac
+    done
+  else
+    case $response in
+      --help )
+        echo "Available Commands:\n" \
+             "--help: Displays this help\n" \
+             "--install: Installs/Reinstalls OSP\n" \
+             "--restartnginx: Restarts Nginx\n" \
+             "--restartosp: Restarts OSP\n" \
+             "--upgrade: Upgrades OSP"
+             ;;
+      --install )
+        install_osp
+        ;;
+      --restartnginx )
+        systemctl restart nginx-osp
+        ;;
+      --restartosp )
+        systemctl restart osp.target
+        ;;
+      --upgrade )
+          upgrade_osp
+        ;;
+    esac
+    fi
