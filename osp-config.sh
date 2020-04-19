@@ -265,12 +265,12 @@ if [ $# -eq 0 ]
           if [[ ! -d .git ]]; then
             result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
           else
-            git fetch > /dev/null
+            git fetch /dev/null
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
             CURRENTCOMMIT=$(git rev-parse HEAD)
             REMOTECOMMIT=$(git rev-parse origin/$BRANCH)
             NEWVERSION=$(curl -s https://gitlab.com/Deamos/flask-nginx-rtmp-manager/-/raw/$BRANCH/version)
-            if [[ $CURRENTCOMMIT -eq $REMOTECOMMIT ]]; then
+            if [[ $CURRENTCOMMIT == $REMOTECOMMIT ]]; then
               result=$(echo "OSP is up-to-date on Branch $BRANCH")
             else
               dialog --title "Upgrade to Latest Build" \
