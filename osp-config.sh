@@ -40,6 +40,8 @@ upgrade_osp() {
    chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG 2>&1
+   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependancies" 10 70 0
+   pip3 install -r requirements.txt >> $UPGRADELOG 2>&1
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db init >> $UPGRADELOG 2>&1
    echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
