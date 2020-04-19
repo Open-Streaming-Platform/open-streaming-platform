@@ -20,10 +20,19 @@ else
   http_user='www-data'
 fi
 
+#######################################################
+# Check Requirements
+#######################################################
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root"
    exit 1
 fi
+
+command -v dialog >/dev/null 2>&1 || { echo >&2 "Dialog is required but it's not installed. (apt-get dialog/packman -S dialog)  Aborting."; exit 1; }
+
+#######################################################
+# Script Functions
+#######################################################
 
 display_result() {
   dialog --title "$1" \
