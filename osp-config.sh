@@ -40,6 +40,21 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+upgrade_db() {
+  UPGRADELOG="/opt/osp/logs/upgrade.log"
+  echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
+  systemctl stop osp.target >> $UPGRADELOG 2>&1
+  echo 15 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  python3 manage.py db init >> $UPGRADELOG 2>&1
+  echo 25 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  python3 manage.py db migrate >> $UPGRADELOG 2>&1
+  echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  python3 manage.py db upgrade >> $UPGRADELOG 2>&1
+  echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
+  systemctl start osp.target >> $UPGRADELOG 2>&1
+  echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
+}
+
 upgrade_osp() {
    UPGRADELOG="/opt/osp/logs/upgrade.log"
    echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
@@ -228,6 +243,7 @@ if [ $# -eq 0 ]
         "2" "Restart Nginx" \
         "3" "Restart OSP" \
         "4" "Upgrade to Latest Build" \
+        "5" "Upgrade DB Only" \
         2>&1 1>&3)
       exit_status=$?
       exec 3>&-
@@ -310,6 +326,11 @@ if [ $# -eq 0 ]
           fi
           display_result "Upgrade Results"
           ;;
+        5 )
+          upgrade_db
+          results=$(Database Upgrade Complete)
+          display_result "Upgrade Results"
+          ;;
       esac
     done
   else
@@ -322,6 +343,7 @@ if [ $# -eq 0 ]
         echo "restartnginx: Restarts Nginx"
         echo "restartosp: Restarts OSP"
         echo "upgrade: Upgrades OSP"
+        echo "dbupgrade: Upgrades the Database Only"
         ;;
       install )
         install_osp
@@ -333,7 +355,10 @@ if [ $# -eq 0 ]
         systemctl restart osp.target
         ;;
       upgrade )
-          upgrade_osp
+        upgrade_osp
+        ;;
+      dbupgrade )
+        upgrade_db
         ;;
     esac
     fi
