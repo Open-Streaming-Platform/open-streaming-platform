@@ -32,7 +32,7 @@ upgrade_osp() {
    git stash > $UPGRADELOG
    git pull >> $UPGRADELOG
    echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
-   chown -R $http_user:$http_user /opt/osp
+   chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
