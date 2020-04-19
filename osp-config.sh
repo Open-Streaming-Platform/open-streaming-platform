@@ -297,13 +297,14 @@ if [ $# -eq 0 ]
   else
     case $1 in
       help )
-        echo "Available Commands:\n" \
-             "help: Displays this help\n" \
-             "install: Installs/Reinstalls OSP\n" \
-             "restartnginx: Restarts Nginx\n" \
-             "restartosp: Restarts OSP\n" \
-             "upgrade: Upgrades OSP"
-             ;;
+        echo "Available Commands:"
+        echo ""
+        echo "help: Displays this help"
+        echo "install: Installs/Reinstalls OSP"
+        echo "restartnginx: Restarts Nginx"
+        echo "restartosp: Restarts OSP"
+        echo "upgrade: Upgrades OSP"
+        ;;
       install )
         install_osp
         ;;
