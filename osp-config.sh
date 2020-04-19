@@ -8,6 +8,18 @@ DIALOG_ESC=255
 HEIGHT=0
 WIDTH=0
 
+archu=$( uname -r | grep -i "arch")
+if [[ "$archu" = *"arch"* ]]
+then
+  arch=true
+  web_root='/srv/http'
+  http_user='http'
+else
+  arch=false
+  web_root='/var/www'
+  http_user='www-data'
+fi
+
 display_result() {
   dialog --title "$1" \
     --no-collapse \
@@ -19,6 +31,8 @@ upgrade_osp() {
    echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
    git stash > $UPGRADELOG
    git pull >> $UPGRADELOG
+   echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
+   chown -R $http_user:$http_user /opt/osp
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
@@ -37,28 +51,17 @@ install_osp() {
   installLog=$cwd/install.log
 
   echo "Starting OSP Install" > $installLog
-
   echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
-  archu=$( uname -r | grep -i "arch")
-  if [[ "$archu" = *"arch"* ]]
-  then
-    arch=true
-  else
-    arch=false
-  fi
 
   if  $arch
   then
           echo "Installing for Arch" >> $installLog
-          web_root='/srv/http'
-          http_user='http'
           sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog
 
           sudo pip3 install -r requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog
-          web_root='/var/www'
-          http_user='www-data'
+
           # Get Dependancies
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog
 
