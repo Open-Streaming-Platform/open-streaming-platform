@@ -20,6 +20,11 @@ else
   http_user='www-data'
 fi
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root"
+   exit 1
+fi
+
 display_result() {
   dialog --title "$1" \
     --no-collapse \
