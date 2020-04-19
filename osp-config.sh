@@ -292,7 +292,7 @@ if [ $# -eq 0 ]
       esac
     done
   else
-    case $response in
+    case $1 in
       --help )
         echo "Available Commands:\n" \
              "--help: Displays this help\n" \
