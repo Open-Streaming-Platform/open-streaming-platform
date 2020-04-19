@@ -275,7 +275,7 @@ if [ $# -eq 0 ]
           worker5007=$(systemctl is-active osp-worker@5007) > /dev/null 2>&1
           worker5008=$(systemctl is-active osp-worker@5008) > /dev/null 2>&1
           worker5009=$(systemctl is-active osp-worker@5009) > /dev/null 2>&1
-          worker5010=$(systemctl is-active osp-worker@50101) > /dev/null 2>&1
+          worker5010=$(systemctl is-active osp-worker@5010) > /dev/null 2>&1
           result=$(echo "Worker 5000: $worker5000\nWorker 5001: $worker5001\nWorker 5002: $worker5002\nWorker 5003: $worker5003\nWorker 5004: $worker5004\nWorker 5005: $worker5005\nWorker 5006: $worker5006 \nWorker 5007: $worker5007 \nWorker 5008: $worker5008 \nWorker 5009: $worker5009\nWorker 5010: $worker5010")
           display_result "OSP Worker Status after Restart"
           ;;
