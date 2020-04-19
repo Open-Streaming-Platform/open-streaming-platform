@@ -296,24 +296,24 @@ if [ $# -eq 0 ]
     done
   else
     case $1 in
-      --help )
+      help )
         echo "Available Commands:\n" \
-             "--help: Displays this help\n" \
-             "--install: Installs/Reinstalls OSP\n" \
-             "--restartnginx: Restarts Nginx\n" \
-             "--restartosp: Restarts OSP\n" \
-             "--upgrade: Upgrades OSP"
+             "help: Displays this help\n" \
+             "install: Installs/Reinstalls OSP\n" \
+             "restartnginx: Restarts Nginx\n" \
+             "restartosp: Restarts OSP\n" \
+             "upgrade: Upgrades OSP"
              ;;
-      --install )
+      install )
         install_osp
         ;;
-      --restartnginx )
+      restartnginx )
         systemctl restart nginx-osp
         ;;
-      --restartosp )
+      restartosp )
         systemctl restart osp.target
         ;;
-      --upgrade )
+      upgrade )
           upgrade_osp
         ;;
     esac
