@@ -269,6 +269,7 @@ if [ $# -eq 0 ]
           display_result "OSP Worker Status after Restart"
           ;;
         4 )
+          cd /opt/osp > /dev/null 2>&1
           gitStatus=$(git branch)
           if [[ ! -d .git ]]; then
             result=$(echo "OSP not setup with Git.\n\n Please clone OSP Repo and try again")
