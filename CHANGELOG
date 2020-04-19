@@ -6,6 +6,7 @@ Fixed issue with docker-compose where OSP was starting before the database had s
 Added new control script, osp-config.sh for Install/Reinstall/Restarting of Services/Upgrading
 Removed dbUpgrade.sh in favor of osp-config.sh
 Removed osp-setup.sh in favor of osp-config.sh
+Confirmation Dialog added to Deletion of Webhooks per Issue #178
 
 Beta-5a
 ==============================================
