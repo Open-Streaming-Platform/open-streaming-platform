@@ -1641,7 +1641,7 @@ function openChannelWindow(divID, windowName) {
 
     function deleteWebhook() {
         var webhookID = document.getElementById('deleteWebhookID').value;
-        socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
+        socket.emit('deleteWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
         createNewBSAlert("Webhook Deleted", "Success");
@@ -1862,7 +1862,7 @@ function openChannelWindow(divID, windowName) {
         requestHeaderCell.style.display = 'none';
         requestPayloadCell.style.display = 'none';
 
-        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhook(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
+        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
 
         var triggerVal = 'Unknown';
 
