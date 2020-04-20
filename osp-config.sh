@@ -64,7 +64,7 @@ upgrade_osp() {
    chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG 2>&1
-   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependancies" 10 70 0
+   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
    pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db init >> $UPGRADELOG 2>&1
@@ -88,17 +88,17 @@ install_osp() {
   then
           echo "Installing for Arch" >> $installLog
           sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
-          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
+          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
           # Get Dependancies
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
-          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
+          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
           sudo apt-get install python3 python3-pip uwsgi-plugin-python -y >> $installLog 2>&1
-          echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
+          echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
 
           # Install Redis
