@@ -114,7 +114,7 @@ install_osp() {
   if cd ..
   then
           sudo cp -rf -R * /opt/osp >> $installLog 2>&1
-          sudo cp -rf -R .git /opt/osp >> $installLog 2>&1
+          sudo cp -rf -R $cwd/.git /opt/osp >> $installLog 2>&1
   else
           echo "Unable to find installer directory. Aborting!" >> $installLog
           exit 1
@@ -149,7 +149,7 @@ install_osp() {
 
   # Grab Configuration
   echo 40 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
-  if cd $cwd/nginx
+  if cd $cwd/setup/nginx
   then
           sudo cp *.conf /usr/local/nginx/conf/ >> $installLog 2>&1
   else
@@ -158,7 +158,7 @@ install_osp() {
   fi
   # Enable SystemD
   echo 45 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
-  if cd $cwd/nginx
+  if cd $cwd/setup/nginx
   then
           sudo cp nginx-osp.service /etc/systemd/system/nginx-osp.service >> $installLog 2>&1
           sudo systemctl daemon-reload >> $installLog 2>&1
@@ -169,7 +169,7 @@ install_osp() {
   fi
 
   echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn SystemD" 10 70 0
-  if cd $cwd/gunicorn
+  if cd $cwd/setup/gunicorn
   then
           sudo cp osp.target /etc/systemd/system/ >> $installLog 2>&1
           sudo cp osp-worker@.service /etc/systemd/system/ >> $installLog 2>&1
