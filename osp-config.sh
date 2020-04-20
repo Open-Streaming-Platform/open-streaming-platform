@@ -111,10 +111,8 @@ install_osp() {
   # Setup OSP Directory
   echo 20 | dialog --title "Installing OSP" --gauge "Setting up OSP Directory" 10 70 0
   mkdir -p /opt/osp >> $installLog 2>&1
-  if cd ..
-  then
-          sudo cp -rf -R * /opt/osp >> $installLog 2>&1
-          sudo cp -rf -R $cwd/.git /opt/osp >> $installLog 2>&1
+  sudo cp -rf -R $cwd/* /opt/osp >> $installLog 2>&1
+  sudo cp -rf -R $cwd/.git /opt/osp >> $installLog 2>&1
   else
           echo "Unable to find installer directory. Aborting!" >> $installLog
           exit 1
