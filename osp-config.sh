@@ -89,7 +89,7 @@ install_osp() {
           echo "Installing for Arch" >> $installLog
           sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
 
-          sudo pip3 install -r requirements.txt
+          sudo pip3 install -r $cwd/setup/requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
