@@ -3552,6 +3552,13 @@ def initialSetup():
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
             user.confirmed_at = datetime.datetime.now()
+
+            user_datastore.find_or_create_role(name='Admin', description='Administrator')
+            user_datastore.find_or_create_role(name='User', description='User')
+            user_datastore.find_or_create_role(name='Streamer', description='Streamer')
+            user_datastore.find_or_create_role(name='Recorder', description='Recorder')
+            user_datastore.find_or_create_role(name='Uploader', description='Uploader')
+
             user_datastore.add_role_to_user(user, 'Admin')
             user_datastore.add_role_to_user(user, 'Streamer')
             user_datastore.add_role_to_user(user, 'Recorder')
