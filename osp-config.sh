@@ -113,10 +113,6 @@ install_osp() {
   mkdir -p /opt/osp >> $installLog 2>&1
   sudo cp -rf -R $cwd/* /opt/osp >> $installLog 2>&1
   sudo cp -rf -R $cwd/.git /opt/osp >> $installLog 2>&1
-  else
-          echo "Unable to find installer directory. Aborting!" >> $installLog
-          exit 1
-  fi
 
   # Build Nginx with RTMP module
   echo 25 | dialog --title "Installing OSP" --gauge "Downloading Nginx Source" 10 70 0
