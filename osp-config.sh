@@ -87,7 +87,7 @@ install_osp() {
   if  $arch
   then
           echo "Installing for Arch" >> $installLog
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
+          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg python3-dev--needed >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt
   else
@@ -97,7 +97,7 @@ install_osp() {
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python -y >> $installLog 2>&1
+          sudo apt-get install python3 python3-pip uwsgi-plugin-python python3-dev -y >> $installLog 2>&1
           echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
 
