@@ -98,7 +98,7 @@ install_osp() {
 
           # Setup Python
           sudo apt-get install python3 python3-pip uwsgi-plugin-python -y >> $installLog 2>&1
-          sudo pip3 install -r requirements.txt >> $installLog 2>&1
+          sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
 
           # Install Redis
           sudo apt-get install redis -y >> $installLog 2>&1
