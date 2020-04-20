@@ -99,6 +99,7 @@ install_osp() {
           # Setup Python
           sudo apt-get install python3 python3-pip uwsgi-plugin-python python3-dev python3-setuptools -y >> $installLog 2>&1
           echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
+          sudo pip3 install wheel >> $installLog 2>&1
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
 
           # Install Redis
