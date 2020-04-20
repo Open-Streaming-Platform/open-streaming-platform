@@ -64,7 +64,7 @@ upgrade_osp() {
    chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG 2>&1
-   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependancies" 10 70 0
+   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
    pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db init >> $UPGRADELOG 2>&1
@@ -88,17 +88,18 @@ install_osp() {
   then
           echo "Installing for Arch" >> $installLog
           sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
-
-          sudo pip3 install -r requirements.txt
+          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
+          sudo pip3 install -r $cwd/setup/requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
           # Get Dependancies
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
-
+          echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
           sudo apt-get install python3 python3-pip uwsgi-plugin-python -y >> $installLog 2>&1
-          sudo pip3 install -r requirements.txt >> $installLog 2>&1
+          echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
+          sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
 
           # Install Redis
           sudo apt-get install redis -y >> $installLog 2>&1
@@ -111,14 +112,8 @@ install_osp() {
   # Setup OSP Directory
   echo 20 | dialog --title "Installing OSP" --gauge "Setting up OSP Directory" 10 70 0
   mkdir -p /opt/osp >> $installLog 2>&1
-  if cd ..
-  then
-          sudo cp -rf -R * /opt/osp >> $installLog 2>&1
-          sudo cp -rf -R .git /opt/osp >> $installLog 2>&1
-  else
-          echo "Unable to find installer directory. Aborting!" >> $installLog
-          exit 1
-  fi
+  sudo cp -rf -R $cwd/* /opt/osp >> $installLog 2>&1
+  sudo cp -rf -R $cwd/.git /opt/osp >> $installLog 2>&1
 
   # Build Nginx with RTMP module
   echo 25 | dialog --title "Installing OSP" --gauge "Downloading Nginx Source" 10 70 0
@@ -149,7 +144,7 @@ install_osp() {
 
   # Grab Configuration
   echo 40 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
-  if cd $cwd/nginx
+  if cd $cwd/setup/nginx
   then
           sudo cp *.conf /usr/local/nginx/conf/ >> $installLog 2>&1
   else
@@ -158,7 +153,7 @@ install_osp() {
   fi
   # Enable SystemD
   echo 45 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
-  if cd $cwd/nginx
+  if cd $cwd/setup/nginx
   then
           sudo cp nginx-osp.service /etc/systemd/system/nginx-osp.service >> $installLog 2>&1
           sudo systemctl daemon-reload >> $installLog 2>&1
@@ -169,7 +164,7 @@ install_osp() {
   fi
 
   echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn SystemD" 10 70 0
-  if cd $cwd/gunicorn
+  if cd $cwd/setup/gunicorn
   then
           sudo cp osp.target /etc/systemd/system/ >> $installLog 2>&1
           sudo cp osp-worker@.service /etc/systemd/system/ >> $installLog 2>&1
