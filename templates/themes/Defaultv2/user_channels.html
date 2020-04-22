@@ -44,10 +44,10 @@
         <div class="row" id="channelDash-{{channel.id}}" style="z-index:-1;display:none;">
           <div class="ml-4 col-auto shadow">
             <div class="h-100">
-              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');"><h2><i class="fas fa-th-large"></i></h2></a></div>
-              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');"><h2><i class="fas fa-video"></i></h2></a></div>
-              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');"><h2><i class="fas fa-cut"></i></h2></a></div>
-              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');"><h2><i class="fas fa-cog"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');" data-toggle="tooltip" data-placement="right" title="Dashboard"><h2><i class="fas fa-th-large"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');" data-toggle="tooltip" data-placement="right" title="Videos"><h2><i class="fas fa-video"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');" data-toggle="tooltip" data-placement="right" title="Clips"><h2><i class="fas fa-cut"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');" data-toggle="tooltip" data-placement="right" title="Settings"><h2><i class="fas fa-cog"></i></h2></a></div>
             </div>
           </div>
           <div class="col-8 col-sm-10 col-lg-11">
@@ -69,12 +69,12 @@
                                 <button type="button" class="btn btn-success btn-block shadow videoThumbnailUploadModalButton" data-toggle="modal" data-target="#videoThumbnailUploadModal" data-videoid="{{video.id}}">Upload Thumbnail</button>
                             </div>
                             <div class="mt-2">
-                              <button class="videoMoveModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal" data-videoid="{{video.id}}"><i class="fas fa-arrow-circle-right"></i></button>
-                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-cut"></i></button>
-                              <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}"><i class="fas fa-edit"></i></button>
-                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');"><i class="fas fa-camera"></i></button>
-                              <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}"><i class="fas fa-share-alt"></i></button>
-                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}"><i class="fas fa-trash-alt"></i></button>
+                              <button class="videoMoveModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Move Video"><i class="fas fa-arrow-circle-right"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Create Clip"><i class="fas fa-cut"></i></button>
+                              <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Edit Metadata"><i class="fas fa-edit"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Set Thumbnail"><i class="fas fa-camera"></i></button>
+                              <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Share Video"><i class="fas fa-share-alt"></i></button>
+                              <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Delete Video"><i class="fas fa-trash-alt"></i></button>
                             </div>
                           </div>
                           <div class="col mt-2">
@@ -794,7 +794,7 @@
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()" data-toggle="tooltip" data-placement="top" title="Set Clip Start">A</button>
                   </div>
                   <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly required>
                 </div>
@@ -802,7 +802,7 @@
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()" data-toggle="tooltip" data-placement="top" title="Set Clip Stop">B</button>
                   </div>
                   <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly required>
                 </div>
