@@ -1464,13 +1464,13 @@ def view_page(loc):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
-    if requestedChannel.protected and sysSettings.protectionEnabled:
-        if not check_isValidChannelViewer(requestedChannel.id):
-            return render_template(checkOverride('channelProtectionAuth.html'))
-
-    streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
-
     if requestedChannel is not None:
+
+        if requestedChannel.protected and sysSettings.protectionEnabled:
+            if not check_isValidChannelViewer(requestedChannel.id):
+                return render_template(checkOverride('channelProtectionAuth.html'))
+
+        streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
         streamURL = ''
         edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
