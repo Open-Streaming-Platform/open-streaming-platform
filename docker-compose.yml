@@ -5,6 +5,7 @@ services:
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     volumes:
       - ./data/mariadb/db:/var/lib/mysql
+      - ./setup/mariadb/osp-mariadb-additions.cnf:/etc/mysql/conf.d/osp-mariadb-additions.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=internalanyway0u4F4C7gBF
       - MYSQL_PASSWORD=internalanywayDSfagWgmUUnF
