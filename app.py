@@ -4543,6 +4543,9 @@ mail = Mail(app)
 app.register_blueprint(api_v1)
 app.register_blueprint(streamers_bp)
 
+# Initialize Jinja2 Template Filters
+templateFilters.init(app)
+
 system.newLog("0", "OSP Started Up Successfully - version: " + str(version))
 
 if __name__ == '__main__':
