@@ -28,6 +28,7 @@ import redis
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from blueprints.apiv1 import api_v1
+from blueprints.streamers import streamers_bp
 
 import uuid
 
@@ -1383,63 +1384,7 @@ def topic_view_page(topicID):
 
     return render_template(checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, clipsList=clipsList, title="Topics - Videos")
 
-@app.route('/streamers')
-def streamers_page():
-    sysSettings = settings.settings.query.first()
-    streamerIDs = []
 
-    if sysSettings.showEmptyTables:
-        for channel in db.session.query(Channel.Channel.owningUser).distinct():
-            if channel.owningUser not in streamerIDs:
-                streamerIDs.append(channel.owningUser)
-    else:
-        openStreams = Stream.Stream.query.all()
-        for stream in openStreams:
-            if stream.channel.owningUser not in streamerIDs:
-                streamerIDs.append(stream.channel.owningUser)
-        for recordedVidInstance in db.session.query(RecordedVideo.RecordedVideo.owningUser).distinct():
-            if recordedVidInstance.owningUser not in streamerIDs:
-                streamerIDs.append(recordedVidInstance.owningUser)
-
-    streamerList = []
-    for userID in streamerIDs:
-        userQuery = Sec.User.query.filter_by(id=userID).first()
-        if userQuery is not None:
-            streamerList.append(userQuery)
-
-    return render_template(checkOverride('streamers.html'), streamerList=streamerList)
-
-@app.route('/streamers/<userID>/')
-def streamers_view_page(userID):
-    userID = int(userID)
-
-    streamerQuery = Sec.User.query.filter_by(id=userID).first()
-    if streamerQuery is not None:
-        if streamerQuery.has_role('Streamer'):
-            userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
-
-            streams = []
-
-            for channel in userChannels:
-                for stream in channel.stream:
-                    streams.append(stream)
-
-            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False, published=True).all()
-
-            # Sort Video to Show Newest First
-            recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
-
-            clipsList = []
-            for vid in recordedVideoQuery:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
-
-            clipsList.sort(key=lambda x: x.views, reverse=True)
-
-            return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=streamerQuery.username, streamerData=streamerQuery)
-    flash('Invalid Streamer','error')
-    return redirect(url_for("main_page"))
 
 
 # Allow a direct link to any open stream for a channel
@@ -5229,6 +5174,9 @@ try:
 except:
     print("DB Load Fail due to Upgrade or Issues")
 mail = Mail(app)
+
+app.register_blueprint(streamers_bp)
+
 newLog("0", "OSP Started Up Successfully - version: " + str(version))
 
 if __name__ == '__main__':
