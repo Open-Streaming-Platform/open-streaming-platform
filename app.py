@@ -152,6 +152,10 @@ Session(app)
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 toolbar = DebugToolbarExtension(app)
+#----------------------------------------------------------------------------#
+# Global Vars Imports
+#----------------------------------------------------------------------------#
+from globals import globalvars
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -192,9 +196,6 @@ patch_request_class(app)
 
 #Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
-
-# Create Theme Data Dictionary
-themeData = {}
 
 # Create In-Memory Invite Cache to Prevent High CPU Usage for Polling Channel Permissions during Streams
 inviteCache = {}
@@ -376,9 +377,8 @@ def init_db_values():
 
         # Import Theme Data into Theme Dictionary
         with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
-            global themeData
 
-            themeData = json.load(f)
+            globalvars.themeData = json.load(f)
 
         ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
         if config.dbLocation[:6] != "sqlite":
@@ -565,7 +565,7 @@ def videoupload_allowedExt(filename):
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     try:
-        if themeHTMLFile in themeData.get('Override',[]):
+        if themeHTMLFile in globalvars.themeData.get('Override',[]):
             sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme).first()
             return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
         else:
@@ -2483,9 +2483,8 @@ def admin_page():
 
             # Import Theme Data into Theme Dictionary
             with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
-                global themeData
 
-                themeData = json.load(f)
+                globalvars.themeData = json.load(f)
 
             newLog(1, "User " + current_user.username + " altered System Settings")
 
@@ -3158,9 +3157,8 @@ def settings_dbRestore():
 
             # Import Theme Data into Theme Dictionary
             with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
-                global themeData
 
-                themeData = json.load(f)
+                globalvars.themeData = json.load(f)
 
             flash("Database Restored from Backup", "success")
             session.clear()
@@ -3540,9 +3538,8 @@ def initialSetup():
 
                 # Import Theme Data into Theme Dictionary
                 with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
-                    global themeData
 
-                    themeData = json.load(f)
+                    globalvars.themeData = json.load(f)
 
         else:
             flash('Passwords do not match')

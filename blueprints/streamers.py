@@ -11,7 +11,7 @@ from classes import RecordedVideo
 from classes import Stream
 from classes import Sec
 
-from app import checkOverride
+from functions import themes
 
 streamers_bp = Blueprint('streamers', __name__, url_prefix='/streamers')
 
@@ -39,7 +39,7 @@ def streamers_page():
         if userQuery is not None:
             streamerList.append(userQuery)
 
-    return render_template(checkOverride('streamers.html'), streamerList=streamerList)
+    return render_template(themes.checkOverride('streamers.html'), streamerList=streamerList)
 
 @streamers_bp.route('/streamers/<userID>/')
 def streamers_view_page(userID):
@@ -69,6 +69,6 @@ def streamers_view_page(userID):
 
             clipsList.sort(key=lambda x: x.views, reverse=True)
 
-            return render_template(checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=streamerQuery.username, streamerData=streamerQuery)
+            return render_template(themes.checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=streamerQuery.username, streamerData=streamerQuery)
     flash('Invalid Streamer','error')
     return redirect(url_for("main_page"))
