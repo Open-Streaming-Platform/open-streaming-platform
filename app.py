@@ -4,15 +4,14 @@ monkey.patch_all(thread=True)
 
 import git
 
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, make_response, Response, session
+from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, Response, session
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.utils import hash_password
-from flask_security.signals import user_registered, confirm_instructions_sent
+from flask_security.signals import user_registered
 from flask_security import utils
 from sqlalchemy.sql.expression import func
-from sqlalchemy import desc, asc, text
-from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
+from flask_socketio import emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
@@ -28,7 +27,7 @@ import redis
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from apiv1 import api_v1
+from blueprints.apiv1 import api_v1
 
 import uuid
 
