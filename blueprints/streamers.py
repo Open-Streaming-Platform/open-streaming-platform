@@ -15,7 +15,7 @@ from functions import themes
 
 streamers_bp = Blueprint('streamers', __name__, url_prefix='/streamers')
 
-@streamers_bp.route('/streamers')
+@streamers_bp.route('/')
 def streamers_page():
     sysSettings = settings.settings.query.first()
     streamerIDs = []
@@ -41,7 +41,7 @@ def streamers_page():
 
     return render_template(themes.checkOverride('streamers.html'), streamerList=streamerList)
 
-@streamers_bp.route('/streamers/<userID>/')
+@streamers_bp.route('/<userID>/')
 def streamers_view_page(userID):
     userID = int(userID)
 
