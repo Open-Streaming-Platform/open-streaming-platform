@@ -31,24 +31,17 @@ from blueprints.apiv1 import api_v1
 from blueprints.streamers import streamers_bp
 
 import uuid
-
 import psutil
-
 import socket
-
 import shutil
 import os
 import subprocess
 import time
 import sys
 import random
-import ipaddress
 import requests
-from threading import Thread
-from functools import wraps
 import json
 import hashlib
-from urllib.parse import urlparse
 
 import smtplib
 
@@ -56,9 +49,6 @@ import smtplib
 cwp = sys.path[0]
 sys.path.append(cwp)
 sys.path.append('./classes')
-
-
-from html.parser import HTMLParser
 
 import logging
 import datetime
@@ -190,6 +180,12 @@ from functions import themes
 from functions import votes
 from functions import videoFunc
 from functions import webhookFunc
+from functions import commentsFunc
+
+#----------------------------------------------------------------------------#
+# Template Filter Imports
+#----------------------------------------------------------------------------#
+from functions import templateFilters
 
 sysSettings = None
 
@@ -396,53 +392,7 @@ def init_db_values():
                 pass
         ## End DB UT8MB4 Fixes
 
-def check_existing_settings():
-    settingsQuery = settings.settings.query.all()
-    if settingsQuery != []:
-        db.session.close()
-        return True
-    else:
-        db.session.close()
-        return False
 
-# Class Required for HTML Stripping in strip_html
-class MLStripper(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-        self.fed = []
-    def handle_data(self, d):
-        self.fed.append(d)
-    def get_data(self):
-        return ''.join(self.fed)
-
-def strip_html(html):
-    s = MLStripper()
-    s.feed(html)
-    return s.get_data()
-
-def formatSiteAddress(systemAddress):
-    try:
-        ipaddress.ip_address(systemAddress)
-        return systemAddress
-    except ValueError:
-        try:
-            ipaddress.ip_address(systemAddress.split(':')[0])
-            return systemAddress.split(':')[0]
-        except ValueError:
-            return systemAddress
-
-def get_Video_Comments(videoID):
-    videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
-    result = videoCommentsQuery
-    return result
-
-def table2Dict(table):
-    exportedTableList = table.query.all()
-    dataList = []
-    for tbl in exportedTableList:
-        dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
-    return dataList
 
 def videoupload_allowedExt(filename):
     if not "." in filename:
@@ -506,141 +456,7 @@ def processSubscriptions(channelID, subject, message):
         system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     return True
 
-def deleteVideo(videoID):
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
-    if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
-        videos_root = app.config['WEB_ROOT'] + 'videos/'
-        filePath = videos_root + recordedVid.videoLocation
-        thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
-        gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
-
-        if filePath != videos_root:
-            if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
-                os.remove(filePath)
-                if os.path.exists(thumbnailPath):
-                    os.remove(thumbnailPath)
-                if os.path.exists(gifPath):
-                    os.remove(gifPath)
-
-        # Delete Clips Attached to Video
-        for clip in recordedVid.clips:
-            thumbnailPath = videos_root + clip.thumbnailLocation
-
-            if thumbnailPath != videos_root:
-                if os.path.exists(thumbnailPath) and (
-                        clip.thumbnailLocation is not None or clip.thumbnailLocation != ""):
-                    os.remove(thumbnailPath)
-            db.session.delete(clip)
-
-        # Delete Upvotes Attached to Video
-        upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
-
-        for vote in upvoteQuery:
-            db.session.delete(vote)
-
-        # Delete Comments Attached to Video
-        commentQuery = comments.videoComments.query.filter_by(videoID=recordedVid.id).all()
-
-        for comment in commentQuery:
-            db.session.delete(comment)
-
-        # Delete Views Attached to Video
-        viewQuery = views.views.query.filter_by(viewType=1, itemID=recordedVid.id).all()
-
-        for view in viewQuery:
-            db.session.delete(view)
-
-        db.session.delete(recordedVid)
-
-        db.session.commit()
-        system.newLog(4, "Video Deleted - ID #" + str(videoID))
-        return True
-    return False
-
-def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments):
-
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
-
-    if recordedVidQuery is not None:
-
-        recordedVidQuery.channelName = strip_html(newVideoName)
-        recordedVidQuery.topic = newVideoTopic
-        recordedVidQuery.description = strip_html(description)
-        recordedVidQuery.allowComments = allowComments
-
-        if recordedVidQuery.channel.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-        else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
-
-        webhookFunc.runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
-                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
-                   channeltopic=get_topicName(recordedVidQuery.channel.topic),
-                   channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
-                   channeldescription=str(recordedVidQuery.channel.description), videoname=recordedVidQuery.channelName,
-                   videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
-                   videotopic=get_topicName(recordedVidQuery.topic),
-                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
-                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
-        db.session.commit()
-        system.newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
-        return True
-    return False
-
-def moveVideo(videoID, newChannel):
-
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-
-    if recordedVidQuery is not None:
-        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
-        if newChannelQuery is not None:
-            videos_root = app.config['WEB_ROOT'] + 'videos/'
-
-            recordedVidQuery.channelID = newChannelQuery.id
-            coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
-            if not os.path.isdir(videos_root + newChannelQuery.channelLoc):
-                try:
-                    os.mkdir(videos_root + newChannelQuery.channelLoc)
-                except OSError:
-                    system.newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
-                        newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-                    flash("Error Moving Video - Unable to Create Directory", "error")
-                    return False
-            shutil.move(videos_root + recordedVidQuery.videoLocation,
-                        videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
-            recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
-            if (recordedVidQuery.thumbnailLocation is not None) and (
-            os.path.exists(videos_root + recordedVidQuery.thumbnailLocation)):
-                coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
-                coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split("_", 1)[1]
-                shutil.move(videos_root + recordedVidQuery.thumbnailLocation,
-                            videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
-                if (recordedVidQuery.gifLocation is not None) and (os.path.exists(videos_root + recordedVidQuery.gifLocation)):
-                    shutil.move(videos_root + recordedVidQuery.gifLocation,
-                                videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
-                recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
-                recordedVidQuery.gifLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif
-            for clip in recordedVidQuery.clips:
-                coreThumbnail = (clip.thumbnailLocation.split("/")[2])
-                if not os.path.isdir(videos_root + newChannelQuery.channelLoc + '/clips'):
-                    try:
-                        os.mkdir(videos_root + newChannelQuery.channelLoc + '/clips')
-                    except OSError:
-                        system.newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
-                            newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-                        flash("Error Moving Video - Unable to Create Clips Directory", "error")
-                        return False
-                newClipLocation = videos_root + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
-                shutil.move(videos_root + clip.thumbnailLocation, newClipLocation)
-                clip.thumbnailLocation = newChannelQuery.channelLoc + "/clips/" + coreThumbnail
-
-            db.session.commit()
-            system.newLog(4, "Video ID #" + str(recordedVidQuery.id) + "Moved to Channel ID" + str(
-                newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-            return True
-    return False
 
 def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
@@ -678,7 +494,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
+                newNotification = notifications.userNotification(templateFilters.get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
                                                                  "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
                 db.session.add(newNotification)
 
@@ -695,8 +511,8 @@ def changeClipMetadata(clipID, name, description):
     if clipQuery is not None:
         if clipQuery.recordedVideo.owningUser == current_user.id:
 
-            clipQuery.clipName = strip_html(name)
-            clipQuery.description = strip_html(description)
+            clipQuery.clipName = system.strip_html(name)
+            clipQuery.description = system.strip_html(description)
 
             db.session.commit()
             system.newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
@@ -741,10 +557,6 @@ scheduler.start()
 # Context Processors
 #----------------------------------------------------------------------------#
 
-#@app.context_processor
-#def inject_user_info():
-#    return dict(user=current_user)
-
 @app.context_processor
 def inject_notifications():
     notificationList = []
@@ -776,189 +588,6 @@ def inject_ownedChannels():
             return dict(ownedChannels=[])
     else:
         return dict(ownedChannels=[])
-
-#----------------------------------------------------------------------------#
-# Template Filters
-#----------------------------------------------------------------------------#
-
-@app.template_filter('normalize_uuid')
-def normalize_uuid(uuidstr):
-    return uuidstr.replace("-", "")
-
-@app.template_filter('normalize_urlroot')
-def normalize_urlroot(urlString):
-    parsedURLRoot = urlparse(urlString)
-    URLProtocol = None
-    if parsedURLRoot.port == 80:
-        URLProtocol = "http"
-    elif parsedURLRoot.port == 443:
-        URLProtocol = "https"
-    else:
-        URLProtocol = parsedURLRoot.scheme
-    reparsedString = str(URLProtocol) + "://" + str(parsedURLRoot.hostname)
-    return str(reparsedString)
-
-@app.template_filter('normalize_url')
-def normalize_url(urlString):
-    parsedURL = urlparse(urlString)
-    if parsedURL.port == 80:
-        URLProtocol = "http"
-    elif parsedURL.port == 443:
-        URLProtocol = "https"
-    else:
-        URLProtocol = parsedURL.scheme
-    reparsedString = str(URLProtocol) + "://" + str(parsedURL.hostname) + str(parsedURL.path)
-    return str(reparsedString)
-
-@app.template_filter('normalize_date')
-def normalize_date(dateStr):
-    return str(dateStr)[:19]
-
-@app.template_filter('limit_title')
-def limit_title(titleStr):
-    if len(titleStr) > 40:
-        return titleStr[:37] + "..."
-    else:
-        return titleStr
-
-@app.template_filter('format_kbps')
-def format_kbps(bits):
-    bits = int(bits)
-    return round(bits/1000)
-
-@app.template_filter('hms_format')
-def hms_format(seconds):
-    val = "Unknown"
-    if seconds is not None:
-        seconds = int(seconds)
-        val = time.strftime("%H:%M:%S", time.gmtime(seconds))
-    return val
-
-@app.template_filter('get_topicName')
-def get_topicName(topicID):
-    topicQuery = topics.topics.query.filter_by(id=int(topicID)).first()
-    if topicQuery is None:
-        return "None"
-    return topicQuery.name
-
-
-@app.template_filter('get_userName')
-def get_userName(userID):
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    if userQuery is None:
-        return "Unknown User"
-    else:
-        return userQuery.username
-
-@app.template_filter('get_Video_Upvotes')
-def get_Video_Upvotes_Filter(videoID):
-    result = votes.get_Video_Upvotes(videoID)
-    return result
-
-@app.template_filter('get_Stream_Upvotes')
-def get_Stream_Upvotes_Filter(videoID):
-    result = votes.get_Stream_Upvotes(videoID)
-    return result
-
-@app.template_filter('get_Clip_Upvotes')
-def get_Clip_Upvotes_Filter(videoID):
-    result = votes.get_Clip_Upvotes(videoID)
-    return result
-
-@app.template_filter('get_Video_Comments')
-def get_Video_Comments_Filter(videoID):
-    result = get_Video_Comments(videoID)
-    return result
-
-@app.template_filter('get_pictureLocation')
-def get_pictureLocation(userID):
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    pictureLocation = None
-    if userQuery.pictureLocation is None:
-        pictureLocation = '/static/img/user2.png'
-    else:
-        pictureLocation = '/images/' + userQuery.pictureLocation
-
-    return pictureLocation
-
-
-@app.template_filter('get_diskUsage')
-def get_diskUsage(channelLocation):
-
-    videos_root = app.config['WEB_ROOT'] + 'videos/'
-    channelLocation = videos_root + channelLocation
-
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(channelLocation):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
-    return "{:,}".format(total_size)
-
-@ app.template_filter('testList')
-def testList(obj):
-    if type(obj) == list:
-        return True
-    else:
-        return False
-
-@app.template_filter('get_webhookTrigger')
-def get_webhookTrigger(webhookTrigger):
-
-    webhookTrigger = str(webhookTrigger)
-    webhookNames = {
-        '0': 'Stream Start',
-        '1': 'Stream End',
-        '2': 'Stream Viewer Join',
-        '3': 'Stream Viewer Upvote',
-        '4': 'Stream Name Change',
-        '5': 'Chat Message',
-        '6': 'New Video',
-        '7': 'Video Comment',
-        '8': 'Video Upvote',
-        '9': 'Video Name Change',
-        '10': 'Channel Subscription',
-        '20': 'New User'
-    }
-    return webhookNames[webhookTrigger]
-
-@app.template_filter('get_hubStatus')
-def get_hubStatus(hubStatus):
-
-    hubStatus = str(hubStatus)
-    hubStatusNames = {
-        '0': 'Unverified',
-        '1': 'Verified'
-    }
-    return hubStatusNames[hubStatus]
-
-#@app.template_filter('get_hubName')
-#def get_hubName(hubID):
-#
-#    hubID = int(hubID)
-#    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
-#    if hubQuery != None:
-#        return hubQuery.serverAddress
-#    return "Unknown"
-
-@app.template_filter('get_logType')
-def get_logType(logType):
-
-    logType = str(logType)
-    logTypeNames = {
-        '0': 'System',
-        '1': 'Security',
-        '2': 'Email',
-        '3': 'Channel',
-        '4': 'Video',
-        '5': 'Stream',
-        '6': 'Clip',
-        '7': 'API',
-        '8': 'Webhook',
-        '9': 'Topic',
-        '10': 'Hub'
-    }
-    return logTypeNames[logType]
 
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
@@ -1004,7 +633,7 @@ def shutdown_session(exception=None):
 @app.route('/')
 def main_page():
 
-    firstRunCheck = check_existing_settings()
+    firstRunCheck = system.check_existing_settings()
 
     if firstRunCheck is False:
         return render_template('/firstrun.html')
@@ -1347,7 +976,7 @@ def vid_move_page(videoID):
     videoID = videoID
     newChannel = int(request.form['moveToChannelID'])
 
-    result = moveVideo(videoID, newChannel)
+    result = videoFunc.moveVideo(videoID, newChannel)
     if result is True:
         flash("Video Moved to Another Channel", "success")
         return redirect(url_for('view_vid_page', videoID=videoID))
@@ -1359,7 +988,7 @@ def vid_move_page(videoID):
 @login_required
 def vid_change_page(videoID):
 
-    newVideoName = strip_html(request.form['newVidName'])
+    newVideoName = system.strip_html(request.form['newVidName'])
     newVideoTopic = request.form['newVidTopic']
     description = request.form['description']
 
@@ -1367,7 +996,7 @@ def vid_change_page(videoID):
     if 'allowComments' in request.form:
         allowComments = True
 
-    result = changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
+    result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
 
     if result is True:
         flash("Changed Video Metadata", "success")
@@ -1380,7 +1009,7 @@ def vid_change_page(videoID):
 @login_required
 def delete_vid_page(videoID):
 
-    result = deleteVideo(videoID)
+    result = videoFunc.deleteVideo(videoID)
 
     if result is True:
         flash("Video deleted")
@@ -1400,7 +1029,7 @@ def comments_vid_page(videoID):
 
         if request.method == 'POST':
 
-            comment = strip_html(request.form['commentText'])
+            comment = system.strip_html(request.form['commentText'])
             currentUser = current_user.id
 
             newComment = comments.videoComments(currentUser,comment,recordedVid.id)
@@ -1418,18 +1047,18 @@ def comments_vid_page(videoID):
             else:
                 pictureLocation = '/images/' + pictureLocation
 
-            newNotification = notifications.userNotification(get_userName(current_user.id) + " commented on your video - " + recordedVid.channelName, '/play/' + str(recordedVid.id),
+            newNotification = notifications.userNotification(templateFilters.get_userName(current_user.id) + " commented on your video - " + recordedVid.channelName, '/play/' + str(recordedVid.id),
                                                                  "/images/" + current_user.pictureLocation, recordedVid.owningUser)
             db.session.add(newNotification)
             db.session.commit()
 
             webhookFunc.runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
-                       channeltopic=get_topicName(recordedVid.channel.topic),
-                       channelimage=channelImage, streamer=get_userName(recordedVid.channel.owningUser),
+                       channeltopic=templateFilters.get_topicName(recordedVid.channel.topic),
+                       channelimage=channelImage, streamer=templateFilters.get_userName(recordedVid.channel.owningUser),
                        channeldescription=str(recordedVid.channel.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
-                       videotopic=get_topicName(recordedVid.topic),
+                       videotopic=templateFilters.get_topicName(recordedVid.topic),
                        videourl=(sysSettings.siteProtocol +sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
                        user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)), comment=comment)
@@ -1668,11 +1297,11 @@ def upload_vid():
     newVideo.gifLocation = newGifFullThumbnailLocation
 
     if request.form['videoTitle'] != "":
-        newVideo.channelName = strip_html(request.form['videoTitle'])
+        newVideo.channelName = system.strip_html(request.form['videoTitle'])
     else:
         newVideo.channelName = currentTime
 
-    newVideo.description = strip_html(request.form['videoDescription'])
+    newVideo.description = system.strip_html(request.form['videoDescription'])
 
     if os.path.isfile(videoPath):
         newVideo.pending = False
@@ -1685,8 +1314,6 @@ def upload_vid():
             newVideo.published = False
         db.session.commit()
 
-
-
         if ChannelQuery.imageLocation is None:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
         else:
@@ -1697,18 +1324,18 @@ def upload_vid():
 
             webhookFunc.runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
-                       channeltopic=get_topicName(ChannelQuery.topic),
-                       channelimage=channelImage, streamer=get_userName(ChannelQuery.owningUser),
+                       channeltopic=templateFilters.get_topicName(ChannelQuery.topic),
+                       channelimage=channelImage, streamer=templateFilters.get_userName(ChannelQuery.owningUser),
                        channeldescription=str(ChannelQuery.description), videoname=newVideo.channelName,
                        videodate=newVideo.videoDate, videodescription=newVideo.description,
-                       videotopic=get_topicName(newVideo.topic),
+                       videotopic=templateFilters.get_topicName(newVideo.topic),
                        videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
 
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
+                newNotification = notifications.userNotification(templateFilters.get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
                                                                  "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
                 db.session.add(newNotification)
             db.session.commit()
@@ -1999,7 +1626,7 @@ def admin_page():
                 for table in dbTables:
                     for c in db.Model._decl_class_registry.values():
                         if hasattr(c, '__table__') and c.__tablename__ == table:
-                            tableDict = table2Dict(c)
+                            tableDict = system.table2Dict(c)
                             dbDump[table] = tableDict
                 userQuery = Sec.User.query.all()
                 dbDump['roles'] = {}
@@ -2156,7 +1783,7 @@ def admin_page():
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
                     systemLogo = "/images/" + filename
 
-            validAddress = formatSiteAddress(serverAddress)
+            validAddress = system.formatSiteAddress(serverAddress)
             try:
                 externalIP = socket.gethostbyname(validAddress)
             except socket.gaierror:
@@ -2964,9 +2591,9 @@ def settings_channels_page():
     elif request.method == 'POST':
 
         requestType = request.form['type']
-        channelName = strip_html(request.form['channelName'])
+        channelName = system.strip_html(request.form['channelName'])
         topic = request.form['channeltopic']
-        description = strip_html(request.form['description'])
+        description = system.strip_html(request.form['description'])
 
 
         record = False
@@ -3167,7 +2794,7 @@ def settings_apikeys_post_page(action):
 
 @app.route('/settings/initialSetup', methods=['POST'])
 def initialSetup():
-    firstRunCheck = check_existing_settings()
+    firstRunCheck = system.check_existing_settings()
 
     if firstRunCheck is False:
 
@@ -3219,7 +2846,7 @@ def initialSetup():
         if 'smtpSSL' in request.form:
             smtpSSL = True
 
-        validAddress = formatSiteAddress(serverAddress)
+        validAddress = system.formatSiteAddress(serverAddress)
         try:
             externalIP = socket.gethostbyname(validAddress)
         except socket.gaierror:
@@ -3418,7 +3045,7 @@ def streamkey_check():
                 returnMessage = {'time': str(currentTime), 'status': 'Successful Key Auth', 'key': str(key), 'channelName': str(channelRequest.channelName), 'userName': str(channelRequest.owningUser), 'ipAddress': str(ipaddress)}
                 print(returnMessage)
 
-                validAddress = formatSiteAddress(sysSettings.siteAddress)
+                validAddress = system.formatSiteAddress(sysSettings.siteAddress)
 
                 externalIP = socket.gethostbyname(validAddress)
                 existingStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).all()
@@ -3427,7 +3054,7 @@ def streamkey_check():
                         db.session.delete(stream)
                     db.session.commit()
 
-                defaultStreamName = normalize_date(str(currentTime))
+                defaultStreamName = templateFilters.normalize_date(str(currentTime))
                 if channelRequest.defaultStreamName != "":
                     defaultStreamName = channelRequest.defaultStreamName
 
@@ -3500,14 +3127,14 @@ def user_auth_check():
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
             webhookFunc.runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
-                       channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser), channeldescription=str(requestedChannel.description),
-                       streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=get_topicName(authedStream.topic),
+                       channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser), channeldescription=str(requestedChannel.description),
+                       streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=templateFilters.get_topicName(authedStream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
 
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
+                newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
                                                                  "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
                 db.session.add(newNotification)
             db.session.commit()
@@ -3628,11 +3255,11 @@ def user_deauth_check():
             webhookFunc.runWebhook(channelRequest.id, 1, channelname=channelRequest.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
                        channeltopic=channelRequest.topic,
-                       channelimage=channelImage, streamer=get_userName(channelRequest.owningUser),
+                       channelimage=channelImage, streamer=templateFilters.get_userName(channelRequest.owningUser),
                        channeldescription=str(channelRequest.description),
                        streamname=stream.streamName,
                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
-                       streamtopic=get_topicName(stream.topic),
+                       streamtopic=templateFilters.get_topicName(stream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + str(channelRequest.channelLoc) + ".png"))
         return 'OK'
     else:
@@ -3682,17 +3309,17 @@ def rec_Complete_handler():
     if requestedChannel.autoPublish is True:
         webhookFunc.runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-               channeltopic=get_topicName(requestedChannel.topic),
-               channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+               channeltopic=templateFilters.get_topicName(requestedChannel.topic),
+               channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                channeldescription=str(requestedChannel.description), videoname=pendingVideo.channelName,
-               videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=get_topicName(pendingVideo.topic),
+               videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=templateFilters.get_topicName(pendingVideo.topic),
                videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(pendingVideo.thumbnailLocation)))
 
         subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
         for sub in subscriptionQuery:
             # Create Notification for Channel Subs
-            newNotification = notifications.userNotification(get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
+            newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
                                                              "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
             db.session.add(newNotification)
         db.session.commit()
@@ -3807,8 +3434,8 @@ def toggle_chanSub(payload):
 
                     webhookFunc.runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                               channeltopic=get_topicName(channelQuery.topic),
-                               channelimage=str(channelImage), streamer=get_userName(channelQuery.owningUser),
+                               channeltopic=templateFilters.get_topicName(channelQuery.topic),
+                               channelimage=str(channelImage), streamer=templateFilters.get_userName(channelQuery.owningUser),
                                channeldescription=str(channelQuery.description),
                                user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation))
                 else:
@@ -3907,17 +3534,17 @@ def handle_new_viewer(streamData):
 
         webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   streamtopic=templateFilters.get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
     else:
         webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=get_userName(requestedChannel.owningUser),
+                   channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName,
                    streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
-                   streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
+                   streamtopic=templateFilters.get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user="Guest", userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/user2.png'))
 
     handle_viewer_total_request(streamData, room=streamData['data'])
@@ -4261,7 +3888,7 @@ def updateStreamData(message):
 
     if channelQuery is not None:
         stream = channelQuery.stream[0]
-        stream.streamName = strip_html(message['name'])
+        stream.streamName = system.strip_html(message['name'])
         stream.topic = int(message['topic'])
         db.session.commit()
 
@@ -4273,11 +3900,11 @@ def updateStreamData(message):
         webhookFunc.runWebhook(channelQuery.id, 4, channelname=channelQuery.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                    channeltopic=channelQuery.topic,
-                   channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                   channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                    channeldescription=str(channelQuery.description),
                    streamname=stream.streamName,
                    streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                   streamtopic=get_topicName(stream.topic),
+                   streamtopic=templateFilters.get_topicName(stream.topic),
                    streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
@@ -4289,7 +3916,7 @@ def text(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
     room = message['room']
-    msg = strip_html(message['msg'])
+    msg = system.strip_html(message['msg'])
 
     sysSettings = settings.settings.query.first()
 
@@ -4391,12 +4018,12 @@ def text(message):
 
                 webhookFunc.runWebhook(channelQuery.id, 5, channelname=channelQuery.channelName,
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                           channeltopic=get_topicName(channelQuery.topic),
-                           channelimage=channelImage, streamer=get_userName(channelQuery.owningUser),
+                           channeltopic=templateFilters.get_topicName(channelQuery.topic),
+                           channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                            channeldescription=str(channelQuery.description),
                            streamname=streamName,
                            streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                           streamtopic=get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
+                           streamtopic=templateFilters.get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"),
                            user=current_user.username, userpicture=sysSettings.siteProtocol + sysSettings.siteAddress + pictureLocation, message=msg)
                 emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg':msg, 'flags':flags}, room=room)
                 db.session.commit()
@@ -4521,7 +4148,7 @@ def deleteInvitedUser(message):
 def deleteVideoSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        result = deleteVideo(videoID)
+        result = videoFunc.deleteVideo(videoID)
         if result is True:
             return 'OK'
         else:
@@ -4533,14 +4160,14 @@ def deleteVideoSocketIO(message):
 def editVideoSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        videoName = strip_html(message['videoName'])
+        videoName = system.strip_html(message['videoName'])
         videoTopic = int(message['videoTopic'])
         videoDescription = message['videoDescription']
         videoAllowComments = False
         if message['videoAllowComments'] == "True" or message['videoAllowComments'] == True:
             videoAllowComments = True
 
-        result = changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
+        result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
         if result is True:
             return 'OK'
         else:
@@ -4552,7 +4179,7 @@ def editVideoSocketIO(message):
 def createclipSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        clipName = strip_html(message['clipName'])
+        clipName = system.strip_html(message['clipName'])
         clipDescription = message['clipDescription']
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
@@ -4570,7 +4197,7 @@ def moveVideoSocketIO(message):
         videoID = int(message['videoID'])
         newChannel = int(message['destinationChannel'])
 
-        result = moveVideo(videoID, newChannel)
+        result = videoFunc.moveVideo(videoID, newChannel)
         if result is True:
             return 'OK'
         else:
@@ -4597,18 +4224,18 @@ def togglePublishedSocketIO(message):
 
                 webhookFunc.runWebhook(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
-                           channeltopic=get_topicName(videoQuery.channel.topic),
-                           channelimage=channelImage, streamer=get_userName(videoQuery.channel.owningUser),
+                           channeltopic=templateFilters.get_topicName(videoQuery.channel.topic),
+                           channelimage=channelImage, streamer=templateFilters.get_userName(videoQuery.channel.owningUser),
                            channeldescription=str(videoQuery.channel.description), videoname=videoQuery.channelName,
                            videodate=videoQuery.videoDate, videodescription=str(videoQuery.description),
-                           videotopic=get_topicName(videoQuery.topic),
+                           videotopic=templateFilters.get_topicName(videoQuery.topic),
                            videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(videoQuery.id)),
                            videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(videoQuery.thumbnailLocation)))
 
                 subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=videoQuery.channel.id).all()
                 for sub in subscriptionQuery:
                     # Create Notification for Channel Subs
-                    newNotification = notifications.userNotification(get_userName(videoQuery.channel.owningUser) + " has posted a new video to " + videoQuery.channel.channelName + " titled " + videoQuery.channelName, '/play/' + str(videoQuery.id), "/images/" + str(videoQuery.channel.owner.pictureLocation), sub.userID)
+                    newNotification = notifications.userNotification(templateFilters.get_userName(videoQuery.channel.owningUser) + " has posted a new video to " + videoQuery.channel.channelName + " titled " + videoQuery.channelName, '/play/' + str(videoQuery.id), "/images/" + str(videoQuery.channel.owner.pictureLocation), sub.userID)
                     db.session.add(newNotification)
                 db.session.commit()
 
@@ -4644,7 +4271,7 @@ def togglePublishedClipSocketIO(message):
                 subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=clipQuery.recordedVideo.channel.id).all()
                 for sub in subscriptionQuery:
                     # Create Notification for Channel Subs
-                    newNotification = notifications.userNotification(get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
+                    newNotification = notifications.userNotification(templateFilters.get_userName(clipQuery.recordedVideo.owningUser) + " has posted a new clip to " +
                                                                      clipQuery.recordedVideo.channel.channelName + " titled " + clipQuery.clipName,'/clip/' +
                                                                      str(clipQuery.id),"/images/" + str(clipQuery.recordedVideo.channel.owner.pictureLocation), sub.userID)
                     db.session.add(newNotification)
