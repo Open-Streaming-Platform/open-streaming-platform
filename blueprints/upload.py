@@ -197,4 +197,4 @@ def upload_vid():
     videoID = newVideo.id
     db.session.close()
     flash("Video upload complete")
-    return redirect(url_for('view_vid_page', videoID=videoID))
+    return redirect(url_for('play.view_vid_page', videoID=videoID))
