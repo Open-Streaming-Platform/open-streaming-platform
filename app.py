@@ -56,7 +56,6 @@ import datetime
 #----------------------------------------------------------------------------#
 # Configuration Imports
 #----------------------------------------------------------------------------#
-
 from conf import config
 
 #----------------------------------------------------------------------------#
@@ -67,17 +66,19 @@ from globals import globalvars
 #----------------------------------------------------------------------------#
 # App Configuration Setup
 #----------------------------------------------------------------------------#
-
 version = "beta-5b"
+appDBVersion = 0.50
 
 # TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
 hubURL = "https://hub.openstreamingplatform.com"
 coreNginxRTMPAddress = "127.0.0.1"
 
+sysSettings = None
+
 app = Flask(__name__)
 
+# Flask App Environment Setup
 app.debug = config.debugMode
-
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
 app.config['WEB_ROOT'] = globalvars.videoRoot
@@ -114,26 +115,24 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
+
+# Initialize Flask-Limiter
 if config.redisPassword == '' or config.redisPassword is None:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 logger = logging.getLogger('gunicorn.error').handlers
 
-# Init Redis DB and Clear Existing DB
+# Initialize Redis for Flask-Session
 if config.redisPassword != '':
     r = redis.Redis(host=config.redisHost, port=config.redisPort)
     app.config["SESSION_REDIS"] = r
 else:
     r = redis.Redis(host=config.redisHost, port=config.redisPort, password=config.redisPassword)
     app.config["SESSION_REDIS"] = r
-
 r.flushdb()
 
-appDBVersion = 0.50
-
-from classes.shared import db
-
+# Initialize Flask-SocketIO
 from classes.shared import socketio
 if config.redisPassword != '':
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort),  cors_allowed_origins=[])
@@ -142,16 +141,21 @@ else:
 
 limiter = Limiter(app, key_func=get_remote_address)
 
+# Begin Database Initialization
+from classes.shared import db
+
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
+# Initialize Flask-Session
 Session(app)
 
+# Initialize Flask-CORS Config
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
+# Initialize Debug Toolbar
 toolbar = DebugToolbarExtension(app)
-
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -193,13 +197,11 @@ from functions import commentsFunc
 #----------------------------------------------------------------------------#
 from functions import templateFilters
 
-sysSettings = None
-
-# Setup Flask-Security
+# Initialize Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
-# Setup Flask-Uploads
+# Initialize Flask-Uploads
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
@@ -398,44 +400,6 @@ def init_db_values():
                 pass
         ## End DB UT8MB4 Fixes
 
-
-
-def videoupload_allowedExt(filename):
-    if not "." in filename:
-        return False
-    ext = filename.rsplit(".", 1)[1]
-    if ext.upper() in app.config["VIDEO_UPLOAD_EXTENSIONS"]:
-        return True
-    else:
-        return False
-
-def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
-    sslContext = None
-    if smtpSSL is True:
-        import ssl
-        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-
-    server = smtplib.SMTP(smtpServer, int(smtpPort))
-    try:
-        if smtpTLS or smtpSSL:
-            server.ehlo()
-            if smtpSSL:
-                server.starttls(context=sslContext)
-            else:
-                server.starttls()
-            server.ehlo()
-        if smtpUsername and smtpPassword:
-            server.login(smtpUsername, smtpPassword)
-        msg = "Test Email - Your Instance of OSP has been successfully configured!"
-        server.sendmail(smtpSender, smtpReceiver, msg)
-    except Exception as e:
-        print(e)
-        system.newLog(1, "Test Email Failed for " + str(smtpServer) + "Reason:" + str(e))
-        return False
-    server.quit()
-    system.newLog(1, "Test Email Successful for " + str(smtpServer))
-    return True
-
 @system.asynch
 def runSubscription(subject, destination, message):
     with app.app_context():
@@ -461,92 +425,6 @@ def processSubscriptions(channelID, subject, message):
                 subCount = subCount + 1
         system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     return True
-
-
-
-def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
-
-    # TODO Add Webhook for Clip Creation
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
-
-    if recordedVidQuery is not None:
-        if clipStop > clipStart:
-            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
-            db.session.add(newClip)
-            db.session.commit()
-
-            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
-            videos_root = app.config['WEB_ROOT'] + 'videos/'
-
-            videoLocation = videos_root + recordedVidQuery.videoLocation
-            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
-            clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
-
-            newClipQuery.thumbnailLocation = clipThumbNailLocation
-            newClipQuery.gifLocation = clipGifLocation
-
-            fullthumbnailLocation = videos_root + clipThumbNailLocation
-            fullgifLocation = videos_root + clipGifLocation
-
-            if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
-                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
-
-            processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
-
-            redirectID = newClipQuery.id
-            system.newLog(6, "New Clip Created - ID #" + str(redirectID))
-
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(templateFilters.get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
-                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
-                db.session.add(newNotification)
-
-            db.session.commit()
-            db.session.close()
-            return True, redirectID
-    return False, None
-
-def changeClipMetadata(clipID, name, description):
-    # TODO Add Webhook for Clip Metadata Change
-
-    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-
-    if clipQuery is not None:
-        if clipQuery.recordedVideo.owningUser == current_user.id:
-
-            clipQuery.clipName = system.strip_html(name)
-            clipQuery.description = system.strip_html(description)
-
-            db.session.commit()
-            system.newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
-            return True
-    return False
-
-def deleteClip(clipID):
-    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-    videos_root = app.config['WEB_ROOT'] + 'videos/'
-
-    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
-        thumbnailPath = videos_root + clipQuery.thumbnailLocation
-        gifPath = videos_root + clipQuery.gifLocation
-
-        if thumbnailPath != videos_root:
-            if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
-                os.remove(thumbnailPath)
-        if gifPath != videos_root:
-            if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
-                os.remove(gifPath)
-
-        db.session.delete(clipQuery)
-
-        db.session.commit()
-        system.newLog(6, "Clip Deleted - ID #" + str(clipID))
-        return True
-    else:
-        return False
 
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
@@ -966,7 +844,7 @@ def vid_clip_page(videoID):
     clipName = str(request.form['clipName'])
     clipDescription = str(request.form['clipDescription'])
 
-    result = createClip(videoID, clipStart, clipStop, clipName, clipDescription)
+    result = videoFunc.createClip(videoID, clipStart, clipStop, clipName, clipDescription)
 
     if result[0] is True:
         flash("Clip Created", "success")
@@ -1161,7 +1039,7 @@ def view_clip_page(clipID):
 @login_required
 def delete_clip_page(clipID):
 
-    result = deleteClip(int(clipID))
+    result = videoFunc.deleteClip(int(clipID))
 
     if result is True:
         flash("Clip deleted")
@@ -1174,7 +1052,7 @@ def delete_clip_page(clipID):
 @login_required
 def clip_change_page(clipID):
 
-    result = changeClipMetadata(int(clipID), request.form['newVideoName'], request.form['description'])
+    result = videoFunc.changeClipMetadata(int(clipID), request.form['newVideoName'], request.form['description'])
 
     if result is True:
         flash("Updated Clip Metadata","success")
@@ -1206,7 +1084,7 @@ def upload():
         else:
             return ("Ooops.", 500)
 
-        if videoupload_allowedExt(file.filename):
+        if system.videoupload_allowedExt(file.filename, app.config['VIDEO_UPLOAD_EXTENSIONS']):
             save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
             current_chunk = int(request.form['dzchunkindex'])
         else:
@@ -3401,7 +3279,7 @@ def test_email(info):
         smtpSender = info['smtpSender']
         smtpReceiver = info['smtpReceiver']
 
-        results = sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
+        results = system.sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver)
         db.session.close()
         emit('testEmailResults', {'results': str(results)}, broadcast=False)
         return 'OK'
@@ -4189,7 +4067,7 @@ def createclipSocketIO(message):
         clipDescription = message['clipDescription']
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
-        result = createClip(videoID, startTime, stopTime, clipName, clipDescription)
+        result = videoFunc.createClip(videoID, startTime, stopTime, clipName, clipDescription)
         if result[0] is True:
             return 'OK'
         else:
@@ -4326,7 +4204,7 @@ def changeClipMetadataSocketIO(message):
         clipName = message['clipName']
         clipDescription = message['clipDescription']
 
-        result = changeClipMetadata(clipID, clipName, clipDescription)
+        result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription)
 
         if result is True:
             return 'OK'
@@ -4340,7 +4218,7 @@ def deleteClipSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message['clipID'])
 
-        result = deleteClip(clipID)
+        result = videoFunc.deleteClip(clipID)
 
         if result is True:
             return 'OK'

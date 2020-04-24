@@ -1,6 +1,7 @@
 from threading import Thread
 from functools import wraps
 import datetime
+import smtplib
 
 from html.parser import HTMLParser
 import ipaddress
@@ -44,6 +45,15 @@ def strip_html(html):
     s.feed(html)
     return s.get_data()
 
+def videoupload_allowedExt(filename, allowedExtensions):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1]
+    if ext.upper() in allowedExtensions:
+        return True
+    else:
+        return False
+
 def formatSiteAddress(systemAddress):
     try:
         ipaddress.ip_address(systemAddress)
@@ -61,6 +71,33 @@ def table2Dict(table):
     for tbl in exportedTableList:
         dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
     return dataList
+
+def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
+    sslContext = None
+    if smtpSSL is True:
+        import ssl
+        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
+    server = smtplib.SMTP(smtpServer, int(smtpPort))
+    try:
+        if smtpTLS or smtpSSL:
+            server.ehlo()
+            if smtpSSL:
+                server.starttls(context=sslContext)
+            else:
+                server.starttls()
+            server.ehlo()
+        if smtpUsername and smtpPassword:
+            server.login(smtpUsername, smtpPassword)
+        msg = "Test Email - Your Instance of OSP has been successfully configured!"
+        server.sendmail(smtpSender, smtpReceiver, msg)
+    except Exception as e:
+        print(e)
+        newLog(1, "Test Email Failed for " + str(smtpServer) + "Reason:" + str(e))
+        return False
+    server.quit()
+    newLog(1, "Test Email Successful for " + str(smtpServer))
+    return True
 
 def newLog(logType, message):
     newLogItem = logs.logs(datetime.datetime.now(), str(message), logType)

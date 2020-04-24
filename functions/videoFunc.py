@@ -14,6 +14,8 @@ from classes import upvotes
 from classes import comments
 from classes import views
 from classes import settings
+from classes import subscriptions
+from classes import notifications
 
 from functions import system
 from functions import webhookFunc
@@ -159,3 +161,87 @@ def moveVideo(videoID, newChannel):
                 newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
             return True
     return False
+
+def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
+
+    # TODO Add Webhook for Clip Creation
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
+
+    if recordedVidQuery is not None:
+        if clipStop > clipStart:
+            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
+            db.session.add(newClip)
+            db.session.commit()
+
+            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
+            videos_root = globalvars.videoRoot + 'videos/'
+
+            videoLocation = videos_root + recordedVidQuery.videoLocation
+            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
+            clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
+
+            newClipQuery.thumbnailLocation = clipThumbNailLocation
+            newClipQuery.gifLocation = clipGifLocation
+
+            fullthumbnailLocation = videos_root + clipThumbNailLocation
+            fullgifLocation = videos_root + clipGifLocation
+
+            if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
+                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
+
+            processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
+
+            redirectID = newClipQuery.id
+            system.newLog(6, "New Clip Created - ID #" + str(redirectID))
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(templateFilters.get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
+                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
+                db.session.add(newNotification)
+
+            db.session.commit()
+            db.session.close()
+            return True, redirectID
+    return False, None
+
+def changeClipMetadata(clipID, name, description):
+    # TODO Add Webhook for Clip Metadata Change
+
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+
+    if clipQuery is not None:
+        if clipQuery.recordedVideo.owningUser == current_user.id:
+
+            clipQuery.clipName = system.strip_html(name)
+            clipQuery.description = system.strip_html(description)
+
+            db.session.commit()
+            system.newLog(6, "Clip Metadata Changed - ID #" + str(clipID))
+            return True
+    return False
+
+def deleteClip(clipID):
+    clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
+    videos_root = globalvars.videoRoot + 'videos/'
+
+    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
+        thumbnailPath = videos_root + clipQuery.thumbnailLocation
+        gifPath = videos_root + clipQuery.gifLocation
+
+        if thumbnailPath != videos_root:
+            if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
+                os.remove(thumbnailPath)
+        if gifPath != videos_root:
+            if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
+                os.remove(gifPath)
+
+        db.session.delete(clipQuery)
+
+        db.session.commit()
+        system.newLog(6, "Clip Deleted - ID #" + str(clipID))
+        return True
+    else:
+        return False
