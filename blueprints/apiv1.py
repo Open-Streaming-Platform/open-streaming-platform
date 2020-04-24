@@ -19,6 +19,8 @@ from classes import settings
 from classes.shared import db
 from classes.shared import socketio
 
+from globals import globalvars
+
 class fixedAPI(Api):
     # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
     @property
@@ -168,7 +170,7 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery != None:
-                        videos_root = api.config['WEB_ROOT'] + 'videos/'
+                        videos_root = globalvars.videoRoot + 'videos/'
                         filePath = videos_root + channelQuery.channelLoc
                         if filePath != videos_root:
                             shutil.rmtree(filePath, ignore_errors=True)
@@ -331,7 +333,7 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery != None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            videos_root = api.config['WEB_ROOT'] + 'videos/'
+                            videos_root = globalvars.videoRoot + 'videos/'
 
                             filePath = videos_root + videoQuery.videoLocation
                             thumbnailPath = videos_root + videoQuery.videoLocation[:-4] + ".png"
@@ -415,7 +417,7 @@ class api_1_ListClip(Resource):
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
                     if clipQuery != None:
                         if clipQuery.owningUser == requestAPIKey.userID:
-                            videos_root = api.config['WEB_ROOT'] + 'videos/'
+                            videos_root = globalvars.videoRoot + 'videos/'
                             thumbnailPath = videos_root + clipQuery.thumbnailLocation
 
                             if thumbnailPath != videos_root:

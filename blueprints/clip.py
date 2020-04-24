@@ -12,12 +12,14 @@ from functions import themes
 from functions import videoFunc
 from functions import securityFunc
 
+from globals import globalvars
+
 clip_bp = Blueprint('clip', __name__, url_prefix='/clip')
 
 @clip_bp.route('/clip/<clipID>')
 def view_clip_page(clipID):
     sysSettings = settings.settings.query.first()
-    videos_root = clip_bp.config['WEB_ROOT'] + 'videos/'
+    videos_root = globalvars.videoRoot + 'videos/'
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 

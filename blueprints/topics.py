@@ -1,5 +1,4 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
-from flask_security import current_user
 
 from classes.shared import db
 from classes import settings

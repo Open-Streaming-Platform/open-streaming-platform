@@ -19,12 +19,14 @@ from functions import securityFunc
 from functions import webhookFunc
 from functions import templateFilters
 
+from globals import globalvars
+
 play_bp = Blueprint('play', __name__, url_prefix='/play')
 
 @play_bp.route('/<videoID>')
 def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
-    videos_root = play_bp.config['WEB_ROOT'] + 'videos/'
+    videos_root = globalvars.videoRoot + 'videos/'
 
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
