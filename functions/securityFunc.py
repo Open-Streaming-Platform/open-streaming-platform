@@ -8,7 +8,7 @@ from classes import invites
 
 from globals import globalvars
 
-import cache
+from functions import cache
 
 
 def check_isValidChannelViewer(channelID):

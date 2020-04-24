@@ -122,7 +122,7 @@ def get_pictureLocation(userID):
     return pictureLocation
 
 def get_diskUsage(channelLocation):
-    with current_app.app_context:
+    with current_app.app_context():
         videos_root = current_app.config['WEB_ROOT'] + 'videos/'
         channelLocation = videos_root + channelLocation
 
