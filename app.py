@@ -366,7 +366,7 @@ def main_page():
 
         return render_template(themes.checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
 
-@app.route('/channels')
+@app.route('/channel')
 def channels_page():
     sysSettings = settings.settings.query.first()
     if sysSettings.showEmptyTables:
@@ -419,7 +419,7 @@ def channel_view_link_page(channelLoc):
     flash("Invalid Channel Location", "error")
     return redirect(url_for("main_page"))
 
-@app.route('/topics')
+@app.route('/topic')
 def topic_page():
     sysSettings = settings.settings.query.first()
     if sysSettings.showEmptyTables:
