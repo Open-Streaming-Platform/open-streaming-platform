@@ -34,7 +34,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
-from werkzeug.utils import secure_filename
+
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import redis
@@ -139,6 +139,7 @@ from functions import votes
 from functions import videoFunc
 from functions import webhookFunc
 from functions import commentsFunc
+from functions import subsFunc
 
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
@@ -223,7 +224,8 @@ except:
     print("DB Load Fail due to Upgrade or Issues")
 
 # Initialize Flask-Mail
-mail = Mail(app)
+from classes.shared import mail
+mail.init(app)
 
 # Register all Blueprints
 app.register_blueprint(api_v1)
@@ -240,34 +242,8 @@ templateFilters.init(app)
 system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
 
 #----------------------------------------------------------------------------#
-# Functions
+# Jinja 2 Gloabl Environment Functions
 #----------------------------------------------------------------------------#
-@system.asynch
-def runSubscription(subject, destination, message):
-    with app.app_context():
-        sysSettings = settings.settings.query.first()
-        finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
-        msg = Message(subject=subject, recipients=[destination])
-        msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
-        msg.body = finalMessage
-        msg.html = finalMessage
-        mail.send(msg)
-        return True
-
-def processSubscriptions(channelID, subject, message):
-    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
-    if subscriptionQuery:
-        system.newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
-
-        subCount = 0
-        for sub in subscriptionQuery:
-            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
-            if userQuery is not None:
-                result = runSubscription(subject, userQuery.email, message)
-                subCount = subCount + 1
-        system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
-    return True
-
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 
@@ -481,180 +457,7 @@ def view_page(loc):
 
 
 
-@app.route('/upload/video-files', methods=['GET', 'POST'])
-@login_required
-@roles_required('Uploader')
-def upload():
-    videos_root = app.config['WEB_ROOT'] + 'videos/'
 
-    sysSettings = settings.settings.query.first()
-    if not sysSettings.allowUploads:
-        db.session.close()
-        return ("Video Uploads Disabled", 501)
-    if request.files['file']:
-
-        if not os.path.exists(videos_root + 'temp'):
-            os.makedirs(videos_root + 'temp')
-
-        file = request.files['file']
-
-        if request.form['ospfilename'] != "":
-            ospfilename = request.form['ospfilename']
-        else:
-            return ("Ooops.", 500)
-
-        if system.videoupload_allowedExt(file.filename, app.config['VIDEO_UPLOAD_EXTENSIONS']):
-            save_path = os.path.join(app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
-            current_chunk = int(request.form['dzchunkindex'])
-        else:
-            system.newLog(4,"File Upload Failed - File Type not Allowed - Username:" + current_user.username)
-            return ("Filetype not allowed", 403)
-
-        if current_chunk > 4500:
-            open(save_path, 'w').close()
-            return ("File is getting too large.", 403)
-
-        if os.path.exists(save_path) and current_chunk == 0:
-            open(save_path, 'w').close()
-
-        try:
-            with open(save_path, 'ab') as f:
-                f.seek(int(request.form['dzchunkbyteoffset']))
-                f.write(file.stream.read())
-        except OSError:
-            system.newLog(4, "File Upload Failed - OSError - Username:" + current_user.username)
-            return ("Ooops.", 500)
-
-        total_chunks = int(request.form['dztotalchunkcount'])
-
-        if current_chunk + 1 == total_chunks:
-            if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
-                return ("Size mismatch", 500)
-
-        return ("success", 200)
-    else:
-        return ("I don't understand", 501)
-
-@app.route('/upload/video-details', methods=['POST'])
-@login_required
-@roles_required('Uploader')
-def upload_vid():
-    sysSettings = settings.settings.query.first()
-    if not sysSettings.allowUploads:
-        db.session.close()
-        flash("Video Upload Disabled", "error")
-        return redirect(url_for('main_page'))
-
-    currentTime = datetime.datetime.now()
-
-    channel = int(request.form['uploadToChannelID'])
-    thumbnailFilename = request.form['thumbnailFilename']
-    videoFilename= request.form['videoFilename']
-
-    ChannelQuery = Channel.Channel.query.filter_by(id=channel).first()
-
-    if ChannelQuery.owningUser != current_user.id:
-        flash('You are not allowed to upload to this channel!')
-        db.session.close()
-        return redirect(url_for('main_page'))
-
-    videoPublishState = ChannelQuery.autoPublish
-
-    newVideo = RecordedVideo.RecordedVideo(current_user.id, channel, ChannelQuery.channelName, ChannelQuery.topic, 0, "", currentTime, ChannelQuery.allowComments, videoPublishState)
-
-    videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
-    videos_root = app.config['WEB_ROOT'] + 'videos/'
-    videoPath = videos_root + videoLoc
-
-    if videoFilename != "":
-        if not os.path.isdir(videos_root + ChannelQuery.channelLoc):
-            try:
-                os.mkdir(videos_root + ChannelQuery.channelLoc)
-            except OSError:
-                system.newLog(4, "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
-                flash("Error uploading video - Unable to create directory","error")
-                db.session.close()
-                return redirect(url_for("main_page"))
-        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
-    else:
-        db.session.close()
-        flash("Error uploading video - Couldn't move video file")
-        return redirect(url_for('main_page'))
-
-    newVideo.videoLocation = videoLoc
-
-    if thumbnailFilename != "":
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
-
-        thumbnailPath = videos_root + thumbnailLoc
-        shutil.move(app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
-        newVideo.thumbnailLocation = thumbnailLoc
-    else:
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
-
-        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1', videos_root + thumbnailLoc])
-        newVideo.thumbnailLocation = thumbnailLoc
-
-    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
-    gifresult = subprocess.call(['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', videos_root + videoLoc, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', videos_root + newGifFullThumbnailLocation])
-    newVideo.gifLocation = newGifFullThumbnailLocation
-
-    if request.form['videoTitle'] != "":
-        newVideo.channelName = system.strip_html(request.form['videoTitle'])
-    else:
-        newVideo.channelName = currentTime
-
-    newVideo.description = system.strip_html(request.form['videoDescription'])
-
-    if os.path.isfile(videoPath):
-        newVideo.pending = False
-        db.session.add(newVideo)
-        db.session.commit()
-
-        if ChannelQuery.autoPublish is True:
-            newVideo.published = True
-        else:
-            newVideo.published = False
-        db.session.commit()
-
-        if ChannelQuery.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-        else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
-        system.newLog(4, "File Upload Successful - Username:" + current_user.username)
-
-        if ChannelQuery.autoPublish is True:
-
-            webhookFunc.runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
-                       channeltopic=templateFilters.get_topicName(ChannelQuery.topic),
-                       channelimage=channelImage, streamer=templateFilters.get_userName(ChannelQuery.owningUser),
-                       channeldescription=str(ChannelQuery.description), videoname=newVideo.channelName,
-                       videodate=newVideo.videoDate, videodescription=newVideo.description,
-                       videotopic=templateFilters.get_topicName(newVideo.topic),
-                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
-                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation))
-
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(templateFilters.get_userName(ChannelQuery.owningUser) + " has posted a new video to " + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
-                                                                 "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
-                db.session.add(newNotification)
-            db.session.commit()
-
-            try:
-                processSubscriptions(ChannelQuery.id,
-                                 sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
-                                 "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
-                                 "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
-            except:
-                system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
-
-    videoID = newVideo.id
-    db.session.close()
-    flash("Video upload complete")
-    return redirect(url_for('view_vid_page', videoID=videoID))
 
 @app.route('/unsubscribe')
 def unsubscribe_page():
@@ -2361,7 +2164,7 @@ def user_auth_check():
             db.session.commit()
 
             try:
-                processSubscriptions(requestedChannel.id,
+                subsFunc.processSubscriptions(requestedChannel.id,
                                  sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
                                  "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
                                  " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
@@ -2545,7 +2348,7 @@ def rec_Complete_handler():
             db.session.add(newNotification)
         db.session.commit()
 
-        processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
+        subsFunc.processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                          "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
                          "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
 
@@ -3460,7 +3263,7 @@ def togglePublishedSocketIO(message):
                     db.session.add(newNotification)
                 db.session.commit()
 
-                processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
+                subsFunc.processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
                                      sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + videoQuery.channel.channelName + " has posted a new video titled <u>" +
                                      videoQuery.channelName + "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" +
                                      str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>")
