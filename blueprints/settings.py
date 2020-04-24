@@ -86,7 +86,7 @@ def user_page():
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
 
-    return redirect(url_for('user_page'))
+    return redirect(url_for('.user_page'))
 
 
 @settings_bp.route('/user/subscriptions')
@@ -1163,7 +1163,7 @@ def settings_dbRestore():
             flash("Invalid Restore Attempt", "error")
             return redirect(url_for('main_page'))
         else:
-            return redirect(url_for('initialSetup'))
+            return redirect(url_for('.initialSetup'))
 
 
 @settings_bp.route('/channels', methods=['POST', 'GET'])
@@ -1348,7 +1348,7 @@ def settings_channels_page():
                 db.session.commit()
             else:
                 flash("Invalid Change Attempt", "Error")
-            redirect(url_for('settings_channels_page'))
+            redirect(url_for('.settings_channels_page'))
 
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
@@ -1427,7 +1427,7 @@ def settings_apikeys_post_page(action):
             flash("API Key Deleted", "success")
         else:
             flash("Invalid API Key", "error")
-    return redirect(url_for('settings_apikeys_page'))
+    return redirect(url_for('.settings_apikeys_page'))
 
 
 @settings_bp.route('/initialSetup', methods=['POST'])
