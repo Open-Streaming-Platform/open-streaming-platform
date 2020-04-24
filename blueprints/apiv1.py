@@ -4,7 +4,6 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Blueprint, request, url_for
 from flask_restplus import Api, Resource, reqparse
-from flask_socketio import emit
 
 import shutil
 import uuid
@@ -17,7 +16,6 @@ from classes import upvotes
 from classes import apikey
 from classes import views
 from classes import settings
-#from classes import hubConnection
 from classes.shared import db
 from classes.shared import socketio
 
@@ -76,10 +74,6 @@ chatParserPost = reqparse.RequestParser()
 chatParserPost.add_argument('username', type=str, required=True)
 chatParserPost.add_argument('message', type=str, required=True)
 chatParserPost.add_argument('userImage', type=str)
-
-hubConnectionPost = reqparse.RequestParser()
-hubConnectionPost.add_argument('verificationToken', type=str, required=True)
-hubConnectionPost.add_argument('serverToken', type=str, required=True)
 
 @api.route('/server')
 class api_1_Server(Resource):
@@ -174,7 +168,7 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery != None:
-                        videos_root = app.config['WEB_ROOT'] + 'videos/'
+                        videos_root = api.config['WEB_ROOT'] + 'videos/'
                         filePath = videos_root + channelQuery.channelLoc
                         if filePath != videos_root:
                             shutil.rmtree(filePath, ignore_errors=True)
@@ -337,7 +331,7 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery != None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            videos_root = app.config['WEB_ROOT'] + 'videos/'
+                            videos_root = api.config['WEB_ROOT'] + 'videos/'
 
                             filePath = videos_root + videoQuery.videoLocation
                             thumbnailPath = videos_root + videoQuery.videoLocation[:-4] + ".png"
@@ -421,7 +415,7 @@ class api_1_ListClip(Resource):
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
                     if clipQuery != None:
                         if clipQuery.owningUser == requestAPIKey.userID:
-                            videos_root = app.config['WEB_ROOT'] + 'videos/'
+                            videos_root = api.config['WEB_ROOT'] + 'videos/'
                             thumbnailPath = videos_root + clipQuery.thumbnailLocation
 
                             if thumbnailPath != videos_root:
@@ -457,19 +451,3 @@ class api_1_ListTopic(Resource):
         topicList = topics.topics.query.filter_by(id=topicID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
-
-#@api.route('/hub/validateServer')
-#class api_1_hubValidateServer(Resource):
-#    """
-#        Endpoint for an OSP Hub Server to Validate the Connection to a Node
-#    """
-#    @api.expect(hubConnectionPost)
-#    def post(self):
-#        args = hubConnectionPost.parse_args()
-#        if 'verificationToken' in args:
-#            connectionQuery = hubConnection.hubConnection.query.filter_by(verificationToken=args['verificationToken']).first()
-#               if 'serverToken' in args:
-#                    connectionQuery.validateHub(args['serverToken'])
-#                    db.session.commit()
-#                    return {'results': {'message': 'Server Validated with OSP Hub'}}, 200
-#        return {'results': {'message': 'Request Error'}}, 400
