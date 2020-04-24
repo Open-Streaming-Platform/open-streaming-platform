@@ -28,7 +28,6 @@ def init(context):
     context.jinja_env.filters['get_diskUsage'] = get_diskUsage
     context.jinja_env.filters['testList'] = testList
     context.jinja_env.filters['get_webhookTrigger'] = get_webhookTrigger
-    context.jinja_env.filters['get_hubStatus'] = get_hubStatus
     context.jinja_env.filters['get_logType'] = get_logType
 
 
