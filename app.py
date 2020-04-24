@@ -150,6 +150,7 @@ from blueprints.channels import channels_bp
 from blueprints.topics import topics_bp
 from blueprints.play import play_bp
 from blueprints.clip import clip_bp
+from blueprints.upload import upload_bp
 
 #----------------------------------------------------------------------------#
 # Template Filter Imports
