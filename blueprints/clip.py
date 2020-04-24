@@ -16,7 +16,7 @@ from globals import globalvars
 
 clip_bp = Blueprint('clip', __name__, url_prefix='/clip')
 
-@clip_bp.route('/clip/<clipID>')
+@clip_bp.route('/<clipID>')
 def view_clip_page(clipID):
     sysSettings = settings.settings.query.first()
     videos_root = globalvars.videoRoot + 'videos/'
@@ -80,7 +80,7 @@ def view_clip_page(clipID):
         flash("No Such Clip at URL","error")
         return redirect(url_for("main_page"))
 
-@clip_bp.route('/clip/<clipID>/delete')
+@clip_bp.route('/<clipID>/delete')
 @login_required
 def delete_clip_page(clipID):
 
@@ -93,7 +93,7 @@ def delete_clip_page(clipID):
         flash("Error Deleting Clip")
         return redirect(url_for('view_clip_page', clipID=clipID))
 
-@clip_bp.route('/clip/<clipID>/change', methods=['POST'])
+@clip_bp.route('/<clipID>/change', methods=['POST'])
 @login_required
 def clip_change_page(clipID):
 
