@@ -2,9 +2,10 @@ import subprocess
 import os
 import shutil
 
-from flask import current_app as app
 from flask import flash
 from flask_security import current_user
+
+from globals import globalvars
 
 from classes.shared import db
 from classes import Channel
@@ -16,6 +17,7 @@ from classes import settings
 
 from functions import system
 from functions import webhookFunc
+from functions import templateFilters
 
 # Checks Length of a Video at path and returns the length
 def getVidLength(input_video):
@@ -26,7 +28,7 @@ def deleteVideo(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
     if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
-        videos_root = app.config['WEB_ROOT'] + 'videos/'
+        videos_root = globalvars.videoRoot + 'videos/'
         filePath = videos_root + recordedVid.videoLocation
         thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
         gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
@@ -81,9 +83,9 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
 
     if recordedVidQuery is not None:
 
-        recordedVidQuery.channelName = strip_html(newVideoName)
+        recordedVidQuery.channelName = system.strip_html(newVideoName)
         recordedVidQuery.topic = newVideoTopic
-        recordedVidQuery.description = strip_html(description)
+        recordedVidQuery.description = system.strip_html(description)
         recordedVidQuery.allowComments = allowComments
 
         if recordedVidQuery.channel.imageLocation is None:
@@ -93,11 +95,11 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
 
         webhookFunc.runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
-                   channeltopic=get_topicName(recordedVidQuery.channel.topic),
-                   channelimage=channelImage, streamer=get_userName(recordedVidQuery.channel.owningUser),
+                   channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
+                   channelimage=channelImage, streamer=templateFilters.get_userName(recordedVidQuery.channel.owningUser),
                    channeldescription=str(recordedVidQuery.channel.description), videoname=recordedVidQuery.channelName,
                    videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
-                   videotopic=get_topicName(recordedVidQuery.topic),
+                   videotopic=templateFilters.get_topicName(recordedVidQuery.topic),
                    videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
                    videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
         db.session.commit()
@@ -112,7 +114,7 @@ def moveVideo(videoID, newChannel):
     if recordedVidQuery is not None:
         newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
         if newChannelQuery is not None:
-            videos_root = app.config['WEB_ROOT'] + 'videos/'
+            videos_root = globalvars.videoRoot + 'videos/'
 
             recordedVidQuery.channelID = newChannelQuery.id
             coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
