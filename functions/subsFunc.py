@@ -1,7 +1,7 @@
 from flask import current_app
 from flask_mail import Message
 
-from classes.shared import mail
+from classes.shared import email
 from classes import settings
 from classes import subscriptions
 from classes import Sec
@@ -17,7 +17,7 @@ def runSubscription(subject, destination, message):
         msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
         msg.body = finalMessage
         msg.html = finalMessage
-        mail.send(msg)
+        email.send(msg)
         return True
 
 def processSubscriptions(channelID, subject, message):

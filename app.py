@@ -27,7 +27,7 @@ from flask_security import utils
 from sqlalchemy.sql.expression import func
 from flask_socketio import emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_mail import Mail, Message
+#from flask_mail import Mail, Message
 from flask_migrate import Migrate, migrate, upgrade
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
@@ -225,8 +225,10 @@ except:
     print("DB Load Fail due to Upgrade or Issues")
 
 # Initialize Flask-Mail
-from classes.shared import mail
-mail.init(app)
+from classes.shared import email
+
+email.init_app(app)
+email.app = app
 
 # Register all Blueprints
 app.register_blueprint(api_v1)
@@ -946,8 +948,8 @@ def admin_page():
                 SECURITY_RESET_PASSWORD_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/reset_password.html',
                 SECURITY_SEND_CONFIRMATION_TEMPLATE = 'themes/'  + sysSettings.systemTheme + '/security/send_confirmation.html')
 
-            global mail
-            mail = Mail(app)
+            email.init_app(app)
+            email.app = app
 
             themeList = []
             themeDirectorySearch = os.listdir("./templates/themes/")
@@ -1135,7 +1137,8 @@ def settings_dbRestore():
                     SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
 
-                mail = Mail(app)
+                email.init_app(app)
+                email.app = app
 
             ## Restore Edge Nodes
             oldEdgeNodes = settings.edgeStreamer.query.all()
@@ -1926,8 +1929,9 @@ def initialSetup():
                     SECURITY_REGISTER_USER_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/register_user.html',
                     SECURITY_RESET_PASSWORD_TEMPLATE = 'themes/' + sysSettings.systemTheme + '/security/reset_password.html',
                     SECURITY_SEND_CONFIRMATION_TEMPLATE = 'themes/'  + sysSettings.systemTheme + '/security/send_confirmation.html')
-                global mail
-                mail = Mail(app)
+
+                email .init_app(app)
+                email.app = app
 
                 # Import Theme Data into Theme Dictionary
                 with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:

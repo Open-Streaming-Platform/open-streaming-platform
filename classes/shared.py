@@ -4,4 +4,4 @@ from flask_mail import Mail
 
 db = SQLAlchemy()
 socketio = SocketIO()
-mail = Mail()
+email = Mail()
