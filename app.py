@@ -235,6 +235,7 @@ app.register_blueprint(play_bp)
 app.register_blueprint(clip_bp)
 app.register_blueprint(streamers_bp)
 app.register_blueprint(topics_bp)
+app.register_blueprint(upload_bp)
 
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
