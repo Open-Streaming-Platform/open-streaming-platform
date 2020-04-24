@@ -53,7 +53,16 @@ sys.path.append('./classes')
 import logging
 import datetime
 
+#----------------------------------------------------------------------------#
+# Configuration Imports
+#----------------------------------------------------------------------------#
+
 from conf import config
+
+#----------------------------------------------------------------------------#
+# Global Vars Imports
+#----------------------------------------------------------------------------#
+from globals import globalvars
 
 #----------------------------------------------------------------------------#
 # App Configuration Setup
@@ -71,7 +80,7 @@ app.debug = config.debugMode
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.jinja_env.cache = {}
-app.config['WEB_ROOT'] = "/var/www/"
+app.config['WEB_ROOT'] = globalvars.videoRoot
 app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
@@ -142,10 +151,7 @@ Session(app)
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 toolbar = DebugToolbarExtension(app)
-#----------------------------------------------------------------------------#
-# Global Vars Imports
-#----------------------------------------------------------------------------#
-from globals import globalvars
+
 
 #----------------------------------------------------------------------------#
 # Modal Imports

@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import time
 import os
 
-from flask import current_app
+from globals import globalvars
 
 from classes import Sec
 from classes import topics
@@ -122,8 +122,7 @@ def get_pictureLocation(userID):
     return pictureLocation
 
 def get_diskUsage(channelLocation):
-    with current_app.app_context():
-        videos_root = current_app.config['WEB_ROOT'] + 'videos/'
+        videos_root = globalvars.videoRoot + 'videos/'
         channelLocation = videos_root + channelLocation
 
         total_size = 0

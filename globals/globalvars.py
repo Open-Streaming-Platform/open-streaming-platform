@@ -1,3 +1,5 @@
+videoRoot = "/var/www/"
+
 # Current Theme Settings Data
 themeData = {}
 
