@@ -2,8 +2,22 @@
 from gevent import monkey
 monkey.patch_all(thread=True)
 
-import git
+# Import Standary Python Libraries
+import uuid
+import socket
+import shutil
+import os
+import subprocess
+import time
+import sys
+import random
+import json
+import hashlib
+import logging
+import datetime
 
+# Import 3rd Party Libraries
+import git
 from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, Response, session
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
@@ -24,34 +38,14 @@ from werkzeug.utils import secure_filename
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import redis
-
 from apscheduler.schedulers.background import BackgroundScheduler
-
-from blueprints.apiv1 import api_v1
-from blueprints.streamers import streamers_bp
-
-import uuid
 import psutil
-import socket
-import shutil
-import os
-import subprocess
-import time
-import sys
-import random
 import requests
-import json
-import hashlib
 
-import smtplib
-
-#Import Paths
+# Import Paths
 cwp = sys.path[0]
 sys.path.append(cwp)
 sys.path.append('./classes')
-
-import logging
-import datetime
 
 #----------------------------------------------------------------------------#
 # Configuration Imports
@@ -66,11 +60,6 @@ from globals import globalvars
 #----------------------------------------------------------------------------#
 # App Configuration Setup
 #----------------------------------------------------------------------------#
-version = "beta-5b"
-appDBVersion = 0.50
-
-# TODO Move Hubsite URL to System Configuration.  Only here for testing/dev of Hub
-hubURL = "https://hub.openstreamingplatform.com"
 coreNginxRTMPAddress = "127.0.0.1"
 
 sysSettings = None
@@ -116,6 +105,55 @@ app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
+#----------------------------------------------------------------------------#
+# Modal Imports
+#----------------------------------------------------------------------------#
+
+from classes import Stream
+from classes import Channel
+from classes import dbVersion
+from classes import RecordedVideo
+from classes import topics
+from classes import settings
+from classes import banList
+from classes import Sec
+from classes import upvotes
+from classes import apikey
+from classes import views
+from classes import comments
+from classes import invites
+from classes import webhook
+from classes import logs
+from classes import subscriptions
+from classes import notifications
+
+#----------------------------------------------------------------------------#
+# Function Imports
+#----------------------------------------------------------------------------#
+from functions import database
+from functions import system
+from functions import securityFunc
+from functions import cache
+from functions import themes
+from functions import votes
+from functions import videoFunc
+from functions import webhookFunc
+from functions import commentsFunc
+
+#----------------------------------------------------------------------------#
+# Blueprint Filter Imports
+#----------------------------------------------------------------------------#
+from blueprints.apiv1 import api_v1
+from blueprints.streamers import streamers_bp
+
+#----------------------------------------------------------------------------#
+# Template Filter Imports
+#----------------------------------------------------------------------------#
+from functions import templateFilters
+
+#----------------------------------------------------------------------------#
+# Begin App Initialization
+#----------------------------------------------------------------------------#
 # Initialize Flask-Limiter
 if config.redisPassword == '' or config.redisPassword is None:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
@@ -157,46 +195,6 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 # Initialize Debug Toolbar
 toolbar = DebugToolbarExtension(app)
 
-#----------------------------------------------------------------------------#
-# Modal Imports
-#----------------------------------------------------------------------------#
-
-from classes import Stream
-from classes import Channel
-from classes import dbVersion
-from classes import RecordedVideo
-from classes import topics
-from classes import settings
-from classes import banList
-from classes import Sec
-from classes import upvotes
-from classes import apikey
-from classes import views
-from classes import comments
-from classes import invites
-from classes import webhook
-#from classes import hubConnection
-from classes import logs
-from classes import subscriptions
-from classes import notifications
-
-#----------------------------------------------------------------------------#
-# Function Imports
-#----------------------------------------------------------------------------#
-from functions import system
-from functions import securityFunc
-from functions import cache
-from functions import themes
-from functions import votes
-from functions import videoFunc
-from functions import webhookFunc
-from functions import commentsFunc
-
-#----------------------------------------------------------------------------#
-# Template Filter Imports
-#----------------------------------------------------------------------------#
-from functions import templateFilters
-
 # Initialize Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
@@ -206,200 +204,36 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
 
-#Initialize Flask-Markdown
+# Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
+
+# Initialize Scheduler
+scheduler = BackgroundScheduler()
+#scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
+scheduler.start()
+
+# Attempt Database Load and Validation
+try:
+    database.init(app, user_datastore)
+except:
+    print("DB Load Fail due to Upgrade or Issues")
+
+# Initialize Flask-Mail
+mail = Mail(app)
+
+# Register all Blueprints
+app.register_blueprint(api_v1)
+app.register_blueprint(streamers_bp)
+
+# Initialize Jinja2 Template Filters
+templateFilters.init(app)
+
+# Log Successful Start and Transfer Control
+system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
 
 #----------------------------------------------------------------------------#
 # Functions
 #----------------------------------------------------------------------------#
-def init_db_values():
-    db.create_all()
-
-    # Logic to Check the DB Version
-    dbVersionQuery = dbVersion.dbVersion.query.first()
-
-    if dbVersionQuery is None:
-        newDBVersion = dbVersion.dbVersion(appDBVersion)
-        db.session.add(newDBVersion)
-        db.session.commit()
-        with app.app_context():
-            migrate_db = migrate()
-            print(migrate_db)
-            upgrade_db = upgrade()
-            print(upgrade_db)
-
-    elif dbVersionQuery.version != appDBVersion:
-        dbVersionQuery.version = appDBVersion
-        db.session.commit()
-        pass
-
-    # Setup Default User Roles
-    user_datastore.find_or_create_role(name='Admin', description='Administrator')
-    user_datastore.find_or_create_role(name='User', description='User')
-    user_datastore.find_or_create_role(name='Streamer', description='Streamer')
-    user_datastore.find_or_create_role(name='Recorder', description='Recorder')
-    user_datastore.find_or_create_role(name='Uploader', description='Uploader')
-
-    topicList = [("Other","None")]
-    for topic in topicList:
-        existingTopic = topics.topics.query.filter_by(name=topic[0]).first()
-        if existingTopic is None:
-            newTopic = topics.topics(topic[0], topic[1])
-            db.session.add(newTopic)
-    db.session.commit()
-
-    # Note: for a freshly installed system, sysSettings is None!
-    sysSettings = settings.settings.query.first()
-
-    if sysSettings is not None:
-        # Set/Update the system version attribute
-        if sysSettings.version is None or sysSettings.version != version:
-            sysSettings.version = version
-            db.session.commit()
-        # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
-        if sysSettings.systemTheme is None or sysSettings.systemTheme == "Default":
-            sysSettings.systemTheme = "Defaultv2"
-            db.session.commit()
-        if sysSettings.siteProtocol is None:
-            sysSettings.siteProtocol = "http://"
-            db.session.commit()
-        if sysSettings.version == "None":
-            sysSettings.version = version
-            db.session.commit()
-        if sysSettings.systemLogo is None:
-            sysSettings.systemLogo = "/static/img/logo.png"
-            db.session.commit()
-        # Sets allowComments to False if None is Set - Usual Cause is moving from Alpha to Beta
-        if sysSettings.allowComments is None:
-            sysSettings.allowComments = False
-            db.session.commit()
-        # Sets allowUploads to False if None is Set - Caused by Moving from Pre-Beta 2
-        if sysSettings.allowUploads is None:
-            sysSettings.allowUploads = False
-            db.session.commit()
-        # Sets Blank Server Message to Prevent Crash if set to None
-        if sysSettings.serverMessage is None:
-            sysSettings.serverMessage = ""
-            db.session.commit()
-        # Sets Protection System Setting if None Exists:
-        if sysSettings.protectionEnabled is None:
-            sysSettings.protectionEnabled = True
-            db.session.commit()
-        # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
-        channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
-        for chan in channelQuery:
-            chan.chatBG = "Standard"
-            chan.chatTextColor = "#FFFFFF"
-            chan.chatAnimation = "slide-in-left"
-            db.session.commit()
-        channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
-        for chan in channelQuery:
-            chan.channelMuted = False
-            db.session.commit()
-        channelQuery = Channel.Channel.query.filter_by(showChatJoinLeaveNotification=None).all()
-        for chan in channelQuery:
-            chan.showChatJoinLeaveNotification = True
-            db.session.commit()
-        channelQuery = Channel.Channel.query.filter_by(currentViewers=None).all()
-        for chan in channelQuery:
-            chan.currentViewers = 0
-            db.session.commit()
-        channelQuery = Channel.Channel.query.filter_by(defaultStreamName=None).all()
-        for chan in channelQuery:
-            chan.defaultStreamName = ""
-            db.session.commit()
-
-        # Fix for Videos and Channels that were created before Publishing Option
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
-        for vid in videoQuery:
-            vid.published = True
-            db.session.commit()
-        clipQuery = RecordedVideo.Clips.query.filter_by(published=None).all()
-        for clip in clipQuery:
-            clip.published = True
-            db.session.commit()
-        channelQuery = Channel.Channel.query.filter_by(autoPublish=None).all()
-        for chan in channelQuery:
-            chan.autoPublish = True
-            db.session.commit()
-        # Fixes for Channels that do not have the restream settings initialized
-        channelQuery = Channel.Channel.query.filter_by(rtmpRestream=None).all()
-        for chan in channelQuery:
-            chan.rtmpRestream = False
-            chan.rtmpRestreamDestination = ""
-            db.session.commit()
-
-        # Fixes for Server Settings not having a Server Message Title
-        if sysSettings.serverMessageTitle is None:
-            sysSettings.serverMessageTitle = "Server Message"
-            db.session.commit()
-        if sysSettings.restreamMaxBitrate is None:
-            sysSettings.restreamMaxBitrate = 3500
-            db.session.commit()
-
-        #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
-        #if hubQuery == None:
-        #    newHub = hubConnection.hubServers(hubURL)
-        #    db.session.add(newHub)
-        #    db.session.commit()
-
-        # Create the stream-thumb directory if it does not exist
-        if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
-            try:
-                os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
-            except OSError:
-                flash("Unable to create <web-root>/stream-thumb", "error")
-
-        sysSettings = settings.settings.query.first()
-
-        app.config['SERVER_NAME'] = None
-        app.config['SECURITY_EMAIL_SENDER'] = sysSettings.smtpSendAs
-        app.config['MAIL_DEFAULT_SENDER'] = sysSettings.smtpSendAs
-        app.config['MAIL_SERVER'] = sysSettings.smtpAddress
-        app.config['MAIL_PORT'] = sysSettings.smtpPort
-        app.config['MAIL_USE_SSL'] = sysSettings.smtpSSL
-        app.config['MAIL_USE_TLS'] = sysSettings.smtpTLS
-        app.config['MAIL_USERNAME'] = sysSettings.smtpUsername
-        app.config['MAIL_PASSWORD'] = sysSettings.smtpPassword
-        app.config['SECURITY_FORGOT_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/forgot_password.html'
-        app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/login_user.html'
-        app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/register_user.html'
-        app.config['SECURITY_SEND_CONFIRMATION_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/send_confirmation.html'
-        app.config['SECURITY_RESET_PASSWORD_TEMPLATE'] = 'themes/' + sysSettings.systemTheme + '/security/reset_password.html'
-        app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_RESET'] = sysSettings.siteName + " - Password Reset Request"
-        app.config['SECURITY_EMAIL_SUBJECT_REGISTER'] = sysSettings.siteName + " - Welcome!"
-        app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
-        app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
-
-        # Initialize the OSP Edge Configuration - Mostly for Docker
-        try:
-            system.rebuildOSPEdgeConf()
-        except:
-            print("Error Rebuilding Edge Config")
-
-        # Import Theme Data into Theme Dictionary
-        with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
-
-            globalvars.themeData = json.load(f)
-
-        ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
-        if config.dbLocation[:6] != "sqlite":
-            try:
-                dbEngine = db.engine
-                dbConnection = dbEngine.connect()
-                dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'" % dbEngine.url.database)
-
-                sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
-
-                results = dbConnection.execute(sql)
-                for row in results:
-                    sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
-                    db.Connection.execute(sql)
-                db.close()
-            except:
-                pass
-        ## End DB UT8MB4 Fixes
-
 @system.asynch
 def runSubscription(subject, destination, message):
     with app.app_context():
@@ -428,14 +262,6 @@ def processSubscriptions(channelID, subject, message):
 
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
-
-#----------------------------------------------------------------------------#
-# Scheduler Tasks
-#----------------------------------------------------------------------------#
-
-scheduler = BackgroundScheduler()
-#scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
-scheduler.start()
 
 #----------------------------------------------------------------------------#
 # Context Processors
@@ -636,9 +462,6 @@ def topic_view_page(topicID):
     clipsList.sort(key=lambda x: x.views, reverse=True)
 
     return render_template(themes.checkOverride('videoListView.html'), openStreams=streamsQuery, recordedVids=recordedVideoQuery, clipsList=clipsList, title="Topics - Videos")
-
-
-
 
 # Allow a direct link to any open stream for a channel
 @app.route('/channel/<loc>/stream')
@@ -1823,88 +1646,6 @@ def admin_page():
 
         return redirect(url_for('admin_page'))
 
-#@app.route('/settings/admin/hub', methods=['POST', 'GET'])
-#@login_required
-#@roles_required('Admin')
-#def admin_hub_page():
-#    sysSettings = settings.settings.query.first()
-#    if request.method == "POST":
-#        if "action" in request.form:
-#            action = request.form["action"]
-#            if action == "addConnection":
-#                if "hubServer" in request.form:
-#                    hubServer = int(request.form["hubServer"])
-#
-#                    hubServerQuery = hubConnection.hubServers.query.filter_by(id=hubServer).first()
-#
-#                    if hubServerQuery != None:
-#                        r = None
-
-#                        existingConnectionRequest = hubConnection.hubConnection.query.filter_by(hubServer=hubServerQuery.id).first()
-#                        if existingConnectionRequest != None:
-#                            try:
-#                                r = requests.delete(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': existingConnectionRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
-#                            except requests.exceptions.Timeout:
-#                                pass
-#                            except requests.exceptions.ConnectionError:
-#                                pass
-#                            db.session.delete(existingConnectionRequest)
-#                            db.session.commit()
-
-#                        newTokenRequest = hubConnection.hubConnection(hubServerQuery.id)
-#                        try:
-#                            r = requests.post(hubServerQuery.serverAddress + '/apiv1/servers', data={'verificationToken': newTokenRequest.verificationToken, 'serverAddress': sysSettings.siteAddress})
-#                        except requests.exceptions.Timeout:
-#                            pass
-#                        except requests.exceptions.ConnectionError:
-#                            pass
-#                        if r != None:
-#                            if r.status_code == 200:
-#                                db.session.add(newTokenRequest)
-#                                db.session.commit()
-#                                flash("Successfully Added to Hub", "success")
-#                                return redirect(url_for('admin_page', page="hub"))
-#                            else:
-#                                flash("Failed to Add to Hub Due to Server Error")
-#                                return redirect(url_for('admin_page', page="hub"))
-#                flash("Failed to Add to Hub")
-#    if request.method == "GET":
-#        if request.args.get("action") is not None:
-#            action = request.args.get("action")
-#            if action == "deleteConnection":
-#                if request.args.get("connectionID"):
-#                    connection = hubConnection.hubConnection.query.filter_by(id=int(request.args.get("connectionID"))).first()
-#                    try:
-#                        r = requests.delete(connection.server.serverAddress + '/apiv1/servers', data={'verificationToken': connection.verificationToken, 'serverAddress': sysSettings.siteAddress})
-#                    except requests.exceptions.Timeout:
-#                        flash("Unable to Remove from Hub Server Due to Timeout", "error")
-#                        return redirect(url_for('admin_page', page="hub"))
-#                    except requests.exceptions.ConnectionError:
-#                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
-#                        return redirect(url_for('admin_page', page="hub"))
-#                    if r.status_code == 200:
-#                        db.session.delete(connection)
-#                        db.session.commit()
-#                        flash("Successfully Removed from Hub","success")
-#                        return redirect(url_for('admin_page', page="hub"))
-#                    else:
-#                        flash("Unable to Remove from Hub Server Due to Connection Error", "error")
-#                        return redirect(url_for('admin_page', page="hub"))
-#            if action == "deleteServer":
-#                if request.args.get("serverID"):
-#                    serverQuery = hubConnection.hubServers.query.filter_by(id=int(request.args.get("serverID"))).first()
-#                    if serverQuery != None:
-#                        if serverQuery.serverAddress == hubURL:
-#                            flash("Unable to Delete Default Hub", "error")
-#                            return redirect(url_for('admin_page', page="hub"))
-#                        else:
-#                            db.session.delete(serverQuery)
-#                            db.session.commit()
-#                            flash("Successfully Deleted Hub", "success")
-#                            return redirect(url_for('admin_page', page="hub"))
-#
-#    return redirect(url_for('admin_page', page="hub"))
-
 @app.route('/settings/dbRestore', methods=['POST'])
 def settings_dbRestore():
     validRestoreAttempt = False
@@ -1949,7 +1690,7 @@ def settings_dbRestore():
                                                eval(restoreDict['settings'][0]['allowUploads']),
                                                eval(restoreDict['settings'][0]['adaptiveStreaming']),
                                                eval(restoreDict['settings'][0]['showEmptyTables']),
-                                               eval(restoreDict['settings'][0]['allowComments']), version)
+                                               eval(restoreDict['settings'][0]['allowComments']), globalvars.version)
             serverSettings.id = int(restoreDict['settings'][0]['id'])
             serverSettings.systemTheme = restoreDict['settings'][0]['systemTheme']
             serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
@@ -2400,7 +2141,7 @@ def settings_dbRestore():
             dbVersionQuery = dbVersion.dbVersion.query.first()
 
             if dbVersionQuery is None:
-                newDBVersion = dbVersion.dbVersion(appDBVersion)
+                newDBVersion = dbVersion.dbVersion(globalvars.appDBVersion)
                 db.session.add(newDBVersion)
                 db.session.commit()
 
@@ -2758,7 +2499,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Uploader')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, version)
+            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect, uploadSelect, adaptiveStreaming, showEmptyTables, allowComments, globalvars.version)
             db.session.add(serverSettings)
             db.session.commit()
 
@@ -4415,22 +4156,6 @@ def markUserNotificationRead(message):
     db.session.commit()
     db.session.close()
     return 'OK'
-
-# Start App Initiation
-try:
-    init_db_values()
-except:
-    print("DB Load Fail due to Upgrade or Issues")
-mail = Mail(app)
-
-# Register all Blueprints
-app.register_blueprint(api_v1)
-app.register_blueprint(streamers_bp)
-
-# Initialize Jinja2 Template Filters
-templateFilters.init(app)
-
-system.newLog("0", "OSP Started Up Successfully - version: " + str(version))
 
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False

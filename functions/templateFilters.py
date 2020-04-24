@@ -157,24 +157,6 @@ def get_webhookTrigger(webhookTrigger):
     }
     return webhookNames[webhookTrigger]
 
-def get_hubStatus(hubStatus):
-
-    hubStatus = str(hubStatus)
-    hubStatusNames = {
-        '0': 'Unverified',
-        '1': 'Verified'
-    }
-    return hubStatusNames[hubStatus]
-
-#@app.template_filter('get_hubName')
-#def get_hubName(hubID):
-#
-#    hubID = int(hubID)
-#    hubQuery = hubConnection.hubServers.query.filter_by(id=hubID).first()
-#    if hubQuery != None:
-#        return hubQuery.serverAddress
-#    return "Unknown"
-
 def get_logType(logType):
 
     logType = str(logType)

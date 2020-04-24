@@ -1,3 +1,6 @@
+version = "beta-5b"
+appDBVersion = 0.50
+
 videoRoot = "/var/www/"
 
 # Current Theme Settings Data
