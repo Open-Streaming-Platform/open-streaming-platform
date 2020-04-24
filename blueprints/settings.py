@@ -167,7 +167,7 @@ def admin_page():
                     db.session.delete(topicQuery)
                     db.session.commit()
                     flash("Topic Deleted")
-                    return redirect(url_for('admin_page', page="topics"))
+                    return redirect(url_for('.admin_page', page="topics"))
 
                 elif setting == "channel":
                     channelID = int(request.args.get("channelID"))
@@ -200,7 +200,7 @@ def admin_page():
                     db.session.commit()
 
                     flash("Channel Deleted")
-                    return redirect(url_for('admin_page', page="channels"))
+                    return redirect(url_for('.admin_page', page="channels"))
 
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
@@ -255,7 +255,7 @@ def admin_page():
                         db.session.delete(userQuery)
                         db.session.commit()
 
-                        return redirect(url_for('admin_page', page="users"))
+                        return redirect(url_for('.admin_page', page="users"))
 
                 elif setting == "userRole":
                     userID = int(request.args.get("userID"))
@@ -273,7 +273,7 @@ def admin_page():
 
                     else:
                         flash("Invalid Role or User!")
-                    return redirect(url_for('admin_page', page="users"))
+                    return redirect(url_for('.admin_page', page="users"))
 
             elif action == "add":
                 if setting == "userRole":
@@ -291,7 +291,7 @@ def admin_page():
                         flash("Added Role to User")
                     else:
                         flash("Invalid Role or User!")
-                    return redirect(url_for('admin_page', page="users"))
+                    return redirect(url_for('.admin_page', page="users"))
             elif action == "toggleActive":
                 if setting == "users":
                     userID = int(request.args.get("userID"))
@@ -306,7 +306,7 @@ def admin_page():
                             system.newLog(1, "User " + current_user.username + " Enabled User " + userQuery.username)
                             flash("User Enabled")
                         db.session.commit()
-                    return redirect(url_for('admin_page', page="users"))
+                    return redirect(url_for('.admin_page', page="users"))
             elif action == "backup":
                 dbTables = db.engine.table_names()
                 dbDump = {}
@@ -327,7 +327,7 @@ def admin_page():
                 return Response(dbDumpJson, mimetype='application/json', headers={
                     'Content-Disposition': 'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
 
-            return redirect(url_for('admin_page'))
+            return redirect(url_for('.admin_page'))
 
         page = None
         if request.args.get('page') is not None:
@@ -482,7 +482,7 @@ def admin_page():
                 externalIP = socket.gethostbyname(validAddress)
             except socket.gaierror:
                 flash("Invalid Server Address/IP", "error")
-                return redirect(url_for("admin_page", page="settings"))
+                return redirect(url_for(".admin_page", page="settings"))
 
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
@@ -550,7 +550,7 @@ def admin_page():
 
             system.newLog(1, "User " + current_user.username + " altered System Settings")
 
-            return redirect(url_for('admin_page', page="settings"))
+            return redirect(url_for('.admin_page', page="settings"))
 
         elif settingType == "topics":
 
@@ -594,7 +594,7 @@ def admin_page():
                 db.session.add(newTopic)
 
             db.session.commit()
-            return redirect(url_for('admin_page', page="topics"))
+            return redirect(url_for('.admin_page', page="topics"))
 
         elif settingType == "edgeNode":
             address = request.form['address']
@@ -614,7 +614,7 @@ def admin_page():
                 db.session.add(newEdge)
                 db.session.commit()
 
-            return redirect(url_for('admin_page', page="ospedge"))
+            return redirect(url_for('.admin_page', page="ospedge"))
 
         elif settingType == "newuser":
 
@@ -630,9 +630,9 @@ def admin_page():
             user = Sec.User.query.filter_by(username=username).first()
             user_datastore.add_role_to_user(user, 'User')
             db.session.commit()
-            return redirect(url_for('admin_page', page="users"))
+            return redirect(url_for('.admin_page', page="users"))
 
-        return redirect(url_for('admin_page'))
+        return redirect(url_for('.admin_page'))
 
 
 @settings_bp.route('/dbRestore', methods=['POST'])
