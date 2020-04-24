@@ -288,7 +288,6 @@ def inject_ownedChannels():
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
-
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
@@ -317,7 +316,6 @@ def page_not_found(e):
 #----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
-
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
@@ -325,7 +323,6 @@ def shutdown_session(exception=None):
 #----------------------------------------------------------------------------#
 # Route Controllers.
 #----------------------------------------------------------------------------#
-
 @app.route('/')
 def main_page():
 
