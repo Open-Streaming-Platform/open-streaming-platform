@@ -110,7 +110,7 @@ def vid_clip_page(videoID):
 
     if result[0] is True:
         flash("Clip Created", "success")
-        return redirect(url_for("view_clip_page", clipID=result[1]))
+        return redirect(url_for("clip.view_clip_page", clipID=result[1]))
     else:
         flash("Unable to create Clip", "error")
         return redirect(url_for("view_vid_page", videoID=videoID))
