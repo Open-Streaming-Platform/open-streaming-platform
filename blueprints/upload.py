@@ -10,7 +10,6 @@ from werkzeug.utils import secure_filename
 from classes.shared import db
 from classes import settings
 from classes import Channel
-from classes import Stream
 from classes import RecordedVideo
 from classes import subscriptions
 from classes import notifications
