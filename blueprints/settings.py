@@ -533,6 +533,7 @@ def admin_page():
                 SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
 
             email.init_app(current_app)
+            email.init_app(current_app)
             email.app = current_app
 
             themeList = []
@@ -618,12 +619,12 @@ def admin_page():
         elif settingType == "newuser":
 
             password = request.form['password1']
-            email = request.form['emailaddress']
+            emailAddress = request.form['emailaddress']
             username = request.form['username']
 
             passwordhash = hash_password(password)
 
-            user_datastore.create_user(email=email, username=username, password=passwordhash)
+            user_datastore.create_user(email=emailAddress, username=username, password=passwordhash)
             db.session.commit()
 
             user = Sec.User.query.filter_by(username=username).first()
