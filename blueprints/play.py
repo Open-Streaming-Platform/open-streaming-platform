@@ -113,7 +113,7 @@ def vid_clip_page(videoID):
         return redirect(url_for("clip.view_clip_page", clipID=result[1]))
     else:
         flash("Unable to create Clip", "error")
-        return redirect(url_for("view_vid_page", videoID=videoID))
+        return redirect(url_for(".view_vid_page", videoID=videoID))
 
 @play_bp.route('/<videoID>/move', methods=['POST'])
 @login_required
@@ -125,7 +125,7 @@ def vid_move_page(videoID):
     result = videoFunc.moveVideo(videoID, newChannel)
     if result is True:
         flash("Video Moved to Another Channel", "success")
-        return redirect(url_for('view_vid_page', videoID=videoID))
+        return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
         flash("Error Moving Video", "error")
         return redirect(url_for("main_page"))
@@ -146,7 +146,7 @@ def vid_change_page(videoID):
 
     if result is True:
         flash("Changed Video Metadata", "success")
-        return redirect(url_for('view_vid_page', videoID=videoID))
+        return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
         flash("Error Changing Video Metadata", "error")
         return redirect(url_for("main_page"))
@@ -162,7 +162,7 @@ def delete_vid_page(videoID):
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Video")
-        return redirect(url_for('view_vid_page', videoID=videoID))
+        return redirect(url_for('.view_vid_page', videoID=videoID))
 
 @play_bp.route('/<videoID>/comment', methods=['GET','POST'])
 @login_required
@@ -231,4 +231,4 @@ def comments_vid_page(videoID):
         flash('Invalid Video ID','error')
         return redirect(url_for('main_page'))
 
-    return redirect(url_for('view_vid_page', videoID=videoID))
+    return redirect(url_for('.view_vid_page', videoID=videoID))

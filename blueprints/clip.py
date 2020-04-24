@@ -91,7 +91,7 @@ def delete_clip_page(clipID):
         return redirect(url_for('main_page'))
     else:
         flash("Error Deleting Clip")
-        return redirect(url_for('view_clip_page', clipID=clipID))
+        return redirect(url_for('.view_clip_page', clipID=clipID))
 
 @clip_bp.route('/<clipID>/change', methods=['POST'])
 @login_required
@@ -101,7 +101,7 @@ def clip_change_page(clipID):
 
     if result is True:
         flash("Updated Clip Metadata","success")
-        return redirect(url_for('view_clip_page', clipID=clipID))
+        return redirect(url_for('.view_clip_page', clipID=clipID))
 
     else:
         flash("Error Changing Clip Metadata", "error")

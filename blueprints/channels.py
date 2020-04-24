@@ -60,7 +60,7 @@ def channel_view_link_page(channelLoc):
     if channelLoc is not None:
         channelQuery = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
         if channelQuery is not None:
-            return redirect(url_for("channel_view_page",chanID=channelQuery.id))
+            return redirect(url_for(".channel_view_page",chanID=channelQuery.id))
     flash("Invalid Channel Location", "error")
     return redirect(url_for("main_page"))
 
@@ -74,7 +74,7 @@ def channel_stream_link_page(loc):
             return redirect(url_for("view_page", loc=requestedChannel.channelLoc))
         else:
             flash("No Active Streams for the Channel","error")
-            return redirect(url_for("channel_view_page",chanID=requestedChannel.id))
+            return redirect(url_for(".channel_view_page",chanID=requestedChannel.id))
     else:
         flash("Unknown Channel","error")
         return redirect(url_for("main_page"))
