@@ -3,40 +3,29 @@ from gevent import monkey
 monkey.patch_all(thread=True)
 
 # Import Standary Python Libraries
-import uuid
 import socket
-import shutil
 import os
 import subprocess
 import time
 import sys
-import random
-import json
 import hashlib
 import logging
 import datetime
 
 # Import 3rd Party Libraries
-from flask import Flask, redirect, request, abort, render_template, url_for, flash, send_from_directory, Response, session
+from flask import Flask, redirect, request, abort, flash
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.signals import user_registered
-from sqlalchemy.sql.expression import func
-from flask_socketio import emit, join_room, leave_room
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_migrate import Migrate, migrate, upgrade
+from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
-import xmltodict
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import redis
 from apscheduler.schedulers.background import BackgroundScheduler
-import psutil
-import requests
 
 # Import Paths
 cwp = sys.path[0]
@@ -228,17 +217,22 @@ from functions.socketio import syst
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 #----------------------------------------------------------------------------#
+from blueprints.errorhandler import errorhandler_bp
 from blueprints.apiv1 import api_v1
+from blueprints.root import root_bp
 from blueprints.streamers import streamers_bp
 from blueprints.channels import channels_bp
 from blueprints.topics import topics_bp
 from blueprints.play import play_bp
+from blueprints.liveview import liveview_bp
 from blueprints.clip import clip_bp
 from blueprints.upload import upload_bp
 from blueprints.settings import settings_bp
 
 # Register all Blueprints
+app.register_blueprint(errorhandler_bp)
 app.register_blueprint(api_v1)
+app.register_blueprint(root_bp)
 app.register_blueprint(channels_bp)
 app.register_blueprint(play_bp)
 app.register_blueprint(clip_bp)
@@ -246,6 +240,7 @@ app.register_blueprint(streamers_bp)
 app.register_blueprint(topics_bp)
 app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
+app.register_blueprint(liveview_bp)
 
 #----------------------------------------------------------------------------#
 # Template Filter Imports
@@ -267,7 +262,6 @@ app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted
 #----------------------------------------------------------------------------#
 # Context Processors
 #----------------------------------------------------------------------------#
-
 @app.context_processor
 def inject_notifications():
     notificationList = []
@@ -314,21 +308,6 @@ def user_registered_sighandler(app, user, confirm_token):
     db.session.commit()
 
 #----------------------------------------------------------------------------#
-# Error Handlers.
-#----------------------------------------------------------------------------#
-@app.errorhandler(404)
-def page_not_found(e):
-    sysSettings = settings.settings.query.first()
-    system.newLog(0, "404 Error - " + str(request.url))
-    return render_template(themes.checkOverride('404.html'), sysSetting=sysSettings), 404
-
-@app.errorhandler(500)
-def page_not_found(e):
-    sysSettings = settings.settings.query.first()
-    system.newLog(0,"500 Error - " + str(request.url))
-    return render_template(themes.checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
-
-#----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
 @app.teardown_appcontext
@@ -338,253 +317,6 @@ def shutdown_session(exception=None):
 #----------------------------------------------------------------------------#
 # Route Controllers.
 #----------------------------------------------------------------------------#
-@app.route('/')
-def main_page():
-
-    firstRunCheck = system.check_existing_settings()
-
-    if firstRunCheck is False:
-        return render_template('/firstrun.html')
-
-    else:
-        activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
-
-        randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)\
-            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id)\
-            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, Channel.Channel.protected, Channel.Channel.channelName.label('ChanName'))\
-            .order_by(func.random()).limit(16)
-
-        randomClips = RecordedVideo.Clips.query.filter_by(published=True)\
-            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id)\
-            .join(Channel.Channel, Channel.Channel.id==RecordedVideo.RecordedVideo.channelID)\
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation)\
-            .order_by(func.random()).limit(16)
-
-        return render_template(themes.checkOverride('index.html'), streamList=activeStreams, randomRecorded=randomRecorded, randomClips=randomClips)
-
-@app.route('/view/<loc>/')
-def view_page(loc):
-    sysSettings = settings.settings.query.first()
-
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
-
-    if requestedChannel is not None:
-
-        if requestedChannel.protected and sysSettings.protectionEnabled:
-            if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
-                return render_template(themes.checkOverride('channelProtectionAuth.html'))
-
-        streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
-
-        streamURL = ''
-        edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-        if edgeQuery == []:
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
-            elif requestedChannel.record is True and requestedChannel.owner.has_role("Recorder") and sysSettings.allowRecording is True:
-                streamURL = '/live-rec/' + requestedChannel.channelLoc + '/index.m3u8'
-            elif requestedChannel.record is False or requestedChannel.owner.has_role("Recorder") is False or sysSettings.allowRecording is False :
-                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
-        else:
-            # Handle Selecting the Node using Round Robin Logic
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
-            else:
-                streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
-
-        requestedChannel.views = requestedChannel.views + 1
-        if streamData is not None:
-            streamData.totalViewers = streamData.totalViewers + 1
-        db.session.commit()
-
-        topicList = topics.topics.query.all()
-
-        chatOnly = request.args.get("chatOnly")
-
-        if chatOnly == "True" or chatOnly == "true":
-            if requestedChannel.chatEnabled:
-                hideBar = False
-
-                hideBarReq = request.args.get("hideBar")
-                if hideBarReq == "True" or hideBarReq == "true":
-                    hideBar = True
-
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar)
-            else:
-                flash("Chat is Not Enabled For This Stream","error")
-
-        isEmbedded = request.args.get("embedded")
-
-        newView = views.views(0, requestedChannel.id)
-        db.session.add(newView)
-        db.session.commit()
-
-        requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
-
-        if isEmbedded is None or isEmbedded == "False":
-
-            secureHash = None
-            rtmpURI = None
-
-            endpoint = 'live'
-
-            if requestedChannel.protected:
-                if current_user.is_authenticated:
-                    secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.password).encode('utf-8')).hexdigest()
-                    username = current_user.username
-                    rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
-            else:
-                rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
-
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-
-            clipsList = []
-            for vid in requestedChannel.recordedVideo:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
-            clipsList.sort(key=lambda x: x.views, reverse=True)
-
-            subState = False
-            if current_user.is_authenticated:
-                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id, userID=current_user.id).first()
-                if chanSubQuery is not None:
-                    subState = True
-
-            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
-        else:
-            isAutoPlay = request.args.get("autoplay")
-            if isAutoPlay is None:
-                isAutoPlay = False
-            elif isAutoPlay.lower() == 'true':
-                isAutoPlay = True
-            else:
-                isAutoPlay = False
-            return render_template(themes.checkOverride('player_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
-
-    else:
-        flash("No Live Stream at URL","error")
-        return redirect(url_for("main_page"))
-
-@app.route('/unsubscribe')
-def unsubscribe_page():
-    if 'email' in request.args:
-        emailAddress = request.args.get("email")
-        userQuery = Sec.User.query.filter_by(email=emailAddress).first()
-        if userQuery is not None:
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(userID=userQuery.id).all()
-            for sub in subscriptionQuery:
-                db.session.delete(sub)
-            db.session.commit()
-        return emailAddress + " has been removed from all subscriptions"
-
-@app.route('/rtmpstat/<node>')
-@login_required
-@roles_required('Admin')
-def rtmpStat_page(node):
-    r = None
-    if node == "localhost":
-        r = requests.get("http://127.0.0.1:9000/stat").text
-    else:
-        nodeQuery = settings.edgeStreamer.query.filter_by(address=node).first()
-        if nodeQuery is not None:
-            r = requests.get('http://' + nodeQuery.address + ":9000/stat").text
-
-    if r is not None:
-        data = None
-        try:
-            data = xmltodict.parse(r)
-            data = json.dumps(data)
-        except:
-            return abort(500)
-        return (data)
-    return abort(500)
-
-@app.route('/search', methods=["POST"])
-def search_page():
-    if 'term' in request.form:
-        search = str(request.form['term'])
-
-        topicList = topics.topics.query.filter(topics.topics.name.contains(search)).all()
-
-        streamerList = []
-        streamerList1 = Sec.User.query.filter(Sec.User.username.contains(search)).all()
-        streamerList2 = Sec.User.query.filter(Sec.User.biography.contains(search)).all()
-        for stream in streamerList1:
-            if stream.has_role('Streamer'):
-                streamerList.append(stream)
-        for stream in streamerList2:
-            if stream not in streamerList and stream.has_role('streamer'):
-                streamerList.append(stream)
-
-        channelList = []
-        channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.contains(search)).all()
-        channelList2 = Channel.Channel.query.filter(Channel.Channel.description.contains(search)).all()
-        for channel in channelList1:
-            channelList.append(channel)
-        for channel in channelList2:
-            if channel not in channelList:
-                channelList.append(channel)
-
-        videoList = []
-        videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
-        videoList2 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.description.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
-        for video in videoList1:
-            videoList.append(video)
-        for video in videoList2:
-            if video not in videoList:
-                videoList.append(video)
-
-        streamList = Stream.Stream.query.filter(Stream.Stream.streamName.contains(search)).all()
-
-        clipList = []
-        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).filter(RecordedVideo.Clips.published == True).all()
-        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).filter(RecordedVideo.Clips.published == True).all()
-        for clip in clipList1:
-            clipList.append(clip)
-        for clip in clipList2:
-            if clip not in clipList:
-                clipList.append(clip)
-
-        return render_template(themes.checkOverride('search.html'), topicList=topicList, streamerList=streamerList, channelList=channelList, videoList=videoList, streamList=streamList, clipList=clipList)
-
-    return redirect(url_for('main_page'))
-
-@login_required
-@app.route('/notifications')
-def notification_page():
-    notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
-    return render_template(themes.checkOverride('notifications.html'), notificationList=notificationQuery)
-
-@app.route('/auth', methods=["POST","GET"])
-def auth_check():
-
-    sysSettings = settings.settings.query.with_entities(settings.settings.protectionEnabled).first()
-    if sysSettings.protectionEnabled is False:
-        return 'OK'
-
-    channelID = ""
-    if 'X-Channel-ID' in request.headers:
-        channelID = request.headers['X-Channel-ID']
-
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).with_entities(Channel.Channel.id, Channel.Channel.protected).first()
-        if channelQuery is not None:
-            if channelQuery.protected:
-                if securityFunc.check_isValidChannelViewer(channelQuery.id):
-                    db.session.close()
-                    return 'OK'
-                else:
-                    db.session.close()
-                    return abort(401)
-            else:
-                return 'OK'
-
-    db.session.close()
-    abort(400)
-
 ### Start NGINX-RTMP Authentication Functions
 
 @app.route('/auth-key', methods=['POST'])
@@ -669,7 +401,6 @@ def streamkey_check():
         print(returnMessage)
         db.session.close()
         return abort(400)
-
 
 @app.route('/auth-user', methods=['POST'])
 def user_auth_check():
@@ -935,10 +666,6 @@ def playback_auth_handler():
                                 return 'OK'
     db.session.close()
     return abort(400)
-
-@app.route('/robots.txt')
-def static_from_root():
-    return send_from_directory(app.static_folder, request.path[1:])
 
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False

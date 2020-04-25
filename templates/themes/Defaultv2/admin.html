@@ -69,7 +69,7 @@
                                     </div>
                                 </div><br>
                                 <div class="card">
-                                    <div class="card-header"><i class="fas fa-video"></i> <a href="/rtmpstat/localhost">RTMP Stats</a></div>
+                                    <div class="card-header"><i class="fas fa-video"></i> <a href="/settings/admin/rtmpstat/localhost">RTMP Stats</a></div>
                                     <div class="card-body">
                                         <table class="table table-hover">
                                             <thead>
@@ -271,7 +271,7 @@
                                             <tbody>
                                             {% for node in edgeNodes %}
                                             <tr id="edgeTableRow-{{node.id}}">
-                                                <td><a href="/rtmpstat/{{node.address}}">{{node.address}}</a></td>
+                                                <td><a href="/settings/admin/rtmpstat/{{node.address}}">{{node.address}}</a></td>
                                                 <td>{{node.port}}</td>
                                                 <td>{{node.loadPct}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"

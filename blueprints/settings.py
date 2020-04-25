@@ -8,7 +8,7 @@ import xmltodict
 import git
 
 import requests
-from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session
+from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password
 from sqlalchemy.sql.expression import func
@@ -633,6 +633,28 @@ def admin_page():
             return redirect(url_for('.admin_page', page="users"))
 
         return redirect(url_for('.admin_page'))
+
+@settings_bp.route('/admin/rtmpstat/<node>')
+@login_required
+@roles_required('Admin')
+def rtmpStat_page(node):
+    r = None
+    if node == "localhost":
+        r = requests.get("http://127.0.0.1:9000/stat").text
+    else:
+        nodeQuery = settings.edgeStreamer.query.filter_by(address=node).first()
+        if nodeQuery is not None:
+            r = requests.get('http://' + nodeQuery.address + ":9000/stat").text
+
+    if r is not None:
+        data = None
+        try:
+            data = xmltodict.parse(r)
+            data = json.dumps(data)
+        except:
+            return abort(500)
+        return (data)
+    return abort(500)
 
 
 @settings_bp.route('/dbRestore', methods=['POST'])
