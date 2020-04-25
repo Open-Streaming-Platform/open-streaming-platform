@@ -472,7 +472,21 @@
 </script>
 
 <script>
-  var player = videojs('video', { autoplay: true });
+  var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
 </script>
 
 <script type="text/javascript" charset="utf-8">
