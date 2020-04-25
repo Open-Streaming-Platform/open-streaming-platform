@@ -479,10 +479,10 @@
 </script>
 
 <script>
-    var easymde = new EasyMDE({ element: document.getElementById("commentText") });
-    var easymde2 = new EasyMDE({ element: document.getElementById("description") });
+    var easymde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("commentText") });
+    var easymde2 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
     {% if video.owningUser == current_user.id %}
-    var easymde3 = new EasyMDE({ element: document.getElementById("clipDescription") });
+    var easymde3 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription") });
     {% endif %}
 </script>
 

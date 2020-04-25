@@ -1170,9 +1170,9 @@
     createNewBSAlert("Thumbnail Updated", "Success");
   }
 
-    var easymdeVideoEditor = new EasyMDE({ element: document.getElementById("editVideoDescription")});
-    var easymdeVideoClip = new EasyMDE({ element: document.getElementById("clipDescription")});
-    var easymdeClipEditor = new EasyMDE({ element: document.getElementById("clipEditDescription")});
+    var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("editVideoDescription")});
+    var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription")});
+    var easymdeClipEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipEditDescription")});
 
     $(document).on("click", ".videoDeleteModalButton", function () {
         var videoID = $(this).data('videoid');
@@ -1584,10 +1584,10 @@ function openChannelWindow(divID, windowName) {
 </script>
 
 <script>
-    var newChanMDE = new EasyMDE({ element: document.getElementById("description") });
+    var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
 
     {% for channel in channels %}
-    var easymde{{channel.id}} = new EasyMDE({ element: document.getElementById("description-{{channel.id}}") });
+    var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 </script>
 
