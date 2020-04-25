@@ -1,3 +1,5 @@
+import hashlib
+
 from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
@@ -140,3 +142,35 @@ def auth_check():
 
     db.session.close()
     abort(400)
+
+@root_bp.route('/playbackAuth', methods=['POST'])
+def playback_auth_handler():
+    stream = request.form['name']
+
+    streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+    if streamQuery is not None:
+
+        if streamQuery.protected is False:
+            db.session.close()
+            return 'OK'
+        else:
+            username = request.form['username']
+            secureHash = request.form['hash']
+
+            if streamQuery is not None:
+                requestedUser = Sec.User.query.filter_by(username=username).first()
+                if requestedUser is not None:
+                    isValid = False
+                    validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                    if secureHash == validHash:
+                        isValid = True
+                    if isValid is True:
+                        if streamQuery.owningUser == requestedUser.id:
+                            db.session.close()
+                            return 'OK'
+                        else:
+                            if securityFunc.check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                                db.session.close()
+                                return 'OK'
+    db.session.close()
+    return abort(400)

@@ -1,3 +1,8 @@
+Beta-6
+==============================================
+Refectored app.py to submodules
+
+
 Beta-5b
 ==============================================
 Added CORS header for APIv1 Endpoint
