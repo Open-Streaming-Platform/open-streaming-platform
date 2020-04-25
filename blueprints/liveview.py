@@ -114,4 +114,4 @@ def view_page(loc):
 
     else:
         flash("No Live Stream at URL","error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))

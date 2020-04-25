@@ -71,4 +71,4 @@ def streamers_view_page(userID):
 
             return render_template(themes.checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=streamerQuery.username, streamerData=streamerQuery)
     flash('Invalid Streamer','error')
-    return redirect(url_for("main_page"))
+    return redirect(url_for("root.main_page"))

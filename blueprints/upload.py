@@ -85,7 +85,7 @@ def upload_vid():
     if not sysSettings.allowUploads:
         db.session.close()
         flash("Video Upload Disabled", "error")
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
 
     currentTime = datetime.datetime.now()
 
@@ -98,7 +98,7 @@ def upload_vid():
     if ChannelQuery.owningUser != current_user.id:
         flash('You are not allowed to upload to this channel!')
         db.session.close()
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
 
     videoPublishState = ChannelQuery.autoPublish
 
@@ -116,12 +116,12 @@ def upload_vid():
                 system.newLog(4, "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
                 flash("Error uploading video - Unable to create directory","error")
                 db.session.close()
-                return redirect(url_for("main_page"))
+                return redirect(url_for("root.main_page"))
         shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
     else:
         db.session.close()
         flash("Error uploading video - Couldn't move video file")
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
 
     newVideo.videoLocation = videoLoc
 

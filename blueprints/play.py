@@ -36,10 +36,10 @@ def view_vid_page(videoID):
             if current_user.is_authenticated:
                 if current_user != recordedVid.owningUser and current_user.has_role('Admin') is False:
                     flash("No Such Video at URL", "error")
-                    return redirect(url_for("main_page"))
+                    return redirect(url_for("root.main_page"))
             else:
                 flash("No Such Video at URL", "error")
-                return redirect(url_for("main_page"))
+                return redirect(url_for("root.main_page"))
 
         if recordedVid.channel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(recordedVid.channel.id):
@@ -95,7 +95,7 @@ def view_vid_page(videoID):
             return render_template(themes.checkOverride('vidplayer_embed.html'), video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
     else:
         flash("No Such Video at URL","error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))
 
 @play_bp.route('/<videoID>/clip', methods=['POST'])
 @login_required
@@ -128,7 +128,7 @@ def vid_move_page(videoID):
         return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
         flash("Error Moving Video", "error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))
 
 @play_bp.route('/<videoID>/change', methods=['POST'])
 @login_required
@@ -149,7 +149,7 @@ def vid_change_page(videoID):
         return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
         flash("Error Changing Video Metadata", "error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))
 
 @play_bp.route('/<videoID>/delete')
 @login_required
@@ -159,7 +159,7 @@ def delete_vid_page(videoID):
 
     if result is True:
         flash("Video deleted")
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
     else:
         flash("Error Deleting Video")
         return redirect(url_for('.view_vid_page', videoID=videoID))
@@ -229,6 +229,6 @@ def comments_vid_page(videoID):
 
     else:
         flash('Invalid Video ID','error')
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
 
     return redirect(url_for('.view_vid_page', videoID=videoID))

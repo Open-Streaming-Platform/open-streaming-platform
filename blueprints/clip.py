@@ -31,10 +31,10 @@ def view_clip_page(clipID):
             if current_user.is_authenticated:
                 if current_user != clipQuery.recordedVideo.owningUser and current_user.has_role('Admin') is False:
                     flash("No Such Video at URL", "error")
-                    return redirect(url_for("main_page"))
+                    return redirect(url_for("root.main_page"))
             else:
                 flash("No Such Video at URL", "error")
-                return redirect(url_for("main_page"))
+                return redirect(url_for("root.main_page"))
 
         if recordedVid.channel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(clipQuery.recordedVideo.channel.id):
@@ -78,7 +78,7 @@ def view_clip_page(clipID):
             #    return render_template(themes.checkOverride('vidplayer_embed.html'), video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
     else:
         flash("No Such Clip at URL","error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))
 
 @clip_bp.route('/<clipID>/delete')
 @login_required
@@ -88,7 +88,7 @@ def delete_clip_page(clipID):
 
     if result is True:
         flash("Clip deleted")
-        return redirect(url_for('main_page'))
+        return redirect(url_for('root.main_page'))
     else:
         flash("Error Deleting Clip")
         return redirect(url_for('.view_clip_page', clipID=clipID))
@@ -105,4 +105,4 @@ def clip_change_page(clipID):
 
     else:
         flash("Error Changing Clip Metadata", "error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))

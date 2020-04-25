@@ -93,7 +93,7 @@ def search_page():
 
         return render_template(themes.checkOverride('search.html'), topicList=topicList, streamerList=streamerList, channelList=channelList, videoList=videoList, streamList=streamList, clipList=clipList)
 
-    return redirect(url_for('main_page'))
+    return redirect(url_for('root.main_page'))
 
 @login_required
 @root_bp.route('/notifications')

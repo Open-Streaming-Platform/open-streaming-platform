@@ -53,7 +53,7 @@ def channel_view_page(chanID):
         return render_template(themes.checkOverride('videoListView.html'), channelData=channelData, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, subState=subState, title="Channels - Videos")
     else:
         flash("No Such Channel", "error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))
 
 @channels_bp.route('/link/<channelLoc>/')
 def channel_view_link_page(channelLoc):
@@ -62,7 +62,7 @@ def channel_view_link_page(channelLoc):
         if channelQuery is not None:
             return redirect(url_for(".channel_view_page",chanID=channelQuery.id))
     flash("Invalid Channel Location", "error")
-    return redirect(url_for("main_page"))
+    return redirect(url_for("root.main_page"))
 
 # Allow a direct link to any open stream for a channel
 @channels_bp.route('/<loc>/stream')
@@ -77,4 +77,4 @@ def channel_stream_link_page(loc):
             return redirect(url_for(".channel_view_page",chanID=requestedChannel.id))
     else:
         flash("Unknown Channel","error")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("root.main_page"))

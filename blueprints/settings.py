@@ -133,7 +133,7 @@ def user_addInviteCode():
                 flash("Invite Code Expired", "error")
         else:
             flash("Invalid Invite Code", "error")
-    return redirect(url_for('main_page'))
+    return redirect(url_for('root.main_page'))
 
 
 @settings_bp.route('/admin', methods=['POST', 'GET'])
@@ -1178,12 +1178,12 @@ def settings_dbRestore():
 
             flash("Database Restored from Backup", "success")
             session.clear()
-            return redirect(url_for('main_page', page="backup"))
+            return redirect(url_for('root.main_page', page="backup"))
 
     else:
         if settings.settings.query.all():
             flash("Invalid Restore Attempt", "error")
-            return redirect(url_for('main_page'))
+            return redirect(url_for('root.main_page'))
         else:
             return redirect(url_for('.initialSetup'))
 
@@ -1573,6 +1573,6 @@ def initialSetup():
 
         else:
             flash('Passwords do not match')
-            return redirect(url_for('main_page'))
+            return redirect(url_for('root.main_page'))
 
-    return redirect(url_for('main_page'))
+    return redirect(url_for('root.main_page'))
