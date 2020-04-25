@@ -27,8 +27,23 @@
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
-    <script>
-        var player = videojs('video', {autoplay: {{isAutoPlay}}});
-    </script>
+
+<script>
+  var player = videojs('video', {
+            autoplay: {{isAutoPlay}},
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
+</script>
 
 {% endblock %}
