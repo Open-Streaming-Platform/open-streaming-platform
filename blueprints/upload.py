@@ -129,7 +129,10 @@ def upload_vid():
         thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
 
         thumbnailPath = videos_root + thumbnailLoc
-        shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+        try:
+            shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+        except:
+            flash("Thumbnail Upload Failed Due to Missing File","error")
         newVideo.thumbnailLocation = thumbnailLoc
     else:
         thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
