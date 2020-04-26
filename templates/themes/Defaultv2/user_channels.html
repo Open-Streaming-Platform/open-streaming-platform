@@ -2017,6 +2017,8 @@ function openChannelWindow(divID, windowName) {
         socket.emit('deleteChannel', {channelID: channelID});
         var channelTableRow = document.getElementById('channelEntry-' + channelID);
         channelTableRow.parentNode.removeChild(channelTableRow);
+        var channelDashRow = document.getElementById('channelDash-' + channelID);
+        channelDashRow.parentNode.removeChild(channelDashRow);
     }
     </script>
 {% endblock %}
