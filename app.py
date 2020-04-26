@@ -120,13 +120,8 @@ from classes import notifications
 from functions import database
 from functions import system
 from functions import securityFunc
-from functions import cache
-from functions import themes
 from functions import votes
-from functions import videoFunc
 from functions import webhookFunc
-from functions import commentsFunc
-from functions import subsFunc
 
 #----------------------------------------------------------------------------#
 # Begin App Initialization
