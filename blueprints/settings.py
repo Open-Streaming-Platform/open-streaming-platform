@@ -169,39 +169,6 @@ def admin_page():
                     flash("Topic Deleted")
                     return redirect(url_for('.admin_page', page="topics"))
 
-                elif setting == "channel":
-                    channelID = int(request.args.get("channelID"))
-
-                    channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
-
-                    for vid in channelQuery.recordedVideo:
-                        for upvote in vid.upvotes:
-                            db.session.delete(upvote)
-
-                        vidComments = vid.comments
-                        for comment in vidComments:
-                            db.session.delete(comment)
-
-                        vidViews = views.views.query.filter_by(viewType=1, itemID=vid.id)
-                        for view in vidViews:
-                            db.session.delete(view)
-
-                        db.session.delete(vid)
-                    for upvote in channelQuery.upvotes:
-                        db.session.delete(upvote)
-
-                    filePath = videos_root + channelQuery.channelLoc
-
-                    if filePath != videos_root:
-                        shutil.rmtree(filePath, ignore_errors=True)
-
-                    system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
-                    db.session.delete(channelQuery)
-                    db.session.commit()
-
-                    flash("Channel Deleted")
-                    return redirect(url_for('.admin_page', page="channels"))
-
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
 

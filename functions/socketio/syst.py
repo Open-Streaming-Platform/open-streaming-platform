@@ -1,6 +1,7 @@
 import psutil
 import os
 import time
+import shutil
 from flask import abort, current_app
 from flask_socketio import emit
 from flask_security import current_user
@@ -10,9 +11,13 @@ from classes.shared import db, socketio, limiter
 from classes import Sec
 from classes import settings
 from classes import RecordedVideo
+from classes import Channel
 from classes import Stream
+from classes import views
 
 from functions import system
+
+from globals import globalvars
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -26,6 +31,45 @@ def deleteInvitedUser(message):
     db.session.close()
     return 'OK'
 
+@socketio.on('deleteChannel')
+def deleteChannelAdmin(message):
+    channelID = int(message['channelID'])
+    channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+    if channelQuery is not None:
+        if current_user.has_role('Admin') or channelQuery.owningUser == current_user.id:
+            for vid in channelQuery.recordedVideo:
+                for upvote in vid.upvotes:
+                    db.session.delete(upvote)
+                vidComments = vid.comments
+                for comment in vidComments:
+                    db.session.delete(comment)
+                vidViews = views.views.query.filter_by(viewType=1, itemID=vid.id)
+                for view in vidViews:
+                    db.session.delete(view)
+                for clip in vid.clips:
+                    db.session.delete(clip)
+
+                db.session.delete(vid)
+
+            for upvote in channelQuery.upvotes:
+                db.session.delete(upvote)
+            for inviteCode in channelQuery.inviteCodes:
+                db.session.delete(inviteCode)
+            for viewer in channelQuery.invitedViewers:
+                db.session.delete(viewer)
+            for sub in channelQuery.subscriptions:
+                db.session.delete(sub)
+            for hook in channelQuery.webhooks:
+                db.session.delete(hook)
+
+            filePath = globalvars.videoRoot + channelQuery.channelLoc
+
+            if filePath != globalvars.videoRoot:
+                shutil.rmtree(filePath, ignore_errors=True)
+
+            system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
+            db.session.delete(channelQuery)
+            db.session.commit()
 
 @socketio.on('deleteStream')
 def deleteActiveStream(message):
