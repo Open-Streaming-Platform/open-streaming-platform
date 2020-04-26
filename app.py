@@ -140,7 +140,7 @@ from classes.shared import limiter
 limiter.init_app(app)
 
 # Initialize Redis for Flask-Session
-if config.redisPassword != '':
+if config.redisPassword == '' or config.redisPassword is None:
     r = redis.Redis(host=config.redisHost, port=config.redisPort)
     app.config["SESSION_REDIS"] = r
 else:
@@ -150,7 +150,7 @@ r.flushdb()
 
 # Initialize Flask-SocketIO
 from classes.shared import socketio
-if config.redisPassword != '':
+if config.redisPassword == '' or config.redisPassword is None:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort),  cors_allowed_origins=[])
 else:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort),  cors_allowed_origins=[])
