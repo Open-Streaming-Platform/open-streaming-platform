@@ -458,6 +458,8 @@ hr {
 }
 
 .search {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
     -webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
