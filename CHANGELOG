@@ -1,6 +1,7 @@
 Beta-6
 ==============================================
 Refectored app.py to submodules
+Fixes for Redis instances with Passwords
 
 
 Beta-5b
