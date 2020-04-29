@@ -194,7 +194,7 @@ def comments_vid_page(videoID):
                 pictureLocation = '/images/' + pictureLocation
 
             newNotification = notifications.userNotification(templateFilters.get_userName(current_user.id) + " commented on your video - " + recordedVid.channelName, '/play/' + str(recordedVid.id),
-                                                                 "/images/" + current_user.pictureLocation, recordedVid.owningUser)
+                                                                 "/images/" + str(current_user.pictureLocation), recordedVid.owningUser)
             db.session.add(newNotification)
             db.session.commit()
 
