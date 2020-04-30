@@ -110,7 +110,7 @@ def view_page(loc):
                 "startupScreen": "customServer",
                 "startupOptions":
                 {
-                    "server": {{sysSettings.siteAddress}},
+                    "server": sysSettings.siteAddress,
                     "port": 6667,
                     "tls": False,
                     "direct": False,
