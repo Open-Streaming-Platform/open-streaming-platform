@@ -123,7 +123,7 @@ def main_page():
                                    Sec.User.pictureLocation) \
                     .order_by(RecordedVideo.Clips.views.desc()).limit(16)
 
-        return render_template(themes.checkOverride('index.html'), streamList=activeStreams, randomRecorded=recordedQuery, randomClips=clipQuery)
+        return render_template(themes.checkOverride('index.html'), streamList=activeStreams, videoList=recordedQuery, clipList=clipQuery)
 
 @root_bp.route('/search', methods=["POST"])
 def search_page():
