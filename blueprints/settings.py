@@ -402,7 +402,7 @@ def admin_page():
             serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
-            mainPageSort = int(request.form['mainPageSort'])
+            mainPageSort = request.form['mainPageSort']
             restreamMaxBitrate = request.form['restreamMaxBitrate']
 
             recordSelect = False
@@ -468,7 +468,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
-            sysSettings.mainPageSort = mainPageSort
+            sysSettings.sortMainBy = int(mainPageSort)
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
