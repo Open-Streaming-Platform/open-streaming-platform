@@ -350,13 +350,13 @@
         "startupScreen": "customServer",
         "startupOptions":
         {
-            "server": sysSettings.siteAddress,
+            "server": "{{sysSettings.siteAddress}}",
             "port": 6667,
             "tls": false,
             "direct": false,
-            "nick": {{current_user.username}},
+            "nick": "{{current_user.username}}",
             "autoConnect": true,
-            "channel": "#" + {{channel.channelLoc}}
+            "channel": "#{{channel.channelLoc}}"
         }
     }
 </script>
