@@ -100,6 +100,11 @@ def view_page(loc):
                     subState = True
 
             kiwiConfig = {
+                "restricted": True,
+                "theme": "default",
+                "themes": [
+                    {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default.css"}
+                ],
                 "startupScreen": "customServer",
                 "startupOptions":
                     {
@@ -107,7 +112,6 @@ def view_page(loc):
                         "port": 6667,
                         "tls": False,
                         "direct": False,
-                        "restricted": True,
                         "nick": current_user.username,
                         "autoConnect": True,
                         "channel": "#" + str(requestedChannel.channelLoc)
