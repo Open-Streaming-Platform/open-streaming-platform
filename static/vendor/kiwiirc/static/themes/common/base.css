@@ -125,6 +125,10 @@
     color: var(--brand-primary);
 }
 
+.kiwi-header-option-settings {
+    display: none;
+}
+
 /* ---- Container Header ( containerHeader ) ---- */
 .kiwi-header {
     background: var(--comp-header-bg);
@@ -132,6 +136,7 @@
 }
 
 .kiwi-header-name-container {
+    display: none;
     color: var(--comp-header-name-fg);
 }
 
@@ -356,6 +361,7 @@
 
 /* Statebrowser - Left sidebar ( StateBrowser.vue ) */
 .kiwi-statebrowser {
+    display: none;
     background: var(--comp-statebrowser-bg);
     color: var(--comp-statebrowser-fg);
 }
@@ -624,6 +630,7 @@
 }
 
 .kiwi-workspace {
+    margin-left:0px;
     background: var(--brand-default-bg);
 }
 
