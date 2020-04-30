@@ -105,7 +105,7 @@ def view_page(loc):
                 "theme": "default",
                 "themes":
                 [
-                    {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default.css"}
+                    {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default/default.css"}
                 ],
                 "startupScreen": "customServer",
                 "startupOptions":
