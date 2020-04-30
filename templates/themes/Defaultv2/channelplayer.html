@@ -340,26 +340,7 @@
 
 {% block scripts %}
 <script name="kiwiconfig">
-    {
-        "restricted": true,
-        "kiwiServer": "http://{{sysSettings.siteAddress}}:2112/webirc/kiwiirc/",
-        "theme": "default",
-        "themes":
-        [
-            {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default.css"}
-        ],
-        "startupScreen": "customServer",
-        "startupOptions":
-        {
-            "server": "{{sysSettings.siteAddress}}",
-            "port": 6667,
-            "tls": false,
-            "direct": false,
-            "nick": "{{current_user.username}}",
-            "autoConnect": true,
-            "channel": "#{{channel.channelLoc}}"
-        }
-    }
+{{kiwiConfig|safe}}
 </script>
 <script type=text/javascript src=/static/vendor/kiwiirc/static/js/manifest.968a66f15b5137552605.js></script>
 <script type=text/javascript src=/static/vendor/kiwiirc/static/js/vendor.faef9ab87173dcdcd03f.js></script>

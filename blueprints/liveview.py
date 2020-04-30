@@ -101,21 +101,23 @@ def view_page(loc):
 
             kiwiConfig = {
                 "restricted": True,
+                "kiwiServer": "http://" + sysSettings.siteAddress + ":2112/webirc/kiwiirc/",
                 "theme": "default",
-                "themes": [
+                "themes":
+                [
                     {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default.css"}
                 ],
                 "startupScreen": "customServer",
                 "startupOptions":
-                    {
-                        "server": sysSettings.siteAddress,
-                        "port": 6667,
-                        "tls": False,
-                        "direct": False,
-                        "nick": current_user.username,
-                        "autoConnect": True,
-                        "channel": "#" + str(requestedChannel.channelLoc)
-                    }
+                {
+                    "server": {{sysSettings.siteAddress}},
+                    "port": 6667,
+                    "tls": False,
+                    "direct": False,
+                    "nick": current_user.username,
+                    "autoConnect": True,
+                    "channel": "#" + requestedChannel.channelLoc
+                }
             }
 
             #kiwiConfig = json.dumps(kiwiConfig)
