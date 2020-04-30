@@ -2,6 +2,7 @@ from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
 import hashlib
+import json
 
 from classes.shared import db
 from classes import settings
@@ -98,8 +99,25 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
+            kiwiConfig = {
+                "startupScreen": "customServer",
+                "startupOptions":
+                    {
+                        "server": sysSettings.siteAddress,
+                        "port": 6667,
+                        "tls": False,
+                        "direct": False,
+                        "restricted": True,
+                        "nick": current_user.username,
+                        "autoConnect": True,
+                        "channel": "#" + str(requestedChannel.channelLoc)
+                    }
+            }
+
+            kiwiConfig = json.dumps(kiwiConfig)
+
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, kiwiConfig=kiwiConfig)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:
