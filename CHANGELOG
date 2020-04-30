@@ -2,6 +2,10 @@ Beta-6
 ==============================================
 Refectored app.py to submodules
 Fixes for Redis instances with Passwords
+Added Confirmation Dialog for Deletion of Channels in Admin Interface
+Added Confirmation Dialog for Deletion of Channels in User Channels Interface
+Added Ability to Select Sort for the Main Display Page
+Removed EasyMDE automatic download of Font Awesome and Other External Dependencies
 
 
 Beta-5b
