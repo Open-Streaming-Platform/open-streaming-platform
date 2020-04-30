@@ -22,6 +22,7 @@ class settings(db.Model):
     systemTheme = db.Column(db.String(255))
     systemLogo = db.Column(db.String(255))
     version = db.Column(db.String(255))
+    sortMainBy = db.Column(db.Integer)
     restreamMaxBitrate = db.Column(db.Integer)
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(2048))
@@ -45,6 +46,7 @@ class settings(db.Model):
         self.adaptiveStreaming = adaptiveStreaming
         self.showEmptyTables = showEmptyTables
         self.allowComments = allowComments
+        self.sortMainBy = 0
         self.background = "Ash"
         self.systemTheme = "Defaultv2"
         self.version = version

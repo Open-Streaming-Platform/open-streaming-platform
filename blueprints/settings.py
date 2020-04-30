@@ -402,6 +402,7 @@ def admin_page():
             serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
+            mainPageSort = int(request.form['mainPageSort'])
             restreamMaxBitrate = request.form['restreamMaxBitrate']
 
             recordSelect = False
@@ -467,6 +468,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.mainPageSort = mainPageSort
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
@@ -674,11 +676,13 @@ def settings_dbRestore():
             serverSettings.systemLogo = restoreDict['settings'][0]['systemLogo']
             serverSettings.protectionEnabled = eval(restoreDict['settings'][0]['protectionEnabled'])
             if 'restreamMaxBitrate' in restoreDict['settings'][0]:
-                serverSettings.restreamMaxBitrate = restoreDict['settings'][0]['restreamMaxBitrate']
+                serverSettings.restreamMaxBitrate = int(restoreDict['settings'][0]['restreamMaxBitrate'])
             if 'serverMessage' in restoreDict['settings'][0]:
                 serverSettings.serverMessage = restoreDict['settings'][0]['serverMessage']
             if 'serverMessageTitle' in restoreDict['settings'][0]:
                 serverSettings.serverMessageTitle = restoreDict['settings'][0]['serverMessageTitle']
+            if 'mainPageSort' in restoreDict['settings'][0]:
+                serverSettings.mainPageSort = int(restoreDict['settings'][0]['mainPageSort'])
 
             # Remove Old Settings
             oldSettings = settings.settings.query.all()

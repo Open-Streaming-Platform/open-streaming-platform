@@ -178,6 +178,14 @@
                                       <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
                                       {% endfor %}
                                   </select>
+                                  <div class="form-group">
+                                      <label for="mainPageSort" class="col-form-label">Main Page Sorting</label>
+                                      <select class="form-control" id="mainPageSort" name="mainPageSort">
+                                          <option value="0" {% if sysSettings.sortMainBy == 0 %} selected {% endif %}>Most Views</option>
+                                          <option value="1" {% if sysSettings.sortMainBy == 1 %} selected {% endif %}>Most Recent</option>
+                                          <option value="2" {% if sysSettings.sortMainBy == 2 %} selected {% endif %}>Random</option>
+                                      </select>
+                                  </div>
                                   <hr>
                                   <div class="form-group">
                                     <label for="restreamMaxBitrate" class="col-form-label">Maximum Bitrate for RTMP Restreams (Kb/s)</label><br>

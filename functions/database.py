@@ -142,11 +142,9 @@ def init(app, user_datastore):
             sysSettings.restreamMaxBitrate = 3500
             db.session.commit()
 
-        #hubQuery = hubConnection.hubServers.query.filter_by(serverAddress=hubURL).first()
-        #if hubQuery == None:
-        #    newHub = hubConnection.hubServers(hubURL)
-        #    db.session.add(newHub)
-        #    db.session.commit()
+        if sysSettings.sortMainBy is None:
+            sysSettings.sortMainBy = 0
+            db.session.commit()
 
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
