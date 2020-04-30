@@ -114,7 +114,7 @@ def view_page(loc):
                     }
             }
 
-            kiwiConfig = json.dumps(kiwiConfig)
+            #kiwiConfig = json.dumps(kiwiConfig)
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, kiwiConfig=kiwiConfig)
