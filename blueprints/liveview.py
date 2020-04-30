@@ -85,8 +85,6 @@ def view_page(loc):
             else:
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
-            randomRecorded = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True, channelID=requestedChannel.id).order_by(func.random()).limit(16)
-
             clipsList = []
             for vid in requestedChannel.recordedVideo:
                 for clip in vid.clips:
@@ -100,7 +98,7 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
-            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, randomRecorded=randomRecorded, channel=requestedChannel, clipsList=clipsList,
+            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
