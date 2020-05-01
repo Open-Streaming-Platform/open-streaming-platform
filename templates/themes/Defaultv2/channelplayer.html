@@ -14,7 +14,6 @@
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
-<link href=/static/vendor/kiwiirc/static/css/app.a17b5e7b020c4b7f4d3a2bb2a9e00bea.css rel=stylesheet>
 <script src="/static/vendor/videojs/js/video.js"></script>
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
@@ -117,7 +116,13 @@
             <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12" >
                 <div class="row ml-2 mr-1">
                     <div class="index-video-title mb-2"><b>Chat</b></div>
-                    <div id="app"></div>
+                    <div class="chatbox" id="chatBlock">
+                          <div id="chat" class="chat"></div><br>
+                          <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
+                          <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
+                          <a href="#" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
+                          <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>
+                      </div>
                 </div>
             </div>
             {% endif %}
@@ -339,50 +344,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    var nickname;
-    {% if current_user.is_authenticated %}
-        nickname = "{{current_user.username}}";
-    {% else %}
-        nickname = "Guest" + String(Math.floor((Math.random() * 100000) + 1));
-    {% endif %}
-
-    window.kiwiConfig = function kiwiConfig() {
-        return {
-            "windowTitle": "{{sysSettings.siteName}} - {{channel.channelName}}" ,
-            "restricted": true,
-            "kiwiServer": "http://{{sysSettings.siteAddress}}:2112/webirc/kiwiirc/",
-            "warnOnExit": false,
-            "hide_advanced": true,
-            "theme": "Default",
-            "themes": [
-                {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default"}
-            ],
-            "startupScreen": "welcome",
-            "startupOptions":
-                {
-                    "server": "{{sysSettings.siteAddress}}",
-                    "port": 6667,
-                    "tls": false,
-                    "direct": false,
-                    "nick": nickname,
-                    "autoConnect": true,
-                    "channel": "#{{channel.channelLoc}}"
-                },
-            "buffers":
-                {
-                    "messageLayout": "modern",
-                    "alert_on": "never",
-                    "show_hostnames": false,
-                    "block_pms": true,
-                    "mute_sound": true
-                }
-        }
-    };
-</script>
-<script type=text/javascript src=/static/vendor/kiwiirc/static/js/manifest.968a66f15b5137552605.js></script>
-<script type=text/javascript src=/static/vendor/kiwiirc/static/js/vendor.faef9ab87173dcdcd03f.js></script>
-<script type=text/javascript src=/static/vendor/kiwiirc/static/js/app.79263cdc04b39888c3c7.js></script>
 
     <script>
         var player = videojs('video', {

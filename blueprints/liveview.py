@@ -2,7 +2,6 @@ from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
 import hashlib
-import json
 
 from classes.shared import db
 from classes import settings
