@@ -649,9 +649,11 @@ form.kiwi-welcome-simple-form h2 {
     width: 100%;
 }
 
-.kiwi-startup-common-section-connection,
-.kiwi-startup-common-section-info {
-    display: none;
+.kiwi-startup-common-section-connection
+{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     -webkit-box-align: center;
     align-items: center;
     -webkit-box-pack: center;
@@ -659,6 +661,11 @@ form.kiwi-welcome-simple-form h2 {
 }
 
 .kiwi-startup-common-section-info {
+    display: none;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
     color: #fff;
     -webkit-box-flex: 1;
     -ms-flex: 1;
