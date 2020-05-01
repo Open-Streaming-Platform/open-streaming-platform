@@ -3103,6 +3103,7 @@ form.kiwi-welcome-simple-form h2 {
 }
 
 .kiwi-nicklist-messageuser {
+    display:none;
     position: absolute;
     content: "\F075";
     right: -1em;
