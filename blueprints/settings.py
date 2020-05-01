@@ -99,7 +99,6 @@ def subscription_page():
 
 @settings_bp.route('/user/addInviteCode')
 @login_required
-@roles_required('Streamer')
 def user_addInviteCode():
     if 'inviteCode' in request.args:
         inviteCode = request.args.get("inviteCode")
