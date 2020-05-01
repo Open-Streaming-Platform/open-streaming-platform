@@ -82,7 +82,6 @@
 
 ::-webkit-input-placeholder,
 ::-moz-placeholder,
-::-ms-placeholder,
 ::placeholder {
     color: black;
 }
@@ -849,7 +848,8 @@
 /* Traditional message styling hover */
 .kiwi-messagelist-message--compact .kiwi-messagelist-message-privmsg:hover,
 .kiwi-messagelist-message--compact .kiwi-messagelist-message-action:hover,
-.kiwi-messagelist-message--compact .kiwi-messagelist-message-notice:hover, {
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-notice:hover
+{
     border-left-color: var(--brand-primary-hover);
 }
 
