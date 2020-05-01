@@ -344,7 +344,7 @@
     {% if current_user.is_authenticated %}
         nickname = "{{current_user.username}}";
     {% else %}
-        nickname = "Guest" + String(Math.floor((Math.random() * 100) + 1));
+        nickname = "Guest" + String(Math.floor((Math.random() * 100000) + 1));
     {% endif %}
 
     window.kiwiConfig = function kiwiConfig() {
@@ -370,7 +370,7 @@
                 },
             "buffers":
                 {
-                    "messageLayout": "compact",
+                    "messageLayout": "modern",
                     "alert_on": "never",
                     "show_hostnames": false,
                     "block_pms": true,

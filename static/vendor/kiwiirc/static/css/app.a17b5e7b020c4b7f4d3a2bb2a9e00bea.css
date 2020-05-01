@@ -4694,12 +4694,14 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
 }
 
 .kiwi-controlinput-inner .kiwi-awaystatusindicator {
+    display: none;
     margin-top: 16px;
     margin-left: 10px;
     margin-right: -2px
 }
 
 .kiwi-controlinput-user {
+    display:none;
     height: 100%;
     padding: 0 10px;
     font-weight: 700;
