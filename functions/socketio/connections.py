@@ -157,9 +157,10 @@ def handle_leaving_viewer(streamData):
                 pictureLocation = '/images/' + pictureLocation
 
             emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
-        else:
-            if requestedChannel.showChatJoinLeaveNotification:
-                emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+    else:
+        if requestedChannel.showChatJoinLeaveNotification:
+            emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
+
 
     handle_viewer_total_request(streamData, room=streamData['data'])
 
