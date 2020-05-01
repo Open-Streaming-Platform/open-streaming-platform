@@ -99,31 +99,8 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
-            kiwiConfig = {
-                "restricted": True,
-                "kiwiServer": "http://" + sysSettings.siteAddress + ":2112/webirc/kiwiirc/",
-                "theme": "default",
-                "themes":
-                [
-                    {"name": "Default", "url": "/static/vendor/kiwiirc/static/themes/default/default.css"}
-                ],
-                "startupScreen": "customServer",
-                "startupOptions":
-                {
-                    "server": sysSettings.siteAddress,
-                    "port": 6667,
-                    "tls": False,
-                    "direct": False,
-                    "nick": current_user.username,
-                    "autoConnect": True,
-                    "channel": "#" + requestedChannel.channelLoc
-                }
-            }
-
-            #kiwiConfig = json.dumps(kiwiConfig)
-
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, kiwiConfig=kiwiConfig)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:

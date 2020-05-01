@@ -357,7 +357,7 @@
                     "port": 6667,
                     "tls": false,
                     "direct": false,
-                    "nick": "{{current_user.username}}",
+                    "nick": {% if current_user.is_authenticated %}"{{current_user.username}}"{% else %}"Guest" + String(Math.floor(Math.random() * 100000) + 1){% endif %},
                     "autoConnect": true,
                     "channel": "#{{channel.channelLoc}}"
                 }
