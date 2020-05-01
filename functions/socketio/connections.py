@@ -16,7 +16,12 @@ from app import r
 
 @socketio.on('disconnect')
 def disconnect():
-
+    userSID = request.sid
+    ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
+    for chan in ChannelQuery:
+        streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
+        if userSID in streamSIDList:
+            r.srem(chan.channelLoc + '-streamSIDList', userSID)
     return 'OK'
 
 @socketio.on('newViewer')
@@ -28,8 +33,8 @@ def handle_new_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    userSID = request.cookies.get('ospSession')
-
+    #userSID = request.cookies.get('ospSession')
+    userSID = request.sid
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
     if streamSIDList is None:
         r.sadd(channelLoc + '-streamSIDList', userSID)
@@ -118,7 +123,8 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    userSID = request.cookies.get('ospSession')
+    #userSID = request.cookies.get('ospSession')
+    userSID = request.sid
 
     streamSIDList = r.smembers(channelLoc + '-streamSIDList')
     if streamSIDList is not None:
