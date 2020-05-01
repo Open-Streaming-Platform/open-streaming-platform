@@ -646,15 +646,12 @@ form.kiwi-welcome-simple-form h2 {
 .kiwi-startup-common-section-connection {
     -ms-flex-align: center;
     -ms-flex-pack: center;
-    width: 40%;
-    max-width: 500px
+    width: 100%;
 }
 
 .kiwi-startup-common-section-connection,
 .kiwi-startup-common-section-info {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    display: none;
     -webkit-box-align: center;
     align-items: center;
     -webkit-box-pack: center;
