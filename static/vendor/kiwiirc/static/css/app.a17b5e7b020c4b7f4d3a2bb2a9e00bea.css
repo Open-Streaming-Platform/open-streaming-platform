@@ -2717,6 +2717,7 @@ form.kiwi-welcome-simple-form h2 {
 }
 
 .kiwi-userbox-actions {
+    display: none;
     width: 100%;
     padding: 1em;
     text-align: center;
