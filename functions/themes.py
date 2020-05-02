@@ -1,3 +1,7 @@
+import os
+from PIL import Image
+from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
+
 from globals import globalvars
 
 from classes.shared import db
@@ -13,3 +17,33 @@ def checkOverride(themeHTMLFile):
             return "themes/Defaultv2/" + themeHTMLFile
     except:
         return "themes/Defaultv2/" + themeHTMLFile
+
+# Code Modified from https://github.com/Hecsall/favicon-generator
+def faviconGenerator(imageLocation):
+    originalImage = imageLocation
+    directory = '/opt/osp/static'
+
+    index = 0
+
+    sizes = [
+	#
+	#	FileName		LogoSize		BoxSize
+	#
+		["favicon-16x16",		[16,16],		[16,16]],
+		["favicon-32x32",		[32,32],		[32,32]],
+		["apple-touch-icon",	[180,180],		[180,180]],
+
+	]
+
+    outfile = os.path.splitext(originalImage)[0] + ".png"
+
+    for size in sizes:
+        im = Image.open(originalImage)
+        processor = ProcessorPipeline([ResizeToFit(size[1][0], size[1][1])])
+        result = processor.process(im)
+        background = Image.new('RGBA', size[2], (255, 255, 255, 0))
+        background.paste(
+			result, (int((size[2][0] - result.size[0]) / 2), int((size[2][1] - result.size[1]) / 2))
+		)
+        background.save(directory + "/" + size[0] + ".png")
+

@@ -443,6 +443,7 @@ def admin_page():
                 if file.filename != '':
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
                     systemLogo = "/images/" + filename
+                    themes.faviconGenerator(globalvars.videoRoot + 'images/' + filename)
 
             validAddress = system.formatSiteAddress(serverAddress)
             try:
