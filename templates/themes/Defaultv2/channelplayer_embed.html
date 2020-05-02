@@ -36,6 +36,7 @@
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/vendor/socketio/js/socket.io.js"></script>
 
     <script>
 
@@ -138,6 +139,34 @@
     setInterval(function() {
         monitor_vid(player);
     }, 10000);
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
+
+        var socket = io("/", {reconnection: true, forceNew: false});
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+            return null;
+        });
     </script>
 
 
