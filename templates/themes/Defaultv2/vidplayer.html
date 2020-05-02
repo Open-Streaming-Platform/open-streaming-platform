@@ -669,4 +669,19 @@ socket.on('sendChanSubResults', function (msg) {
   });
 </script>
 
+<script>
+  const video = document.querySelector('video');
+  video.addEventListener('play', (event) => {
+    var cookieVolume = getCookie('ospvolume');
+    if (!(cookieVolume == null)) {
+      video.volume(cookieVolume);
+    }
+  });
+
+  video.addEventListener('play', (event) => {
+    var currentVolume = video.volume();
+    setCookie('ospvolume',currentVolume, 365);
+  });
+</script>
+
 {% endblock %}
