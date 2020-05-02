@@ -302,60 +302,64 @@
                                 <div class="row">
                                     <div class="form-group col-md-12">
                                         <label for="oAuthName">oAuth Provider Name</label>
-                                        <input type="text" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
+                                        <input type="text" class="form-control" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
                                         <small id="oAuthHelp" class="form-text text-muted">Used for Identification.  No Spaces</small>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthClient_id">Client ID</label>
-                                        <input type="text" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
+                                        <input type="text" class="form-control" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthClient_secret">Client Secret</label>
-                                        <input type="password" id="oAuthClient_secret" name="oAuthClient_secret" required>
+                                        <input type="password" class="form-control" id="oAuthClient_secret" name="oAuthClient_secret" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthAccess_token_url">Access Token URL</label>
-                                        <input type="text" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
+                                        <input type="text" class="form-control" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthAccess_token_params">Access Token Params</label>
-                                        <textarea id="oAuthAccess_token_params" name="oAuthAccess_token_params"></textarea>
+                                        <textarea id="oAuthAccess_token_params" class="form-control" name="oAuthAccess_token_params"></textarea>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthAuthorize_url">Authorize URL</label>
-                                        <input type="text" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
+                                        <input type="text" class="form-control" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthAuthorize_params">Authorize Params</label>
-                                        <textarea id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
+                                        <textarea class="form-control" id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthApi_base_url">API Base URL</label>
-                                        <input type="text" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
+                                        <input type="text" class="form-control" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthClient_kwargs">Client Kwargs</label>
-                                        <textarea id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
+                                        <textarea class="form-control" id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthProfile_endpoint">Profile Endpoint</label>
-                                        <input type="text" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
+                                        <input type="text" class="form-control" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthUsername">Username Profile Value</label>
-                                        <input type="text" id="oAuthUsername" name="oAuthUsername" required>
+                                        <input type="text" class="form-control" id="oAuthUsername" name="oAuthUsername" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthEmail">Email Profile Value</label>
-                                        <input type="text" id="oAuthEmail" name="oAuthEmail" required>
+                                        <input type="text" class="form-control" id="oAuthEmail" name="oAuthEmail" required>
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="oAuthPicture">Picture Location Profile Value</label>
-                                        <input type="text" id="oAuthPicture" name="oAuthPicture">
+                                        <input type="text" class="form-control" id="oAuthPicture" name="oAuthPicture">
                                     </div>
                                     <input type="hidden" value="oAuthProvider" id="settingType" name="settingType">
                                 </div>
                               </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add">
                           </div>
                           </form>
                         </div>
