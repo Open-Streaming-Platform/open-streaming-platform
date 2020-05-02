@@ -32,6 +32,8 @@ def faviconGenerator(imageLocation):
 		["favicon-16x16",		[16,16],		[16,16]],
 		["favicon-32x32",		[32,32],		[32,32]],
 		["apple-touch-icon",	[180,180],		[180,180]],
+        ["android-chrome-192x192", [192, 192], [192, 192]],
+        ["android-chrome-512x512", [512, 512], [512, 512]],
 
 	]
 
@@ -46,4 +48,8 @@ def faviconGenerator(imageLocation):
 			result, (int((size[2][0] - result.size[0]) / 2), int((size[2][1] - result.size[1]) / 2))
 		)
         background.save(directory + "/" + size[0] + ".png")
+    im = Image.open(originalImage)
+    processor = im.resize(16,16)
+    processor.save(directory + "/favicon.ico")
+    return 'OK'
 
