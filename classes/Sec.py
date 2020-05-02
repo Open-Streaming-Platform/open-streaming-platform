@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
     pictureLocation = db.Column(db.String(255))
     authType = db.Column(db.Integer)
     oAuthProvider = db.Column(db.String(40))
-    oAuthToken = db.relationship('OAuth2Token', backref='user', lazy='joined')
+    oAuthToken = db.relationship('OAuth2Token', backref='userObj', lazy='joined')
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
