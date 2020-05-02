@@ -375,6 +375,8 @@ def admin_page():
 
         logsList = logs.logs.query.order_by(logs.logs.timestamp.desc()).limit(250)
 
+        oAuthProvidersList = settings.oAuthProvider.query.all()
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -383,7 +385,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery,
-                               logsList=logsList, edgeNodes=edgeNodes, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -584,6 +586,44 @@ def admin_page():
                 db.session.commit()
 
             return redirect(url_for('.admin_page', page="ospedge"))
+
+        elif settingType == "oAuthProvider":
+            oAuth_name = request.form['oAuthName']
+            oAuth_client_id = request.form['oAuthClient_id']
+            oAuth_client_secret = request.form['oAuthClient_secret']
+            oAuth_access_token_url = request.form['oAuthAccess_token_url']
+            oAuth_access_token_params = request.form['oAuthAccess_token_params']
+            oAuth_authorize_url = request.form['oAuthAuthorize_url']
+            oAuth_authorize_params = request.form['oAuthAuthorize_params']
+            oAuth_api_base_url = request.form['oAuthApi_base_url']
+            oAuth_client_kwargs = request.form['oAuthClient_kwargs']
+            oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
+            oAuth_username = request.form['oAuthUsername']
+            oAuth_email = request.form['oAuthEmail']
+            oAuth_picture = request.form['oAuthPicture']
+
+            if oAuth_access_token_params == '':
+                oAuth_access_token_params = None
+            if oAuth_authorize_params == '':
+                oAuth_authorize_params = None
+            if oAuth_client_kwargs == '':
+                oAuth_client_kwargs = None
+            if oAuth_picture == '':
+                oAuth_picture = None
+
+            newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+            if oAuth_access_token_params is not None:
+                newOauthProvider.access_token_params = oAuth_access_token_params
+            if oAuth_authorize_params is not None:
+                newOauthProvider.authorize_params = oAuth_authorize_params
+            if oAuth_client_kwargs is not None:
+                newOauthProvider.client_kwargs = oAuth_client_kwargs
+            if oAuth_picture is not None:
+                newOauthProvider.picture_value = oAuth_picture
+
+            db.session.add(newOauthProvider)
+            db.session.commit()
+            return redirect(url_for('.admin_page', page="oauth"))
 
         elif settingType == "newuser":
 

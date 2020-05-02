@@ -260,6 +260,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     oAuth Provider Listing
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newOauthModal"><i class="fas fa-plus"></i></button></span>
                                 </div>
                                 <div class="card-body">
                                     <table id="oAuthTable" class="table table-borderless" width="100%">
@@ -272,12 +273,93 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-
+                                        {% for provider in oAuthProvidersList %}
+                                            <tr>
+                                                <td>{{provider.name}}</td>
+                                                <td>{{provider.client_id}}</td>
+                                                <td>{{provider_authorize_url}}</td>
+                                                <td><button type="button" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button></td>
+                                            </tr>
+                                        {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="modal fade" id="newOauthModal" tabindex="-1" role="dialog" aria-labelledby="newOAuthModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newOauthModalTitle">Add a oAuth Provider</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthName">oAuth Provider Name</label>
+                                        <input type="text" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
+                                        <small id="oAuthHelp" class="form-text text-muted">Used for Identification.  No Spaces</small>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthClient_id">Client ID</label>
+                                        <input type="text" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthClient_secret">Client Secret</label>
+                                        <input type="password" id="oAuthClient_secret" name="oAuthClient_secret" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthAccess_token_url">Access Token URL</label>
+                                        <input type="text" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthAccess_token_params">Access Token Params</label>
+                                        <textarea id="oAuthAccess_token_params" name="oAuthAccess_token_params"></textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthAuthorize_url">Authorize URL</label>
+                                        <input type="text" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthAuthorize_params">Authorize Params</label>
+                                        <textarea id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthApi_base_url">API Base URL</label>
+                                        <input type="text" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthClient_kwargs">Client Kwargs</label>
+                                        <textarea id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthProfile_endpoint">Profile Endpoint</label>
+                                        <input type="text" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthUsername">Username Profile Value</label>
+                                        <input type="text" id="oAuthUsername" name="oAuthUsername" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthEmail">Email Profile Value</label>
+                                        <input type="text" id="oAuthEmail" name="oAuthEmail" required>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthPicture">Picture Location Profile Value</label>
+                                        <input type="text" id="oAuthPicture" name="oAuthPicture">
+                                    </div>
+                                    <input type="hidden" value="oAuthProvider" id="settingType" name="settingType">
+                                </div>
+                              </div>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">

@@ -104,19 +104,30 @@ class edgeStreamer(db.Model):
 
 class oAuthProvider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(40))
-    client_id = db.Column(db.String(256))
-    client_secret = db.Column(db.String(256))
-    access_token_url = db.Column(db.String(1024))
+    name = db.Column(db.String(40), required=True)
+    client_id = db.Column(db.String(256), required=True)
+    client_secret = db.Column(db.String(256), required=True)
+    access_token_url = db.Column(db.String(1024), required=True)
     access_token_params = db.Column(db.String(1024))
-    authorize_url = db.Column(db.String(1024))
-    authorize_parms = db.Column(db.String(1024))
-    api_base_url = db.Column(db.String(1024))
+    authorize_url = db.Column(db.String(1024), required=True)
+    authorize_params = db.Column(db.String(1024))
+    api_base_url = db.Column(db.String(1024), required=True)
     client_kwargs = db.Column(db.String(2056))
-    profile_endpoint = db.Column(db.String(2056))
-    username_value = db.Column(db.String(256))
-    email_value = db.Column(db.String(256))
+    profile_endpoint = db.Column(db.String(2056), required=True)
+    username_value = db.Column(db.String(256), required=True)
+    email_value = db.Column(db.String(256), required=True)
     picture_value = db.Column(db.String(256))
+
+    def __init__(self, name, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
+        self.name = name
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.access_token_url = access_token_url
+        self.authorize_url = authorize_url
+        self.api_base_url = api_base_url
+        self.profile_endpoint = profile_endpoint
+        self.username_value = username_value
+        self.email_value = email_value
 
     def __repr__(self):
         return '<id %r>' % self.id

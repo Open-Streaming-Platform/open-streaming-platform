@@ -232,6 +232,7 @@ from blueprints.liveview import liveview_bp
 from blueprints.clip import clip_bp
 from blueprints.upload import upload_bp
 from blueprints.settings import settings_bp
+from blueprints.oauth import oauth_bp
 
 # Register all Blueprints
 app.register_blueprint(errorhandler_bp)
@@ -246,6 +247,7 @@ app.register_blueprint(topics_bp)
 app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
+app.register_blueprint(oauth_bp)
 
 #----------------------------------------------------------------------------#
 # Template Filter Imports
