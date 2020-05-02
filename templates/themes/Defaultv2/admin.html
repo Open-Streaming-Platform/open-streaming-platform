@@ -21,6 +21,9 @@
                     <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">oAuth Providers</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
                 </li>
                 <li class="nav-item">
@@ -251,6 +254,32 @@
                           </div>
                       </form>
                 </div>
+                <div class="tab-pane fade {% if page == 'oauth' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-oauth" id="adminOauth">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    oAuth Provider Listing
+                                </div>
+                                <div class="card-body">
+                                    <table id="oAuthTable" class="table table-borderless" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Provider Name</th>
+                                                <th>Client ID</th>
+                                                <th>Authorize URL</th>
+                                                <th>Options</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">
                     <h5>
                         OSP Edge Streamer Nodes
@@ -263,7 +292,7 @@
                                     <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span><br>
                                     <note style="color:red;">*** A Reload of NGINX is required after any changes for OSP Streaming to work ***</note><br>
                                 </div>
-                                <div class="body">
+                                <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="edgeTable" class="table table-borderless" width="100%">
                                             <thead>

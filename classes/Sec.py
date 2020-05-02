@@ -51,8 +51,27 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer)
     pictureLocation = db.Column(db.String(255))
+    oAuthProvider = db.Column(db.String(40))
+    oAuthToken = db.relationship('OAuth2Token', backref='user', lazy='joined')
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+
+class OAuth2Token(db.Model):
+    __tablename__ = "OAuth2Token"
+    name = db.Column(db.String(40))
+    token_type = db.Column(db.String(40))
+    access_token = db.Column(db.String(200))
+    refresh_token = db.Column(db.String(200))
+    expires_at = db.Column(db.PositiveIntegerField())
+    user = db.Column(db.ForeignKey(User.id))
+
+    def to_token(self):
+        return dict(
+            access_token=self.access_token,
+            token_type=self.token_type,
+            refresh_token=self.refresh_token,
+            expires_at=self.expires_at,
+        )
