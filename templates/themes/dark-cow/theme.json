@@ -5,7 +5,6 @@
   "Description": "A dark theme",
   "Override": [
     "admin.html",
-    "apikeys.html",
     "channelplayer.html",
     "channelProtectionAuth.html",
     "channels.html",
