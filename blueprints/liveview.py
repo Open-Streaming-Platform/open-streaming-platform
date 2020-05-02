@@ -108,7 +108,7 @@ def view_page(loc):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template(themes.checkOverride('player_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+            return render_template(themes.checkOverride('channelplayer_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
 
     else:
         flash("No Live Stream at URL","error")
