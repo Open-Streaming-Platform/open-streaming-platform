@@ -51,6 +51,7 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer)
     pictureLocation = db.Column(db.String(255))
+    authType = db.Column(db.Integer)
     oAuthProvider = db.Column(db.String(40))
     oAuthToken = db.relationship('OAuth2Token', backref='user', lazy='joined')
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
