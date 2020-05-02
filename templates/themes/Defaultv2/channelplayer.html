@@ -77,15 +77,15 @@
                      <div class="row m-2">
                          <div class="video-buttons-row">
                              <span class="float-left">
-                                  <button type="button" class="btn btn-primary shadow {% if channel.chatEnabled == False %}disabled{% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                                  <button type="button" class="btn btn-primary shadow {% if channel.chatEnabled == False %}disabled{% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" data-toggle="tooltip" data-placement="top" title="Toggle Chat">
                                     <i class="fas fa-comment"></i>
                                   </button>
-                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal" data-toggle="tooltip" data-placement="top" title="Share or Embed">
                                     <i class="fas fa-share-alt"></i>
                                   </button>
 
                                   {% if channel.owningUser == current_user.id %}
-                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal" data-toggle="tooltip" data-placement="top" title="Edit Stream Metadata">
                                     <i class="fas fa-edit"></i>
                                   </button>
                                   {% endif %}
