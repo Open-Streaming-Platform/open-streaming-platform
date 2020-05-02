@@ -177,16 +177,16 @@ def init(app, user_datastore):
         oAuthSettingsList = settings.oAuthProvider.query.all()
         if oAuthSettingsList != []:
             for oAuthSettings in oAuthSettingsList:
-                app.config[oAuthSettings.name + '_CLIENT_ID'] = oAuthSettings.client_id
-                app.config[oAuthSettings.name + '_CLIENT_SECRET'] = oAuthSettings.client_secret
-                app.config[oAuthSettings.name + '_REQUEST_TOKEN_URL'] = oAuthSettings.request_token_url
-                app.config[oAuthSettings.name + '_REQUEST_TOKEN_PARAMS'] = oAuthSettings.request_token_params
-                app.config[oAuthSettings.name + '_ACCESS_TOKEN_URL'] = oAuthSettings.access_token_url
-                app.config[oAuthSettings.name + '_ACCESS_TOKEN_PARAMS'] = oAuthSettings.access_token_params
-                app.config[oAuthSettings.name + '_AUTHORIZE_URL'] = oAuthSettings.authorize_url
-                app.config[oAuthSettings.name + '_AUTHORIZE_PARAMS'] = oAuthSettings.authorize_params
-                app.config[oAuthSettings.name + '_API_BASE_URL'] = oAuthSettings.api_base_url
-                app.config[oAuthSettings.name + '_CLIENT_KWARGS'] = oAuthSettings.client_kwargs
+                app.config[(oAuthSettings.name).upper() + '_CLIENT_ID'] = oAuthSettings.client_id
+                app.config[(oAuthSettings.name).upper() + '_CLIENT_SECRET'] = oAuthSettings.client_secret
+                app.config[(oAuthSettings.name).upper() + '_REQUEST_TOKEN_URL'] = oAuthSettings.request_token_url
+                app.config[(oAuthSettings.name).upper() + '_REQUEST_TOKEN_PARAMS'] = oAuthSettings.request_token_params
+                app.config[(oAuthSettings.name).upper() + '_ACCESS_TOKEN_URL'] = oAuthSettings.access_token_url
+                app.config[(oAuthSettings.name).upper() + '_ACCESS_TOKEN_PARAMS'] = oAuthSettings.access_token_params
+                app.config[(oAuthSettings.name).upper() + '_AUTHORIZE_URL'] = oAuthSettings.authorize_url
+                app.config[(oAuthSettings.name).upper() + '_AUTHORIZE_PARAMS'] = oAuthSettings.authorize_params
+                app.config[(oAuthSettings.name).upper() + '_API_BASE_URL'] = oAuthSettings.api_base_url
+                app.config[(oAuthSettings.name).upper() + '_CLIENT_KWARGS'] = oAuthSettings.client_kwargs
 
         # Initialize the OSP Edge Configuration - Mostly for Docker
         try:

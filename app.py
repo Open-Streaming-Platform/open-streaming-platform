@@ -192,9 +192,10 @@ except:
 from classes.shared import oauth
 oauth.init_app(app)
 
-from globals.globalvars import oAuthProviderObjects
+#from globals.globalvars import oAuthProviderObjects
+oAuthProviderList = {}
 for oAuthProvider in settings.oAuthProvider.query.all():
-    oAuthProviderObjects[oAuthProvider.name] = oauth.create_client(oAuthProvider.name)
+    oAuthProviderList[oAuthProvider.name] = oauth.create_client(oAuthProvider.name)
 
 # Initialize Flask-Mail
 from classes.shared import email
