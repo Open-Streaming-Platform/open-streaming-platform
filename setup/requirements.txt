@@ -35,7 +35,7 @@ speaklater==1.3
 SQLAlchemy==1.3.5
 Werkzeug==0.16.0
 WTForms==2.2.1
-requests==2.18.4
+requests==2.20.0
 flask-markdown==0.3
 xmltodict==0.12.0
 apscheduler==3.6.1
