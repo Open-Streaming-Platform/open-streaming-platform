@@ -1,5 +1,6 @@
 from flask import redirect, url_for, Blueprint, abort
 from classes import settings
+from classes.shared import oauth
 
 #from globals.globalvars import oAuthProviderObjects
 from app import oAuthProviderList
@@ -10,11 +11,13 @@ oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 def oAuthLogin(provider):
     sysSettings = settings.settings.query.first()
     if sysSettings is not None:
-        if provider in oAuthProviderList:
-            redirect_url = sysSettings.siteProtocol + sysSettings.siteAddress + '/oauth/authorize/' + provider
-            return oAuthProviderList[provider].authorize_redirect(redirect_url)
-        else:
-            abort(500)
+        #if provider in oAuthProviderList:
+        #    redirect_url = sysSettings.siteProtocol + sysSettings.siteAddress + '/oauth/authorize/' + provider
+        #    return oAuthProviderList[provider].authorize_redirect(redirect_url)
+
+        oAuthClient = oauth.create_client(provider)
+        redirect_url = sysSettings.siteProtocol + sysSettings.siteAddress + '/oauth/authorize/' + provider
+        return oAuthClient.authorize_redirect(redirect_url)
     else:
         redirect(url_for('root.main_page'))
 
