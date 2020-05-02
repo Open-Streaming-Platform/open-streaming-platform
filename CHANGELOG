@@ -13,6 +13,9 @@ Changing System Logo will now update the Favicons
 Tooltips added to all players in Defaultv2
 Fixed an issue with Streaming Role was required for using an invite code
 Added Additional Checks to Ensure accurate live view count
+Fixes Embedded Stream to Allow Embed Views to count against Live Count
+Upgraded Requests from 2.18.4 to 2.20.0 - CVE-2018-18074
+Upgraded psutil from 5.6.3 to 5.6.6 - CVE-2019-18874
 
 Beta-5b
 ==============================================
