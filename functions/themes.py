@@ -49,7 +49,7 @@ def faviconGenerator(imageLocation):
 		)
         background.save(directory + "/" + size[0] + ".png")
     im = Image.open(originalImage)
-    processor = im.resize(16,16, Image.LANCZOS)
+    processor = im.resize((16,16), Image.LANCZOS)
     processor.save(directory + "/favicon.ico")
     return 'OK'
 
