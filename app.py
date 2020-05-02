@@ -192,10 +192,19 @@ except:
 from classes.shared import oauth
 oauth.init_app(app)
 
-#from globals.globalvars import oAuthProviderObjects
-oAuthProviderList = {}
-for oAuthProvider in settings.oAuthProvider.query.all():
-    oAuthProviderList[oAuthProvider.name] = oauth.create_client(oAuthProvider.name)
+# Register oAuth Providers
+for provider in settings.oAuthProvider.query.all():
+    oauth.register(
+        name=provider.name,
+        client_id=provider.client_id,
+        client_secret=provider.client_secret,
+        access_token_url=provider.access_token_url,
+        access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+        authorize_url=provider.authorize_url,
+        authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+        api_base_url=provider.api_base_url,
+        client_kwargs=provider.client_kwargs if provider.client_kwargs != '' else None,
+    )
 
 # Initialize Flask-Mail
 from classes.shared import email
