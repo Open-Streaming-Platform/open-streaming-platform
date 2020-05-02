@@ -678,7 +678,7 @@ socket.on('sendChanSubResults', function (msg) {
     }
   });
 
-  video.addEventListener('play', (event) => {
+  video.addEventListener('volumechange', (event) => {
     var currentVolume = player.volume();
     setCookie('ospvolume',currentVolume, 365);
   });
