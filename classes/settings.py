@@ -105,6 +105,8 @@ class edgeStreamer(db.Model):
 class oAuthProvider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40))
+    friendlyName = db.Column(db.String(64))
+    displayColor = db.Colmn(db.String(8))
     client_id = db.Column(db.String(256))
     client_secret = db.Column(db.String(256))
     access_token_url = db.Column(db.String(1024))
@@ -118,8 +120,10 @@ class oAuthProvider(db.Model):
     email_value = db.Column(db.String(256))
     picture_value = db.Column(db.String(256))
 
-    def __init__(self, name, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
+    def __init__(self, name, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
         self.name = name
+        self.friendlyName = friendlyName
+        self.displayColor = displayColor
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token_url = access_token_url

@@ -591,6 +591,8 @@ def admin_page():
 
         elif settingType == "oAuthProvider":
             oAuth_name = request.form['oAuthName']
+            oAuth_friendlyName = request.form['oAuthFriendlyName']
+            oAuth_displayColor = request.form['oAuthColor']
             oAuth_client_id = request.form['oAuthClient_id']
             oAuth_client_secret = request.form['oAuthClient_secret']
             oAuth_access_token_url = request.form['oAuthAccess_token_url']
@@ -613,7 +615,7 @@ def admin_page():
             if oAuth_picture == '':
                 oAuth_picture = None
 
-            newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+            newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
             if oAuth_access_token_params is not None:
                 newOauthProvider.access_token_params = oAuth_access_token_params
             if oAuth_authorize_params is not None:

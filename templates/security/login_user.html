@@ -32,7 +32,7 @@
                             </form>
                             {% for provider in SystemOAuthProviders %}
                             <div class="my-2">
-                                <a href="/oauth/login/{{provider.name}}" class="btn btn-success btn-lg btn-block">Login With {{provider.name}}</a>
+                                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};">Login With {{provider.friendlyName}}</a>
                             </div>
                             {% endfor %}
                         </div>
