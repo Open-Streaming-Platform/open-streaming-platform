@@ -1111,15 +1111,15 @@
          $("#oAuthClient_secret").val( oAuthClientSecret );
          $("#oAuthAccess_token_url").val( oAuthAccessTokenURL );
          if (oAuthAccessTokenParams != 'None') {
-             $("#oAuthAccess_token_params").val(oAuthAccessTokenParams);
+             $("#oAuthAccess_token_params").val(JSON.parse(oAuthAccessTokenParams));
          }
          $("#oAuthAuthorize_url").val( oAuthAuthorizeURL );
          if (oAuthAuthorizeParams != 'None') {
-             $("#oAuthAuthorize_params").val(oAuthAuthorizeParams);
+             $("#oAuthAuthorize_params").val(JSON.parse(oAuthAuthorizeParams));
          }
          $("#oAuthApi_base_url").val( oAuthAPIBaseURL );
          if (oAuthClientKwargs != 'None') {
-             $("#oAuthClient_kwargs").val(oAuthClientKwargs);
+             $("#oAuthClient_kwargs").val(JSON.parse(oAuthClientKwargs));
          }
          $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
          $("#oAuthUsername").val( oAuthUsername );
