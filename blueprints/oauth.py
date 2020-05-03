@@ -22,5 +22,6 @@ def oAuthAuthorize(provider):
     if oAuthProviderQuery is not None:
         token = oAuthClient.authorize_access_token()
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
-        return(jsonify(userData))
+
+        return(userData.text)
 
