@@ -604,7 +604,6 @@ def admin_page():
             oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
             oAuth_username = request.form['oAuthUsername']
             oAuth_email = request.form['oAuthEmail']
-            oAuth_picture = request.form['oAuthPicture']
 
             if oAuth_access_token_params == '':
                 oAuth_access_token_params = None
@@ -612,8 +611,6 @@ def admin_page():
                 oAuth_authorize_params = None
             if oAuth_client_kwargs == '':
                 oAuth_client_kwargs = None
-            if oAuth_picture == '':
-                oAuth_picture = None
 
             if request.form['oAuthID'] == '':
                 newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
@@ -623,8 +620,6 @@ def admin_page():
                     newOauthProvider.authorize_params = oAuth_authorize_params
                 if oAuth_client_kwargs is not None:
                     newOauthProvider.client_kwargs = oAuth_client_kwargs
-                if oAuth_picture is not None:
-                    newOauthProvider.picture_value = oAuth_picture
 
                 db.session.add(newOauthProvider)
                 db.session.commit()
@@ -664,7 +659,6 @@ def admin_page():
                     oAuthQuery.profile_endpoint = oAuth_profile_endpoint
                     oAuthQuery.username_value = oAuth_username
                     oAuthQuery.email_value = oAuth_email
-                    oAuthQuery.picture_value = oAuth_picture
                     db.session.commit()
 
                     userQuery = Sec.User.query.filter_by(oAuthProvider=oldOAuthName).all()

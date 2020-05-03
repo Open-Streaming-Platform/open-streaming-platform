@@ -377,10 +377,6 @@
                                             <input type="text" class="form-control" id="oAuthEmail" name="oAuthEmail" required>
                                             <small id="oAuthEmailHelp" class="form-text text-muted">Email Address Attribute Retrieved from Profile Endpoint</small>
                                         </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="oAuthPicture">Picture Location Profile Value</label>
-                                            <input type="text" class="form-control" id="oAuthPicture" name="oAuthPicture">
-                                        </div>
                                     </div>
                                     <input type="hidden" id="oAuthID" name="oAuthID">
                                     <input type="hidden" value="oAuthProvider" id="settingType" name="settingType">
@@ -1113,7 +1109,6 @@
          var oAuthProfileEndpoint = $(this).data('profileendpoint');
          var oAuthUsername = $(this).data('usernamevalue');
          var oAuthEmail = $(this).data('emailvalue');
-         var oAuthPicture = $(this).data('picturevalue');
          $("#oAuthID").val( oAuthID );
          $("#oAuthName").val( oAuthName );
          $("#oAuthFriendlyName").val( oAuthFriendlyName );
@@ -1135,9 +1130,6 @@
          $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
          $("#oAuthUsername").val( oAuthUsername );
          $("#oAuthEmail").val( oAuthEmail );
-         if (oAuthPicture != 'None') {
-             $("#oAuthPicture").val(oAuthPicture);
-         }
          $("#newOauthModal").modal('show');
     });
 
