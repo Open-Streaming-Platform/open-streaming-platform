@@ -49,7 +49,7 @@ def oAuthAuthorize(provider):
 
             if userQuery.active is False:
                 flash("User has been Disabled.  Please contact your administrator","error")
-                redirect('/login')
+                return(redirect('/login'))
             else:
                 login_user(userQuery)
                 return(redirect(url_for('root.main_page')))
