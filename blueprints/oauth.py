@@ -1,4 +1,4 @@
-from flask import redirect, url_for, Blueprint, abort
+from flask import redirect, url_for, Blueprint, abort, jsonify
 from classes import settings
 from classes.shared import oauth
 
@@ -22,5 +22,5 @@ def oAuthAuthorize(provider):
     if oAuthProviderQuery is not None:
         token = oAuthClient.authorize_access_token()
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
-        return(str(userData))
+        return(jsonify(userData))
 
