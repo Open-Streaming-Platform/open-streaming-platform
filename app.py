@@ -191,7 +191,8 @@ except:
 
 # Initialize oAuth
 from classes.shared import oauth
-oauth.init_app(app)
+from functions.oauth import fetch_token
+oauth.init_app(app, fetch_token=fetch_token)
 
 # Register oAuth Providers
 for provider in settings.oAuthProvider.query.all():

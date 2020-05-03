@@ -5,10 +5,8 @@ from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from functions.oauth import fetch_token
-
 db = SQLAlchemy()
-oauth = OAuth(fetch_token=fetch_token)
+oauth = OAuth()
 socketio = SocketIO()
 email = Mail()
 limiter = Limiter(key_func=get_remote_address)
