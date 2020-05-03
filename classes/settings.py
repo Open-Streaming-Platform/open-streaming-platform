@@ -106,7 +106,7 @@ class oAuthProvider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40))
     friendlyName = db.Column(db.String(64))
-    displayColor = db.Colmn(db.String(8))
+    displayColor = db.Column(db.String(8))
     client_id = db.Column(db.String(256))
     client_secret = db.Column(db.String(256))
     access_token_url = db.Column(db.String(1024))
