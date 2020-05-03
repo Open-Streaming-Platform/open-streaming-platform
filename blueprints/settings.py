@@ -635,6 +635,7 @@ def admin_page():
                 existingOAuthID = request.form['oAuthID']
                 oAuthQuery = settings.oAuthProvider.query.filter_by(id=int(existingOAuthID)).first()
                 if oAuthQuery != None:
+                    oldOAuthName = oAuthQuery.name
                     oAuthQuery.name = oAuth_name
                     oAuthQuery.friendlyName = oAuth_friendlyName
                     oAuthQuery.displayColor = oAuth_displayColor
@@ -650,7 +651,16 @@ def admin_page():
                     oAuthQuery.username_value = oAuth_username
                     oAuthQuery.email_value = oAuth_email
                     oAuthQuery.picture_value = oAuth_picture
+                    db.session.commit()
 
+                    userQuery = Sec.User.query.filter_by(oAuthProvider=oldOAuthName).all()
+                    for user in userQuery:
+                        user.oAuthProvider = oAuth_name
+                    db.session.commit()
+
+                    tokenQuery = Sec.OAuth2Token.query.filter_by(name=oldOAuthName).all()
+                    for token in tokenQuery:
+                        token.name = oAuth_name
                     db.session.commit()
                     flash("oAuth Provider Updated","success")
                 else:
