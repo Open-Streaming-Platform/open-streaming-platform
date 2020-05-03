@@ -36,6 +36,7 @@ class OSPLoginForm(LoginForm):
         if isvalid is True:
             response = super(OSPLoginForm, self).validate()
             return response
+        self.email.errors.append("Invalid Username or Password")
         return False
 
 roles_users = db.Table('roles_users',
