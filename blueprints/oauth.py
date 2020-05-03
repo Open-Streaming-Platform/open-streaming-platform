@@ -47,6 +47,9 @@ def oAuthAuthorize(provider):
                 db.session.add(newToken)
                 db.session.commit()
                 login_user(userQuery)
+                if userQuery.active is False:
+                    flash("User has been Disabled.  Please contact your administrator","error")
+                    redirect('/login')
                 return(redirect(url_for('root.main_page')))
             else:
                 flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
