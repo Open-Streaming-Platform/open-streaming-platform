@@ -282,7 +282,7 @@
                                                     <button type="button" class="btn btn-sm btn-warning shadow edit-oAuth-Button" data-id="{{provider.id}}" data-name="{{provider.name}}" data-friendlyname="{{provider.friendlyName}}"
                                                             data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
                                                             data-accesstokenparams="{{provider.access_token_params}}" data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams="{{provider.authorize_params}}"
-                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs="{{provider.clientkwargs}}" data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
+                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs="{{provider.client_kwargs}}" data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
                                                             data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
@@ -1110,15 +1110,23 @@
          $("#oAuthClient_id").val( oAuthClientID );
          $("#oAuthClient_secret").val( oAuthClientSecret );
          $("#oAuthAccess_token_url").val( oAuthAccessTokenURL );
-         $("#oAuthAccess_token_params").val( oAuthAccessTokenParams );
+         if (oAuthAccessTokenParams != 'None') {
+             $("#oAuthAccess_token_params").val(oAuthAccessTokenParams);
+         }
          $("#oAuthAuthorize_url").val( oAuthAuthorizeURL );
-         $("#oAuthAuthorize_params").val( oAuthAuthorizeParams );
+         if (oAuthAuthorizeParams != 'None') {
+             $("#oAuthAuthorize_params").val(oAuthAuthorizeParams);
+         }
          $("#oAuthApi_base_url").val( oAuthAPIBaseURL );
-         $("#oAuthClient_kwargs").val( oAuthClientKwargs );
+         if (oAuthClientKwargs != 'None') {
+             $("#oAuthClient_kwargs").val(oAuthClientKwargs);
+         }
          $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
          $("#oAuthUsername").val( oAuthUsername );
          $("#oAuthEmail").val( oAuthEmail );
-         $("#oAuthPicture").val( oAuthPicture );
+         if (oAuthPicture != 'None') {
+             $("#oAuthPicture").val(oAuthPicture);
+         }
          $("#newOauthModal").modal('show');
     });
 
