@@ -281,8 +281,8 @@
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-warning shadow edit-oAuth-Button" data-id="{{provider.id}}" data-name="{{provider.name}}" data-friendlyname="{{provider.friendlyName}}"
                                                             data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
-                                                            data-accesstokenparams='{{provider.access_token_params|safe}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|safe}}'
-                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|safe}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
+                                                            data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
+                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
                                                             data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
