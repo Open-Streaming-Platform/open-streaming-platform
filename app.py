@@ -194,23 +194,26 @@ from classes.shared import oauth
 from functions.oauth import fetch_token
 oauth.init_app(app, fetch_token=fetch_token)
 
+try:
 # Register oAuth Providers
-for provider in settings.oAuthProvider.query.all():
-    try:
-        oauth.register(
-            name=provider.name,
-            client_id=provider.client_id,
-            client_secret=provider.client_secret,
-            access_token_url=provider.access_token_url,
-            access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
-            authorize_url=provider.authorize_url,
-            authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
-            api_base_url=provider.api_base_url,
-            client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
-        )
+    for provider in settings.oAuthProvider.query.all():
+        try:
+            oauth.register(
+                name=provider.name,
+                client_id=provider.client_id,
+                client_secret=provider.client_secret,
+                access_token_url=provider.access_token_url,
+                access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                authorize_url=provider.authorize_url,
+                authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                api_base_url=provider.api_base_url,
+                client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+            )
 
-    except Exception as e:
-        print("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+        except Exception as e:
+            print("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+except:
+    print("Failed Loading oAuth Providers")
 
 # Initialize Flask-Mail
 from classes.shared import email
