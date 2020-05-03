@@ -10,6 +10,8 @@ import json
 
 from app import user_datastore
 from functions.oauth import fetch_token
+from functions.system import newLog
+from functions.webhookFunc import runWebhook
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -58,6 +60,9 @@ def oAuthAuthorize(provider):
             db.session.add(newToken)
             db.session.commit()
             login_user(user)
+
+            runWebhook("ZZZ", 20, user=user.username)
+            newLog(1, "A New User has Registered - Username:" + str(user.username))
 
             redirect(url_for('root.main_page'))
 
