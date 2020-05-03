@@ -11,6 +11,7 @@ import sys
 import hashlib
 import logging
 import datetime
+import json
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash
@@ -203,7 +204,7 @@ for provider in settings.oAuthProvider.query.all():
         authorize_url=provider.authorize_url,
         authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
         api_base_url=provider.api_base_url,
-        client_kwargs=provider.client_kwargs if provider.client_kwargs != '' else None,
+        client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
     )
 
 # Initialize Flask-Mail
