@@ -15,7 +15,7 @@ from sqlalchemy.sql.expression import func
 
 from werkzeug.utils import secure_filename
 
-from classes.shared import db, email
+from classes.shared import db, email, oauth
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -629,6 +629,20 @@ def admin_page():
                 db.session.add(newOauthProvider)
                 db.session.commit()
 
+                provider = settings.oAuthProvider.query.filter_by(name=oAuth_name).first()
+
+                oauth.register(
+                    name=provider.name,
+                    client_id=provider.client_id,
+                    client_secret=provider.client_secret,
+                    access_token_url=provider.access_token_url,
+                    access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                    authorize_url=provider.authorize_url,
+                    authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                    api_base_url=provider.api_base_url,
+                    client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                )
+
                 flash("oAuth Provider Added", "success")
 
             else:
@@ -662,6 +676,22 @@ def admin_page():
                     for token in tokenQuery:
                         token.name = oAuth_name
                     db.session.commit()
+
+                    provider = settings.oAuthProvider.query.filter_by(name=oAuth_name).first()
+
+                    oauth.register(
+                        name=provider.name,
+                        overwrite=True,
+                        client_id=provider.client_id,
+                        client_secret=provider.client_secret,
+                        access_token_url=provider.access_token_url,
+                        access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                        authorize_url=provider.authorize_url,
+                        authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                        api_base_url=provider.api_base_url,
+                        client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                    )
+
                     flash("oAuth Provider Updated","success")
                 else:
                     flash("oAuth Provider Does Not Exist", "error")
