@@ -286,7 +286,7 @@
                                                             data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-danger shadow "><i class="far fa-trash-alt"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="far fa-trash-alt"></i></button>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -389,7 +389,7 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="resetOAuthForm();">Cancel</button>
-                            <input type="submit" class="btn btn-success" value="Add">
+                            <input type="submit" class="btn btn-success" value="Add/Edit">
                           </div>
                           </form>
                         </div>
@@ -400,7 +400,7 @@
                         <div class="modal-content">
                           <form action="/settings/admin" method="post">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="delteOauthModalTitle">Delete a oAuth Provider</h5>
+                            <h5 class="modal-title" id="deleteOauthModalTitle">Delete a oAuth Provider</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -410,14 +410,17 @@
                                 <div class="row">
                                     <div class="col-md-6 col-12">
                                         <div class="form-group col-md-12">
-
+                                            <p>Any Users that registered under the oAuth Provider will be reassigned to local authentication and passwords set to a random value.  Users will need to perform a password reset to regain access.</p>
+                                            <p>Are you sure you want to delete the oAuth Provider?</p>
+                                            <input type="hidden" id="DeleteOAuthProviderID" name="DeleteOAuthProviderID">
                                         </div>
                                     </div>
                                 </div>
                               </div>
                           </div>
                           <div class="modal-footer">
-
+                            <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete">
                           </div>
                           </form>
                         </div>
@@ -1086,6 +1089,11 @@
 </script>
 
 <script>
+    function deleteOAuthProvider(providerID) {
+        document.getElementById('DeleteOAuthProviderID').value = providerID;
+        $('#deleteOauthModal').modal('show');
+    }
+
     $(document).on("click", ".edit-oAuth-Button", function () {
          var oAuthID = $(this).data('id');
          var oAuthName = $(this).data('name');
