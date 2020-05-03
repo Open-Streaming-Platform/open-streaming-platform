@@ -49,19 +49,24 @@ def user_page():
     if request.method == 'GET':
         return render_template(themes.checkOverride('userSettings.html'))
     elif request.method == 'POST':
-        emailAddress = request.form['emailAddress']
-        password1 = request.form['password1']
-        password2 = request.form['password2']
-        biography = request.form['biography']
 
-        if password1 != "":
-            if password1 == password2:
-                newPassword = hash_password(password1)
-                current_user.password = newPassword
-                system.newLog(1, "User Password Changed - Username:" + current_user.username)
-                flash("Password Changed")
-            else:
-                flash("Passwords Don't Match!")
+        biography = request.form['biography']
+        current_user.biography = biography
+
+        if current_user.authType == 0:
+            password1 = request.form['password1']
+            password2 = request.form['password2']
+            if password1 != "":
+                if password1 == password2:
+                    newPassword = hash_password(password1)
+                    current_user.password = newPassword
+                    system.newLog(1, "User Password Changed - Username:" + current_user.username)
+                    flash("Password Changed")
+                else:
+                    flash("Passwords Don't Match!")
+
+        emailAddress = request.form['emailAddress']
+        current_user.email = emailAddress
 
         if 'photo' in request.files:
             file = request.files['photo']
@@ -80,9 +85,6 @@ def user_page():
                     except OSError:
                         pass
 
-        current_user.email = emailAddress
-
-        current_user.biography = biography
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
 
