@@ -293,13 +293,17 @@ def inject_notifications():
         notificationList.sort(key=lambda x: x.timestamp, reverse=True)
     return dict(notifications=notificationList)
 
+@app.context_processor
+def inject_oAuthProviders():
+
+    SystemOAuthProviders = db.session.query(settings.oAuthProvider).all()
+    return dict(SystemOAuthProviders=SystemOAuthProviders)
 
 @app.context_processor
 def inject_sysSettings():
 
     sysSettings = db.session.query(settings.settings).first()
     allowRegistration = config.allowRegistration
-
     return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 
 @app.context_processor

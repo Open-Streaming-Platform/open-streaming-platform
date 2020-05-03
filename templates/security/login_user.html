@@ -30,6 +30,11 @@
                                 {{ render_field(login_user_form.remember, class_="form-check-label") }}
                               {{ render_field(login_user_form.submit, class_="form-control") }}
                             </form>
+                            {% for provider in SystemOAuthProviders %}
+                            <div class="m-2">
+                                <a href="/oauth/login/{{provider.name}}" class="btn btn-success">Login with {{provider.name}}</a>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
