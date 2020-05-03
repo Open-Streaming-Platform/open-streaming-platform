@@ -69,7 +69,7 @@ def oAuthAuthorize(provider):
                 runWebhook("ZZZ", 20, user=user.username)
                 newLog(1, "A New User has Registered - Username:" + str(user.username))
 
-                redirect(url_for('root.main_page'))
+                return(redirect(url_for('root.main_page')))
             else:
                 flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
                 return(redirect('/login'))
