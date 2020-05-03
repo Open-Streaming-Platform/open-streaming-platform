@@ -36,36 +36,41 @@ def oAuthAuthorize(provider):
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
 
-        userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+        userQuery = Sec.User.query.filter_by(oAuthID=userDataDict['id'], oAuthProvider=provider, authType=1).first()
         if userQuery != None:
-            if userQuery.authType == 1 and userQuery.oAuthProvider == provider:
-                existingTokenQuery = Sec.OAuth2Token.query.filter_by(user=userQuery.id).all()
-                for existingToken in existingTokenQuery:
-                    db.session.delete(existingToken)
-                db.session.commit()
-                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
-                db.session.add(newToken)
-                db.session.commit()
-                login_user(userQuery)
-                if userQuery.active is False:
-                    flash("User has been Disabled.  Please contact your administrator","error")
-                    redirect('/login')
-                return(redirect(url_for('root.main_page')))
-            else:
-                flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
-                return(redirect('/login'))
-        else:
-            user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=userDataDict[oAuthProviderQuery.username_value], active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthProvider=provider)
+
+            existingTokenQuery = Sec.OAuth2Token.query.filter_by(user=userQuery.id).all()
+            for existingToken in existingTokenQuery:
+                db.session.delete(existingToken)
             db.session.commit()
-            user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
-            user_datastore.add_role_to_user(user, 'User')
             newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
             db.session.add(newToken)
             db.session.commit()
-            login_user(user)
 
-            runWebhook("ZZZ", 20, user=user.username)
-            newLog(1, "A New User has Registered - Username:" + str(user.username))
+            if userQuery.active is False:
+                flash("User has been Disabled.  Please contact your administrator","error")
+                redirect('/login')
+            else:
+                login_user(userQuery)
+                return(redirect(url_for('root.main_page')))
 
-            redirect(url_for('root.main_page'))
+        else:
+            existingUsernameQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+            if existingUsernameQuery is None:
+                user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=userDataDict[oAuthProviderQuery.username_value], active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+                db.session.commit()
+                user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+                user_datastore.add_role_to_user(user, 'User')
+                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
+                db.session.add(newToken)
+                db.session.commit()
+                login_user(user)
+
+                runWebhook("ZZZ", 20, user=user.username)
+                newLog(1, "A New User has Registered - Username:" + str(user.username))
+
+                redirect(url_for('root.main_page'))
+            else:
+                flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
+                return(redirect('/login'))
 
