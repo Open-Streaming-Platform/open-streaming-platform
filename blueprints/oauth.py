@@ -26,7 +26,7 @@ def oAuthAuthorize(provider):
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
 
-        userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username]).first()
+        userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
         if userQuery != None:
             if userQuery.type == 1 and userQuery.oAuthProvider == provider:
                 return("Existing User - Success")
