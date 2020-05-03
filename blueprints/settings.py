@@ -615,18 +615,47 @@ def admin_page():
             if oAuth_picture == '':
                 oAuth_picture = None
 
-            newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
-            if oAuth_access_token_params is not None:
-                newOauthProvider.access_token_params = oAuth_access_token_params
-            if oAuth_authorize_params is not None:
-                newOauthProvider.authorize_params = oAuth_authorize_params
-            if oAuth_client_kwargs is not None:
-                newOauthProvider.client_kwargs = oAuth_client_kwargs
-            if oAuth_picture is not None:
-                newOauthProvider.picture_value = oAuth_picture
+            if request.form['oAuthID'] == '':
+                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+                if oAuth_access_token_params is not None:
+                    newOauthProvider.access_token_params = oAuth_access_token_params
+                if oAuth_authorize_params is not None:
+                    newOauthProvider.authorize_params = oAuth_authorize_params
+                if oAuth_client_kwargs is not None:
+                    newOauthProvider.client_kwargs = oAuth_client_kwargs
+                if oAuth_picture is not None:
+                    newOauthProvider.picture_value = oAuth_picture
 
-            db.session.add(newOauthProvider)
-            db.session.commit()
+                db.session.add(newOauthProvider)
+                db.session.commit()
+
+                flash("oAuth Provider Added", "success")
+
+            else:
+                existingOAuthID = request.form['oAuthID']
+                oAuthQuery = settings.oAuthProvider.query.filter_by(id=int(existingOAuthID)).first()
+                if oAuthQuery != None:
+                    oAuthQuery.name = oAuth_name
+                    oAuthQuery.friendlyName = oAuth_friendlyName
+                    oAuthQuery.displayColor = oAuth_displayColor
+                    oAuthQuery.client_id = oAuth_client_id
+                    oAuthQuery.client_secret = oAuth_client_secret
+                    oAuthQuery.access_token_url = oAuth_access_token_url
+                    oAuthQuery.access_token_params = oAuth_access_token_params
+                    oAuthQuery.authorize_url = oAuth_authorize_url
+                    oAuthQuery.authorize_params = oAuth_authorize_params
+                    oAuthQuery.api_base_url = oAuth_api_base_url
+                    oAuthQuery.client_kwargs = oAuth_client_kwargs
+                    oAuthQuery.profile_endpoint = oAuth_profile_endpoint
+                    oAuthQuery.username_value = oAuth_username
+                    oAuthQuery.email_value = oAuth_email
+                    oAuthQuery.picture_value = oAuth_picture
+
+                    db.session.commit()
+                    flash("oAuth Provider Updated","success")
+                else:
+                    flash("oAuth Provider Does Not Exist", "error")
+
             return redirect(url_for('.admin_page', page="oauth"))
 
         elif settingType == "newuser":
