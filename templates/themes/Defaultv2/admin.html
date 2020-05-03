@@ -1151,25 +1151,43 @@
         switch(authType) {
             case "Custom":
                 $("#oAuthAccess_token_url").attr("disabled", false);
+                $("#oAuthAccess_token_url").show();
                 $("#oAuthAccess_token_params").attr("disabled", false);
+                $("#oAuthAccess_token_params").show();
                 $("#oAuthAuthorize_url").attr("disabled", false);
+                $("#oAuthAuthorize_url").show();
                 $("#oAuthAuthorize_params").attr("disabled", false);
+                $("#oAuthAuthorize_params").show();
                 $("#oAuthApi_base_url").attr("disabled", false);
+                $("#oAuthApi_base_url").show();
                 $("#oAuthClient_kwargs").attr("disabled", false);
+                $("#oAuthClient_kwargs").show();
                 $("#oAuthProfile_endpoint").attr("disabled", false);
+                $("#oAuthProfile_endpoint").show();
                 $("#oAuthUsername").attr("disabled", false);
+                $("#oAuthUsername").show();
                 $("#oAuthEmail").attr("disabled", false);
+                $("#oAuthEmail").show();
                 break;
-            case "Discord":
+            default:
                 $("#oAuthAccess_token_url").attr("disabled", true);
+                $("#oAuthAccess_token_url").hide();
                 $("#oAuthAccess_token_params").attr("disabled", true);
+                $("#oAuthAccess_token_params").hide();
                 $("#oAuthAuthorize_url").attr("disabled", true);
+                $("#oAuthAuthorize_url").hide();
                 $("#oAuthAuthorize_params").attr("disabled", true);
+                $("#oAuthAuthorize_params").hide();
                 $("#oAuthApi_base_url").attr("disabled", true);
+                $("#oAuthApi_base_url").hide();
                 $("#oAuthClient_kwargs").attr("disabled", true);
+                $("#oAuthClient_kwargs").hide();
                 $("#oAuthProfile_endpoint").attr("disabled", true);
+                $("#oAuthProfile_endpoint").hide();
                 $("#oAuthUsername").attr("disabled", true);
+                $("#oAuthUsername").hide();
                 $("#oAuthEmail").attr("disabled", true);
+                $("#oAuthEmail").hide();
                 break;
         }
 

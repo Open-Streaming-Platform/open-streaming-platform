@@ -120,8 +120,9 @@ class oAuthProvider(db.Model):
     username_value = db.Column(db.String(256))
     email_value = db.Column(db.String(256))
 
-    def __init__(self, name, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
+    def __init__(self, name, preset_auth_type, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
         self.name = name
+        self.preset_auth_type = preset_auth_type
         self.friendlyName = friendlyName
         self.displayColor = displayColor
         self.client_id = client_id

@@ -590,27 +590,48 @@ def admin_page():
             return redirect(url_for('.admin_page', page="ospedge"))
 
         elif settingType == "oAuthProvider":
+            oAuth_type = request.form['oAuthPreset']
             oAuth_name = request.form['oAuthName']
             oAuth_friendlyName = request.form['oAuthFriendlyName']
             oAuth_displayColor = request.form['oAuthColor']
             oAuth_client_id = request.form['oAuthClient_id']
             oAuth_client_secret = request.form['oAuthClient_secret']
-            oAuth_access_token_url = request.form['oAuthAccess_token_url']
-            oAuth_access_token_params = request.form['oAuthAccess_token_params']
-            oAuth_authorize_url = request.form['oAuthAuthorize_url']
-            oAuth_authorize_params = request.form['oAuthAuthorize_params']
-            oAuth_api_base_url = request.form['oAuthApi_base_url']
-            oAuth_client_kwargs = request.form['oAuthClient_kwargs']
-            oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
-            oAuth_username = request.form['oAuthUsername']
-            oAuth_email = request.form['oAuthEmail']
+            oAuth_access_token_url = None
+            oAuth_access_token_params = None
+            oAuth_authorize_url = None
+            oAuth_authorize_params = None
+            oAuth_api_base_url = None
+            oAuth_client_kwargs = None
+            oAuth_profile_endpoint = None
+            oAuth_username = None
+            oAuth_email = None
+            if oAuth_type == "Custom":
+                oAuth_access_token_url = request.form['oAuthAccess_token_url']
+                oAuth_access_token_params = request.form['oAuthAccess_token_params']
+                oAuth_authorize_url = request.form['oAuthAuthorize_url']
+                oAuth_authorize_params = request.form['oAuthAuthorize_params']
+                oAuth_api_base_url = request.form['oAuthApi_base_url']
+                oAuth_client_kwargs = request.form['oAuthClient_kwargs']
+                oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
+                oAuth_username = request.form['oAuthUsername']
+                oAuth_email = request.form['oAuthEmail']
 
-            if oAuth_access_token_params == '':
+                if oAuth_access_token_params == '':
+                    oAuth_access_token_params = None
+                if oAuth_authorize_params == '':
+                    oAuth_authorize_params = None
+                if oAuth_client_kwargs == '':
+                    oAuth_client_kwargs = None
+            elif oAuth_type == "Discord":
+                oAuth_access_token_url = 'https://discordapp.com/api/oauth2/token'
                 oAuth_access_token_params = None
-            if oAuth_authorize_params == '':
+                oAuth_authorize_url = 'https://discordapp.com/api/oauth2/authorize'
                 oAuth_authorize_params = None
-            if oAuth_client_kwargs == '':
-                oAuth_client_kwargs = None
+                oAuth_api_base_url = 'https://discordapp.com/api/'
+                oAuth_client_kwargs = '{"scope":"identify email"}'
+                oAuth_profile_endpoint = 'users/@me'
+                oAuth_username = 'username'
+                oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
                 newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
@@ -645,6 +666,7 @@ def admin_page():
                 oAuthQuery = settings.oAuthProvider.query.filter_by(id=int(existingOAuthID)).first()
                 if oAuthQuery != None:
                     oldOAuthName = oAuthQuery.name
+                    oAuthQuery.preset_auth_type = oAuth_type
                     oAuthQuery.name = oAuth_name
                     oAuthQuery.friendlyName = oAuth_friendlyName
                     oAuthQuery.displayColor = oAuth_displayColor
