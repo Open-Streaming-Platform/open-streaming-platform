@@ -67,7 +67,7 @@ class OAuth2Token(db.Model):
     token_type = db.Column(db.String(40))
     access_token = db.Column(db.String(200))
     refresh_token = db.Column(db.String(200))
-    expires_at = db.Column(db.DateTime)
+    expires_at = db.Column(db.Integer)
     user = db.Column(db.ForeignKey(User.id))
 
     def to_token(self):

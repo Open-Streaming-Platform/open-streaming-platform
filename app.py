@@ -192,7 +192,7 @@ except:
 # Initialize oAuth
 from classes.shared import oauth
 oauth.init_app(app)
-
+oAuthProviderClients = {}
 # Register oAuth Providers
 for provider in settings.oAuthProvider.query.all():
     try:
@@ -207,6 +207,7 @@ for provider in settings.oAuthProvider.query.all():
             api_base_url=provider.api_base_url,
             client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
         )
+        oAuthProviderClients[provider.name] = oauth.create_client(provider)
     except Exception as e:
         print("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
 
