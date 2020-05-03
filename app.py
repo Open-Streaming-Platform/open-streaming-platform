@@ -321,6 +321,7 @@ def inject_ownedChannels():
 def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
+    user.authType = 0
     webhookFunc.runWebhook("ZZZ", 20, user=user.username)
     system.newLog(1, "A New User has Registered - Username:" + str(user.username))
     if config.requireEmailRegistration:

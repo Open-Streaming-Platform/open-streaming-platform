@@ -1,6 +1,7 @@
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm
 from flask_security import UserMixin, RoleMixin
 from .shared import db
+from classes import Sec
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
@@ -22,10 +23,20 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     username = StringField('username', [Required()])
 
 class OSPLoginForm(LoginForm):
-    def validate(self):
-        response = super(OSPLoginForm, self).validate()
 
-        return response
+    def validate(self):
+
+        isvalid = False
+        userQuery = Sec.User.query.filter_by(username=self.email, authType=0).first()
+        if userQuery != None:
+            isvalid = True
+        userQuery = Sec.User.query.filter_by(email=self.email, authType=0).first()
+        if userQuery != None:
+            isvalid = True
+        if isvalid is True:
+            response = super(OSPLoginForm, self).validate()
+            return response
+        return False
 
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
