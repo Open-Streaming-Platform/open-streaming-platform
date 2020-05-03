@@ -698,6 +698,28 @@ def admin_page():
 
             return redirect(url_for('.admin_page', page="oauth"))
 
+        elif settingType == "DeleteOAuthProvider":
+            oAuthProvider = request.form['DeleteOAuthProviderID']
+
+            oAuthProviderQuery = settings.oAuthProvider.query.filter_by(id=int(oAuthProvider)).first()
+            if oAuthProvider is not None:
+                userQuery = Sec.User.query.filter_by(oAuthProvider=oAuthProviderQuery.name, authType=1).all()
+                count = 0
+                for user in userQuery:
+                    count = count + 1
+                    user.authType = 0
+                    user.oAuthProvider = ""
+                    user.password = hash_password(str(uuid.uuid4()))
+                    for token in user.oAuthToken:
+                        db.session.delete(token)
+                    db.session.commit()
+                db.session.delete(oAuthProvider)
+                db.session.commit()
+                flash("oAuth Provider Deleted - " + str(count) + "User(s) Converted to Local Users", "success")
+            else:
+                flash("Invalid oAuth Object","errror")
+            return redirect(url_for('.admin_page', page="oauth"))
+
         elif settingType == "newuser":
 
             password = request.form['password1']
