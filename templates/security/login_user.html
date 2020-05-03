@@ -21,6 +21,14 @@
 
                             <form class="form" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
                               {{ login_user_form.hidden_tag() }}
+                                {% for provider in SystemOAuthProviders %}
+                                <div class="my-2">
+                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">Register With {{provider.friendlyName}}</a>
+                                </div>
+                                {% endfor %}
+                                {% if SystemOAuthProviders != [] %}
+                                <hr>
+                                {% endif %}
                                 <b><i class="fas fa-user-circle"></i> Username</b><br>
                               {{ render_field(login_user_form.email, class_="form-control") }}
                                 <b><i class="fas fa-key"></i> Password</b><br>
@@ -30,11 +38,6 @@
                                 {{ render_field(login_user_form.remember, class_="form-check-label") }}
                               {{ render_field(login_user_form.submit, class_="form-control") }}
                             </form>
-                            {% for provider in SystemOAuthProviders %}
-                            <div class="my-2">
-                                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">Login With {{provider.friendlyName}}</a>
-                            </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
