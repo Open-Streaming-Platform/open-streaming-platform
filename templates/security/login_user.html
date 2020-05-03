@@ -31,8 +31,8 @@
                               {{ render_field(login_user_form.submit, class_="form-control") }}
                             </form>
                             {% for provider in SystemOAuthProviders %}
-                            <div class="m-2">
-                                <a href="/oauth/login/{{provider.name}}" class="btn btn-success btn-lg btn-block">Login with {{provider.name}}</a>
+                            <div class="my-2">
+                                <a href="/oauth/login/{{provider.name}}" class="btn btn-success btn-lg btn-block">Login With {{provider.name}}</a>
                             </div>
                             {% endfor %}
                         </div>
