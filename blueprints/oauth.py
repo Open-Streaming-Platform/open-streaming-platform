@@ -6,6 +6,8 @@ from classes import settings
 from classes import Sec
 from classes.shared import oauth, db
 
+import json
+
 from app import user_datastore
 from functions.oauth import fetch_token
 
@@ -28,7 +30,7 @@ def oAuthAuthorize(provider):
     oAuthProviderQuery = settings.oAuthProvider.query.filter_by(name=provider).first()
     if oAuthProviderQuery is not None:
         token = oAuthClient.authorize_access_token()
-        tokenDict = token.json()
+        tokenDict = json.loads(token.json)
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
 
