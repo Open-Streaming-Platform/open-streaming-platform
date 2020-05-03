@@ -1,3 +1,4 @@
+from flask import flash
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm
 from flask_security import UserMixin, RoleMixin
 from .shared import db
@@ -36,6 +37,7 @@ class OSPLoginForm(LoginForm):
         if isvalid is True:
             response = super(OSPLoginForm, self).validate()
             return response
+        flash("Invalid Username or Password","error")
         return False
 
 roles_users = db.Table('roles_users',
