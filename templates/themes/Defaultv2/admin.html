@@ -341,8 +341,8 @@
                                             <label for="oAuthClient_secret">Client Secret</label>
                                             <input type="password" class="form-control required" id="oAuthClient_secret" name="oAuthClient_secret" required>
                                         </div>
-                                        <hr>
                                         <div id="oAuthAccess_token_urlDiv" class="form-group col-md-12">
+                                            <hr>
                                             <label for="oAuthAccess_token_url">Access Token URL</label>
                                             <input type="text" class="form-control required" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
                                         </div>
@@ -370,8 +370,9 @@
                                             <textarea class="form-control" id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
                                             <small id="oAuthClient_kwargsHelp" class="form-text text-muted">JSON Payload Request - Typically Includes oAuth Client Scope</small>
                                         </div>
-                                        <hr>
+
                                         <div id="oAuthProfile_endpointDiv" class="form-group col-md-12">
+                                            <hr>
                                             <label for="oAuthProfile_endpoint">Profile Endpoint</label>
                                             <input type="text" class="form-control required" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
                                             <small id="oAuthProfile_endpointHelp" class="form-text text-muted">Relative Path of API Base URL to Retrieve Login User's Profile (no leading /)</small>
