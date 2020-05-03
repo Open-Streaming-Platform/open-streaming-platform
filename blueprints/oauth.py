@@ -28,7 +28,7 @@ def oAuthAuthorize(provider):
 
         userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
         if userQuery != None:
-            if userQuery.type == 1 and userQuery.oAuthProvider == provider:
+            if userQuery.authType == 1 and userQuery.oAuthProvider == provider:
                 return("Existing User - Success")
             else:
                 return("Existing User - Failure: Not for Provider or Not oAuth Login")
