@@ -81,6 +81,14 @@ class OAuth2Token(db.Model):
     expires_at = db.Column(db.Integer)
     user = db.Column(db.ForeignKey(User.id))
 
+    def __init__(self, name, token_type, access_token, refresh_token, expires_at, user):
+        self.name = name
+        self.token_type = token_type
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        self.expires_at = expires_at
+        self.user = user
+
     def to_token(self):
         return dict(
             access_token=self.access_token,

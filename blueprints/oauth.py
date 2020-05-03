@@ -1,8 +1,13 @@
-from flask import redirect, url_for, Blueprint, abort
+import datetime
+
+from flask import redirect, url_for, Blueprint, flash, abort
+from flask_security.utils import login_user
 from classes import settings
 from classes import Sec
-from classes.shared import oauth
+from classes.shared import oauth, db
 
+from app import user_datastore
+from functions.oauth import fetch_token
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -23,15 +28,34 @@ def oAuthAuthorize(provider):
     oAuthProviderQuery = settings.oAuthProvider.query.filter_by(name=provider).first()
     if oAuthProviderQuery is not None:
         token = oAuthClient.authorize_access_token()
+        tokenDict = token.json()
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
 
         userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
         if userQuery != None:
             if userQuery.authType == 1 and userQuery.oAuthProvider == provider:
-                return("Existing User - Success")
+                existingTokenQuery = Sec.OAuth2Token.query.filter_by(user=userQuery.id).all()
+                for existingToken in existingTokenQuery:
+                    db.session.delete(existingToken)
+                db.session.commit()
+                newToken = Sec.OAuth2Token(provider, tokenDict['token_type'], tokenDict['access_token'], tokenDict['refresh_token'], tokenDict['expires_at'], userQuery.id)
+                db.session.add(newToken)
+                db.session.commit()
+                login_user(userQuery)
+                return(redirect(url_for('root.main_page')))
             else:
-                return("Existing User - Failure: Not for Provider or Not oAuth Login")
+                flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
+                return(redirect('/login'))
         else:
-            return("No User - Create User Here")
+            user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=userDataDict[oAuthProviderQuery.username_value], active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthProvider=provider)
+            db.session.commit()
+            user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+            user_datastore.add_role_to_user(user, 'User')
+            newToken = Sec.OAuth2Token(provider, tokenDict['token_type'], tokenDict['access_token'], tokenDict['refresh_token'], tokenDict['expires_at'], userQuery.id)
+            db.session.add(newToken)
+            db.session.commit()
+            login_user(user)
+
+            redirect(url_for('root.main_page'))
 
