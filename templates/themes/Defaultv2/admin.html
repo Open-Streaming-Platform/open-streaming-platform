@@ -1146,30 +1146,30 @@
 
     // Set Presets for oAuth
     $(document).on("change", "#oAuthPreset", function () {
-        var authType = document.get.getElementById("oAuthPreset").val();
+        var authType = document.getElementById("oAuthPreset").val();
 
         switch(authType) {
             case "Custom":
-                $("#oAuthAccess_token_url").attr("readonly", false);
-                $("#oAuthAccess_token_params").attr("readonly", false);
-                $("#oAuthAuthorize_url").attr("readonly", false);
-                $("#oAuthAuthorize_params").attr("readonly", false);
-                $("#oAuthApi_base_url").attr("readonly", false);
-                $("#oAuthClient_kwargs").attr("readonly", false);
-                $("#oAuthProfile_endpoint").attr("readonly", false);
-                $("#oAuthUsername").attr("readonly", false);
-                $("#oAuthEmail").attr("readonly", false);
+                $("#oAuthAccess_token_url").attr("disabled", false);
+                $("#oAuthAccess_token_params").attr("disabled", false);
+                $("#oAuthAuthorize_url").attr("disabled", false);
+                $("#oAuthAuthorize_params").attr("disabled", false);
+                $("#oAuthApi_base_url").attr("disabled", false);
+                $("#oAuthClient_kwargs").attr("disabled", false);
+                $("#oAuthProfile_endpoint").attr("disabled", false);
+                $("#oAuthUsername").attr("disabled", false);
+                $("#oAuthEmail").attr("disabled", false);
                 break;
             case "Discord":
-                $("#oAuthAccess_token_url").attr("readonly", true);
-                $("#oAuthAccess_token_params").attr("readonly", true);
-                $("#oAuthAuthorize_url").attr("readonly", true);
-                $("#oAuthAuthorize_params").attr("readonly", true);
-                $("#oAuthApi_base_url").attr("readonly", true);
-                $("#oAuthClient_kwargs").attr("readonly", true);
-                $("#oAuthProfile_endpoint").attr("readonly", true);
-                $("#oAuthUsername").attr("readonly", true);
-                $("#oAuthEmail").attr("readonly", true);
+                $("#oAuthAccess_token_url").attr("disabled", true);
+                $("#oAuthAccess_token_params").attr("disabled", true);
+                $("#oAuthAuthorize_url").attr("disabled", true);
+                $("#oAuthAuthorize_params").attr("disabled", true);
+                $("#oAuthApi_base_url").attr("disabled", true);
+                $("#oAuthClient_kwargs").attr("disabled", true);
+                $("#oAuthProfile_endpoint").attr("disabled", true);
+                $("#oAuthUsername").attr("disabled", true);
+                $("#oAuthEmail").attr("disabled", true);
                 break;
         }
 
