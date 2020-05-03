@@ -1,4 +1,4 @@
-from flask import redirect, url_for, Blueprint, abort, jsonify
+from flask import redirect, url_for, Blueprint, abort,jsonify
 from classes import settings
 from classes.shared import oauth
 
@@ -23,5 +23,5 @@ def oAuthAuthorize(provider):
         token = oAuthClient.authorize_access_token()
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
 
-        return(userData.text)
+        return(jsonify(userData))
 
