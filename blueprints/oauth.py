@@ -1,6 +1,8 @@
 from flask import redirect, url_for, Blueprint, abort
 from classes import settings
+from classes import Sec
 from classes.shared import oauth
+
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -22,6 +24,14 @@ def oAuthAuthorize(provider):
     if oAuthProviderQuery is not None:
         token = oAuthClient.authorize_access_token()
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
+        userDataDict = userData.json()
 
-        return(userData.json())
+        userQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username]).first()
+        if userQuery != None:
+            if userQuery.type == 1 and userQuery.oAuthProvider == provider:
+                return("Existing User - Success")
+            else:
+                return("Existing User - Failure: Not for Provider or Not oAuth Login")
+        else:
+            return("No User - Create User Here")
 
