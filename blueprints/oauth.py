@@ -41,7 +41,7 @@ def oAuthAuthorize(provider):
                 for existingToken in existingTokenQuery:
                     db.session.delete(existingToken)
                 db.session.commit()
-                newToken = Sec.OAuth2Token(provider, token.token_type, token.access_token, token.refresh_token, token.expires_at, userQuery.id)
+                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
                 db.session.add(newToken)
                 db.session.commit()
                 login_user(userQuery)
@@ -54,7 +54,7 @@ def oAuthAuthorize(provider):
             db.session.commit()
             user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
             user_datastore.add_role_to_user(user, 'User')
-            newToken = Sec.OAuth2Token(provider, token.token_type, token.access_token, token.refresh_token, token.expires_at, userQuery.id)
+            newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
             db.session.add(newToken)
             db.session.commit()
             login_user(user)
