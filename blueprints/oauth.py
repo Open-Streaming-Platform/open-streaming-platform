@@ -48,7 +48,11 @@ def oAuthAuthorize(provider):
             for existingToken in existingTokenQuery:
                 db.session.delete(existingToken)
             db.session.commit()
-            newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
+            newToken = None
+            if 'refresh_token' in token:
+                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], userQuery.id)
+            else:
+                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], None, token['expires_at'], userQuery.id)
             db.session.add(newToken)
             db.session.commit()
 
@@ -91,7 +95,11 @@ def oAuthAuthorize(provider):
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, user)
 
-                newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], user.id)
+                newToken = None
+                if 'refresh_token' in token:
+                    newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], user.id)
+                else:
+                    newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], None, token['expires_at'], user.id)
                 db.session.add(newToken)
                 db.session.commit()
                 login_user(user)
