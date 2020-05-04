@@ -23,7 +23,10 @@
                               {{ login_user_form.hidden_tag() }}
                                 {% for provider in SystemOAuthProviders %}
                                 <div class="my-2">
-                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">Login With {{provider.friendlyName}}</a>
+                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                                        {% if provider.preset_auth_type =="Discord" %}<span class="float-left"><img src="/static/img/Discord-Logo-White.png" style="width:64px;height:64px;"></span>{% endif %}
+                                        Login With {{provider.friendlyName}}
+                                    </a>
                                 </div>
                                 {% endfor %}
                                 {% if SystemOAuthProviders != [] %}
