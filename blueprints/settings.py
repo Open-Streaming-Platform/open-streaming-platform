@@ -636,7 +636,7 @@ def admin_page():
                 oAuth_access_token_url = 'https://www.reddit.com/api/v1/access_token'
                 oAuth_authorize_url = 'https://www.reddit.com/api/v1/authorize'
                 oAuth_api_base_url = 'https://oauth.reddit.com/api/v1/'
-                oAuth_client_kwargs = '{"scope":"identify email"}'
+                oAuth_client_kwargs = '{"scope":"identity"}'
                 oAuth_profile_endpoint = 'me'
                 oAuth_username = 'name'
                 oAuth_email = 'email'
