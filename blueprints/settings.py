@@ -66,6 +66,10 @@ def user_page():
                     flash("Passwords Don't Match!")
 
         emailAddress = request.form['emailAddress']
+        existingEmailQuery = Sec.User.query.filter_by(email=emailAddress).first()
+        if existingEmailQuery.id != current_user.id:
+            flash("An User Account exists with the same email address", "error")
+            return redirect(url_for('.user_page'))
         current_user.email = emailAddress
 
         if 'photo' in request.files:
