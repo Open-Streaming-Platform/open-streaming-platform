@@ -261,6 +261,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Provider Name</th>
+                                                <th>Authentication Type</th>
                                                 <th>Client ID</th>
                                                 <th>Authorize URL</th>
                                                 <th>Options</th>
@@ -270,6 +271,7 @@
                                         {% for provider in oAuthProvidersList %}
                                             <tr>
                                                 <td>{{provider.name}}</td>
+                                                <td>{{provider.preset_auth_type}}</td>
                                                 <td>{{provider.client_id}}</td>
                                                 <td>{{provider.authorize_url}}</td>
                                                 <td>
@@ -277,7 +279,7 @@
                                                             data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
                                                             data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
                                                             data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
-                                                            data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}">
+                                                            data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}" data-authtype="{{provider.preset_auth_type}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="far fa-trash-alt"></i></button>
@@ -303,72 +305,80 @@
                           <div class="modal-body">
                               <div class="container">
                                 <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthPreset">Authentication Type</label>
+                                        <select class="form-control required" id="oAuthPreset" name="oAuthPreset" required>
+                                            <option value="Custom">Custom oAuth2</option>
+                                            <option value="Discord">Discord</option>
+                                        </select>
+                                    </div>
                                     <div class="col-md-6 col-12">
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthNameDiv" class="form-group col-md-12">
                                             <label for="oAuthName">oAuth Provider ID</label>
-                                            <input type="text" class="form-control" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
+                                            <input type="text" class="form-control required" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
                                             <small id="oAuthHelp" class="form-text text-muted">Used for Internal Identification.  No Spaces</small>
                                         </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="oAuthName">oAuth Provider Friendly Name</label>
-                                            <input type="text" class="form-control" id="oAuthFriendlyName" name="oAuthFriendlyName" maxlength="64" required>
+                                        <div id="oAuthFriendlyNameDiv" class="form-group col-md-12">
+                                            <label for="oAuthFriendlyName">oAuth Provider Friendly Name</label>
+                                            <input type="text" class="form-control required" id="oAuthFriendlyName" name="oAuthFriendlyName" maxlength="64" required>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthColorDiv" class="form-group col-md-12">
                                             <label for="oAuthName">Login Button Color</label>
-                                            <input type="color" class="form-control" id="oAuthColor" name="oAuthColor" required>
+                                            <input type="color" class="form-control required" id="oAuthColor" name="oAuthColor" required>
                                         </div>
                                         <hr>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthClient_idDiv" class="form-group col-md-12">
                                             <label for="oAuthClient_id">Client ID</label>
-                                            <input type="text" class="form-control" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
+                                            <input type="text" class="form-control required" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthClient_secretDiv"  class="form-group col-md-12">
                                             <label for="oAuthClient_secret">Client Secret</label>
-                                            <input type="password" class="form-control" id="oAuthClient_secret" name="oAuthClient_secret" required>
+                                            <input type="password" class="form-control required" id="oAuthClient_secret" name="oAuthClient_secret" required>
                                         </div>
-                                        <hr>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthAccess_token_urlDiv" class="form-group col-md-12">
+                                            <hr>
                                             <label for="oAuthAccess_token_url">Access Token URL</label>
-                                            <input type="text" class="form-control" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
+                                            <input type="text" class="form-control required" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthAccess_token_paramsDiv" class="form-group col-md-12">
                                             <label for="oAuthAccess_token_params">Access Token Params</label>
                                             <textarea id="oAuthAccess_token_params" class="form-control" name="oAuthAccess_token_params"></textarea>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthAuthorize_urlDiv" class="form-group col-md-12">
                                             <label for="oAuthAuthorize_url">Authorize URL</label>
-                                            <input type="text" class="form-control" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
+                                            <input type="text" class="form-control required" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthAuthorize_paramsDiv" class="form-group col-md-12">
                                             <label for="oAuthAuthorize_params">Authorize Params</label>
                                             <textarea class="form-control" id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-12">
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthApi_base_urlDiv" class="form-group col-md-12">
                                             <label for="oAuthApi_base_url">API Base URL</label>
-                                            <input type="text" class="form-control" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
+                                            <input type="text" class="form-control required" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
                                             <small id="oAuthApi_base_urlHelp" class="form-text text-muted">Full URI for API Requests (including trailing /)</small>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthClient_kwargsDiv" class="form-group col-md-12">
                                             <label for="oAuthClient_kwargs">Client Kwargs</label>
                                             <textarea class="form-control" id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
                                             <small id="oAuthClient_kwargsHelp" class="form-text text-muted">JSON Payload Request - Typically Includes oAuth Client Scope</small>
                                         </div>
-                                        <hr>
-                                        <div class="form-group col-md-12">
+
+                                        <div id="oAuthProfile_endpointDiv" class="form-group col-md-12">
+                                            <hr>
                                             <label for="oAuthProfile_endpoint">Profile Endpoint</label>
-                                            <input type="text" class="form-control" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
+                                            <input type="text" class="form-control required" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
                                             <small id="oAuthProfile_endpointHelp" class="form-text text-muted">Relative Path of API Base URL to Retrieve Login User's Profile (no leading /)</small>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthUsernameDiv" class="form-group col-md-12">
                                             <label for="oAuthUsername">Username Profile Value</label>
-                                            <input type="text" class="form-control" id="oAuthUsername" name="oAuthUsername" required>
+                                            <input type="text" class="form-control required" id="oAuthUsername" name="oAuthUsername" required>
                                             <small id="oAuthUsernameHelp" class="form-text text-muted">Username Attribute Retrieved from Profile Endpoint</small>
                                         </div>
-                                        <div class="form-group col-md-12">
+                                        <div id="oAuthEmailDiv" class="form-group col-md-12">
                                             <label for="oAuthEmail">Email Profile Value</label>
-                                            <input type="text" class="form-control" id="oAuthEmail" name="oAuthEmail" required>
+                                            <input type="text" class="form-control required" id="oAuthEmail" name="oAuthEmail" required>
                                             <small id="oAuthEmailHelp" class="form-text text-muted">Email Address Attribute Retrieved from Profile Endpoint</small>
                                         </div>
                                     </div>
@@ -1070,9 +1080,57 @@
         $('#deleteOauthModal').modal('show');
     }
 
+    function updateOAuthModalWindowLayout() {
+        var authType = document.getElementById("oAuthPreset").value;
+        switch(authType) {
+            case "Custom":
+                $("#oAuthAccess_token_url").attr("disabled", false);
+                $("#oAuthAccess_token_urlDiv").show();
+                $("#oAuthAccess_token_params").attr("disabled", false);
+                $("#oAuthAccess_token_paramsDiv").show();
+                $("#oAuthAuthorize_url").attr("disabled", false);
+                $("#oAuthAuthorize_urlDiv").show();
+                $("#oAuthAuthorize_params").attr("disabled", false);
+                $("#oAuthAuthorize_paramsDiv").show();
+                $("#oAuthApi_base_url").attr("disabled", false);
+                $("#oAuthApi_base_urlDiv").show();
+                $("#oAuthClient_kwargs").attr("disabled", false);
+                $("#oAuthClient_kwargsDiv").show();
+                $("#oAuthProfile_endpoint").attr("disabled", false);
+                $("#oAuthProfile_endpointDiv").show();
+                $("#oAuthUsername").attr("disabled", false);
+                $("#oAuthUsernameDiv").show();
+                $("#oAuthEmail").attr("disabled", false);
+                $("#oAuthEmailDiv").show();
+                break;
+            default:
+                $("#oAuthAccess_token_url").attr("disabled", true);
+                $("#oAuthAccess_token_urlDiv").hide();
+                $("#oAuthAccess_token_params").attr("disabled", true);
+                $("#oAuthAccess_token_paramsDiv").hide();
+                $("#oAuthAuthorize_url").attr("disabled", true);
+                $("#oAuthAuthorize_urlDiv").hide();
+                $("#oAuthAuthorize_params").attr("disabled", true);
+                $("#oAuthAuthorize_paramsDiv").hide();
+                $("#oAuthApi_base_url").attr("disabled", true);
+                $("#oAuthApi_base_urlDiv").hide();
+                $("#oAuthClient_kwargs").attr("disabled", true);
+                $("#oAuthClient_kwargsDiv").hide();
+                $("#oAuthProfile_endpoint").attr("disabled", true);
+                $("#oAuthProfile_endpointDiv").hide();
+                $("#oAuthUsername").attr("disabled", true);
+                $("#oAuthUsernameDiv").hide();
+                $("#oAuthEmail").attr("disabled", true);
+                $("#oAuthEmailDiv").hide();
+                break;
+        }
+    }
+
     $(document).on("click", ".edit-oAuth-Button", function () {
+
          var oAuthID = $(this).data('id');
          var oAuthName = $(this).data('name');
+         var oAuthType = $(this).data('authtype');
          var oAuthFriendlyName = $(this).data('friendlyname');
          var oAuthDisplayColor = $(this).data('displaycolor');
          var oAuthClientID = $(this).data('clientid');
@@ -1086,8 +1144,8 @@
          var oAuthProfileEndpoint = $(this).data('profileendpoint');
          var oAuthUsername = $(this).data('usernamevalue');
          var oAuthEmail = $(this).data('emailvalue');
-         var oAuthPicture = $(this).data('picturevalue');
          $("#oAuthID").val( oAuthID );
+         $("#oAuthPreset").val( oAuthType )
          $("#oAuthName").val( oAuthName );
          $("#oAuthFriendlyName").val( oAuthFriendlyName );
          $("#oAuthColor").val( oAuthDisplayColor );
@@ -1108,15 +1166,19 @@
          $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
          $("#oAuthUsername").val( oAuthUsername );
          $("#oAuthEmail").val( oAuthEmail );
-         if (oAuthPicture != 'None') {
-             $("#oAuthPicture").val(oAuthPicture);
-         }
+         updateOAuthModalWindowLayout();
          $("#newOauthModal").modal('show');
+    });
+
+    // Set Presets for oAuth
+    $(document).on("change", "#oAuthPreset", function () {
+        updateOAuthModalWindowLayout();
     });
 
     function resetOAuthForm() {
         document.getElementById("OAuthForm").reset();
         $("#oAuthID").val('');
+        updateOAuthModalWindowLayout();
     }
 </script>
 
