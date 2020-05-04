@@ -69,7 +69,11 @@ def oAuthAuthorize(provider):
                 elif oAuthProviderQuery.preset_auth_type == "Facebook":
                     facebook_processLogin(oAuthProviderQuery.api_base_url, userDataDict, userQuery)
 
-                return(redirect(url_for('root.main_page')))
+                if userQuery.email == None or userQuery.email == 'None':
+                    flash("Please Add an Email Address to your User Profile", "error")
+                    return(redirect(url_for('settings.user_page')))
+                else:
+                    return(redirect(url_for('root.main_page')))
 
         # If No Match, Determine if a User Needs to be created
         else:
@@ -80,7 +84,7 @@ def oAuthAuthorize(provider):
                 existingEmailQuery = Sec.User.query.filter_by(email=userDataDict[oAuthProviderQuery.email_value]).first()
                 hasEmail = True
             else:
-                flash("Please Update Add an Email Address to your User Profile")
+                flash("Please Add an Email Address to your User Profile", "error")
 
             # No Username Match - Create New User
             if existingEmailQuery is None:
