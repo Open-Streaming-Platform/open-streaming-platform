@@ -1,5 +1,11 @@
+import requests
+import uuid
+
 from classes.Sec import OAuth2Token
+from classes.shared import db
 from flask_security import current_user
+
+from globals.globalvars import videoRoot
 
 def fetch_token(name):
     model = OAuth2Token
@@ -9,3 +15,18 @@ def fetch_token(name):
         user=current_user,
     )
     return token.to_token()
+
+def discord_processLogin(userDataDict, UserObj):
+    # Handle Discord Avatar Download
+    avatarHash = userDataDict['avatar']
+    userID = userDataDict['id']
+
+    image_url = "https://cdn.discordapp.com/avatars/" + str(userID) + "/" + str(avatarHash) + ".png?size=512"
+    img_data = requests.get(image_url).content
+    fileName = str(uuid.uuid4()) + ".png"
+    with open(videoRoot + 'images/' + fileName, 'wb') as handler:
+        handler.write(img_data)
+
+    UserObj.pictureLocation = fileName
+    db.session.commit()
+    return True

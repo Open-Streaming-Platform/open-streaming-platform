@@ -1,4 +1,5 @@
 import datetime
+import requests
 
 from flask import redirect, url_for, Blueprint, flash, abort
 from flask_security.utils import login_user
@@ -9,7 +10,7 @@ from classes.shared import oauth, db
 import json
 
 from app import user_datastore
-from functions.oauth import fetch_token
+from functions.oauth import fetch_token, discord_processLogin
 from functions.system import newLog
 from functions.webhookFunc import runWebhook
 
@@ -37,8 +38,9 @@ def oAuthAuthorize(provider):
         userDataDict = userData.json()
 
         userQuery = Sec.User.query.filter_by(oAuthID=userDataDict['id'], oAuthProvider=provider, authType=1).first()
-        if userQuery != None:
 
+        # If oAuth ID, Provider, and Auth Type Match - Initiate Login
+        if userQuery != None:
             existingTokenQuery = Sec.OAuth2Token.query.filter_by(user=userQuery.id).all()
             for existingToken in existingTokenQuery:
                 db.session.delete(existingToken)
@@ -52,15 +54,26 @@ def oAuthAuthorize(provider):
                 return(redirect('/login'))
             else:
                 login_user(userQuery)
+
+                if oAuthProviderQuery.preset_auth_type == "Discord":
+                    discord_processLogin(userDataDict, userQuery)
+
                 return(redirect(url_for('root.main_page')))
 
+        # If No Match, Determine if a User Needs to be created
         else:
             existingUsernameQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+
+            # No Username Match - Create New User
             if existingUsernameQuery is None:
                 user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=userDataDict[oAuthProviderQuery.username_value], active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
                 user_datastore.add_role_to_user(user, 'User')
+
+                if oAuthProviderQuery.preset_auth_type == "Discord":
+                    discord_processLogin(userDataDict, user)
+
                 newToken = Sec.OAuth2Token(provider, token['token_type'], token['access_token'], token['refresh_token'], token['expires_at'], user.id)
                 db.session.add(newToken)
                 db.session.commit()
