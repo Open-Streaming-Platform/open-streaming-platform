@@ -605,6 +605,8 @@ def admin_page():
             oAuth_profile_endpoint = None
             oAuth_username = None
             oAuth_email = None
+
+            # Apply Custom or Preset Settings for Providers
             if oAuth_type == "Custom":
                 oAuth_access_token_url = request.form['oAuthAccess_token_url']
                 oAuth_access_token_params = request.form['oAuthAccess_token_params']
@@ -615,22 +617,28 @@ def admin_page():
                 oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
                 oAuth_username = request.form['oAuthUsername']
                 oAuth_email = request.form['oAuthEmail']
-
                 if oAuth_access_token_params == '':
                     oAuth_access_token_params = None
                 if oAuth_authorize_params == '':
                     oAuth_authorize_params = None
                 if oAuth_client_kwargs == '':
                     oAuth_client_kwargs = None
+
             elif oAuth_type == "Discord":
                 oAuth_access_token_url = 'https://discordapp.com/api/oauth2/token'
-                oAuth_access_token_params = None
                 oAuth_authorize_url = 'https://discordapp.com/api/oauth2/authorize'
-                oAuth_authorize_params = None
                 oAuth_api_base_url = 'https://discordapp.com/api/'
                 oAuth_client_kwargs = '{"scope":"identify email"}'
                 oAuth_profile_endpoint = 'users/@me'
                 oAuth_username = 'username'
+                oAuth_email = 'email'
+            elif oAuth_type == "Reddit":
+                oAuth_access_token_url = 'https://www.reddit.com/api/v1/access_token'
+                oAuth_authorize_url = 'https://www.reddit.com/api/v1/authorize'
+                oAuth_api_base_url = 'https://oauth.reddit.com/api/v1/'
+                oAuth_client_kwargs = '{"scope":"identify email"}'
+                oAuth_profile_endpoint = 'me'
+                oAuth_username = 'name'
                 oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
@@ -681,6 +689,7 @@ def admin_page():
                     oAuthQuery.profile_endpoint = oAuth_profile_endpoint
                     oAuthQuery.username_value = oAuth_username
                     oAuthQuery.email_value = oAuth_email
+
                     db.session.commit()
 
                     userQuery = Sec.User.query.filter_by(oAuthProvider=oldOAuthName).all()
