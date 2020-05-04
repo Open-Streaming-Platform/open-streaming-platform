@@ -640,6 +640,14 @@ def admin_page():
                 oAuth_profile_endpoint = 'me'
                 oAuth_username = 'name'
                 oAuth_email = 'email'
+            elif oAuth_type == "Facebook":
+                oAuth_access_token_url = 'https://graph.facebook.com/v6.0/oauth/access_token'
+                oAuth_authorize_url = 'https://graph.facebook.com/v6.0/oauth/authorize'
+                oAuth_api_base_url = 'https://graph.facebook.com/v6.0/'
+                oAuth_client_kwargs = '{"scope": "email public_profile"}'
+                oAuth_profile_endpoint = 'me?fields=name,id,email'
+                oAuth_username = 'name'
+                oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
                 newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)

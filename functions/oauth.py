@@ -42,3 +42,14 @@ def reddit_processLogin(userDataDict, UserObj):
     UserObj.pictureLocation = fileName
     db.session.commit()
     return True
+
+def facebook_processLogin(apiLocation, userDataDict, UserObj):
+    image_url = apiLocation + str(userDataDict['id']) + "/picture?redirect=0&height=64&width=64&type=normal"
+    img_data = requests.get(image_url).content
+    fileName = str(uuid.uuid4()) + ".png"
+    with open(videoRoot + 'images/' + fileName, 'wb') as handler:
+        handler.write(img_data)
+
+    UserObj.pictureLocation = fileName
+    db.session.commit()
+    return True
