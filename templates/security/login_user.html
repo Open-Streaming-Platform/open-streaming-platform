@@ -24,7 +24,7 @@
                                 {% for provider in SystemOAuthProviders %}
                                 <div class="my-2">
                                     <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
-                                        {% if provider.preset_auth_type =="Discord" %}<span class="float-left"><img src="/static/img/Discord-Logo-White.png" style="width:64px;height:64px;"></span>{% endif %}
+                                        {% if provider.preset_auth_type =="Discord" %}<span class="float-left"><img src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;"></span>{% endif %}
                                         Login With {{provider.friendlyName}}
                                     </a>
                                 </div>
