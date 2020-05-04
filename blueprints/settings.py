@@ -634,7 +634,7 @@ def admin_page():
                 oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
-                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
                 if oAuth_access_token_params is not None:
                     newOauthProvider.access_token_params = oAuth_access_token_params
                 if oAuth_authorize_params is not None:
