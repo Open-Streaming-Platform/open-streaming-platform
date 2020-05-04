@@ -748,7 +748,7 @@ def admin_page():
                     db.session.commit()
                 db.session.delete(oAuthProviderQuery)
                 db.session.commit()
-                flash("oAuth Provider Deleted - " + str(count) + "User(s) Converted to Local Users", "success")
+                flash("oAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
             else:
                 flash("Invalid oAuth Object","errror")
             return redirect(url_for('.admin_page', page="oauth"))
