@@ -16,14 +16,13 @@
                     <div class="card-body text-left">
                         <div>
                             <div>
-                                A Local User Already Exists with the same Username.  To Convert from Local Authentication to {{provider.friendlyName}}, enter your Password Below:
+                                A Local User Already Exists with the same Username. <br><br> To Convert from Local Authentication to {{provider.friendlyName}}, enter your Password Below:
                             </div>
                             <hr>
-                            <b><i class="fas fa-user-circle"></i> Username</b><br>
-                            <div>
-                                <img class="shadow rounded float-left" src="/images/{{existingUser.pictureLocation}}" style="width:64px;height:64px;">
-                                <span>{{existingUser.username}}</span>
-                            </div>
+                            <div class="my-2">
+                                <img class="shadow rounded float-left mr-3" src="/images/{{existingUser.pictureLocation}}" style="width:64px;height:64px;">
+                              <span class="px-3"><br><b>{{existingUser.username}}</b></span>
+                            </div><br>
                             <b><i class="fas fa-key"></i> Password</b><br>
                             <input class="form-control" type="password" name="password" id="password">
                             <input type="hidden" name="oAuthUsername" value="{{oAuthData[provider.username_value]}}">
