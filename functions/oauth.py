@@ -30,3 +30,15 @@ def discord_processLogin(userDataDict, UserObj):
     UserObj.pictureLocation = fileName
     db.session.commit()
     return True
+
+def reddit_processLogin(userDataDict, UserObj):
+    # Handle Reddit Avatar Download
+    image_url = userDataDict['icon_img']
+    img_data = requests.get(image_url).content
+    fileName = str(uuid.uuid4()) + ".png"
+    with open(videoRoot + 'images/' + fileName, 'wb') as handler:
+        handler.write(img_data)
+
+    UserObj.pictureLocation = fileName
+    db.session.commit()
+    return True

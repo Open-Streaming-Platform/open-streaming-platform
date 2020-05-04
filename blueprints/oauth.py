@@ -12,7 +12,7 @@ from classes.shared import oauth, db
 import json
 
 from app import user_datastore
-from functions.oauth import fetch_token, discord_processLogin
+from functions.oauth import fetch_token, discord_processLogin, reddit_processLogin
 from functions.system import newLog
 from functions.webhookFunc import runWebhook
 from functions.themes import checkOverride
@@ -64,6 +64,8 @@ def oAuthAuthorize(provider):
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, userQuery)
+                if oAuthProviderQuery.preset_auth_type == "Reddit":
+                    reddit_processLogin(userDataDict, userQuery)
 
                 return(redirect(url_for('root.main_page')))
 
