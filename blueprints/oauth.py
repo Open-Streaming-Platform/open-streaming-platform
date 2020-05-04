@@ -64,7 +64,7 @@ def oAuthAuthorize(provider):
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, userQuery)
-                if oAuthProviderQuery.preset_auth_type == "Reddit":
+                elif oAuthProviderQuery.preset_auth_type == "Reddit":
                     reddit_processLogin(userDataDict, userQuery)
 
                 return(redirect(url_for('root.main_page')))
@@ -96,6 +96,8 @@ def oAuthAuthorize(provider):
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, user)
+                elif oAuthProviderQuery.preset_auth_type == "Reddit":
+                    reddit_processLogin(userDataDict, userQuery)
 
                 newToken = None
                 if 'refresh_token' in token:
