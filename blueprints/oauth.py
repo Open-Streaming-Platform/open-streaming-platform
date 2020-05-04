@@ -1,8 +1,10 @@
 import datetime
 import requests
 
-from flask import redirect, url_for, Blueprint, flash, abort
+from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
+from flask_security.utils import hash_password
+
 from classes import settings
 from classes import Sec
 from classes.shared import oauth, db
@@ -13,6 +15,7 @@ from app import user_datastore
 from functions.oauth import fetch_token, discord_processLogin
 from functions.system import newLog
 from functions.webhookFunc import runWebhook
+from functions.themes import checkOverride
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -84,6 +87,26 @@ def oAuthAuthorize(provider):
 
                 return(redirect(url_for('root.main_page')))
             else:
-                flash("A username already exists with that name and is not configured for the oAuth provider or oAuth login","error")
-                return(redirect('/login'))
+                return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingUsernameQuery))
 
+@oauth_bp.route('/convert/<provider>',  methods=['POST'])
+def oAuthConvert(provider):
+    oAuthID = request.form['oAuthID']
+    oAuthUserName = request.form['oAuthUsername']
+    password = request.form['password']
+    existingUserID = request.form['existingUserID']
+
+    userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName, authType=0).first()
+    if userQuery != None:
+        passwordHash = hash_password(password)
+        if passwordHash == userQuery.password:
+            userQuery.authType = 1
+            userQuery.oAuthProvider = provider
+            userQuery.oAuthID = int(oAuthID)
+            userQuery.password = None
+            db.session.commit()
+            flash("Conversion Successful.  Please log in again with your Provider","success")
+            return(redirect('/login'))
+
+    flash("Invalid Password or Information.  Please try again.", "error")
+    return(redirect('/login'))
