@@ -35,7 +35,11 @@ def oAuthAuthorize(provider):
     oAuthClient = oauth.create_client(provider)
     oAuthProviderQuery = settings.oAuthProvider.query.filter_by(name=provider).first()
     if oAuthProviderQuery is not None:
-        token = oAuthClient.authorize_access_token()
+
+        try:
+            token = oAuthClient.authorize_access_token()
+        except:
+            return redirect('/login')
 
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
