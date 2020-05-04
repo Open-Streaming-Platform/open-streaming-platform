@@ -99,9 +99,9 @@ def oAuthAuthorize(provider):
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, user)
                 elif oAuthProviderQuery.preset_auth_type == "Reddit":
-                    reddit_processLogin(userDataDict, userQuery)
+                    reddit_processLogin(userDataDict, user)
                 elif oAuthProviderQuery.preset_auth_type == "Facebook":
-                    facebook_processLogin(oAuthProviderQuery.api_base_url, userDataDict, userQuery)
+                    facebook_processLogin(oAuthProviderQuery.api_base_url, userDataDict, user)
 
                 newToken = None
                 if 'refresh_token' in token:
