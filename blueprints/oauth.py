@@ -65,7 +65,14 @@ def oAuthAuthorize(provider):
 
         # If No Match, Determine if a User Needs to be created
         else:
-            existingEmailQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.email_value]).first()
+            existingEmailQuery = None
+            hasEmail = False
+
+            if oAuthProviderQuery.email_value in userDataDict:
+                existingEmailQuery = Sec.User.query.filter_by(email=userDataDict[oAuthProviderQuery.email_value]).first()
+                hasEmail = True
+            else:
+                flash("Please Update Add an Email Address to your User Profile")
 
             # No Username Match - Create New User
             if existingEmailQuery is None:
@@ -73,7 +80,10 @@ def oAuthAuthorize(provider):
                 requestedUsername = userDataDict[oAuthProviderQuery.username_value]
                 if existingUsernameQuery is not None:
                     requestedUsername = requestedUsername + str(random.randint(1,9999))
-                user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+                if hasEmail is True:
+                    user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+                else:
+                    user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
                 user_datastore.add_role_to_user(user, 'User')
@@ -88,8 +98,10 @@ def oAuthAuthorize(provider):
 
                 runWebhook("ZZZ", 20, user=user.username)
                 newLog(1, "A New User has Registered - Username:" + str(user.username))
-
-                return(redirect(url_for('root.main_page')))
+                if hasEmail is True:
+                    return(redirect(url_for('root.main_page')))
+                else:
+                    return(redirect(url_for('settings.user_page')))
             else:
                 return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery))
 
