@@ -3,7 +3,7 @@ import requests
 
 from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
-from flask_security.utils import hash_password
+from flask_security.utils import verify_password
 
 from classes import settings
 from classes import Sec
@@ -98,8 +98,8 @@ def oAuthConvert(provider):
 
     userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName, authType=0).first()
     if userQuery != None:
-        passwordHash = hash_password(password)
-        if passwordHash == userQuery.password:
+        passwordMatch = verify_password(password, userQuery.password)
+        if passwordMatch is True:
             userQuery.authType = 1
             userQuery.oAuthProvider = provider
             userQuery.oAuthID = int(oAuthID)
@@ -107,8 +107,6 @@ def oAuthConvert(provider):
             db.session.commit()
             flash("Conversion Successful.  Please log in again with your Provider","success")
             return(redirect('/login'))
-
-
         else:
             flash("Invalid Password or Information.  Please try again.", "error")
             return(redirect('/login'))
