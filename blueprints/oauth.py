@@ -1,5 +1,5 @@
 import datetime
-import requests
+import random
 
 from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
@@ -65,13 +65,17 @@ def oAuthAuthorize(provider):
 
         # If No Match, Determine if a User Needs to be created
         else:
-            existingUsernameQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+            existingEmailQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.email_value]).first()
 
             # No Username Match - Create New User
-            if existingUsernameQuery is None:
-                user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=userDataDict[oAuthProviderQuery.username_value], active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+            if existingEmailQuery is None:
+                existingUsernameQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+                requestedUsername = userDataDict[oAuthProviderQuery.username_value]
+                if existingUsernameQuery is not None:
+                    requestedUsername = requestedUsername + str(random.randint(1,9999))
+                user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
                 db.session.commit()
-                user = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
+                user = Sec.User.query.filter_by(username=requestedUsername).first()
                 user_datastore.add_role_to_user(user, 'User')
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
@@ -87,7 +91,7 @@ def oAuthAuthorize(provider):
 
                 return(redirect(url_for('root.main_page')))
             else:
-                return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingUsernameQuery))
+                return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery))
 
 @oauth_bp.route('/convert/<provider>',  methods=['POST'])
 def oAuthConvert(provider):
