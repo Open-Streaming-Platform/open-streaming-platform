@@ -12,6 +12,7 @@ from classes import dbVersion
 from classes import topics
 from classes import Channel
 from classes import RecordedVideo
+from classes import Sec
 
 from functions import system
 
@@ -144,6 +145,12 @@ def init(app, user_datastore):
 
         if sysSettings.sortMainBy is None:
             sysSettings.sortMainBy = 0
+            db.session.commit()
+
+        # Check for Users with Auth Type not Sent
+        userQuery = Sec.User.query.filter_by(authType=None).all()
+        for user in userQuery:
+            user.authType = 0
             db.session.commit()
 
         # Create the stream-thumb directory if it does not exist
