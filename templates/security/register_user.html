@@ -20,6 +20,19 @@
                         <div>
                             {{fields_errors(register_user_form.username,register_user_form.email,register_user_form.password)}}
                             <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+                                {% for provider in SystemOAuthProviders %}
+                                <div class="my-2">
+                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                                        {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
+                                        {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
+                                        {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
+                                        Register With {{provider.friendlyName}}
+                                    </a>
+                                </div>
+                                {% endfor %}
+                                {% if SystemOAuthProviders != [] %}
+                                <hr>
+                                {% endif %}
                               {{ register_user_form.hidden_tag() }}
                                 <b><i class="fas fa-user-circle"></i> Username</b><br>
                               {{ render_field(register_user_form.username, class_="form-control") }}

@@ -3,6 +3,9 @@ appDBVersion = 0.50
 
 videoRoot = "/var/www/"
 
+# Global oAuth Dictionary
+oAuthProviderObjects = {}
+
 # Current Theme Settings Data
 themeData = {}
 

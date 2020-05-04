@@ -11,6 +11,7 @@ import sys
 import hashlib
 import logging
 import datetime
+import json
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash
@@ -188,6 +189,32 @@ try:
 except:
     print("DB Load Fail due to Upgrade or Issues")
 
+# Initialize oAuth
+from classes.shared import oauth
+from functions.oauth import fetch_token
+oauth.init_app(app, fetch_token=fetch_token)
+
+try:
+# Register oAuth Providers
+    for provider in settings.oAuthProvider.query.all():
+        try:
+            oauth.register(
+                name=provider.name,
+                client_id=provider.client_id,
+                client_secret=provider.client_secret,
+                access_token_url=provider.access_token_url,
+                access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                authorize_url=provider.authorize_url,
+                authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                api_base_url=provider.api_base_url,
+                client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+            )
+
+        except Exception as e:
+            print("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+except:
+    print("Failed Loading oAuth Providers")
+
 # Initialize Flask-Mail
 from classes.shared import email
 
@@ -224,6 +251,7 @@ from blueprints.liveview import liveview_bp
 from blueprints.clip import clip_bp
 from blueprints.upload import upload_bp
 from blueprints.settings import settings_bp
+from blueprints.oauth import oauth_bp
 
 # Register all Blueprints
 app.register_blueprint(errorhandler_bp)
@@ -238,6 +266,7 @@ app.register_blueprint(topics_bp)
 app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
+app.register_blueprint(oauth_bp)
 
 #----------------------------------------------------------------------------#
 # Template Filter Imports
@@ -267,13 +296,17 @@ def inject_notifications():
         notificationList.sort(key=lambda x: x.timestamp, reverse=True)
     return dict(notifications=notificationList)
 
+@app.context_processor
+def inject_oAuthProviders():
+
+    SystemOAuthProviders = db.session.query(settings.oAuthProvider).all()
+    return dict(SystemOAuthProviders=SystemOAuthProviders)
 
 @app.context_processor
 def inject_sysSettings():
 
     sysSettings = db.session.query(settings.settings).first()
     allowRegistration = config.allowRegistration
-
     return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 
 @app.context_processor
@@ -295,6 +328,7 @@ def inject_ownedChannels():
 def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
+    user.authType = 0
     webhookFunc.runWebhook("ZZZ", 20, user=user.username)
     system.newLog(1, "A New User has Registered - Username:" + str(user.username))
     if config.requireEmailRegistration:

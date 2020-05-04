@@ -15,7 +15,7 @@ from sqlalchemy.sql.expression import func
 
 from werkzeug.utils import secure_filename
 
-from classes.shared import db, email
+from classes.shared import db, email, oauth
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -49,19 +49,24 @@ def user_page():
     if request.method == 'GET':
         return render_template(themes.checkOverride('userSettings.html'))
     elif request.method == 'POST':
-        emailAddress = request.form['emailAddress']
-        password1 = request.form['password1']
-        password2 = request.form['password2']
-        biography = request.form['biography']
 
-        if password1 != "":
-            if password1 == password2:
-                newPassword = hash_password(password1)
-                current_user.password = newPassword
-                system.newLog(1, "User Password Changed - Username:" + current_user.username)
-                flash("Password Changed")
-            else:
-                flash("Passwords Don't Match!")
+        biography = request.form['biography']
+        current_user.biography = biography
+
+        if current_user.authType == 0:
+            password1 = request.form['password1']
+            password2 = request.form['password2']
+            if password1 != "":
+                if password1 == password2:
+                    newPassword = hash_password(password1)
+                    current_user.password = newPassword
+                    system.newLog(1, "User Password Changed - Username:" + current_user.username)
+                    flash("Password Changed")
+                else:
+                    flash("Passwords Don't Match!")
+
+        emailAddress = request.form['emailAddress']
+        current_user.email = emailAddress
 
         if 'photo' in request.files:
             file = request.files['photo']
@@ -80,9 +85,6 @@ def user_page():
                     except OSError:
                         pass
 
-        current_user.email = emailAddress
-
-        current_user.biography = biography
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
 
@@ -375,6 +377,8 @@ def admin_page():
 
         logsList = logs.logs.query.order_by(logs.logs.timestamp.desc()).limit(250)
 
+        oAuthProvidersList = settings.oAuthProvider.query.all()
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -383,7 +387,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery,
-                               logsList=logsList, edgeNodes=edgeNodes, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -584,6 +588,170 @@ def admin_page():
                 db.session.commit()
 
             return redirect(url_for('.admin_page', page="ospedge"))
+
+        elif settingType == "oAuthProvider":
+            oAuth_type = request.form['oAuthPreset']
+            oAuth_name = request.form['oAuthName']
+            oAuth_friendlyName = request.form['oAuthFriendlyName']
+            oAuth_displayColor = request.form['oAuthColor']
+            oAuth_client_id = request.form['oAuthClient_id']
+            oAuth_client_secret = request.form['oAuthClient_secret']
+            oAuth_access_token_url = None
+            oAuth_access_token_params = None
+            oAuth_authorize_url = None
+            oAuth_authorize_params = None
+            oAuth_api_base_url = None
+            oAuth_client_kwargs = None
+            oAuth_profile_endpoint = None
+            oAuth_username = None
+            oAuth_email = None
+
+            # Apply Custom or Preset Settings for Providers
+            if oAuth_type == "Custom":
+                oAuth_access_token_url = request.form['oAuthAccess_token_url']
+                oAuth_access_token_params = request.form['oAuthAccess_token_params']
+                oAuth_authorize_url = request.form['oAuthAuthorize_url']
+                oAuth_authorize_params = request.form['oAuthAuthorize_params']
+                oAuth_api_base_url = request.form['oAuthApi_base_url']
+                oAuth_client_kwargs = request.form['oAuthClient_kwargs']
+                oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
+                oAuth_username = request.form['oAuthUsername']
+                oAuth_email = request.form['oAuthEmail']
+                if oAuth_access_token_params == '':
+                    oAuth_access_token_params = None
+                if oAuth_authorize_params == '':
+                    oAuth_authorize_params = None
+                if oAuth_client_kwargs == '':
+                    oAuth_client_kwargs = None
+
+            elif oAuth_type == "Discord":
+                oAuth_access_token_url = 'https://discordapp.com/api/oauth2/token'
+                oAuth_authorize_url = 'https://discordapp.com/api/oauth2/authorize'
+                oAuth_api_base_url = 'https://discordapp.com/api/'
+                oAuth_client_kwargs = '{"scope":"identify email"}'
+                oAuth_profile_endpoint = 'users/@me'
+                oAuth_username = 'username'
+                oAuth_email = 'email'
+            elif oAuth_type == "Reddit":
+                oAuth_access_token_url = 'https://www.reddit.com/api/v1/access_token'
+                oAuth_authorize_url = 'https://www.reddit.com/api/v1/authorize'
+                oAuth_api_base_url = 'https://oauth.reddit.com/api/v1/'
+                oAuth_client_kwargs = '{"scope":"identity"}'
+                oAuth_profile_endpoint = 'me'
+                oAuth_username = 'name'
+                oAuth_email = 'email'
+            elif oAuth_type == "Facebook":
+                oAuth_access_token_url = 'https://graph.facebook.com/v6.0/oauth/access_token'
+                oAuth_authorize_url = 'https://graph.facebook.com/v6.0/oauth/authorize'
+                oAuth_api_base_url = 'https://graph.facebook.com/v6.0/'
+                oAuth_client_kwargs = '{"scope": "email public_profile"}'
+                oAuth_profile_endpoint = 'me?fields=name,id,email'
+                oAuth_username = 'name'
+                oAuth_email = 'email'
+
+            if request.form['oAuthID'] == '':
+                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+                if oAuth_access_token_params is not None:
+                    newOauthProvider.access_token_params = oAuth_access_token_params
+                if oAuth_authorize_params is not None:
+                    newOauthProvider.authorize_params = oAuth_authorize_params
+                if oAuth_client_kwargs is not None:
+                    newOauthProvider.client_kwargs = oAuth_client_kwargs
+
+                db.session.add(newOauthProvider)
+                db.session.commit()
+
+                provider = settings.oAuthProvider.query.filter_by(name=oAuth_name).first()
+
+                oauth.register(
+                    name=provider.name,
+                    client_id=provider.client_id,
+                    client_secret=provider.client_secret,
+                    access_token_url=provider.access_token_url,
+                    access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                    authorize_url=provider.authorize_url,
+                    authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                    api_base_url=provider.api_base_url,
+                    client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                )
+
+                flash("oAuth Provider Added", "success")
+
+            else:
+                existingOAuthID = request.form['oAuthID']
+                oAuthQuery = settings.oAuthProvider.query.filter_by(id=int(existingOAuthID)).first()
+                if oAuthQuery != None:
+                    oldOAuthName = oAuthQuery.name
+                    oAuthQuery.preset_auth_type = oAuth_type
+                    oAuthQuery.name = oAuth_name
+                    oAuthQuery.friendlyName = oAuth_friendlyName
+                    oAuthQuery.displayColor = oAuth_displayColor
+                    oAuthQuery.client_id = oAuth_client_id
+                    oAuthQuery.client_secret = oAuth_client_secret
+                    oAuthQuery.access_token_url = oAuth_access_token_url
+                    oAuthQuery.access_token_params = oAuth_access_token_params
+                    oAuthQuery.authorize_url = oAuth_authorize_url
+                    oAuthQuery.authorize_params = oAuth_authorize_params
+                    oAuthQuery.api_base_url = oAuth_api_base_url
+                    oAuthQuery.client_kwargs = oAuth_client_kwargs
+                    oAuthQuery.profile_endpoint = oAuth_profile_endpoint
+                    oAuthQuery.username_value = oAuth_username
+                    oAuthQuery.email_value = oAuth_email
+
+                    db.session.commit()
+
+                    userQuery = Sec.User.query.filter_by(oAuthProvider=oldOAuthName).all()
+                    for user in userQuery:
+                        user.oAuthProvider = oAuth_name
+                    db.session.commit()
+
+                    tokenQuery = Sec.OAuth2Token.query.filter_by(name=oldOAuthName).all()
+                    for token in tokenQuery:
+                        token.name = oAuth_name
+                    db.session.commit()
+
+                    provider = settings.oAuthProvider.query.filter_by(name=oAuth_name).first()
+
+                    oauth.register(
+                        name=provider.name,
+                        overwrite=True,
+                        client_id=provider.client_id,
+                        client_secret=provider.client_secret,
+                        access_token_url=provider.access_token_url,
+                        access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                        authorize_url=provider.authorize_url,
+                        authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                        api_base_url=provider.api_base_url,
+                        client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                    )
+
+                    flash("oAuth Provider Updated","success")
+                else:
+                    flash("oAuth Provider Does Not Exist", "error")
+
+            return redirect(url_for('.admin_page', page="oauth"))
+
+        elif settingType == "DeleteOAuthProvider":
+            oAuthProvider = request.form['DeleteOAuthProviderID']
+
+            oAuthProviderQuery = settings.oAuthProvider.query.filter_by(id=int(oAuthProvider)).first()
+            if oAuthProvider is not None:
+                userQuery = Sec.User.query.filter_by(oAuthProvider=oAuthProviderQuery.name, authType=1).all()
+                count = 0
+                for user in userQuery:
+                    count = count + 1
+                    user.authType = 0
+                    user.oAuthProvider = ""
+                    user.password = hash_password(str(uuid.uuid4()))
+                    for token in user.oAuthToken:
+                        db.session.delete(token)
+                    db.session.commit()
+                db.session.delete(oAuthProviderQuery)
+                db.session.commit()
+                flash("oAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
+            else:
+                flash("Invalid oAuth Object","errror")
+            return redirect(url_for('.admin_page', page="oauth"))
 
         elif settingType == "newuser":
 
