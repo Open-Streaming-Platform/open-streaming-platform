@@ -108,5 +108,9 @@ def oAuthConvert(provider):
             flash("Conversion Successful.  Please log in again with your Provider","success")
             return(redirect('/login'))
 
-    flash("Invalid Password or Information.  Please try again.", "error")
+
+        else:
+            flash("Invalid Password or Information.  Please try again.", "error")
+            return(redirect('/login'))
+    flash("Invalid User!","error")
     return(redirect('/login'))
