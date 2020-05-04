@@ -746,7 +746,7 @@ def admin_page():
                     for token in user.oAuthToken:
                         db.session.delete(token)
                     db.session.commit()
-                db.session.delete(oAuthProvider)
+                db.session.delete(oAuthProviderQuery)
                 db.session.commit()
                 flash("oAuth Provider Deleted - " + str(count) + "User(s) Converted to Local Users", "success")
             else:
