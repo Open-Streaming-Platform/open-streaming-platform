@@ -685,8 +685,8 @@
                                     <div class="card-header {% if user.active == true %} bg-success{% endif %}">
                                         <b><a href="/streamers/{{user.id}}/" class="text-dark">{{user.username}}</a></b>
                                         <div class="float-right">
-                                            <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
-                                            <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow"><i class="far fa-trash-alt"></i></a>
+                                            <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" {% if user.id == current_user.id %} disabled {% endif %} class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
+                                            <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" {% if user.id == current_user.id %} disabled {% endif %} class="btn btn-sm btn-danger shadow"><i class="far fa-trash-alt"></i></a>
                                         </div>
                                     </div>
                                     <div class="card-body">
