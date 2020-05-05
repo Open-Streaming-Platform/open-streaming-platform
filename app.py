@@ -221,11 +221,6 @@ from classes.shared import email
 email.init_app(app)
 email.app = app
 
-# Rebuild Site Favicons
-sysSettings = settings.settings.query.first()
-from functions.themes import faviconGenerator
-faviconGenerator(sysSettings.systemLogo)
-
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
