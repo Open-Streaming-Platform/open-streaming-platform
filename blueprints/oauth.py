@@ -127,7 +127,11 @@ def oAuthAuthorize(provider):
                 else:
                     return(redirect(url_for('settings.user_page')))
             else:
-                return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery))
+                if existingEmailQuery.authType == 0:
+                    return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery))
+                else:
+                    flash("An existing OAuth User exists under this email address with another provider", "error")
+                    return redirect('/')
 
 @oauth_bp.route('/convert/<provider>',  methods=['POST'])
 def oAuthConvert(provider):
