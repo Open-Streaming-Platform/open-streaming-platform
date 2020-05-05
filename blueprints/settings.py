@@ -685,7 +685,7 @@ def admin_page():
                     client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
                 )
 
-                flash("oAuth Provider Added", "success")
+                flash("OAuth Provider Added", "success")
 
             else:
                 existingOAuthID = request.form['oAuthID']
@@ -736,9 +736,9 @@ def admin_page():
                         client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
                     )
 
-                    flash("oAuth Provider Updated","success")
+                    flash("OAuth Provider Updated","success")
                 else:
-                    flash("oAuth Provider Does Not Exist", "error")
+                    flash("OAuth Provider Does Not Exist", "error")
 
             return redirect(url_for('.admin_page', page="oauth"))
 
@@ -759,9 +759,9 @@ def admin_page():
                     db.session.commit()
                 db.session.delete(oAuthProviderQuery)
                 db.session.commit()
-                flash("oAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
+                flash("OAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
             else:
-                flash("Invalid oAuth Object","errror")
+                flash("Invalid OAuth Object","errror")
             return redirect(url_for('.admin_page', page="oauth"))
 
         elif settingType == "newuser":

@@ -21,7 +21,7 @@
                     <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">oAuth Providers</a>
+                    <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">OAuth Providers</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
@@ -259,7 +259,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    oAuth Provider Listing
+                                    OAuth Provider Listing
                                     <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newOauthModal"><i class="fas fa-plus"></i></button></span>
                                 </div>
                                 <div class="card-body">
@@ -303,7 +303,7 @@
                         <div class="modal-content">
                           <form action="/settings/admin" id="OAuthForm" method="post">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="newOauthModalTitle">Add/Edit an oAuth Provider</h5>
+                            <h5 class="modal-title" id="newOauthModalTitle">Add/Edit an OAuth Provider</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -314,7 +314,7 @@
                                     <div class="form-group col-md-12">
                                         <label for="oAuthPreset">Authentication Type</label>
                                         <select class="form-control required" id="oAuthPreset" name="oAuthPreset" required>
-                                            <option value="Custom">Custom oAuth2</option>
+                                            <option value="Custom">Custom OAuth2</option>
                                             <option value="Discord">Discord</option>
                                             <option value="Reddit">Reddit</option>
                                             <option value="Facebook">Facebook</option>
@@ -322,12 +322,12 @@
                                     </div>
                                     <div class="col-md-6 col-12">
                                         <div id="oAuthNameDiv" class="form-group col-md-12">
-                                            <label for="oAuthName">oAuth Provider ID</label>
+                                            <label for="oAuthName">OAuth Provider ID</label>
                                             <input type="text" class="form-control required" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
                                             <small id="oAuthHelp" class="form-text text-muted">Used for Internal Identification.  No Spaces</small>
                                         </div>
                                         <div id="oAuthFriendlyNameDiv" class="form-group col-md-12">
-                                            <label for="oAuthFriendlyName">oAuth Provider Friendly Name</label>
+                                            <label for="oAuthFriendlyName">OAuth Provider Friendly Name</label>
                                             <input type="text" class="form-control required" id="oAuthFriendlyName" name="oAuthFriendlyName" maxlength="64" required>
                                         </div>
                                         <div id="oAuthColorDiv" class="form-group col-md-12">
@@ -413,7 +413,7 @@
                         <div class="modal-content">
                           <form action="/settings/admin" method="post">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="deleteOauthModalTitle">Delete a oAuth Provider</h5>
+                            <h5 class="modal-title" id="deleteOauthModalTitle">Delete a OAuth Provider</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -423,8 +423,8 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group col-md-12">
-                                            <p>Any Users that registered under the oAuth Provider will be reassigned to local authentication and passwords set to a random value.  Users will need to perform a password reset to regain access.</p>
-                                            <p>Are you sure you want to delete the oAuth Provider?</p>
+                                            <p>Any Users that registered under the OAuth Provider will be reassigned to local authentication and passwords set to a random value.  Users will need to perform a password reset to regain access.</p>
+                                            <p>Are you sure you want to delete the OAuth Provider?</p>
                                             <input type="hidden" id="DeleteOAuthProviderID" name="DeleteOAuthProviderID">
                                             <input type="hidden" value="DeleteOAuthProvider" id="settingType" name="settingType">
                                         </div>
