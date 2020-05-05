@@ -1,7 +1,7 @@
 Beta-6
 ==============================================
 Refectored app.py to submodules
-Added oAuth2 Authentication and Ability to Convert Local Logins
+Added OAuth2 Authentication and Ability to Convert Local Logins
 Fixes for Redis instances with Passwords
 Added Confirmation Dialog for Deletion of Channels in Admin Interface
 Added Confirmation Dialog for Deletion of Channels in User Channels Interface
@@ -17,7 +17,8 @@ Added Additional Checks to Ensure accurate live view count
 Fixes Embedded Stream to Allow Embed Views to count against Live Count
 Upgraded Requests from 2.18.4 to 2.20.0 - CVE-2018-18074
 Upgraded psutil from 5.6.3 to 5.6.6 - CVE-2019-18874
-Added Fixes to Prevent an Admin User from Disabling or Deleting Themselves
+Fixes to Prevent an Admin User from Disabling or Deleting Themselves
+Fixes to First Run to force required settings.
 
 Beta-5b
 ==============================================
