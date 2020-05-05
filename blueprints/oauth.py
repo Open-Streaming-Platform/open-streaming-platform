@@ -44,7 +44,7 @@ def oAuthAuthorize(provider):
         userData = oAuthClient.get(oAuthProviderQuery.profile_endpoint)
         userDataDict = userData.json()
 
-        userQuery = Sec.User.query.filter_by(oAuthID=userDataDict['id'], oAuthProvider=provider, authType=1).first()
+        userQuery = Sec.User.query.filter_by(oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider, authType=1).first()
 
         # If oAuth ID, Provider, and Auth Type Match - Initiate Login
         if userQuery != None:
@@ -97,9 +97,9 @@ def oAuthAuthorize(provider):
                 if existingUsernameQuery is not None:
                     requestedUsername = requestedUsername + str(random.randint(1,9999))
                 if hasEmail is True:
-                    user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+                    user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
                 else:
-                    user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict['id'], oAuthProvider=provider)
+                    user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
                 user_datastore.add_role_to_user(user, 'User')

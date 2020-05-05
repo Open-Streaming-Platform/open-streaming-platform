@@ -117,10 +117,11 @@ class oAuthProvider(db.Model):
     api_base_url = db.Column(db.String(1024))
     client_kwargs = db.Column(db.String(2056))
     profile_endpoint = db.Column(db.String(2056))
+    id_value = db.Column(db.String(256))
     username_value = db.Column(db.String(256))
     email_value = db.Column(db.String(256))
 
-    def __init__(self, name, preset_auth_type, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, username_value, email_value):
+    def __init__(self, name, preset_auth_type, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, id_value, username_value, email_value):
         self.name = name
         self.preset_auth_type = preset_auth_type
         self.friendlyName = friendlyName
@@ -131,6 +132,7 @@ class oAuthProvider(db.Model):
         self.authorize_url = authorize_url
         self.api_base_url = api_base_url
         self.profile_endpoint = profile_endpoint
+        self.id_value = id_value
         self.username_value = username_value
         self.email_value = email_value
 

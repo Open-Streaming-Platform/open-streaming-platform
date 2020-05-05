@@ -608,6 +608,7 @@ def admin_page():
             oAuth_api_base_url = None
             oAuth_client_kwargs = None
             oAuth_profile_endpoint = None
+            oAuth_id = None
             oAuth_username = None
             oAuth_email = None
 
@@ -620,6 +621,7 @@ def admin_page():
                 oAuth_api_base_url = request.form['oAuthApi_base_url']
                 oAuth_client_kwargs = request.form['oAuthClient_kwargs']
                 oAuth_profile_endpoint = request.form['oAuthProfile_endpoint']
+                oAuth_id = request.form['oAuthIDValue']
                 oAuth_username = request.form['oAuthUsername']
                 oAuth_email = request.form['oAuthEmail']
                 if oAuth_access_token_params == '':
@@ -635,6 +637,7 @@ def admin_page():
                 oAuth_api_base_url = 'https://discordapp.com/api/'
                 oAuth_client_kwargs = '{"scope":"identify email"}'
                 oAuth_profile_endpoint = 'users/@me'
+                oAuth_id = 'id'
                 oAuth_username = 'username'
                 oAuth_email = 'email'
             elif oAuth_type == "Reddit":
@@ -643,6 +646,7 @@ def admin_page():
                 oAuth_api_base_url = 'https://oauth.reddit.com/api/v1/'
                 oAuth_client_kwargs = '{"scope":"identity"}'
                 oAuth_profile_endpoint = 'me'
+                oAuth_id = 'id'
                 oAuth_username = 'name'
                 oAuth_email = 'email'
             elif oAuth_type == "Facebook":
@@ -651,11 +655,12 @@ def admin_page():
                 oAuth_api_base_url = 'https://graph.facebook.com/v6.0/'
                 oAuth_client_kwargs = '{"scope": "email public_profile"}'
                 oAuth_profile_endpoint = 'me?fields=name,id,email'
+                oAuth_id = 'id'
                 oAuth_username = 'name'
                 oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
-                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_username, oAuth_email)
+                newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_id, oAuth_username, oAuth_email)
                 if oAuth_access_token_params is not None:
                     newOauthProvider.access_token_params = oAuth_access_token_params
                 if oAuth_authorize_params is not None:
@@ -700,6 +705,7 @@ def admin_page():
                     oAuthQuery.api_base_url = oAuth_api_base_url
                     oAuthQuery.client_kwargs = oAuth_client_kwargs
                     oAuthQuery.profile_endpoint = oAuth_profile_endpoint
+                    oAuthQuery.id_value = oAuth_id
                     oAuthQuery.username_value = oAuth_username
                     oAuthQuery.email_value = oAuth_email
 

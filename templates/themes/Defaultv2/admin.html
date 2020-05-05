@@ -285,7 +285,7 @@
                                                             data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
                                                             data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
                                                             data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
-                                                            data-emailvalue="{{provider.email_value}}" data-picturevalue="{{provider.picture_value}}" data-authtype="{{provider.preset_auth_type}}">
+                                                            data-emailvalue="{{provider.email_value}}" data-idvalue="{{provider.id_value}}" data-authtype="{{provider.preset_auth_type}}">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="far fa-trash-alt"></i></button>
@@ -378,6 +378,11 @@
                                             <label for="oAuthProfile_endpoint">Profile Endpoint</label>
                                             <input type="text" class="form-control required" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
                                             <small id="oAuthProfile_endpointHelp" class="form-text text-muted">Relative Path of API Base URL to Retrieve Login User's Profile (no leading /)</small>
+                                        </div>
+                                        <div id="oAuthIDValueDiv" class="form-group col-md-12">
+                                            <label for="oAuthUsername">ID Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthIDValue" name="oAuthIDValue" required>
+                                            <small id="oAuthIDValueHelp" class="form-text text-muted">Unique ID Attribute Retrieved from Profile Endpoint</small>
                                         </div>
                                         <div id="oAuthUsernameDiv" class="form-group col-md-12">
                                             <label for="oAuthUsername">Username Profile Value</label>
@@ -1123,6 +1128,8 @@
                 $("#oAuthClient_kwargsDiv").show();
                 $("#oAuthProfile_endpoint").attr("disabled", false);
                 $("#oAuthProfile_endpointDiv").show();
+                $("#oAuthValue").attr("disabled", false);
+                $("#oAuthIDValue").show();
                 $("#oAuthUsername").attr("disabled", false);
                 $("#oAuthUsernameDiv").show();
                 $("#oAuthEmail").attr("disabled", false);
@@ -1143,6 +1150,8 @@
                 $("#oAuthClient_kwargsDiv").hide();
                 $("#oAuthProfile_endpoint").attr("disabled", true);
                 $("#oAuthProfile_endpointDiv").hide();
+                $("#oAuthIDValue").attr("disabled", true);
+                $("#oAuthIDValue").hide();
                 $("#oAuthUsername").attr("disabled", true);
                 $("#oAuthUsernameDiv").hide();
                 $("#oAuthEmail").attr("disabled", true);
@@ -1167,6 +1176,7 @@
          var oAuthAPIBaseURL = $(this).data('apibaseurl');
          var oAuthClientKwargs = $(this).data('clientkwargs');
          var oAuthProfileEndpoint = $(this).data('profileendpoint');
+         var oAuthIDValue= $(this).data('idvalue');
          var oAuthUsername = $(this).data('usernamevalue');
          var oAuthEmail = $(this).data('emailvalue');
          $("#oAuthID").val( oAuthID );
@@ -1189,6 +1199,7 @@
              $("#oAuthClient_kwargs").val(JSON.parse(oAuthClientKwargs));
          }
          $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
+         $("#oAuthIDValue").val( oAuthIDValue );
          $("#oAuthUsername").val( oAuthUsername );
          $("#oAuthEmail").val( oAuthEmail );
          updateOAuthModalWindowLayout();
