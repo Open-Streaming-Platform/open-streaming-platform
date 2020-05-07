@@ -42,6 +42,7 @@ def runWebhook(channelID, triggerType, **kwargs):
 
 @system.asynch
 def testWebhook(webhookType, webhookID, **kwargs):
+    system.newLog(8, "Testing Webhook for ID #" + str(webhookID) +", Type:" + webhookType)
     webhookQuery = None
     if webhookType == "channel":
         webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
@@ -63,7 +64,7 @@ def testWebhook(webhookType, webhookID, **kwargs):
                 r = requests.delete(url, headers=header, data=payload)
         except Exception as e:
             print("Webhook Error-" + str(e) )
-        system.newLog(8, "Processing Webhook for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
+        system.newLog(8, "Completed Webhook Test for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
