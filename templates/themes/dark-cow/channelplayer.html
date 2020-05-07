@@ -387,7 +387,10 @@
             autoplay: true,
             errorDisplay: false,
             liveui: true,
-            liveTracker: true,
+            liveTracker: {
+                trackingThreshold: 5,
+                liveTolerance: 15
+            },
             html5:
             {
                 nativeAudioTracks: false,
