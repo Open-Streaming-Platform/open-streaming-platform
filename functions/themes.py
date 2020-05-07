@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
+from flask_security import current_user
 
 from globals import globalvars
 
@@ -9,9 +10,16 @@ from classes import settings
 
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
+    sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode).first()
+    if sysSettings.maintenanceMode is True:
+        if current_user.is_authenticated:
+            if current_user.has_role('Admin') == False:
+                return "maintenance.html"
+        else:
+            return "maintenance.html"
     try:
         if themeHTMLFile in globalvars.themeData.get('Override',[]):
-            sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme).first()
+
             return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
         else:
             return "themes/Defaultv2/" + themeHTMLFile

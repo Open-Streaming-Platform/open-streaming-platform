@@ -811,6 +811,7 @@ def rtmpStat_page(node):
 
 @settings_bp.route('/dbRestore', methods=['POST'])
 def settings_dbRestore():
+    # TODO Add OAuth to DB Restore
     validRestoreAttempt = False
     if not settings.settings.query.all():
         validRestoreAttempt = True
