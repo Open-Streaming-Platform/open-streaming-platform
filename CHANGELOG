@@ -12,6 +12,7 @@ Added a Maintenance Mode where only Admins may log in.  All others are redirecte
 Added Topic Option to Uploaded Videos per Issue #189 (https://gitlab.com/Deamos/flask-nginx-rtmp-manager/-/issues/189)
 Added Webhook Testing for Global and Channel Level Webhooks
 Updated 404 and 500 pages for cleaner, less static filled look
+Updated Video JS to 7.7.6 - Corrects IOS issues on video and stream playback
 Removed EasyMDE automatic download of Font Awesome and Other External Dependencies
 Refactored Theme Logic - Themes no longer require a separate security directory
 Refactored Theme Layout - Themes now expect layout for CSS files to be as follows: /opt/osp/static/css/<themename>/theme.css
