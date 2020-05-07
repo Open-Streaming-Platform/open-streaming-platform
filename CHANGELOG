@@ -1,6 +1,7 @@
 Beta-6
 ==============================================
 Refectored app.py to submodules
+Clips will no longer be "fake" timestamp hacked clips. Clips will be separate video files.  Existing Clips will be converted on upgrade.  Be aware of increased storage usage prior to upgrade.
 Added OAuth2 Authentication and Ability to Convert Local Logins
 Fixes for Redis instances with Passwords
 Added Confirmation Dialog for Deletion of Channels in Admin Interface
