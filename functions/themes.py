@@ -11,12 +11,22 @@ from classes import settings
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode).first()
+
+    # Check for Maintenance Mode
     if sysSettings.maintenanceMode is True:
         if current_user.is_authenticated:
             if current_user.has_role('Admin') is False:
-                return "maintenance.html"
+                if "maintenance.html" in globalvars.themeData.get('Override', []):
+                    return "themes/" + sysSettings.systemTheme + "/maintenance.html"
+                else:
+                    return "themes/Defaultv2/maintenance.html"
         else:
-            return "maintenance.html"
+            if "maintenance.html" in globalvars.themeData.get('Override', []):
+                return "themes/" + sysSettings.systemTheme + "/maintenance.html"
+            else:
+                return "themes/Defaultv2/maintenance.html"
+
+    # Check if normal theme override exists
     try:
         if themeHTMLFile in globalvars.themeData.get('Override',[]):
 
