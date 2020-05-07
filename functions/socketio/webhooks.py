@@ -162,7 +162,7 @@ def testWebhook(message):
                                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                                        channeldescription=str(channelQuery.description), streamname="Testing Stream",
                                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
-                                       streamtopic=templateFilters.get_topicName(topic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg"),
+                                       streamtopic=templateFilters.get_topicName(topic.id), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg"),
                                        user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)),
                                        videoname=randomVideoQuery.channelName, videodate=str(randomVideoQuery.videoDate), videodescription=randomVideoQuery.description,
                                        videotopic=templateFilters.get_topicName(randomVideoQuery.topic), videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(randomVideoQuery.id)),
