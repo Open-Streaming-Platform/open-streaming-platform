@@ -570,6 +570,7 @@
                                                         <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
                                                             <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
@@ -1346,6 +1347,11 @@
         socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
+    }
+
+    function testWebhook(webhookID) {
+        socket.emit('testWebhook', {webhookID: webhookID, webhookType: 'global'});
+        createNewBSAlert("Webhook Test Sent","success")
     }
 
     function deleteChannelModal(channelID) {

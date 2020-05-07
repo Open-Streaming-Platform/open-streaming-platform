@@ -1,9 +1,16 @@
 from flask_security import current_user
 from flask_socketio import emit
+from sqlalchemy.sql.expression import func
 
 from classes.shared import db, socketio
 from classes import Channel
 from classes import webhook
+from classes import settings
+from classes import topics
+from classes import RecordedVideo
+
+from functions import webhookFunc
+from functions import templateFilters
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
@@ -98,4 +105,67 @@ def deleteGlobalWebhook(message):
             db.session.delete(webhookQuery)
             db.session.commit()
     db.session.close()
+    return 'OK'
+
+@socketio.on('testWebhook')
+def testWebhook(message):
+    if current_user.is_authenticated:
+        webhookID = int(message['webhookID'])
+        webhookType = message['webhookType']
+        channelID = None
+
+        if 'channelID' in message:
+            channelID = int(message['channelID'])
+
+        sysSettings = settings.settings.query.first()
+        webhookQuery = None
+
+        # Acquire a Channel to Test With
+        channelQuery = None
+        if channelID is not None:
+            channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+        else:
+            channelQuery = Channel.Channel.query.order_by(func.rand()).first()
+
+        # Acquire a Topic to Test With
+        topic = topics.topics.query.order_by(func.rand()).first()
+
+        # Retrieve Current Picture
+        pictureLocation = current_user.pictureLocation
+        if current_user.pictureLocation is None:
+            pictureLocation = '/static/img/user2.png'
+        else:
+            pictureLocation = '/images/' + pictureLocation
+
+        if channelQuery is not None:
+
+            # Prepare Channel Image
+            if channelQuery.imageLocation is None:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
+
+            if webhookType == "global":
+                if current_user.has_role("Admin"):
+                    webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).first()
+
+            elif webhookType == "channel":
+                webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
+                if webhookQuery != None:
+                    if webhookQuery.channel.id != current_user.id:
+                        webhookQuery = None
+
+            randomVideoQuery = RecordedVideo.RecordedVideo.query.order_by(func.random()).first()
+
+            webhookFunc.testWebhook(channelQuery.id, webhookQuery.requestType, channelname=channelQuery.channelName,
+                                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)), channeltopic=channelQuery.topic,
+                                       channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
+                                       channeldescription=str(channelQuery.description), streamname="Testing Stream",
+                                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
+                                       streamtopic=templateFilters.get_topicName(topic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg"),
+                                       user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)),
+                                       videoname=randomVideoQuery.channelName, videodate=str(randomVideoQuery.videoDate), videodescription=randomVideoQuery.description,
+                                       videotopic=templateFilters.get_topicName(randomVideoQuery.topic), videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(randomVideoQuery.id)),
+                                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(randomVideoQuery.thumbnailLocation)), comment="This is just a test comment!",
+                                       message="This is just a test message!")
     return 'OK'

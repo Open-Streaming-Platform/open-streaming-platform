@@ -472,6 +472,7 @@
                                                                             <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                                             <td>
                                                                                 <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
+                                                                                <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-vial"></i></button>
                                                                                 <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                                                                             </td>
                                                                         </tr>
@@ -1666,6 +1667,11 @@ function openChannelWindow(divID, windowName) {
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
         createNewBSAlert("Webhook Deleted", "Success");
+    }
+
+    function testWebhook(webhookID, channelID) {
+        socket.emit('testWebhook', {webhookID: webhookID, channelID: channelID, webhookType: 'channel'});
+        createNewBSAlert("Webhook Test Sent","success")
     }
 </script>
 

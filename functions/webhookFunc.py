@@ -40,6 +40,31 @@ def runWebhook(channelID, triggerType, **kwargs):
     db.session.close()
     return True
 
+@system.asynch
+def testWebhook(webhookType, webhookID, **kwargs):
+    webhookQuery = None
+    if webhookType == "channel":
+        webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
+    elif webhookType == "global":
+        webhook.globalWebhook.query.filter_by(id=webhookID).first()
+    if webhookQuery is not None:
+        url = webhookQuery.endpointURL
+        payload = processWebhookVariables(webhookQuery.requestPayload, **kwargs)
+        header = json.loads(webhookQuery.requestHeader)
+        requestType = webhookQuery.requestType
+        try:
+            if requestType == 0:
+                r = requests.post(url, headers=header, data=payload)
+            elif requestType == 1:
+                r = requests.get(url, headers=header, data=payload)
+            elif requestType == 2:
+                r = requests.put(url, headers=header, data=payload)
+            elif requestType == 3:
+                r = requests.delete(url, headers=header, data=payload)
+        except:
+            pass
+        system.newLog(8, "Processing Webhook for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
+
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
         replacementValue = ("%" + key + "%")
