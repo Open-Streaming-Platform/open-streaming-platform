@@ -421,6 +421,7 @@ def admin_page():
             smtpTLS = False
             smtpSSL = False
             protectionEnabled = False
+            maintenanceMode = False
 
             if 'recordSelect' in request.form:
                 recordSelect = True
@@ -445,6 +446,8 @@ def admin_page():
 
             if 'enableProtection' in request.form:
                 protectionEnabled = True
+            if 'maintenanceMode' in request.form:
+                maintenanceMode = True
 
             systemLogo = None
             if 'photo' in request.files:
@@ -482,6 +485,7 @@ def admin_page():
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
             sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
+            sysSettings.maintenanceMode = maintenanceMode
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
