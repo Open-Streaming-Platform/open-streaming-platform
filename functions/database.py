@@ -120,7 +120,7 @@ def init(app, user_datastore):
         clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
         videos_root = globalvars.videoRoot + 'videos/'
         for clip in clipQuery:
-            originalVideo = clip.recordedVideo.videoLocation
+            originalVideo = videos_root + clip.recordedVideo.videoLocation
             clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
             fullvideoLocation = videos_root + clipVideoLocation
             clip.videoLocation = clipVideoLocation
