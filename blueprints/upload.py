@@ -90,6 +90,7 @@ def upload_vid():
     currentTime = datetime.datetime.now()
 
     channel = int(request.form['uploadToChannelID'])
+    topic = int(request.form['uploadTopic'])
     thumbnailFilename = request.form['thumbnailFilename']
     videoFilename= request.form['videoFilename']
 
@@ -149,6 +150,8 @@ def upload_vid():
     else:
         newVideo.channelName = currentTime
 
+    newVideo.topic = topic
+
     newVideo.description = system.strip_html(request.form['videoDescription'])
 
     if os.path.isfile(videoPath):
@@ -197,6 +200,7 @@ def upload_vid():
                 system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
     videoID = newVideo.id
+    db.session.commit()
     db.session.close()
     flash("Video upload complete")
     return redirect(url_for('play.view_vid_page', videoID=videoID))

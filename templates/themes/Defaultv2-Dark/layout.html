@@ -189,6 +189,14 @@
                 {% endfor %}
               </select>
             </div>
+            <div class="form-group">
+              <label for="uploadTopic">Topic</label>
+              <select name="uploadTopic" class="form-control" required>
+                {% for topic in uploadTopics %}
+                <option value="{{topic.id}}">{{topic.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
 
             <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
             <!-- hidden dropzone -->

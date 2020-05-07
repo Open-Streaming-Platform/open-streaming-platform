@@ -321,6 +321,11 @@ def inject_ownedChannels():
     else:
         return dict(ownedChannels=[])
 
+@app.context_processor
+def inject_topics():
+    topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
+    return dict(uploadTopics=topicQuery)
+
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
