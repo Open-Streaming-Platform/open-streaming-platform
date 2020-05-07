@@ -26,6 +26,7 @@ class settings(db.Model):
     restreamMaxBitrate = db.Column(db.Integer)
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(2048))
+    maintenanceMode = db.Column(db.Boolean)
 
     allowRegistration = db.Column(db.Boolean) # Moved to config.py
     requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
@@ -55,6 +56,7 @@ class settings(db.Model):
         self.serverMessage = ""
         self.restreamMaxBitrate = 3500
         self.protectionEnabled = False
+        self.maintenanceMode = False
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -66,12 +68,14 @@ class settings(db.Model):
             'siteAddress': self.siteAddress,
             'siteURI': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
+            'serverMessageTitle': self.serverMessageTitle,
             'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,
             'allowComments': self.allowComments,
             'version': self.version,
-            'protectionEnabled': self.protectionEnabled
+            'protectionEnabled': self.protectionEnabled,
+            'maintenanceMode': self.maintenanceMode
         }
 
 class edgeStreamer(db.Model):
