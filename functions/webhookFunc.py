@@ -42,12 +42,12 @@ def runWebhook(channelID, triggerType, **kwargs):
 
 @system.asynch
 def testWebhook(webhookType, webhookID, **kwargs):
-    system.newLog(8, "Testing Webhook for ID #" + str(webhookID) +", Type:" + webhookType)
+    system.newLog(8, "Testing Webhook for ID #" + str(webhookID) +", Type: " + webhookType)
     webhookQuery = None
     if webhookType == "channel":
         webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
     elif webhookType == "global":
-        webhook.globalWebhook.query.filter_by(id=webhookID).first()
+        webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).first()
     if webhookQuery is not None:
         url = webhookQuery.endpointURL
         payload = processWebhookVariables(webhookQuery.requestPayload, **kwargs)
