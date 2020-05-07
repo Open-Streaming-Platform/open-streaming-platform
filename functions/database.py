@@ -123,7 +123,8 @@ def init(app, user_datastore):
             originalVideo = clip.recordedVideo.videoLocation
             clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
             fullvideoLocation = videos_root + clipVideoLocation
-            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clip.startTime), '-to', str(clip.length), '-i', originalVideo, '-c:v', 'copy', '-c:a' 'copy', fullvideoLocation])
+            clip.videoLocation = clipVideoLocation
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clip.startTime), '-t', str(clip.length), '-i', originalVideo, '-c:v', 'copy', '-c:a' 'copy', fullvideoLocation])
             clip.videoLocation = clipVideoLocation
             db.session.commmit()
 
