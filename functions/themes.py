@@ -13,7 +13,7 @@ def checkOverride(themeHTMLFile):
     sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode).first()
     if sysSettings.maintenanceMode is True:
         if current_user.is_authenticated:
-            if current_user.has_role('Admin') == False:
+            if current_user.has_role('Admin') is False:
                 return "maintenance.html"
         else:
             return "maintenance.html"
