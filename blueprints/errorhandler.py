@@ -11,10 +11,10 @@ errorhandler_bp = Blueprint('errors', __name__)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
     system.newLog(0, "404 Error - " + str(request.url))
-    return render_template(themes.checkOverride('404.html'), sysSetting=sysSettings), 404
+    return render_template(themes.checkOverride('404.html'), sysSetting=sysSettings, previous=request.referrer), 404
 
 @errorhandler_bp.app_errorhandler(500)
 def page_not_found(e):
     sysSettings = settings.settings.query.first()
     system.newLog(0,"500 Error - " + str(request.url))
-    return render_template(themes.checkOverride('500.html'), sysSetting=sysSettings, error=e), 500
+    return render_template(themes.checkOverride('500.html'), sysSetting=sysSettings, previous=request.referrer, error=e), 500
