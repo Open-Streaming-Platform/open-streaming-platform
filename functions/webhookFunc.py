@@ -61,8 +61,8 @@ def testWebhook(webhookType, webhookID, **kwargs):
                 r = requests.put(url, headers=header, data=payload)
             elif requestType == 3:
                 r = requests.delete(url, headers=header, data=payload)
-        except:
-            pass
+        except Exception as e:
+            print("Webhook Error-" + str(e) )
         system.newLog(8, "Processing Webhook for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
 
 def processWebhookVariables(payload, **kwargs):
