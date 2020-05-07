@@ -1,5 +1,6 @@
 Beta-6
 ==============================================
+Brand New Logo - Courtesy of @curldev in Discord
 Refectored app.py to submodules
 Clips will no longer be "fake" timestamp hacked clips. Clips will be separate video files.  Existing Clips will be converted on upgrade.  Be aware of increased storage usage prior to upgrade.
 Added OAuth2 Authentication and Ability to Convert Local Logins
