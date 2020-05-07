@@ -238,6 +238,11 @@
       </div>
     </div>
   </div>
+  {% if sysSettings.maintenanceMode == True %}
+  <div class="alert alert-secondary m-2" role="alert">
+    Server is in Maintenance Mode!
+  </div>
+  {% endif %}
 
   {% block body %}
 
