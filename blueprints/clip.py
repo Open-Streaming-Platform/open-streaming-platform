@@ -52,7 +52,7 @@ def view_clip_page(clipID):
 
             topicList = topics.topics.query.all()
 
-            streamURL = '/videos/' + recordedVid.videoLocation
+            streamURL = '/videos/' + clipQuery.videoLocation
 
             isEmbedded = request.args.get("embedded")
 

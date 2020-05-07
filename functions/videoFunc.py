@@ -169,30 +169,38 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
     if recordedVidQuery is not None:
         if clipStop > clipStart:
-            newClip = RecordedVideo.Clips(recordedVidQuery.id, clipStart, clipStop, clipName, clipDescription)
+            videos_root = globalvars.videoRoot + 'videos/'
+
+            newClip = RecordedVideo.Clips(recordedVidQuery.id, None, clipStart, clipStop, clipName, clipDescription)
+            newClip.published = False
             db.session.add(newClip)
             db.session.commit()
 
             newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
-            videos_root = globalvars.videoRoot + 'videos/'
 
             videoLocation = videos_root + recordedVidQuery.videoLocation
+
+            clipVideoLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".mp4"
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
             clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
 
+            newClipQuery.videoLocation = clipVideoLocation
             newClipQuery.thumbnailLocation = clipThumbNailLocation
             newClipQuery.gifLocation = clipGifLocation
 
+            fullvideoLocation = videos_root + clipVideoLocation
             fullthumbnailLocation = videos_root + clipThumbNailLocation
             fullgifLocation = videos_root + clipGifLocation
 
             if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
 
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStop), '-to', str(newClipQuery.length), '-i', videoLocation, '-c:v', 'copy', '-c:a' 'copy', fullvideoLocation])
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
             redirectID = newClipQuery.id
+            newClipQuery.published = True
             system.newLog(6, "New Clip Created - ID #" + str(redirectID))
 
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
@@ -228,6 +236,7 @@ def deleteClip(clipID):
     videos_root = globalvars.videoRoot + 'videos/'
 
     if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
+        videoPath = videos_root + clipQuery.videoLocation
         thumbnailPath = videos_root + clipQuery.thumbnailLocation
         gifPath = videos_root + clipQuery.gifLocation
 
@@ -237,6 +246,9 @@ def deleteClip(clipID):
         if gifPath != videos_root:
             if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
                 os.remove(gifPath)
+        if videoPath != videos_root:
+            if os.path.exists(videoPath) and (clipQuery.videoLocation is not None or videoPath != ""):
+                os.remove(videoPath)
 
         db.session.delete(clipQuery)
 

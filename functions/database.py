@@ -1,5 +1,6 @@
 import os
 import json
+import subprocess
 
 from flask import flash
 from flask_migrate import migrate, upgrade
@@ -115,6 +116,17 @@ def init(app, user_datastore):
             chan.defaultStreamName = ""
             db.session.commit()
 
+        # Fix for Beta 6 Switch from Fake Clips to real clips
+        clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
+        videos_root = globalvars.videoRoot + 'videos/'
+        for clip in clipQuery:
+            originalVideo = clip.recordedVideo.videoLocation
+            clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
+            fullvideoLocation = videos_root + clipVideoLocation
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clip.startTime), '-to', str(clip.length), '-i', originalVideo, '-c:v', 'copy', '-c:a' 'copy', fullvideoLocation])
+            clip.videoLocation = clipVideoLocation
+            db.session.commmit()
+
         # Fix for Videos and Channels that were created before Publishing Option
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
         for vid in videoQuery:
@@ -143,6 +155,7 @@ def init(app, user_datastore):
             sysSettings.restreamMaxBitrate = 3500
             db.session.commit()
 
+        # Fixes for Server Settings Missing the Main Page Sort Option
         if sysSettings.sortMainBy is None:
             sysSettings.sortMainBy = 0
             db.session.commit()

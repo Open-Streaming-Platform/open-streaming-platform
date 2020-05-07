@@ -266,22 +266,6 @@
                 }
         });
 
-  var startTime = {{ clip.startTime }};
-  var stopTime = {{ clip.endTime }};
-
-  player.currentTime(startTime);
-  player.play();
-
-  player.on('timeupdate', function (e) {
-    if (player.currentTime() < startTime) {
-      player.currentTime(startTime);
-    }
-    if (player.currentTime() >= stopTime) {
-      player.currentTime(startTime);
-      player.pause();
-    }
-  });
-
 </script>
 
 <script type="text/javascript" charset="utf-8">

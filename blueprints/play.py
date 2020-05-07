@@ -205,7 +205,7 @@ def comments_vid_page(videoID):
                        channeldescription=str(recordedVid.channel.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
                        videotopic=templateFilters.get_topicName(recordedVid.topic),
-                       videourl=(sysSettings.siteProtocol +sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
+                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.thumbnailLocation),
                        user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)), comment=comment)
             flash('Comment Added', "success")
