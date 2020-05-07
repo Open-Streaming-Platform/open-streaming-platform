@@ -158,7 +158,7 @@ def testWebhook(message):
             randomVideoQuery = RecordedVideo.RecordedVideo.query.order_by(func.random()).first()
 
             webhookFunc.testWebhook(channelQuery.id, webhookQuery.requestType, channelname=channelQuery.channelName,
-                                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)), channeltopic=channelQuery.topic,
+                                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)), channeltopic=templateFilters.get_topicName(channelQuery.topic),
                                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                                        channeldescription=str(channelQuery.description), streamname="Testing Stream",
                                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
