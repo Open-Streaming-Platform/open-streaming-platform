@@ -82,7 +82,7 @@ install_osp() {
   installLog=$cwd/install.log
 
   echo "Starting OSP Install" > $installLog
-  echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
+  echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   if  $arch
   then
@@ -93,7 +93,7 @@ install_osp() {
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
-          # Get Dependancies
+          # Get Dependencies
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
