@@ -941,6 +941,20 @@ def settings_dbRestore():
                     db.session.add(newOauthProvider)
                 db.session.commit()
 
+                providerQuery = settings.oAuthProvider.query.all()
+                for provider in providerQuery:
+                    oauth.register(
+                        name=provider.name,
+                        client_id=provider.client_id,
+                        client_secret=provider.client_secret,
+                        access_token_url=provider.access_token_url,
+                        access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                        authorize_url=provider.authorize_url,
+                        authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                        api_base_url=provider.api_base_url,
+                        client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                    )
+
             for restoredUser in restoreDict['user']:
                 user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'],
                                            password=restoredUser['password'])
