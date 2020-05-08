@@ -163,11 +163,18 @@ def moveVideo(videoID, newChannel):
     return False
 
 def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
+    settingsQuery = settings.settings.query.first()
 
     # TODO Add Webhook for Clip Creation
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
 
     if recordedVidQuery is not None:
+
+        clipLength = clipStop - clipStart
+        if settingsQuery.maxClipLength < 301:
+            if clipLength > settingsQuery.maxClipLength:
+                return False, None
+
         if clipStop > clipStart:
             videos_root = globalvars.videoRoot + 'videos/'
 
