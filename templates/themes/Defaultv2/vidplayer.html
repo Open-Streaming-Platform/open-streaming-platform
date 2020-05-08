@@ -325,6 +325,7 @@
             </video>
           </div>
           <br>
+          <div id="clipError" class="alert alert-warning" style="display:none;"></div>
           <div id="clipTimeSelect">
             <div class="row">
               <div class="col-12 col-md-6">
@@ -351,12 +352,13 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Create</button>
+          <button id="clipSubmitButton" type="submit" class="btn btn-success">Create</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
 
 {% endif %}
 
@@ -640,11 +642,40 @@
   function setClipStart() {
     var startInput = document.getElementById('clipStartTime');
     startInput.value = clipplayer.currentTime()
+    checkClipConstraints();
   }
 
   function setClipStop() {
     var stopInput = document.getElementById('clipStopTime');
     stopInput.value = clipplayer.currentTime()
+    checkClipConstraints();
+  }
+
+  function checkClipConstraints() {
+    var startTime = document.getElementById('clipStartTime').value;
+    var stopTime = document.getElementById('clipStopTime').value;
+    var systemMaxClipLength = {{sysSettings.maxClipLength}};
+    var clipErrorDiv = document.getElementById('clipError');
+    var clipSubmitButton = document.getElementById('clipSubMitButton');
+
+    if (systemMaxClipLength < 301) {
+      if ((startTime != "") && (stopTime != "")) {
+        var clipLength = stopTime - startTime;
+        if (clipLength > systemMaxClipLength) {
+          clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
+          clipErrorDiv.style.display = "block";
+          clipSubmitButton.disabled = true;
+        } else if (stopTime < startTime) {
+          clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
+          clipErrorDiv.style.display = "block";
+          clipSubmitButton.disabled = true;
+        } else {
+          clipErrorDiv.innerHTML = "";
+          clipSubmitButton.disabled = false;
+          clipErrorDiv.style.display = "none";
+        }
+      }
+    }
   }
 
 </script>
