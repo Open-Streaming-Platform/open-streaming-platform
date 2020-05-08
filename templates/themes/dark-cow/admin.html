@@ -199,7 +199,7 @@
                                     <input type="number" id="restreamMaxBitrate" name="restreamMaxBitrate" class="form-control" value="{{sysSettings.restreamMaxBitrate}}">
                                   </div>
                                   <div class="form-group">
-                                    <label for="rangeSlider" class="ml-3">Maximum Clip Length</label><br>
+                                    <label for="rangeSlider">Maximum Clip Length</label><br>
                                     <div class="input-group">
                                       <input id="maxClipLength" name="maxClipLength" class="rangeSliderInput form-control" type="range" value="{{sysSettings.maxClipLength}}" min="0" max="301">
                                       <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-large badge-secondary" style="width:100px;"></span></h3>
@@ -1700,7 +1700,7 @@ $('#search').on('input', function(){
 </script>
 
 <script>
-    $(document).ready(function () {
+    document.addEventListener("DOMContentLoaded", function() {
         var maxClipLengthInput = $('#maxClipLength')
         var maxClipLengthLabel = $('#maxClipLengthLabel')
         var sliderValue = maxClipLengthInput.val();
