@@ -811,7 +811,6 @@ def rtmpStat_page(node):
 
 @settings_bp.route('/dbRestore', methods=['POST'])
 def settings_dbRestore():
-    # TODO Add OAuth to DB Restore
     validRestoreAttempt = False
     if not settings.settings.query.all():
         validRestoreAttempt = True
@@ -917,11 +916,31 @@ def settings_dbRestore():
                     db.session.add(restoredNode)
                     db.session.commit()
 
-            ## Restores Users
+            ## Restores OAuth and Users
             oldUsers = Sec.User.query.all()
             for user in oldUsers:
                 db.session.delete(user)
             db.session.commit()
+
+            oldOAuth = settings.oAuthProvider.query.all()
+            for provider in oldOAuth:
+                db.session.delete(provider)
+            db.session.commit()
+
+            if 'o_auth_provider' in restoreDict:
+                for provider in restoreDict['o_auth_provider']:
+                    newOauthProvider = settings.oAuthProvider(provider['name'], provider['preset_auth_type'], provider['friendlyName'], provider['displayColor'],
+                                                              provider['client_id'], provider['client_secret'], provider['access_token_url'], provider['authorize_url'],
+                                                              provider['api_base_url'], provider['profile_endpoint'], provider['id_value'], provider['username_value'], provider['email_value'])
+                    if provider['access_token_params'] != 'None':
+                        newOauthProvider.access_token_params = provider['access_token_params']
+                    if provider['authorize_params'] != 'None':
+                        newOauthProvider.authorize_params = provider['authorize_params']
+                    if provider['client_kwargs'] != 'None':
+                        newOauthProvider.client_kwargs = provider['client_kwargs']
+                    db.session.add(newOauthProvider)
+                db.session.commit()
+
             for restoredUser in restoreDict['user']:
                 user_datastore.create_user(email=restoredUser['email'], username=restoredUser['username'],
                                            password=restoredUser['password'])
@@ -930,6 +949,15 @@ def settings_dbRestore():
                 user.pictureLocation = restoredUser['pictureLocation']
                 user.active = eval(restoredUser['active'])
                 user.biography = restoredUser['biography']
+
+                if 'authType' in restoredUser:
+                    user.authType = int(restoredUser['authType'])
+                else:
+                    user.authType = 0
+                if 'oAuthID' in restoredUser:
+                    user.oAuthID = restoredUser['oAuthID']
+                if 'oAuthProvider' in restoredUser:
+                    user.oAuthProvider = restoredUser['oAuthProvider']
 
                 if restoredUser['confirmed_at'] != "None":
                     try:
