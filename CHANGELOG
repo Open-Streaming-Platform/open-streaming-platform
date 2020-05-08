@@ -3,6 +3,7 @@ Beta-6
 Brand New Logo - Courtesy of @curldev in Discord
 Refectored app.py to submodules
 Clips will no longer be "fake" timestamp hacked clips. Clips will be separate video files.  Existing Clips will be converted on upgrade.  Be aware of increased storage usage prior to upgrade.
+Added Clip Constraints.  Admins may now set a maximum length allowed for Clips, Can be set to infinite.  Upgraded OSP instances will be set by default to infinite while new installs will be set to 1m30s.
 Added OAuth2 Authentication and Ability to Convert Local Logins
 Fixes for Redis instances with Passwords
 Added Confirmation Dialog for Deletion of Channels in Admin Interface
