@@ -508,11 +508,11 @@ def admin_page():
                 SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
                 SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
                 SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
-                SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
-                SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
-                SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
-                SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+                SECURITY_FORGOT_PASSWORD_TEMPLATE='security/forgot_password.html',
+                SECURITY_LOGIN_USER_TEMPLATE='security/login_user.html',
+                SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
+                SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
+                SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
             email.init_app(current_app)
             email.init_app(current_app)
@@ -1713,11 +1713,11 @@ def initialSetup():
                     SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
                     SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                    SECURITY_FORGOT_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/forgot_password.html',
-                    SECURITY_LOGIN_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/login_user.html',
-                    SECURITY_REGISTER_USER_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/register_user.html',
-                    SECURITY_RESET_PASSWORD_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/reset_password.html',
-                    SECURITY_SEND_CONFIRMATION_TEMPLATE='themes/' + sysSettings.systemTheme + '/security/send_confirmation.html')
+                    SECURITY_FORGOT_PASSWORD_TEMPLATE='security/forgot_password.html',
+                    SECURITY_LOGIN_USER_TEMPLATE='security/login_user.html',
+                    SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
+                    SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
+                    SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
                 email.init_app(current_app)
                 email.app = current_app
