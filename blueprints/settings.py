@@ -1620,7 +1620,7 @@ def initialSetup():
         db.session.commit()
 
         username = request.form['username']
-        email = request.form['email']
+        emailAddress = request.form['email']
         password1 = request.form['password1']
         password2 = request.form['password2']
         serverName = request.form['serverName']
@@ -1672,7 +1672,7 @@ def initialSetup():
 
             passwordhash = hash_password(password1)
 
-            user_datastore.create_user(email=email, username=username, password=passwordhash)
+            user_datastore.create_user(email=emailAddress, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
             user.confirmed_at = datetime.datetime.now()
