@@ -656,7 +656,7 @@
     var stopTime = document.getElementById('clipStopTime').value;
     var systemMaxClipLength = {{sysSettings.maxClipLength}};
     var clipErrorDiv = document.getElementById('clipError');
-    var clipSubmitButton = document.getElementById('clipSubMitButton');
+    var clipSubmitButton = document.getElementById('clipSubmitButton');
 
     if (systemMaxClipLength < 301) {
       if ((startTime != "") && (stopTime != "")) {
@@ -665,14 +665,15 @@
           clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
           clipErrorDiv.style.display = "block";
           clipSubmitButton.disabled = true;
-        } else if (stopTime < startTime) {
+        } else if (startTime > stopTime) {
           clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
           clipErrorDiv.style.display = "block";
           clipSubmitButton.disabled = true;
         } else {
           clipErrorDiv.innerHTML = "";
-          clipSubmitButton.disabled = false;
           clipErrorDiv.style.display = "none";
+          clipSubmitButton.disabled = false;
+
         }
       }
     }
