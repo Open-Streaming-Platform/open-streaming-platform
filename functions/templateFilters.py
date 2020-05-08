@@ -84,7 +84,7 @@ def hms_format(seconds):
 
 def format_clipLength(seconds):
     if int(seconds) == 301:
-        return "Infinity"
+        return "Infinite"
     else:
         return hms_format(seconds)
 
