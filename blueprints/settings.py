@@ -1719,6 +1719,7 @@ def initialSetup():
             user_datastore.create_user(email=emailAddress, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
+            user.authType = 0
             user.confirmed_at = datetime.datetime.now()
 
             user_datastore.find_or_create_role(name='Admin', description='Administrator')
