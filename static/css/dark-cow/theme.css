@@ -156,9 +156,7 @@ hr {
   -moz-border-top-colors: none;
   border-color: #3488db;
   border-width: 1px 0;
-  margin: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 10px auto;
   width: 75%;
 }
 
@@ -371,10 +369,7 @@ hr {
 .chatBar-Item {
     border: 0px solid black;
     border-radius: 4px;
-    padding-top: 4px;
-    padding-left: 4px;
-    padding-bottom: 4px;
-    padding-right: 4px;
+    padding: 4px;
     margin-top: 5px;
     min-height: 60px;
 }
@@ -525,10 +520,7 @@ hr {
 	border-top: 0px !important;
 	border-bottom: 0px !important;
 	display: inline !important;
-	padding-left:1rem !important;
-	padding-right:1rem !important;
-	padding-top:0rem !important;
-	padding-bottom:0rem !important;
+    padding: 0rem 1rem !important;
 }
 #channelPlayerMenu{
 	margin-top: 5px;

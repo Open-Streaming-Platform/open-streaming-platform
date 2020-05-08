@@ -94,7 +94,7 @@ def setScreenShot(message):
             result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullNewClipThumbnailLocation])
 
             # Generate Gif
-            if clipQuery.gifLocation != None:
+            if clipQuery.gifLocation is not None:
                 gifLocation = clipQuery.gifLocation
                 fullthumbnailLocation = videos_root + gifLocation
 

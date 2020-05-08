@@ -309,6 +309,7 @@ def admin_page():
         remoteSHA = repoSHA
         branch = "Local Install"
         validGitRepo = False
+        repo = None
         try:
             repo = git.Repo(search_parent_directories=True)
             validGitRepo = True
@@ -694,7 +695,7 @@ def admin_page():
             else:
                 existingOAuthID = request.form['oAuthID']
                 oAuthQuery = settings.oAuthProvider.query.filter_by(id=int(existingOAuthID)).first()
-                if oAuthQuery != None:
+                if oAuthQuery is not None:
                     oldOAuthName = oAuthQuery.name
                     oAuthQuery.preset_auth_type = oAuth_type
                     oAuthQuery.name = oAuth_name
@@ -805,7 +806,7 @@ def rtmpStat_page(node):
             data = json.dumps(data)
         except:
             return abort(500)
-        return (data)
+        return data
     return abort(500)
 
 
@@ -1106,10 +1107,7 @@ def settings_dbRestore():
             if 'restoreVideos' in request.form:
                 for restoredClip in restoreDict['Clips']:
                     if restoredClip['parentVideo'] != "None":
-                        newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']),
-                                                      float(restoredClip['startTime']),
-                                                      float(restoredClip['endTime']), restoredClip['clipName'],
-                                                      restoredClip['description'])
+                        newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), float(restoredClip['startTime']), float(restoredClip['endTime']), restoredClip['clipName'], restoredClip['description'])
                         newClip.id = int(restoredClip['id'])
                         newClip.views = int(restoredClip['views'])
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']

@@ -48,8 +48,6 @@ from globals import globalvars
 #----------------------------------------------------------------------------#
 coreNginxRTMPAddress = "127.0.0.1"
 
-sysSettings = None
-
 app = Flask(__name__)
 
 # Flask App Environment Setup

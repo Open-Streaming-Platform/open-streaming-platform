@@ -151,7 +151,7 @@ def testWebhook(message):
 
             elif webhookType == "channel":
                 webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
-                if webhookQuery != None:
+                if webhookQuery is not None:
                     if webhookQuery.channel.id != current_user.id:
                         webhookQuery = None
 

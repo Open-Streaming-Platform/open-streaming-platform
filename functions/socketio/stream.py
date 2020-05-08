@@ -23,7 +23,7 @@ def handle_viewer_total_request(streamData, room=None):
         streamUserList = []
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    if channelQuery != None:
+    if channelQuery is not None:
         channelQuery.currentViewers = viewers
         for stream in channelQuery.stream:
             stream.currentViewers = viewers

@@ -47,7 +47,7 @@ def oAuthAuthorize(provider):
         userQuery = Sec.User.query.filter_by(oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider, authType=1).first()
 
         # If oAuth ID, Provider, and Auth Type Match - Initiate Login
-        if userQuery != None:
+        if userQuery is not None:
             existingTokenQuery = Sec.OAuth2Token.query.filter_by(user=userQuery.id).all()
             for existingToken in existingTokenQuery:
                 db.session.delete(existingToken)
@@ -62,7 +62,7 @@ def oAuthAuthorize(provider):
 
             if userQuery.active is False:
                 flash("User has been Disabled.  Please contact your administrator","error")
-                return(redirect('/login'))
+                return redirect('/login')
             else:
                 login_user(userQuery)
 
@@ -73,11 +73,11 @@ def oAuthAuthorize(provider):
                 elif oAuthProviderQuery.preset_auth_type == "Facebook":
                     facebook_processLogin(oAuthProviderQuery.api_base_url, userDataDict, userQuery)
 
-                if userQuery.email == None or userQuery.email == 'None':
+                if userQuery.email is None or userQuery.email == 'None':
                     flash("Please Add an Email Address to your User Profile", "error")
-                    return(redirect(url_for('settings.user_page')))
+                    return redirect(url_for('settings.user_page'))
                 else:
-                    return(redirect(url_for('root.main_page')))
+                    return redirect(url_for('root.main_page'))
 
         # If No Match, Determine if a User Needs to be created
         else:
@@ -123,12 +123,12 @@ def oAuthAuthorize(provider):
                 runWebhook("ZZZ", 20, user=user.username)
                 newLog(1, "A New User has Registered - Username:" + str(user.username))
                 if hasEmail is True:
-                    return(redirect(url_for('root.main_page')))
+                    return redirect(url_for('root.main_page'))
                 else:
-                    return(redirect(url_for('settings.user_page')))
+                    return redirect(url_for('settings.user_page'))
             else:
                 if existingEmailQuery.authType == 0:
-                    return(render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery))
+                    return render_template(checkOverride('oAuthConvert.html'), provider=oAuthProviderQuery, oAuthData=userDataDict, existingUser=existingEmailQuery)
                 else:
                     flash("An existing OAuth User exists under this email address with another provider", "error")
                     return redirect('/')
@@ -141,7 +141,7 @@ def oAuthConvert(provider):
     existingUserID = request.form['existingUserID']
 
     userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName, authType=0).first()
-    if userQuery != None:
+    if userQuery is not None:
         passwordMatch = verify_password(password, userQuery.password)
         if passwordMatch is True:
             userQuery.authType = 1
@@ -150,9 +150,9 @@ def oAuthConvert(provider):
             userQuery.password = None
             db.session.commit()
             flash("Conversion Successful.  Please log in again with your Provider","success")
-            return(redirect('/login'))
+            return redirect('/login')
         else:
             flash("Invalid Password or Information.  Please try again.", "error")
-            return(redirect('/login'))
+            return redirect('/login')
     flash("Invalid User!","error")
-    return(redirect('/login'))
+    return redirect('/login')

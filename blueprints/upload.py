@@ -32,7 +32,7 @@ def upload():
     sysSettings = settings.settings.query.first()
     if not sysSettings.allowUploads:
         db.session.close()
-        return ("Video Uploads Disabled", 501)
+        return "Video Uploads Disabled", 501
     if request.files['file']:
 
         if not os.path.exists(videos_root + 'temp'):
@@ -43,18 +43,18 @@ def upload():
         if request.form['ospfilename'] != "":
             ospfilename = request.form['ospfilename']
         else:
-            return ("Ooops.", 500)
+            return "Ooops.", 500
 
         if system.videoupload_allowedExt(file.filename, current_app.config['VIDEO_UPLOAD_EXTENSIONS']):
             save_path = os.path.join(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'], secure_filename(ospfilename))
             current_chunk = int(request.form['dzchunkindex'])
         else:
             system.newLog(4,"File Upload Failed - File Type not Allowed - Username:" + current_user.username)
-            return ("Filetype not allowed", 403)
+            return "Filetype not allowed", 403
 
         if current_chunk > 4500:
             open(save_path, 'w').close()
-            return ("File is getting too large.", 403)
+            return "File is getting too large.", 403
 
         if os.path.exists(save_path) and current_chunk == 0:
             open(save_path, 'w').close()
@@ -65,17 +65,17 @@ def upload():
                 f.write(file.stream.read())
         except OSError:
             system.newLog(4, "File Upload Failed - OSError - Username:" + current_user.username)
-            return ("Ooops.", 500)
+            return "Ooops.", 500
 
         total_chunks = int(request.form['dztotalchunkcount'])
 
         if current_chunk + 1 == total_chunks:
             if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
-                return ("Size mismatch", 500)
+                return "Size mismatch", 500
 
-        return ("success", 200)
+        return "success", 200
     else:
-        return ("I don't understand", 501)
+        return "I don't understand", 501
 
 @upload_bp.route('/video-details', methods=['POST'])
 @login_required

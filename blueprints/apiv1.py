@@ -108,7 +108,7 @@ class api_1_ListChannels(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
                     newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'], args['description'])
@@ -138,10 +138,10 @@ class api_1_ListChannel(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                    if channelQuery != None:
+                    if channelQuery is not None:
                         args = channelParserPut.parse_args()
                         if 'channelName' in args:
                             if args['channelName'] is not None:
@@ -152,7 +152,7 @@ class api_1_ListChannel(Resource):
                         if 'topicID' in args:
                             if args['topicID'] is not None:
                                 possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                                if possibleTopics != None:
+                                if possibleTopics is not None:
                                     channelQuery.topic = int(args['topicID'])
                         db.session.commit()
                         return {'results': {'message':'Channel Updated'}}, 200
@@ -166,10 +166,10 @@ class api_1_ListChannel(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                    if channelQuery != None:
+                    if channelQuery is not None:
                         videos_root = globalvars.videoRoot + 'videos/'
                         filePath = videos_root + channelQuery.channelLoc
                         if filePath != videos_root:
@@ -210,10 +210,10 @@ class api_1_ChannelChat(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                    if channelQuery != None:
+                    if channelQuery is not None:
                         args = chatParserPost.parse_args()
                         userImage = '/static/img/user2.png'
                         if 'userImage' in args:
@@ -253,10 +253,10 @@ class api_1_ListStream(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     streamQuery = Stream.Stream.query.filter_by(id=int(streamID)).first()
-                    if streamQuery != None:
+                    if streamQuery is not None:
                         if streamQuery.channel.owningUser == requestAPIKey.userID:
                             args = streamParserPut.parse_args()
                             if 'streamName' in args:
@@ -265,7 +265,7 @@ class api_1_ListStream(Resource):
                             if 'topicID' in args:
                                 if args['topicID'] is not None:
                                     possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                                    if possibleTopics != None:
+                                    if possibleTopics is not None:
                                         streamQuery.topic = int(args['topicID'])
                             db.session.commit()
                             return {'results': {'message': 'Stream Updated'}}, 200
@@ -300,10 +300,10 @@ class api_1_ListVideo(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
-                    if videoQuery != None:
+                    if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
                             args = videoParserPut.parse_args()
                             if 'videoName' in args:
@@ -312,7 +312,7 @@ class api_1_ListVideo(Resource):
                             if 'topicID' in args:
                                 if args['topicID'] is not None:
                                     possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
-                                    if possibleTopics != None:
+                                    if possibleTopics is not None:
                                         videoQuery.topic = int(args['topicID'])
                             if 'description' in args:
                                 if args['description'] is not None:
@@ -328,10 +328,10 @@ class api_1_ListVideo(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
-                    if videoQuery != None:
+                    if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
                             videos_root = globalvars.videoRoot + 'videos/'
 
@@ -340,7 +340,7 @@ class api_1_ListVideo(Resource):
 
                             if filePath != videos_root:
                                 if path.exists(filePath) and (
-                                        videoQuery.videoLocation != None or videoQuery.videoLocation != ""):
+                                        videoQuery.videoLocation is not None or videoQuery.videoLocation != ""):
                                     remove(filePath)
                                     if path.exists(thumbnailPath):
                                         remove(thumbnailPath)
@@ -388,10 +388,10 @@ class api_1_ListClip(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-                    if clipQuery != None:
+                    if clipQuery is not None:
                         if clipQuery.recordedVideo.owningUser == requestAPIKey.userID:
                             args = clipParserPut.parse_args()
                             if 'clipName' in args:
@@ -412,16 +412,16 @@ class api_1_ListClip(Resource):
         """
         if 'X-API-KEY' in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey != None:
+            if requestAPIKey is not None:
                 if requestAPIKey.isValid():
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
-                    if clipQuery != None:
+                    if clipQuery is not None:
                         if clipQuery.owningUser == requestAPIKey.userID:
                             videos_root = globalvars.videoRoot + 'videos/'
                             thumbnailPath = videos_root + clipQuery.thumbnailLocation
 
                             if thumbnailPath != videos_root:
-                                if path.exists(thumbnailPath) and clipQuery.thumbnailLocation != None and clipQuery.thumbnailLocation != "":
+                                if path.exists(thumbnailPath) and clipQuery.thumbnailLocation is not None and clipQuery.thumbnailLocation != "":
                                     remove(thumbnailPath)
                             upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
                             for vote in upvoteQuery:
