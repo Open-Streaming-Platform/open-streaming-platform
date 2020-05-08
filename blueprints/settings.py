@@ -413,6 +413,7 @@ def admin_page():
             theme = request.form['theme']
             mainPageSort = request.form['mainPageSort']
             restreamMaxBitrate = request.form['restreamMaxBitrate']
+            clipMaxLength = request.form['maxClipLength']
 
             recordSelect = False
             uploadSelect = False
@@ -487,6 +488,7 @@ def admin_page():
             sysSettings.protectionEnabled = protectionEnabled
             sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
             sysSettings.maintenanceMode = maintenanceMode
+            sysSettings.maxClipLength = int(clipMaxLength)
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
@@ -867,6 +869,8 @@ def settings_dbRestore():
                 serverSettings.serverMessageTitle = restoreDict['settings'][0]['serverMessageTitle']
             if 'mainPageSort' in restoreDict['settings'][0]:
                 serverSettings.mainPageSort = int(restoreDict['settings'][0]['mainPageSort'])
+            if 'maxClipLength' in restoreDict['settings'][0]:
+                serverSettings.maxClipLength = int(restoreDict['settings'][0]['maxClipLength'])
 
             # Remove Old Settings
             oldSettings = settings.settings.query.all()
