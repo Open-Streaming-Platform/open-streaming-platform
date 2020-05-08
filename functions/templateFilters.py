@@ -29,6 +29,7 @@ def init(context):
     context.jinja_env.filters['testList'] = testList
     context.jinja_env.filters['get_webhookTrigger'] = get_webhookTrigger
     context.jinja_env.filters['get_logType'] = get_logType
+    context.jinja_env.filters['format_clipLength'] = format_clipLength
 
 
 #----------------------------------------------------------------------------#
@@ -80,6 +81,12 @@ def hms_format(seconds):
         seconds = int(seconds)
         val = time.strftime("%H:%M:%S", time.gmtime(seconds))
     return val
+
+def format_clipLength(seconds):
+    if int(seconds) == 301:
+        return "Infinity"
+    else:
+        return hms_format(seconds)
 
 def get_topicName(topicID):
     topicQuery = topics.topics.query.filter_by(id=int(topicID)).first()
