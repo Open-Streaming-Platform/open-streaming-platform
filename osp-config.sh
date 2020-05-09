@@ -347,6 +347,8 @@ if [ $# -eq 0 ]
           ;;
         6 ) reset_nginx
           result=$(echo "Nginx Configuration has been reset.\n\nBackup of nginx.conf was stored at /usr/local/nginx/conf/nginx.conf.bak")
+          display_result "Reset Results"
+          ;;
       esac
     done
   else
