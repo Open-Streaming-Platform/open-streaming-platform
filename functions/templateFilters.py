@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 import time
 import os
+import json
 
 from globals import globalvars
 
@@ -148,8 +149,9 @@ def testList(obj):
 def processClientCount(data):
     count = 0
     for client in data:
-        if 'flashver' in client:
-            if data[client]['flashver'] != 'nginx-local-relay':
+        clientDict = json.loads(client)
+        if 'flashver' in clientDict:
+            if clientDict['flashver'] != 'nginx-local-relay':
                 count = count + 1
     return count
 
