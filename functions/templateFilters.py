@@ -151,7 +151,7 @@ def processClientCount(data):
     if type(data) == list:
         for client in data:
             if 'flashver' in client:
-                if client['flashver'] != 'nginx-local-relay':
+                if client['flashver'] != 'ngx-local-relay':
                     count = count + 1
     else:
         count = 1
