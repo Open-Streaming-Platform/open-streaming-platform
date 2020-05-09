@@ -149,9 +149,9 @@ def testList(obj):
 def processClientCount(data):
     count = 0
     for client in data:
-        clientDict = json.loads(client)
-        if 'flashver' in clientDict:
-            if clientDict['flashver'] != 'nginx-local-relay':
+        print(client)
+        if 'flashver' in client:
+            if client['flashver'] != 'nginx-local-relay':
                 count = count + 1
     return count
 
