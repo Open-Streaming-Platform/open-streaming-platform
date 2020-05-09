@@ -179,7 +179,7 @@ def user_auth_check():
         return abort(400)
 
 @rtmp_bp.route('/auth-record', methods=['POST'])
-def user_auth_check():
+def record_auth_check():
     key = request.form['name']
     sysSettings = settings.settings.query.first()
     channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
