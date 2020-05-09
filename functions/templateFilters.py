@@ -148,11 +148,13 @@ def testList(obj):
 
 def processClientCount(data):
     count = 0
-    for client in data:
-        print(client)
-        if 'flashver' in client:
-            if client['flashver'] != 'nginx-local-relay':
-                count = count + 1
+    if type(data) == list:
+        for client in data:
+            if 'flashver' in client:
+                if client['flashver'] != 'nginx-local-relay':
+                    count = count + 1
+    else:
+        count = 1
     return count
 
 def get_webhookTrigger(webhookTrigger):
