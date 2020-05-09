@@ -331,7 +331,7 @@ if [ $# -eq 0 ]
                    upgrade_osp
                    UPGRADECHECKVERSION="/opt/osp/setup/upgrade/${NEWVERSION::-1}.sh"
                    if [[ -f $UPGRADECHECKVERSION ]]; then
-                      bash $UPGRADECHECKVERSION
+                      bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
                    fi
                    version=$NEWVERSION
                    result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
