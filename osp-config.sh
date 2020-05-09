@@ -329,7 +329,7 @@ if [ $# -eq 0 ]
               case $response in
                  0 )
                    upgrade_osp
-                   UPGRADECHECKVERSION=echo "${NEWVERSION::-1}"
+                   UPGRADECHECKVERSION=${NEWVERSION::-1}
                    if [ -f "/opt/osp/setup/upgrade/$UPGRADECHECKVERSION.sh"]; then
                       bash /opt/osp/setup/upgrade/$UPGRADECHECKVERSION.sh
                    fi
