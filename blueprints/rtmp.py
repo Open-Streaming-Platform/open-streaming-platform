@@ -69,32 +69,11 @@ def streamkey_check():
                 db.session.add(newStream)
                 db.session.commit()
 
-                if channelRequest.record is False or sysSettings.allowRecording is False or userQuery.has_role("Recorder") is False:
-                    if sysSettings.adaptiveStreaming:
-                        return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
-                    else:
-                        return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data/' + channelRequest.channelLoc, code=302)
-                elif channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
-
-                    userCheck = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
-                    existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
-                    if existingRecordingQuery:
-                        for recording in existingRecordingQuery:
-                            db.session.delete(recording)
-                            db.session.commit()
-
-                    newRecording = RecordedVideo.RecordedVideo(userCheck.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
-                    db.session.add(newRecording)
-                    db.session.commit()
-                    if sysSettings.adaptiveStreaming:
-                        return redirect('rtmp://' + coreNginxRTMPAddress + '/streamrec-data-adapt/' + channelRequest.channelLoc, code=302)
-                    else:
-                        return redirect('rtmp://' + coreNginxRTMPAddress + '/streamrec-data/' + channelRequest.channelLoc, code=302)
+                if sysSettings.adaptiveStreaming:
+                    return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data-adapt/' + channelRequest.channelLoc, code=302)
                 else:
-                    returnMessage = {'time': str(currentTime), 'status': 'Streaming Error due to mismatched settings', 'key': str(key), 'ipAddress': str(ipaddress)}
-                    print(returnMessage)
-                    db.session.close()
-                    return abort(400)
+                    return redirect('rtmp://' + coreNginxRTMPAddress + '/stream-data/' + channelRequest.channelLoc, code=302)
+
             else:
                 returnMessage = {'time': str(currentTime), 'status': 'Unauthorized User - Missing Streamer Role', 'key': str(key), 'ipAddress': str(ipaddress)}
                 print(returnMessage)
@@ -199,6 +178,29 @@ def user_auth_check():
         db.session.close()
         return abort(400)
 
+@rtmp_bp.route('/auth-record', methods=['POST'])
+def user_auth_check():
+    key = request.form['name']
+    sysSettings = settings.settings.query.first()
+    channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
+    currentTime = datetime.datetime.now()
+
+    if channelRequest is not None:
+        userQuery = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
+
+        if channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
+            existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
+            if existingRecordingQuery:
+                for recording in existingRecordingQuery:
+                    db.session.delete(recording)
+                    db.session.commit()
+
+            newRecording = RecordedVideo.RecordedVideo(userQuery.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
+            db.session.add(newRecording)
+            db.session.commit()
+
+            return 'OK'
+    return abort(400)
 
 @rtmp_bp.route('/deauth-user', methods=['POST'])
 def user_deauth_check():
@@ -275,7 +277,7 @@ def user_deauth_check():
         return abort(400)
 
 
-@rtmp_bp.route('/recComplete', methods=['POST'])
+@rtmp_bp.route('/deauth-record', methods=['POST'])
 def rec_Complete_handler():
     key = request.form['name']
     path = request.form['path']
