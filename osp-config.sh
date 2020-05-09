@@ -198,7 +198,6 @@ install_osp() {
   sudo mkdir -p "$web_root" >> $installLog 2>&1
   sudo mkdir -p "$web_root/live" >> $installLog 2>&1
   sudo mkdir -p "$web_root/videos" >> $installLog 2>&1
-  sudo mkdir -p "$web_root/live-rec" >> $installLog 2>&1
   sudo mkdir -p "$web_root/images" >> $installLog 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $installLog 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $installLog 2>&1
