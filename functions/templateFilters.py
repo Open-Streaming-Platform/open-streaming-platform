@@ -30,6 +30,7 @@ def init(context):
     context.jinja_env.filters['get_webhookTrigger'] = get_webhookTrigger
     context.jinja_env.filters['get_logType'] = get_logType
     context.jinja_env.filters['format_clipLength'] = format_clipLength
+    context.jinja_env.filters['processClientCount'] = processClientCount
 
 
 #----------------------------------------------------------------------------#
@@ -143,6 +144,14 @@ def testList(obj):
         return True
     else:
         return False
+
+def processClientCount(data):
+    count = 0
+    for client in data:
+        if 'flashver' in client:
+            if client['flashver'] != 'nginx-local-relay':
+                count = count + 1
+    return count
 
 def get_webhookTrigger(webhookTrigger):
 

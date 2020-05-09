@@ -94,7 +94,7 @@
                                                                 <td>{{entry['name']}}</td>
                                                                 <td>{{entry['bw_in']|format_kbps}}</td>
                                                                 <td>{{entry['bw_out']|format_kbps}}</td>
-                                                                <td>{{entry['nclients']}}</td>
+                                                                <td>{{entry['client']|processClientCount}}</td>
                                                             </tr>
                                                         {% endfor %}
                                                     {% else %}
@@ -103,7 +103,7 @@
                                                         <td>{{data['live']['stream']['name']}}</td>
                                                         <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
                                                         <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
-                                                        <td>{{data['live']['stream']['nclients']}}</td>
+                                                        <td>{{data['live']['stream']['client']|processClientCount}}</td>
                                                     </tr>
                                                     {% endif %}
                                                 {% endif %}
