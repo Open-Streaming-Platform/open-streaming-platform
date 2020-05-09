@@ -479,15 +479,15 @@
                                                 <td>{{node.loadPct}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
                                                            {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');"></td>
-                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 or node.address == sysSettings.siteAddress  %}badge-success{% endif %}">
-                                                    {% if node.status == 0 %} Offline
-                                                    {% elif node.status == 1 or node.address == sysSettings.siteAddress %} Online
+                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 1 or node.address == sysSettings.siteAddress %}badge-success{% elif node.status == 0 %}badge-danger{% endif %}">
+                                                    {% if node.status == 1 or node.address == sysSettings.siteAddress %} Online
+                                                    {% elif node.status == 0 %} Offline
                                                     {% endif %}
                                                 </span>
 
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-primary" onclick="checkEdge('{{node.id}}')"><i class="fas fa-sync-alt"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
                                                 </td>
                                             </tr>

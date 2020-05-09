@@ -478,7 +478,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                             <tbody>
                                             {% for node in edgeNodes %}
                                             <tr id="edgeTableRow-{{node.id}}">
                                                 <td><a href="/settings/admin/rtmpstat/{% if node.address == sysSettings.siteAddress %}localhost{% else %}{{node.address}}{% endif %}">{{node.address}}</a></td>
