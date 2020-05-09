@@ -1,1 +1,1 @@
-echo "TEST"
+touch testcomplete
