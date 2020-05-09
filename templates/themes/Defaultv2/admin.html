@@ -478,16 +478,17 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                             <tbody>
                                             {% for node in edgeNodes %}
                                             <tr id="edgeTableRow-{{node.id}}">
-                                                <td><a href="/settings/admin/rtmpstat/{{node.address}}">{{node.address}}</a></td>
+                                                <td><a href="/settings/admin/rtmpstat/{% if node.address == sysSettings.siteAddress %}localhost{% else %}{{node.address}}{% endif %}">{{node.address}}</a></td>
                                                 <td>{{node.port}}</td>
                                                 <td>{{node.loadPct}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
                                                            {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');"></td>
-                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 %}badge-success{% endif %}">
+                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 or node.address == sysSettings.siteAddress  %}badge-success{% endif %}">
                                                     {% if node.status == 0 %} Offline
-                                                    {% elif node.status == 1 %} Online
+                                                    {% elif node.status == 1 or node.address == sysSettings.siteAddress %} Online
                                                     {% endif %}
                                                 </span>
 
