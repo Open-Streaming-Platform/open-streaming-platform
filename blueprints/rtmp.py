@@ -154,16 +154,17 @@ def user_auth_check():
                 globalvars.edgeRestreamSubprocesses[requestedChannel.channelLoc] = []
 
                 for node in ospEdgeNodeQuery:
-                    subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy"]
-                    subprocessConstructor.append("-f")
-                    subprocessConstructor.append("flv")
-                    if sysSettings.adaptiveStreaming:
-                        subprocessConstructor.append("rtmp://" + node.address + "/stream-data-adapt/" + requestedChannel.channelLoc)
-                    else:
-                        subprocessConstructor.append("rtmp://" + node.address + "/stream-data/" + requestedChannel.channelLoc)
+                    if node.address != sysSettings.siteAddress:
+                        subprocessConstructor = ["ffmpeg", "-i", inputLocation, "-c", "copy"]
+                        subprocessConstructor.append("-f")
+                        subprocessConstructor.append("flv")
+                        if sysSettings.adaptiveStreaming:
+                            subprocessConstructor.append("rtmp://" + node.address + "/stream-data-adapt/" + requestedChannel.channelLoc)
+                        else:
+                            subprocessConstructor.append("rtmp://" + node.address + "/stream-data/" + requestedChannel.channelLoc)
 
-                    p = subprocess.Popen(subprocessConstructor, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    globalvars.edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
+                        p = subprocess.Popen(subprocessConstructor, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        globalvars.edgeRestreamSubprocesses[requestedChannel.channelLoc].append(p)
 
             db.session.close()
             return 'OK'
