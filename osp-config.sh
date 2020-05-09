@@ -43,12 +43,12 @@ display_result() {
 reset_nginx() {
    RESETLOG="/opt/osp/logs/reset.log"
    echo 25 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Backup Nginx-RTMP Configurations" 10 70 0
-   cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak $RESETLOG 2>&1
+   cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak >> $RESETLOG 2>&1
    echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Copying Nginx-RTMP Configurations" 10 70 0
-   cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
    echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Restarting Nginx" 10 70 0
    systemctl restart nginx-osp $RESETLOG 2>&1
 }
