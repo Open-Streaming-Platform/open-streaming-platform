@@ -494,7 +494,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')"><i class="fas fa-sync-alt"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
                                                 </td>
                                             </tr>
