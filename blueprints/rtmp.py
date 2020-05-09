@@ -182,7 +182,7 @@ def user_auth_check():
 def record_auth_check():
     key = request.form['name']
     sysSettings = settings.settings.query.first()
-    channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
+    channelRequest = Channel.Channel.query.filter_by(channeLoc=key).first()
     currentTime = datetime.datetime.now()
 
     if channelRequest is not None:
