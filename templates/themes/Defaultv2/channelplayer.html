@@ -609,7 +609,7 @@
                 }*/
 
 
-                if (currentReadyState == 0) {
+                if (currentReadyState <= 2) {
                     try {
                         videoJSObj.reset();
                         videoJSObj.src('{{streamURL}}');
