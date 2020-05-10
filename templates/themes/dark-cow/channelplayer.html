@@ -15,6 +15,10 @@
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<script src="/static/vendor/videojs/js/video.js"></script>
+<script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+<link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+<script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -380,8 +384,6 @@
 
     {% block scripts %}
 
-    <script src="/static/vendor/videojs/js/video.js"></script>
-
     <script>
         var player = videojs('video', {
             autoplay: true,
@@ -392,15 +394,23 @@
                 liveTolerance: 15
             },
             html5:
-            {
-                nativeAudioTracks: false,
-                nativeVideoTracks: false,
-                hls:
                 {
-                    overrideNative: true
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                },
+            plugins : {
+                httpSourceSelector: {
+                    default: 'auto'
                 }
             }
         });
+
+        qualityLevels = player.qualityLevels();
+        httpSelector = player.httpSourceSelector();
 
         player.ready(function () {
             this.src({
@@ -614,14 +624,14 @@
                     videoContainer.style.display = "block";
                     offlineWindow.style.display = "none";
 
-                    if (currentReadyState == 2) {
+                    /*if (currentReadyState == 2) {
                         try {
                             videoJSObj.pause();
                             videoJSObj.currentTime(0);
                             videoJSObj.play();
                             currentReadyState = videoJSObj.readyState();
-                        } catch (e) {
-                            console.log("OSP tried restarting the stream but had an issue:" + e);
+                        } catch(e) {
+                            console.log("OSP tried restarting the stream but had an issue:" + e)
                         }
                     } else if (currentReadyState == 0) {
                         try {
@@ -630,9 +640,22 @@
                             videoJSObj.pause().trigger('loadstart');
                             videoJSObj.play();
                         } catch (e) {
-                            console.log("OSP tried restarting the stream but had an issue:" + e);
+                            console.log("OSP tried restarting the stream but had an issue:" + e)
+                        }
+                    }*/
+
+
+                    if (currentReadyState <= 2) {
+                        try {
+                            videoJSObj.reset();
+                            videoJSObj.src('{{streamURL}}');
+                            videoJSObj.pause().trigger('loadstart');
+                            videoJSObj.play();
+                        } catch (e) {
+                            console.log("OSP tried restarting the stream but had an issue:" + e)
                         }
                     }
+
 
                     $.getJSON('/apiv1/streams/' + currentStreamID, function (data) {
                         var streamData = data['results'][0];
