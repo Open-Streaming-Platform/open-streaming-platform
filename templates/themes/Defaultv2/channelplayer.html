@@ -588,7 +588,7 @@
                 videoContainer.style.display = "block";
                 offlineWindow.style.display = "none";
 
-                if (currentReadyState == 2) {
+                /*if (currentReadyState == 2) {
                     try {
                         videoJSObj.pause();
                         videoJSObj.currentTime(0);
@@ -606,7 +606,20 @@
                     } catch (e) {
                         console.log("OSP tried restarting the stream but had an issue:" + e)
                     }
+                }*/
+
+
+                if (currentReadyState == 0) {
+                    try {
+                        videoJSObj.reset();
+                        videoJSObj.src('{{streamURL}}');
+                        videoJSObj.pause().trigger('loadstart');
+                        videoJSObj.play();
+                    } catch (e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
                 }
+
 
                 $.getJSON('/apiv1/streams/' + currentStreamID, function(data) {
                     var streamData = data['results'][0];
