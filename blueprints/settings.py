@@ -67,10 +67,11 @@ def user_page():
 
         emailAddress = request.form['emailAddress']
         existingEmailQuery = Sec.User.query.filter_by(email=emailAddress).first()
-        if existingEmailQuery.id != current_user.id:
-            # TODO Add Option to Merge Existing Account
-            flash("An User Account exists with the same email address", "error")
-            return redirect(url_for('.user_page'))
+        if existingEmailQuery is not None:
+            if existingEmailQuery.id != current_user.id:
+                # TODO Add Option to Merge Existing Account
+                flash("An User Account exists with the same email address", "error")
+                return redirect(url_for('.user_page'))
         current_user.email = emailAddress
 
         if 'photo' in request.files:
@@ -685,11 +686,11 @@ def admin_page():
                     client_id=provider.client_id,
                     client_secret=provider.client_secret,
                     access_token_url=provider.access_token_url,
-                    access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                    access_token_params=provider.access_token_params if (provider.access_token_params != '' and provider.access_token_params is not None) else None,
                     authorize_url=provider.authorize_url,
-                    authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                    authorize_params=provider.authorize_params if (provider.authorize_params != '' and provider.authorize_params is not None) else None,
                     api_base_url=provider.api_base_url,
-                    client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                    client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                 )
 
                 flash("OAuth Provider Added", "success")
@@ -736,11 +737,11 @@ def admin_page():
                         client_id=provider.client_id,
                         client_secret=provider.client_secret,
                         access_token_url=provider.access_token_url,
-                        access_token_params=provider.access_token_params if provider.access_token_params != '' else None,
+                        access_token_params=provider.access_token_params if (provider.access_token_params != '' and provider.access_token_params is not None) else None,
                         authorize_url=provider.authorize_url,
-                        authorize_params=provider.authorize_params if provider.authorize_params != '' else None,
+                        authorize_params=provider.authorize_params if (provider.authorize_params != '' and provider.authorize_params is not None) else None,
                         api_base_url=provider.api_base_url,
-                        client_kwargs=json.loads(provider.client_kwargs) if provider.client_kwargs != '' else None,
+                        client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                     )
 
                     flash("OAuth Provider Updated","success")
