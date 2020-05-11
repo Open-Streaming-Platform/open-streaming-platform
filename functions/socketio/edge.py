@@ -29,8 +29,13 @@ def checkEdgeNode(message):
                 edgeNodeQuery.status = 0
                 emit('edgeNodeCheckResults', {'edgeID': str(edgeNodeQuery.id), 'status': str(0)}, broadcast=False)
                 db.session.commit()
+                db.session.close()
                 return 'OK'
+        db.session.commit()
+        db.session.close()
         return abort(500)
+    db.session.commit()
+    db.session.close()
     return abort(401)
 
 @socketio.on('toggleOSPEdge')
@@ -42,10 +47,15 @@ def toggleEdgeNode(message):
             edgeNodeQuery.active = not edgeNodeQuery.active
             db.session.commit()
             system.rebuildOSPEdgeConf()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('deleteOSPEdge')
@@ -57,8 +67,13 @@ def deleteEdgeNode(message):
             db.session.delete(edgeNodeQuery)
             db.session.commit()
             system.rebuildOSPEdgeConf()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)

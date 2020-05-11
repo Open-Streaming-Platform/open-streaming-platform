@@ -41,6 +41,8 @@ def newScreenShot(message):
             else:
                 emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
             db.session.close()
+    db.session.commit()
+    db.session.close()
     return 'OK'
 
 @socketio.on('setScreenShot')
@@ -112,6 +114,8 @@ def setScreenShot(message):
 
             gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullNewClipThumbnailLocation])
 
+    db.session.commit()
+    db.session.close()
     return 'OK'
 
 @socketio.on('saveUploadedThumbnail')
@@ -137,4 +141,6 @@ def saveUploadedThumbnailSocketIO(message):
             db.session.commit()
             db.session.close()
             return abort(401)
+    db.session.commit()
+    db.session.close()
     return abort(401)

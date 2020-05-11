@@ -22,6 +22,8 @@ def disconnect():
         streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
         if userSID in streamSIDList:
             r.srem(chan.channelLoc + '-streamSIDList', userSID)
+    db.session.commit()
+    db.session.close()
     return 'OK'
 
 @socketio.on('newViewer')

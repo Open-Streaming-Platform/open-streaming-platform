@@ -70,6 +70,8 @@ def deleteChannelAdmin(message):
             system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
             db.session.delete(channelQuery)
             db.session.commit()
+    db.session.close()
+    return 'OK'
 
 @socketio.on('deleteStream')
 def deleteActiveStream(message):
@@ -82,10 +84,15 @@ def deleteActiveStream(message):
                 db.session.delete(pending)
             db.session.delete(streamQuery)
             db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('getServerResources')
@@ -126,6 +133,9 @@ def test_email(info):
         db.session.close()
         emit('testEmailResults', {'results': str(results)}, broadcast=False)
         return 'OK'
+    db.session.commit()
+    db.session.close()
+    return 'OK'
 
 @socketio.on('cancelUpload')
 def handle_videoupload_disconnect(videofilename):
