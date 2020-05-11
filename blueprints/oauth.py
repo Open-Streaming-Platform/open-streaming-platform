@@ -146,7 +146,7 @@ def oAuthConvert(provider):
         if passwordMatch is True:
             userQuery.authType = 1
             userQuery.oAuthProvider = provider
-            userQuery.oAuthID = int(oAuthID)
+            userQuery.oAuthID = oAuthID
             userQuery.password = None
             db.session.commit()
             flash("Conversion Successful.  Please log in again with your Provider","success")
