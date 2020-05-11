@@ -1,0 +1,23 @@
+# Additional mariadb/mysql configuration for Open Streaming Platform
+# Copy or link this one into /etc/mysql/conf.d/
+
+
+
+# increasing the maximum number of database connections
+# otherwise you might see "pymysql.err.OperationalError: (1040, 'Too many connections')" in your error logs
+[mysqld]
+max_connections = 250
+
+# setting the character set to be able to store any unicode character.
+[mysqld]
+character_set_server = utf8mb4
+collation_server = utf8mb4_unicode_ci
+init_connect = 'SET NAMES utf8mb4'
+character_set_server = utf8mb4
+
+[client]
+default-character-set=utf8mb4
+
+[mysql]
+default-character-set=utf8mb4
+

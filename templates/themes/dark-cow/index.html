@@ -68,7 +68,7 @@
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
-                {% for video in randomRecorded %}
+                {% for video in videoList %}
                 <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/play/{{video.id}}">
@@ -101,7 +101,7 @@
     <div class="row mx-2">
         <div class="col-lg col-xs-12 col-sm-12">
             <div class="d-flex flex-wrap justify-content-start">
-                {% for clip in randomClips %}
+                {% for clip in clipList %}
                 <div class="video-card bg-dark mx-4" style="max-width: 20rem;">
                     <div class="video-card-header">
                         <a href="/clip/{{clip.id}}">

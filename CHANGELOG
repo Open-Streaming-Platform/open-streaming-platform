@@ -1,3 +1,39 @@
+Beta-6
+==============================================
+Brand New Logo - Courtesy of @curldev in Discord
+Refectored app.py to submodules
+Clips will no longer be "fake" timestamp hacked clips. Clips will be separate video files.  Existing Clips will be converted on upgrade.  Be aware of increased storage usage prior to upgrade.
+Added Clip Constraints.  Admins may now set a maximum length allowed for Clips, Can be set to infinite.  Upgraded OSP instances will be set by default to infinite while new installs will be set to 1m30s.
+Added OAuth2 Authentication and Ability to Convert Local Logins
+Fixes for Redis instances with Passwords
+Added Confirmation Dialog for Deletion of Channels in Admin Interface
+Added Confirmation Dialog for Deletion of Channels in User Channels Interface
+Added Ability to Select Sort for the Main Display Page
+Added a Maintenance Mode where only Admins may log in.  All others are redirected to maintenance page.
+Added Topic Option to Uploaded Videos per Issue #189 (https://gitlab.com/Deamos/flask-nginx-rtmp-manager/-/issues/189)
+Added Webhook Testing for Global and Channel Level Webhooks
+Adjustments to the Nginx-RTMP Configuration Files to allow the main OSP Instance to also act as an Edge Streamer Node - You can add by using the exact hostname as the Site Address in Admin Settings
+Added Adaptive Quality Selector to Adaptive Streams
+Adjusted VideoJS Monitor Script during Live Streams to Recover from a ReadyState=2 -> ReadyState=1 Issue
+Adjusted osp-config.sh script to automatically replace all Nginx configuration files except nginx.conf
+Added Option to osp-config.sh script to reload all default Nginx Configuration Files
+Added Version Specific Upgrade Process Shim in osp-config.sh. Version Specific Upgrade Scripts will be located in /opt/osp/setup/upgrades/$version.sh
+Updated 404 and 500 pages for cleaner, less static filled look
+Updated Video JS to 7.7.6 - Corrects IOS issues on video and stream playback
+Removed EasyMDE automatic download of Font Awesome and Other External Dependencies
+Refactored Theme Logic - Themes no longer require a separate security directory
+Refactored Theme Layout - Themes now expect layout for CSS files to be as follows: /opt/osp/static/css/<themename>/theme.css
+Added Saving of Video Player Volume to stored cookie under 'ospvolume'
+Changing System Logo will now update the Favicons
+Tooltips added to all players in Defaultv2
+Fixed an issue with Streaming Role was required for using an invite code
+Added Additional Checks to Ensure accurate live view count
+Fixes Embedded Stream to Allow Embed Views to count against Live Count
+Upgraded Requests from 2.18.4 to 2.20.0 - CVE-2018-18074
+Upgraded psutil from 5.6.3 to 5.6.6 - CVE-2019-18874
+Fixes to Prevent an Admin User from Disabling or Deleting Themselves
+Fixes to First Run to force required settings.
+
 Beta-5b
 ==============================================
 Added CORS header for APIv1 Endpoint

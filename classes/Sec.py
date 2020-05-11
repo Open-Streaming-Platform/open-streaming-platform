@@ -1,6 +1,8 @@
+from flask import flash
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm
 from flask_security import UserMixin, RoleMixin
 from .shared import db
+from classes import Sec
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
@@ -22,10 +24,21 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     username = StringField('username', [Required()])
 
 class OSPLoginForm(LoginForm):
-    def validate(self):
-        response = super(OSPLoginForm, self).validate()
 
-        return response
+    def validate(self):
+
+        isvalid = False
+        userQuery = Sec.User.query.filter_by(username=self.email.data.strip(), authType=0).first()
+        if userQuery is not None:
+            isvalid = True
+        userQuery = Sec.User.query.filter_by(email=self.email.data.strip(), authType=0).first()
+        if userQuery is not None:
+            isvalid = True
+        if isvalid is True:
+            response = super(OSPLoginForm, self).validate()
+            return response
+        flash("Invalid Username or Password","error")
+        return False
 
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -51,8 +64,38 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer)
     pictureLocation = db.Column(db.String(255))
+    authType = db.Column(db.Integer)
+    oAuthID = db.Column(db.String(2048))
+    oAuthProvider = db.Column(db.String(40))
+    oAuthToken = db.relationship('OAuth2Token', backref='userObj', lazy='joined')
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+
+class OAuth2Token(db.Model):
+    __tablename__ = "OAuth2Token"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40))
+    token_type = db.Column(db.String(40))
+    access_token = db.Column(db.String(200))
+    refresh_token = db.Column(db.String(200))
+    expires_at = db.Column(db.Integer)
+    user = db.Column(db.ForeignKey(User.id))
+
+    def __init__(self, name, token_type, access_token, refresh_token, expires_at, user):
+        self.name = name
+        self.token_type = token_type
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        self.expires_at = expires_at
+        self.user = user
+
+    def to_token(self):
+        return dict(
+            access_token=self.access_token,
+            token_type=self.token_type,
+            refresh_token=self.refresh_token,
+            expires_at=self.expires_at,
+        )

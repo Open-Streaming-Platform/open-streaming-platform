@@ -277,8 +277,7 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    background-repeat:no-repeat;
-    background: white;
+    background: white no-repeat;
 }
 
 .Ash-BG {

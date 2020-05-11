@@ -40,6 +40,19 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+reset_nginx() {
+   RESETLOG="/opt/osp/logs/reset.log"
+   echo 25 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Backup Nginx-RTMP Configurations" 10 70 0
+   cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak >> $RESETLOG 2>&1
+   echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Copying Nginx-RTMP Configurations" 10 70 0
+   cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Restarting Nginx" 10 70 0
+   systemctl restart nginx-osp $RESETLOG 2>&1
+}
+
 upgrade_db() {
   UPGRADELOG="/opt/osp/logs/upgrade.log"
   echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
@@ -66,6 +79,10 @@ upgrade_osp() {
    systemctl stop osp.target >> $UPGRADELOG 2>&1
    echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
    pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
+   echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
+   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
+   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
+   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db init >> $UPGRADELOG 2>&1
    echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
@@ -82,7 +99,7 @@ install_osp() {
   installLog=$cwd/install.log
 
   echo "Starting OSP Install" > $installLog
-  echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependancies" 10 70 0
+  echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   if  $arch
   then
@@ -93,11 +110,11 @@ install_osp() {
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
-          # Get Dependancies
+          # Get Dependencies
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python python3-dev python3-setuptools -y >> $installLog 2>&1
+          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $installLog 2>&1
           echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install wheel >> $installLog 2>&1
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
@@ -181,7 +198,6 @@ install_osp() {
   sudo mkdir -p "$web_root" >> $installLog 2>&1
   sudo mkdir -p "$web_root/live" >> $installLog 2>&1
   sudo mkdir -p "$web_root/videos" >> $installLog 2>&1
-  sudo mkdir -p "$web_root/live-rec" >> $installLog 2>&1
   sudo mkdir -p "$web_root/images" >> $installLog 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $installLog 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $installLog 2>&1
@@ -240,6 +256,7 @@ if [ $# -eq 0 ]
         "3" "Restart OSP" \
         "4" "Upgrade to Latest Build" \
         "5" "Upgrade DB Only" \
+        "6" "Reset Nginx Configuration" \
         2>&1 1>&3)
       exit_status=$?
       exec 3>&-
@@ -311,6 +328,10 @@ if [ $# -eq 0 ]
               case $response in
                  0 )
                    upgrade_osp
+                   UPGRADECHECKVERSION="/opt/osp/setup/upgrade/${NEWVERSION::-1}.sh"
+                   if [[ -f $UPGRADECHECKVERSION ]]; then
+                      bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
+                   fi
                    version=$NEWVERSION
                    result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
                    ;;
@@ -327,6 +348,10 @@ if [ $# -eq 0 ]
           result=$(echo "Database Upgrade Complete!")
           display_result "Upgrade Results"
           ;;
+        6 ) reset_nginx
+          result=$(echo "Nginx Configuration has been reset.\n\nBackup of nginx.conf was stored at /usr/local/nginx/conf/nginx.conf.bak")
+          display_result "Reset Results"
+          ;;
       esac
     done
   else
@@ -340,6 +365,7 @@ if [ $# -eq 0 ]
         echo "restartosp: Restarts OSP"
         echo "upgrade: Upgrades OSP"
         echo "dbupgrade: Upgrades the Database Only"
+        echo "resetnginx: Resets the Nginx Configuration and Restarts"
         ;;
       install )
         install_osp
@@ -355,6 +381,9 @@ if [ $# -eq 0 ]
         ;;
       dbupgrade )
         upgrade_db
+        ;;
+      resetnginx )
+        reset_nginx
         ;;
     esac
     fi

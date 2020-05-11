@@ -66,14 +66,16 @@ class Clips(db.Model):
     length = db.Column(db.Float)
     views = db.Column(db.Integer)
     clipName = db.Column(db.String(255))
+    videoLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
     thumbnailLocation = db.Column(db.String(255))
     gifLocation = db.Column(db.String(255))
     published = db.Column(db.Boolean)
     upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
 
-    def __init__(self, parentVideo, startTime, endTime, clipName, description):
+    def __init__(self, parentVideo, videoLocation, startTime, endTime, clipName, description):
         self.parentVideo = parentVideo
+        self.videoLocation = videoLocation
         self.startTime = startTime
         self.endTime = endTime
         self.description = description
@@ -95,6 +97,7 @@ class Clips(db.Model):
             'name': self.clipName,
             'description': self.description,
             'views': self.views,
+            'videoLocation': '/videos/' + self.videoLocation,
             'thumbnailLocation': '/videos/' + self.thumbnailLocation,
             'gifLocation': '/videos/' + self.gifLocation
         }

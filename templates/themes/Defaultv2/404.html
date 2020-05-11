@@ -6,53 +6,104 @@
 </head>
 <body>
 <style>
-    #video-background {
-    /*  making the video fullscreen  */
+    .left-col {
+      width:200px;
+      height:95vh;
+      float: left;
+    }
+
+    .center-col {
+      padding-top: 30px;
+      padding-bottom: -30px;
+    }
+
+    .center-content {
+      font-family: Arial, Sans-serif;
+    }
+
+    .siteTitle {
+      font-size: 4em;
+    }
+
+    .errorType {
+      font-size: 3.5em;
+    }
+
+    .errorDescription {
+      padding-top:50px;
+      font-size: 2.5em;
+    }
+
+    .pageLink {
       position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
-      z-index: -100;
+      bottom:50px;
+      left: 215px;
+      font-size:2em;
     }
 
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin: auto;
-        text-align: center;
-        background: rgb(196,196,196);
-        background: linear-gradient(0deg, rgba(196,196,196,0.7707457983193278) 0%, rgba(201,201,201,1) 100%);
-        padding: 20px;
-        border-radius: 5px;
-
-        -webkit-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
-        -moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
-        box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.75);
+    .pageLink a:link, .pageLink a:visited {
+      text-decoration: none;
+      color: black;
     }
 
-    .errorShadow {
-        color: #e0dfdc;
-        letter-spacing: .1em;
-        text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a, 0 4px 0 #282828, 0 5px 0 #262626, 0 6px 0 #242424, 0 7px 0 #222, 0 8px 0 #202020, 0 9px 0 #1e1e1e, 0 10px 0 #1c1c1c, 0 11px 0 #1a1a1a, 0 12px 0 #181818, 0 13px 0 #161616, 0 14px 0 #141414, 0 15px 0 #121212, 0 22px 30px rgba(0,0,0,0.9);
+    .pageLink a:hover, .pageLink a:active {
+      text-decoration: underline;
     }
-    .errorText {
-        color:white;
-        font-size:4em;
-        text-shadow: 2px 2px 2px rgba(0, 0, 0, 1);
+
+    .tvImage {
+      position:fixed;
+      right:25px;
+      bottom: 50px;
     }
+
+    .tvImage img {
+        width: 375px;
+        height: 265px;
+    }
+
+    @media screen and (max-width : 1028px) {
+        .tvImage {
+            padding-top: 50px;
+            position: initial;
+            display: block;
+            margin: auto;
+            width: 375px;
+        }
+
+        .pageLink {
+            position: initial;
+            margin-top: 10px;
+        }
+    }
+
+    @media screen and (max-width : 800px) {
+        .left-col {
+            display: none;
+        }
+    }
+
 </style>
-<video autoplay loop id="video-background" muted plays-inline>
-  <source src="/static/img/static.mp4" type="video/mp4">
-</video>
-<div class="center">
-    <div class="errorShadow" style="font-size:15em;">404</div>
-    <div class="errorText">The page you are looking for is not here. <br> <a href="/">Click here to return</a></div>
-</div>
+    <div class="left-col">
+      <img src="/static/img/logo.png" style="width:96px;height:96px;display:block;margin:auto;padding-top:25px;">
+    </div>
+    <div class="center-col">
+      <div class="center-content">
+        <div class="siteTitle">
+          <b>{{sysSettings.siteName}}</b>
+        </div>
+        <div class="errorType">
+          <b>404 Not Found</b>
+        </div>
+        <div class="errorDescription">
+          <b>This page does not exist.</b>
+        </div>
+        <div class="pageLink">
+            <a href="#" onclick="history.back(-1);">Return to the previous page</a>
+        </div>
+        <div class="tvImage">
+          <img src="/static/img/static-tv.gif">
+        </div>
+      </div>
+    </div>
 </body>
 </html>

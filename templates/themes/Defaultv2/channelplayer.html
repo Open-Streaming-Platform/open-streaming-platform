@@ -15,6 +15,10 @@
 <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <script src="/static/vendor/videojs/js/video.js"></script>
+<script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+<link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+<script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -77,15 +81,15 @@
                      <div class="row m-2">
                          <div class="video-buttons-row">
                              <span class="float-left">
-                                  <button type="button" class="btn btn-primary shadow {% if channel.chatEnabled == False %}disabled{% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()">
+                                  <button type="button" class="btn btn-primary shadow {% if channel.chatEnabled == False %}disabled{% endif %}" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="toggleChat()" data-toggle="tooltip" data-placement="top" title="Toggle Chat">
                                     <i class="fas fa-comment"></i>
                                   </button>
-                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal" data-toggle="tooltip" data-placement="top" title="Share or Embed">
                                     <i class="fas fa-share-alt"></i>
                                   </button>
 
                                   {% if channel.owningUser == current_user.id %}
-                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+                                  <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal" data-toggle="tooltip" data-placement="top" title="Edit Stream Metadata">
                                     <i class="fas fa-edit"></i>
                                   </button>
                                   {% endif %}
@@ -344,13 +348,15 @@
 {% endblock %}
 
 {% block scripts %}
-
     <script>
         var player = videojs('video', {
             autoplay: true,
             errorDisplay: false,
             liveui: true,
-            liveTracker:true,
+            liveTracker: {
+                trackingThreshold: 5,
+                liveTolerance: 15
+            },
             html5:
                 {
                     nativeAudioTracks: false,
@@ -359,9 +365,16 @@
                         {
                             overrideNative: true
                         }
+                },
+            plugins : {
+                httpSourceSelector: {
+                    default: 'auto'
                 }
+            }
         });
 
+        qualityLevels = player.qualityLevels();
+        httpSelector = player.httpSourceSelector();
 
         player.ready(function() {
                this.src({
@@ -574,7 +587,7 @@
                 videoContainer.style.display = "block";
                 offlineWindow.style.display = "none";
 
-                if (currentReadyState == 2) {
+                /*if (currentReadyState == 2) {
                     try {
                         videoJSObj.pause();
                         videoJSObj.currentTime(0);
@@ -592,7 +605,20 @@
                     } catch (e) {
                         console.log("OSP tried restarting the stream but had an issue:" + e)
                     }
+                }*/
+
+
+                if (currentReadyState <= 2) {
+                    try {
+                        videoJSObj.reset();
+                        videoJSObj.src('{{streamURL}}');
+                        videoJSObj.pause().trigger('loadstart');
+                        videoJSObj.play();
+                    } catch (e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
                 }
+
 
                 $.getJSON('/apiv1/streams/' + currentStreamID, function(data) {
                     var streamData = data['results'][0];
@@ -684,5 +710,20 @@
         var recordedVideosList = new List('recordedVideoList', videoListOptions);
         var clipList = new List('clipsList', clipListOptions);
 
+    </script>
+
+    <script>
+      const video = document.querySelector('video');
+      video.addEventListener('play', (event) => {
+        var cookieVolume = getCookie('ospvolume');
+        if (!(cookieVolume == null)) {
+          player.volume(cookieVolume);
+        }
+      });
+
+      video.addEventListener('volumechange', (event) => {
+        var currentVolume = player.volume();
+        setCookie('ospvolume',currentVolume, 365);
+      });
     </script>
 {% endblock %}

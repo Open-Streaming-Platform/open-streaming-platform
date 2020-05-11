@@ -1,0 +1,178 @@
+{% block head %}
+    <title>{{sysSettings.siteName}} - {{stream.streamName}}</title>
+    <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+    <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+
+
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+{% endblock %}
+
+{% block body %}
+<div class="">
+      <div class="container-fluid">
+          <div class="row justify-content-md-center">
+              <div class="col-xl-12 col-sm-12">
+                  <div class="player">
+                      <div id="videoContainer">
+                        <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="{{channel.channelLoc}}.png" {% if isAutoPlay == True %}autoplay{% endif %} controls preload="auto" data-setup='{"fluid": true}'>
+                            <source src="{{streamURL}}" type="application/x-mpegURL">
+                            <p class="vjs-no-js">
+                              To view this video please enable JavaScript, and consider upgrading to a web browser that
+                              <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                            </p>
+                        </video>
+                      </div>
+                      <div id="offlineImage" style="display:none;">
+                        <img class="videoStream shadow" style="width:100%;" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %}>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/vendor/socketio/js/socket.io.js"></script>
+
+    <script>
+
+        var $ = jQuery;
+
+        var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: true,
+            liveTracker: {
+                trackingThreshold: 5,
+                liveTolerance: 15
+            },
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                },
+            plugins : {
+                httpSourceSelector: {
+                    default: 'auto'
+                }
+            }
+        });
+
+        qualityLevels = player.qualityLevels();
+        httpSelector = player.httpSourceSelector();
+
+        player.ready(function() {
+               this.src({
+                       src: '{{streamURL}}',
+                       type: 'application/x-mpegURL'
+               });
+       });
+
+       player.play();
+
+    </script>
+
+    <script>
+        $(document).ready( function () {
+            monitor_vid(player);
+        });
+    </script>
+
+
+<script>
+    //Fixes for VideoJS on Disconnect to Force a Reconnect when the readyState is stuck at 2
+    function monitor_vid(vidplayer){
+
+
+        videoJSObj = vidplayer;
+        currentReadyState = videoJSObj.readyState();
+
+        videoWindowState = document.getElementsByTagName('video');
+
+        videoContainer = document.getElementById('videoContainer');
+        offlineWindow = document.getElementById('offlineImage');
+
+
+        $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
+            var channelList = data['results'][0];
+            var streamIDList = channelList['stream'];
+
+            if (streamIDList.length > 0) {
+                var currentStreamID = streamIDList[0];
+
+                videoContainer.style.display = "block";
+                offlineWindow.style.display = "none";
+
+                if (currentReadyState <= 2) {
+                    try {
+                        videoJSObj.reset();
+                        videoJSObj.src('{{streamURL}}');
+                        videoJSObj.pause().trigger('loadstart');
+                        videoJSObj.play();
+                    } catch (e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
+                }
+
+            } else {
+                try {
+                    videoJSObj.pause();
+                    videoJSObj.reset();
+
+                    videoContainer.style.display = "none";
+                    offlineWindow.style.display = "block";
+
+                } catch(e) {
+                    console.log("OSP tried restarting the stream but had an issue:" + e)
+                }
+            }
+        });
+        var lastVideoState = currentReadyState;
+    }
+
+    setInterval(function() {
+        monitor_vid(player);
+    }, 10000);
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
+
+        var socket = io("/", {reconnection: true, forceNew: false});
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
+
+
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+            return null;
+        });
+    </script>
+
+
+{% endblock %}
