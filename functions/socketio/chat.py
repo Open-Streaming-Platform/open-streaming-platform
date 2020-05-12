@@ -26,8 +26,6 @@ def text(message):
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=room).first()
 
-    #global streamSIDList
-
     if channelQuery is not None:
 
         userSID = request.cookies.get('ospSession')
@@ -58,6 +56,8 @@ def text(message):
                     db.session.commit()
                     msg = "<b> *** " + current_user.username + " has muted the chat channel ***"
                     emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, room=room)
+                    db.session.commit()
+                    db.session.close()
                     return
             elif msg.startswith('/unmute'):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
@@ -65,6 +65,8 @@ def text(message):
                     db.session.commit()
                     msg = "<b> *** " + current_user.username + " has unmuted the chat channel ***"
                     emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, room=room)
+                    db.session.commit()
+                    db.session.close()
                     return
             elif msg.startswith('/ban '):
                 if (current_user.has_role('Admin')) or (current_user.id == channelQuery.owningUser):
@@ -144,4 +146,6 @@ def text(message):
             emit('message', {'user': current_user.username, 'image': pictureLocation, 'msg': msg}, broadcast=False)
             db.session.commit()
             db.session.close()
+    db.session.commit()
+    db.session.close()
     return 'OK'

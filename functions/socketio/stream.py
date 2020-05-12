@@ -73,4 +73,6 @@ def updateStreamData(message):
                    streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + channelQuery.channelLoc + ".png"))
         db.session.commit()
         db.session.close()
+    db.session.commit()
+    db.session.close()
     return 'OK'

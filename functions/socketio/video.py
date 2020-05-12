@@ -21,10 +21,16 @@ def deleteVideoSocketIO(message):
         videoID = int(message['videoID'])
         result = videoFunc.deleteVideo(videoID)
         if result is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('editVideo')
@@ -40,10 +46,16 @@ def editVideoSocketIO(message):
 
         result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
         if result is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('createClip')
@@ -56,10 +68,16 @@ def createclipSocketIO(message):
         stopTime = float(message['clipStop'])
         result = videoFunc.createClip(videoID, startTime, stopTime, clipName, clipDescription)
         if result[0] is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('moveVideo')
@@ -70,10 +88,16 @@ def moveVideoSocketIO(message):
 
         result = videoFunc.moveVideo(videoID, newChannel)
         if result is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('togglePublished')
@@ -168,10 +192,16 @@ def changeClipMetadataSocketIO(message):
         result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription)
 
         if result is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)
 
 @socketio.on('deleteClip')
@@ -182,8 +212,14 @@ def deleteClipSocketIO(message):
         result = videoFunc.deleteClip(clipID)
 
         if result is True:
+            db.session.commit()
+            db.session.close()
             return 'OK'
         else:
+            db.session.commit()
+            db.session.close()
             return abort(500)
     else:
+        db.session.commit()
+        db.session.close()
         return abort(401)

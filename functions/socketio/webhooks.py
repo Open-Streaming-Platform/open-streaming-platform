@@ -168,4 +168,6 @@ def testWebhook(message):
                                        videotopic=templateFilters.get_topicName(randomVideoQuery.topic), videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(randomVideoQuery.id)),
                                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(randomVideoQuery.thumbnailLocation)), comment="This is just a test comment!",
                                        message="This is just a test message!")
+    db.session.commit()
+    db.session.close()
     return 'OK'

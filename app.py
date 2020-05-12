@@ -59,10 +59,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.dbLocation
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 if config.dbLocation[:6] != "sqlite":
     app.config['SQLALCHEMY_MAX_OVERFLOW'] = -1
-    app.config['SQLALCHEMY_POOL_RECYCLE'] = 600
-    app.config['SQLALCHEMY_POOL_TIMEOUT'] = 1200
+    app.config['SQLALCHEMY_POOL_RECYCLE'] = 300
+    app.config['SQLALCHEMY_POOL_TIMEOUT'] = 600
     app.config['MYSQL_DATABASE_CHARSET'] = "utf8"
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'True', 'pool_size': 20, "pool_pre_ping": True}
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'encoding': 'utf8', 'pool_use_lifo': 'False', 'pool_size': 10, "pool_pre_ping": True}
 else:
     pass
 app.config['SESSION_TYPE'] = 'redis'
