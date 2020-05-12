@@ -1123,7 +1123,7 @@ def settings_dbRestore():
             if 'restoreVideos' in request.form:
                 for restoredClip in restoreDict['Clips']:
                     if restoredClip['parentVideo'] != "None":
-                        newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), float(restoredClip['startTime']), float(restoredClip['endTime']), restoredClip['clipName'], restoredClip['description'])
+                        newClip = RecordedVideo.Clips(int(restoredClip['parentVideo']), restoredClip['videoLocation'], float(restoredClip['startTime']), float(restoredClip['endTime']), restoredClip['clipName'], restoredClip['description'])
                         newClip.id = int(restoredClip['id'])
                         newClip.views = int(restoredClip['views'])
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']
