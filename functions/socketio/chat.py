@@ -28,7 +28,7 @@ def text(message):
 
     if channelQuery is not None:
 
-        userSID = request.cookies.get('ospSession')
+        userSID = request.sid
         if userSID.encode('utf-8') not in r.smembers(channelQuery.channelLoc + '-streamSIDList'):
             r.sadd(channelQuery.channelLoc + '-streamSIDList', userSID)
         if current_user.username.encode('utf-8') not in r.lrange(channelQuery.channelLoc + '-streamUserList', 0, -1):
