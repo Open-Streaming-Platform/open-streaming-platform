@@ -30,7 +30,7 @@ thread_cache_size       = 8
 myisam-recover-options  = BACKUP
 max_connections        = 100000
 query_cache_limit       = 1M
-query_cache_type        = 1
+#query_cache_type        = 1
 query_cache_size        = 16M
 
 log_error = /var/log/mysql/error.log
