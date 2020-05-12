@@ -225,6 +225,9 @@ def auth_check():
 def playback_auth_handler():
     stream = request.form['name']
 
+    if request.remote_addr == "127.0.0.1" or request.remote_addr == "localhost":
+        return 'OK'
+
     streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
     if streamQuery is not None:
 
