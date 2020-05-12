@@ -209,6 +209,11 @@ def init(app, user_datastore):
 
             globalvars.themeData = json.load(f)
 
+        # Initialize the Topic Cache
+        topicQuery = topics.topics.query.all()
+        for topic in topicQuery:
+            globalvars.topicCache[topic.id] = topic.name
+
         ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
         if config.dbLocation[:6] != "sqlite":
             try:

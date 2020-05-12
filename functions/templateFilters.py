@@ -91,10 +91,10 @@ def format_clipLength(seconds):
         return hms_format(seconds)
 
 def get_topicName(topicID):
-    topicQuery = topics.topics.query.filter_by(id=int(topicID)).first()
-    if topicQuery is None:
-        return "None"
-    return topicQuery.name
+    topicID = int(topicID)
+    if topicID in globalvars.topicCache:
+        return globalvars.topicCache[topicID]
+    return "None"
 
 def get_userName(userID):
     userQuery = Sec.User.query.filter_by(id=int(userID)).first()
