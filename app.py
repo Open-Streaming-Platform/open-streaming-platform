@@ -87,7 +87,7 @@ app.config['SECURITY_MSG_INVALID_EMAIL_ADDRESS'] = ("Invalid Username or Passwor
 app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password","error")
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
-app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
+app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "JPG", "MP4"]
 
 logger = logging.getLogger('gunicorn.error').handlers
 
