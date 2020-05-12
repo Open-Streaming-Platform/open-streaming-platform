@@ -173,6 +173,12 @@ def admin_page():
                     system.newLog(1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name))
                     db.session.delete(topicQuery)
                     db.session.commit()
+
+                    # Initialize the Topic Cache
+                    topicQuery = topics.topics.query.all()
+                    for topic in topicQuery:
+                        globalvars.topicCache[topic.id] = topic.name
+
                     flash("Topic Deleted")
                     return redirect(url_for('.admin_page', page="topics"))
 
@@ -578,6 +584,11 @@ def admin_page():
 
                 newTopic = topics.topics(topicName, topicImage)
                 db.session.add(newTopic)
+
+            # Initialize the Topic Cache
+            topicQuery = topics.topics.query.all()
+            for topic in topicQuery:
+                globalvars.topicCache[topic.id] = topic.name
 
             db.session.commit()
             return redirect(url_for('.admin_page', page="topics"))

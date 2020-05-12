@@ -19,6 +19,7 @@ Adjusted osp-config.sh script to automatically replace all Nginx configuration f
 Added Option to osp-config.sh script to reload all default Nginx Configuration Files
 Added Version Specific Upgrade Process Shim in osp-config.sh. Version Specific Upgrade Scripts will be located in /opt/osp/setup/upgrades/$version.sh
 Updated 404 and 500 pages for cleaner, less static filled look
+Fixed an issue where Protected Adaptive Streams were not generating hls fragments
 Updated Video JS to 7.7.6 - Corrects IOS issues on video and stream playback
 Removed EasyMDE automatic download of Font Awesome and Other External Dependencies
 Refactored Theme Logic - Themes no longer require a separate security directory

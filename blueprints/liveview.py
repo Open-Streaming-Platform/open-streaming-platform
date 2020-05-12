@@ -77,7 +77,11 @@ def view_page(loc):
 
             if requestedChannel.protected:
                 if current_user.is_authenticated:
-                    secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.password).encode('utf-8')).hexdigest()
+                    secureHash = None
+                    if current_user.authType == 0:
+                        secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.password).encode('utf-8')).hexdigest()
+                    else:
+                        secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
                     username = current_user.username
                     rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
             else:

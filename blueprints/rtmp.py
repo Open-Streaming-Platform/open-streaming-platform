@@ -133,14 +133,7 @@ def user_auth_check():
             except:
                 system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
-            inputLocation = ""
-            if requestedChannel.protected and sysSettings.protectionEnabled:
-                owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
-                secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
-                username = owningUser.username
-                inputLocation = 'rtmp://' + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
-            else:
-                inputLocation = "rtmp://" + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc
+            inputLocation = "rtmp://" + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc
 
             # Begin RTMP Restream Function
             if requestedChannel.rtmpRestream is True:

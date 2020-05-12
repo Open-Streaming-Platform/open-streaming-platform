@@ -224,31 +224,39 @@ def auth_check():
 @root_bp.route('/playbackAuth', methods=['POST'])
 def playback_auth_handler():
     stream = request.form['name']
+    clientIP = request.form['addr']
 
-    streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
-    if streamQuery is not None:
+    if clientIP == "127.0.0.1" or clientIP == "localhost":
+        return 'OK'
+    else:
+        streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+        if streamQuery is not None:
 
-        if streamQuery.protected is False:
-            db.session.close()
-            return 'OK'
-        else:
-            username = request.form['username']
-            secureHash = request.form['hash']
+            if streamQuery.protected is False:
+                db.session.close()
+                return 'OK'
+            else:
+                username = request.form['username']
+                secureHash = request.form['hash']
 
-            if streamQuery is not None:
-                requestedUser = Sec.User.query.filter_by(username=username).first()
-                if requestedUser is not None:
-                    isValid = False
-                    validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
-                    if secureHash == validHash:
-                        isValid = True
-                    if isValid is True:
-                        if streamQuery.owningUser == requestedUser.id:
-                            db.session.close()
-                            return 'OK'
+                if streamQuery is not None:
+                    requestedUser = Sec.User.query.filter_by(username=username).first()
+                    if requestedUser is not None:
+                        isValid = False
+                        validHash = None
+                        if requestedUser.authType == 0:
+                            validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
                         else:
-                            if securityFunc.check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                            validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.oAuthID).encode('utf-8')).hexdigest()
+                        if secureHash == validHash:
+                            isValid = True
+                        if isValid is True:
+                            if streamQuery.owningUser == requestedUser.id:
                                 db.session.close()
                                 return 'OK'
+                            else:
+                                if securityFunc.check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                                    db.session.close()
+                                    return 'OK'
     db.session.close()
     return abort(400)
