@@ -239,7 +239,11 @@ def playback_auth_handler():
                 requestedUser = Sec.User.query.filter_by(username=username).first()
                 if requestedUser is not None:
                     isValid = False
-                    validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                    validHash = None
+                    if requestedUser.authType == 0:
+                        validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                    else:
+                        validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.oAuthID).encode('utf-8')).hexdigest()
                     if secureHash == validHash:
                         isValid = True
                     if isValid is True:

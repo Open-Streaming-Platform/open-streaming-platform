@@ -136,7 +136,11 @@ def user_auth_check():
             inputLocation = ""
             if requestedChannel.protected and sysSettings.protectionEnabled:
                 owningUser = Sec.User.query.filter_by(id=requestedChannel.owningUser).first()
-                secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
+                secureHash = None
+                if owningUser.authType == 0:
+                    secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.password).encode('utf-8')).hexdigest()
+                else:
+                    secureHash = hashlib.sha256((owningUser.username + requestedChannel.channelLoc + owningUser.oAuthID).encode('utf-8')).hexdigest()
                 username = owningUser.username
                 inputLocation = 'rtmp://' + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
             else:
