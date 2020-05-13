@@ -1,5 +1,7 @@
 Beta-6
 ==============================================
+** Important Note: Users will need to manually copy all osp-*.conf files from /opt/osp/setup/nginx to /usr/local/nginx/conf and restart the nginx-osp service after running the standard upgrade
+
 Brand New Logo - Courtesy of @curldev in Discord
 Refectored app.py to submodules
 Clips will no longer be "fake" timestamp hacked clips. Clips will be separate video files.  Existing Clips will be converted on upgrade.  Be aware of increased storage usage prior to upgrade.
