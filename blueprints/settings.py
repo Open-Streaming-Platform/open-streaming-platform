@@ -981,6 +981,8 @@ def settings_dbRestore():
                 user.active = eval(restoredUser['active'])
                 user.biography = restoredUser['biography']
 
+                if 'uuid' in restoredUser:
+                    user.uuid = str(restoredUser['uuid'])
                 if 'authType' in restoredUser:
                     user.authType = int(restoredUser['authType'])
                 else:
@@ -1111,6 +1113,8 @@ def settings_dbRestore():
                         if 'gifLocation' in restoredVideo:
                             if restoredVideo['gifLocation'] != "None":
                                 video.gifLocation = restoredVideo['gifLocation']
+                        if 'uuid' in restoredVideo:
+                            video.uuid = str(restoredVideo['uuid'])
                         db.session.add(video)
                     else:
                         flash("Error Restoring Recorded Video: ID# " + str(restoredVideo['id']), "error")
@@ -1128,6 +1132,8 @@ def settings_dbRestore():
                         newClip.views = int(restoredClip['views'])
                         newClip.thumbnailLocation = restoredClip['thumbnailLocation']
                         newClip.published = eval(restoredClip['published'])
+                        if 'uuid' in restoredClip:
+                            newClip.uuid = str(restoredClip['uuid'])
                         if 'gifLocation' in restoredClip:
                             if restoredClip['gifLocation'] != "None":
                                 newClip.gifLocation = restoredClip['gifLocation']

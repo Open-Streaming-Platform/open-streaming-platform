@@ -1,9 +1,11 @@
 from .shared import db
 from .settings import settings
+from uuid import uuid4
 
 class Stream(db.Model):
     __tablename__ = "Stream"
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(255), unique=True)
     linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
     streamKey = db.Column(db.String(255))
     streamName = db.Column(db.String(255))
@@ -13,6 +15,7 @@ class Stream(db.Model):
     upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
+        self.uuid = str(uuid4())
         self.streamKey = streamKey
         self.streamName = streamName
         self.linkedChannel = linkedChannel
@@ -39,13 +42,12 @@ class Stream(db.Model):
         sysSettings = settings.query.first()
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
-            streamURL = '/streams/' + self.channel.channelLoc + '.m3u8'
-        elif self.channel.record is True:
-            streamURL = '/live-rec/' + self.channel.channelLoc + '/index.m3u8'
+            streamURL = '/live-adapt/' + self.channel.channelLoc + '.m3u8'
         else:
             streamURL = '/live/' + self.channel.channelLoc + '/index.m3u8'
         return {
             'id': self.id,
+            'uuid': self.uuid,
             'channelID': self.linkedChannel,
             'channelEndpointID': self.channel.channelLoc,
             'owningUser': self.channel.owningUser,
