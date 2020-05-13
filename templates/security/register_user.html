@@ -1,0 +1,90 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% from "security/custom_macros.html" import fields_errors %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Register</title>
+
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card my-5 shadow text-left">
+                    <h5 class="card-header text-white bg-dark mb-3">
+                        Register
+                    </h5>
+                    <div class="card-body">
+                        <div>
+                            {{fields_errors(register_user_form.username,register_user_form.email,register_user_form.password)}}
+                            <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
+                                {% for provider in SystemOAuthProviders %}
+                                <div class="my-2">
+                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                                        {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
+                                        {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
+                                        {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
+                                        Register With {{provider.friendlyName}}
+                                    </a>
+                                </div>
+                                {% endfor %}
+                                {% if SystemOAuthProviders != [] %}
+                                <hr>
+                                {% endif %}
+                              {{ register_user_form.hidden_tag() }}
+                                <b><i class="fas fa-user-circle"></i> Username</b><br>
+                              {{ render_field(register_user_form.username, class_="form-control") }}
+                                <b><i class="far fa-envelope"></i> Email Address</b><br>
+                              {{ render_field(register_user_form.email, class_="form-control") }}
+                                <b><i class="fas fa-key"></i> Password</b><br>
+                              {{ render_field(register_user_form.password, class_="form-control") }}
+                              {% if register_user_form.password_confirm %}
+                                <b><i class="fas fa-key"></i> Confirm Password</b><br>
+                                {{ render_field(register_user_form.password_confirm, class_="form-control") }}
+                              {% endif %}
+                              {{ render_field(register_user_form.submit, class_="form-control") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript" charset="utf-8">
+    var conn_options = {
+        'sync disconnect on unload':true
+    };
+
+    var socket = io();
+</script>
+
+<script>
+    function checkUniqueUsername() {
+        var usernameDiv = document.getElementById('username');
+        username = usernameDiv.value;
+
+        socket.emit('checkUniqueUsername', {username: username});
+    }
+</script>
+
+<script>
+    $('#username').change(function() {
+    checkUniqueUsername();
+});
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('checkUniqueUsernameAck', function (msg) {
+        var checkResults = msg['results'];
+        var usernameDiv = document.getElementById('username');
+        if (checkResults == '0') {
+            usernameDiv.setCustomValidity('Invalid User');
+        } else {
+            usernameDiv.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}

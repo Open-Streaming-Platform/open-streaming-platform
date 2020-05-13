@@ -57,6 +57,9 @@
       <div class="row m-2">
         <div class="video-buttons-row">
           <span class="float-md-left">
+            <a href="{{streamURL}}" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Download Video" download >
+              <i class="fas fa-download"></i>
+            </a>
             <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
               <i class="fas fa-share-alt"></i>
             </button>
@@ -270,23 +273,21 @@
 <script src="/static/vendor/videojs/js/video.js"></script>
 
 <script>
-  var player = videojs('video', { autoplay: false });
-
-  var startTime = {{clip.startTime}};
-  var stopTime = {{clip.endTime}};
-
-  player.currentTime(startTime);
-  player.play();
-
-  player.on('timeupdate', function (e) {
-    if (player.currentTime() < startTime) {
-        player.currentTime(startTime);
-    }
-    if (player.currentTime() >= stopTime) {
-        player.currentTime(startTime);
-        player.pause();
-    }
-   });
+    var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
 
 </script>
 
@@ -299,7 +300,7 @@
 </script>
 
 <script>
-    var easymde2 = new EasyMDE({ element: document.getElementById("description") });
+    var easymde2 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
 </script>
 
 <script>

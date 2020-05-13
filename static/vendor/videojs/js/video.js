@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 7.7.1 <http://videojs.com/>
+ * Video.js 7.7.6 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -14,11 +14,12 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('global/window'), require('global/document')) :
   typeof define === 'function' && define.amd ? define(['global/window', 'global/document'], factory) :
   (global = global || self, global.videojs = factory(global.window, global.document));
-}(this, function (window$1, document) {
-  window$1 = window$1 && window$1.hasOwnProperty('default') ? window$1['default'] : window$1;
+}(this, function (window$3, document) { 'use strict';
+
+  window$3 = window$3 && window$3.hasOwnProperty('default') ? window$3['default'] : window$3;
   document = document && document.hasOwnProperty('default') ? document['default'] : document;
 
-  var version = "7.7.1";
+  var version = "7.7.6";
 
   /**
    * @file create-logger.js
@@ -59,19 +60,19 @@
       // still be stored in history.
 
 
-      if (!window$1.console) {
+      if (!window$3.console) {
         return;
       } // Was setting these once outside of this function, but containing them
       // in the function makes it easier to test cases where console doesn't exist
       // when the module is executed.
 
 
-      var fn = window$1.console[type];
+      var fn = window$3.console[type];
 
       if (!fn && type === 'debug') {
         // Certain browsers don't have support for console.debug. For those, we
         // should default to the closest comparable log.
-        fn = window$1.console.info || window$1.console.log;
+        fn = window$3.console.info || window$3.console.log;
       } // Bail out if there's no console or if this type is not allowed by the
       // current logging level.
 
@@ -80,7 +81,7 @@
         return;
       }
 
-      fn[Array.isArray(args) ? 'apply' : 'call'](window$1.console, args);
+      fn[Array.isArray(args) ? 'apply' : 'call'](window$3.console, args);
     };
   };
 
@@ -508,8 +509,8 @@
       return '';
     }
 
-    if (typeof window$1.getComputedStyle === 'function') {
-      var computedStyleValue = window$1.getComputedStyle(el);
+    if (typeof window$3.getComputedStyle === 'function') {
+      var computedStyleValue = window$3.getComputedStyle(el);
       return computedStyleValue ? computedStyleValue.getPropertyValue(prop) || computedStyleValue[prop] : '';
     }
 
@@ -585,7 +586,7 @@
 
   function isReal() {
     // Both document and window will never be undefined thanks to `global`.
-    return document === window$1.document;
+    return document === window$3.document;
   }
   /**
    * Determines, via duck typing, whether or not a value is a DOM element.
@@ -612,7 +613,7 @@
     // We need a try/catch here because Safari will throw errors when attempting
     // to get either `parent` or `self`
     try {
-      return window$1.parent !== window$1.self;
+      return window$3.parent !== window$3.self;
     } catch (x) {
       return true;
     }
@@ -1086,10 +1087,10 @@
     var docEl = document.documentElement;
     var body = document.body;
     var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-    var scrollLeft = window$1.pageXOffset || body.scrollLeft;
+    var scrollLeft = window$3.pageXOffset || body.scrollLeft;
     var left = box.left + scrollLeft - clientLeft;
     var clientTop = docEl.clientTop || body.clientTop || 0;
-    var scrollTop = window$1.pageYOffset || body.scrollTop;
+    var scrollTop = window$3.pageYOffset || body.scrollTop;
     var top = box.top + scrollTop - clientTop; // Android sometimes returns slightly off decimal values, so need to round
 
     return {
@@ -1456,7 +1457,7 @@
       videojs = vjs;
     }
 
-    window$1.setTimeout(autoSetup, wait);
+    window$3.setTimeout(autoSetup, wait);
   }
   /**
    * Used to set the internal tracking of window loaded state to true.
@@ -1467,7 +1468,7 @@
 
   function setWindowLoaded() {
     _windowLoaded = true;
-    window$1.removeEventListener('load', setWindowLoaded);
+    window$3.removeEventListener('load', setWindowLoaded);
   }
 
   if (isReal()) {
@@ -1482,7 +1483,7 @@
        *
        * @listens load
        */
-      window$1.addEventListener('load', setWindowLoaded);
+      window$3.addEventListener('load', setWindowLoaded);
     }
   }
 
@@ -1558,12 +1559,10 @@
    */
   var FakeWeakMap;
 
-  if (!window$1.WeakMap) {
-    FakeWeakMap =
-    /*#__PURE__*/
-    function () {
+  if (!window$3.WeakMap) {
+    FakeWeakMap = /*#__PURE__*/function () {
       function FakeWeakMap() {
-        this.vdata = 'vdata' + Math.floor(window$1.performance && window$1.performance.now() || Date.now());
+        this.vdata = 'vdata' + Math.floor(window$3.performance && window$3.performance.now() || Date.now());
         this.data = {};
       }
 
@@ -1622,7 +1621,7 @@
    */
 
 
-  var DomData = window$1.WeakMap ? new WeakMap() : new FakeWeakMap();
+  var DomData = window$3.WeakMap ? new WeakMap() : new FakeWeakMap();
 
   /**
    * @file events.js. An Event System (John Resig - Secrets of a JS Ninja http://jsninja.com/)
@@ -1727,7 +1726,7 @@
 
 
     if (!event || !event.isPropagationStopped) {
-      var old = event || window$1.event;
+      var old = event || window$3.event;
       event = {}; // Clone the old object so that we can modify the values event = {};
       // IE8 Doesn't like when you mess with native event properties
       // Firefox returns false for event.hasOwnProperty('type') and other props
@@ -1834,8 +1833,8 @@
             _supportsPassive = true;
           }
         });
-        window$1.addEventListener('test', null, opts);
-        window$1.removeEventListener('test', null, opts);
+        window$3.addEventListener('test', null, opts);
+        window$3.removeEventListener('test', null, opts);
       } catch (e) {// disregard
       }
     }
@@ -2195,10 +2194,10 @@
    */
 
   var throttle = function throttle(fn, wait) {
-    var last = window$1.performance.now();
+    var last = window$3.performance.now();
 
     var throttled = function throttled() {
-      var now = window$1.performance.now();
+      var now = window$3.performance.now();
 
       if (now - last >= wait) {
         fn.apply(void 0, arguments);
@@ -2237,7 +2236,7 @@
 
   var debounce = function debounce(func, wait, immediate, context) {
     if (context === void 0) {
-      context = window$1;
+      context = window$3;
     }
 
     var timeout;
@@ -2479,8 +2478,8 @@
 
     var oldTimeout = map.get(type);
     map["delete"](type);
-    window$1.clearTimeout(oldTimeout);
-    var timeout = window$1.setTimeout(function () {
+    window$3.clearTimeout(oldTimeout);
+    var timeout = window$3.setTimeout(function () {
       // if we cleared out all timeouts for the current target, delete its map
       if (map.size === 0) {
         map = null;
@@ -2982,7 +2981,7 @@
 
     target.on('dispose', function () {
       target.off();
-      window$1.setTimeout(function () {
+      window$3.setTimeout(function () {
         target.eventBusEl_ = null;
       }, 0);
     });
@@ -3223,9 +3222,7 @@
    * Components can also use methods from {@link EventTarget}
    */
 
-  var Component =
-  /*#__PURE__*/
-  function () {
+  var Component = /*#__PURE__*/function () {
     /**
      * A callback that is called when a component is ready. Does not have any
      * paramters and any callback value will be ignored.
@@ -3297,10 +3294,8 @@
       this.childNameIndex_ = {};
       var SetSham;
 
-      if (!window$1.Set) {
-        SetSham =
-        /*#__PURE__*/
-        function () {
+      if (!window$3.Set) {
+        SetSham = /*#__PURE__*/function () {
           function SetSham() {
             this.set_ = {};
           }
@@ -3332,9 +3327,9 @@
         }();
       }
 
-      this.setTimeoutIds_ = window$1.Set ? new Set() : new SetSham();
-      this.setIntervalIds_ = window$1.Set ? new Set() : new SetSham();
-      this.rafIds_ = window$1.Set ? new Set() : new SetSham();
+      this.setTimeoutIds_ = window$3.Set ? new Set() : new SetSham();
+      this.setIntervalIds_ = window$3.Set ? new Set() : new SetSham();
+      this.rafIds_ = window$3.Set ? new Set() : new SetSham();
       this.clearingTimersOnDispose_ = false; // Add any child components in options
 
       if (options.initChildren !== false) {
@@ -4440,7 +4435,7 @@
             pageY: event.touches[0].pageY
           }; // Record start time so we can detect a tap vs. "touch and hold"
 
-          touchStart = window$1.performance.now(); // Reset couldBeTap tracking
+          touchStart = window$3.performance.now(); // Reset couldBeTap tracking
 
           couldBeTap = true;
         }
@@ -4476,7 +4471,7 @@
 
         if (couldBeTap === true) {
           // Measure how long the touch lasted
-          var touchTime = window$1.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
+          var touchTime = window$3.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
 
           if (touchTime < touchTimeThreshold) {
             // Don't let browser turn this into a click
@@ -4592,7 +4587,7 @@
       var timeoutId;
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      timeoutId = window$1.setTimeout(function () {
+      timeoutId = window$3.setTimeout(function () {
         if (_this2.setTimeoutIds_.has(timeoutId)) {
           _this2.setTimeoutIds_["delete"](timeoutId);
         }
@@ -4622,7 +4617,7 @@
     _proto.clearTimeout = function clearTimeout(timeoutId) {
       if (this.setTimeoutIds_.has(timeoutId)) {
         this.setTimeoutIds_["delete"](timeoutId);
-        window$1.clearTimeout(timeoutId);
+        window$3.clearTimeout(timeoutId);
       }
 
       return timeoutId;
@@ -4652,7 +4647,7 @@
     _proto.setInterval = function setInterval(fn, interval) {
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      var intervalId = window$1.setInterval(fn, interval);
+      var intervalId = window$3.setInterval(fn, interval);
       this.setIntervalIds_.add(intervalId);
       return intervalId;
     }
@@ -4676,7 +4671,7 @@
     _proto.clearInterval = function clearInterval(intervalId) {
       if (this.setIntervalIds_.has(intervalId)) {
         this.setIntervalIds_["delete"](intervalId);
-        window$1.clearInterval(intervalId);
+        window$3.clearInterval(intervalId);
       }
 
       return intervalId;
@@ -4721,7 +4716,7 @@
 
       var id;
       fn = bind(this, fn);
-      id = window$1.requestAnimationFrame(function () {
+      id = window$3.requestAnimationFrame(function () {
         if (_this3.rafIds_.has(id)) {
           _this3.rafIds_["delete"](id);
         }
@@ -4757,7 +4752,7 @@
 
       if (this.rafIds_.has(id)) {
         this.rafIds_["delete"](id);
-        window$1.cancelAnimationFrame(id);
+        window$3.cancelAnimationFrame(id);
       }
 
       return id;
@@ -4897,7 +4892,7 @@
    */
 
 
-  Component.prototype.supportsRaf_ = typeof window$1.requestAnimationFrame === 'function' && typeof window$1.cancelAnimationFrame === 'function';
+  Component.prototype.supportsRaf_ = typeof window$3.requestAnimationFrame === 'function' && typeof window$3.cancelAnimationFrame === 'function';
   Component.registerComponent('Component', Component);
 
   function _assertThisInitialized(self) {
@@ -4909,6 +4904,37 @@
   }
 
   var assertThisInitialized = _assertThisInitialized;
+
+  var _typeof_1 = createCommonjsModule(function (module) {
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+
+      if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+        module.exports = _typeof = function _typeof(obj) {
+          return typeof obj;
+        };
+      } else {
+        module.exports = _typeof = function _typeof(obj) {
+          return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+        };
+      }
+
+      return _typeof(obj);
+    }
+
+    module.exports = _typeof;
+  });
+
+  var getPrototypeOf = createCommonjsModule(function (module) {
+    function _getPrototypeOf(o) {
+      module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+      };
+      return _getPrototypeOf(o);
+    }
+
+    module.exports = _getPrototypeOf;
+  });
 
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
@@ -4922,7 +4948,7 @@
    * @file browser.js
    * @module browser
    */
-  var USER_AGENT = window$1.navigator && window$1.navigator.userAgent || '';
+  var USER_AGENT = window$3.navigator && window$3.navigator.userAgent || '';
   var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
   var appleWebkitVersion = webkitVersionMap ? parseFloat(webkitVersionMap.pop()) : null;
   /**
@@ -5014,7 +5040,7 @@
    * @type {Boolean}
    */
 
-  var IS_EDGE = /Edge/i.test(USER_AGENT);
+  var IS_EDGE = /Edg/i.test(USER_AGENT);
   /**
    * Whether or not this is Google Chrome.
    *
@@ -5089,7 +5115,7 @@
    * @type {Boolean}
    */
 
-  var TOUCH_ENABLED = isReal() && ('ontouchstart' in window$1 || window$1.navigator.maxTouchPoints || window$1.DocumentTouch && window$1.document instanceof window$1.DocumentTouch);
+  var TOUCH_ENABLED = isReal() && ('ontouchstart' in window$3 || window$3.navigator.maxTouchPoints || window$3.DocumentTouch && window$3.document instanceof window$3.DocumentTouch);
   /**
    * Whether or not this device is an iPad.
    *
@@ -5098,7 +5124,7 @@
    * @type {Boolean}
    */
 
-  var IS_IPAD = /iPad/i.test(USER_AGENT) || IS_SAFARI && TOUCH_ENABLED;
+  var IS_IPAD = /iPad/i.test(USER_AGENT) || IS_SAFARI && TOUCH_ENABLED && !/iPhone/i.test(USER_AGENT);
   /**
    * Whether or not this device is an iPhone.
    *
@@ -5752,9 +5778,9 @@
       '[': 219,
       '\\': 220,
       ']': 221,
-      "'": 222 // Helper aliases
+      "'": 222
+    }; // Helper aliases
 
-    };
     var aliases = exports.aliases = {
       'windows': 91,
       '⇧': 16,
@@ -5776,12 +5802,11 @@
       'ins': 45,
       'del': 46,
       'cmd': 91
-      /*!
-       * Programatically add the following
-       */
-      // lower case chars
-
     };
+    /*!
+     * Programatically add the following
+     */
+    // lower case chars
 
     for (i = 97; i < 123; i++) {
       codes[String.fromCharCode(i)] = i - 32;
@@ -5837,9 +5862,7 @@
    * @extends Component
    */
 
-  var ModalDialog =
-  /*#__PURE__*/
-  function (_Component) {
+  var ModalDialog = /*#__PURE__*/function (_Component) {
     inheritsLoose(ModalDialog, _Component);
 
     /**
@@ -6332,7 +6355,7 @@
     _proto.focusableEls_ = function focusableEls_() {
       var allChildren = this.el_.querySelectorAll('*');
       return Array.prototype.filter.call(allChildren, function (child) {
-        return (child instanceof window$1.HTMLAnchorElement || child instanceof window$1.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window$1.HTMLInputElement || child instanceof window$1.HTMLSelectElement || child instanceof window$1.HTMLTextAreaElement || child instanceof window$1.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window$1.HTMLIFrameElement || child instanceof window$1.HTMLObjectElement || child instanceof window$1.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
+        return (child instanceof window$3.HTMLAnchorElement || child instanceof window$3.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window$3.HTMLInputElement || child instanceof window$3.HTMLSelectElement || child instanceof window$3.HTMLTextAreaElement || child instanceof window$3.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window$3.HTMLIFrameElement || child instanceof window$3.HTMLObjectElement || child instanceof window$3.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
       });
     };
 
@@ -6359,9 +6382,7 @@
    * @extends EventTarget
    */
 
-  var TrackList =
-  /*#__PURE__*/
-  function (_EventTarget) {
+  var TrackList = /*#__PURE__*/function (_EventTarget) {
     inheritsLoose(TrackList, _EventTarget);
 
     /**
@@ -6570,9 +6591,7 @@
    */
 
 
-  var AudioTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
+  var AudioTrackList = /*#__PURE__*/function (_TrackList) {
     inheritsLoose(AudioTrackList, _TrackList);
 
     /**
@@ -6692,9 +6711,7 @@
    */
 
 
-  var VideoTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
+  var VideoTrackList = /*#__PURE__*/function (_TrackList) {
     inheritsLoose(VideoTrackList, _TrackList);
 
     /**
@@ -6805,9 +6822,7 @@
    * @extends TrackList
    */
 
-  var TextTrackList =
-  /*#__PURE__*/
-  function (_TrackList) {
+  var TextTrackList = /*#__PURE__*/function (_TrackList) {
     inheritsLoose(TextTrackList, _TrackList);
 
     function TextTrackList() {
@@ -6879,9 +6894,7 @@
   /**
    * The current list of {@link HtmlTrackElement}s.
    */
-  var HtmlTrackElementList =
-  /*#__PURE__*/
-  function () {
+  var HtmlTrackElementList = /*#__PURE__*/function () {
     /**
      * Create an instance of this class.
      *
@@ -7022,9 +7035,7 @@
    *
    * @see [Spec]{@link https://html.spec.whatwg.org/multipage/embedded-content.html#texttrackcuelist}
    */
-  var TextTrackCueList =
-  /*#__PURE__*/
-  function () {
+  var TextTrackCueList = /*#__PURE__*/function () {
     /**
      * Create an instance of this class..
      *
@@ -7188,9 +7199,7 @@
    * @abstract
    */
 
-  var Track =
-  /*#__PURE__*/
-  function (_EventTarget) {
+  var Track = /*#__PURE__*/function (_EventTarget) {
     inheritsLoose(Track, _EventTarget);
 
     /**
@@ -7363,7 +7372,7 @@
     }
 
     if (!details.protocol) {
-      details.protocol = window$1.location.protocol;
+      details.protocol = window$3.location.protocol;
     }
 
     if (addToBody) {
@@ -7443,7 +7452,7 @@
 
   var isCrossOrigin = function isCrossOrigin(url, winLoc) {
     if (winLoc === void 0) {
-      winLoc = window$1.location;
+      winLoc = window$3.location;
     }
 
     var urlInfo = parseUrl(url); // IE8 protocol relative urls will return ':' for protocol
@@ -7506,8 +7515,8 @@
   var xhr = createXHR; // Allow use of default import syntax in TypeScript
 
   var default_1 = createXHR;
-  createXHR.XMLHttpRequest = window$1.XMLHttpRequest || noop;
-  createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window$1.XDomainRequest;
+  createXHR.XMLHttpRequest = window$3.XMLHttpRequest || noop;
+  createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window$3.XDomainRequest;
   forEachArray(["get", "put", "post", "patch", "head", "delete"], function (method) {
     createXHR[method === "delete" ? "del" : method] = function (uri, options, callback) {
       options = initParams(uri, options, callback);
@@ -7774,7 +7783,7 @@
    */
 
   var parseCues = function parseCues(srcContent, track) {
-    var parser = new window$1.WebVTT.Parser(window$1, window$1.vttjs, window$1.WebVTT.StringDecoder());
+    var parser = new window$3.WebVTT.Parser(window$3, window$3.vttjs, window$3.WebVTT.StringDecoder());
     var errors = [];
 
     parser.oncue = function (cue) {
@@ -7795,16 +7804,16 @@
     parser.parse(srcContent);
 
     if (errors.length > 0) {
-      if (window$1.console && window$1.console.groupCollapsed) {
-        window$1.console.groupCollapsed("Text Track parsing errors for " + track.src);
+      if (window$3.console && window$3.console.groupCollapsed) {
+        window$3.console.groupCollapsed("Text Track parsing errors for " + track.src);
       }
 
       errors.forEach(function (error) {
         return log.error(error);
       });
 
-      if (window$1.console && window$1.console.groupEnd) {
-        window$1.console.groupEnd();
+      if (window$3.console && window$3.console.groupEnd) {
+        window$3.console.groupEnd();
       }
     }
 
@@ -7841,7 +7850,7 @@
       track.loaded_ = true; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
       // NOTE: this is only used for the alt/video.novtt.js build
 
-      if (typeof window$1.WebVTT !== 'function') {
+      if (typeof window$3.WebVTT !== 'function') {
         if (track.tech_) {
           // to prevent use before define eslint error, we define loadHandler
           // as a let here
@@ -7867,9 +7876,7 @@
    */
 
 
-  var TextTrack =
-  /*#__PURE__*/
-  function (_Track) {
+  var TextTrack = /*#__PURE__*/function (_Track) {
     inheritsLoose(TextTrack, _Track);
 
     /**
@@ -8120,8 +8127,8 @@
     _proto.addCue = function addCue(originalCue) {
       var cue = originalCue;
 
-      if (window$1.vttjs && !(originalCue instanceof window$1.vttjs.VTTCue)) {
-        cue = new window$1.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
+      if (window$3.vttjs && !(originalCue instanceof window$3.vttjs.VTTCue)) {
+        cue = new window$3.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
 
         for (var prop in originalCue) {
           if (!(prop in cue)) {
@@ -8186,9 +8193,7 @@
    * @extends Track
    */
 
-  var AudioTrack =
-  /*#__PURE__*/
-  function (_Track) {
+  var AudioTrack = /*#__PURE__*/function (_Track) {
     inheritsLoose(AudioTrack, _Track);
 
     /**
@@ -8281,9 +8286,7 @@
    * @extends Track
    */
 
-  var VideoTrack =
-  /*#__PURE__*/
-  function (_Track) {
+  var VideoTrack = /*#__PURE__*/function (_Track) {
     inheritsLoose(VideoTrack, _Track);
 
     /**
@@ -8384,9 +8387,7 @@
    * @extends EventTarget
    */
 
-  var HTMLTrackElement =
-  /*#__PURE__*/
-  function (_EventTarget) {
+  var HTMLTrackElement = /*#__PURE__*/function (_EventTarget) {
     inheritsLoose(HTMLTrackElement, _EventTarget);
 
     /**
@@ -8560,6 +8561,7 @@
   /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
   /* vim: set shiftwidth=2 tabstop=2 autoindent cindent expandtab: */
+
   var _objCreate = Object.create || function () {
     function F() {}
 
@@ -8602,7 +8604,7 @@
       return (h | 0) * 3600 + (m | 0) * 60 + (s | 0) + (f | 0) / 1000;
     }
 
-    var m = input.match(/^(\d+):(\d{2})(:\d{2})?\.(\d{3})/);
+    var m = input.match(/^(\d+):(\d{1,2})(:\d{1,2})?\.(\d{3})/);
 
     if (!m) {
       return null;
@@ -8748,7 +8750,7 @@
             settings.alt(k, vals0, ["auto"]);
 
             if (vals.length === 2) {
-              settings.alt("lineAlign", vals[1], ["start", "middle", "end"]);
+              settings.alt("lineAlign", vals[1], ["start", "center", "end"]);
             }
 
             break;
@@ -8758,7 +8760,7 @@
             settings.percent(k, vals[0]);
 
             if (vals.length === 2) {
-              settings.alt("positionAlign", vals[1], ["start", "middle", "end"]);
+              settings.alt("positionAlign", vals[1], ["start", "center", "end"]);
             }
 
             break;
@@ -8768,29 +8770,46 @@
             break;
 
           case "align":
-            settings.alt(k, v, ["start", "middle", "end", "left", "right"]);
+            settings.alt(k, v, ["start", "center", "end", "left", "right"]);
             break;
         }
       }, /:/, /\s/); // Apply default values for any missing fields.
 
       cue.region = settings.get("region", null);
       cue.vertical = settings.get("vertical", "");
-      cue.line = settings.get("line", "auto");
+
+      try {
+        cue.line = settings.get("line", "auto");
+      } catch (e) {}
+
       cue.lineAlign = settings.get("lineAlign", "start");
       cue.snapToLines = settings.get("snapToLines", true);
-      cue.size = settings.get("size", 100);
-      cue.align = settings.get("align", "middle");
-      cue.position = settings.get("position", {
-        start: 0,
-        left: 0,
-        middle: 50,
-        end: 100,
-        right: 100
-      }, cue.align);
+      cue.size = settings.get("size", 100); // Safari still uses the old middle value and won't accept center
+
+      try {
+        cue.align = settings.get("align", "center");
+      } catch (e) {
+        cue.align = settings.get("align", "middle");
+      }
+
+      try {
+        cue.position = settings.get("position", "auto");
+      } catch (e) {
+        cue.position = settings.get("position", {
+          start: 0,
+          left: 0,
+          center: 50,
+          middle: 50,
+          end: 100,
+          right: 100
+        }, cue.align);
+      }
+
       cue.positionAlign = settings.get("positionAlign", {
         start: "start",
         left: "start",
-        middle: "middle",
+        center: "center",
+        middle: "center",
         end: "end",
         right: "end"
       }, cue.align);
@@ -8820,14 +8839,7 @@
     consumeCueSettings(input, cue);
   }
 
-  var ESCAPE = {
-    "&amp;": "&",
-    "&lt;": "<",
-    "&gt;": ">",
-    "&lrm;": "\u200E",
-    "&rlm;": "\u200F",
-    "&nbsp;": "\xA0"
-  };
+  var TEXTAREA_ELEMENT = document.createElement("textarea");
   var TAG_NAME = {
     c: "span",
     i: "i",
@@ -8837,6 +8849,18 @@
     rt: "rt",
     v: "span",
     lang: "span"
+  }; // 5.1 default text color
+  // 5.2 default text background color is equivalent to text color with bg_ prefix
+
+  var DEFAULT_COLOR_CLASS = {
+    white: 'rgba(255,255,255,1)',
+    lime: 'rgba(0,255,0,1)',
+    cyan: 'rgba(0,255,255,1)',
+    red: 'rgba(255,0,0,1)',
+    yellow: 'rgba(255,255,0,1)',
+    magenta: 'rgba(255,0,255,1)',
+    blue: 'rgba(0,0,255,1)',
+    black: 'rgba(0,0,0,1)'
   };
   var TAG_ANNOTATION = {
     v: "title",
@@ -8863,18 +8887,12 @@
       // the tag.
 
       return consume(m[1] ? m[1] : m[2]);
-    } // Unescape a string 's'.
-
-
-    function unescape1(e) {
-      return ESCAPE[e];
     }
 
     function unescape(s) {
-      while (m = s.match(/&(amp|lt|gt|lrm|rlm|nbsp);/)) {
-        s = s.replace(m[0], unescape1);
-      }
-
+      TEXTAREA_ELEMENT.innerHTML = s;
+      s = TEXTAREA_ELEMENT.textContent;
+      TEXTAREA_ELEMENT.textContent = "";
       return s;
     }
 
@@ -8891,7 +8909,6 @@
       }
 
       var element = window.document.createElement(tagName);
-      element.localName = tagName;
       var name = TAG_ANNOTATION[type];
 
       if (name && annotation) {
@@ -8950,7 +8967,19 @@
 
 
         if (m[2]) {
-          node.className = m[2].substr(1).replace('.', ' ');
+          var classes = m[2].split('.');
+          classes.forEach(function (cl) {
+            var bgColor = /^bg_/.test(cl); // slice out `bg_` if it's a background color
+
+            var colorName = bgColor ? cl.slice(3) : cl;
+
+            if (DEFAULT_COLOR_CLASS.hasOwnProperty(colorName)) {
+              var propName = bgColor ? 'background-color' : 'color';
+              var propValue = DEFAULT_COLOR_CLASS[colorName];
+              node.style[propName] = propValue;
+            }
+          });
+          node.className = classes.join(' ');
         } // Append the node to the current node, and enter the scope of the new
         // node.
 
@@ -9110,7 +9139,7 @@
     };
     this.applyStyles(styles, this.cueDiv); // Create an absolutely positioned div that will be used to position the cue
     // div. Note, all WebVTT cue-setting alignments are equivalent to the CSS
-    // mirrors of them except "middle" which is "center" in CSS.
+    // mirrors of them except middle instead of center on Safari.
 
     this.div = window.document.createElement("div");
     styles = {
@@ -9134,7 +9163,7 @@
         textPos = cue.position;
         break;
 
-      case "middle":
+      case "center":
         textPos = cue.position - cue.size / 2;
         break;
 
@@ -9412,7 +9441,7 @@
       var calculatedPercentage = boxPosition.lineHeight / containerBox.height * 100;
 
       switch (cue.lineAlign) {
-        case "middle":
+        case "center":
           linePos -= calculatedPercentage / 2;
           break;
 
@@ -9790,7 +9819,14 @@
                 continue;
               }
 
-              self.cue = new (self.vttjs.VTTCue || self.window.VTTCue)(0, 0, "");
+              self.cue = new (self.vttjs.VTTCue || self.window.VTTCue)(0, 0, ""); // Safari still uses the old middle value and won't accept center
+
+              try {
+                self.cue.align = "center";
+              } catch (e) {
+                self.cue.align = "middle";
+              }
+
               self.state = "CUE"; // 30-39 - Check if self line contains an optional identifier or timing data.
 
               if (line.indexOf("-->") === -1) {
@@ -9835,7 +9871,7 @@
                 self.cue.text += "\n";
               }
 
-              self.cue.text += line;
+              self.cue.text += line.replace(/\u2028/g, '\n').replace(/u2029/g, '\n');
               continue;
 
             case "BADCUE":
@@ -9914,10 +9950,13 @@
   };
   var alignSetting = {
     "start": 1,
-    "middle": 1,
+    "center": 1,
     "end": 1,
     "left": 1,
-    "right": 1
+    "right": 1,
+    "auto": 1,
+    "line-left": 1,
+    "line-right": 1
   };
 
   function findDirectionSetting(value) {
@@ -9962,10 +10001,10 @@
     var _snapToLines = true;
     var _line = "auto";
     var _lineAlign = "start";
-    var _position = 50;
-    var _positionAlign = "middle";
-    var _size = 50;
-    var _align = "middle";
+    var _position = "auto";
+    var _positionAlign = "auto";
+    var _size = 100;
+    var _align = "center";
     Object.defineProperties(this, {
       "id": {
         enumerable: true,
@@ -10042,7 +10081,7 @@
           var setting = findDirectionSetting(value); // Have to check for false because the setting an be an empty string.
 
           if (setting === false) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            throw new SyntaxError("Vertical: an invalid or illegal direction string was specified.");
           }
 
           _vertical = setting;
@@ -10066,7 +10105,7 @@
         },
         set: function set(value) {
           if (typeof value !== "number" && value !== autoKeyword) {
-            throw new SyntaxError("An invalid number or illegal string was specified.");
+            throw new SyntaxError("Line: an invalid number or illegal string was specified.");
           }
 
           _line = value;
@@ -10082,11 +10121,11 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("lineAlign: an invalid or illegal string was specified.");
+          } else {
+            _lineAlign = setting;
+            this.hasBeenReset = true;
           }
-
-          _lineAlign = setting;
-          this.hasBeenReset = true;
         }
       },
       "position": {
@@ -10112,11 +10151,11 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("positionAlign: an invalid or illegal string was specified.");
+          } else {
+            _positionAlign = setting;
+            this.hasBeenReset = true;
           }
-
-          _positionAlign = setting;
-          this.hasBeenReset = true;
         }
       },
       "size": {
@@ -10142,7 +10181,7 @@
           var setting = findAlignSetting(value);
 
           if (!setting) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            throw new SyntaxError("align: an invalid or illegal alignment string was specified.");
           }
 
           _align = setting;
@@ -10299,10 +10338,10 @@
           var setting = findScrollSetting(value); // Have to check for false as an empty string is a legal value.
 
           if (setting === false) {
-            throw new SyntaxError("An invalid or illegal string was specified.");
+            console.warn("Scroll: an invalid or illegal string was specified.");
+          } else {
+            _scroll = setting;
           }
-
-          _scroll = setting;
         }
       }
     });
@@ -10335,24 +10374,24 @@
       VTTCue: vttcue,
       VTTRegion: vttregion
     };
-    window$1.vttjs = vttjs;
-    window$1.WebVTT = vttjs.WebVTT;
+    window$3.vttjs = vttjs;
+    window$3.WebVTT = vttjs.WebVTT;
     var cueShim = vttjs.VTTCue;
     var regionShim = vttjs.VTTRegion;
-    var nativeVTTCue = window$1.VTTCue;
-    var nativeVTTRegion = window$1.VTTRegion;
+    var nativeVTTCue = window$3.VTTCue;
+    var nativeVTTRegion = window$3.VTTRegion;
 
     vttjs.shim = function () {
-      window$1.VTTCue = cueShim;
-      window$1.VTTRegion = regionShim;
+      window$3.VTTCue = cueShim;
+      window$3.VTTRegion = regionShim;
     };
 
     vttjs.restore = function () {
-      window$1.VTTCue = nativeVTTCue;
-      window$1.VTTRegion = nativeVTTRegion;
+      window$3.VTTCue = nativeVTTCue;
+      window$3.VTTRegion = nativeVTTRegion;
     };
 
-    if (!window$1.VTTCue) {
+    if (!window$3.VTTCue) {
       vttjs.shim();
     }
   });
@@ -10428,9 +10467,7 @@
    */
 
 
-  var Tech =
-  /*#__PURE__*/
-  function (_Component) {
+  var Tech = /*#__PURE__*/function (_Component) {
     inheritsLoose(Tech, _Component);
 
     /**
@@ -10943,7 +10980,7 @@
     _proto.addWebVttScript_ = function addWebVttScript_() {
       var _this5 = this;
 
-      if (window$1.WebVTT) {
+      if (window$3.WebVTT) {
         return;
       } // Initially, Tech.el_ is a child of a dummy-div wait until the Component system
       // signals that the Tech is ready at which point Tech.el_ is part of the DOM
@@ -10990,7 +11027,7 @@
         }); // but have not loaded yet and we set it to true before the inject so that
         // we don't overwrite the injected window.WebVTT if it loads right away
 
-        window$1.WebVTT = true;
+        window$3.WebVTT = true;
         this.el().parentNode.appendChild(script);
       } else {
         this.ready(this.addWebVttScript_);
@@ -11205,7 +11242,7 @@
     ;
 
     _proto.requestPictureInPicture = function requestPictureInPicture() {
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (PromiseClass) {
         return PromiseClass.reject();
@@ -11385,9 +11422,9 @@
 
       name = toTitleCase(name);
 
-      if (window$1 && window$1.videojs && window$1.videojs[name]) {
+      if (window$3 && window$3.videojs && window$3.videojs[name]) {
         log.warn("The " + name + " tech was added to the videojs object when it should be registered using videojs.registerTech(name, tech)");
-        return window$1.videojs[name];
+        return window$3.videojs[name];
       }
     };
 
@@ -12261,9 +12298,7 @@
    * @extends Component
    */
 
-  var MediaLoader =
-  /*#__PURE__*/
-  function (_Component) {
+  var MediaLoader = /*#__PURE__*/function (_Component) {
     inheritsLoose(MediaLoader, _Component);
 
     /**
@@ -12327,9 +12362,7 @@
    * @extends Component
    */
 
-  var ClickableComponent =
-  /*#__PURE__*/
-  function (_Component) {
+  var ClickableComponent = /*#__PURE__*/function (_Component) {
     inheritsLoose(ClickableComponent, _Component);
 
     /**
@@ -12578,9 +12611,7 @@
    * @extends ClickableComponent
    */
 
-  var PosterImage =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
+  var PosterImage = /*#__PURE__*/function (_ClickableComponent) {
     inheritsLoose(PosterImage, _ClickableComponent);
 
     /**
@@ -12688,7 +12719,12 @@
         return;
       }
 
-      if (this.player_.tech(true)) {
+      var sourceIsEncrypted = this.player_.usingPlugin('eme') && this.player_.eme.sessions && this.player_.eme.sessions.length > 0;
+
+      if (this.player_.tech(true) && // We've observed a bug in IE and Edge when playing back DRM content where
+      // calling .focus() on the video element causes the video to go black,
+      // so we avoid it in that specific case
+      !((IE_VERSION || IS_EDGE) && sourceIsEncrypted)) {
         this.player_.tech(true).focus();
       }
 
@@ -12777,9 +12813,7 @@
    */
 
 
-  var TextTrackDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var TextTrackDisplay = /*#__PURE__*/function (_Component) {
     inheritsLoose(TextTrackDisplay, _Component);
 
     /**
@@ -12814,9 +12848,9 @@
 
         player.on('fullscreenchange', updateDisplayHandler);
         player.on('playerresize', updateDisplayHandler);
-        window$1.addEventListener('orientationchange', updateDisplayHandler);
+        window$3.addEventListener('orientationchange', updateDisplayHandler);
         player.on('dispose', function () {
-          return window$1.removeEventListener('orientationchange', updateDisplayHandler);
+          return window$3.removeEventListener('orientationchange', updateDisplayHandler);
         });
         var tracks = this.options_.playerOptions.tracks || [];
 
@@ -12927,8 +12961,8 @@
     ;
 
     _proto.clearDisplay = function clearDisplay() {
-      if (typeof window$1.WebVTT === 'function') {
-        window$1.WebVTT.processCues(window$1, [], this.el_);
+      if (typeof window$3.WebVTT === 'function') {
+        window$3.WebVTT.processCues(window$3, [], this.el_);
       }
     }
     /**
@@ -13054,7 +13088,7 @@
         }
 
         if (overrides.fontPercent && overrides.fontPercent !== 1) {
-          var fontSize = window$1.parseFloat(cueDiv.style.fontSize);
+          var fontSize = window$3.parseFloat(cueDiv.style.fontSize);
           cueDiv.style.fontSize = fontSize * overrides.fontPercent + 'px';
           cueDiv.style.height = 'auto';
           cueDiv.style.top = 'auto';
@@ -13083,7 +13117,7 @@
         tracks = [tracks];
       }
 
-      if (typeof window$1.WebVTT !== 'function' || tracks.every(function (track) {
+      if (typeof window$3.WebVTT !== 'function' || tracks.every(function (track) {
         return !track.activeCues;
       })) {
         return;
@@ -13100,7 +13134,7 @@
       } // removes all cues before it processes new ones
 
 
-      window$1.WebVTT.processCues(window$1, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
+      window$3.WebVTT.processCues(window$3, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
 
       for (var _i2 = 0; _i2 < tracks.length; ++_i2) {
         var _track2 = tracks[_i2];
@@ -13128,9 +13162,7 @@
    * @extends Component
    */
 
-  var LoadingSpinner =
-  /*#__PURE__*/
-  function (_Component) {
+  var LoadingSpinner = /*#__PURE__*/function (_Component) {
     inheritsLoose(LoadingSpinner, _Component);
 
     function LoadingSpinner() {
@@ -13173,9 +13205,7 @@
    * @extends ClickableComponent
    */
 
-  var Button =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
+  var Button = /*#__PURE__*/function (_ClickableComponent) {
     inheritsLoose(Button, _ClickableComponent);
 
     function Button() {
@@ -13311,9 +13341,7 @@
    * @extends Button
    */
 
-  var BigPlayButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var BigPlayButton = /*#__PURE__*/function (_Button) {
     inheritsLoose(BigPlayButton, _Button);
 
     function BigPlayButton(player, options) {
@@ -13418,9 +13446,7 @@
    * @extends Button
    */
 
-  var CloseButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var CloseButton = /*#__PURE__*/function (_Button) {
     inheritsLoose(CloseButton, _Button);
 
     /**
@@ -13521,9 +13547,7 @@
    * @extends Button
    */
 
-  var PlayToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var PlayToggle = /*#__PURE__*/function (_Button) {
     inheritsLoose(PlayToggle, _Button);
 
     /**
@@ -13773,9 +13797,7 @@
    * @extends Component
    */
 
-  var TimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var TimeDisplay = /*#__PURE__*/function (_Component) {
     inheritsLoose(TimeDisplay, _Component);
 
     /**
@@ -13921,9 +13943,7 @@
    * @extends Component
    */
 
-  var CurrentTimeDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
+  var CurrentTimeDisplay = /*#__PURE__*/function (_TimeDisplay) {
     inheritsLoose(CurrentTimeDisplay, _TimeDisplay);
 
     function CurrentTimeDisplay() {
@@ -13993,9 +14013,7 @@
    * @extends Component
    */
 
-  var DurationDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
+  var DurationDisplay = /*#__PURE__*/function (_TimeDisplay) {
     inheritsLoose(DurationDisplay, _TimeDisplay);
 
     /**
@@ -14089,9 +14107,7 @@
    * @extends Component
    */
 
-  var TimeDivider =
-  /*#__PURE__*/
-  function (_Component) {
+  var TimeDivider = /*#__PURE__*/function (_Component) {
     inheritsLoose(TimeDivider, _Component);
 
     function TimeDivider() {
@@ -14129,9 +14145,7 @@
    * @extends Component
    */
 
-  var RemainingTimeDisplay =
-  /*#__PURE__*/
-  function (_TimeDisplay) {
+  var RemainingTimeDisplay = /*#__PURE__*/function (_TimeDisplay) {
     inheritsLoose(RemainingTimeDisplay, _TimeDisplay);
 
     /**
@@ -14240,9 +14254,7 @@
    * @extends Component
    */
 
-  var LiveDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var LiveDisplay = /*#__PURE__*/function (_Component) {
     inheritsLoose(LiveDisplay, _Component);
 
     /**
@@ -14325,9 +14337,7 @@
    * @extends Component
    */
 
-  var SeekToLive =
-  /*#__PURE__*/
-  function (_Button) {
+  var SeekToLive = /*#__PURE__*/function (_Button) {
     inheritsLoose(SeekToLive, _Button);
 
     /**
@@ -14451,9 +14461,7 @@
    * @extends Component
    */
 
-  var Slider =
-  /*#__PURE__*/
-  function (_Component) {
+  var Slider = /*#__PURE__*/function (_Component) {
     inheritsLoose(Slider, _Component);
 
     /**
@@ -14699,7 +14707,7 @@
       var progress = this.getProgress();
 
       if (progress === this.progress_) {
-        return;
+        return progress;
       }
 
       this.progress_ = progress;
@@ -14721,7 +14729,7 @@
     ;
 
     _proto.getProgress = function getProgress() {
-      return clamp(this.getPercent(), 0, 1).toFixed(4);
+      return Number(clamp(this.getPercent(), 0, 1).toFixed(4));
     }
     /**
      * Calculate distance for slider
@@ -14827,9 +14835,7 @@
    */
 
 
-  var LoadProgressBar =
-  /*#__PURE__*/
-  function (_Component) {
+  var LoadProgressBar = /*#__PURE__*/function (_Component) {
     inheritsLoose(LoadProgressBar, _Component);
 
     /**
@@ -14966,9 +14972,7 @@
    * @extends Component
    */
 
-  var TimeTooltip =
-  /*#__PURE__*/
-  function (_Component) {
+  var TimeTooltip = /*#__PURE__*/function (_Component) {
     inheritsLoose(TimeTooltip, _Component);
 
     /**
@@ -15131,9 +15135,7 @@
    * @extends Component
    */
 
-  var PlayProgressBar =
-  /*#__PURE__*/
-  function (_Component) {
+  var PlayProgressBar = /*#__PURE__*/function (_Component) {
     inheritsLoose(PlayProgressBar, _Component);
 
     /**
@@ -15222,9 +15224,7 @@
    * @extends Component
    */
 
-  var MouseTimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var MouseTimeDisplay = /*#__PURE__*/function (_Component) {
     inheritsLoose(MouseTimeDisplay, _Component);
 
     /**
@@ -15297,9 +15297,7 @@
 
   var STEP_SECONDS = 5; // The multiplier of STEP_SECONDS that PgUp/PgDown move the timeline.
 
-  var PAGE_KEY_MULTIPLIER = 12; // The interval at which the bar should update as it progresses.
-
-  var UPDATE_REFRESH_INTERVAL$1 = 30;
+  var PAGE_KEY_MULTIPLIER = 12;
   /**
    * Seek bar and container for the progress bars. Uses {@link PlayProgressBar}
    * as its `bar`.
@@ -15307,9 +15305,7 @@
    * @extends Slider
    */
 
-  var SeekBar =
-  /*#__PURE__*/
-  function (_Slider) {
+  var SeekBar = /*#__PURE__*/function (_Slider) {
     inheritsLoose(SeekBar, _Slider);
 
     /**
@@ -15340,7 +15336,8 @@
     var _proto = SeekBar.prototype;
 
     _proto.setEventHandlers_ = function setEventHandlers_() {
-      this.update = throttle(bind(this, this.update), UPDATE_REFRESH_INTERVAL$1);
+      this.update_ = bind(this, this.update);
+      this.update = throttle(this.update_, UPDATE_REFRESH_INTERVAL);
       this.on(this.player_, ['ended', 'durationchange', 'timeupdate'], this.update);
 
       if (this.player_.liveTracker) {
@@ -15374,7 +15371,7 @@
         return;
       }
 
-      this.updateInterval = this.setInterval(this.update, UPDATE_REFRESH_INTERVAL$1);
+      this.updateInterval = this.setInterval(this.update, UPDATE_REFRESH_INTERVAL);
     };
 
     _proto.disableInterval_ = function disableInterval_(e) {
@@ -15446,6 +15443,11 @@
 
           _this2.currentTime_ = currentTime;
           _this2.duration_ = duration;
+        } // update the progress bar time tooltip with the current time
+
+
+        if (_this2.bar) {
+          _this2.bar.update(getBoundingClientRect(_this2.el()), _this2.getProgress());
         }
       });
       return percent;
@@ -15622,6 +15624,10 @@
 
       if (this.videoWasPlaying) {
         silencePromise(this.player_.play());
+      } else {
+        // We're done seeking and the time has changed.
+        // If the player is paused, make sure we display the correct time on the seek bar.
+        this.update_();
       }
     }
     /**
@@ -15735,9 +15741,7 @@
    * @extends Component
    */
 
-  var ProgressControl =
-  /*#__PURE__*/
-  function (_Component) {
+  var ProgressControl = /*#__PURE__*/function (_Component) {
     inheritsLoose(ProgressControl, _Component);
 
     /**
@@ -15965,9 +15969,7 @@
    * @extends Button
    */
 
-  var PictureInPictureToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var PictureInPictureToggle = /*#__PURE__*/function (_Button) {
     inheritsLoose(PictureInPictureToggle, _Button);
 
     /**
@@ -16070,9 +16072,7 @@
    * @extends Button
    */
 
-  var FullscreenToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var FullscreenToggle = /*#__PURE__*/function (_Button) {
     inheritsLoose(FullscreenToggle, _Button);
 
     /**
@@ -16195,9 +16195,7 @@
    * @extends Component
    */
 
-  var VolumeLevel =
-  /*#__PURE__*/
-  function (_Component) {
+  var VolumeLevel = /*#__PURE__*/function (_Component) {
     inheritsLoose(VolumeLevel, _Component);
 
     function VolumeLevel() {
@@ -16230,9 +16228,7 @@
    * @extends Slider
    */
 
-  var VolumeBar =
-  /*#__PURE__*/
-  function (_Slider) {
+  var VolumeBar = /*#__PURE__*/function (_Slider) {
     inheritsLoose(VolumeBar, _Slider);
 
     /**
@@ -16429,9 +16425,7 @@
    * @extends Component
    */
 
-  var VolumeControl =
-  /*#__PURE__*/
-  function (_Component) {
+  var VolumeControl = /*#__PURE__*/function (_Component) {
     inheritsLoose(VolumeControl, _Component);
 
     /**
@@ -16607,9 +16601,7 @@
    * @extends Button
    */
 
-  var MuteToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var MuteToggle = /*#__PURE__*/function (_Button) {
     inheritsLoose(MuteToggle, _Button);
 
     /**
@@ -16763,9 +16755,7 @@
    * @extends Component
    */
 
-  var VolumePanel =
-  /*#__PURE__*/
-  function (_Component) {
+  var VolumePanel = /*#__PURE__*/function (_Component) {
     inheritsLoose(VolumePanel, _Component);
 
     /**
@@ -16981,9 +16971,7 @@
    * @extends Component
    */
 
-  var Menu =
-  /*#__PURE__*/
-  function (_Component) {
+  var Menu = /*#__PURE__*/function (_Component) {
     inheritsLoose(Menu, _Component);
 
     /**
@@ -17274,9 +17262,7 @@
    * @extends Component
    */
 
-  var MenuButton =
-  /*#__PURE__*/
-  function (_Component) {
+  var MenuButton = /*#__PURE__*/function (_Component) {
     inheritsLoose(MenuButton, _Component);
 
     /**
@@ -17713,9 +17699,7 @@
    * @extends MenuButton
    */
 
-  var TrackButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var TrackButton = /*#__PURE__*/function (_MenuButton) {
     inheritsLoose(TrackButton, _MenuButton);
 
     /**
@@ -17779,9 +17763,7 @@
    * @extends ClickableComponent
    */
 
-  var MenuItem =
-  /*#__PURE__*/
-  function (_ClickableComponent) {
+  var MenuItem = /*#__PURE__*/function (_ClickableComponent) {
     inheritsLoose(MenuItem, _ClickableComponent);
 
     /**
@@ -17917,9 +17899,7 @@
    * @extends MenuItem
    */
 
-  var TextTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var TextTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
     inheritsLoose(TextTrackMenuItem, _MenuItem);
 
     /**
@@ -17981,10 +17961,10 @@
         var event;
 
         _this.on(['tap', 'click'], function () {
-          if (typeof window$1.Event !== 'object') {
+          if (typeof window$3.Event !== 'object') {
             // Android 2.3 throws an Illegal Constructor error for window.Event
             try {
-              event = new window$1.Event('change');
+              event = new window$3.Event('change');
             } catch (err) {// continue regardless of error
             }
           }
@@ -18102,9 +18082,7 @@
    * @extends TextTrackMenuItem
    */
 
-  var OffTextTrackMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
+  var OffTextTrackMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
     inheritsLoose(OffTextTrackMenuItem, _TextTrackMenuItem);
 
     /**
@@ -18207,9 +18185,7 @@
    * @extends MenuButton
    */
 
-  var TextTrackButton =
-  /*#__PURE__*/
-  function (_TrackButton) {
+  var TextTrackButton = /*#__PURE__*/function (_TrackButton) {
     inheritsLoose(TextTrackButton, _TrackButton);
 
     /**
@@ -18304,9 +18280,7 @@
    * @extends MenuItem
    */
 
-  var ChaptersTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var ChaptersTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
     inheritsLoose(ChaptersTrackMenuItem, _MenuItem);
 
     /**
@@ -18386,9 +18360,7 @@
    * @extends TextTrackButton
    */
 
-  var ChaptersButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
+  var ChaptersButton = /*#__PURE__*/function (_TextTrackButton) {
     inheritsLoose(ChaptersButton, _TextTrackButton);
 
     /**
@@ -18591,9 +18563,7 @@
    * @extends TextTrackButton
    */
 
-  var DescriptionsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
+  var DescriptionsButton = /*#__PURE__*/function (_TextTrackButton) {
     inheritsLoose(DescriptionsButton, _TextTrackButton);
 
     /**
@@ -18697,9 +18667,7 @@
    * @extends TextTrackButton
    */
 
-  var SubtitlesButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
+  var SubtitlesButton = /*#__PURE__*/function (_TextTrackButton) {
     inheritsLoose(SubtitlesButton, _TextTrackButton);
 
     /**
@@ -18762,9 +18730,7 @@
    * @extends TextTrackMenuItem
    */
 
-  var CaptionSettingsMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
+  var CaptionSettingsMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
     inheritsLoose(CaptionSettingsMenuItem, _TextTrackMenuItem);
 
     /**
@@ -18828,9 +18794,7 @@
    * @extends TextTrackButton
    */
 
-  var CaptionsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
+  var CaptionsButton = /*#__PURE__*/function (_TextTrackButton) {
     inheritsLoose(CaptionsButton, _TextTrackButton);
 
     /**
@@ -18914,9 +18878,7 @@
    * @extends TextTrackMenuItem
    */
 
-  var SubsCapsMenuItem =
-  /*#__PURE__*/
-  function (_TextTrackMenuItem) {
+  var SubsCapsMenuItem = /*#__PURE__*/function (_TextTrackMenuItem) {
     inheritsLoose(SubsCapsMenuItem, _TextTrackMenuItem);
 
     function SubsCapsMenuItem() {
@@ -18952,9 +18914,7 @@
    * @extends TextTrackButton
    */
 
-  var SubsCapsButton =
-  /*#__PURE__*/
-  function (_TextTrackButton) {
+  var SubsCapsButton = /*#__PURE__*/function (_TextTrackButton) {
     inheritsLoose(SubsCapsButton, _TextTrackButton);
 
     function SubsCapsButton(player, options) {
@@ -19044,9 +19004,7 @@
    * @extends MenuItem
    */
 
-  var AudioTrackMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var AudioTrackMenuItem = /*#__PURE__*/function (_MenuItem) {
     inheritsLoose(AudioTrackMenuItem, _MenuItem);
 
     /**
@@ -19153,9 +19111,7 @@
    * @extends TrackButton
    */
 
-  var AudioTrackButton =
-  /*#__PURE__*/
-  function (_TrackButton) {
+  var AudioTrackButton = /*#__PURE__*/function (_TrackButton) {
     inheritsLoose(AudioTrackButton, _TrackButton);
 
     /**
@@ -19245,9 +19201,7 @@
    * @extends MenuItem
    */
 
-  var PlaybackRateMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var PlaybackRateMenuItem = /*#__PURE__*/function (_MenuItem) {
     inheritsLoose(PlaybackRateMenuItem, _MenuItem);
 
     /**
@@ -19330,9 +19284,7 @@
    * @extends MenuButton
    */
 
-  var PlaybackRateMenuButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var PlaybackRateMenuButton = /*#__PURE__*/function (_MenuButton) {
     inheritsLoose(PlaybackRateMenuButton, _MenuButton);
 
     /**
@@ -19536,9 +19488,7 @@
    * @extends Component
    */
 
-  var Spacer =
-  /*#__PURE__*/
-  function (_Component) {
+  var Spacer = /*#__PURE__*/function (_Component) {
     inheritsLoose(Spacer, _Component);
 
     function Spacer() {
@@ -19581,9 +19531,7 @@
    * @extends Spacer
    */
 
-  var CustomControlSpacer =
-  /*#__PURE__*/
-  function (_Spacer) {
+  var CustomControlSpacer = /*#__PURE__*/function (_Spacer) {
     inheritsLoose(CustomControlSpacer, _Spacer);
 
     function CustomControlSpacer() {
@@ -19631,9 +19579,7 @@
    * @extends Component
    */
 
-  var ControlBar =
-  /*#__PURE__*/
-  function (_Component) {
+  var ControlBar = /*#__PURE__*/function (_Component) {
     inheritsLoose(ControlBar, _Component);
 
     function ControlBar() {
@@ -19682,9 +19628,7 @@
    * @extends ModalDialog
    */
 
-  var ErrorDisplay =
-  /*#__PURE__*/
-  function (_ModalDialog) {
+  var ErrorDisplay = /*#__PURE__*/function (_ModalDialog) {
     inheritsLoose(ErrorDisplay, _ModalDialog);
 
     /**
@@ -19919,9 +19863,7 @@
    */
 
 
-  var TextTrackSettings =
-  /*#__PURE__*/
-  function (_ModalDialog) {
+  var TextTrackSettings = /*#__PURE__*/function (_ModalDialog) {
     inheritsLoose(TextTrackSettings, _ModalDialog);
 
     /**
@@ -20184,7 +20126,7 @@
       var values;
 
       try {
-        values = JSON.parse(window$1.localStorage.getItem(LOCAL_STORAGE_KEY));
+        values = JSON.parse(window$3.localStorage.getItem(LOCAL_STORAGE_KEY));
       } catch (err) {
         log.warn(err);
       }
@@ -20207,9 +20149,9 @@
 
       try {
         if (Object.keys(values).length) {
-          window$1.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(values));
+          window$3.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(values));
         } else {
-          window$1.localStorage.removeItem(LOCAL_STORAGE_KEY);
+          window$3.localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
       } catch (err) {
         log.warn(err);
@@ -20269,9 +20211,7 @@
    * @extends Component
    */
 
-  var ResizeManager =
-  /*#__PURE__*/
-  function (_Component) {
+  var ResizeManager = /*#__PURE__*/function (_Component) {
     inheritsLoose(ResizeManager, _Component);
 
     /**
@@ -20290,7 +20230,7 @@
     function ResizeManager(player, options) {
       var _this;
 
-      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window$1.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
+      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window$3.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
 
       if (options.ResizeObserver === null) {
         RESIZE_OBSERVER_AVAILABLE = false;
@@ -20302,7 +20242,7 @@
         reportTouchActivity: false
       }, options);
       _this = _Component.call(this, player, options_) || this;
-      _this.ResizeObserver = options.ResizeObserver || window$1.ResizeObserver;
+      _this.ResizeObserver = options.ResizeObserver || window$3.ResizeObserver;
       _this.loadListener_ = null;
       _this.resizeObserver_ = null;
       _this.debouncedHandler_ = debounce(function () {
@@ -20423,20 +20363,23 @@
     return arr.length % 2 !== 0 ? sortedList[mid] : (sortedList[mid - 1] + sortedList[mid]) / 2;
   };
 
+  var defaults = {
+    // Number of seconds of live window (seekableEnd - seekableStart) that
+    // a video needs to have before the liveui will be shown.
+    trackingThreshold: 30
+  };
   /* track when we are at the live edge, and other helpers for live playback */
 
-  var LiveTracker =
-  /*#__PURE__*/
-  function (_Component) {
+  var LiveTracker = /*#__PURE__*/function (_Component) {
     inheritsLoose(LiveTracker, _Component);
 
     function LiveTracker(player, options) {
       var _this;
 
       // LiveTracker does not need an element
-      var options_ = mergeOptions({
+      var options_ = mergeOptions(defaults, options, {
         createEl: false
-      }, options);
+      });
       _this = _Component.call(this, player, options_) || this;
 
       _this.reset_();
@@ -20536,9 +20479,14 @@
     ;
 
     _proto.handleDurationchange = function handleDurationchange() {
-      if (this.player_.duration() === Infinity) {
+      if (this.player_.duration() === Infinity && this.liveWindow() >= this.options_.trackingThreshold) {
+        if (this.player_.options_.liveui) {
+          this.player_.addClass('vjs-liveui');
+        }
+
         this.startTracking();
       } else {
+        this.player_.removeClass('vjs-liveui');
         this.stopTracking();
       }
     }
@@ -20561,7 +20509,7 @@
         this.timeupdateSeen_ = this.player_.hasStarted();
       }
 
-      this.trackingInterval_ = this.setInterval(this.trackLive_, 30);
+      this.trackingInterval_ = this.setInterval(this.trackLive_, UPDATE_REFRESH_INTERVAL);
       this.trackLive_();
       this.on(this.player_, 'play', this.trackLive_);
       this.on(this.player_, 'pause', this.trackLive_); // this is to prevent showing that we are not live
@@ -20839,7 +20787,7 @@
       this.innerText = ''; // now we add all of that html in one by appending the
       // document fragment. This is how innerHTML does it.
 
-      window$1.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
+      window$3.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
 
       return this.innerHTML;
     }
@@ -20866,7 +20814,7 @@
   };
 
   var getInnerHTMLDescriptor = function getInnerHTMLDescriptor(tech) {
-    return getDescriptor([tech.el(), window$1.HTMLMediaElement.prototype, window$1.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
+    return getDescriptor([tech.el(), window$3.HTMLMediaElement.prototype, window$3.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
   };
   /**
    * Patches browser internal functions so that we can tell synchronously
@@ -20945,19 +20893,19 @@
   var srcDescriptorPolyfill = Object.defineProperty({}, 'src', {
     get: function get() {
       if (this.hasAttribute('src')) {
-        return getAbsoluteURL(window$1.Element.prototype.getAttribute.call(this, 'src'));
+        return getAbsoluteURL(window$3.Element.prototype.getAttribute.call(this, 'src'));
       }
 
       return '';
     },
     set: function set(v) {
-      window$1.Element.prototype.setAttribute.call(this, 'src', v);
+      window$3.Element.prototype.setAttribute.call(this, 'src', v);
       return v;
     }
   });
 
   var getSrcDescriptor = function getSrcDescriptor(tech) {
-    return getDescriptor([tech.el(), window$1.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
+    return getDescriptor([tech.el(), window$3.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
   };
   /**
    * setup `sourceset` handling on the `Html5` tech. This function
@@ -21087,9 +21035,7 @@
    * @extends Tech
    */
 
-  var Html5 =
-  /*#__PURE__*/
-  function (_Tech) {
+  var Html5 = /*#__PURE__*/function (_Tech) {
     inheritsLoose(Html5, _Tech);
 
     /**
@@ -21178,10 +21124,6 @@
 
 
       _this.proxyWebkitFullscreen_();
-
-      if (IS_IOS) {
-        _this.handleIOSHeadphonesDisconnection_();
-      }
 
       _this.triggerReady();
 
@@ -21281,51 +21223,6 @@
       });
     }
     /**
-     * Handle IOS Headphone disconnection during playback
-     *
-     * @private
-    */
-    ;
-
-    _proto.handleIOSHeadphonesDisconnection_ = function handleIOSHeadphonesDisconnection_() {
-      var _this2 = this;
-
-      // Fudge factor to account for TimeRanges rounding
-      var TIME_FUDGE_FACTOR = 1 / 30; // Comparisons between time values such as current time and the end of the buffered range
-      // can be misleading because of precision differences or when the current media has poorly
-      // aligned audio and video, which can cause values to be slightly off from what you would
-      // expect. This value is what we consider to be safe to use in such comparisons to account
-      // for these scenarios.
-
-      var SAFE_TIME_DELTA = TIME_FUDGE_FACTOR * 3; // If iOS check if we have a real stalled or supend event or
-      // we got stalled/suspend due headphones where disconnected during playback
-
-      this.on(['stalled', 'suspend'], function (e) {
-        var buffered = _this2.buffered();
-
-        if (!buffered.length) {
-          return;
-        }
-
-        var extraBuffer = false;
-
-        var currentTime = _this2.currentTime(); // Establish if we have an extra buffer in the current time range playing.
-
-
-        for (var i = 0; i < buffered.length; i++) {
-          if (buffered.start(i) <= currentTime && currentTime < buffered.end(i) + SAFE_TIME_DELTA) {
-            extraBuffer = true;
-            break;
-          }
-        } // if tech is not paused, browser has internet connection & player has extraBuffer inside the timeRange
-
-
-        if (extraBuffer && !_this2.paused() && window$1.navigator.onLine) {
-          _this2.pause();
-        }
-      });
-    }
-    /**
      * Attempt to force override of tracks for the given type
      *
      * @param {string} type - Track type to override, possible values include 'Audio',
@@ -21337,7 +21234,7 @@
     ;
 
     _proto.overrideNative_ = function overrideNative_(type, override) {
-      var _this3 = this;
+      var _this2 = this;
 
       // If there is no behavioral change don't add/remove listeners
       if (override !== this["featuresNative" + type + "Tracks"]) {
@@ -21348,9 +21245,9 @@
 
       if (this[lowerCaseType + "TracksListeners_"]) {
         Object.keys(this[lowerCaseType + "TracksListeners_"]).forEach(function (eventName) {
-          var elTracks = _this3.el()[lowerCaseType + "Tracks"];
+          var elTracks = _this2.el()[lowerCaseType + "Tracks"];
 
-          elTracks.removeEventListener(eventName, _this3[lowerCaseType + "TracksListeners_"][eventName]);
+          elTracks.removeEventListener(eventName, _this2[lowerCaseType + "TracksListeners_"][eventName]);
         });
       }
 
@@ -21390,7 +21287,7 @@
     ;
 
     _proto.proxyNativeTracksForType_ = function proxyNativeTracksForType_(name) {
-      var _this4 = this;
+      var _this3 = this;
 
       var props = NORMAL[name];
       var elTracks = this.el()[props.getterName];
@@ -21402,12 +21299,23 @@
 
       var listeners = {
         change: function change(e) {
-          techTracks.trigger({
+          var event = {
             type: 'change',
             target: techTracks,
             currentTarget: techTracks,
             srcElement: techTracks
-          });
+          };
+          techTracks.trigger(event); // if we are a text track change event, we should also notify the
+          // remote text track list. This can potentially cause a false positive
+          // if we were to get a change event on a non-remote track and
+          // we triggered the event on the remote text track list which doesn't
+          // contain that track. However, best practices mean looping through the
+          // list of tracks and searching for the appropriate mode value, so,
+          // this shouldn't pose an issue
+
+          if (name === 'text') {
+            _this3[REMOTE.remoteText.getterName]().trigger(event);
+          }
         },
         addtrack: function addtrack(e) {
           techTracks.addTrack(e.track);
@@ -21445,14 +21353,14 @@
         var listener = listeners[eventName];
         elTracks.addEventListener(eventName, listener);
 
-        _this4.on('dispose', function (e) {
+        _this3.on('dispose', function (e) {
           return elTracks.removeEventListener(eventName, listener);
         });
       }); // Remove (native) tracks that are not used anymore
 
       this.on('loadstart', removeOldTracks);
       this.on('dispose', function (e) {
-        return _this4.off('loadstart', removeOldTracks);
+        return _this3.off('loadstart', removeOldTracks);
       });
     }
     /**
@@ -21464,10 +21372,10 @@
     ;
 
     _proto.proxyNativeTracks_ = function proxyNativeTracks_() {
-      var _this5 = this;
+      var _this4 = this;
 
       NORMAL.names.forEach(function (name) {
-        _this5.proxyNativeTracksForType_(name);
+        _this4.proxyNativeTracksForType_(name);
       });
     }
     /**
@@ -21655,7 +21563,7 @@
     ;
 
     _proto.duration = function duration() {
-      var _this6 = this;
+      var _this5 = this;
 
       // Android Chrome will report duration as Infinity for VOD HLS until after
       // playback has started, which triggers the live display erroneously.
@@ -21665,13 +21573,13 @@
         // Wait for the first `timeupdate` with currentTime > 0 - there may be
         // several with 0
         var checkProgress = function checkProgress() {
-          if (_this6.el_.currentTime > 0) {
+          if (_this5.el_.currentTime > 0) {
             // Trigger durationchange for genuinely live video
-            if (_this6.el_.duration === Infinity) {
-              _this6.trigger('durationchange');
+            if (_this5.el_.duration === Infinity) {
+              _this5.trigger('durationchange');
             }
 
-            _this6.off('timeupdate', checkProgress);
+            _this5.off('timeupdate', checkProgress);
           }
         };
 
@@ -21716,7 +21624,7 @@
     ;
 
     _proto.proxyWebkitFullscreen_ = function proxyWebkitFullscreen_() {
-      var _this7 = this;
+      var _this6 = this;
 
       if (!('webkitDisplayingFullscreen' in this.el_)) {
         return;
@@ -21739,9 +21647,9 @@
 
       this.on('webkitbeginfullscreen', beginFn);
       this.on('dispose', function () {
-        _this7.off('webkitbeginfullscreen', beginFn);
+        _this6.off('webkitbeginfullscreen', beginFn);
 
-        _this7.off('webkitendfullscreen', endFn);
+        _this6.off('webkitendfullscreen', endFn);
       });
     }
     /**
@@ -21755,7 +21663,7 @@
 
     _proto.supportsFullScreen = function supportsFullScreen() {
       if (typeof this.el_.webkitEnterFullScreen === 'function') {
-        var userAgent = window$1.navigator && window$1.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
+        var userAgent = window$3.navigator && window$3.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
 
         if (/Android/.test(userAgent) || !/Chrome|Mac OS X 10.5/.test(userAgent)) {
           return true;
@@ -22024,10 +21932,10 @@
         videoPlaybackQuality.totalVideoFrames = this.el().webkitDecodedFrameCount;
       }
 
-      if (window$1.performance && typeof window$1.performance.now === 'function') {
-        videoPlaybackQuality.creationTime = window$1.performance.now();
-      } else if (window$1.performance && window$1.performance.timing && typeof window$1.performance.timing.navigationStart === 'number') {
-        videoPlaybackQuality.creationTime = window$1.Date.now() - window$1.performance.timing.navigationStart;
+      if (window$3.performance && typeof window$3.performance.now === 'function') {
+        videoPlaybackQuality.creationTime = window$3.performance.now();
+      } else if (window$3.performance && window$3.performance.timing && typeof window$3.performance.timing.navigationStart === 'number') {
+        videoPlaybackQuality.creationTime = window$3.Date.now() - window$3.performance.timing.navigationStart;
       }
 
       return videoPlaybackQuality;
@@ -22318,7 +22226,7 @@
         fn = _ref[1];
     defineLazyProperty(Html5.prototype, key, function () {
       return Html5[fn]();
-    }, false);
+    }, true);
   });
   /**
    * Boolean indicating whether the `HTML5` tech currently supports the media element
@@ -23289,9 +23197,7 @@
    * @extends Component
    */
 
-  var Player =
-  /*#__PURE__*/
-  function (_Component) {
+  var Player = /*#__PURE__*/function (_Component) {
     inheritsLoose(Player, _Component);
 
     /**
@@ -23353,7 +23259,9 @@
       _this = _Component.call(this, null, options, ready) || this; // Create bound methods for document listeners.
 
       _this.boundDocumentFullscreenChange_ = bind(assertThisInitialized(_this), _this.documentFullscreenChange_);
-      _this.boundFullWindowOnEscKey_ = bind(assertThisInitialized(_this), _this.fullWindowOnEscKey); // create logger
+      _this.boundFullWindowOnEscKey_ = bind(assertThisInitialized(_this), _this.fullWindowOnEscKey); // default isFullscreen_ to false
+
+      _this.isFullscreen_ = false; // create logger
 
       _this.log = createLogger$1(_this.id_); // Hold our own reference to fullscreen api so it can be mocked in tests
 
@@ -23438,7 +23346,16 @@
 
       evented(assertThisInitialized(_this), {
         eventBusKey: 'el_'
-      });
+      }); // listen to document and player fullscreenchange handlers so we receive those events
+      // before a user can receive them so we can update isFullscreen appropriately.
+      // make sure that we listen to fullscreenchange events before everything else to make sure that
+      // our isFullscreen method is updated properly for internal components as well as external.
+
+      if (_this.fsApi_.requestFullscreen) {
+        on(document, _this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
+
+        _this.on(_this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
+      }
 
       if (_this.fluid_) {
         _this.on('playerreset', _this.updateStyleEl_);
@@ -23703,7 +23620,7 @@
       // of the player in a way that's still overrideable by CSS, just like the
       // video element
 
-      if (window$1.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
+      if (window$3.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
         this.styleEl_ = createStyleElement('vjs-styles-dimensions');
         var defaultsStyleEl = $('.vjs-styles-defaults');
         var head = $('head');
@@ -23935,7 +23852,7 @@
     ;
 
     _proto.updateStyleEl_ = function updateStyleEl_() {
-      if (window$1.VIDEOJS_NO_DYNAMIC_STYLE === true) {
+      if (window$3.VIDEOJS_NO_DYNAMIC_STYLE === true) {
         var _width = typeof this.width_ === 'number' ? this.width_ : this.options_.width;
 
         var _height = typeof this.height_ === 'number' ? this.height_ : this.options_.height;
@@ -25007,6 +24924,13 @@
     ;
 
     _proto.documentFullscreenChange_ = function documentFullscreenChange_(e) {
+      var targetPlayer = e.target.player; // if another player was fullscreen
+      // do a null check for targetPlayer because older firefox's would put document as e.target
+
+      if (targetPlayer && targetPlayer !== this) {
+        return;
+      }
+
       var el = this.el();
       var isFs = document[this.fsApi_.fullscreenElement] === el;
 
@@ -25016,19 +24940,7 @@
         isFs = el.msMatchesSelector(':' + this.fsApi_.fullscreen);
       }
 
-      this.isFullscreen(isFs); // If cancelling fullscreen, remove event listener.
-
-      if (this.isFullscreen() === false) {
-        off(document, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_);
-      }
-
-      if (this.fsApi_.prefixed) {
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-        this.trigger('fullscreenchange');
-      }
+      this.isFullscreen(isFs);
     }
     /**
      * Handle Tech Fullscreen Change
@@ -25049,15 +24961,6 @@
       if (data) {
         this.isFullscreen(data.isFullscreen);
       }
-      /**
-       * Fired when going in and out of fullscreen.
-       *
-       * @event Player#fullscreenchange
-       * @type {EventTarget~Event}
-       */
-
-
-      this.trigger('fullscreenchange');
     }
     /**
      * @private
@@ -25270,7 +25173,7 @@
     _proto.play = function play() {
       var _this8 = this;
 
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (PromiseClass) {
         return new PromiseClass(function (resolve) {
@@ -25495,13 +25398,8 @@
 
         if (seconds === Infinity) {
           this.addClass('vjs-live');
-
-          if (this.options_.liveui && this.player_.liveTracker) {
-            this.addClass('vjs-liveui');
-          }
         } else {
           this.removeClass('vjs-live');
-          this.removeClass('vjs-liveui');
         }
 
         if (!isNaN(seconds)) {
@@ -25741,12 +25639,24 @@
 
     _proto.isFullscreen = function isFullscreen(isFS) {
       if (isFS !== undefined) {
-        this.isFullscreen_ = !!isFS;
+        var oldValue = this.isFullscreen_;
+        this.isFullscreen_ = Boolean(isFS); // if we changed fullscreen state and we're in prefixed mode, trigger fullscreenchange
+        // this is the only place where we trigger fullscreenchange events for older browsers
+        // fullWindow mode is treated as a prefixed event and will get a fullscreenchange event as well
+
+        if (this.isFullscreen_ !== oldValue && this.fsApi_.prefixed) {
+          /**
+             * @event Player#fullscreenchange
+             * @type {EventTarget~Event}
+             */
+          this.trigger('fullscreenchange');
+        }
+
         this.toggleFullscreenClass_();
         return;
       }
 
-      return !!this.isFullscreen_;
+      return this.isFullscreen_;
     }
     /**
      * Increase the size of the video to full screen
@@ -25765,28 +25675,38 @@
     ;
 
     _proto.requestFullscreen = function requestFullscreen(fullscreenOptions) {
-      var fsOptions;
-      this.isFullscreen(true);
+      var _this10 = this;
+
+      var fsOptions; // Only pass fullscreen options to requestFullscreen in spec-compliant browsers.
+      // Use defaults or player configured option unless passed directly to this method.
+
+      if (!this.fsApi_.prefixed) {
+        fsOptions = this.options_.fullscreen && this.options_.fullscreen.options || {};
+
+        if (fullscreenOptions !== undefined) {
+          fsOptions = fullscreenOptions;
+        }
+      } // This method works as follows:
+      // 1. if a fullscreen api is available, use it
+      //   1. call requestFullscreen with potential options
+      //   2. if we got a promise from above, use it to update isFullscreen()
+      // 2. otherwise, if the tech supports fullscreen, call `enterFullScreen` on it.
+      //   This is particularly used for iPhone, older iPads, and non-safari browser on iOS.
+      // 3. otherwise, use "fullWindow" mode
+
 
       if (this.fsApi_.requestFullscreen) {
-        // the browser supports going fullscreen at the element level so we can
-        // take the controls fullscreen as well as the video
-        // Trigger fullscreenchange event after change
-        // We have to specifically add this each time, and remove
-        // when canceling fullscreen. Otherwise if there's multiple
-        // players on a page, they would all be reacting to the same fullscreen
-        // events
-        on(document, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_); // only pass FullscreenOptions to requestFullscreen if it isn't prefixed
+        var promise = this.el_[this.fsApi_.requestFullscreen](fsOptions);
 
-        if (!this.fsApi_.prefixed) {
-          fsOptions = this.options_.fullscreen && this.options_.fullscreen.options || {};
-
-          if (fullscreenOptions !== undefined) {
-            fsOptions = fullscreenOptions;
-          }
+        if (promise) {
+          promise.then(function () {
+            return _this10.isFullscreen(true);
+          }, function () {
+            return _this10.isFullscreen(false);
+          });
         }
 
-        silencePromise(this.el_[this.fsApi_.requestFullscreen](fsOptions));
+        return promise;
       } else if (this.tech_.supportsFullScreen()) {
         // we can't take the video.js controls fullscreen but we can go fullscreen
         // with native controls
@@ -25795,12 +25715,6 @@
         // fullscreen isn't supported so we'll just stretch the video element to
         // fill the viewport
         this.enterFullWindow();
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-
-        this.trigger('fullscreenchange');
       }
     }
     /**
@@ -25811,20 +25725,22 @@
     ;
 
     _proto.exitFullscreen = function exitFullscreen() {
-      this.isFullscreen(false); // Check for browser element fullscreen support
+      var _this11 = this;
 
       if (this.fsApi_.requestFullscreen) {
-        silencePromise(document[this.fsApi_.exitFullscreen]());
+        var promise = document[this.fsApi_.exitFullscreen]();
+
+        if (promise) {
+          promise.then(function () {
+            return _this11.isFullscreen(false);
+          });
+        }
+
+        return promise;
       } else if (this.tech_.supportsFullScreen()) {
         this.techCall_('exitFullScreen');
       } else {
         this.exitFullWindow();
-        /**
-         * @event Player#fullscreenchange
-         * @type {EventTarget~Event}
-         */
-
-        this.trigger('fullscreenchange');
       }
     }
     /**
@@ -25836,6 +25752,7 @@
     ;
 
     _proto.enterFullWindow = function enterFullWindow() {
+      this.isFullscreen(true);
       this.isFullWindow = true; // Storing original doc overflow value to return to when fullscreen is off
 
       this.docOrigOverflow = document.documentElement.style.overflow; // Add listener for esc key to exit fullscreen
@@ -25878,6 +25795,7 @@
     ;
 
     _proto.exitFullWindow = function exitFullWindow() {
+      this.isFullscreen(false);
       this.isFullWindow = false;
       off(document, 'keydown', this.boundFullWindowOnEscKey_); // Unhide scroll bars.
 
@@ -26122,7 +26040,7 @@
     ;
 
     _proto.selectSource = function selectSource(sources) {
-      var _this10 = this;
+      var _this12 = this;
 
       // Get only the techs specified in `techOrder` that exist and are supported by the
       // current platform
@@ -26170,7 +26088,7 @@
         var techName = _ref2[0],
             tech = _ref2[1];
 
-        if (tech.canPlaySource(source, _this10.options_[techName.toLowerCase()])) {
+        if (tech.canPlaySource(source, _this12.options_[techName.toLowerCase()])) {
           return {
             source: source,
             tech: techName
@@ -26208,7 +26126,7 @@
     ;
 
     _proto.src = function src(source) {
-      var _this11 = this;
+      var _this13 = this;
 
       // getter usage
       if (typeof source === 'undefined') {
@@ -26237,23 +26155,23 @@
       this.updateSourceCaches_(sources[0]); // middlewareSource is the source after it has been changed by middleware
 
       setSource(this, sources[0], function (middlewareSource, mws) {
-        _this11.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
+        _this13.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
         // the source that is selected could be out of order from the cache update above this callback.
 
-        _this11.cache_.sources = sources;
+        _this13.cache_.sources = sources;
 
-        _this11.updateSourceCaches_(middlewareSource);
+        _this13.updateSourceCaches_(middlewareSource);
 
-        var err = _this11.src_(middlewareSource);
+        var err = _this13.src_(middlewareSource);
 
         if (err) {
           if (sources.length > 1) {
-            return _this11.src(sources.slice(1));
+            return _this13.src(sources.slice(1));
           }
 
-          _this11.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
+          _this13.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
 
-          _this11.setTimeout(function () {
+          _this13.setTimeout(function () {
             this.error({
               code: 4,
               message: this.localize(this.options_.notSupportedMessage)
@@ -26262,12 +26180,12 @@
           // this needs a better comment about why this is needed
 
 
-          _this11.triggerReady();
+          _this13.triggerReady();
 
           return;
         }
 
-        setTech(mws, _this11.tech_);
+        setTech(mws, _this13.tech_);
       });
     }
     /**
@@ -26286,7 +26204,7 @@
     ;
 
     _proto.src_ = function src_(source) {
-      var _this12 = this;
+      var _this14 = this;
 
       var sourceTech = this.selectSource([source]);
 
@@ -26299,7 +26217,7 @@
 
         this.loadTech_(sourceTech.tech, sourceTech.source);
         this.tech_.ready(function () {
-          _this12.changingSrc_ = false;
+          _this14.changingSrc_ = false;
         });
         return false;
       } // wait until the tech is ready to set the source
@@ -26337,16 +26255,16 @@
     ;
 
     _proto.reset = function reset() {
-      var _this13 = this;
+      var _this15 = this;
 
-      var PromiseClass = this.options_.Promise || window$1.Promise;
+      var PromiseClass = this.options_.Promise || window$3.Promise;
 
       if (this.paused() || !PromiseClass) {
         this.doReset_();
       } else {
         var playPromise = this.play();
         silencePromise(playPromise.then(function () {
-          return _this13.doReset_();
+          return _this15.doReset_();
         }));
       }
     };
@@ -26937,7 +26855,7 @@
         mouseInProgress = this.setInterval(handleActivity, 250);
       };
 
-      var handleMouseUp = function handleMouseUp(event) {
+      var handleMouseUpAndMouseLeave = function handleMouseUpAndMouseLeave(event) {
         handleActivity(); // Stop the interval that maintains activity if the mouse/touch is down
 
         this.clearInterval(mouseInProgress);
@@ -26946,7 +26864,8 @@
 
       this.on('mousedown', handleMouseDown);
       this.on('mousemove', handleMouseMove);
-      this.on('mouseup', handleMouseUp);
+      this.on('mouseup', handleMouseUpAndMouseLeave);
+      this.on('mouseleave', handleMouseUpAndMouseLeave);
       var controlBar = this.getChild('controlBar'); // Fixes bug on Android & iOS where when tapping progressBar (when control bar is displayed)
       // controlBar would no longer be hidden by default timeout.
 
@@ -27106,15 +27025,16 @@
       }
     }
     /**
-     * Create a remote {@link TextTrack} and an {@link HTMLTrackElement}. It will
-     * automatically removed from the video element whenever the source changes, unless
-     * manualCleanup is set to false.
+     * Create a remote {@link TextTrack} and an {@link HTMLTrackElement}.
+     * When manualCleanup is set to false, the track will be automatically removed
+     * on source changes.
      *
      * @param {Object} options
      *        Options to pass to {@link HTMLTrackElement} during creation. See
      *        {@link HTMLTrackElement} for object properties that you should use.
      *
      * @param {boolean} [manualCleanup=true] if set to false, the TextTrack will be
+     *                                       removed on a source change
      *
      * @return {HtmlTrackElement}
      *         the HTMLTrackElement that was created and added
@@ -27275,14 +27195,14 @@
     ;
 
     _proto.createModal = function createModal(content, options) {
-      var _this14 = this;
+      var _this16 = this;
 
       options = options || {};
       options.content = content || '';
       var modal = new ModalDialog(this, options);
       this.addChild(modal);
       modal.on('dispose', function () {
-        _this14.removeChild(modal);
+        _this16.removeChild(modal);
       });
       modal.open();
       return modal;
@@ -27513,7 +27433,7 @@
     ;
 
     _proto.loadMedia = function loadMedia(media, ready) {
-      var _this15 = this;
+      var _this17 = this;
 
       if (!media || typeof media !== 'object') {
         return;
@@ -27545,7 +27465,7 @@
 
       if (Array.isArray(textTracks)) {
         textTracks.forEach(function (tt) {
-          return _this15.addRemoteTextTrack(tt, false);
+          return _this17.addRemoteTextTrack(tt, false);
         });
       }
 
@@ -27747,7 +27667,7 @@
    */
 
   Player.players = {};
-  var navigator = window$1.navigator;
+  var navigator = window$3.navigator;
   /*
    * Player instance options, surfaced using options
    * options = Player.prototype.options_
@@ -27934,20 +27854,22 @@
     module.exports = _setPrototypeOf;
   });
 
-  var construct = createCommonjsModule(function (module) {
-    function isNativeReflectConstruct() {
-      if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-      if (Reflect.construct.sham) return false;
-      if (typeof Proxy === "function") return true;
+  function _isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
 
-      try {
-        Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-        return true;
-      } catch (e) {
-        return false;
-      }
+    try {
+      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
     }
+  }
 
+  var isNativeReflectConstruct = _isNativeReflectConstruct;
+
+  var construct = createCommonjsModule(function (module) {
     function _construct(Parent, args, Class) {
       if (isNativeReflectConstruct()) {
         module.exports = _construct = Reflect.construct;
@@ -28166,9 +28088,7 @@
    */
 
 
-  var Plugin =
-  /*#__PURE__*/
-  function () {
+  var Plugin = /*#__PURE__*/function () {
     /**
      * Creates an instance of this class.
      *
@@ -28840,7 +28760,7 @@
   }; // Add default styles
 
 
-  if (window$1.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
+  if (window$3.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
     var style = $('.vjs-styles-defaults');
 
     if (!style) {
@@ -29346,9 +29266,7 @@
    */
 
 
-  var Stream =
-  /*#__PURE__*/
-  function () {
+  var Stream = /*#__PURE__*/function () {
     function Stream() {
       this.listeners = {};
     }
@@ -29461,9 +29379,7 @@
    */
 
 
-  var LineStream =
-  /*#__PURE__*/
-  function (_Stream) {
+  var LineStream = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(LineStream, _Stream);
 
     function LineStream() {
@@ -29567,9 +29483,7 @@
    */
 
 
-  var ParseStream =
-  /*#__PURE__*/
-  function (_Stream) {
+  var ParseStream = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(ParseStream, _Stream);
 
     function ParseStream() {
@@ -30129,7 +30043,7 @@
   }(Stream);
 
   function decodeB64ToUint8Array(b64Text) {
-    var decodedString = window$1.atob(b64Text || '');
+    var decodedString = window$3.atob(b64Text || '');
     var array = new Uint8Array(decodedString.length);
 
     for (var i = 0; i < decodedString.length; i++) {
@@ -30161,9 +30075,7 @@
    */
 
 
-  var Parser =
-  /*#__PURE__*/
-  function (_Stream) {
+  var Parser = /*#__PURE__*/function (_Stream) {
     _inheritsLoose$1(Parser, _Stream);
 
     function Parser() {
@@ -30625,7 +30537,2540 @@
     return Parser;
   }(Stream);
 
-  /*! @name mpd-parser @version 0.8.1 @license Apache-2.0 */
+  function _interopDefault(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+  }
+
+  var URLToolkit = _interopDefault(urlToolkit);
+
+  var window$1 = _interopDefault(window$3);
+
+  var resolveUrl = function resolveUrl(baseUrl, relativeUrl) {
+    // return early if we don't need to resolve
+    if (/^[a-z]+:/i.test(relativeUrl)) {
+      return relativeUrl;
+    } // if the base URL is relative then combine with the current location
+
+
+    if (!/\/\//i.test(baseUrl)) {
+      baseUrl = URLToolkit.buildAbsoluteURL(window$1.location && window$1.location.href || '', baseUrl);
+    }
+
+    return URLToolkit.buildAbsoluteURL(baseUrl, relativeUrl);
+  };
+
+  var resolveUrl_1 = resolveUrl;
+
+  function _interopDefault$1(ex) {
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+  }
+
+  var window$2 = _interopDefault$1(window$3);
+
+  var atob = function atob(s) {
+    return window$2.atob ? window$2.atob(s) : Buffer.from(s, 'base64').toString('binary');
+  };
+
+  function decodeB64ToUint8Array$1(b64Text) {
+    var decodedString = atob(b64Text);
+    var array = new Uint8Array(decodedString.length);
+
+    for (var i = 0; i < decodedString.length; i++) {
+      array[i] = decodedString.charCodeAt(i);
+    }
+
+    return array;
+  }
+
+  var decodeB64ToUint8Array_1 = decodeB64ToUint8Array$1;
+
+  //[4]   	NameStartChar	   ::=   	":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+  //[4a]   	NameChar	   ::=   	NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
+  //[5]   	Name	   ::=   	NameStartChar (NameChar)*
+  var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/; //\u10000-\uEFFFF
+
+  var nameChar = new RegExp("[\\-\\.0-9" + nameStartChar.source.slice(1, -1) + "\\u00B7\\u0300-\\u036F\\u203F-\\u2040]");
+  var tagNamePattern = new RegExp('^' + nameStartChar.source + nameChar.source + '*(?:\:' + nameStartChar.source + nameChar.source + '*)?$'); //var tagNamePattern = /^[a-zA-Z_][\w\-\.]*(?:\:[a-zA-Z_][\w\-\.]*)?$/
+  //var handlers = 'resolveEntity,getExternalSubset,characters,endDocument,endElement,endPrefixMapping,ignorableWhitespace,processingInstruction,setDocumentLocator,skippedEntity,startDocument,startElement,startPrefixMapping,notationDecl,unparsedEntityDecl,error,fatalError,warning,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,comment,endCDATA,endDTD,endEntity,startCDATA,startDTD,startEntity'.split(',')
+  //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+  //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+
+  var S_TAG = 0; //tag name offerring
+
+  var S_ATTR = 1; //attr name offerring 
+
+  var S_ATTR_SPACE = 2; //attr name end and space offer
+
+  var S_EQ = 3; //=space?
+
+  var S_ATTR_NOQUOT_VALUE = 4; //attr value(no quot value only)
+
+  var S_ATTR_END = 5; //attr value end and no space(quot end)
+
+  var S_TAG_SPACE = 6; //(attr value end || tag end ) && (space offer)
+
+  var S_TAG_CLOSE = 7; //closed el<el />
+
+  function XMLReader() {}
+
+  XMLReader.prototype = {
+    parse: function parse(source, defaultNSMap, entityMap) {
+      var domBuilder = this.domBuilder;
+      domBuilder.startDocument();
+
+      _copy(defaultNSMap, defaultNSMap = {});
+
+      _parse(source, defaultNSMap, entityMap, domBuilder, this.errorHandler);
+
+      domBuilder.endDocument();
+    }
+  };
+
+  function _parse(source, defaultNSMapCopy, entityMap, domBuilder, errorHandler) {
+    function fixedFromCharCode(code) {
+      // String.prototype.fromCharCode does not supports
+      // > 2 bytes unicode chars directly
+      if (code > 0xffff) {
+        code -= 0x10000;
+        var surrogate1 = 0xd800 + (code >> 10),
+            surrogate2 = 0xdc00 + (code & 0x3ff);
+        return String.fromCharCode(surrogate1, surrogate2);
+      } else {
+        return String.fromCharCode(code);
+      }
+    }
+
+    function entityReplacer(a) {
+      var k = a.slice(1, -1);
+
+      if (k in entityMap) {
+        return entityMap[k];
+      } else if (k.charAt(0) === '#') {
+        return fixedFromCharCode(parseInt(k.substr(1).replace('x', '0x')));
+      } else {
+        errorHandler.error('entity not found:' + a);
+        return a;
+      }
+    }
+
+    function appendText(end) {
+      //has some bugs
+      if (end > start) {
+        var xt = source.substring(start, end).replace(/&#?\w+;/g, entityReplacer);
+        locator && position(start);
+        domBuilder.characters(xt, 0, end - start);
+        start = end;
+      }
+    }
+
+    function position(p, m) {
+      while (p >= lineEnd && (m = linePattern.exec(source))) {
+        lineStart = m.index;
+        lineEnd = lineStart + m[0].length;
+        locator.lineNumber++; //console.log('line++:',locator,startPos,endPos)
+      }
+
+      locator.columnNumber = p - lineStart + 1;
+    }
+
+    var lineStart = 0;
+    var lineEnd = 0;
+    var linePattern = /.*(?:\r\n?|\n)|.*$/g;
+    var locator = domBuilder.locator;
+    var parseStack = [{
+      currentNSMap: defaultNSMapCopy
+    }];
+    var closeMap = {};
+    var start = 0;
+
+    while (true) {
+      try {
+        var tagStart = source.indexOf('<', start);
+
+        if (tagStart < 0) {
+          if (!source.substr(start).match(/^\s*$/)) {
+            var doc = domBuilder.doc;
+            var text = doc.createTextNode(source.substr(start));
+            doc.appendChild(text);
+            domBuilder.currentElement = text;
+          }
+
+          return;
+        }
+
+        if (tagStart > start) {
+          appendText(tagStart);
+        }
+
+        switch (source.charAt(tagStart + 1)) {
+          case '/':
+            var end = source.indexOf('>', tagStart + 3);
+            var tagName = source.substring(tagStart + 2, end);
+            var config = parseStack.pop();
+
+            if (end < 0) {
+              tagName = source.substring(tagStart + 2).replace(/[\s<].*/, ''); //console.error('#@@@@@@'+tagName)
+
+              errorHandler.error("end tag name: " + tagName + ' is not complete:' + config.tagName);
+              end = tagStart + 1 + tagName.length;
+            } else if (tagName.match(/\s</)) {
+              tagName = tagName.replace(/[\s<].*/, '');
+              errorHandler.error("end tag name: " + tagName + ' maybe not complete');
+              end = tagStart + 1 + tagName.length;
+            } //console.error(parseStack.length,parseStack)
+            //console.error(config);
+
+
+            var localNSMap = config.localNSMap;
+            var endMatch = config.tagName == tagName;
+            var endIgnoreCaseMach = endMatch || config.tagName && config.tagName.toLowerCase() == tagName.toLowerCase();
+
+            if (endIgnoreCaseMach) {
+              domBuilder.endElement(config.uri, config.localName, tagName);
+
+              if (localNSMap) {
+                for (var prefix in localNSMap) {
+                  domBuilder.endPrefixMapping(prefix);
+                }
+              }
+
+              if (!endMatch) {
+                errorHandler.fatalError("end tag name: " + tagName + ' is not match the current start tagName:' + config.tagName);
+              }
+            } else {
+              parseStack.push(config);
+            }
+
+            end++;
+            break;
+          // end elment
+
+          case '?':
+            // <?...?>
+            locator && position(tagStart);
+            end = parseInstruction(source, tagStart, domBuilder);
+            break;
+
+          case '!':
+            // <!doctype,<![CDATA,<!--
+            locator && position(tagStart);
+            end = parseDCC(source, tagStart, domBuilder, errorHandler);
+            break;
+
+          default:
+            locator && position(tagStart);
+            var el = new ElementAttributes();
+            var currentNSMap = parseStack[parseStack.length - 1].currentNSMap; //elStartEnd
+
+            var end = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
+            var len = el.length;
+
+            if (!el.closed && fixSelfClosed(source, end, el.tagName, closeMap)) {
+              el.closed = true;
+
+              if (!entityMap.nbsp) {
+                errorHandler.warning('unclosed xml attribute');
+              }
+            }
+
+            if (locator && len) {
+              var locator2 = copyLocator(locator, {}); //try{//attribute position fixed
+
+              for (var i = 0; i < len; i++) {
+                var a = el[i];
+                position(a.offset);
+                a.locator = copyLocator(locator, {});
+              } //}catch(e){console.error('@@@@@'+e)}
+
+
+              domBuilder.locator = locator2;
+
+              if (appendElement(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+
+              domBuilder.locator = locator;
+            } else {
+              if (appendElement(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+            }
+
+            if (el.uri === 'http://www.w3.org/1999/xhtml' && !el.closed) {
+              end = parseHtmlSpecialContent(source, end, el.tagName, entityReplacer, domBuilder);
+            } else {
+              end++;
+            }
+
+        }
+      } catch (e) {
+        errorHandler.error('element parse error: ' + e); //errorHandler.error('element parse error: '+e);
+
+        end = -1; //throw e;
+      }
+
+      if (end > start) {
+        start = end;
+      } else {
+        //TODO: 这里有可能sax回退，有位置错误风险
+        appendText(Math.max(tagStart, start) + 1);
+      }
+    }
+  }
+
+  function copyLocator(f, t) {
+    t.lineNumber = f.lineNumber;
+    t.columnNumber = f.columnNumber;
+    return t;
+  }
+  /**
+   * @see #appendElement(source,elStartEnd,el,selfClosed,entityReplacer,domBuilder,parseStack);
+   * @return end of the elementStartPart(end of elementEndPart for selfClosed el)
+   */
+
+
+  function parseElementStartPart(source, start, el, currentNSMap, entityReplacer, errorHandler) {
+    var attrName;
+    var value;
+    var p = ++start;
+    var s = S_TAG; //status
+
+    while (true) {
+      var c = source.charAt(p);
+
+      switch (c) {
+        case '=':
+          if (s === S_ATTR) {
+            //attrName
+            attrName = source.slice(start, p);
+            s = S_EQ;
+          } else if (s === S_ATTR_SPACE) {
+            s = S_EQ;
+          } else {
+            //fatalError: equal must after attrName or space after attrName
+            throw new Error('attribute equal must after attrName');
+          }
+
+          break;
+
+        case '\'':
+        case '"':
+          if (s === S_EQ || s === S_ATTR //|| s == S_ATTR_SPACE
+          ) {
+              //equal
+              if (s === S_ATTR) {
+                errorHandler.warning('attribute value must after "="');
+                attrName = source.slice(start, p);
+              }
+
+              start = p + 1;
+              p = source.indexOf(c, start);
+
+              if (p > 0) {
+                value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                el.add(attrName, value, start - 1);
+                s = S_ATTR_END;
+              } else {
+                //fatalError: no end quot match
+                throw new Error('attribute value no end \'' + c + '\' match');
+              }
+            } else if (s == S_ATTR_NOQUOT_VALUE) {
+            value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer); //console.log(attrName,value,start,p)
+
+            el.add(attrName, value, start); //console.dir(el)
+
+            errorHandler.warning('attribute "' + attrName + '" missed start quot(' + c + ')!!');
+            start = p + 1;
+            s = S_ATTR_END;
+          } else {
+            //fatalError: no equal before
+            throw new Error('attribute value must after "="');
+          }
+
+          break;
+
+        case '/':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              s = S_TAG_CLOSE;
+              el.closed = true;
+
+            case S_ATTR_NOQUOT_VALUE:
+            case S_ATTR:
+            case S_ATTR_SPACE:
+              break;
+            //case S_EQ:
+
+            default:
+              throw new Error("attribute invalid close char('/')");
+          }
+
+          break;
+
+        case '':
+          //end document
+          //throw new Error('unexpected end of input')
+          errorHandler.error('unexpected end of input');
+
+          if (s == S_TAG) {
+            el.setTagName(source.slice(start, p));
+          }
+
+          return p;
+
+        case '>':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              break;
+            //normal
+
+            case S_ATTR_NOQUOT_VALUE: //Compatible state
+
+            case S_ATTR:
+              value = source.slice(start, p);
+
+              if (value.slice(-1) === '/') {
+                el.closed = true;
+                value = value.slice(0, -1);
+              }
+
+            case S_ATTR_SPACE:
+              if (s === S_ATTR_SPACE) {
+                value = attrName;
+              }
+
+              if (s == S_ATTR_NOQUOT_VALUE) {
+                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
+                el.add(attrName, value.replace(/&#?\w+;/g, entityReplacer), start);
+              } else {
+                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !value.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + value + '" missed value!! "' + value + '" instead!!');
+                }
+
+                el.add(value, value, start);
+              }
+
+              break;
+
+            case S_EQ:
+              throw new Error('attribute value missed!!');
+          } //			console.log(tagName,tagNamePattern,tagNamePattern.test(tagName))
+
+
+          return p;
+
+        /*xml space '\x20' | #x9 | #xD | #xA; */
+
+        case "\x80":
+          c = ' ';
+
+        default:
+          if (c <= ' ') {
+            //space
+            switch (s) {
+              case S_TAG:
+                el.setTagName(source.slice(start, p)); //tagName
+
+                s = S_TAG_SPACE;
+                break;
+
+              case S_ATTR:
+                attrName = source.slice(start, p);
+                s = S_ATTR_SPACE;
+                break;
+
+              case S_ATTR_NOQUOT_VALUE:
+                var value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
+                el.add(attrName, value, start);
+
+              case S_ATTR_END:
+                s = S_TAG_SPACE;
+                break;
+              //case S_TAG_SPACE:
+              //case S_EQ:
+              //case S_ATTR_SPACE:
+              //	void();break;
+              //case S_TAG_CLOSE:
+              //ignore warning
+            }
+          } else {
+            //not space
+            //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+            //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+            switch (s) {
+              //case S_TAG:void();break;
+              //case S_ATTR:void();break;
+              //case S_ATTR_NOQUOT_VALUE:void();break;
+              case S_ATTR_SPACE:
+                var tagName = el.tagName;
+
+                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !attrName.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + attrName + '" missed value!! "' + attrName + '" instead2!!');
+                }
+
+                el.add(attrName, attrName, start);
+                start = p;
+                s = S_ATTR;
+                break;
+
+              case S_ATTR_END:
+                errorHandler.warning('attribute space is required"' + attrName + '"!!');
+
+              case S_TAG_SPACE:
+                s = S_ATTR;
+                start = p;
+                break;
+
+              case S_EQ:
+                s = S_ATTR_NOQUOT_VALUE;
+                start = p;
+                break;
+
+              case S_TAG_CLOSE:
+                throw new Error("elements closed character '/' and '>' must be connected to");
+            }
+          }
+
+      } //end outer switch
+      //console.log('p++',p)
+
+
+      p++;
+    }
+  }
+  /**
+   * @return true if has new namespace define
+   */
+
+
+  function appendElement(el, domBuilder, currentNSMap) {
+    var tagName = el.tagName;
+    var localNSMap = null; //var currentNSMap = parseStack[parseStack.length-1].currentNSMap;
+
+    var i = el.length;
+
+    while (i--) {
+      var a = el[i];
+      var qName = a.qName;
+      var value = a.value;
+      var nsp = qName.indexOf(':');
+
+      if (nsp > 0) {
+        var prefix = a.prefix = qName.slice(0, nsp);
+        var localName = qName.slice(nsp + 1);
+        var nsPrefix = prefix === 'xmlns' && localName;
+      } else {
+        localName = qName;
+        prefix = null;
+        nsPrefix = qName === 'xmlns' && '';
+      } //can not set prefix,because prefix !== ''
+
+
+      a.localName = localName; //prefix == null for no ns prefix attribute 
+
+      if (nsPrefix !== false) {
+        //hack!!
+        if (localNSMap == null) {
+          localNSMap = {}; //console.log(currentNSMap,0)
+
+          _copy(currentNSMap, currentNSMap = {}); //console.log(currentNSMap,1)
+
+        }
+
+        currentNSMap[nsPrefix] = localNSMap[nsPrefix] = value;
+        a.uri = 'http://www.w3.org/2000/xmlns/';
+        domBuilder.startPrefixMapping(nsPrefix, value);
+      }
+    }
+
+    var i = el.length;
+
+    while (i--) {
+      a = el[i];
+      var prefix = a.prefix;
+
+      if (prefix) {
+        //no prefix attribute has no namespace
+        if (prefix === 'xml') {
+          a.uri = 'http://www.w3.org/XML/1998/namespace';
+        }
+
+        if (prefix !== 'xmlns') {
+          a.uri = currentNSMap[prefix || '']; //{console.log('###'+a.qName,domBuilder.locator.systemId+'',currentNSMap,a.uri)}
+        }
+      }
+    }
+
+    var nsp = tagName.indexOf(':');
+
+    if (nsp > 0) {
+      prefix = el.prefix = tagName.slice(0, nsp);
+      localName = el.localName = tagName.slice(nsp + 1);
+    } else {
+      prefix = null; //important!!
+
+      localName = el.localName = tagName;
+    } //no prefix element has default namespace
+
+
+    var ns = el.uri = currentNSMap[prefix || ''];
+    domBuilder.startElement(ns, localName, tagName, el); //endPrefixMapping and startPrefixMapping have not any help for dom builder
+    //localNSMap = null
+
+    if (el.closed) {
+      domBuilder.endElement(ns, localName, tagName);
+
+      if (localNSMap) {
+        for (prefix in localNSMap) {
+          domBuilder.endPrefixMapping(prefix);
+        }
+      }
+    } else {
+      el.currentNSMap = currentNSMap;
+      el.localNSMap = localNSMap; //parseStack.push(el);
+
+      return true;
+    }
+  }
+
+  function parseHtmlSpecialContent(source, elStartEnd, tagName, entityReplacer, domBuilder) {
+    if (/^(?:script|textarea)$/i.test(tagName)) {
+      var elEndStart = source.indexOf('</' + tagName + '>', elStartEnd);
+      var text = source.substring(elStartEnd + 1, elEndStart);
+
+      if (/[&<]/.test(text)) {
+        if (/^script$/i.test(tagName)) {
+          //if(!/\]\]>/.test(text)){
+          //lexHandler.startCDATA();
+          domBuilder.characters(text, 0, text.length); //lexHandler.endCDATA();
+
+          return elEndStart; //}
+        } //}else{//text area
+
+
+        text = text.replace(/&#?\w+;/g, entityReplacer);
+        domBuilder.characters(text, 0, text.length);
+        return elEndStart; //}
+      }
+    }
+
+    return elStartEnd + 1;
+  }
+
+  function fixSelfClosed(source, elStartEnd, tagName, closeMap) {
+    //if(tagName in closeMap){
+    var pos = closeMap[tagName];
+
+    if (pos == null) {
+      //console.log(tagName)
+      pos = source.lastIndexOf('</' + tagName + '>');
+
+      if (pos < elStartEnd) {
+        //忘记闭合
+        pos = source.lastIndexOf('</' + tagName);
+      }
+
+      closeMap[tagName] = pos;
+    }
+
+    return pos < elStartEnd; //} 
+  }
+
+  function _copy(source, target) {
+    for (var n in source) {
+      target[n] = source[n];
+    }
+  }
+
+  function parseDCC(source, start, domBuilder, errorHandler) {
+    //sure start with '<!'
+    var next = source.charAt(start + 2);
+
+    switch (next) {
+      case '-':
+        if (source.charAt(start + 3) === '-') {
+          var end = source.indexOf('-->', start + 4); //append comment source.substring(4,end)//<!--
+
+          if (end > start) {
+            domBuilder.comment(source, start + 4, end - start - 4);
+            return end + 3;
+          } else {
+            errorHandler.error("Unclosed comment");
+            return -1;
+          }
+        } else {
+          //error
+          return -1;
+        }
+
+      default:
+        if (source.substr(start + 3, 6) == 'CDATA[') {
+          var end = source.indexOf(']]>', start + 9);
+          domBuilder.startCDATA();
+          domBuilder.characters(source, start + 9, end - start - 9);
+          domBuilder.endCDATA();
+          return end + 3;
+        } //<!DOCTYPE
+        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId) 
+
+
+        var matchs = split(source, start);
+        var len = matchs.length;
+
+        if (len > 1 && /!doctype/i.test(matchs[0][0])) {
+          var name = matchs[1][0];
+          var pubid = len > 3 && /^public$/i.test(matchs[2][0]) && matchs[3][0];
+          var sysid = len > 4 && matchs[4][0];
+          var lastMatch = matchs[len - 1];
+          domBuilder.startDTD(name, pubid && pubid.replace(/^(['"])(.*?)\1$/, '$2'), sysid && sysid.replace(/^(['"])(.*?)\1$/, '$2'));
+          domBuilder.endDTD();
+          return lastMatch.index + lastMatch[0].length;
+        }
+
+    }
+
+    return -1;
+  }
+
+  function parseInstruction(source, start, domBuilder) {
+    var end = source.indexOf('?>', start);
+
+    if (end) {
+      var match = source.substring(start, end).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
+
+      if (match) {
+        var len = match[0].length;
+        domBuilder.processingInstruction(match[1], match[2]);
+        return end + 2;
+      } else {
+        //error
+        return -1;
+      }
+    }
+
+    return -1;
+  }
+  /**
+   * @param source
+   */
+
+
+  function ElementAttributes(source) {}
+
+  ElementAttributes.prototype = {
+    setTagName: function setTagName(tagName) {
+      if (!tagNamePattern.test(tagName)) {
+        throw new Error('invalid tagName:' + tagName);
+      }
+
+      this.tagName = tagName;
+    },
+    add: function add(qName, value, offset) {
+      if (!tagNamePattern.test(qName)) {
+        throw new Error('invalid attribute:' + qName);
+      }
+
+      this[this.length++] = {
+        qName: qName,
+        value: value,
+        offset: offset
+      };
+    },
+    length: 0,
+    getLocalName: function getLocalName(i) {
+      return this[i].localName;
+    },
+    getLocator: function getLocator(i) {
+      return this[i].locator;
+    },
+    getQName: function getQName(i) {
+      return this[i].qName;
+    },
+    getURI: function getURI(i) {
+      return this[i].uri;
+    },
+    getValue: function getValue(i) {
+      return this[i].value;
+    } //	,getIndex:function(uri, localName)){
+    //		if(localName){
+    //			
+    //		}else{
+    //			var qName = uri
+    //		}
+    //	},
+    //	getValue:function(){return this.getValue(this.getIndex.apply(this,arguments))},
+    //	getType:function(uri,localName){}
+    //	getType:function(i){},
+
+  };
+
+  function _set_proto_(thiz, parent) {
+    thiz.__proto__ = parent;
+    return thiz;
+  }
+
+  if (!(_set_proto_({}, _set_proto_.prototype) instanceof _set_proto_)) {
+    _set_proto_ = function _set_proto_(thiz, parent) {
+      function p() {}
+      p.prototype = parent;
+      p = new p();
+
+      for (parent in thiz) {
+        p[parent] = thiz[parent];
+      }
+
+      return p;
+    };
+  }
+
+  function split(source, start) {
+    var match;
+    var buf = [];
+    var reg = /'[^']+'|"[^"]+"|[^\s<>\/=]+=?|(\/?\s*>|<)/g;
+    reg.lastIndex = start;
+    reg.exec(source); //skip <
+
+    while (match = reg.exec(source)) {
+      buf.push(match);
+      if (match[1]) return buf;
+    }
+  }
+
+  var XMLReader_1 = XMLReader;
+  var sax = {
+    XMLReader: XMLReader_1
+  };
+
+  /*
+   * DOM Level 2
+   * Object DOMException
+   * @see http://www.w3.org/TR/REC-DOM-Level-1/ecma-script-language-binding.html
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/ecma-script-binding.html
+   */
+  function copy(src, dest) {
+    for (var p in src) {
+      dest[p] = src[p];
+    }
+  }
+  /**
+  ^\w+\.prototype\.([_\w]+)\s*=\s*((?:.*\{\s*?[\r\n][\s\S]*?^})|\S.*?(?=[;\r\n]));?
+  ^\w+\.prototype\.([_\w]+)\s*=\s*(\S.*?(?=[;\r\n]));?
+   */
+
+
+  function _extends$1(Class, Super) {
+    var pt = Class.prototype;
+
+    if (Object.create) {
+      var ppt = Object.create(Super.prototype);
+      pt.__proto__ = ppt;
+    }
+
+    if (!(pt instanceof Super)) {
+      var t = function t() {};
+      t.prototype = Super.prototype;
+      t = new t();
+      copy(pt, t);
+      Class.prototype = pt = t;
+    }
+
+    if (pt.constructor != Class) {
+      if (typeof Class != 'function') {
+        console.error("unknow Class:" + Class);
+      }
+
+      pt.constructor = Class;
+    }
+  }
+
+  var htmlns = 'http://www.w3.org/1999/xhtml'; // Node Types
+
+  var NodeType = {};
+  var ELEMENT_NODE = NodeType.ELEMENT_NODE = 1;
+  var ATTRIBUTE_NODE = NodeType.ATTRIBUTE_NODE = 2;
+  var TEXT_NODE = NodeType.TEXT_NODE = 3;
+  var CDATA_SECTION_NODE = NodeType.CDATA_SECTION_NODE = 4;
+  var ENTITY_REFERENCE_NODE = NodeType.ENTITY_REFERENCE_NODE = 5;
+  var ENTITY_NODE = NodeType.ENTITY_NODE = 6;
+  var PROCESSING_INSTRUCTION_NODE = NodeType.PROCESSING_INSTRUCTION_NODE = 7;
+  var COMMENT_NODE = NodeType.COMMENT_NODE = 8;
+  var DOCUMENT_NODE = NodeType.DOCUMENT_NODE = 9;
+  var DOCUMENT_TYPE_NODE = NodeType.DOCUMENT_TYPE_NODE = 10;
+  var DOCUMENT_FRAGMENT_NODE = NodeType.DOCUMENT_FRAGMENT_NODE = 11;
+  var NOTATION_NODE = NodeType.NOTATION_NODE = 12; // ExceptionCode
+
+  var ExceptionCode = {};
+  var ExceptionMessage = {};
+  var INDEX_SIZE_ERR = ExceptionCode.INDEX_SIZE_ERR = (ExceptionMessage[1] = "Index size error", 1);
+  var DOMSTRING_SIZE_ERR = ExceptionCode.DOMSTRING_SIZE_ERR = (ExceptionMessage[2] = "DOMString size error", 2);
+  var HIERARCHY_REQUEST_ERR = ExceptionCode.HIERARCHY_REQUEST_ERR = (ExceptionMessage[3] = "Hierarchy request error", 3);
+  var WRONG_DOCUMENT_ERR = ExceptionCode.WRONG_DOCUMENT_ERR = (ExceptionMessage[4] = "Wrong document", 4);
+  var INVALID_CHARACTER_ERR = ExceptionCode.INVALID_CHARACTER_ERR = (ExceptionMessage[5] = "Invalid character", 5);
+  var NO_DATA_ALLOWED_ERR = ExceptionCode.NO_DATA_ALLOWED_ERR = (ExceptionMessage[6] = "No data allowed", 6);
+  var NO_MODIFICATION_ALLOWED_ERR = ExceptionCode.NO_MODIFICATION_ALLOWED_ERR = (ExceptionMessage[7] = "No modification allowed", 7);
+  var NOT_FOUND_ERR = ExceptionCode.NOT_FOUND_ERR = (ExceptionMessage[8] = "Not found", 8);
+  var NOT_SUPPORTED_ERR = ExceptionCode.NOT_SUPPORTED_ERR = (ExceptionMessage[9] = "Not supported", 9);
+  var INUSE_ATTRIBUTE_ERR = ExceptionCode.INUSE_ATTRIBUTE_ERR = (ExceptionMessage[10] = "Attribute in use", 10); //level2
+
+  var INVALID_STATE_ERR = ExceptionCode.INVALID_STATE_ERR = (ExceptionMessage[11] = "Invalid state", 11);
+  var SYNTAX_ERR = ExceptionCode.SYNTAX_ERR = (ExceptionMessage[12] = "Syntax error", 12);
+  var INVALID_MODIFICATION_ERR = ExceptionCode.INVALID_MODIFICATION_ERR = (ExceptionMessage[13] = "Invalid modification", 13);
+  var NAMESPACE_ERR = ExceptionCode.NAMESPACE_ERR = (ExceptionMessage[14] = "Invalid namespace", 14);
+  var INVALID_ACCESS_ERR = ExceptionCode.INVALID_ACCESS_ERR = (ExceptionMessage[15] = "Invalid access", 15);
+
+  function DOMException(code, message) {
+    if (message instanceof Error) {
+      var error = message;
+    } else {
+      error = this;
+      Error.call(this, ExceptionMessage[code]);
+      this.message = ExceptionMessage[code];
+      if (Error.captureStackTrace) Error.captureStackTrace(this, DOMException);
+    }
+
+    error.code = code;
+    if (message) this.message = this.message + ": " + message;
+    return error;
+  }
+  DOMException.prototype = Error.prototype;
+  copy(ExceptionCode, DOMException);
+  /**
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-536297177
+   * The NodeList interface provides the abstraction of an ordered collection of nodes, without defining or constraining how this collection is implemented. NodeList objects in the DOM are live.
+   * The items in the NodeList are accessible via an integral index, starting from 0.
+   */
+
+  function NodeList() {}
+  NodeList.prototype = {
+    /**
+     * The number of nodes in the list. The range of valid child node indices is 0 to length-1 inclusive.
+     * @standard level1
+     */
+    length: 0,
+
+    /**
+     * Returns the indexth item in the collection. If index is greater than or equal to the number of nodes in the list, this returns null.
+     * @standard level1
+     * @param index  unsigned long 
+     *   Index into the collection.
+     * @return Node
+     * 	The node at the indexth position in the NodeList, or null if that is not a valid index. 
+     */
+    item: function item(index) {
+      return this[index] || null;
+    },
+    toString: function toString(isHTML, nodeFilter) {
+      for (var buf = [], i = 0; i < this.length; i++) {
+        serializeToString(this[i], buf, isHTML, nodeFilter);
+      }
+
+      return buf.join('');
+    }
+  };
+
+  function LiveNodeList(node, refresh) {
+    this._node = node;
+    this._refresh = refresh;
+
+    _updateLiveList(this);
+  }
+
+  function _updateLiveList(list) {
+    var inc = list._node._inc || list._node.ownerDocument._inc;
+
+    if (list._inc != inc) {
+      var ls = list._refresh(list._node); //console.log(ls.length)
+
+
+      __set__(list, 'length', ls.length);
+
+      copy(ls, list);
+      list._inc = inc;
+    }
+  }
+
+  LiveNodeList.prototype.item = function (i) {
+    _updateLiveList(this);
+
+    return this[i];
+  };
+
+  _extends$1(LiveNodeList, NodeList);
+  /**
+   * 
+   * Objects implementing the NamedNodeMap interface are used to represent collections of nodes that can be accessed by name. Note that NamedNodeMap does not inherit from NodeList; NamedNodeMaps are not maintained in any particular order. Objects contained in an object implementing NamedNodeMap may also be accessed by an ordinal index, but this is simply to allow convenient enumeration of the contents of a NamedNodeMap, and does not imply that the DOM specifies an order to these Nodes.
+   * NamedNodeMap objects in the DOM are live.
+   * used for attributes or DocumentType entities 
+   */
+
+
+  function NamedNodeMap() {}
+
+  function _findNodeIndex(list, node) {
+    var i = list.length;
+
+    while (i--) {
+      if (list[i] === node) {
+        return i;
+      }
+    }
+  }
+
+  function _addNamedNode(el, list, newAttr, oldAttr) {
+    if (oldAttr) {
+      list[_findNodeIndex(list, oldAttr)] = newAttr;
+    } else {
+      list[list.length++] = newAttr;
+    }
+
+    if (el) {
+      newAttr.ownerElement = el;
+      var doc = el.ownerDocument;
+
+      if (doc) {
+        oldAttr && _onRemoveAttribute(doc, el, oldAttr);
+
+        _onAddAttribute(doc, el, newAttr);
+      }
+    }
+  }
+
+  function _removeNamedNode(el, list, attr) {
+    //console.log('remove attr:'+attr)
+    var i = _findNodeIndex(list, attr);
+
+    if (i >= 0) {
+      var lastIndex = list.length - 1;
+
+      while (i < lastIndex) {
+        list[i] = list[++i];
+      }
+
+      list.length = lastIndex;
+
+      if (el) {
+        var doc = el.ownerDocument;
+
+        if (doc) {
+          _onRemoveAttribute(doc, el, attr);
+
+          attr.ownerElement = null;
+        }
+      }
+    } else {
+      throw DOMException(NOT_FOUND_ERR, new Error(el.tagName + '@' + attr));
+    }
+  }
+
+  NamedNodeMap.prototype = {
+    length: 0,
+    item: NodeList.prototype.item,
+    getNamedItem: function getNamedItem(key) {
+      //		if(key.indexOf(':')>0 || key == 'xmlns'){
+      //			return null;
+      //		}
+      //console.log()
+      var i = this.length;
+
+      while (i--) {
+        var attr = this[i]; //console.log(attr.nodeName,key)
+
+        if (attr.nodeName == key) {
+          return attr;
+        }
+      }
+    },
+    setNamedItem: function setNamedItem(attr) {
+      var el = attr.ownerElement;
+
+      if (el && el != this._ownerElement) {
+        throw new DOMException(INUSE_ATTRIBUTE_ERR);
+      }
+
+      var oldAttr = this.getNamedItem(attr.nodeName);
+
+      _addNamedNode(this._ownerElement, this, attr, oldAttr);
+
+      return oldAttr;
+    },
+
+    /* returns Node */
+    setNamedItemNS: function setNamedItemNS(attr) {
+      // raises: WRONG_DOCUMENT_ERR,NO_MODIFICATION_ALLOWED_ERR,INUSE_ATTRIBUTE_ERR
+      var el = attr.ownerElement,
+          oldAttr;
+
+      if (el && el != this._ownerElement) {
+        throw new DOMException(INUSE_ATTRIBUTE_ERR);
+      }
+
+      oldAttr = this.getNamedItemNS(attr.namespaceURI, attr.localName);
+
+      _addNamedNode(this._ownerElement, this, attr, oldAttr);
+
+      return oldAttr;
+    },
+
+    /* returns Node */
+    removeNamedItem: function removeNamedItem(key) {
+      var attr = this.getNamedItem(key);
+
+      _removeNamedNode(this._ownerElement, this, attr);
+
+      return attr;
+    },
+    // raises: NOT_FOUND_ERR,NO_MODIFICATION_ALLOWED_ERR
+    //for level2
+    removeNamedItemNS: function removeNamedItemNS(namespaceURI, localName) {
+      var attr = this.getNamedItemNS(namespaceURI, localName);
+
+      _removeNamedNode(this._ownerElement, this, attr);
+
+      return attr;
+    },
+    getNamedItemNS: function getNamedItemNS(namespaceURI, localName) {
+      var i = this.length;
+
+      while (i--) {
+        var node = this[i];
+
+        if (node.localName == localName && node.namespaceURI == namespaceURI) {
+          return node;
+        }
+      }
+
+      return null;
+    }
+  };
+  /**
+   * @see http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-102161490
+   */
+
+  function DOMImplementation(
+  /* Object */
+  features) {
+    this._features = {};
+
+    if (features) {
+      for (var feature in features) {
+        this._features = features[feature];
+      }
+    }
+  }
+  DOMImplementation.prototype = {
+    hasFeature: function hasFeature(
+    /* string */
+    feature,
+    /* string */
+    version) {
+      var versions = this._features[feature.toLowerCase()];
+
+      if (versions && (!version || version in versions)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // Introduced in DOM Level 2:
+    createDocument: function createDocument(namespaceURI, qualifiedName, doctype) {
+      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR,WRONG_DOCUMENT_ERR
+      var doc = new Document();
+      doc.implementation = this;
+      doc.childNodes = new NodeList();
+      doc.doctype = doctype;
+
+      if (doctype) {
+        doc.appendChild(doctype);
+      }
+
+      if (qualifiedName) {
+        var root = doc.createElementNS(namespaceURI, qualifiedName);
+        doc.appendChild(root);
+      }
+
+      return doc;
+    },
+    // Introduced in DOM Level 2:
+    createDocumentType: function createDocumentType(qualifiedName, publicId, systemId) {
+      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR
+      var node = new DocumentType();
+      node.name = qualifiedName;
+      node.nodeName = qualifiedName;
+      node.publicId = publicId;
+      node.systemId = systemId; // Introduced in DOM Level 2:
+      //readonly attribute DOMString        internalSubset;
+      //TODO:..
+      //  readonly attribute NamedNodeMap     entities;
+      //  readonly attribute NamedNodeMap     notations;
+
+      return node;
+    }
+  };
+  /**
+   * @see http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247
+   */
+
+  function Node() {}
+  Node.prototype = {
+    firstChild: null,
+    lastChild: null,
+    previousSibling: null,
+    nextSibling: null,
+    attributes: null,
+    parentNode: null,
+    childNodes: null,
+    ownerDocument: null,
+    nodeValue: null,
+    namespaceURI: null,
+    prefix: null,
+    localName: null,
+    // Modified in DOM Level 2:
+    insertBefore: function insertBefore(newChild, refChild) {
+      //raises 
+      return _insertBefore(this, newChild, refChild);
+    },
+    replaceChild: function replaceChild(newChild, oldChild) {
+      //raises 
+      this.insertBefore(newChild, oldChild);
+
+      if (oldChild) {
+        this.removeChild(oldChild);
+      }
+    },
+    removeChild: function removeChild(oldChild) {
+      return _removeChild(this, oldChild);
+    },
+    appendChild: function appendChild(newChild) {
+      return this.insertBefore(newChild, null);
+    },
+    hasChildNodes: function hasChildNodes() {
+      return this.firstChild != null;
+    },
+    cloneNode: function cloneNode(deep) {
+      return _cloneNode(this.ownerDocument || this, this, deep);
+    },
+    // Modified in DOM Level 2:
+    normalize: function normalize() {
+      var child = this.firstChild;
+
+      while (child) {
+        var next = child.nextSibling;
+
+        if (next && next.nodeType == TEXT_NODE && child.nodeType == TEXT_NODE) {
+          this.removeChild(next);
+          child.appendData(next.data);
+        } else {
+          child.normalize();
+          child = next;
+        }
+      }
+    },
+    // Introduced in DOM Level 2:
+    isSupported: function isSupported(feature, version) {
+      return this.ownerDocument.implementation.hasFeature(feature, version);
+    },
+    // Introduced in DOM Level 2:
+    hasAttributes: function hasAttributes() {
+      return this.attributes.length > 0;
+    },
+    lookupPrefix: function lookupPrefix(namespaceURI) {
+      var el = this;
+
+      while (el) {
+        var map = el._nsMap; //console.dir(map)
+
+        if (map) {
+          for (var n in map) {
+            if (map[n] == namespaceURI) {
+              return n;
+            }
+          }
+        }
+
+        el = el.nodeType == ATTRIBUTE_NODE ? el.ownerDocument : el.parentNode;
+      }
+
+      return null;
+    },
+    // Introduced in DOM Level 3:
+    lookupNamespaceURI: function lookupNamespaceURI(prefix) {
+      var el = this;
+
+      while (el) {
+        var map = el._nsMap; //console.dir(map)
+
+        if (map) {
+          if (prefix in map) {
+            return map[prefix];
+          }
+        }
+
+        el = el.nodeType == ATTRIBUTE_NODE ? el.ownerDocument : el.parentNode;
+      }
+
+      return null;
+    },
+    // Introduced in DOM Level 3:
+    isDefaultNamespace: function isDefaultNamespace(namespaceURI) {
+      var prefix = this.lookupPrefix(namespaceURI);
+      return prefix == null;
+    }
+  };
+
+  function _xmlEncoder(c) {
+    return c == '<' && '&lt;' || c == '>' && '&gt;' || c == '&' && '&amp;' || c == '"' && '&quot;' || '&#' + c.charCodeAt() + ';';
+  }
+
+  copy(NodeType, Node);
+  copy(NodeType, Node.prototype);
+  /**
+   * @param callback return true for continue,false for break
+   * @return boolean true: break visit;
+   */
+
+  function _visitNode(node, callback) {
+    if (callback(node)) {
+      return true;
+    }
+
+    if (node = node.firstChild) {
+      do {
+        if (_visitNode(node, callback)) {
+          return true;
+        }
+      } while (node = node.nextSibling);
+    }
+  }
+
+  function Document() {}
+
+  function _onAddAttribute(doc, el, newAttr) {
+    doc && doc._inc++;
+    var ns = newAttr.namespaceURI;
+
+    if (ns == 'http://www.w3.org/2000/xmlns/') {
+      //update namespace
+      el._nsMap[newAttr.prefix ? newAttr.localName : ''] = newAttr.value;
+    }
+  }
+
+  function _onRemoveAttribute(doc, el, newAttr, remove) {
+    doc && doc._inc++;
+    var ns = newAttr.namespaceURI;
+
+    if (ns == 'http://www.w3.org/2000/xmlns/') {
+      //update namespace
+      delete el._nsMap[newAttr.prefix ? newAttr.localName : ''];
+    }
+  }
+
+  function _onUpdateChild(doc, el, newChild) {
+    if (doc && doc._inc) {
+      doc._inc++; //update childNodes
+
+      var cs = el.childNodes;
+
+      if (newChild) {
+        cs[cs.length++] = newChild;
+      } else {
+        //console.log(1)
+        var child = el.firstChild;
+        var i = 0;
+
+        while (child) {
+          cs[i++] = child;
+          child = child.nextSibling;
+        }
+
+        cs.length = i;
+      }
+    }
+  }
+  /**
+   * attributes;
+   * children;
+   * 
+   * writeable properties:
+   * nodeValue,Attr:value,CharacterData:data
+   * prefix
+   */
+
+
+  function _removeChild(parentNode, child) {
+    var previous = child.previousSibling;
+    var next = child.nextSibling;
+
+    if (previous) {
+      previous.nextSibling = next;
+    } else {
+      parentNode.firstChild = next;
+    }
+
+    if (next) {
+      next.previousSibling = previous;
+    } else {
+      parentNode.lastChild = previous;
+    }
+
+    _onUpdateChild(parentNode.ownerDocument, parentNode);
+
+    return child;
+  }
+  /**
+   * preformance key(refChild == null)
+   */
+
+
+  function _insertBefore(parentNode, newChild, nextChild) {
+    var cp = newChild.parentNode;
+
+    if (cp) {
+      cp.removeChild(newChild); //remove and update
+    }
+
+    if (newChild.nodeType === DOCUMENT_FRAGMENT_NODE) {
+      var newFirst = newChild.firstChild;
+
+      if (newFirst == null) {
+        return newChild;
+      }
+
+      var newLast = newChild.lastChild;
+    } else {
+      newFirst = newLast = newChild;
+    }
+
+    var pre = nextChild ? nextChild.previousSibling : parentNode.lastChild;
+    newFirst.previousSibling = pre;
+    newLast.nextSibling = nextChild;
+
+    if (pre) {
+      pre.nextSibling = newFirst;
+    } else {
+      parentNode.firstChild = newFirst;
+    }
+
+    if (nextChild == null) {
+      parentNode.lastChild = newLast;
+    } else {
+      nextChild.previousSibling = newLast;
+    }
+
+    do {
+      newFirst.parentNode = parentNode;
+    } while (newFirst !== newLast && (newFirst = newFirst.nextSibling));
+
+    _onUpdateChild(parentNode.ownerDocument || parentNode, parentNode); //console.log(parentNode.lastChild.nextSibling == null)
+
+
+    if (newChild.nodeType == DOCUMENT_FRAGMENT_NODE) {
+      newChild.firstChild = newChild.lastChild = null;
+    }
+
+    return newChild;
+  }
+
+  function _appendSingleChild(parentNode, newChild) {
+    var cp = newChild.parentNode;
+
+    if (cp) {
+      var pre = parentNode.lastChild;
+      cp.removeChild(newChild); //remove and update
+
+      var pre = parentNode.lastChild;
+    }
+
+    var pre = parentNode.lastChild;
+    newChild.parentNode = parentNode;
+    newChild.previousSibling = pre;
+    newChild.nextSibling = null;
+
+    if (pre) {
+      pre.nextSibling = newChild;
+    } else {
+      parentNode.firstChild = newChild;
+    }
+
+    parentNode.lastChild = newChild;
+
+    _onUpdateChild(parentNode.ownerDocument, parentNode, newChild);
+
+    return newChild; //console.log("__aa",parentNode.lastChild.nextSibling == null)
+  }
+
+  Document.prototype = {
+    //implementation : null,
+    nodeName: '#document',
+    nodeType: DOCUMENT_NODE,
+    doctype: null,
+    documentElement: null,
+    _inc: 1,
+    insertBefore: function insertBefore(newChild, refChild) {
+      //raises 
+      if (newChild.nodeType == DOCUMENT_FRAGMENT_NODE) {
+        var child = newChild.firstChild;
+
+        while (child) {
+          var next = child.nextSibling;
+          this.insertBefore(child, refChild);
+          child = next;
+        }
+
+        return newChild;
+      }
+
+      if (this.documentElement == null && newChild.nodeType == ELEMENT_NODE) {
+        this.documentElement = newChild;
+      }
+
+      return _insertBefore(this, newChild, refChild), newChild.ownerDocument = this, newChild;
+    },
+    removeChild: function removeChild(oldChild) {
+      if (this.documentElement == oldChild) {
+        this.documentElement = null;
+      }
+
+      return _removeChild(this, oldChild);
+    },
+    // Introduced in DOM Level 2:
+    importNode: function importNode(importedNode, deep) {
+      return _importNode(this, importedNode, deep);
+    },
+    // Introduced in DOM Level 2:
+    getElementById: function getElementById(id) {
+      var rtv = null;
+
+      _visitNode(this.documentElement, function (node) {
+        if (node.nodeType == ELEMENT_NODE) {
+          if (node.getAttribute('id') == id) {
+            rtv = node;
+            return true;
+          }
+        }
+      });
+
+      return rtv;
+    },
+    //document factory method:
+    createElement: function createElement(tagName) {
+      var node = new Element();
+      node.ownerDocument = this;
+      node.nodeName = tagName;
+      node.tagName = tagName;
+      node.childNodes = new NodeList();
+      var attrs = node.attributes = new NamedNodeMap();
+      attrs._ownerElement = node;
+      return node;
+    },
+    createDocumentFragment: function createDocumentFragment() {
+      var node = new DocumentFragment();
+      node.ownerDocument = this;
+      node.childNodes = new NodeList();
+      return node;
+    },
+    createTextNode: function createTextNode(data) {
+      var node = new Text();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createComment: function createComment(data) {
+      var node = new Comment();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createCDATASection: function createCDATASection(data) {
+      var node = new CDATASection();
+      node.ownerDocument = this;
+      node.appendData(data);
+      return node;
+    },
+    createProcessingInstruction: function createProcessingInstruction(target, data) {
+      var node = new ProcessingInstruction();
+      node.ownerDocument = this;
+      node.tagName = node.target = target;
+      node.nodeValue = node.data = data;
+      return node;
+    },
+    createAttribute: function createAttribute(name) {
+      var node = new Attr();
+      node.ownerDocument = this;
+      node.name = name;
+      node.nodeName = name;
+      node.localName = name;
+      node.specified = true;
+      return node;
+    },
+    createEntityReference: function createEntityReference(name) {
+      var node = new EntityReference();
+      node.ownerDocument = this;
+      node.nodeName = name;
+      return node;
+    },
+    // Introduced in DOM Level 2:
+    createElementNS: function createElementNS(namespaceURI, qualifiedName) {
+      var node = new Element();
+      var pl = qualifiedName.split(':');
+      var attrs = node.attributes = new NamedNodeMap();
+      node.childNodes = new NodeList();
+      node.ownerDocument = this;
+      node.nodeName = qualifiedName;
+      node.tagName = qualifiedName;
+      node.namespaceURI = namespaceURI;
+
+      if (pl.length == 2) {
+        node.prefix = pl[0];
+        node.localName = pl[1];
+      } else {
+        //el.prefix = null;
+        node.localName = qualifiedName;
+      }
+
+      attrs._ownerElement = node;
+      return node;
+    },
+    // Introduced in DOM Level 2:
+    createAttributeNS: function createAttributeNS(namespaceURI, qualifiedName) {
+      var node = new Attr();
+      var pl = qualifiedName.split(':');
+      node.ownerDocument = this;
+      node.nodeName = qualifiedName;
+      node.name = qualifiedName;
+      node.namespaceURI = namespaceURI;
+      node.specified = true;
+
+      if (pl.length == 2) {
+        node.prefix = pl[0];
+        node.localName = pl[1];
+      } else {
+        //el.prefix = null;
+        node.localName = qualifiedName;
+      }
+
+      return node;
+    }
+  };
+
+  _extends$1(Document, Node);
+
+  function Element() {
+    this._nsMap = {};
+  }
+  Element.prototype = {
+    nodeType: ELEMENT_NODE,
+    hasAttribute: function hasAttribute(name) {
+      return this.getAttributeNode(name) != null;
+    },
+    getAttribute: function getAttribute(name) {
+      var attr = this.getAttributeNode(name);
+      return attr && attr.value || '';
+    },
+    getAttributeNode: function getAttributeNode(name) {
+      return this.attributes.getNamedItem(name);
+    },
+    setAttribute: function setAttribute(name, value) {
+      var attr = this.ownerDocument.createAttribute(name);
+      attr.value = attr.nodeValue = "" + value;
+      this.setAttributeNode(attr);
+    },
+    removeAttribute: function removeAttribute(name) {
+      var attr = this.getAttributeNode(name);
+      attr && this.removeAttributeNode(attr);
+    },
+    //four real opeartion method
+    appendChild: function appendChild(newChild) {
+      if (newChild.nodeType === DOCUMENT_FRAGMENT_NODE) {
+        return this.insertBefore(newChild, null);
+      } else {
+        return _appendSingleChild(this, newChild);
+      }
+    },
+    setAttributeNode: function setAttributeNode(newAttr) {
+      return this.attributes.setNamedItem(newAttr);
+    },
+    setAttributeNodeNS: function setAttributeNodeNS(newAttr) {
+      return this.attributes.setNamedItemNS(newAttr);
+    },
+    removeAttributeNode: function removeAttributeNode(oldAttr) {
+      //console.log(this == oldAttr.ownerElement)
+      return this.attributes.removeNamedItem(oldAttr.nodeName);
+    },
+    //get real attribute name,and remove it by removeAttributeNode
+    removeAttributeNS: function removeAttributeNS(namespaceURI, localName) {
+      var old = this.getAttributeNodeNS(namespaceURI, localName);
+      old && this.removeAttributeNode(old);
+    },
+    hasAttributeNS: function hasAttributeNS(namespaceURI, localName) {
+      return this.getAttributeNodeNS(namespaceURI, localName) != null;
+    },
+    getAttributeNS: function getAttributeNS(namespaceURI, localName) {
+      var attr = this.getAttributeNodeNS(namespaceURI, localName);
+      return attr && attr.value || '';
+    },
+    setAttributeNS: function setAttributeNS(namespaceURI, qualifiedName, value) {
+      var attr = this.ownerDocument.createAttributeNS(namespaceURI, qualifiedName);
+      attr.value = attr.nodeValue = "" + value;
+      this.setAttributeNode(attr);
+    },
+    getAttributeNodeNS: function getAttributeNodeNS(namespaceURI, localName) {
+      return this.attributes.getNamedItemNS(namespaceURI, localName);
+    },
+    getElementsByTagName: function getElementsByTagName(tagName) {
+      return new LiveNodeList(this, function (base) {
+        var ls = [];
+
+        _visitNode(base, function (node) {
+          if (node !== base && node.nodeType == ELEMENT_NODE && (tagName === '*' || node.tagName == tagName)) {
+            ls.push(node);
+          }
+        });
+
+        return ls;
+      });
+    },
+    getElementsByTagNameNS: function getElementsByTagNameNS(namespaceURI, localName) {
+      return new LiveNodeList(this, function (base) {
+        var ls = [];
+
+        _visitNode(base, function (node) {
+          if (node !== base && node.nodeType === ELEMENT_NODE && (namespaceURI === '*' || node.namespaceURI === namespaceURI) && (localName === '*' || node.localName == localName)) {
+            ls.push(node);
+          }
+        });
+
+        return ls;
+      });
+    }
+  };
+  Document.prototype.getElementsByTagName = Element.prototype.getElementsByTagName;
+  Document.prototype.getElementsByTagNameNS = Element.prototype.getElementsByTagNameNS;
+
+  _extends$1(Element, Node);
+
+  function Attr() {}
+  Attr.prototype.nodeType = ATTRIBUTE_NODE;
+
+  _extends$1(Attr, Node);
+
+  function CharacterData() {}
+  CharacterData.prototype = {
+    data: '',
+    substringData: function substringData(offset, count) {
+      return this.data.substring(offset, offset + count);
+    },
+    appendData: function appendData(text) {
+      text = this.data + text;
+      this.nodeValue = this.data = text;
+      this.length = text.length;
+    },
+    insertData: function insertData(offset, text) {
+      this.replaceData(offset, 0, text);
+    },
+    appendChild: function appendChild(newChild) {
+      throw new Error(ExceptionMessage[HIERARCHY_REQUEST_ERR]);
+    },
+    deleteData: function deleteData(offset, count) {
+      this.replaceData(offset, count, "");
+    },
+    replaceData: function replaceData(offset, count, text) {
+      var start = this.data.substring(0, offset);
+      var end = this.data.substring(offset + count);
+      text = start + text + end;
+      this.nodeValue = this.data = text;
+      this.length = text.length;
+    }
+  };
+
+  _extends$1(CharacterData, Node);
+
+  function Text() {}
+  Text.prototype = {
+    nodeName: "#text",
+    nodeType: TEXT_NODE,
+    splitText: function splitText(offset) {
+      var text = this.data;
+      var newText = text.substring(offset);
+      text = text.substring(0, offset);
+      this.data = this.nodeValue = text;
+      this.length = text.length;
+      var newNode = this.ownerDocument.createTextNode(newText);
+
+      if (this.parentNode) {
+        this.parentNode.insertBefore(newNode, this.nextSibling);
+      }
+
+      return newNode;
+    }
+  };
+
+  _extends$1(Text, CharacterData);
+
+  function Comment() {}
+  Comment.prototype = {
+    nodeName: "#comment",
+    nodeType: COMMENT_NODE
+  };
+
+  _extends$1(Comment, CharacterData);
+
+  function CDATASection() {}
+  CDATASection.prototype = {
+    nodeName: "#cdata-section",
+    nodeType: CDATA_SECTION_NODE
+  };
+
+  _extends$1(CDATASection, CharacterData);
+
+  function DocumentType() {}
+  DocumentType.prototype.nodeType = DOCUMENT_TYPE_NODE;
+
+  _extends$1(DocumentType, Node);
+
+  function Notation() {}
+  Notation.prototype.nodeType = NOTATION_NODE;
+
+  _extends$1(Notation, Node);
+
+  function Entity() {}
+  Entity.prototype.nodeType = ENTITY_NODE;
+
+  _extends$1(Entity, Node);
+
+  function EntityReference() {}
+  EntityReference.prototype.nodeType = ENTITY_REFERENCE_NODE;
+
+  _extends$1(EntityReference, Node);
+
+  function DocumentFragment() {}
+  DocumentFragment.prototype.nodeName = "#document-fragment";
+  DocumentFragment.prototype.nodeType = DOCUMENT_FRAGMENT_NODE;
+
+  _extends$1(DocumentFragment, Node);
+
+  function ProcessingInstruction() {}
+
+  ProcessingInstruction.prototype.nodeType = PROCESSING_INSTRUCTION_NODE;
+
+  _extends$1(ProcessingInstruction, Node);
+
+  function XMLSerializer() {}
+
+  XMLSerializer.prototype.serializeToString = function (node, isHtml, nodeFilter) {
+    return nodeSerializeToString.call(node, isHtml, nodeFilter);
+  };
+
+  Node.prototype.toString = nodeSerializeToString;
+
+  function nodeSerializeToString(isHtml, nodeFilter) {
+    var buf = [];
+    var refNode = this.nodeType == 9 ? this.documentElement : this;
+    var prefix = refNode.prefix;
+    var uri = refNode.namespaceURI;
+
+    if (uri && prefix == null) {
+      //console.log(prefix)
+      var prefix = refNode.lookupPrefix(uri);
+
+      if (prefix == null) {
+        //isHTML = true;
+        var visibleNamespaces = [{
+          namespace: uri,
+          prefix: null
+        } //{namespace:uri,prefix:''}
+        ];
+      }
+    }
+
+    serializeToString(this, buf, isHtml, nodeFilter, visibleNamespaces); //console.log('###',this.nodeType,uri,prefix,buf.join(''))
+
+    return buf.join('');
+  }
+
+  function needNamespaceDefine(node, isHTML, visibleNamespaces) {
+    var prefix = node.prefix || '';
+    var uri = node.namespaceURI;
+
+    if (!prefix && !uri) {
+      return false;
+    }
+
+    if (prefix === "xml" && uri === "http://www.w3.org/XML/1998/namespace" || uri == 'http://www.w3.org/2000/xmlns/') {
+      return false;
+    }
+
+    var i = visibleNamespaces.length; //console.log('@@@@',node.tagName,prefix,uri,visibleNamespaces)
+
+    while (i--) {
+      var ns = visibleNamespaces[i]; // get namespace prefix
+      //console.log(node.nodeType,node.tagName,ns.prefix,prefix)
+
+      if (ns.prefix == prefix) {
+        return ns.namespace != uri;
+      }
+    } //console.log(isHTML,uri,prefix=='')
+    //if(isHTML && prefix ==null && uri == 'http://www.w3.org/1999/xhtml'){
+    //	return false;
+    //}
+    //node.flag = '11111'
+    //console.error(3,true,node.flag,node.prefix,node.namespaceURI)
+
+
+    return true;
+  }
+
+  function serializeToString(node, buf, isHTML, nodeFilter, visibleNamespaces) {
+    if (nodeFilter) {
+      node = nodeFilter(node);
+
+      if (node) {
+        if (typeof node == 'string') {
+          buf.push(node);
+          return;
+        }
+      } else {
+        return;
+      } //buf.sort.apply(attrs, attributeSorter);
+
+    }
+
+    switch (node.nodeType) {
+      case ELEMENT_NODE:
+        if (!visibleNamespaces) visibleNamespaces = [];
+        var startVisibleNamespaces = visibleNamespaces.length;
+        var attrs = node.attributes;
+        var len = attrs.length;
+        var child = node.firstChild;
+        var nodeName = node.tagName;
+        isHTML = htmlns === node.namespaceURI || isHTML;
+        buf.push('<', nodeName);
+
+        for (var i = 0; i < len; i++) {
+          // add namespaces for attributes
+          var attr = attrs.item(i);
+
+          if (attr.prefix == 'xmlns') {
+            visibleNamespaces.push({
+              prefix: attr.localName,
+              namespace: attr.value
+            });
+          } else if (attr.nodeName == 'xmlns') {
+            visibleNamespaces.push({
+              prefix: '',
+              namespace: attr.value
+            });
+          }
+        }
+
+        for (var i = 0; i < len; i++) {
+          var attr = attrs.item(i);
+
+          if (needNamespaceDefine(attr, isHTML, visibleNamespaces)) {
+            var prefix = attr.prefix || '';
+            var uri = attr.namespaceURI;
+            var ns = prefix ? ' xmlns:' + prefix : " xmlns";
+            buf.push(ns, '="', uri, '"');
+            visibleNamespaces.push({
+              prefix: prefix,
+              namespace: uri
+            });
+          }
+
+          serializeToString(attr, buf, isHTML, nodeFilter, visibleNamespaces);
+        } // add namespace for current node		
+
+
+        if (needNamespaceDefine(node, isHTML, visibleNamespaces)) {
+          var prefix = node.prefix || '';
+          var uri = node.namespaceURI;
+          var ns = prefix ? ' xmlns:' + prefix : " xmlns";
+          buf.push(ns, '="', uri, '"');
+          visibleNamespaces.push({
+            prefix: prefix,
+            namespace: uri
+          });
+        }
+
+        if (child || isHTML && !/^(?:meta|link|img|br|hr|input)$/i.test(nodeName)) {
+          buf.push('>'); //if is cdata child node
+
+          if (isHTML && /^script$/i.test(nodeName)) {
+            while (child) {
+              if (child.data) {
+                buf.push(child.data);
+              } else {
+                serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+              }
+
+              child = child.nextSibling;
+            }
+          } else {
+            while (child) {
+              serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+              child = child.nextSibling;
+            }
+          }
+
+          buf.push('</', nodeName, '>');
+        } else {
+          buf.push('/>');
+        } // remove added visible namespaces
+        //visibleNamespaces.length = startVisibleNamespaces;
+
+
+        return;
+
+      case DOCUMENT_NODE:
+      case DOCUMENT_FRAGMENT_NODE:
+        var child = node.firstChild;
+
+        while (child) {
+          serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+          child = child.nextSibling;
+        }
+
+        return;
+
+      case ATTRIBUTE_NODE:
+        return buf.push(' ', node.name, '="', node.value.replace(/[<&"]/g, _xmlEncoder), '"');
+
+      case TEXT_NODE:
+        return buf.push(node.data.replace(/[<&]/g, _xmlEncoder));
+
+      case CDATA_SECTION_NODE:
+        return buf.push('<![CDATA[', node.data, ']]>');
+
+      case COMMENT_NODE:
+        return buf.push("<!--", node.data, "-->");
+
+      case DOCUMENT_TYPE_NODE:
+        var pubid = node.publicId;
+        var sysid = node.systemId;
+        buf.push('<!DOCTYPE ', node.name);
+
+        if (pubid) {
+          buf.push(' PUBLIC "', pubid);
+
+          if (sysid && sysid != '.') {
+            buf.push('" "', sysid);
+          }
+
+          buf.push('">');
+        } else if (sysid && sysid != '.') {
+          buf.push(' SYSTEM "', sysid, '">');
+        } else {
+          var sub = node.internalSubset;
+
+          if (sub) {
+            buf.push(" [", sub, "]");
+          }
+
+          buf.push(">");
+        }
+
+        return;
+
+      case PROCESSING_INSTRUCTION_NODE:
+        return buf.push("<?", node.target, " ", node.data, "?>");
+
+      case ENTITY_REFERENCE_NODE:
+        return buf.push('&', node.nodeName, ';');
+      //case ENTITY_NODE:
+      //case NOTATION_NODE:
+
+      default:
+        buf.push('??', node.nodeName);
+    }
+  }
+
+  function _importNode(doc, node, deep) {
+    var node2;
+
+    switch (node.nodeType) {
+      case ELEMENT_NODE:
+        node2 = node.cloneNode(false);
+        node2.ownerDocument = doc;
+      //var attrs = node2.attributes;
+      //var len = attrs.length;
+      //for(var i=0;i<len;i++){
+      //node2.setAttributeNodeNS(importNode(doc,attrs.item(i),deep));
+      //}
+
+      case DOCUMENT_FRAGMENT_NODE:
+        break;
+
+      case ATTRIBUTE_NODE:
+        deep = true;
+        break;
+      //case ENTITY_REFERENCE_NODE:
+      //case PROCESSING_INSTRUCTION_NODE:
+      ////case TEXT_NODE:
+      //case CDATA_SECTION_NODE:
+      //case COMMENT_NODE:
+      //	deep = false;
+      //	break;
+      //case DOCUMENT_NODE:
+      //case DOCUMENT_TYPE_NODE:
+      //cannot be imported.
+      //case ENTITY_NODE:
+      //case NOTATION_NODE：
+      //can not hit in level3
+      //default:throw e;
+    }
+
+    if (!node2) {
+      node2 = node.cloneNode(false); //false
+    }
+
+    node2.ownerDocument = doc;
+    node2.parentNode = null;
+
+    if (deep) {
+      var child = node.firstChild;
+
+      while (child) {
+        node2.appendChild(_importNode(doc, child, deep));
+        child = child.nextSibling;
+      }
+    }
+
+    return node2;
+  } //
+  //var _relationMap = {firstChild:1,lastChild:1,previousSibling:1,nextSibling:1,
+  //					attributes:1,childNodes:1,parentNode:1,documentElement:1,doctype,};
+
+
+  function _cloneNode(doc, node, deep) {
+    var node2 = new node.constructor();
+
+    for (var n in node) {
+      var v = node[n];
+
+      if (typeof v != 'object') {
+        if (v != node2[n]) {
+          node2[n] = v;
+        }
+      }
+    }
+
+    if (node.childNodes) {
+      node2.childNodes = new NodeList();
+    }
+
+    node2.ownerDocument = doc;
+
+    switch (node2.nodeType) {
+      case ELEMENT_NODE:
+        var attrs = node.attributes;
+        var attrs2 = node2.attributes = new NamedNodeMap();
+        var len = attrs.length;
+        attrs2._ownerElement = node2;
+
+        for (var i = 0; i < len; i++) {
+          node2.setAttributeNode(_cloneNode(doc, attrs.item(i), true));
+        }
+
+        break;
+
+
+      case ATTRIBUTE_NODE:
+        deep = true;
+    }
+
+    if (deep) {
+      var child = node.firstChild;
+
+      while (child) {
+        node2.appendChild(_cloneNode(doc, child, deep));
+        child = child.nextSibling;
+      }
+    }
+
+    return node2;
+  }
+
+  function __set__(object, key, value) {
+    object[key] = value;
+  } //do dynamic
+
+
+  try {
+    if (Object.defineProperty) {
+      var getTextContent = function getTextContent(node) {
+        switch (node.nodeType) {
+          case ELEMENT_NODE:
+          case DOCUMENT_FRAGMENT_NODE:
+            var buf = [];
+            node = node.firstChild;
+
+            while (node) {
+              if (node.nodeType !== 7 && node.nodeType !== 8) {
+                buf.push(getTextContent(node));
+              }
+
+              node = node.nextSibling;
+            }
+
+            return buf.join('');
+
+          default:
+            return node.nodeValue;
+        }
+      };
+
+      Object.defineProperty(LiveNodeList.prototype, 'length', {
+        get: function get() {
+          _updateLiveList(this);
+
+          return this.$$length;
+        }
+      });
+      Object.defineProperty(Node.prototype, 'textContent', {
+        get: function get() {
+          return getTextContent(this);
+        },
+        set: function set(data) {
+          switch (this.nodeType) {
+            case ELEMENT_NODE:
+            case DOCUMENT_FRAGMENT_NODE:
+              while (this.firstChild) {
+                this.removeChild(this.firstChild);
+              }
+
+              if (data || String(data)) {
+                this.appendChild(this.ownerDocument.createTextNode(data));
+              }
+
+              break;
+
+            default:
+              //TODO:
+              this.data = data;
+              this.value = data;
+              this.nodeValue = data;
+          }
+        }
+      });
+
+      __set__ = function __set__(object, key, value) {
+        //console.log(value)
+        object['$$' + key] = value;
+      };
+    }
+  } catch (e) {} //ie8
+  //if(typeof require == 'function'){
+
+
+  var DOMImplementation_1 = DOMImplementation;
+  var XMLSerializer_1 = XMLSerializer; //}
+
+  var dom = {
+    DOMImplementation: DOMImplementation_1,
+    XMLSerializer: XMLSerializer_1
+  };
+
+  var domParser = createCommonjsModule(function (module, exports) {
+    function DOMParser(options) {
+      this.options = options || {
+        locator: {}
+      };
+    }
+
+    DOMParser.prototype.parseFromString = function (source, mimeType) {
+      var options = this.options;
+      var sax = new XMLReader();
+      var domBuilder = options.domBuilder || new DOMHandler(); //contentHandler and LexicalHandler
+
+      var errorHandler = options.errorHandler;
+      var locator = options.locator;
+      var defaultNSMap = options.xmlns || {};
+      var entityMap = {
+        'lt': '<',
+        'gt': '>',
+        'amp': '&',
+        'quot': '"',
+        'apos': "'"
+      };
+
+      if (locator) {
+        domBuilder.setDocumentLocator(locator);
+      }
+
+      sax.errorHandler = buildErrorHandler(errorHandler, domBuilder, locator);
+      sax.domBuilder = options.domBuilder || domBuilder;
+
+      if (/\/x?html?$/.test(mimeType)) {
+        entityMap.nbsp = '\xa0';
+        entityMap.copy = '\xa9';
+        defaultNSMap[''] = 'http://www.w3.org/1999/xhtml';
+      }
+
+      defaultNSMap.xml = defaultNSMap.xml || 'http://www.w3.org/XML/1998/namespace';
+
+      if (source) {
+        sax.parse(source, defaultNSMap, entityMap);
+      } else {
+        sax.errorHandler.error("invalid doc source");
+      }
+
+      return domBuilder.doc;
+    };
+
+    function buildErrorHandler(errorImpl, domBuilder, locator) {
+      if (!errorImpl) {
+        if (domBuilder instanceof DOMHandler) {
+          return domBuilder;
+        }
+
+        errorImpl = domBuilder;
+      }
+
+      var errorHandler = {};
+      var isCallback = errorImpl instanceof Function;
+      locator = locator || {};
+
+      function build(key) {
+        var fn = errorImpl[key];
+
+        if (!fn && isCallback) {
+          fn = errorImpl.length == 2 ? function (msg) {
+            errorImpl(key, msg);
+          } : errorImpl;
+        }
+
+        errorHandler[key] = fn && function (msg) {
+          fn('[xmldom ' + key + ']\t' + msg + _locator(locator));
+        } || function () {};
+      }
+
+      build('warning');
+      build('error');
+      build('fatalError');
+      return errorHandler;
+    } //console.log('#\n\n\n\n\n\n\n####')
+
+    /**
+     * +ContentHandler+ErrorHandler
+     * +LexicalHandler+EntityResolver2
+     * -DeclHandler-DTDHandler 
+     * 
+     * DefaultHandler:EntityResolver, DTDHandler, ContentHandler, ErrorHandler
+     * DefaultHandler2:DefaultHandler,LexicalHandler, DeclHandler, EntityResolver2
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/helpers/DefaultHandler.html
+     */
+
+
+    function DOMHandler() {
+      this.cdata = false;
+    }
+
+    function position(locator, node) {
+      node.lineNumber = locator.lineNumber;
+      node.columnNumber = locator.columnNumber;
+    }
+    /**
+     * @see org.xml.sax.ContentHandler#startDocument
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html
+     */
+
+
+    DOMHandler.prototype = {
+      startDocument: function startDocument() {
+        this.doc = new DOMImplementation().createDocument(null, null, null);
+
+        if (this.locator) {
+          this.doc.documentURI = this.locator.systemId;
+        }
+      },
+      startElement: function startElement(namespaceURI, localName, qName, attrs) {
+        var doc = this.doc;
+        var el = doc.createElementNS(namespaceURI, qName || localName);
+        var len = attrs.length;
+        appendElement(this, el);
+        this.currentElement = el;
+        this.locator && position(this.locator, el);
+
+        for (var i = 0; i < len; i++) {
+          var namespaceURI = attrs.getURI(i);
+          var value = attrs.getValue(i);
+          var qName = attrs.getQName(i);
+          var attr = doc.createAttributeNS(namespaceURI, qName);
+          this.locator && position(attrs.getLocator(i), attr);
+          attr.value = attr.nodeValue = value;
+          el.setAttributeNode(attr);
+        }
+      },
+      endElement: function endElement(namespaceURI, localName, qName) {
+        var current = this.currentElement;
+        var tagName = current.tagName;
+        this.currentElement = current.parentNode;
+      },
+      startPrefixMapping: function startPrefixMapping(prefix, uri) {},
+      endPrefixMapping: function endPrefixMapping(prefix) {},
+      processingInstruction: function processingInstruction(target, data) {
+        var ins = this.doc.createProcessingInstruction(target, data);
+        this.locator && position(this.locator, ins);
+        appendElement(this, ins);
+      },
+      ignorableWhitespace: function ignorableWhitespace(ch, start, length) {},
+      characters: function characters(chars, start, length) {
+        chars = _toString.apply(this, arguments); //console.log(chars)
+
+        if (chars) {
+          if (this.cdata) {
+            var charNode = this.doc.createCDATASection(chars);
+          } else {
+            var charNode = this.doc.createTextNode(chars);
+          }
+
+          if (this.currentElement) {
+            this.currentElement.appendChild(charNode);
+          } else if (/^\s*$/.test(chars)) {
+            this.doc.appendChild(charNode); //process xml
+          }
+
+          this.locator && position(this.locator, charNode);
+        }
+      },
+      skippedEntity: function skippedEntity(name) {},
+      endDocument: function endDocument() {
+        this.doc.normalize();
+      },
+      setDocumentLocator: function setDocumentLocator(locator) {
+        if (this.locator = locator) {
+          // && !('lineNumber' in locator)){
+          locator.lineNumber = 0;
+        }
+      },
+      //LexicalHandler
+      comment: function comment(chars, start, length) {
+        chars = _toString.apply(this, arguments);
+        var comm = this.doc.createComment(chars);
+        this.locator && position(this.locator, comm);
+        appendElement(this, comm);
+      },
+      startCDATA: function startCDATA() {
+        //used in characters() methods
+        this.cdata = true;
+      },
+      endCDATA: function endCDATA() {
+        this.cdata = false;
+      },
+      startDTD: function startDTD(name, publicId, systemId) {
+        var impl = this.doc.implementation;
+
+        if (impl && impl.createDocumentType) {
+          var dt = impl.createDocumentType(name, publicId, systemId);
+          this.locator && position(this.locator, dt);
+          appendElement(this, dt);
+        }
+      },
+
+      /**
+       * @see org.xml.sax.ErrorHandler
+       * @link http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html
+       */
+      warning: function warning(error) {
+        console.warn('[xmldom warning]\t' + error, _locator(this.locator));
+      },
+      error: function error(_error) {
+        console.error('[xmldom error]\t' + _error, _locator(this.locator));
+      },
+      fatalError: function fatalError(error) {
+        console.error('[xmldom fatalError]\t' + error, _locator(this.locator));
+        throw error;
+      }
+    };
+
+    function _locator(l) {
+      if (l) {
+        return '\n@' + (l.systemId || '') + '#[line:' + l.lineNumber + ',col:' + l.columnNumber + ']';
+      }
+    }
+
+    function _toString(chars, start, length) {
+      if (typeof chars == 'string') {
+        return chars.substr(start, length);
+      } else {
+        //java sax connect width xmldom on rhino(what about: "? && !(chars instanceof String)")
+        if (chars.length >= start + length || start) {
+          return new java.lang.String(chars, start, length) + '';
+        }
+
+        return chars;
+      }
+    }
+    /*
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html
+     * used method of org.xml.sax.ext.LexicalHandler:
+     *  #comment(chars, start, length)
+     *  #startCDATA()
+     *  #endCDATA()
+     *  #startDTD(name, publicId, systemId)
+     *
+     *
+     * IGNORED method of org.xml.sax.ext.LexicalHandler:
+     *  #endDTD()
+     *  #startEntity(name)
+     *  #endEntity(name)
+     *
+     *
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/DeclHandler.html
+     * IGNORED method of org.xml.sax.ext.DeclHandler
+     * 	#attributeDecl(eName, aName, type, mode, value)
+     *  #elementDecl(name, model)
+     *  #externalEntityDecl(name, publicId, systemId)
+     *  #internalEntityDecl(name, value)
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/EntityResolver2.html
+     * IGNORED method of org.xml.sax.EntityResolver2
+     *  #resolveEntity(String name,String publicId,String baseURI,String systemId)
+     *  #resolveEntity(publicId, systemId)
+     *  #getExternalSubset(name, baseURI)
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/DTDHandler.html
+     * IGNORED method of org.xml.sax.DTDHandler
+     *  #notationDecl(name, publicId, systemId) {};
+     *  #unparsedEntityDecl(name, publicId, systemId, notationName) {};
+     */
+
+
+    "endDTD,startEntity,endEntity,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,resolveEntity,getExternalSubset,notationDecl,unparsedEntityDecl".replace(/\w+/g, function (key) {
+      DOMHandler.prototype[key] = function () {
+        return null;
+      };
+    });
+    /* Private static helpers treated below as private instance methods, so don't need to add these to the public API; we might use a Relator to also get rid of non-standard public properties */
+
+    function appendElement(hander, node) {
+      if (!hander.currentElement) {
+        hander.doc.appendChild(node);
+      } else {
+        hander.currentElement.appendChild(node);
+      }
+    } //appendChild and setAttributeNS are preformance key
+    //if(typeof require == 'function'){
+
+
+    var XMLReader = sax.XMLReader;
+    var DOMImplementation = exports.DOMImplementation = dom.DOMImplementation;
+    exports.XMLSerializer = dom.XMLSerializer;
+    exports.DOMParser = DOMParser; //}
+  });
+  var domParser_1 = domParser.DOMImplementation;
+  var domParser_2 = domParser.XMLSerializer;
+  var domParser_3 = domParser.DOMParser;
+
+  /*! @name mpd-parser @version 0.10.0 @license Apache-2.0 */
 
   var isObject$1 = function isObject(obj) {
     return !!obj && typeof obj === 'object';
@@ -30705,205 +33150,6 @@
     SEGMENT_TIME_UNSPECIFIED: 'SEGMENT_TIME_UNSPECIFIED',
     UNSUPPORTED_UTC_TIMING_SCHEME: 'UNSUPPORTED_UTC_TIMING_SCHEME'
   };
-
-  function createCommonjsModule$1(fn, module) {
-    return module = {
-      exports: {}
-    }, fn(module, module.exports), module.exports;
-  }
-
-  var urlToolkit$1 = createCommonjsModule$1(function (module, exports) {
-    // see https://tools.ietf.org/html/rfc1808
-
-    /* jshint ignore:start */
-    (function (root) {
-      /* jshint ignore:end */
-      var URL_REGEX = /^((?:[a-zA-Z0-9+\-.]+:)?)(\/\/[^\/?#]*)?((?:[^\/\?#]*\/)*.*?)??(;.*?)?(\?.*?)?(#.*?)?$/;
-      var FIRST_SEGMENT_REGEX = /^([^\/?#]*)(.*)$/;
-      var SLASH_DOT_REGEX = /(?:\/|^)\.(?=\/)/g;
-      var SLASH_DOT_DOT_REGEX = /(?:\/|^)\.\.\/(?!\.\.\/).*?(?=\/)/g;
-      var URLToolkit = {
-        // jshint ignore:line
-        // If opts.alwaysNormalize is true then the path will always be normalized even when it starts with / or //
-        // E.g
-        // With opts.alwaysNormalize = false (default, spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/f/../g
-        // With opts.alwaysNormalize = true (not spec compliant)
-        // http://a.com/b/cd + /e/f/../g => http://a.com/e/g
-        buildAbsoluteURL: function buildAbsoluteURL(baseURL, relativeURL, opts) {
-          opts = opts || {}; // remove any remaining space and CRLF
-
-          baseURL = baseURL.trim();
-          relativeURL = relativeURL.trim();
-
-          if (!relativeURL) {
-            // 2a) If the embedded URL is entirely empty, it inherits the
-            // entire base URL (i.e., is set equal to the base URL)
-            // and we are done.
-            if (!opts.alwaysNormalize) {
-              return baseURL;
-            }
-
-            var basePartsForNormalise = URLToolkit.parseURL(baseURL);
-
-            if (!basePartsForNormalise) {
-              throw new Error('Error trying to parse base URL.');
-            }
-
-            basePartsForNormalise.path = URLToolkit.normalizePath(basePartsForNormalise.path);
-            return URLToolkit.buildURLFromParts(basePartsForNormalise);
-          }
-
-          var relativeParts = URLToolkit.parseURL(relativeURL);
-
-          if (!relativeParts) {
-            throw new Error('Error trying to parse relative URL.');
-          }
-
-          if (relativeParts.scheme) {
-            // 2b) If the embedded URL starts with a scheme name, it is
-            // interpreted as an absolute URL and we are done.
-            if (!opts.alwaysNormalize) {
-              return relativeURL;
-            }
-
-            relativeParts.path = URLToolkit.normalizePath(relativeParts.path);
-            return URLToolkit.buildURLFromParts(relativeParts);
-          }
-
-          var baseParts = URLToolkit.parseURL(baseURL);
-
-          if (!baseParts) {
-            throw new Error('Error trying to parse base URL.');
-          }
-
-          if (!baseParts.netLoc && baseParts.path && baseParts.path[0] !== '/') {
-            // If netLoc missing and path doesn't start with '/', assume everthing before the first '/' is the netLoc
-            // This causes 'example.com/a' to be handled as '//example.com/a' instead of '/example.com/a'
-            var pathParts = FIRST_SEGMENT_REGEX.exec(baseParts.path);
-            baseParts.netLoc = pathParts[1];
-            baseParts.path = pathParts[2];
-          }
-
-          if (baseParts.netLoc && !baseParts.path) {
-            baseParts.path = '/';
-          }
-
-          var builtParts = {
-            // 2c) Otherwise, the embedded URL inherits the scheme of
-            // the base URL.
-            scheme: baseParts.scheme,
-            netLoc: relativeParts.netLoc,
-            path: null,
-            params: relativeParts.params,
-            query: relativeParts.query,
-            fragment: relativeParts.fragment
-          };
-
-          if (!relativeParts.netLoc) {
-            // 3) If the embedded URL's <net_loc> is non-empty, we skip to
-            // Step 7.  Otherwise, the embedded URL inherits the <net_loc>
-            // (if any) of the base URL.
-            builtParts.netLoc = baseParts.netLoc; // 4) If the embedded URL path is preceded by a slash "/", the
-            // path is not relative and we skip to Step 7.
-
-            if (relativeParts.path[0] !== '/') {
-              if (!relativeParts.path) {
-                // 5) If the embedded URL path is empty (and not preceded by a
-                // slash), then the embedded URL inherits the base URL path
-                builtParts.path = baseParts.path; // 5a) if the embedded URL's <params> is non-empty, we skip to
-                // step 7; otherwise, it inherits the <params> of the base
-                // URL (if any) and
-
-                if (!relativeParts.params) {
-                  builtParts.params = baseParts.params; // 5b) if the embedded URL's <query> is non-empty, we skip to
-                  // step 7; otherwise, it inherits the <query> of the base
-                  // URL (if any) and we skip to step 7.
-
-                  if (!relativeParts.query) {
-                    builtParts.query = baseParts.query;
-                  }
-                }
-              } else {
-                // 6) The last segment of the base URL's path (anything
-                // following the rightmost slash "/", or the entire path if no
-                // slash is present) is removed and the embedded URL's path is
-                // appended in its place.
-                var baseURLPath = baseParts.path;
-                var newPath = baseURLPath.substring(0, baseURLPath.lastIndexOf('/') + 1) + relativeParts.path;
-                builtParts.path = URLToolkit.normalizePath(newPath);
-              }
-            }
-          }
-
-          if (builtParts.path === null) {
-            builtParts.path = opts.alwaysNormalize ? URLToolkit.normalizePath(relativeParts.path) : relativeParts.path;
-          }
-
-          return URLToolkit.buildURLFromParts(builtParts);
-        },
-        parseURL: function parseURL(url) {
-          var parts = URL_REGEX.exec(url);
-
-          if (!parts) {
-            return null;
-          }
-
-          return {
-            scheme: parts[1] || '',
-            netLoc: parts[2] || '',
-            path: parts[3] || '',
-            params: parts[4] || '',
-            query: parts[5] || '',
-            fragment: parts[6] || ''
-          };
-        },
-        normalizePath: function normalizePath(path) {
-          // The following operations are
-          // then applied, in order, to the new path:
-          // 6a) All occurrences of "./", where "." is a complete path
-          // segment, are removed.
-          // 6b) If the path ends with "." as a complete path segment,
-          // that "." is removed.
-          path = path.split('').reverse().join('').replace(SLASH_DOT_REGEX, ''); // 6c) All occurrences of "<segment>/../", where <segment> is a
-          // complete path segment not equal to "..", are removed.
-          // Removal of these path segments is performed iteratively,
-          // removing the leftmost matching pattern on each iteration,
-          // until no matching pattern remains.
-          // 6d) If the path ends with "<segment>/..", where <segment> is a
-          // complete path segment not equal to "..", that
-          // "<segment>/.." is removed.
-
-          while (path.length !== (path = path.replace(SLASH_DOT_DOT_REGEX, '')).length) {} // jshint ignore:line
-
-
-          return path.split('').reverse().join('');
-        },
-        buildURLFromParts: function buildURLFromParts(parts) {
-          return parts.scheme + parts.netLoc + parts.path + parts.params + parts.query + parts.fragment;
-        }
-      };
-      /* jshint ignore:start */
-
-      module.exports = URLToolkit;
-    })();
-    /* jshint ignore:end */
-
-  });
-
-  var resolveUrl = function resolveUrl(baseUrl, relativeUrl) {
-    // return early if we don't need to resolve
-    if (/^[a-z]+:/i.test(relativeUrl)) {
-      return relativeUrl;
-    } // if the base URL is relative then combine with the current location
-
-
-    if (!/\/\//i.test(baseUrl)) {
-      baseUrl = urlToolkit$1.buildAbsoluteURL(window$1.location.href, baseUrl);
-    }
-
-    return urlToolkit$1.buildAbsoluteURL(baseUrl, relativeUrl);
-  };
   /**
    * @typedef {Object} SingleUri
    * @property {string} uri - relative location of segment
@@ -30930,7 +33176,6 @@
    *   to m3u8-parser
    */
 
-
   var urlTypeToSegment = function urlTypeToSegment(_ref) {
     var _ref$baseUrl = _ref.baseUrl,
         baseUrl = _ref$baseUrl === void 0 ? '' : _ref$baseUrl,
@@ -30942,7 +33187,7 @@
         indexRange = _ref$indexRange === void 0 ? '' : _ref$indexRange;
     var segment = {
       uri: source,
-      resolvedUri: resolveUrl(baseUrl || '', source)
+      resolvedUri: resolveUrl_1(baseUrl || '', source)
     };
 
     if (range || indexRange) {
@@ -31471,8 +33716,11 @@
 
     var _dashPlaylists$0$attr = dashPlaylists[0].attributes,
         duration = _dashPlaylists$0$attr.sourceDuration,
-        _dashPlaylists$0$attr2 = _dashPlaylists$0$attr.minimumUpdatePeriod,
-        minimumUpdatePeriod = _dashPlaylists$0$attr2 === void 0 ? 0 : _dashPlaylists$0$attr2;
+        _dashPlaylists$0$attr2 = _dashPlaylists$0$attr.type,
+        type = _dashPlaylists$0$attr2 === void 0 ? 'static' : _dashPlaylists$0$attr2,
+        suggestedPresentationDelay = _dashPlaylists$0$attr.suggestedPresentationDelay,
+        _dashPlaylists$0$attr3 = _dashPlaylists$0$attr.minimumUpdatePeriod,
+        minimumUpdatePeriod = _dashPlaylists$0$attr3 === void 0 ? 0 : _dashPlaylists$0$attr3;
 
     var videoOnly = function videoOnly(_ref4) {
       var attributes = _ref4.attributes;
@@ -31506,6 +33754,10 @@
       playlists: addSegmentInfoFromSidx(videoPlaylists, sidxMapping),
       minimumUpdatePeriod: minimumUpdatePeriod * 1000
     };
+
+    if (type === 'dynamic') {
+      master.suggestedPresentationDelay = suggestedPresentationDelay;
+    }
 
     if (audioPlaylists.length) {
       master.mediaGroups.AUDIO.audio = organizeAudioPlaylists(audioPlaylists, sidxMapping);
@@ -31817,7 +34069,7 @@
         uri: uri,
         timeline: segment.timeline,
         duration: segment.duration,
-        resolvedUri: resolveUrl(attributes.baseUrl || '', uri),
+        resolvedUri: resolveUrl_1(attributes.baseUrl || '', uri),
         map: mapSegment,
         number: segment.number
       };
@@ -32059,6 +34311,32 @@
     },
 
     /**
+     * Specifies the suggested presentation delay. Format is a
+     * duration string as specified in ISO 8601
+     *
+     * @param {string} value
+     *        value of attribute as a string
+     * @return {number}
+     *         The duration in seconds
+     */
+    suggestedPresentationDelay: function suggestedPresentationDelay(value) {
+      return parseDuration(value);
+    },
+
+    /**
+     * specifices the type of mpd. Can be either "static" or "dynamic"
+     *
+     * @param {string} value
+     *        value of attribute as a string
+     *
+     * @return {string}
+     *         The type as a string
+     */
+    type: function type(value) {
+      return value;
+    },
+
+    /**
      * Specifies the duration of the smallest time shifting buffer for any Representation
      * in the MPD. Format is a duration string as specified in ISO 8601
      *
@@ -32239,17 +34517,6 @@
     }, {});
   };
 
-  function decodeB64ToUint8Array$1(b64Text) {
-    var decodedString = window$1.atob(b64Text);
-    var array = new Uint8Array(decodedString.length);
-
-    for (var i = 0; i < decodedString.length; i++) {
-      array[i] = decodedString.charCodeAt(i);
-    }
-
-    return array;
-  }
-
   var keySystemsMap = {
     'urn:uuid:1077efec-c0b2-4d02-ace3-3c1e52e2fb4b': 'org.w3.clearkey',
     'urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed': 'com.widevine.alpha',
@@ -32274,7 +34541,7 @@
 
     return flatten(referenceUrls.map(function (reference) {
       return baseUrlElements.map(function (baseUrlElement) {
-        return resolveUrl(reference, getContent(baseUrlElement));
+        return resolveUrl_1(reference, getContent(baseUrlElement));
       });
     }));
   };
@@ -32430,7 +34697,7 @@
 
         if (psshNode) {
           var pssh = getContent(psshNode);
-          var psshBuffer = pssh && decodeB64ToUint8Array$1(pssh);
+          var psshBuffer = pssh && decodeB64ToUint8Array_1(pssh);
           acc[keySystem].pssh = psshBuffer;
         }
       }
@@ -32520,7 +34787,7 @@
       var periodAtt = parseAttributes$1(period);
       var parsedPeriodId = parseInt(periodAtt.id, 10); // fallback to mapping index if Period@id is not a number
 
-      var periodIndex = window$1.isNaN(parsedPeriodId) ? index : parsedPeriodId;
+      var periodIndex = window$3.isNaN(parsedPeriodId) ? index : parsedPeriodId;
       var periodAttributes = merge(mpdAttributes, {
         periodIndex: periodIndex
       });
@@ -32579,7 +34846,7 @@
       throw new Error(errors.DASH_EMPTY_MANIFEST);
     }
 
-    var parser = new window$1.DOMParser();
+    var parser = new domParser_3();
     var xml = parser.parseFromString(manifestString, 'application/xml');
     var mpd = xml && xml.documentElement.tagName === 'MPD' ? xml.documentElement : null;
 
@@ -37306,8 +39573,8 @@
 
   /**
    * @videojs/http-streaming
-   * @version 1.11.2
-   * @copyright 2019 Brightcove, Inc
+   * @version 1.12.3
+   * @copyright 2020 Brightcove, Inc
    * @license Apache-2.0
    */
   /**
@@ -37322,7 +39589,7 @@
 
 
     if (!/\/\//i.test(baseURL)) {
-      baseURL = urlToolkit.buildAbsoluteURL(window$1.location.href, baseURL);
+      baseURL = urlToolkit.buildAbsoluteURL(window$3.location.href, baseURL);
     }
 
     return urlToolkit.buildAbsoluteURL(baseURL, relativeURL);
@@ -37551,7 +39818,7 @@
 
   var updateMaster = function updateMaster(master, media) {
     var result = mergeOptions$1(master, {});
-    var playlist = result.playlists[media.uri];
+    var playlist = result.playlists[media.id];
 
     if (!playlist) {
       return null;
@@ -37577,13 +39844,19 @@
     // necessary.
 
     for (var i = 0; i < result.playlists.length; i++) {
-      if (result.playlists[i].uri === media.uri) {
+      if (result.playlists[i].id === media.id) {
         result.playlists[i] = mergedPlaylist;
       }
     }
 
+    result.playlists[media.id] = mergedPlaylist; // URI reference added for backwards compatibility
+
     result.playlists[media.uri] = mergedPlaylist;
     return result;
+  };
+
+  var createPlaylistID = function createPlaylistID(index, uri) {
+    return index + '-' + uri;
   };
 
   var setupMediaPlaylists = function setupMediaPlaylists(master) {
@@ -37592,9 +39865,11 @@
 
     while (i--) {
       var playlist = master.playlists[i];
-      master.playlists[playlist.uri] = playlist;
       playlist.resolvedUri = resolveUrl$1(master.uri, playlist.uri);
-      playlist.id = i;
+      playlist.id = createPlaylistID(i, playlist.uri);
+      master.playlists[playlist.id] = playlist; // URI reference added for backwards compatibility
+
+      master.playlists[playlist.uri] = playlist;
 
       if (!playlist.attributes) {
         // Although the spec states an #EXT-X-STREAM-INF tag MUST have a
@@ -37697,10 +39972,10 @@
           }
 
           if (error) {
-            return _this.playlistRequestError(_this.request, _this.media().uri, 'HAVE_METADATA');
+            return _this.playlistRequestError(_this.request, _this.media(), 'HAVE_METADATA');
           }
 
-          _this.haveMetadata(_this.request, _this.media().uri);
+          _this.haveMetadata(_this.request, _this.media().uri, _this.media().id);
         });
       });
 
@@ -37709,8 +39984,10 @@
 
     createClass$1(PlaylistLoader, [{
       key: 'playlistRequestError',
-      value: function playlistRequestError(xhr, url, startingState) {
-        // any in-flight request is now finished
+      value: function playlistRequestError(xhr, playlist, startingState) {
+        var uri = playlist.uri,
+            id = playlist.id; // any in-flight request is now finished
+
         this.request = null;
 
         if (startingState) {
@@ -37718,9 +39995,9 @@
         }
 
         this.error = {
-          playlist: this.master.playlists[url],
+          playlist: this.master.playlists[id],
           status: xhr.status,
-          message: 'HLS playlist request error at URL: ' + url + '.',
+          message: 'HLS playlist request error at URL: ' + uri + '.',
           responseText: xhr.responseText,
           code: xhr.status >= 500 ? 4 : 2
         };
@@ -37730,7 +40007,7 @@
 
     }, {
       key: 'haveMetadata',
-      value: function haveMetadata(xhr, url) {
+      value: function haveMetadata(xhr, url, id) {
         var _this2 = this; // any in-flight request is now finished
 
 
@@ -37747,7 +40024,8 @@
         });
         parser.push(xhr.responseText);
         parser.end();
-        parser.manifest.uri = url; // m3u8-parser does not attach an attributes property to media playlists so make
+        parser.manifest.uri = url;
+        parser.manifest.id = id; // m3u8-parser does not attach an attributes property to media playlists so make
         // sure that the property is attached to avoid undefined reference errors
 
         parser.manifest.attributes = parser.manifest.attributes || {}; // merge this playlist into the master
@@ -37757,15 +40035,15 @@
 
         if (update) {
           this.master = update;
-          this.media_ = this.master.playlists[parser.manifest.uri];
+          this.media_ = this.master.playlists[id];
         } else {
           this.trigger('playlistunchanged');
         } // refresh live playlists after a target duration passes
 
 
         if (!this.media().endList) {
-          window$1.clearTimeout(this.mediaUpdateTimeout);
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          window$3.clearTimeout(this.mediaUpdateTimeout);
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             _this2.trigger('mediaupdatetimeout');
           }, refreshDelay(this.media(), !!update));
         }
@@ -37779,9 +40057,11 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.finalRenditionTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.finalRenditionTimeout);
+        this.off();
       }
     }, {
       key: 'stopRequest',
@@ -37833,18 +40113,18 @@
           playlist = this.master.playlists[playlist];
         }
 
-        window$1.clearTimeout(this.finalRenditionTimeout);
+        window$3.clearTimeout(this.finalRenditionTimeout);
 
         if (isFinalRendition) {
           var delay = playlist.targetDuration / 2 * 1000 || 5 * 1000;
-          this.finalRenditionTimeout = window$1.setTimeout(this.media.bind(this, playlist, false), delay);
+          this.finalRenditionTimeout = window$3.setTimeout(this.media.bind(this, playlist, false), delay);
           return;
         }
 
         var startingState = this.state;
-        var mediaChange = !this.media_ || playlist.uri !== this.media_.uri; // switch to fully loaded playlists immediately
+        var mediaChange = !this.media_ || playlist.id !== this.media_.id; // switch to fully loaded playlists immediately
 
-        if (this.master.playlists[playlist.uri].endList) {
+        if (this.master.playlists[playlist.id].endList) {
           // abort outstanding playlist requests
           if (this.request) {
             this.request.onreadystatechange = null;
@@ -37899,10 +40179,10 @@
           playlist.resolvedUri = resolveManifestRedirect(_this3.handleManifestRedirects, playlist.resolvedUri, req);
 
           if (error) {
-            return _this3.playlistRequestError(_this3.request, playlist.uri, startingState);
+            return _this3.playlistRequestError(_this3.request, playlist, startingState);
           }
 
-          _this3.haveMetadata(req, playlist.uri); // fire loadedmetadata the first time a media playlist is loaded
+          _this3.haveMetadata(req, playlist.uri, playlist.id); // fire loadedmetadata the first time a media playlist is loaded
 
 
           if (startingState === 'HAVE_MASTER') {
@@ -37920,7 +40200,7 @@
       key: 'pause',
       value: function pause() {
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
 
         if (this.state === 'HAVE_NOTHING') {
           // If we pause the loader before any data has been retrieved, its as if we never
@@ -37951,12 +40231,12 @@
       value: function load(isFinalRendition) {
         var _this4 = this;
 
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
         var media = this.media();
 
         if (isFinalRendition) {
           var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             return _this4.load();
           }, delay);
           return;
@@ -38043,9 +40323,10 @@
             }
 
             return;
-          } // loaded a media playlist
-          // infer a master playlist if none was previously requested
+          }
 
+          var id = createPlaylistID(0, _this5.srcUrl); // loaded a media playlist
+          // infer a master playlist if none was previously requested
 
           _this5.master = {
             mediaGroups: {
@@ -38054,19 +40335,21 @@
               'CLOSED-CAPTIONS': {},
               'SUBTITLES': {}
             },
-            uri: window$1.location.href,
+            uri: window$3.location.href,
             playlists: [{
               uri: _this5.srcUrl,
-              id: 0,
+              id: id,
               resolvedUri: _this5.srcUrl,
               // m3u8-parser does not attach an attributes property to media playlists so make
               // sure that the property is attached to avoid undefined reference errors
               attributes: {}
             }]
           };
+          _this5.master.playlists[id] = _this5.master.playlists[0]; // URI reference added for backwards compatibility
+
           _this5.master.playlists[_this5.srcUrl] = _this5.master.playlists[0];
 
-          _this5.haveMetadata(req, _this5.srcUrl);
+          _this5.haveMetadata(req, _this5.srcUrl, id);
 
           return _this5.trigger('loadedmetadata');
         });
@@ -38266,7 +40549,7 @@
 
 
       if (!playlist.endList) {
-        return window$1.Infinity;
+        return window$3.Infinity;
       }
     } // calculate the total duration based on the segment durations
 
@@ -38314,8 +40597,15 @@
    * window which is the duration of the last segment plus 2 target durations from the end
    * of the playlist.
    *
+   * A liveEdgePadding can be provided which will be used instead of calculating the safe live edge.
+   * This corresponds to suggestedPresentationDelay in DASH manifests.
+   *
    * @param {Object} playlist
    *        a media playlist object
+   * @param {Number} [liveEdgePadding]
+   *        A number in seconds indicating how far from the end we want to be.
+   *        If provided, this value is used instead of calculating the safe live index from the target durations.
+   *        Corresponds to suggestedPresentationDelay in DASH manifests.
    * @return {Number}
    *         The media index of the segment at the safe live point. 0 if there is no "safe"
    *         point.
@@ -38323,14 +40613,20 @@
    */
 
 
-  var safeLiveIndex = function safeLiveIndex(playlist) {
+  var safeLiveIndex = function safeLiveIndex(playlist, liveEdgePadding) {
     if (!playlist.segments.length) {
       return 0;
     }
 
-    var i = playlist.segments.length - 1;
-    var distanceFromEnd = playlist.segments[i].duration || playlist.targetDuration;
-    var safeDistance = distanceFromEnd + playlist.targetDuration * 2;
+    var i = playlist.segments.length;
+    var lastSegmentDuration = playlist.segments[i - 1].duration || playlist.targetDuration;
+    var safeDistance = typeof liveEdgePadding === 'number' ? liveEdgePadding : lastSegmentDuration + playlist.targetDuration * 2;
+
+    if (safeDistance === 0) {
+      return i;
+    }
+
+    var distanceFromEnd = 0;
 
     while (i--) {
       distanceFromEnd += playlist.segments[i].duration;
@@ -38352,12 +40648,18 @@
    *                        playlist end calculation should consider the safe live end
    *                        (truncate the playlist end by three segments). This is normally
    *                        used for calculating the end of the playlist's seekable range.
+   *                        This takes into account the value of liveEdgePadding.
+   *                        Setting liveEdgePadding to 0 is equivalent to setting this to false.
+   * @param {Number} liveEdgePadding a number indicating how far from the end of the playlist we should be in seconds.
+   *                 If this is provided, it is used in the safe live end calculation.
+   *                 Setting useSafeLiveEnd=false or liveEdgePadding=0 are equivalent.
+   *                 Corresponds to suggestedPresentationDelay in DASH manifests.
    * @returns {Number} the end time of playlist
    * @function playlistEnd
    */
 
 
-  var playlistEnd = function playlistEnd(playlist, expired, useSafeLiveEnd) {
+  var playlistEnd = function playlistEnd(playlist, expired, useSafeLiveEnd, liveEdgePadding) {
     if (!playlist || !playlist.segments) {
       return null;
     }
@@ -38371,7 +40673,7 @@
     }
 
     expired = expired || 0;
-    var endSequence = useSafeLiveEnd ? safeLiveIndex(playlist) : playlist.segments.length;
+    var endSequence = useSafeLiveEnd ? safeLiveIndex(playlist, liveEdgePadding) : playlist.segments.length;
     return intervalDuration(playlist, playlist.mediaSequence + endSequence, expired);
   };
   /**
@@ -38386,15 +40688,17 @@
     * dropped off the front of the playlist in a live scenario
     * @param {Number=} expired the amount of time that has
     * dropped off the front of the playlist in a live scenario
+    * @param {Number} liveEdgePadding how far from the end of the playlist we should be in seconds.
+    *        Corresponds to suggestedPresentationDelay in DASH manifests.
     * @return {TimeRanges} the periods of time that are valid targets
     * for seeking
     */
 
 
-  var seekable = function seekable(playlist, expired) {
+  var seekable = function seekable(playlist, expired, liveEdgePadding) {
     var useSafeLiveEnd = true;
     var seekableStart = expired || 0;
-    var seekableEnd = playlistEnd(playlist, expired, useSafeLiveEnd);
+    var seekableEnd = playlistEnd(playlist, expired, useSafeLiveEnd, liveEdgePadding);
 
     if (seekableEnd === null) {
       return createTimeRange();
@@ -38902,9 +41206,7 @@
     return result;
   };
 
-  var utils$1 =
-  /*#__PURE__*/
-  Object.freeze({
+  var utils$1 = /*#__PURE__*/Object.freeze({
     createTransferableMessage: createTransferableMessage,
     initSegmentId: initSegmentId,
     segmentKeyId: segmentKeyId,
@@ -39581,7 +41883,7 @@
 
 
   var addTextTrackData = function addTextTrackData(sourceHandler, captionArray, metadataArray) {
-    var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+    var Cue = window$3.WebKitDataCue || window$3.VTTCue;
 
     if (captionArray) {
       captionArray.forEach(function (caption) {
@@ -39598,7 +41900,7 @@
         // This likely occurs when you have an non-timed ID3 tag like TIT2,
         // which is the "Title/Songname/Content description" frame
 
-        if (typeof time !== 'number' || window$1.isNaN(time) || time < 0 || !(time < Infinity)) {
+        if (typeof time !== 'number' || window$3.isNaN(time) || time < 0 || !(time < Infinity)) {
           return;
         }
 
@@ -44272,8 +46574,8 @@
 
           if (frames.length) {
             this.trigger('timingInfo', {
-              start: frames[0].dts,
-              end: frames[0].dts + frames.length * frameDuration
+              start: frames[0].pts,
+              end: frames[0].pts + frames.length * frameDuration
             });
           }
 
@@ -44473,8 +46775,8 @@
           lastGop = gops[gops.length - 1];
           this.trigger('segmentTimingInfo', generateVideoSegmentTimingInfo(track.baseMediaDecodeTime, firstGop.dts, firstGop.pts, lastGop.dts + lastGop.duration, lastGop.pts + lastGop.duration, prependedContentDuration));
           this.trigger('timingInfo', {
-            start: gops[0].dts,
-            end: gops[gops.length - 1].dts + gops[gops.length - 1].duration
+            start: gops[0].pts,
+            end: gops[gops.length - 1].pts + gops[gops.length - 1].duration
           }); // save all the nals in the last GOP into the gop cache
 
           this.gopCache_.unshift({
@@ -46530,6 +48832,12 @@
         this.pendingBuffers_.length = 0;
         this.bufferUpdating_ = false;
       }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
+      }
     }]);
     return VirtualSourceBuffer;
   }(videojs$1.EventTarget);
@@ -46556,7 +48864,7 @@
       var _this = possibleConstructorReturn$1(this, (HtmlMediaSource.__proto__ || Object.getPrototypeOf(HtmlMediaSource)).call(this));
 
       var property = void 0;
-      _this.nativeMediaSource_ = new window$1.MediaSource(); // delegate to the native MediaSource's methods by default
+      _this.nativeMediaSource_ = new window$3.MediaSource(); // delegate to the native MediaSource's methods by default
 
       for (property in _this.nativeMediaSource_) {
         if (!(property in HtmlMediaSource.prototype) && typeof _this.nativeMediaSource_[property] === 'function') {
@@ -46873,6 +49181,18 @@
         this.sourceBuffers.push(buffer);
         return buffer;
       }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
+        this.sourceBuffers.forEach(function (buffer) {
+          if (buffer.dispose) {
+            buffer.dispose();
+          }
+        });
+        this.sourceBuffers.length = 0;
+      }
     }]);
     return HtmlMediaSource;
   }(videojs$1.EventTarget);
@@ -46918,7 +49238,7 @@
 
 
   var supportsNativeMediaSources = function supportsNativeMediaSources() {
-    return !!window$1.MediaSource && !!window$1.MediaSource.isTypeSupported && window$1.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
+    return !!window$3.MediaSource && !!window$3.MediaSource.isTypeSupported && window$3.MediaSource.isTypeSupported('video/mp4;codecs="avc1.4d400d,mp4a.40.2"');
   };
   /**
    * An emulation of the MediaSource API so that we can support
@@ -46965,7 +49285,7 @@
       var url = void 0; // use the native MediaSource to generate an object URL
 
       if (object instanceof HtmlMediaSource) {
-        url = window$1.URL.createObjectURL(object.nativeMediaSource_);
+        url = window$3.URL.createObjectURL(object.nativeMediaSource_);
         object.url_ = url;
         return url;
       } // if the object isn't an emulated MediaSource, delegate to the
@@ -46973,7 +49293,7 @@
 
 
       if (!(object instanceof HtmlMediaSource)) {
-        url = window$1.URL.createObjectURL(object);
+        url = window$3.URL.createObjectURL(object);
         object.url_ = url;
         return url;
       } // build a URL that can be used to map back to the emulated
@@ -47025,14 +49345,14 @@
 
     forEachMediaGroup(newMaster, function (properties, type, group, label) {
       if (properties.playlists && properties.playlists.length) {
-        var uri = properties.playlists[0].uri;
+        var id = properties.playlists[0].id;
 
         var _playlistUpdate = updateMaster(update, properties.playlists[0]);
 
         if (_playlistUpdate) {
           update = _playlistUpdate; // update the playlist reference within media groups
 
-          update.mediaGroups[type][group][label].playlists[0] = update.playlists[uri];
+          update.mediaGroups[type][group][label].playlists[0] = update.playlists[id];
           noChanges = false;
         }
       }
@@ -47065,8 +49385,8 @@
   var compareSidxEntry = function compareSidxEntry(playlists, oldSidxMapping) {
     var newSidxMapping = {};
 
-    for (var uri in playlists) {
-      var playlist = playlists[uri];
+    for (var id in playlists) {
+      var playlist = playlists[id];
       var currentSidxInfo = playlist.sidx;
 
       if (currentSidxInfo) {
@@ -47163,7 +49483,7 @@
 
 
       _this.on('mediaupdatetimeout', function () {
-        _this.refreshMedia_(_this.media().uri);
+        _this.refreshMedia_(_this.media().id);
       });
 
       _this.state = 'HAVE_NOTHING';
@@ -47192,11 +49512,13 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.stopRequest();
         this.loadedPlaylists_ = {};
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
-        window$1.clearTimeout(this.mediaRequest_);
-        window$1.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaRequest_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        this.off();
       }
     }, {
       key: 'hasPendingRequest',
@@ -47275,9 +49597,9 @@
           playlist = this.master.playlists[playlist];
         }
 
-        var mediaChange = !this.media_ || playlist.uri !== this.media_.uri; // switch to previously loaded playlists immediately
+        var mediaChange = !this.media_ || playlist.id !== this.media_.id; // switch to previously loaded playlists immediately
 
-        if (mediaChange && this.loadedPlaylists_[playlist.uri] && this.loadedPlaylists_[playlist.uri].endList) {
+        if (mediaChange && this.loadedPlaylists_[playlist.id] && this.loadedPlaylists_[playlist.id].endList) {
           this.state = 'HAVE_METADATA';
           this.media_ = playlist; // trigger media change if the active media has been updated
 
@@ -47302,7 +49624,7 @@
         if (!playlist.sidx) {
           // Continue asynchronously if there is no sidx
           // wait one tick to allow haveMaster to run first on a child loader
-          this.mediaRequest_ = window$1.setTimeout(this.haveMetadata.bind(this, {
+          this.mediaRequest_ = window$3.setTimeout(this.haveMetadata.bind(this, {
             startingState: startingState,
             playlist: playlist
           }), 0); // exit early and don't do sidx work
@@ -47339,7 +49661,7 @@
 
           _this3.haveMetadata({
             startingState: startingState,
-            playlist: newMaster.playlists[playlist.uri]
+            playlist: newMaster.playlists[playlist.id]
           });
         }));
       }
@@ -47349,10 +49671,10 @@
         var startingState = _ref.startingState,
             playlist = _ref.playlist;
         this.state = 'HAVE_METADATA';
-        this.loadedPlaylists_[playlist.uri] = playlist;
+        this.loadedPlaylists_[playlist.id] = playlist;
         this.mediaRequest_ = null; // This will trigger loadedplaylist
 
-        this.refreshMedia_(playlist.uri); // fire loadedmetadata the first time a media playlist is loaded
+        this.refreshMedia_(playlist.id); // fire loadedmetadata the first time a media playlist is loaded
         // to resolve setup of media groups
 
         if (startingState === 'HAVE_MASTER') {
@@ -47366,8 +49688,8 @@
       key: 'pause',
       value: function pause() {
         this.stopRequest();
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
 
         if (this.state === 'HAVE_NOTHING') {
           // If we pause the loader before any data has been retrieved, its as if we never
@@ -47380,13 +49702,13 @@
       value: function load(isFinalRendition) {
         var _this4 = this;
 
-        window$1.clearTimeout(this.mediaUpdateTimeout);
-        window$1.clearTimeout(this.minimumUpdatePeriodTimeout_);
+        window$3.clearTimeout(this.mediaUpdateTimeout);
+        window$3.clearTimeout(this.minimumUpdatePeriodTimeout_);
         var media = this.media();
 
         if (isFinalRendition) {
           var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             return _this4.load();
           }, delay);
           return;
@@ -47399,7 +49721,11 @@
           return;
         }
 
-        this.trigger('loadedplaylist');
+        if (media && !media.endList) {
+          this.trigger('mediaupdatetimeout');
+        } else {
+          this.trigger('loadedplaylist');
+        }
       }
       /**
        * Parses the master xml string and updates playlist uri references
@@ -47422,9 +49748,7 @@
 
         for (var i = 0; i < master.playlists.length; i++) {
           var phonyUri = 'placeholder-uri-' + i;
-          master.playlists[i].uri = phonyUri; // set up by URI references
-
-          master.playlists[phonyUri] = master.playlists[i];
+          master.playlists[i].uri = phonyUri;
         } // set up phony URIs for the media group playlists since we won't have external
         // URIs for DASH but reference playlists by their URI throughout the project
 
@@ -47433,8 +49757,11 @@
           if (properties.playlists && properties.playlists.length) {
             var _phonyUri = 'placeholder-uri-' + mediaType + '-' + groupKey + '-' + labelKey;
 
-            properties.playlists[0].uri = _phonyUri; // setup URI references
+            var id = createPlaylistID(0, _phonyUri);
+            properties.playlists[0].uri = _phonyUri;
+            properties.playlists[0].id = id; // setup ID and URI references (URI for backwards compatibility)
 
+            master.playlists[id] = properties.playlists[0];
             master.playlists[_phonyUri] = properties.playlists[0];
           }
         });
@@ -47451,7 +49778,7 @@
         // Call this asynchronously to match the xhr request behavior below
 
         if (this.masterPlaylistLoader_) {
-          this.mediaRequest_ = window$1.setTimeout(this.haveMaster_.bind(this), 0);
+          this.mediaRequest_ = window$3.setTimeout(this.haveMaster_.bind(this), 0);
           return;
         } // request the specified URL
 
@@ -47600,7 +49927,7 @@
 
 
         if (this.master && this.master.minimumUpdatePeriod) {
-          this.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+          this.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
             _this7.trigger('minimumUpdatePeriod');
           }, this.master.minimumUpdatePeriod);
         }
@@ -47671,11 +49998,11 @@
 
 
                   _this8.sidxMapping_[sidxKey].sidx = sidx;
-                  _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+                  _this8.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
                     _this8.trigger('minimumUpdatePeriod');
                   }, _this8.master.minimumUpdatePeriod); // TODO: do we need to reload the current playlist?
 
-                  _this8.refreshMedia_(_this8.media().uri);
+                  _this8.refreshMedia_(_this8.media().id);
 
                   return;
                 }));
@@ -47685,7 +50012,7 @@
             }
           }
 
-          _this8.minimumUpdatePeriodTimeout_ = window$1.setTimeout(function () {
+          _this8.minimumUpdatePeriodTimeout_ = window$3.setTimeout(function () {
             _this8.trigger('minimumUpdatePeriod');
           }, _this8.master.minimumUpdatePeriod);
         });
@@ -47698,11 +50025,11 @@
 
     }, {
       key: 'refreshMedia_',
-      value: function refreshMedia_(mediaUri) {
+      value: function refreshMedia_(mediaID) {
         var _this9 = this;
 
-        if (!mediaUri) {
-          throw new Error('refreshMedia_ must take a media uri');
+        if (!mediaID) {
+          throw new Error('refreshMedia_ must take a media id');
         }
 
         var oldMaster = void 0;
@@ -47725,14 +50052,14 @@
             this.master = updatedMaster;
           }
 
-          this.media_ = updatedMaster.playlists[mediaUri];
+          this.media_ = updatedMaster.playlists[mediaID];
         } else {
-          this.media_ = newMaster.playlists[mediaUri];
+          this.media_ = newMaster.playlists[mediaID];
           this.trigger('playlistunchanged');
         }
 
         if (!this.media().endList) {
-          this.mediaUpdateTimeout = window$1.setTimeout(function () {
+          this.mediaUpdateTimeout = window$3.setTimeout(function () {
             _this9.trigger('mediaupdatetimeout');
           }, refreshDelay(this.media(), !!updatedMaster));
         }
@@ -48481,7 +50808,7 @@
       return '';
     }
 
-    result = window$1.getComputedStyle(el);
+    result = window$3.getComputedStyle(el);
 
     if (!result) {
       return '';
@@ -48530,13 +50857,13 @@
       leftBandwidth = left.attributes.BANDWIDTH;
     }
 
-    leftBandwidth = leftBandwidth || window$1.Number.MAX_VALUE;
+    leftBandwidth = leftBandwidth || window$3.Number.MAX_VALUE;
 
     if (right.attributes.BANDWIDTH) {
       rightBandwidth = right.attributes.BANDWIDTH;
     }
 
-    rightBandwidth = rightBandwidth || window$1.Number.MAX_VALUE;
+    rightBandwidth = rightBandwidth || window$3.Number.MAX_VALUE;
     return leftBandwidth - rightBandwidth;
   };
   /**
@@ -48558,13 +50885,13 @@
       leftWidth = left.attributes.RESOLUTION.width;
     }
 
-    leftWidth = leftWidth || window$1.Number.MAX_VALUE;
+    leftWidth = leftWidth || window$3.Number.MAX_VALUE;
 
     if (right.attributes.RESOLUTION && right.attributes.RESOLUTION.width) {
       rightWidth = right.attributes.RESOLUTION.width;
     }
 
-    rightWidth = rightWidth || window$1.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
+    rightWidth = rightWidth || window$3.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
     // have the same media dimensions/ resolution
 
     if (leftWidth === rightWidth && left.attributes.BANDWIDTH && right.attributes.BANDWIDTH) {
@@ -48601,7 +50928,7 @@
       width = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.width;
       height = playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height;
       bandwidth = playlist.attributes.BANDWIDTH;
-      bandwidth = bandwidth || window$1.Number.MAX_VALUE;
+      bandwidth = bandwidth || window$3.Number.MAX_VALUE;
       return {
         bandwidth: bandwidth,
         width: width,
@@ -48961,20 +51288,23 @@
 
 
   var safeBackBufferTrimTime = function safeBackBufferTrimTime(seekable$$1, currentTime, targetDuration) {
-    var removeToTime = void 0;
+    // 30 seconds before the playhead provides a safe default for trimming.
+    //
+    // Choosing a reasonable default is particularly important for high bitrate content and
+    // VOD videos/live streams with large windows, as the buffer may end up overfilled and
+    // throw an APPEND_BUFFER_ERR.
+    var trimTime = currentTime - 30;
 
-    if (seekable$$1.length && seekable$$1.start(0) > 0 && seekable$$1.start(0) < currentTime) {
-      // If we have a seekable range use that as the limit for what can be removed safely
-      removeToTime = seekable$$1.start(0);
-    } else {
-      // otherwise remove anything older than 30 seconds before the current play head
-      removeToTime = currentTime - 30;
-    } // Don't allow removing from the buffer within target duration of current time
-    // to avoid the possibility of removing the GOP currently being played which could
-    // cause playback stalls.
+    if (seekable$$1.length) {
+      // Some live playlists may have a shorter window of content than the full allowed back
+      // buffer. For these playlists, don't save content that's no longer within the window.
+      trimTime = Math.max(trimTime, seekable$$1.start(0));
+    } // Don't remove within target duration of the current time to avoid the possibility of
+    // removing the GOP currently being played, as removing it can cause playback stalls.
 
 
-    return Math.min(removeToTime, currentTime - targetDuration);
+    var maxTrimTime = currentTime - targetDuration;
+    return Math.min(maxTrimTime, trimTime);
   };
 
   var segmentInfoString = function segmentInfoString(segmentInfo) {
@@ -49076,9 +51406,11 @@
         time: 0
       };
 
-      _this.syncController_.on('syncinfoupdate', function () {
+      _this.triggerSyncInfoUpdate_ = function () {
         return _this.trigger('syncinfoupdate');
-      });
+      };
+
+      _this.syncController_.on('syncinfoupdate', _this.triggerSyncInfoUpdate_);
 
       _this.mediaSource_.addEventListener('sourceopen', function () {
         return _this.ended_ = false;
@@ -49125,6 +51457,7 @@
     }, {
       key: 'dispose',
       value: function dispose() {
+        this.trigger('dispose');
         this.state = 'DISPOSED';
         this.pause();
         this.abort_();
@@ -49138,6 +51471,16 @@
         if (this.captionParser_) {
           this.captionParser_.reset();
         }
+
+        if (this.checkBufferTimeout_) {
+          window$3.clearTimeout(this.checkBufferTimeout_);
+        }
+
+        if (this.syncController_ && this.triggerSyncInfoUpdate_) {
+          this.syncController_.off('syncinfoupdate', this.triggerSyncInfoUpdate_);
+        }
+
+        this.off();
       }
       /**
        * abort anything that is currently doing on with the SegmentLoader
@@ -49381,8 +51724,12 @@
         this.xhrOptions_ = options; // when we haven't started playing yet, the start of a live playlist
         // is always our zero-time so force a sync update each time the playlist
         // is refreshed from the server
+        //
+        // Use the INIT state to determine if playback has started, as the playlist sync info
+        // should be fixed once requests begin (as sync points are generated based on sync
+        // info), but not before then.
 
-        if (!this.hasPlayed_()) {
+        if (this.state === 'INIT') {
           newPlaylist.syncInfo = {
             mediaSequence: newPlaylist.mediaSequence,
             time: 0
@@ -49457,7 +51804,7 @@
       key: 'pause',
       value: function pause() {
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
           this.checkBufferTimeout_ = null;
         }
       }
@@ -49506,8 +51853,11 @@
       key: 'resetEverything',
       value: function resetEverything(done) {
         this.ended_ = false;
-        this.resetLoader();
-        this.remove(0, this.duration_(), done); // clears fmp4 captions
+        this.resetLoader(); // remove from 0, the earliest point, to Infinity, to signify removal of everything.
+        // VTT Segment Loader doesn't need to do anything but in the regular SegmentLoader,
+        // we then clamp the value to duration if necessary.
+
+        this.remove(0, Infinity, done); // clears fmp4 captions
 
         if (this.captionParser_) {
           this.captionParser_.clearAllCaptions();
@@ -49551,6 +51901,13 @@
     }, {
       key: 'remove',
       value: function remove(start, end, done) {
+        // clamp end to duration if we need to remove everything.
+        // This is due to a browser bug that causes issues if we remove to Infinity.
+        // videojs/videojs-contrib-hls#1225
+        if (end === Infinity) {
+          end = this.duration_();
+        }
+
         if (this.sourceUpdater_) {
           this.sourceUpdater_.remove(start, end, done);
         }
@@ -49573,10 +51930,10 @@
       key: 'monitorBuffer_',
       value: function monitorBuffer_() {
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
         }
 
-        this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), 1);
+        this.checkBufferTimeout_ = window$3.setTimeout(this.monitorBufferTick_.bind(this), 1);
       }
       /**
        * As long as the SegmentLoader is in the READY state, periodically
@@ -49593,10 +51950,10 @@
         }
 
         if (this.checkBufferTimeout_) {
-          window$1.clearTimeout(this.checkBufferTimeout_);
+          window$3.clearTimeout(this.checkBufferTimeout_);
         }
 
-        this.checkBufferTimeout_ = window$1.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
+        this.checkBufferTimeout_ = window$3.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
       }
       /**
        * fill the buffer with segements unless the sourceBuffers are
@@ -50336,7 +52693,7 @@
         }
 
         removeCuesFromTrack(start, end, this.segmentMetadataTrack_);
-        var Cue = window$1.WebKitDataCue || window$1.VTTCue;
+        var Cue = window$3.WebKitDataCue || window$3.VTTCue;
         var value = {
           custom: segment.custom,
           dateTimeObject: segment.dateTimeObject,
@@ -50347,7 +52704,7 @@
           byteLength: segmentInfo.byteLength,
           uri: segmentInfo.uri,
           timeline: segmentInfo.timeline,
-          playlist: segmentInfo.playlist.uri,
+          playlist: segmentInfo.playlist.id,
           start: start,
           end: end
         };
@@ -50393,6 +52750,7 @@
 
       _this.mediaSource_ = null;
       _this.subtitlesTrack_ = null;
+      _this.featuresNativeTextTracks_ = settings.featuresNativeTextTracks;
       return _this;
     }
     /**
@@ -50605,7 +52963,7 @@
         var segmentInfo = this.pendingSegment_;
         var segment = segmentInfo.segment; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
 
-        if (typeof window$1.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
+        if (typeof window$3.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
           var loadHandler = void 0;
 
           var errorHandler = function errorHandler() {
@@ -50665,7 +53023,7 @@
         }
 
         segmentInfo.cues.forEach(function (cue) {
-          _this3.subtitlesTrack_.addCue(cue);
+          _this3.subtitlesTrack_.addCue(_this3.featuresNativeTextTracks_ ? new window$3.VTTCue(cue.startTime, cue.endTime, cue.text) : cue);
         });
         this.handleUpdateEnd_();
       }
@@ -50683,14 +53041,14 @@
         var decoder = void 0;
         var decodeBytesToString = false;
 
-        if (typeof window$1.TextDecoder === 'function') {
-          decoder = new window$1.TextDecoder('utf8');
+        if (typeof window$3.TextDecoder === 'function') {
+          decoder = new window$3.TextDecoder('utf8');
         } else {
-          decoder = window$1.WebVTT.StringDecoder();
+          decoder = window$3.WebVTT.StringDecoder();
           decodeBytesToString = true;
         }
 
-        var parser = new window$1.WebVTT.Parser(window$1, window$1.vttjs, decoder);
+        var parser = new window$3.WebVTT.Parser(window$3, window$3.vttjs, decoder);
         segmentInfo.cues = [];
         segmentInfo.timestampmap = {
           MPEGTS: 0,
@@ -50843,7 +53201,7 @@
         cue.endTime += segment.duration;
       } else {
         if ('cueOut' in segment) {
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
+          cue = new window$3.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
           cue.adStartTime = mediaTime; // Assumes tag format to be
           // #EXT-X-CUE-OUT:30
 
@@ -50863,7 +53221,7 @@
 
           adOffset = _segment$cueOutCont$s2[0];
           adTotal = _segment$cueOutCont$s2[1];
-          cue = new window$1.VTTCue(mediaTime, mediaTime + segment.duration, '');
+          cue = new window$3.VTTCue(mediaTime, mediaTime + segment.duration, '');
           cue.adStartTime = mediaTime - adOffset;
           cue.adEndTime = cue.adStartTime + adTotal;
           track.addCue(cue);
@@ -51445,6 +53803,12 @@
             }
           }
         }
+      }
+    }, {
+      key: 'dispose',
+      value: function dispose() {
+        this.trigger('dispose');
+        this.off();
       }
     }]);
     return SyncController;
@@ -52733,7 +55097,7 @@
         var tracks = settings.mediaTypes[type].tracks;
 
         for (var id in tracks) {
-          if (tracks[id].mode === 'showing') {
+          if (tracks[id].mode === 'showing' || tracks[id].mode === 'hidden') {
             return tracks[id];
           }
         }
@@ -52922,11 +55286,7 @@
       _this.mediaSource.addEventListener('sourceopen', _this.handleSourceOpen_.bind(_this));
 
       _this.seekable_ = videojs$1.createTimeRanges();
-
-      _this.hasPlayed_ = function () {
-        return false;
-      };
-
+      _this.hasPlayed_ = false;
       _this.syncController_ = new SyncController(options);
       _this.segmentMetadataTrack_ = tech.addRemoteTextTrack({
         kind: 'metadata',
@@ -52948,7 +55308,7 @@
           return _this.mediaSource.duration;
         },
         hasPlayed: function hasPlayed() {
-          return _this.hasPlayed_();
+          return _this.hasPlayed_;
         },
         goalBufferLength: function goalBufferLength() {
           return _this.goalBufferLength();
@@ -52975,7 +55335,8 @@
         loaderType: 'audio'
       }), options);
       _this.subtitleSegmentLoader_ = new VTTSegmentLoader(videojs$1.mergeOptions(segmentLoaderSettings, {
-        loaderType: 'vtt'
+        loaderType: 'vtt',
+        featuresNativeTextTracks: _this.tech_.featuresNativeTextTracks
       }), options);
 
       _this.setupSegmentLoaderListeners_(); // Create SegmentLoader stat-getters
@@ -53435,7 +55796,7 @@
           this.seekTo_(0);
         }
 
-        if (this.hasPlayed_()) {
+        if (this.hasPlayed_) {
           this.load();
         }
 
@@ -53464,7 +55825,7 @@
         //     3) the first play has already been setup
         // then exit early
 
-        if (!media || this.tech_.paused() || this.hasPlayed_()) {
+        if (!media || this.tech_.paused() || this.hasPlayed_) {
           return false;
         } // when the video is a live stream
 
@@ -53486,9 +55847,7 @@
 
               _this5.seekTo_(seekable$$1.end(0));
 
-              _this5.hasPlayed_ = function () {
-                return true;
-              };
+              _this5.hasPlayed_ = true;
             });
             return false;
           } // trigger firstplay to inform the source handler to ignore the next seek event
@@ -53499,10 +55858,7 @@
           this.seekTo_(seekable$$1.end(0));
         }
 
-        this.hasPlayed_ = function () {
-          return true;
-        }; // we can begin loading now that everything is ready
-
+        this.hasPlayed_ = true; // we can begin loading now that everything is ready
 
         this.load();
         return true;
@@ -53792,7 +56148,6 @@
     }, {
       key: 'onSyncInfoUpdate_',
       value: function onSyncInfoUpdate_() {
-        var mainSeekable = void 0;
         var audioSeekable = void 0;
 
         if (!this.masterPlaylistLoader_) {
@@ -53812,7 +56167,8 @@
           return;
         }
 
-        mainSeekable = Hls.Playlist.seekable(media, expired);
+        var suggestedPresentationDelay = this.masterPlaylistLoader_.master.suggestedPresentationDelay;
+        var mainSeekable = Hls.Playlist.seekable(media, expired, suggestedPresentationDelay);
 
         if (mainSeekable.length === 0) {
           return;
@@ -53826,7 +56182,7 @@
             return;
           }
 
-          audioSeekable = Hls.Playlist.seekable(media, expired);
+          audioSeekable = Hls.Playlist.seekable(media, expired, suggestedPresentationDelay);
 
           if (audioSeekable.length === 0) {
             return;
@@ -53916,6 +56272,7 @@
       value: function dispose() {
         var _this7 = this;
 
+        this.trigger('dispose');
         this.decrypter_.terminate();
         this.masterPlaylistLoader_.dispose();
         this.mainSegmentLoader_.dispose();
@@ -53932,6 +56289,11 @@
         });
         this.audioSegmentLoader_.dispose();
         this.subtitleSegmentLoader_.dispose();
+        this.off();
+
+        if (this.mediaSource.dispose) {
+          this.mediaSource.dispose();
+        }
       }
       /**
        * return the master playlist object if we have one
@@ -54014,7 +56376,7 @@
       key: 'excludeUnsupportedVariants_',
       value: function excludeUnsupportedVariants_() {
         this.master().playlists.forEach(function (variant) {
-          if (variant.attributes.CODECS && window$1.MediaSource && window$1.MediaSource.isTypeSupported && !window$1.MediaSource.isTypeSupported('video/mp4; codecs="' + mapLegacyAvcCodecs(variant.attributes.CODECS) + '"')) {
+          if (variant.attributes.CODECS && window$3.MediaSource && window$3.MediaSource.isTypeSupported && !window$3.MediaSource.isTypeSupported('video/mp4; codecs="' + mapLegacyAvcCodecs(variant.attributes.CODECS) + '"')) {
             variant.excludeUntil = Infinity;
           }
         });
@@ -54119,7 +56481,8 @@
    * Returns a function that acts as the Enable/disable playlist function.
    *
    * @param {PlaylistLoader} loader - The master playlist loader
-   * @param {String} playlistUri - uri of the playlist
+
+   * @param {string} playlistID - id of the playlist
    * @param {Function} changePlaylistFn - A function to be called after a
    * playlist's enabled-state has been changed. Will NOT be called if a
    * playlist's enabled-state is unchanged
@@ -54129,9 +56492,9 @@
    */
 
 
-  var enableFunction = function enableFunction(loader, playlistUri, changePlaylistFn) {
+  var enableFunction = function enableFunction(loader, playlistID, changePlaylistFn) {
     return function (enable) {
-      var playlist = loader.master.playlists[playlistUri];
+      var playlist = loader.master.playlists[playlistID];
       var incompatible = isIncompatible(playlist);
       var currentlyEnabled = isEnabled(playlist);
 
@@ -54188,7 +56551,7 @@
     this.id = id; // Partially-apply the enableFunction to create a playlist-
     // specific variant
 
-    this.enabled = enableFunction(hlsHandler.playlists, playlist.uri, qualityChangeFunction);
+    this.enabled = enableFunction(hlsHandler.playlists, playlist.id, qualityChangeFunction);
   };
   /**
    * A mixin function that adds the `representations` api to an instance
@@ -54202,10 +56565,14 @@
     var playlists = hlsHandler.playlists; // Add a single API-specific function to the HlsHandler instance
 
     hlsHandler.representations = function () {
+      if (!playlists || !playlists.master || !playlists.master.playlists) {
+        return [];
+      }
+
       return playlists.master.playlists.filter(function (media) {
         return !isIncompatible(media);
       }).map(function (e, i) {
-        return new Representation(hlsHandler, e, e.uri);
+        return new Representation(hlsHandler, e, e.id);
       });
     };
   };
@@ -54281,7 +56648,7 @@
         _this.tech_.off('canplay', canPlayHandler);
 
         if (_this.checkCurrentTimeTimeout_) {
-          window$1.clearTimeout(_this.checkCurrentTimeTimeout_);
+          window$3.clearTimeout(_this.checkCurrentTimeTimeout_);
         }
 
         _this.cancelTimer_();
@@ -54300,11 +56667,11 @@
         this.checkCurrentTime_();
 
         if (this.checkCurrentTimeTimeout_) {
-          window$1.clearTimeout(this.checkCurrentTimeTimeout_);
+          window$3.clearTimeout(this.checkCurrentTimeTimeout_);
         } // 42 = 24 fps // 250 is what Webkit uses // FF uses 15
 
 
-        this.checkCurrentTimeTimeout_ = window$1.setTimeout(this.monitorCurrentTime_.bind(this), 250);
+        this.checkCurrentTimeTimeout_ = window$3.setTimeout(this.monitorCurrentTime_.bind(this), 250);
       }
       /**
        * The purpose of this function is to emulate the "waiting" event on
@@ -54767,7 +57134,7 @@
     initPlugin(this, options);
   };
 
-  var version$1 = "1.11.2"; // since VHS handles HLS and DASH (and in the future, more types), use * to capture all
+  var version$1 = "1.12.3"; // since VHS handles HLS and DASH (and in the future, more types), use * to capture all
 
   videojs$1.use('*', function (player) {
     return {
@@ -54867,7 +57234,7 @@
     var selectedIndex = -1;
 
     for (var i = 0; i < qualityLevels.length; i++) {
-      if (qualityLevels[i].id === newPlaylist.uri) {
+      if (qualityLevels[i].id === newPlaylist.id) {
         selectedIndex = i;
         break;
       }
@@ -55476,9 +57843,7 @@
         this.on(this.masterPlaylistController_, 'progress', function () {
           this.tech_.trigger('progress');
         });
-        this.tech_.ready(function () {
-          return _this3.setupQualityLevels_();
-        }); // do nothing if the tech has been disposed already
+        this.setupQualityLevels_(); // do nothing if the tech has been disposed already
         // this can occur if someone sets the src in player.ready(), for instance
 
         if (!this.tech_.el()) {
@@ -55499,17 +57864,20 @@
       value: function setupQualityLevels_() {
         var _this4 = this;
 
-        var player = videojs$1.players[this.tech_.options_.playerId];
+        var player = videojs$1.players[this.tech_.options_.playerId]; // if there isn't a player or there isn't a qualityLevels plugin
+        // or qualityLevels_ listeners have already been setup, do nothing.
 
-        if (player && player.qualityLevels) {
-          this.qualityLevels_ = player.qualityLevels();
-          this.masterPlaylistController_.on('selectedinitialmedia', function () {
-            handleHlsLoadedMetadata(_this4.qualityLevels_, _this4);
-          });
-          this.playlists.on('mediachange', function () {
-            handleHlsMediaChange(_this4.qualityLevels_, _this4.playlists);
-          });
+        if (!player || !player.qualityLevels || this.qualityLevels_) {
+          return;
         }
+
+        this.qualityLevels_ = player.qualityLevels();
+        this.masterPlaylistController_.on('selectedinitialmedia', function () {
+          handleHlsLoadedMetadata(_this4.qualityLevels_, _this4);
+        });
+        this.playlists.on('mediachange', function () {
+          handleHlsMediaChange(_this4.qualityLevels_, _this4.playlists);
+        });
       }
       /**
        * Begin playing the video.

@@ -325,6 +325,7 @@
             </video>
           </div>
           <br>
+          <div id="clipError" class="alert alert-warning" style="display:none;"></div>
           <div id="clipTimeSelect">
             <div class="row">
               <div class="col-12 col-md-6">
@@ -351,12 +352,13 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Create</button>
+          <button id="clipSubmitButton" type="submit" class="btn btn-success">Create</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
 
 {% endif %}
 
@@ -453,7 +455,21 @@
 <script src="/static/vendor/videojs/js/video.js"></script>
 
 <script>
-  var player = videojs('video', { autoplay: true });
+  var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
 </script>
 
 <script type="text/javascript" charset="utf-8">
@@ -465,10 +481,10 @@
 </script>
 
 <script>
-    var easymde = new EasyMDE({ element: document.getElementById("commentText") });
-    var easymde2 = new EasyMDE({ element: document.getElementById("description") });
+    var easymde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("commentText") });
+    var easymde2 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
     {% if video.owningUser == current_user.id %}
-    var easymde3 = new EasyMDE({ element: document.getElementById("clipDescription") });
+    var easymde3 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription") });
     {% endif %}
 </script>
 
@@ -626,11 +642,41 @@
   function setClipStart() {
     var startInput = document.getElementById('clipStartTime');
     startInput.value = clipplayer.currentTime()
+    checkClipConstraints();
   }
 
   function setClipStop() {
     var stopInput = document.getElementById('clipStopTime');
     stopInput.value = clipplayer.currentTime()
+    checkClipConstraints();
+  }
+
+  function checkClipConstraints() {
+    var startTime = document.getElementById('clipStartTime').value;
+    var stopTime = document.getElementById('clipStopTime').value;
+    var systemMaxClipLength = {{sysSettings.maxClipLength}};
+    var clipErrorDiv = document.getElementById('clipError');
+    var clipSubmitButton = document.getElementById('clipSubmitButton');
+
+    if (systemMaxClipLength < 301) {
+      if ((startTime != "") && (stopTime != "")) {
+        var clipLength = stopTime - startTime;
+        if (clipLength > systemMaxClipLength) {
+          clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
+          clipErrorDiv.style.display = "block";
+          clipSubmitButton.disabled = true;
+        } else if (startTime > stopTime) {
+          clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
+          clipErrorDiv.style.display = "block";
+          clipSubmitButton.disabled = true;
+        } else {
+          clipErrorDiv.innerHTML = "";
+          clipErrorDiv.style.display = "none";
+          clipSubmitButton.disabled = false;
+
+        }
+      }
+    }
   }
 
 </script>
@@ -652,6 +698,21 @@ socket.on('sendChanSubResults', function (msg) {
         subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
         subButton.className = "btn btn-sm btn-outline-success";
     }
+  });
+</script>
+
+<script>
+  const video = document.querySelector('video');
+  video.addEventListener('play', (event) => {
+    var cookieVolume = getCookie('ospvolume');
+    if (!(cookieVolume == null)) {
+      player.volume(cookieVolume);
+    }
+  });
+
+  video.addEventListener('volumechange', (event) => {
+    var currentVolume = player.volume();
+    setCookie('ospvolume',currentVolume, 365);
   });
 </script>
 

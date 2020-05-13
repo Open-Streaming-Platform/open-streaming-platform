@@ -21,6 +21,9 @@
                     <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">OAuth Providers</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
                 </li>
                 <li class="nav-item">
@@ -69,7 +72,7 @@
                                     </div>
                                 </div><br>
                                 <div class="card">
-                                    <div class="card-header"><i class="fas fa-video"></i> <a href="/rtmpstat/localhost">RTMP Stats</a></div>
+                                    <div class="card-header"><i class="fas fa-video"></i> <a href="/settings/admin/rtmpstat/localhost">RTMP Stats</a></div>
                                     <div class="card-body">
                                         <table class="table table-hover">
                                             <thead>
@@ -91,7 +94,7 @@
                                                                 <td>{{entry['name']}}</td>
                                                                 <td>{{entry['bw_in']|format_kbps}}</td>
                                                                 <td>{{entry['bw_out']|format_kbps}}</td>
-                                                                <td>{{entry['nclients']}}</td>
+                                                                <td>{{entry['client']|processClientCount}}</td>
                                                             </tr>
                                                         {% endfor %}
                                                     {% else %}
@@ -100,7 +103,7 @@
                                                         <td>{{data['live']['stream']['name']}}</td>
                                                         <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
                                                         <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
-                                                        <td>{{data['live']['stream']['nclients']}}</td>
+                                                        <td>{{data['live']['stream']['client']|processClientCount}}</td>
                                                     </tr>
                                                     {% endif %}
                                                 {% endif %}
@@ -170,6 +173,10 @@
                                         Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" size="48" required>
                                       </div>
                                   </div>
+                                  <div class="form-group">
+                                    <label for="maintenanceMode">Maintenance Mode</label><br>
+                                    <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="maintenanceMode" name="maintenanceMode" autocomplete="new-password" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
+                                  </div>
                                   <hr>
                                   System Logo:
                                   <img src="{{sysSettings.systemLogo}}" width="32" height="32"><br>
@@ -180,10 +187,25 @@
                                       <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
                                       {% endfor %}
                                   </select>
+                                  <div class="form-group">
+                                      <label for="mainPageSort" class="col-form-label">Main Page Sorting</label>
+                                      <select class="form-control" id="mainPageSort" name="mainPageSort">
+                                          <option value="0" {% if sysSettings.sortMainBy == 0 %} selected {% endif %}>Most Views</option>
+                                          <option value="1" {% if sysSettings.sortMainBy == 1 %} selected {% endif %}>Most Recent</option>
+                                          <option value="2" {% if sysSettings.sortMainBy == 2 %} selected {% endif %}>Random</option>
+                                      </select>
+                                  </div>
                                   <hr>
                                   <div class="form-group">
                                     <label for="restreamMaxBitrate" class="col-form-label">Maximum Bitrate for RTMP Restreams (Kb/s)</label><br>
                                     <input type="number" id="restreamMaxBitrate" name="restreamMaxBitrate" class="form-control" value="{{sysSettings.restreamMaxBitrate}}">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="rangeSlider">Maximum Clip Length</label><br>
+                                    <div class="input-group">
+                                      <input id="maxClipLength" name="maxClipLength" class="rangeSliderInput form-control" type="range" value="{{sysSettings.maxClipLength}}" style="border:0;" min="0" max="301">
+                                      <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-large badge-secondary" style="width:100px;">{{sysSettings.maxClipLength|format_clipLength}}</span></h3>
+                                      </div>
                                   </div>
                                   <hr>
                                   Allow Users to Record:<br>
@@ -243,6 +265,193 @@
                           </div>
                       </form>
                 </div>
+                <div class="tab-pane fade {% if page == 'oauth' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-oauth" id="adminOauth">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    OAuth Provider Listing
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newOauthModal"><i class="fas fa-plus"></i></button></span>
+                                </div>
+                                <div class="card-body">
+                                    <table id="oAuthTable" class="table table-borderless" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Provider Name</th>
+                                                <th>Authentication Type</th>
+                                                <th>Client ID</th>
+                                                <th>Authorize URL</th>
+                                                <th>Options</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for provider in oAuthProvidersList %}
+                                            <tr>
+                                                <td>{{provider.name}}</td>
+                                                <td>{{provider.preset_auth_type}}</td>
+                                                <td>{{provider.client_id}}</td>
+                                                <td>{{provider.authorize_url}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-warning shadow edit-oAuth-Button" data-id="{{provider.id}}" data-name="{{provider.name}}" data-friendlyname="{{provider.friendlyName}}"
+                                                            data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
+                                                            data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
+                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
+                                                            data-emailvalue="{{provider.email_value}}" data-idvalue="{{provider.id_value}}" data-authtype="{{provider.preset_auth_type}}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newOauthModal" tabindex="-1" role="dialog" aria-labelledby="newOAuthModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" id="OAuthForm" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newOauthModalTitle">Add/Edit an OAuth Provider</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthPreset">Authentication Type</label>
+                                        <select class="form-control required" id="oAuthPreset" name="oAuthPreset" required>
+                                            <option value="Custom">Custom OAuth2</option>
+                                            <option value="Discord">Discord</option>
+                                            <option value="Reddit">Reddit</option>
+                                            <option value="Facebook">Facebook</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div id="oAuthNameDiv" class="form-group col-md-12">
+                                            <label for="oAuthName">OAuth Provider ID</label>
+                                            <input type="text" class="form-control required" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
+                                            <small id="oAuthHelp" class="form-text text-muted">Used for Internal Identification.  No Spaces</small>
+                                        </div>
+                                        <div id="oAuthFriendlyNameDiv" class="form-group col-md-12">
+                                            <label for="oAuthFriendlyName">OAuth Provider Friendly Name</label>
+                                            <input type="text" class="form-control required" id="oAuthFriendlyName" name="oAuthFriendlyName" maxlength="64" required>
+                                        </div>
+                                        <div id="oAuthColorDiv" class="form-group col-md-12">
+                                            <label for="oAuthName">Login Button Color</label>
+                                            <input type="color" class="form-control required" id="oAuthColor" name="oAuthColor" required>
+                                        </div>
+                                        <hr>
+                                        <div id="oAuthClient_idDiv" class="form-group col-md-12">
+                                            <label for="oAuthClient_id">Client ID</label>
+                                            <input type="text" class="form-control required" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthClient_secretDiv"  class="form-group col-md-12">
+                                            <label for="oAuthClient_secret">Client Secret</label>
+                                            <input type="password" class="form-control required" id="oAuthClient_secret" name="oAuthClient_secret" required>
+                                        </div>
+                                        <div id="oAuthAccess_token_urlDiv" class="form-group col-md-12">
+                                            <hr>
+                                            <label for="oAuthAccess_token_url">Access Token URL</label>
+                                            <input type="text" class="form-control required" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthAccess_token_paramsDiv" class="form-group col-md-12">
+                                            <label for="oAuthAccess_token_params">Access Token Params</label>
+                                            <textarea id="oAuthAccess_token_params" class="form-control" name="oAuthAccess_token_params"></textarea>
+                                        </div>
+                                        <div id="oAuthAuthorize_urlDiv" class="form-group col-md-12">
+                                            <label for="oAuthAuthorize_url">Authorize URL</label>
+                                            <input type="text" class="form-control required" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthAuthorize_paramsDiv" class="form-group col-md-12">
+                                            <label for="oAuthAuthorize_params">Authorize Params</label>
+                                            <textarea class="form-control" id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div id="oAuthApi_base_urlDiv" class="form-group col-md-12">
+                                            <label for="oAuthApi_base_url">API Base URL</label>
+                                            <input type="text" class="form-control required" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
+                                            <small id="oAuthApi_base_urlHelp" class="form-text text-muted">Full URI for API Requests (including trailing /)</small>
+                                        </div>
+                                        <div id="oAuthClient_kwargsDiv" class="form-group col-md-12">
+                                            <label for="oAuthClient_kwargs">Client Kwargs</label>
+                                            <textarea class="form-control" id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
+                                            <small id="oAuthClient_kwargsHelp" class="form-text text-muted">JSON Payload Request - Typically Includes oAuth Client Scope</small>
+                                        </div>
+
+                                        <div id="oAuthProfile_endpointDiv" class="form-group col-md-12">
+                                            <hr>
+                                            <label for="oAuthProfile_endpoint">Profile Endpoint</label>
+                                            <input type="text" class="form-control required" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
+                                            <small id="oAuthProfile_endpointHelp" class="form-text text-muted">Relative Path of API Base URL to Retrieve Login User's Profile (no leading /)</small>
+                                        </div>
+                                        <div id="oAuthIDValueDiv" class="form-group col-md-12">
+                                            <label for="oAuthUsername">ID Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthIDValue" name="oAuthIDValue" required>
+                                            <small id="oAuthIDValueHelp" class="form-text text-muted">Unique ID Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                        <div id="oAuthUsernameDiv" class="form-group col-md-12">
+                                            <label for="oAuthUsername">Username Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthUsername" name="oAuthUsername" required>
+                                            <small id="oAuthUsernameHelp" class="form-text text-muted">Username Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                        <div id="oAuthEmailDiv" class="form-group col-md-12">
+                                            <label for="oAuthEmail">Email Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthEmail" name="oAuthEmail" required>
+                                            <small id="oAuthEmailHelp" class="form-text text-muted">Email Address Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="oAuthID" name="oAuthID">
+                                    <input type="hidden" value="oAuthProvider" id="settingType" name="settingType">
+                                </div>
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="resetOAuthForm();">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add/Edit">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="deleteOauthModal" tabindex="-1" role="dialog" aria-labelledby="deleteOAuthModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteOauthModalTitle">Delete a OAuth Provider</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group col-md-12">
+                                            <p>Any Users that registered under the OAuth Provider will be reassigned to local authentication and passwords set to a random value.  Users will need to perform a password reset to regain access.</p>
+                                            <p>Are you sure you want to delete the OAuth Provider?</p>
+                                            <input type="hidden" id="DeleteOAuthProviderID" name="DeleteOAuthProviderID">
+                                            <input type="hidden" value="DeleteOAuthProvider" id="settingType" name="settingType">
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
                 <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">
                     <h5>
                         OSP Edge Streamer Nodes
@@ -255,7 +464,7 @@
                                     <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span><br>
                                     <note style="color:red;">*** A Reload of NGINX is required after any changes for OSP Streaming to work ***</note><br>
                                 </div>
-                                <div class="body">
+                                <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="edgeTable" class="table table-borderless" width="100%">
                                             <thead>
@@ -271,20 +480,20 @@
                                             <tbody>
                                             {% for node in edgeNodes %}
                                             <tr id="edgeTableRow-{{node.id}}">
-                                                <td><a href="/rtmpstat/{{node.address}}">{{node.address}}</a></td>
+                                                <td><a href="/settings/admin/rtmpstat/{% if node.address == sysSettings.siteAddress %}localhost{% else %}{{node.address}}{% endif %}">{{node.address}}</a></td>
                                                 <td>{{node.port}}</td>
                                                 <td>{{node.loadPct}}</td>
                                                 <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
                                                            {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');"></td>
-                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 0 %}badge-danger{% elif node.status == 1 %}badge-success{% endif %}">
-                                                    {% if node.status == 0 %} Offline
-                                                    {% elif node.status == 1 %} Online
+                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 1 or node.address == sysSettings.siteAddress %}badge-success{% elif node.status == 0 %}badge-danger{% endif %}">
+                                                    {% if node.status == 1 or node.address == sysSettings.siteAddress %} Online
+                                                    {% elif node.status == 0 %} Offline
                                                     {% endif %}
                                                 </span>
 
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-primary" onclick="checkEdge('{{node.id}}')"><i class="fas fa-sync-alt"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
                                                     <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
                                                 </td>
                                             </tr>
@@ -374,6 +583,7 @@
                                                         <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
                                                             <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
@@ -494,8 +704,8 @@
                                     <div class="card-header {% if user.active == true %} bg-success{% endif %}">
                                         <b><a href="/streamers/{{user.id}}/" class="text-dark">{{user.username}}</a></b>
                                         <div class="float-right">
-                                            <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
-                                            <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow"><i class="far fa-trash-alt"></i></a>
+                                            <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.id == current_user.id %} disabled {% endif %} {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
+                                            <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -505,6 +715,8 @@
                                           </div>
                                           <div class="col-xl-2 col-sm-12">
                                             <i class="fas fa-at"></i> {{user.email}}<br>
+                                            <i class="fas fa-passport"></i> <span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span><br>
+                                            {% if user.authType == 1 %}<i class="fas fa-file-contract"></i> {{user.oAuthProvider}} {% endif %}
                                           </div>
                                           <div class="col-xl-3 col-sm-12">
                                             <i class="fas fa-key"></i> Roles: <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
@@ -675,12 +887,12 @@
                     <br>
                     <div class="container-fluid">
                         {% for channel in channelList %}
-                        <div class="row">
+                        <div id="channelCardRow-{{channel.id}}" class="row">
                             <div class="col-12">
                                 <div class="card shadow searchable">
                                   <div class="card-header">
                                       <b><span class="video-title"><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></span></b>
-                                    <div class="float-right"><a href="/settings/admin?action=delete&setting=channel&channelID={{channel.id}}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a></button></div>
+                                    <div class="float-right"><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></div>
                                   </div>
                                   <div class="card-body">
                                     <div class="row">
@@ -708,6 +920,28 @@
                         </div>
                         <br>
                         {% endfor %}
+                    </div>
+                    <div class="modal fade" id="confirmDeleteChannelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteChannelModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteChannelModalTitle">Delete Channel</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              Deleting a channel will remove all associated videos and clip.  Are you sure you want to delete the channel?<br>
+                              <input type="hidden" id="deleteChannelID" name="channelID">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="deleteChannel();" data-dismiss="modal">Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'streams' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-streams" id="streamsList">
@@ -772,86 +1006,6 @@
                       </div>
                     </div>
                 </div>
-                {# <div class="tab-pane fade {% if page == 'hub' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-hub" id="hubSettings">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-10 col-md-12">
-                                <h5>OSP Hub Setup</h5>
-                                <div class="card">
-                                    <div class="card-header"><h6>OSP Hub Servers</h6></div>
-                                    <div class="card-body">
-                                        <h5>Add an OSP Hub</h5>
-                                        <hr>
-                                        <form action="/settings/admin/hub" method="post">
-                                            <div class="input-group">
-                                                <input type="hidden" name="action" id="hubaction" value="addHub">
-                                                <input type="text" name="hubServerAddress" class="form-control disabled" disabled autocomplete="new-password">
-                                                <div class="input-group-append">
-                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <br>
-                                        {% for hubServer in hubServers %}
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" value="{{hubServer.serverAddress}}" readonly autocomplete="new-password">
-                                            <div class="input-group-append">
-                                                <a href="/settings/admin/hub?action=deleteServer&serverID={{hubServer.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="card">
-                                    <div class="card-header"><h6>Hub Connections</h6></div>
-                                    <div class="card-body">
-                                        <h5>Add a New Connection</h5>
-                                        <hr>
-                                        <form action="/settings/admin/hub" method="post">
-                                            <input type="hidden" name="action" id="hubConnectionaction" value="addConnection">
-                                            <div class="input-group">
-                                                <select class="form-control" name="hubServer" required>
-                                                    {% for hubServer in hubServers %}
-                                                        <option value={{hubServer.id}}>{{hubServer.serverAddress}}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <div class="input-group-append">
-                                                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <br>
-                                        <h5>Existing Connections</h5>
-                                        <hr>
-                                        {% for hub in hubConnections %}
-                                        <div class="row">
-                                            <div class="col-12 col-md-5">
-                                                <input type="text" class="form-control readonly" readonly value="{{hub.hubServer|get_hubName}}">
-                                            </div>
-                                            <div class="col-12 col-md-1">
-                                                <div class="badge {% if hub.status == 0 %}badge-warning {% elif hub.status == 1 %}badge-success {% endif%}">{{hub.status|get_hubStatus}}</div>
-                                            </div>
-                                            <div class="col-12 col-md-2">
-                                                {{hub.lastUpload|normalize_date}}
-                                            </div>
-                                            <div class="col-12 col-md-3">
-                                                <input type="text" class="form-control readonly" readonly value="{{hub.verificationToken}}">
-                                                <input type="text" class="form-control readonly" readonly value="{{hub.serverToken}}">
-                                            </div>
-                                            <div class="col-12 col-md-1">
-                                                <a href="/settings/admin/hub?action=deleteConnection&connectionID={{hub.id}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                                            </div>
-                                        </div>
-                                        <br>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> #}
                 <div class="tab-pane fade {% if page == 'logs' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-logs" id="logs">
                     <div class="container-fluid">
                         <div class="row">
@@ -947,7 +1101,6 @@
 {% block scripts %}
 <script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
 <script>
-
     $(document).ready(function() {
         $('#logTable').DataTable({
             "order": [[ 0, "desc" ]]
@@ -960,6 +1113,120 @@
         var divid = '#' + selDiv;
         $('.settingsOption').hide();
         $(divid).show();
+    }
+</script>
+
+<script>
+    function deleteOAuthProvider(providerID) {
+        document.getElementById('DeleteOAuthProviderID').value = providerID;
+        $('#deleteOauthModal').modal('show');
+    }
+
+    function updateOAuthModalWindowLayout() {
+        var authType = document.getElementById("oAuthPreset").value;
+        switch(authType) {
+            case "Custom":
+                $("#oAuthAccess_token_url").attr("disabled", false);
+                $("#oAuthAccess_token_urlDiv").show();
+                $("#oAuthAccess_token_params").attr("disabled", false);
+                $("#oAuthAccess_token_paramsDiv").show();
+                $("#oAuthAuthorize_url").attr("disabled", false);
+                $("#oAuthAuthorize_urlDiv").show();
+                $("#oAuthAuthorize_params").attr("disabled", false);
+                $("#oAuthAuthorize_paramsDiv").show();
+                $("#oAuthApi_base_url").attr("disabled", false);
+                $("#oAuthApi_base_urlDiv").show();
+                $("#oAuthClient_kwargs").attr("disabled", false);
+                $("#oAuthClient_kwargsDiv").show();
+                $("#oAuthProfile_endpoint").attr("disabled", false);
+                $("#oAuthProfile_endpointDiv").show();
+                $("#oAuthIDValue").attr("disabled", false);
+                $("#oAuthIDValueDiv").show();
+                $("#oAuthUsername").attr("disabled", false);
+                $("#oAuthUsernameDiv").show();
+                $("#oAuthEmail").attr("disabled", false);
+                $("#oAuthEmailDiv").show();
+                break;
+            default:
+                $("#oAuthAccess_token_url").attr("disabled", true);
+                $("#oAuthAccess_token_urlDiv").hide();
+                $("#oAuthAccess_token_params").attr("disabled", true);
+                $("#oAuthAccess_token_paramsDiv").hide();
+                $("#oAuthAuthorize_url").attr("disabled", true);
+                $("#oAuthAuthorize_urlDiv").hide();
+                $("#oAuthAuthorize_params").attr("disabled", true);
+                $("#oAuthAuthorize_paramsDiv").hide();
+                $("#oAuthApi_base_url").attr("disabled", true);
+                $("#oAuthApi_base_urlDiv").hide();
+                $("#oAuthClient_kwargs").attr("disabled", true);
+                $("#oAuthClient_kwargsDiv").hide();
+                $("#oAuthProfile_endpoint").attr("disabled", true);
+                $("#oAuthProfile_endpointDiv").hide();
+                $("#oAuthIDValue").attr("disabled", true);
+                $("#oAuthIDValueDiv").hide();
+                $("#oAuthUsername").attr("disabled", true);
+                $("#oAuthUsernameDiv").hide();
+                $("#oAuthEmail").attr("disabled", true);
+                $("#oAuthEmailDiv").hide();
+                break;
+        }
+    }
+
+    $(document).on("click", ".edit-oAuth-Button", function () {
+
+         var oAuthID = $(this).data('id');
+         var oAuthName = $(this).data('name');
+         var oAuthType = $(this).data('authtype');
+         var oAuthFriendlyName = $(this).data('friendlyname');
+         var oAuthDisplayColor = $(this).data('displaycolor');
+         var oAuthClientID = $(this).data('clientid');
+         var oAuthClientSecret = $(this).data('clientsecret');
+         var oAuthAccessTokenURL = $(this).data('accesstokenurl');
+         var oAuthAccessTokenParams = $(this).data('accesstokenparams');
+         var oAuthAuthorizeURL = $(this).data('authorizeurl');
+         var oAuthAuthorizeParams = $(this).data('authorizeparams');
+         var oAuthAPIBaseURL = $(this).data('apibaseurl');
+         var oAuthClientKwargs = $(this).data('clientkwargs');
+         var oAuthProfileEndpoint = $(this).data('profileendpoint');
+         var oAuthIDValue= $(this).data('idvalue');
+         var oAuthUsername = $(this).data('usernamevalue');
+         var oAuthEmail = $(this).data('emailvalue');
+         $("#oAuthID").val( oAuthID );
+         $("#oAuthPreset").val( oAuthType )
+         $("#oAuthName").val( oAuthName );
+         $("#oAuthFriendlyName").val( oAuthFriendlyName );
+         $("#oAuthColor").val( oAuthDisplayColor );
+         $("#oAuthClient_id").val( oAuthClientID );
+         $("#oAuthClient_secret").val( oAuthClientSecret );
+         $("#oAuthAccess_token_url").val( oAuthAccessTokenURL );
+         if (oAuthAccessTokenParams != 'None') {
+             $("#oAuthAccess_token_params").val(JSON.parse(oAuthAccessTokenParams));
+         }
+         $("#oAuthAuthorize_url").val( oAuthAuthorizeURL );
+         if (oAuthAuthorizeParams != 'None') {
+             $("#oAuthAuthorize_params").val(JSON.parse(oAuthAuthorizeParams));
+         }
+         $("#oAuthApi_base_url").val( oAuthAPIBaseURL );
+         if (oAuthClientKwargs != 'None') {
+             $("#oAuthClient_kwargs").val(JSON.parse(oAuthClientKwargs));
+         }
+         $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
+         $("#oAuthIDValue").val( oAuthIDValue );
+         $("#oAuthUsername").val( oAuthUsername );
+         $("#oAuthEmail").val( oAuthEmail );
+         updateOAuthModalWindowLayout();
+         $("#newOauthModal").modal('show');
+    });
+
+    // Set Presets for oAuth
+    $(document).on("change", "#oAuthPreset", function () {
+        updateOAuthModalWindowLayout();
+    });
+
+    function resetOAuthForm() {
+        document.getElementById("OAuthForm").reset();
+        $("#oAuthID").val('');
+        updateOAuthModalWindowLayout();
     }
 </script>
 
@@ -1131,6 +1398,23 @@
         socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
         var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
         webhookTableRow.parentNode.removeChild(webhookTableRow);
+    }
+
+    function testWebhook(webhookID) {
+        socket.emit('testWebhook', {webhookID: webhookID, webhookType: 'global'});
+        createNewBSAlert("Webhook Test Sent","success")
+    }
+
+    function deleteChannelModal(channelID) {
+        document.getElementById('deleteChannelID').value = channelID;
+        $('#confirmDeleteChannelModal').modal('show');
+    }
+
+    function deleteChannel() {
+        var channelID = document.getElementById('deleteChannelID').value;
+        socket.emit('deleteChannel', {channelID: channelID});
+        var channelTableRow = document.getElementById('channelCardRow-' + channelID);
+        channelTableRow.parentNode.removeChild(channelTableRow);
     }
 </script>
 
@@ -1427,7 +1711,7 @@
 
 
 <script>
-    var easymde1 = new EasyMDE({ element: document.getElementById("serverMessage") });
+    var easymde1 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("serverMessage") });
 </script>
 
 
@@ -1441,6 +1725,23 @@ $('#search').on('input', function(){
         else $this.closest('.searchable').show();
     });
 });
+</script>
+
+<script>
+    $('.rangeSliderInput').on('input', function() {
+      var sliderValue = $(this).val();
+      if (sliderValue != "") {
+        var maxValue = $(this).attr("max");
+        if (sliderValue != maxValue) {
+          var date = new Date(0);
+          date.setSeconds(sliderValue);
+          var timeString = date.toISOString().substr(11, 8);
+        } else {
+          timeString = "Infinite";
+        }
+        $(this).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
+      }
+    });
 </script>
 
 {% endblock %}

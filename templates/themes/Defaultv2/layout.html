@@ -12,13 +12,14 @@
 
   <link rel=stylesheet type=text/css href="/static/css/shared.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
+  <link rel=stylesheet type=text/css href="/static/css/range.css">
   <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
   <link rel="stylesheet" href="/static/vendor/easymde/css/easymde.min.css">
-  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2.css">
+  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/theme.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
   <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
@@ -44,13 +45,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto" id="main-navbar-options">
           <form class="form-inline my-2 my-lg-0 mr-auto" action="/search" method="post">
-            <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:Arial, FontAwesome" aria-label="Search" size="24">
+            <input class="form-control search" name="term" type="search" placeholder="&#xf002; Search..." aria-label="Search" style="font-weight: 900;font-family: 'Font Awesome 5 Free', Arial, Sans-serif;" size="24">
           </form>
           <li class="nav-item px-2">
-            <a class="nav-link zoom" href="/channels"><b><i class="fas fa-tv"></i> Channels</b></a>
+            <a class="nav-link zoom" href="/channel"><b><i class="fas fa-tv"></i> Channels</b></a>
           </li>
           <li class="nav-item px-2">
-            <a class="nav-link zoom" href="/topics"><b><i class="fas fa-hashtag"></i> Topics</b></a>
+            <a class="nav-link zoom" href="/topic"><b><i class="fas fa-hashtag"></i> Topics</b></a>
           </li>
           <li class="nav-item px-2">
             <a class="nav-link zoom" href="/streamers"><b><i class="fas fa-users"></i> Streamers</b></a>
@@ -243,6 +244,14 @@
                 {% endif %}
               </select>
             </div>
+            <div class="form-group">
+              <label for="uploadTopic">Topic</label>
+              <select name="uploadTopic" class="form-control" required>
+                {% for topic in uploadTopics %}
+                <option value="{{topic.id}}">{{topic.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
 
             <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
             <!-- hidden dropzone -->
@@ -294,6 +303,12 @@
   </div>
   {% endif %}
 
+  {% if sysSettings.maintenanceMode == True %}
+  <div class="alert alert-secondary m-2" role="alert">
+    Server is in Maintenance Mode!
+  </div>
+  {% endif %}
+
   {% block body %}
 
   {% endblock %}
@@ -310,6 +325,33 @@
   {% block scripts %}
 
   {% endblock %}
+  <script>
+
+  function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  }
+  function eraseCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999;';
+  }
+
+  </script>
 
   <script>
     $(function () {
@@ -318,7 +360,7 @@
   </script>
 
   <script>
-    var uploadmde = new EasyMDE({ element: document.getElementById("videoDescription") });
+    var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
   </script>
 
   <script type="application/javascript">

@@ -78,7 +78,7 @@
     </div>
     <div class="row mx-1">
         <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start">
-            {% for video in randomRecorded %}
+            {% for video in videoList %}
                 <li class="displayCard mx-4 my-3">
                   <a href="/play/{{video.id}}">
                     <div class="displayCard-thumbnail zoom">
@@ -117,7 +117,7 @@
     </div>
     <div class="row mx-1">
         <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
-            {% for clip in randomClips %}
+            {% for clip in clipList %}
             <li class="displayCard mx-4 my-3">
               <a href="/clip/{{clip.id}}">
                 <div class="displayCard-thumbnail zoom">

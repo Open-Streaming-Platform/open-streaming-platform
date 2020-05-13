@@ -26,11 +26,14 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 Installation Instructions may be found at the [OSP Wiki Page](https://wiki.openstreamingplatform.com)
 
+Attribution
+----
+See our [Attribution Page](https://wiki.openstreamingplatform.com/en/Attribution)
+
 Thanks
 ----
 Special thanks to the folks of the [OSP Discord channel](https://discord.gg/Jp5rzbD) and all contributors for their code, testing, and suggestions!
 
 License
 ----
-
 MIT License

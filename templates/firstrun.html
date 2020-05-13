@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/Defaultv2.css">
+  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/theme.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
   <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
   <link href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -22,8 +22,7 @@
       -moz-background-size: cover;
       -o-background-size: cover;
       background-size: cover;
-      background-repeat: no-repeat;
-      background: #ffffff;
+      background: #ffffff no-repeat;
     }
   </style>
 
@@ -75,7 +74,7 @@
                               </select>
                           </div>
                           <div class="form-group mx-2">
-                            Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" size="48" required >
+                            Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" size="48" required >
                           </div>
                       </div>
                       Allow Users to Record:<br>
@@ -106,11 +105,11 @@
                       <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:springgreen;"></i> Email Test was Successful!</div>
                       <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
                       <br>
-                      SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required>
-                      SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required>
-                      SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required>
-                      SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}">
-                      SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}">
+                      SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" required>
+                      SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" required>
+                      SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" required>
+                      SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control">
+                      SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control">
                       SMTP SSL:<br>
                       <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL">
                       <br>

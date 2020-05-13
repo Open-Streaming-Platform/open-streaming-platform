@@ -11,8 +11,9 @@
   <link rel="manifest" href="/static/site.webmanifest">
   <link rel=stylesheet type=text/css href="/static/css/shared.css">
   <link rel=stylesheet type=text/css href="/static/css/slider.css">
+  <link rel=stylesheet type=text/css href="/static/css/range.css">
   <link rel="stylesheet" href="/static/vendor/bootswatch-slate/css/bootstrap-slate.min.css">
-  <link rel=stylesheet type=text/css href="/static/css/dark-cow/dark-cow.css">
+  <link rel=stylesheet type=text/css href="/static/css/dark-cow/theme.css">
   <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
   <link rel="stylesheet" href="/static/vendor/bootstrap-toggle/css/bootstrap-toggle.min.css">
   <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
@@ -43,13 +44,13 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
         <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
-          <input class="form-control search" name="term" type="search" placeholder="&#xF002; Search" style="font-family:FontAwesome;height:14px;" aria-label="Search" size="24">
+          <input class="form-control search" name="term" type="search" placeholder="&#xf002; Search..." aria-label="Search" style="height:16px;font-weight: 900;font-family: 'Font Awesome 5 Free', Arial, Sans-serif;" size="24">
         </form>
         <li class="nav-item">
-          <a class="nav-link" href="/channels">Channels</a>
+          <a class="nav-link" href="/channel">Channels</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/topics">Topics</a>
+          <a class="nav-link" href="/topic">Topics</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/streamers">Streamers</a>
@@ -238,6 +239,14 @@
                 {% endfor %}
               </select>
             </div>
+            <div class="form-group">
+              <label for="uploadTopic">Topic</label>
+              <select name="uploadTopic" class="form-control" required>
+                {% for topic in uploadTopics %}
+                <option value="{{topic.id}}">{{topic.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
             
             <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
             <!-- hidden dropzone -->
@@ -287,6 +296,11 @@
       </div>
     </div>
   </div>
+  {% if sysSettings.maintenanceMode == True %}
+  <div class="alert alert-secondary m-2" role="alert">
+    Server is in Maintenance Mode!
+  </div>
+  {% endif %}
   
   {% block body %}
   
@@ -304,10 +318,37 @@
   {% block scripts %}
   
   {% endblock %}
+    <script>
+
+    function setCookie(name,value,days) {
+      var expires = "";
+      if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days*24*60*60*1000));
+          expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+    }
+    function eraseCookie(name) {
+      document.cookie = name + '=; Max-Age=-99999999;';
+    }
+
+    </script>
   
   <scripts>
     <script>
-      var uploadmde = new EasyMDE({ element: document.getElementById("videoDescription") });
+      var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
     </script>
   </scripts>
   

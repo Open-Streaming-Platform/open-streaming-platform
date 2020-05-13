@@ -3,5 +3,22 @@
   "Maintainer": "m00lean",
   "Version": "0.1",
   "Description": "A dark theme",
-  "Override": ["admin.html","apikeys.html","channelplayer.html","channelProtectionAuth.html","channels.html","chatpopout.html","index.html","streamers.html","topics.html","user_channels.html","userSettings.html","videoListView.html","vidplayer.html","clipplayer.html", "search.html", "subscriptions.html","notifications.html"]
+  "Override": [
+    "admin.html",
+    "channelplayer.html",
+    "channelProtectionAuth.html",
+    "channels.html",
+    "chatpopout.html",
+    "index.html",
+    "streamers.html",
+    "topics.html",
+    "user_channels.html",
+    "userSettings.html",
+    "videoListView.html",
+    "vidplayer.html",
+    "clipplayer.html",
+    "search.html",
+    "subscriptions.html",
+    "notifications.html"
+  ]
 }

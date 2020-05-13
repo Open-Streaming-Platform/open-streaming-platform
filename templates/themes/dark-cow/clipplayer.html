@@ -75,6 +75,7 @@
                 <div class="btn-group" role="group">
                   <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i id="cog" class="fas fa-cogs"></i></button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <a class="dropdown-item" href="{{streamURL}}" download><i class="fas fa-download"></i> Download Video</a>
                     <a class="dropdown-item" href="#" onclick="newScreenShot();"><i class="fas fa-camera"></i> Create Thumbnail</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i> Edit Details</a>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i> Delete Video</a>
@@ -250,23 +251,21 @@
 <script src="/static/vendor/videojs/js/video.js"></script>
 
 <script>
-  var player = videojs('video', { autoplay: false });
-
-  var startTime = {{ clip.startTime }};
-  var stopTime = {{ clip.endTime }};
-
-  player.currentTime(startTime);
-  player.play();
-
-  player.on('timeupdate', function (e) {
-    if (player.currentTime() < startTime) {
-      player.currentTime(startTime);
-    }
-    if (player.currentTime() >= stopTime) {
-      player.currentTime(startTime);
-      player.pause();
-    }
-  });
+    var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
 
 </script>
 
@@ -279,7 +278,7 @@
 </script>
 
 <script>
-  var simplemde2 = new EasyMDE({ element: document.getElementById("description") });
+  var simplemde2 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
 </script>
 
 <script>
