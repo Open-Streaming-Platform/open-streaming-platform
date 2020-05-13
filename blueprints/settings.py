@@ -983,6 +983,8 @@ def settings_dbRestore():
 
                 if 'uuid' in restoredUser:
                     user.uuid = str(restoredUser['uuid'])
+                else:
+                    user.uuid = str(uuid.uuid4())
                 if 'authType' in restoredUser:
                     user.authType = int(restoredUser['authType'])
                 else:
@@ -1737,6 +1739,7 @@ def initialSetup():
             user_datastore.create_user(email=emailAddress, username=username, password=passwordhash)
             db.session.commit()
             user = Sec.User.query.filter_by(username=username).first()
+            user.uuid = str(uuid.uuid4())
             user.authType = 0
             user.confirmed_at = datetime.datetime.now()
 

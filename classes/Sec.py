@@ -76,9 +76,6 @@ class User(db.Model, UserMixin):
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
 
-    def __init__(self):
-        self.uuid = str(uuid4())
-
     def serialize(self):
         return {
             'id': self.id,
