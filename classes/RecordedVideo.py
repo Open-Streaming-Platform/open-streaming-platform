@@ -1,8 +1,10 @@
 from .shared import db
+from uuid import uuid4
 
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
     id = db.Column(db.Integer,primary_key=True)
+    uuid = db.Column(db.String(255), unique=True)
     videoDate = db.Column(db.DateTime)
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
     channelName = db.Column(db.String(255))
@@ -22,6 +24,7 @@ class RecordedVideo(db.Model):
     clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments, published):
+        self.uuid = str(uuid4())
         self.videoDate = videoDate
         self.owningUser = owningUser
         self.channelID = channelID
@@ -42,6 +45,7 @@ class RecordedVideo(db.Model):
     def serialize(self):
         return {
             'id': self.id,
+            'uuid': self.uuid,
             'channelID': self.channelID,
             'owningUser': self.owningUser,
             'videoDate': str(self.videoDate),
@@ -60,6 +64,7 @@ class RecordedVideo(db.Model):
 class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(255), unique=True)
     parentVideo = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
     startTime = db.Column(db.Float)
     endTime = db.Column(db.Float)
@@ -74,6 +79,7 @@ class Clips(db.Model):
     upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, parentVideo, videoLocation, startTime, endTime, clipName, description):
+        self.uuid = str(uuid4())
         self.parentVideo = parentVideo
         self.videoLocation = videoLocation
         self.startTime = startTime
@@ -90,6 +96,7 @@ class Clips(db.Model):
     def serialize(self):
         return {
             'id': self.id,
+            'uuid': self.uuid,
             'parentVideo': self.parentVideo,
             'startTime': self.startTime,
             'endTime': self.endTime,

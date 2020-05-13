@@ -3,6 +3,7 @@ from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegi
 from flask_security import UserMixin, RoleMixin
 from .shared import db
 from classes import Sec
+from uuid import uuid4
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [Required()])
@@ -51,6 +52,7 @@ class Role(db.Model, RoleMixin):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
@@ -73,6 +75,20 @@ class User(db.Model, UserMixin):
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+
+    def __init__(self):
+        self.uuid = str(uuid4())
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'uuid': self.uuid,
+            'username': self.username,
+            'biography': self.biography,
+            'pictureLocation': "/images/" + self.pictureLocation,
+            'channels': [obj.id for obj in self.channels],
+            'page': '/streamers/' + self.id + '/'
+        }
 
 class OAuth2Token(db.Model):
     __tablename__ = "OAuth2Token"

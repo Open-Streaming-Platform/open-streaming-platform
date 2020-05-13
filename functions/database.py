@@ -1,6 +1,7 @@
 import os
 import json
 import subprocess
+import uuid
 
 from flask import flash
 from flask_migrate import migrate, upgrade
@@ -176,6 +177,20 @@ def init(app, user_datastore):
                 os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
             except OSError:
                 flash("Unable to create <web-root>/stream-thumb", "error")
+
+        # Generate UUIDs for DB Items Missing
+        userQuery = Sec.User.query.filter_by(uuid=None).all()
+        for user in userQuery:
+            user.uuid = str(uuid.uuid4())
+            db.session.commit()
+        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(uuid=None).all()
+        for vid in videoQuery:
+            vid.uuid = str(uuid.uuid4())
+            db.session.commit()
+        clipQuery = RecordedVideo.Clips.query.filter_by(uuid=None).all()
+        for clip in clipQuery:
+            clip.uuid = str(uuid.uuid4())
+            db.session.commit()
 
         sysSettings = settings.settings.query.first()
 
