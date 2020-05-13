@@ -182,15 +182,15 @@ def init(app, user_datastore):
         userQuery = Sec.User.query.filter_by(uuid=None).all()
         for user in userQuery:
             user.uuid = str(uuid.uuid4())
-        db.session.commit()
+            db.session.commit()
         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(uuid=None).all()
         for vid in videoQuery:
             vid.uuid = str(uuid.uuid4())
-        db.session.commit()
+            db.session.commit()
         clipQuery = RecordedVideo.Clips.query.filter_by(uuid=None).all()
         for clip in clipQuery:
             clip.uuid = str(uuid.uuid4())
-        db.session.commit()
+            db.session.commit()
 
         sysSettings = settings.settings.query.first()
 
