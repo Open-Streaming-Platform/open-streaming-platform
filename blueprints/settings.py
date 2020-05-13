@@ -677,15 +677,6 @@ def admin_page():
                 oAuth_id = 'id'
                 oAuth_username = 'name'
                 oAuth_email = 'email'
-            elif oAuth_type == "Twitter":
-                oAuth_access_token_url = 'https://api.twitter.com/oauth/access_token'
-                oAuth_authorize_url = 'https://api.twitter.com/oauth/authenticate'
-                oAuth_api_base_url = 'https://api.twitter.com/1.1/'
-                oAuth_client_kwargs =  None
-                oAuth_profile_endpoint = 'account/verify_credentials.json?include_email=True'
-                oAuth_id = 'id'
-                oAuth_username = 'screen_name'
-                oAuth_email = 'email'
 
             if request.form['oAuthID'] == '':
                 newOauthProvider = settings.oAuthProvider(oAuth_name, oAuth_type, oAuth_friendlyName, oAuth_displayColor, oAuth_client_id, oAuth_client_secret, oAuth_access_token_url, oAuth_authorize_url, oAuth_api_base_url, oAuth_profile_endpoint, oAuth_id, oAuth_username, oAuth_email)
