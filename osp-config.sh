@@ -77,6 +77,8 @@ upgrade_osp() {
    chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG 2>&1
+   echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
+   systemctl stop nginx-osp >> $UPGRADELOG 2>&1
    echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
    pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
    echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
@@ -91,6 +93,8 @@ upgrade_osp() {
    python3 manage.py db upgrade >> $UPGRADELOG 2>&1
    echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
    systemctl start osp.target >> $UPGRADELOG 2>&1
+   echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
+   systemctl start nginx-osp >> $UPGRADELOG 2>&1
    echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
 }
 
