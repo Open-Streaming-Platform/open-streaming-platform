@@ -4,7 +4,7 @@ from uuid import uuid4
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
     id = db.Column(db.Integer,primary_key=True)
-    uuid = db.Column(db.String(255), unique=True)
+    uuid = db.Column(db.String(255))
     videoDate = db.Column(db.DateTime)
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
     channelName = db.Column(db.String(255))
@@ -64,7 +64,7 @@ class RecordedVideo(db.Model):
 class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(255), unique=True)
+    uuid = db.Column(db.String(255))
     parentVideo = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
     startTime = db.Column(db.Float)
     endTime = db.Column(db.Float)
