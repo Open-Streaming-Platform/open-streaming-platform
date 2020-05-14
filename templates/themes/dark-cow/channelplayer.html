@@ -79,7 +79,7 @@
                             <div id="offlineImage" style="display:none;">
                                 <img class="videoStream shadow" {% if channel.offlineImageLocation != None %}
                                     src="/images/{{channel.offlineImageLocation}}" {% else %}
-                                    src="/static/img/video-placeholder.jpg" {% endif %}>
+                                    src="/static/img/video-placeholder.jpg" {% endif %} onerror="this.onerror=null;this.src='/static/img/video-placeholder.jpg';">
                             </div>
                         </div>
                         <div class="row m-2">
