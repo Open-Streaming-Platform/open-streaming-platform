@@ -1,3 +1,9 @@
+Beta-6a
+==============================================
+Fixes for Redis Password being set to None instead of '' and causing an issue starting
+Fixes for SQLite Instances due to Unique Constraint
+Fix for Adaptive 420p bit rate values being underset
+
 Beta-6
 ==============================================
 ** Important Note: Users will need to manually copy all osp-*.conf files from /opt/osp/setup/nginx to /usr/local/nginx/conf and restart the nginx-osp service after running the standard upgrade
