@@ -35,7 +35,7 @@ def text(message):
             r.rpush(channelQuery.channelLoc + '-streamUserList', current_user.username)
 
         pictureLocation = current_user.pictureLocation
-        if current_user.pictureLocation is None:
+        if current_user.pictureLocation is None or current_user.pictureLocation == "None":
             pictureLocation = '/static/img/user2.png'
         else:
             pictureLocation = '/images/' + pictureLocation
