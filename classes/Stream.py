@@ -5,7 +5,7 @@ from uuid import uuid4
 class Stream(db.Model):
     __tablename__ = "Stream"
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(255), unique=True)
+    uuid = db.Column(db.String(255))
     linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
     streamKey = db.Column(db.String(255))
     streamName = db.Column(db.String(255))

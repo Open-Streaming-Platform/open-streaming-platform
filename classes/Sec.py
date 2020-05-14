@@ -52,7 +52,7 @@ class Role(db.Model, RoleMixin):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(255), unique=True)
+    uuid = db.Column(db.String(255))
     username = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
