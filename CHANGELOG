@@ -1,3 +1,8 @@
+Beta-6b
+==============================================
+Fixed Issue where Thumbnails were not being generated for Uploaded Videos
+Fixed Issue where Offline Channel Images and Chat User Pictures were not displaying as default images on restore of a backup where the original was never set and was using default
+
 Beta-6a
 ==============================================
 Fixes for Redis Password being set to None instead of '' and causing an issue starting
