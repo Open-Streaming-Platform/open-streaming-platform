@@ -129,7 +129,7 @@ def init(app, user_datastore):
             clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
             fullvideoLocation = videos_root + clipVideoLocation
             clip.videoLocation = clipVideoLocation
-            clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), fullvideoLocation])
+            clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-copyts', fullvideoLocation])
             db.session.commmit()
 
         # Fix for Videos and Channels that were created before Publishing Option
