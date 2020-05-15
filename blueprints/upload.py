@@ -136,7 +136,7 @@ def upload_vid():
             flash("Thumbnail Upload Failed Due to Missing File","error")
         newVideo.thumbnailLocation = thumbnailLoc
     else:
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + videoFilename.rsplit(".", 1)[-1]
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' +  datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
 
         subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1', videos_root + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc

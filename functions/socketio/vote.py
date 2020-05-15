@@ -69,6 +69,12 @@ def handle_upvoteChange(streamData):
     loc = streamData['loc']
     vidType = str(streamData['vidType'])
 
+    myUpvote = False
+    totalUpvotes = 0
+
+    totalQuery = None
+    myVoteQuery = None
+
     if vidType == 'stream':
         loc = str(loc)
         channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
@@ -86,6 +92,10 @@ def handle_upvoteChange(streamData):
 
             else:
                 db.session.delete(myVoteQuery)
+
+            totalQuery = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count()
+            myVoteQuery = upvotes.streamUpvotes.query.filter_by(userID=current_user.id, streamID=stream.id).first()
+
             db.session.commit()
 
     elif vidType == 'video':
@@ -104,7 +114,12 @@ def handle_upvoteChange(streamData):
 
             else:
                 db.session.delete(myVoteQuery)
+
+            totalQuery = upvotes.videoUpvotes.query.filter_by(videoID=loc).count()
+            myVoteQuery = upvotes.videoUpvotes.query.filter_by(userID=current_user.id, videoID=loc).first()
+
             db.session.commit()
+
     elif vidType == "comment":
         loc = int(loc)
         videoCommentQuery = comments.videoComments.query.filter_by(id=loc).first()
@@ -120,7 +135,12 @@ def handle_upvoteChange(streamData):
 
             else:
                 db.session.delete(myVoteQuery)
+
+            totalQuery = upvotes.commentUpvotes.query.filter_by(commentID=loc).count()
+            myVoteQuery = upvotes.commentUpvotes.query.filter_by(userID=current_user.id, commentID=loc).first()
+
             db.session.commit()
+
     elif vidType == 'clip':
         loc = int(loc)
         clipQuery = RecordedVideo.Clips.query.filter_by(id=loc).first()
@@ -137,6 +157,17 @@ def handle_upvoteChange(streamData):
 
             else:
                 db.session.delete(myVoteQuery)
+
+            totalQuery = upvotes.clipUpvotes.query.filter_by(clipID=loc).count()
+            myVoteQuery = upvotes.clipUpvotes.query.filter_by(userID=current_user.id, clipID=loc).first()
+
             db.session.commit()
+
+    if totalQuery is not None:
+        totalUpvotes = totalQuery
+    if myVoteQuery is not None:
+        myUpvote = True
+
     db.session.close()
+    emit('upvoteTotalResponse', {'totalUpvotes': str(totalUpvotes), 'myUpvote': str(myUpvote), 'type': vidType, 'loc': loc})
     return 'OK'
