@@ -3,6 +3,7 @@ Beta-6b
 Fixed Issue where Thumbnails were not being generated for Uploaded Videos
 Fixed Issue where Offline Channel Images and Chat User Pictures were not displaying as default images on restore of a backup where the original was never set and was using default
 Fixed Issue where Upvote status returns were returning after a long delay causing confusion and a mixed up display
+Tweaks made to the Clipping Configuration to prevent keyframe issues on Video Clips
 
 Beta-6a
 ==============================================
