@@ -529,7 +529,6 @@
     <script>
         function changeUpvote() {
             socket.emit('changeUpvote', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
-            socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
         }
     </script>
 
