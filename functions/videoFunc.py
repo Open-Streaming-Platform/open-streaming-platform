@@ -202,7 +202,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
 
-            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-c', 'copy', '-t', str(newClipQuery.length), '-copyts', fullvideoLocation])
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-c', 'copy', '-t', str(newClipQuery.length), '-avoid_negative_ts', '1', fullvideoLocation])
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
