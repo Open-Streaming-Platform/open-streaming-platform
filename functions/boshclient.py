@@ -175,7 +175,7 @@ class BOSHClient:
 
 if __name__ == '__main__':
     USERNAME = 'admin@localhost'
-    PASSWORD = 'Labtec32119'
+    PASSWORD = 'NA'
     SERVICE = 'http://localhost/http-bind/'
 
     c = BOSHClient(USERNAME, PASSWORD, SERVICE)
