@@ -273,57 +273,76 @@ body {
         width:100%;
     }
 
-.chat {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 75vh;
-    padding: 5px 5px 5px 5px;
-    width:100%;
+.chatloader {
+    display: none;
 }
 
-.chatpopout {
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 5px 5px 5px 5px;
-    max-height: calc(100vh - 150px);
+.chatPanel {
+  display: none;
+  flex-flow: column;
+  height: 100%;
+}
+.chatPanel .chatHeader {
+  width:100%;
+  flex: 0 1 auto;
 }
 
-.chatpopout-nobar {
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 5px 5px 5px 5px;
-    max-height: calc(100vh);
+.chatPanel .chatContent {
+  flex: 1 1 500px;
+  overflow-x:auto;
 }
 
-.chatBar-Item {
-    border: 0px solid black;
-    border-radius: 4px;
-    padding: 4px;
-    margin-top: 5px;
-    min-height: 60px;
+.chatPanel .chatContent .chatEntryContainer {
+  z-index: 100;
 }
 
-.charBar-Item-Image {
-    float:left;
+.chatPanel .chatContent .chatEntryContainer .chatEntry {
+  padding: 5px 10px 5px 10px;
+  background-color: #ECECEC;
+  min-height: 56px;
+  border-radius: 10px;
+  margin: 5px;
+}
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatImage {
+  width: 64px;
+  display: inline-block;
+}
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatImage img {
+  width: 48px;
+  height: 48px;
+}
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo {
 }
 
-.chatBar-Item-Text {
-    position:relative;
-    left:20px;
-    color:white;
-    word-wrap: break-word;
-    width:82%;
-    display:inline-block;
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatTimestamp {
+  color: gray;
 }
 
-.chatbox {
-    height: 100%;
-    width:100%;
-    margin-bottom:15px;
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatUsername {
+  font-weight: bold;
 }
 
-.chatbox textarea {
-    resize: none;
+.chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatMessage {
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+.chatPanel .chatFooter {
+  flex: 0 1 75px;
+}
+
+.chatPanel .chatFooter input {
+  background-color: #ECECEC;
+  border: 0px solid black;
+}
+
+.chatPanel .chatFooter .chatFooterTop {
+  height: 30px;
+}
+
+.chatMembersOverlay {
+    display:none;
 }
 
 #chatside {

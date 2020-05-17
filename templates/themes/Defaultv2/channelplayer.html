@@ -18,6 +18,11 @@
 <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
 <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+<script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
+// Strophe
+<script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
+<script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
+<script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
 
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
@@ -118,15 +123,68 @@
             </div>
             {% if channel.chatEnabled == True %}
             <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12" >
-                <div class="row ml-2 mr-1">
-                    <div class="index-video-title mb-2"><b>Chat</b></div>
-                    <div class="chatbox" id="chatBlock">
-                          <div id="chat" class="chat"></div><br>
-                          <input autocomplete="off" id="text" size="80" class="form-control shadow" {% if current_user.is_authenticated==false %} disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..." {% endif %}><br>
-                          <button type="button" id="userList" class="btn btn-primary shadow" data-html="true" data-toggle="popover" title="<b>User List</b>" data-content="" data-placement="right"><i class="fas fa-list"></i></button>
-                          <a href="#" onClick="popoutChat();return false;" class="btn btn-primary shadow" title="Popout Chat"><i class="fas fa-external-link-alt"></i></a>
-                          <span class="float-right"><button id="chatSubmit" class="btn btn-success shadow" onclick="sendChat();">Send</button></span>
+                <<div class="container" style="height:1000px;">
+                  <div id="loader" class="chatloader">
+                      <div class="d-flex justify-content-center">
+                          <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
                       </div>
+                  </div>
+                  <div id="chatPanel" class="chatPanel my-2">
+                    <div class="chatHeader my-2">
+                        <div class="chatCounts">
+                            <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+                        </div>
+                    </div>
+                    <div id="chatContentWindow" class="chatContent">
+                        <div id="chatMembers" class="chatMembersOverlay slide-in-blurred-top">
+                          <div class="membersList card my-3">
+                              <div class="card-header bg-primary"><b>Owners</b></div>
+                              <div id="OwnerList" class="card-body"></div>
+                          </div>
+                          <div class="membersList card my-3">
+                              <div class="card-header bg-primary"><b>Admins</b></div>
+                              <div id="AdminList" class="card-body"></div>
+                          </div>
+                          <div class="membersList card my-3">
+                              <div class="card-header bg-primary"><b>Members</b></div>
+                              <div id="MemberList" class="card-body"></div>
+                          </div>
+                          <div class="membersList card my-3">
+                              <div class="card-header bg-primary"><b>Visitors</b></div>
+                              <div id="VisitorList" class="card-body"></div>
+                          </div>
+                        </div>
+                        <div id="chat" class="chatSection slide-in-blurred-top"></div>
+                    </div>
+                    <div class="chatFooter pl-1">
+                      <div class="chatFooterTop"></div>
+                      <div class="chatFooterInput">
+                          <div class="input-group">
+                              <input id="chatinput" type="text" class="form-control">
+                              <div class="input-group-append">
+                                <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="chatFooterBottom"></div>
+                      <div id='log' style="display:none;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
+                    <div class="chatEntry flexbox">
+                      <span class="chatImage float-left">
+                        <img class="avatar rounded shadow" src="https://picsum.photos/48">
+                      </span>
+                      <span class="chatInfo">
+                        <div class="chatTimestamp float-right"></div>
+                        <div class="chatUsername"></div>
+                        <div class="chatMessage"></div>
+                      </span>
+                    </div>
                 </div>
             </div>
             {% endif %}
@@ -435,53 +493,20 @@
         });
     </script>
 
+
+
+    <script src="chat.js"></script>
     <script>
-        var chatTimer;
-        var chatThrottled = false;
-        var chatTimeout = 2000;
+        var username = "{{current_user.username}}-Test";
+        var xmppPassword = "fakepw";
+        var serverproto = 'http://';
+        var server = 'osp.internal.divby0.net';
+        var BOSH_SERVICE = serverproto + server + '/http-bind/';
+        var ROOM_SERVICE = 'conference.' + server;
+        var ROOMNAME = 'testroom';
 
-        function chatThrottleDisable() {
-            chatThrottled = false;
-        }
-
-        function sendChat() {
-            if (chatThrottled == false) {
-                text = $('#text').val();
-                $('#text').val('');
-                socket.emit('text', {msg: text, room: '{{channel.channelLoc}}'});
-                chatThrottled = true;
-                chatTimer = setTimeout(chatThrottleDisable, chatTimeout);
-            }
-
-        };
-
-        $('#text').keypress(function(e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
-                sendChat();
-            }
-        });
     </script>
 
-    <script>
-
-        socket.on('message', function(data) {
-            var today = new Date();
-            var h = today.getHours();
-            var m = (today.getMinutes() < 10? '0' : '') + today.getMinutes();
-            var s = today.getSeconds();
-            var message = data['msg'];
-            if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            } else if (data['flags'] === 'Bot')
-            {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img class="rounded" src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            }
-            $('#chat').animate({ scrollTop: 1000000 }, "fast");
-        });
-    </script>
 
     <script>
         $(function () {
