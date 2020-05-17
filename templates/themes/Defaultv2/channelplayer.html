@@ -24,6 +24,8 @@
 <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
 <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
 
+<script src="/static/js/chat.js" type="text/javascript"></script>
+
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -123,7 +125,7 @@
             </div>
             {% if channel.chatEnabled == True %}
             <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12" >
-                <<div class="container" style="height:1000px;">
+                <div class="container" style="height:1000px;">
                   <div id="loader" class="chatloader">
                       <div class="d-flex justify-content-center">
                           <div class="spinner-border" role="status">
@@ -492,10 +494,6 @@
             userListElement.setAttribute("data-content",userBoxHTML);
         });
     </script>
-
-
-
-    <script src="chat.js"></script>
     <script>
         var username = "{{current_user.username}}-Test";
         var xmppPassword = "fakepw";
