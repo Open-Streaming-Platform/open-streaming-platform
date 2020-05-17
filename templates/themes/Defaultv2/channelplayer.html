@@ -187,6 +187,7 @@
                       </span>
                     </div>
                 </div>
+
             </div>
             {% endif %}
          </div>
@@ -489,19 +490,18 @@
             for (var i = 0; i < userListLength; i++) {
                 userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
             }
-            var userListElement = document.getElementById("userList");
-            userListElement.setAttribute("data-content",userBoxHTML);
         });
     </script>
     <script>
         var username = "{{current_user.username}}-Test";
         var xmppPassword = "fakepw";
-        var serverproto = 'http://';
-        var server = 'osp.internal.divby0.net';
+        var serverproto = '{{sysSettings.siteProtocol}}';
+        var server = '{{sysSettings.siteAddress}}';
         var BOSH_SERVICE = serverproto + server + '/http-bind/';
         var ROOM_SERVICE = 'conference.' + server;
         var ROOMNAME = 'testroom';
 
+        var ChatContentWindow = document.getElementById("chatContentWindow");
     </script>
 
 

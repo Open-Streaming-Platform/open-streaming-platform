@@ -4,8 +4,6 @@ var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 
-var ChatContentWindow = document.getElementById("chatContentWindow");
-
 $(window).bind('load', function() {
     var url = BOSH_SERVICE;
     connection = new Strophe.Connection(url);
