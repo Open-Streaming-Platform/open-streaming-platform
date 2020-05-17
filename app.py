@@ -122,6 +122,7 @@ from functions import system
 from functions import securityFunc
 from functions import votes
 from functions import webhookFunc
+from functions.ejabberdctl import ejabberdctl
 
 #----------------------------------------------------------------------------#
 # Begin App Initialization
@@ -181,6 +182,14 @@ md = Markdown(app, extensions=['tables'])
 scheduler = BackgroundScheduler()
 #scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
 scheduler.start()
+
+# Initialize ejabberdctl
+ejabberd = None
+try:
+    ejabberd = ejabberdctl('localhost', 'admin', 'password')
+    print(ejabberd.status)
+except Exception as e:
+    print("ejabberdctl failed to load: " + str(e))
 
 # Attempt Database Load and Validation
 try:
