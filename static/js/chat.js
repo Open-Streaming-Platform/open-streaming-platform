@@ -12,12 +12,6 @@ $(window).bind('load', function() {
     connection.connect(username + '@' + server, xmppPassword, onConnect);
 });
 
-$('#chatinput').on('keyup', function(e) {
-      if (e.keyCode === 13) {
-        sendMessage();
-      }
-});
-
 // Disconnect XMPP on Page Unload
 $(window).bind('unload', function(){
       // Leave Room First
