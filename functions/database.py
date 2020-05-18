@@ -195,8 +195,8 @@ def init(app, user_datastore):
         # Generate XMPP Token for Users Missing
         userQuery = Sec.User.query.filter_by(xmppPassword=None).all()
         for user in userQuery:
-            user.xmppToken = os.urandom(32).hex()
-        db.session.commit()
+            user.xmppToken = str(os.urandom(32).hex())
+            db.session.commit()
 
         sysSettings = settings.settings.query.first()
 
