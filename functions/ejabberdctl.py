@@ -84,7 +84,11 @@ class ejabberdctl(object):
                                             'host': host,
                                             'newpass': newpass})
 
-    # TODO def change_room_option(self, name, service, option, value)
+    def change_room_option(self, name, service, option, value):
+        return self.ctl('change_room_option', {'name': name,
+                                            'service': service,
+                                            'option': option,
+                                            'value': value})
     # Change an option in a MUC room
 
     def check_account(self, user, host):
