@@ -143,10 +143,12 @@ class ejabberdctl(object):
     # TODO def convert_to_yaml(self, in, out):
     # Convert the input file from Erlang to YAML format
 
-    # TODO def create_room(self, name, service, host):
+    def create_room(self, name, service, host):
+        return self.ctl('create_room', {'name': name, 'service':service, 'host': host})
     # Create a MUC room name@service in host
 
-    # TODO def create_room_with_opts(self, name, service, host, options):
+    def create_room_with_opts(self, name, service, host, options):
+        return self.ctl('create_room', {'name': name, 'service': service, 'host': host, 'options': options})
     # Create a MUC room name@service in host with given options
 
     # TODO def create_rooms_file(self, file):
@@ -605,7 +607,11 @@ class ejabberdctl(object):
                                          'status': status,
                                          'priority': priority})
 
-    # TODO def set_room_affiliation(self, name, service, jid, affiliation):
+    def set_room_affiliation(self, name, service, jid, affiliation):
+        return self.ctl('set_presence', {'name': name,
+                                         'service': service,
+                                         'jid': jid,
+                                         'affiliation': affiliation})
     # Change an affiliation in a MUC room
 
     def set_vcard(self, user, host, name, content):
