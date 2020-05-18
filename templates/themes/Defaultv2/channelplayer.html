@@ -495,7 +495,7 @@
     </script>
     <script>
         {% if current_user.is_authenticated %}
-        var username = "{{current_user.username}}";
+        var username = "{{current_user.username|lower}}";
         var xmppPassword = "{{current_user.xmppToken}}";
         {% else %}
         var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
