@@ -192,6 +192,12 @@ def init(app, user_datastore):
             clip.uuid = str(uuid.uuid4())
             db.session.commit()
 
+        # Generate XMPP Token for Users Missing
+        userQuery = Sec.User.query.filter_by(xmppPassword=None).all()
+        for user in userQuery:
+            user.xmppToken = os.urandom(32).hex()
+        db.session.commit()
+
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
