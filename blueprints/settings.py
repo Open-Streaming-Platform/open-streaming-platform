@@ -1745,6 +1745,7 @@ def initialSetup():
             user.uuid = str(uuid.uuid4())
             user.authType = 0
             user.confirmed_at = datetime.datetime.now()
+            user.xmppToken = str(os.urandom(32).hex())
 
             user_datastore.find_or_create_role(name='Admin', description='Administrator')
             user_datastore.find_or_create_role(name='User', description='User')
