@@ -47,14 +47,11 @@ def ejabberd_in():
 	return income
 
 
-def ejabberd_out(bool):
-	logging.debug("Ejabberd gets: %s" % bool)
-
-	token = genanswer(bool)
-
-	logging.debug("sent bytes: %#x %#x %#x %#x" % (ord(token[0]), ord(token[1]), ord(token[2]), ord(token[3])))
-
-	sys.stdout.write(token)
+def ejabberd_out(result):
+	if result:
+		sys.stdout.write('\x00\x02\x00\x01')
+	else:
+		sys.stdout.write('\x00\x02\x00\x00')
 	sys.stdout.flush()
 
 
