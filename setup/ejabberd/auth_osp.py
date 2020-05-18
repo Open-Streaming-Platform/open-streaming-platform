@@ -7,7 +7,7 @@ import requests
 
 def auth(user, host, password):
     payload = {'jid': user, 'host': host, 'token': password}
-    r = requests.post('http://127.0.0.1/apiv1/xmpp', data=payload)
+    r = requests.post('http://127.0.0.1/apiv1/xmpp/auth', data=payload)
     resp = r.json()
     if 'results' in resp:
         code = resp['results']['code']
@@ -19,7 +19,20 @@ def auth(user, host, password):
             return False
     else:
         return False
-
+def isUser(user,host):
+    payload = {'jid': user, 'host': host}
+    r = requests.post('http://127.0.0.1/apiv1/xmpp/isuser', data=payload)
+    resp = r.json()
+    if 'results' in resp:
+        code = resp['results']['code']
+        if code == 200:
+            return True
+        elif code == 400:
+            return False
+        else:
+            return False
+    else:
+        return False
 def read():
     (pkt_size,) = struct.unpack('>H', sys.stdin.buffer.read(2))
     pkt = sys.stdin.read(pkt_size)
@@ -27,6 +40,10 @@ def read():
     if cmd == 'auth':
         u, s, p = pkt.split(':', 3)[1:]
         results = auth(u,s,p)
+        write(results)
+    elif cmd == 'isuser':
+        u, s = pkt.split(':', 2)[1:]
+        results = isUser(u,s)
         write(results)
     else:
         write(False)
