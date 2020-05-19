@@ -110,6 +110,9 @@ RUN pip3 install cryptography
 # Setup FFMPEG for recordings and Thumbnails
 RUN apk add ffmpeg
 
+# Add Dialog (used in osp-config.sh)
+RUN apk add dialog
+
 # Setup Wait-For-It Script
 RUN chmod +x /opt/osp/setup/docker/wait-for-it.sh
 
@@ -119,5 +122,6 @@ RUN mkdir -p /var/log/supervisor
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/db", "/opt/osp/conf"]
 
+RUN chmod +x /opt/osp/osp-config.sh
 RUN chmod +x /opt/osp/setup/docker/entrypoint.sh
 ENTRYPOINT ["/bin/sh","-c", "/opt/osp/setup/docker/entrypoint.sh"]
