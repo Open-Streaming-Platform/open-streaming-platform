@@ -603,7 +603,7 @@ class ejabberdctl(object):
                                          'priority': priority})
 
     def set_room_affiliation(self, name, service, jid, affiliation):
-        return self.ctl('set_presence', {'name': name,
+        return self.ctl('set_room_affiliation', {'name': name,
                                          'service': service,
                                          'user': jid,
                                          'affiliation': affiliation})
