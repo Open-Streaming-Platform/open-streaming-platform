@@ -34,7 +34,7 @@
       <div class="videoPanel">
         <div class="player ml-2">
           <div id="videoContainer">
-            <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{clip.thumbnailLocation}}" controls preload="auto" data-setup='{"fluid": true}'>
+            <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{clip.thumbnailLocation}}" controls preload="auto" playsinline data-setup='{"fluid": true}'>
               <source src="{{streamURL}}" type="video/mp4">
               <p class="vjs-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that
