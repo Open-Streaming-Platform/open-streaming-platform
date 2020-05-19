@@ -214,7 +214,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
                 newNotification = notifications.userNotification(templateFilters.get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
-                                                                 "/images/" + recordedVidQuery.channel.owner.pictureLocation, sub.userID)
+                                                                 "/images/" + str(recordedVidQuery.channel.owner.pictureLocation), sub.userID)
                 db.session.add(newNotification)
 
             db.session.commit()

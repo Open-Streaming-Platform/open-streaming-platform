@@ -1,4 +1,4 @@
-version = "beta-6c"
+version = "beta-6d"
 appDBVersion = 0.50
 
 videoRoot = "/var/www/"

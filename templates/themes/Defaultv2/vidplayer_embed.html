@@ -9,7 +9,7 @@
           <div class="row justify-content-md-center">
               <div class="col-xl-12 col-sm-12">
                   <div class="player">
-                      <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" {% if isAutoPlay == True %}autoplay{% endif %} controls preload="auto" data-setup='{"fluid": true}'>
+                      <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline preload="auto" data-setup='{"fluid": true}'>
                         <source src="{{streamURL}}" type="video/mp4">
                         <p class="vjs-no-js">
                           To view this video please enable JavaScript, and consider upgrading to a web browser that
