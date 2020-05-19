@@ -2,6 +2,7 @@ Beta-6d
 ==============================================
 Fix for Missing CSS file for Stream Iframe Embeds
 Fix for Clips and Owners with No Picture per Issue #208
+Playsinline added to video tags to enable inline/fullscreen play for IOS
 
 Beta-6c
 ==============================================
