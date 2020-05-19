@@ -40,15 +40,6 @@ class ejabberdctl(object):
             raise Exception('{}\n{}'.format(self.errors['connect'],
                                             str(e)))
         except xmlrpc.client.Fault as e:
-            if 'account_unprivileged' in e:
-                raise Exception('{}\n{}'.format(self.errors['access'],
-                                                str(e)))
-            if 'bad_argument' in e:
-                raise Exception('{}\n{}'.format(self.errors['bad_arg'],
-                                                str(e)))
-            if 'Required attribute' in e and 'not found' in e:
-                raise Exception('{}\n{}'.format(self.errors['missing_arg'],
-                                                str(e)))
             raise Exception(e)
 
     def add_rosteritem(self,
@@ -614,7 +605,7 @@ class ejabberdctl(object):
     def set_room_affiliation(self, name, service, jid, affiliation):
         return self.ctl('set_presence', {'name': name,
                                          'service': service,
-                                         'jid': jid,
+                                         'user': jid,
                                          'affiliation': affiliation})
     # Change an affiliation in a MUC room
 
