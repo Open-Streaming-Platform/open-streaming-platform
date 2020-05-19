@@ -28,7 +28,10 @@ services:
       internal:
 
   app:
-    build: .
+    ## default: use prebuilt image of this project
+    image: deamos/openstreamingplatform
+    ## use build instead, if you have custom modifications in osp
+    # build: .
     restart: unless-stopped
     ports:
       - '1935:1935'
