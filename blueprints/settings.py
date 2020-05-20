@@ -1481,15 +1481,8 @@ def settings_channels_page():
             from app import ejabberd
             ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
             ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
-            room_config = {'persistent': 'true',
-                           'moderated': 'true',
-                           'members_by_default': 'true',
-                           'max_users': '2500',
-                           'allow_change_subj': 'false',
-                           'allow_private_messages_from_visitors': 'nobody',
-                           'allow_visitor_status': 'false',
-                           'allow_visitor_nickchange': 'false'}
-            for key, value in room_config.items():
+
+            for key, value in globalvars.room_config.items():
                 ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
             db.session.add(newChannel)

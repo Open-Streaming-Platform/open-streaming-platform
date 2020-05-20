@@ -124,7 +124,6 @@ from functions import securityFunc
 from functions import votes
 from functions import webhookFunc
 from functions.ejabberdctl import ejabberdctl
-
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
@@ -229,6 +228,10 @@ from classes.shared import email
 
 email.init_app(app)
 email.app = app
+
+# Perform XMPP Sanity Check
+from functions import xmpp
+results = xmpp.sanityCheck()
 
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
