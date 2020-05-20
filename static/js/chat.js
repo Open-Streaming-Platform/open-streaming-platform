@@ -284,8 +284,12 @@ function userExists(jid) {
 function addUser(jid, username, affiliation, role) {
   if (userExists(jid)) {
     return false;
+  } else if (role == null) {
+      return false;
+  } else {
+      OccupantsArray.push({ jid: jid, username: username, affiliation: affiliation, role: role });
   }
-  OccupantsArray.push({ jid: jid, username: username, affiliation: affiliation, role: role });
+
   return true;
 }
 
