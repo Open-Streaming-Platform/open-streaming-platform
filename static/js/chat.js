@@ -133,7 +133,7 @@ function onPresence(presence) {
 function enterRoom(room) {
   console.log('Connecting to: ' + room);
   connection.muc.init(connection);
-  connection.muc.join(room, username + '@' + server, room_msg_handler, room_pres_handler);
+  connection.muc.join(room, username, room_msg_handler, room_pres_handler);
   connection.muc.setStatus(room, username + '@' + server, 'subscribed', 'chat');
   connection
   console.log('Connected to: ' + room);
@@ -184,13 +184,13 @@ function onMessage(msg) {
   } else if (type == "groupchat" && messageElement.length > 0) {
       var body = messageElement[0];
       var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
-      var nick = Strophe.getResourceFromJid(from);
+      // var nick = Strophe.getResourceFromJid(from);
 
-      nick = nick.replace('@' + server, '');
+      // nick = nick.replace('@' + server, '');
 
       var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
       tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
-      tempNode.querySelector("div.chatUsername").textContent = nick;
+      tempNode.querySelector("div.chatUsername").textContent = Strophe.getResourceFromJid(from);
       tempNode.querySelector("div.chatMessage").textContent = Strophe.getText(body);
       tempNode.style.display = "block";
       chatDiv = document.getElementById("chat");
