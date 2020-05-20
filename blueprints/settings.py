@@ -993,6 +993,8 @@ def settings_dbRestore():
                     user.oAuthID = restoredUser['oAuthID']
                 if 'oAuthProvider' in restoredUser:
                     user.oAuthProvider = restoredUser['oAuthProvider']
+                if 'xmppToken' in restoredUser:
+                    user.xmppToken = restoredUser['xmppToken']
 
                 if restoredUser['confirmed_at'] != "None":
                     try:
