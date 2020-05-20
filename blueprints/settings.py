@@ -1459,6 +1459,9 @@ def settings_channels_page():
                     for entry in channelStreams:
                         db.session.delete(entry)
 
+                    from app import ejabberd
+                    ejabberd.destroy_room(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress)
+
                     db.session.delete(requestedChannel)
                     db.session.commit()
                     flash("Channel Deleted")
@@ -1521,6 +1524,14 @@ def settings_channels_page():
             from app import ejabberd
             ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
             ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
+            room_config = {'persistent': 'true',
+                           'max_users': '2500',
+                           'allow_change_subj': 'false',
+                           'allow_private_messages_from_visitors': 'nobody',
+                           'allow_visitor_status': 'false',
+                           'allow_visitor_nickchange': 'false'}
+            for key, value in room_config:
+                ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
             db.session.add(newChannel)
             db.session.commit()
@@ -1558,6 +1569,12 @@ def settings_channels_page():
                 requestedChannel.autoPublish = autoPublish
                 requestedChannel.rtmpRestream = rtmpRestream
                 requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+
+                from app import ejabberd
+                if protection is True:
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'members_only', 'true')
+                else:
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'members_only', 'false')
 
                 if 'photo' in request.files:
                     file = request.files['photo']

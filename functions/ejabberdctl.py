@@ -190,7 +190,8 @@ class ejabberdctl(object):
                                               'user': user,
                                               'server': server})
 
-    # TODO def destroy_room(self, name, service):
+    def destroy_room(self, name, service):
+        return self.ctl('destroy_room', {'name': name, 'service': service})
     # Destroy a MUC room
 
     # TODO def destroy_rooms_file(self, file):
@@ -238,7 +239,8 @@ class ejabberdctl(object):
     # TODO def get_offline_count(self):
     # Get the number of unread offline messages
 
-    # TODO def get_room_affiliations(self, name, service):
+    def get_room_affiliations(self, name, service):
+        return self.ctl('get_room_affiliations', {'name': name, 'service': service})
     # Get the list of affiliations of a MUC room
 
     # TODO def get_room_occupants(self, name, service):
@@ -247,7 +249,8 @@ class ejabberdctl(object):
     # TODO def get_room_occupants_number(self, name, service):
     # Get the number of occupants of a MUC room
 
-    # TODO def get_room_options(self, name, service):
+    def get_room_options(self, name, service):
+        return self.ctl('get_room_options', {'name': name, 'service': service})
     # Get options from a MUC room
 
     def get_roster(self, user, server):
