@@ -449,7 +449,7 @@ class api_1_xmppAuth(Resource):
                 sysSettings = settings.settings.query.first()
                 if sysSettings is not None:
                     username = jid.replace("@" + sysSettings.siteAddress,"")
-                    userQuery = Sec.User.query.filter_by(username=username).first()
+                    userQuery = Sec.User.query.filter_by(username=username, active=True).first()
                     if userQuery != None:
                         if userQuery.xmppToken == token:
                             return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
