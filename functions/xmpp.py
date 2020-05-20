@@ -11,18 +11,18 @@ def sanityCheck():
     existingChannels = ejabberd.muc_online_rooms('global')
 
     channelQuery = Channel.Channel.query.all()
-    for channelQuery in channelQuery:
+    for channel in channelQuery:
         roomExists = False
         try:
-            xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+            xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
             roomExists = True
         except:
-            ejabberd.create_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
+            ejabberd.create_room(channel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
 
             for key, value in room_config.items():
-                ejabberd.change_room_option(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+                ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
-            xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+            xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
             roomExists = True
 
         if roomExists:
@@ -39,13 +39,13 @@ def sanityCheck():
                 if user['domain'] != sysSettings.siteAddress:
                     userQuery = User.query.filter_by(username=user['username']).first()
                     if userQuery is not None:
-                        ejabberd.set_room_affiliation(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, userQuery.username + '@' + sysSettings.siteAddress, user['affiliation'])
+                        ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, userQuery.username + '@' + sysSettings.siteAddress, user['affiliation'])
 
-            if not all((d['username'] == channelQuery.owner.username and d['domain'] == sysSettings.siteAddress) for d in affiliationList):
-                ejabberd.set_room_affiliation(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, channelQuery.owner.username + '@' + sysSettings.siteAddress, 'owner')
+            if not all((d['username'] == channel.owner.username and d['domain'] == sysSettings.siteAddress) for d in affiliationList):
+                ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.username + '@' + sysSettings.siteAddress, 'owner')
 
-            for invite in channelQuery.invitedViewers:
+            for invite in channel.invitedViewers:
                 if not all((d['username'] == invite.user.username and d['affiliation'] == 'member') for d in affiliationList):
-                    ejabberd.set_room_affiliation(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, invite.user.username + '@' + sysSettings.siteAddress, 'member')
+                    ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, invite.user.username + '@' + sysSettings.siteAddress, 'member')
     return True
 
