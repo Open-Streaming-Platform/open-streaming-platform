@@ -73,4 +73,4 @@ def cleanInvalidRooms():
             if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
-    print('Invalid Rooms Pruned: ' + count )
+    print('Invalid Rooms Pruned: ' + str(count) )
