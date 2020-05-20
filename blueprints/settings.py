@@ -1530,7 +1530,7 @@ def settings_channels_page():
                            'allow_private_messages_from_visitors': 'nobody',
                            'allow_visitor_status': 'false',
                            'allow_visitor_nickchange': 'false'}
-            for key, value in room_config:
+            for key, value in room_config.items():
                 ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
             db.session.add(newChannel)
