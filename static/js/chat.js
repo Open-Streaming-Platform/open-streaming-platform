@@ -235,50 +235,40 @@ function parseOccupants(resp) {
   var userCount = OccupantsArray.length;
   document.getElementById('chatTotal').innerHTML = userCount;
 
-  var chatMembersArray = {owner:[], admin:[], member:[], none:[]};
+  var chatMembersArray = {moderator:[], participant:[], visitor:[], none:[]};
   for (let i = 0; i < OccupantsArray.length; i++) {
-      chatMembersArray[OccupantsArray[i]['affiliation']].push(OccupantsArray[i]);
+      chatMembersArray[OccupantsArray[i]['role']].push(OccupantsArray[i]);
   }
   // Update the chatMembers Div with listing of Members
 
-  // Owners
-  document.getElementById('OwnerList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['owner'].length; i++) {
-      //document.getElementById('chatMembers').append(chatMembersArray['owner'][i]['username']);
+  // Moderators
+  document.getElementById('ModeratorList').innerHTML="";
+  for (let i = 0; i < chatMembersArray['moderator'].length; i++) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
-      document.getElementById('OwnerList').appendChild(userEntry)
+      document.getElementById('ModeratorList').appendChild(userEntry)
   }
 
   // Admins
-  document.getElementById('AdminList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['admin'].length; i++) {
-      //document.getElementById('chatMembers').append(chatMembersArray['admin'][i]['username']);
+  document.getElementById('ParticipantList').innerHTML="";
+  for (let i = 0; i < chatMembersArray['participant'].length; i++) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
-      userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['admin'][i]['username'] + '</span>';
-      document.getElementById('AdminList').appendChild(userEntry)
+      //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
+      document.getElementById('ParticipantList').appendChild(userEntry)
   }
 
-  // Members
-  document.getElementById('MemberList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['member'].length; i++) {
-      //document.getElementById('chatMembers').append(chatMembersArray['member'][i]['username']);
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-2";
-      userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['member'][i]['username'] + '</span>';
-      document.getElementById('MemberList').appendChild(userEntry)
-  }
-
-  // None
+  // Visitor
   document.getElementById('VisitorList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['none'].length; i++) {
+  for (let i = 0; i < chatMembersArray['visitor'].length; i++) {
       //document.getElementById('chatMembers').append(chatMembersArray['none'][i]['username']);
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
-      userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['none'][i]['username'] + '</span>';
+      //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
       document.getElementById('VisitorList').appendChild(userEntry)
   }
 
