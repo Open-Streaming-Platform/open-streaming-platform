@@ -1482,6 +1482,8 @@ def settings_channels_page():
             ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
             ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
             room_config = {'persistent': 'true',
+                           'moderated': 'true',
+                           'members_by_default': 'true',
                            'max_users': '2500',
                            'allow_change_subj': 'false',
                            'allow_private_messages_from_visitors': 'nobody',
