@@ -605,7 +605,7 @@ class ejabberdctl(object):
     def set_room_affiliation(self, name, service, jid, affiliation):
         return self.ctl('set_room_affiliation', {'name': name,
                                          'service': service,
-                                         'user': jid,
+                                         'jid': jid,
                                          'affiliation': affiliation})
     # Change an affiliation in a MUC room
 
