@@ -63,14 +63,14 @@ def verifyExistingRooms():
 def cleanInvalidRooms():
     sysSettings = settings.query.first()
     xmppChannels = ejabberd.muc_online_rooms('global')
-    existingChannels = Channel.Channel.query.all()
+
     roomList = []
     count = 0
     if 'rooms' in xmppChannels:
         for room in xmppChannels['rooms']:
             roomName = room['room'].replace('@conference.' + sysSettings.siteAddress,"")
-            channelFilter = existingChannels.filter_by(channelLoc=roomName).first()
-            if channelFilter is None:
+            existingChannels = Channel.Channel.query.filter_by(channelLoc=roomName).first()
+            if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
     print('Invalid Rooms Pruned: ' + count )
