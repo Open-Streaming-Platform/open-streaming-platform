@@ -17,7 +17,7 @@ def sanityCheck():
             xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
             roomExists = True
         except:
-            ejabberd.create_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+            ejabberd.create_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
 
             for key, value in room_config.items():
                 ejabberd.change_room_option(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
