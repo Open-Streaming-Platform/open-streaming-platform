@@ -400,7 +400,8 @@ class ejabberdctl(object):
 
     # TODO def modules_update_specs(self):
 
-    # TODO def muc_online_rooms(self, host):
+    def muc_online_rooms(self, host):
+        return self.ctl('muc_online_rooms', {'host': host})
     # List existing rooms (‘global’ to get all vhosts)
 
     # TODO def muc_unregister_nick(self, nick):
