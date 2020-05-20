@@ -7,7 +7,7 @@ from app import ejabberd
 from globals.globalvars import room_config
 
 def sanityCheck():
-    sysSettings = settings.query.first().with_entities(settings.siteAddress)
+    sysSettings = settings.query.first()
     existingChannels = ejabberd.muc_online_rooms('global')
 
     channelQuery = Channel.Channel.query.all()
