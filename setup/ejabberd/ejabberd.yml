@@ -741,7 +741,10 @@ modules:
   ## mod_multicast: {}
   mod_offline:
     access_max_user_messages: max_user_offline_messages
-  mod_ping: {}
+  mod_ping:
+    send_pings: true
+    ping_interval: 1 min
+    timeout_action: kill
   ## mod_pres_counter:
   ##   count: 5
   ##   interval: 60
