@@ -67,6 +67,7 @@ if config.dbLocation[:6] != "sqlite":
 else:
     pass
 app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_COOKIE_SAMESITE'] = "Lax"
 app.config['SESSION_COOKIE_NAME'] = 'ospSession'
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
