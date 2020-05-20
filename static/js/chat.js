@@ -247,7 +247,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span>' + chatMembersArray['moderator'][i]['username'] + '</span>';
       document.getElementById('ModeratorList').appendChild(userEntry)
   }
 
