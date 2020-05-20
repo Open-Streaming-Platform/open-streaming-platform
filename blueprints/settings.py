@@ -1425,50 +1425,7 @@ def settings_channels_page():
                                    {'name': 'Fade-In', 'value': 'fade-in-fwd'}]
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
-    if request.method == 'GET':
-        if request.args.get("action") is not None:
-            action = request.args.get("action")
-            streamKey = request.args.get("streamkey")
-
-            requestedChannel = Channel.Channel.query.filter_by(streamKey=streamKey).first()
-
-            if action == "delete":
-                if current_user.id == requestedChannel.owningUser:
-
-                    filePath = videos_root + requestedChannel.channelLoc
-                    if filePath != videos_root:
-                        shutil.rmtree(filePath, ignore_errors=True)
-
-                    channelVid = requestedChannel.recordedVideo
-                    channelUpvotes = requestedChannel.upvotes
-                    channelStreams = requestedChannel.stream
-
-                    for entry in channelVid:
-
-                        vidComments = channelVid.comments
-                        for comment in vidComments:
-                            db.session.delete(comment)
-
-                        vidViews = views.views.query.filter_by(viewType=1, itemID=channelVid.id)
-                        for view in vidViews:
-                            db.session.delete(view)
-
-                        db.session.delete(entry)
-                    for entry in channelUpvotes:
-                        db.session.delete(entry)
-                    for entry in channelStreams:
-                        db.session.delete(entry)
-
-                    from app import ejabberd
-                    ejabberd.destroy_room(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress)
-
-                    db.session.delete(requestedChannel)
-                    db.session.commit()
-                    flash("Channel Deleted")
-                else:
-                    flash("Invalid Deletion Attempt", "Error")
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
 
         requestType = request.form['type']
         channelName = system.strip_html(request.form['channelName'])
