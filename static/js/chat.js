@@ -220,11 +220,12 @@ function scrollChatWindow() {
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
 
-  CHATSTATUS['username'] = roomsData.nick;
+  // Attempt to grab chat status of current user
+  CHATSTATUS.username = roomsData.nick;
   var presumedUserObj = roomsData['roster'][roomsData.nick];
-  if (presumedUserObj.jid == CHATSTATUS['jid']) {
-      CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
-      CHATSTATUS['role'] = presumedUserObj.role;
+  if (presumedUserObj.jid == CHATSTATUS.jid) {
+      CHATSTATUS.affiliation = presumedUserObj.affiliation;
+      CHATSTATUS.role = presumedUserObj.role;
   }
   parseOccupants(roomsData);
 }
