@@ -82,6 +82,8 @@ function onConnect(status) {
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
 
+    CHATSTATUS['jid'] = connection.jid;
+
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
         scrollChatWindow();
@@ -89,6 +91,7 @@ function onConnect(status) {
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "flex";
     queryOccupants();
+
     var occupantCheck = setInterval(queryOccupants, 5000);
 
     return true;
@@ -216,6 +219,13 @@ function scrollChatWindow() {
 
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
+
+  CHATSTATUS['username'] = roomsData.nick;
+  var presumedUserObj = roomsData['roster'][roomsData.nick];
+  if (presumedUserObj.jid == CHATSTATUS['jid']) {
+      CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
+      CHATSTATUS['role'] = presumedUserObj.role;
+  }
   parseOccupants(roomsData);
 }
 
