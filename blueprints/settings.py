@@ -1484,8 +1484,13 @@ def settings_channels_page():
             ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
             ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
 
+            # Defautl values
             for key, value in globalvars.room_config.items():
                 ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+
+            # Name and title
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', newChannel.channelName)
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + newChannel.channelName + '"')
 
             db.session.add(newChannel)
             db.session.commit()
