@@ -82,7 +82,7 @@ function onConnect(status) {
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
 
-    CHATSTATUS['jid'] = connection.jid;
+    CHATSTATUS['jid'] = connection['jid'];
 
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
@@ -228,6 +228,7 @@ function queryOccupants() {
       CHATSTATUS['role'] = presumedUserObj['role'];
   }
   parseOccupants(roomsData);
+  return true;
 }
 
 function parseOccupants(resp) {
