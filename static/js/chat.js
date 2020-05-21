@@ -221,7 +221,6 @@ function scrollChatWindow() {
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
   parseOccupants(roomsData);
-
   return true;
 }
 
@@ -243,11 +242,10 @@ function parseOccupants(resp) {
 
   // Parse Occupant Data and Store in Occupants Array
   for (user in elements) {
-      var jid = elements[user]['jid'];
       var username = elements[user]['nick'];
       var affiliation = elements[user]['affiliation'];
       var role = elements[user]['role'];
-      addUser(jid, username, affiliation, role);
+      addUser(username, affiliation, role);
   }
   // Handle User Count
   var userCount = OccupantsArray.length;
@@ -293,19 +291,19 @@ function parseOccupants(resp) {
   return true;
 }
 
-function userExists(jid) {
+function userExists(username) {
   return OccupantsArray.some(function(el) {
-    return el.jid === jid;
+    return el.username === username;
   });
 }
 
-function addUser(jid, username, affiliation, role) {
-  if (userExists(jid)) {
+function addUser(username, affiliation, role) {
+  if (userExists(username)) {
     return false;
   } else if (role == null) {
       return false;
   } else {
-      OccupantsArray.push({ jid: jid, username: username, affiliation: affiliation, role: role });
+      OccupantsArray.push({ username: username, affiliation: affiliation, role: role });
   }
 
   return true;
