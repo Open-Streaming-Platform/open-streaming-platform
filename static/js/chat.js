@@ -94,7 +94,7 @@ function onConnect(status) {
 
     CHATSTATUS['jid'] = connection['jid'];
     var occupantCheck = setInterval(queryOccupants, 5000);
-
+    var statusCheck = setInterval(statusCheck, 5000);
     return true;
   }
 }
@@ -220,19 +220,19 @@ function scrollChatWindow() {
 
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-  //updateChatData(roomsData);
   parseOccupants(roomsData);
 
   return true;
 }
 
-function updateChatData(resp) {
-  // Attempt to grab chat status of current user
-  CHATSTATUS['username'] = resp['nick'];
-  var presumedUserObj = resp['roster'][CHATSTATUS['username']];
-  if (presumedUserObj['jid'] === CHATSTATUS['jid']) {
-      CHATSTATUS['affiliation'] = presumedUserObj['affiliation'];
-      CHATSTATUS['role'] = presumedUserObj['role'];
+function statusCheck() {
+  var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
+
+  CHATSTATUS['username'] = roomsData.nick;
+  var presumedUserObj = roomsData.roster[CHATSTATUS['username']];
+  if (presumedUserObj.jid === CHATSTATUS['jid']) {
+      CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
+      CHATSTATUS['role'] = presumedUserObj.role;
   }
   return true;
 }
