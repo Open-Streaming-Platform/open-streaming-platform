@@ -92,9 +92,9 @@ function onConnect(status) {
     document.getElementById('chatPanel').style.display = "flex";
     queryOccupants();
 
-    CHATSTATUS['jid'] = connection['jid'];
+    CHATSTATUS['jid'] = fullJID;
     var occupantCheck = setInterval(queryOccupants, 5000);
-    var statusCheck = setInterval(statusCheck, 5000);
+    var chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
 }
