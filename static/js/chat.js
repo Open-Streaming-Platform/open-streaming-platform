@@ -82,7 +82,7 @@ function onConnect(status) {
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
 
-    CHATSTATUS['jid'] = connection['jid'];
+
 
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
@@ -92,6 +92,7 @@ function onConnect(status) {
     document.getElementById('chatPanel').style.display = "flex";
     queryOccupants();
 
+    CHATSTATUS['jid'] = connection['jid'];
     var occupantCheck = setInterval(queryOccupants, 5000);
 
     return true;
