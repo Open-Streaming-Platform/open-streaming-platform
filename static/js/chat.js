@@ -229,7 +229,7 @@ function queryOccupants() {
 function updateChatData(resp) {
   // Attempt to grab chat status of current user
   CHATSTATUS['username'] = resp['nick'];
-  var presumedUserObj = resp['roster'][resp.nick];
+  var presumedUserObj = resp['roster'][CHATSTATUS['username']];
   if (presumedUserObj['jid'] === CHATSTATUS['jid']) {
       CHATSTATUS['affiliation'] = presumedUserObj['affiliation'];
       CHATSTATUS['role'] = presumedUserObj['role'];
