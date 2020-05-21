@@ -228,8 +228,8 @@ function queryOccupants() {
 function statusCheck() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
   // Attempt to grab chat status of current user
-  CHATSTATUS['username'] = roomsData['nick'];
-  var presumedUserObj = roomsData['roster'][CHATSTATUS['username']];
+  CHATSTATUS['username'] = roomsData.nick;
+  var presumedUserObj = roomsData.roster[CHATSTATUS['username']];
   if (presumedUserObj['jid'] === CHATSTATUS['jid']) {
       CHATSTATUS['affiliation'] = presumedUserObj['affiliation'];
       CHATSTATUS['role'] = presumedUserObj['role'];
