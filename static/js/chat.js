@@ -220,7 +220,7 @@ function scrollChatWindow() {
 
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-  updateChatData(roomsData);
+  //updateChatData(roomsData);
   parseOccupants(roomsData);
 
   return true;
