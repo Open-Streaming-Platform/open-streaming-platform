@@ -175,33 +175,35 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
-  console.log(timestampElement);
-  if (timestampElement[0] != undefined) {
-      var messageTimestamp = moment(timestampElement[0].getAttribute("stamp")).format('hh:mm A');
-  } else {
-      var messageTimestamp = moment().format('hh:mm A');
-  }
+  if  (!(CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from)))) {
 
-  if (type == "chat" && messageElement.length > 0) {
-    var body = messageElement[0];
-    console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
-  } else if (type == "groupchat" && messageElement.length > 0) {
-      var body = messageElement[0];
-      var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
-      // var nick = Strophe.getResourceFromJid(from);
+      if (timestampElement[0] != undefined) {
+          var messageTimestamp = moment(timestampElement[0].getAttribute("stamp")).format('hh:mm A');
+      } else {
+          var messageTimestamp = moment().format('hh:mm A');
+      }
 
-      // nick = nick.replace('@' + server, '');
+      if (type == "chat" && messageElement.length > 0) {
+          var body = messageElement[0];
+          console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
+      } else if (type == "groupchat" && messageElement.length > 0) {
+          var body = messageElement[0];
+          var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
+          // var nick = Strophe.getResourceFromJid(from);
 
-      var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-      tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
-      tempNode.querySelector("div.chatUsername").textContent = Strophe.getResourceFromJid(from);
-      tempNode.querySelector("div.chatMessage").textContent = Strophe.getText(body);
-      tempNode.style.display = "block";
-      chatDiv = document.getElementById("chat");
-      var needsScroll = checkChatScroll()
-      chatDiv.appendChild(tempNode);
-      if (needsScroll) {
-          scrollChatWindow();
+          // nick = nick.replace('@' + server, '');
+
+          var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+          tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
+          tempNode.querySelector("div.chatUsername").textContent = Strophe.getResourceFromJid(from);
+          tempNode.querySelector("div.chatMessage").textContent = Strophe.getText(body);
+          tempNode.style.display = "block";
+          chatDiv = document.getElementById("chat");
+          var needsScroll = checkChatScroll()
+          chatDiv.appendChild(tempNode);
+          if (needsScroll) {
+              scrollChatWindow();
+          }
       }
   }
 
