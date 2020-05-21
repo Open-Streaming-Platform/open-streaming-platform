@@ -225,7 +225,7 @@ function queryOccupants() {
   var presumedUserObj = roomsData['roster'][roomsData.nick];
   if (presumedUserObj['jid'] == CHATSTATUS['jid']) {
       CHATSTATUS['affiliation'] = presumedUserObj['affiliation'];
-      CHATSTATUS['role'] = presumedUserObj['role;']
+      CHATSTATUS['role'] = presumedUserObj['role'];
   }
   parseOccupants(roomsData);
 }
