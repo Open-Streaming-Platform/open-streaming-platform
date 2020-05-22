@@ -380,7 +380,7 @@ function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
-    div.querySelector("div#profileBox-username").textContent = elem.textContent;
+    div.querySelector("span#profileBox-username").textContent = elem.textContent;
     div.style.position = 'absolute';
     div.style.top =  position.y + "px";
     div.style.left = position.x + "px";
