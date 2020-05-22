@@ -376,18 +376,18 @@ function unmute(username) {
 }
 
 // Generate Profile Box on Username Click
-    function displayProfileBox(elem) {
-      closeProfileBox();
-      var position = getPos(elem);
-      var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
-      div.style.position = 'absolute';
-      div.style.top =  position.y;///'10px';
-      div.style.left = position.x;//'0px';
-      div.style.zIndex = 10;
-      div.style.display= "block";
-      div.id="newProfileBox";
-      elem.after(div);
-    }
+function displayProfileBox(elem) {
+    closeProfileBox();
+    position = getPos(elem);
+    var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+    div.style.position = 'absolute';
+    div.style.top =  position.y + "px";
+    div.style.left = position.x + "px";
+    div.style.zIndex = 10;
+    div.style.display= "block";
+    div.id="newProfileBox";
+    document.body.appendChild(div);
+}
 
 // Close Profile Box
 function closeProfileBox() {
