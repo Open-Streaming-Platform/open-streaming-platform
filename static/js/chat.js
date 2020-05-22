@@ -378,8 +378,9 @@ function unmute(username) {
 // Generate Profile Box on Username Click
 function displayProfileBox(elem) {
     closeProfileBox();
-    position = getPos(elem);
+    var position = getPos(elem);
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+    div.querySelector("div#profileBox-username").textContent = elem.text();
     div.style.position = 'absolute';
     div.style.top =  position.y + "px";
     div.style.left = position.x + "px";
