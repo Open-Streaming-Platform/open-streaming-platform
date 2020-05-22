@@ -24,7 +24,8 @@ $(window).bind('unload', function(){
 });
 
 // Generate Profile Box on Username Click
-$("#chatMembers a").click(function() {
+$(".membersList a").click(function() {
+  console.log("ClickDetected");
   closeProfileBox();
   position = getPos($(this));
 	var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
