@@ -380,29 +380,16 @@ function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
     var username = elem.textContent;
-
-    // Retreive API Profile from OSP
-    var returnedData = getAPIProfile(username);
-    var profileData = returnedData.responseJSON.results;
-    var pictureLocation = null;
-    if (profileData.length > 0) { // Check if user exists
-        var pictureData = profileData[0]['pictureLocation'];
-        if (pictureData !== null && pictureData !== '/images/None' && pictureData !== 'None') { // Check for invalid profile picture location
-            pictureLocation = pictureData;
-        }
-    }
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+    div.id="newProfileBox";
+    updateProfileBox(div, username); // Begin Async Call to Update Profile Data
     div.querySelector("span#profileBox-username").textContent = elem.textContent;
-    // Set Picture if pictureLocation is Valid
-    if (pictureLocation !== null) {
-        div.querySelector("img#profileBox-photo").src = pictureLocation;
-    }
     div.style.position = 'absolute';
     div.style.top =  position.y + "px";
     div.style.left = position.x + "px";
     div.style.zIndex = 10;
     div.style.display= "block";
-    div.id="newProfileBox";
+
     document.body.appendChild(div);
 }
 
@@ -414,19 +401,23 @@ function closeProfileBox() {
   }
 }
 
-function getAPIProfile(username) {
-    var apiEndpoint = '/apiv1/users/' + username
-    $.ajax({
-        url: apiEndpoint,
-        dataType: 'json',
-        async: false,
-        success: function(json) {
-            return json;
-        },
-        error: function() {
-            console.log('Unable to get api: ' + apiEndpoint);
-            return {};
+function updateProfileBox(elem, username) {
+    var apiEndpoint = '/apiv1/users/' + username;
+
+    // Retreive API Profile from OSP
+    fetch(apiEndpoint) // Call the fetch function passing the url of the API as a parameter
+    .then(function(data) {
+        var profileData = data['results'];
+        if (profileData.length > 0) { // Check if user exists
+            var pictureData = profileData[0]['pictureLocation'];
+            if (pictureData !== null && pictureData !== '/images/None' && pictureData !== 'None') { // Check for invalid profile picture location
+                // Set Picture if Valid
+                elem.querySelector("img#profileBox-photo").src = pictureData;
+            }
         }
+    })
+    .catch(function() {
+        console.log('Unable to get api: ' + apiEndpoint);
     });
 }
 
