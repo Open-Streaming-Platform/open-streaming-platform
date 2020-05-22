@@ -24,18 +24,18 @@ $(window).bind('unload', function(){
 });
 
 // Generate Profile Box on Username Click
-$("#user a").click(function() {
+$(".user a").click(function() {
   console.log("ClickDetected");
   closeProfileBox();
   position = getPos($(this));
-	var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
-	div.style.position = 'absolute';
-	div.style.top =  position.y;///'10px';
-	div.style.left = position.x;//'0px';
+  var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+  div.style.position = 'absolute';
+  div.style.top =  position.y;///'10px';
+  div.style.left = position.x;//'0px';
   div.style.zIndex = 10;
   div.style.display= "block";
   div.id="newProfileBox";
-	$(this).after(div);
+  $(this).after(div);
   })
 
 // Hide Profile Box on Click Outside
