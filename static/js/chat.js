@@ -24,7 +24,7 @@ $(window).bind('unload', function(){
 });
 
 // Generate Profile Box on Username Click
-$(".membersList a").click(function() {
+$("#user a").click(function() {
   console.log("ClickDetected");
   closeProfileBox();
   position = getPos($(this));
