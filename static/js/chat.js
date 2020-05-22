@@ -198,7 +198,7 @@ function onMessage(msg) {
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
-          tempNode.querySelector("div.chatUsername").textContent = Strophe.getResourceFromJid(from);
+          tempNode.querySelector("div.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
           tempNode.querySelector("div.chatMessage").textContent = Strophe.getText(body);
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
