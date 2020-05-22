@@ -382,14 +382,18 @@ function displayProfileBox(elem) {
     var username = elem.textContent;
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
-    updateProfileBox(div, username); // Begin Async Call to Update Profile Data
-    div.querySelector("span#profileBox-username").textContent = elem.textContent;
+
+    //Begin Async Call to Update Profile Data from API
+    updateProfileBox(div, username);
+
+    // Format ProfileBox
     div.style.position = 'absolute';
     div.style.top =  position.y + "px";
     div.style.left = position.x + "px";
     div.style.zIndex = 10;
     div.style.display= "block";
 
+    // Add to Document Body
     document.body.appendChild(div);
 }
 
@@ -408,9 +412,9 @@ function updateProfileBox(elem, username) {
     fetch(apiEndpoint) // Call the fetch function passing the url of the API as a parameter
     .then((resp) => resp.json())
     .then(function (data) {
-        console.log(data);
         var profileData = data['results'];
         if (profileData.length > 0) { // Check if user exists
+            elm.querySelector("span#profileBox-username").textContent = profileData[0]['username'];
             var pictureData = profileData[0]['pictureLocation'];
             if (pictureData !== null && pictureData !== '/images/None' && pictureData !== 'None') { // Check for invalid profile picture location
                 // Set Picture if Valid
