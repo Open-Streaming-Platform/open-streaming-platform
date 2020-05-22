@@ -380,10 +380,22 @@ function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
     var username = elem.textContent;
-    var profileData = getAPIProfile(username);
 
+    // Retreive API Profile from OSP
+    var profileData = getAPIProfile(username)['results'];
+    var pictureLocation = null;
+    if (profileData.length > 0) { // Check if user exists
+        var pictureData = profileData[0]['pictureLocation'];
+        if (pictureData !== null && pictureData !== '/images/None' && pictureData !== 'None') { // Check for invalid profile picture location
+            pictureLocation = pictureData;
+        }
+    }
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.querySelector("span#profileBox-username").textContent = elem.textContent;
+    // Set Picture if pictureLocation is Valid
+    if (pictureLocation !== null) {
+        div.querySelector("img#profileBox-photo").src = pictureLocation;
+    }
     div.style.position = 'absolute';
     div.style.top =  position.y + "px";
     div.style.left = position.x + "px";
@@ -411,7 +423,7 @@ function getAPIProfile(username) {
     })
   .then(data => {
        // Work with JSON data here
-       console.log(data)
+       return(data);
     })
   .catch(err => {
        // Do something for an error here
