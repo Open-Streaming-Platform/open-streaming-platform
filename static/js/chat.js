@@ -4,6 +4,7 @@ var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 
+// Start Connection on Load
 $(window).bind('load', function() {
     var url = BOSH_SERVICE;
     connection = new Strophe.Connection(url);
@@ -53,6 +54,7 @@ function log(msg) {
   console.log(msg);
 }
 
+// Function for Handling XMPP Connection, Joining a Room, and Initializing Intervals
 function onConnect(status) {
   if (status == Strophe.Status.CONNECTING) {
     console.log('Connecting to XMPP Server...');
@@ -81,8 +83,6 @@ function onConnect(status) {
     connection.addHandler(onMessage, null, 'message', null, null, null);
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
-
-
 
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
@@ -144,6 +144,7 @@ function enterRoom(room) {
   return true;
 }
 
+// Function for Sending Chat Input
 function sendMessage() {
     var chatInput = document.getElementById('chatinput');
     var message = chatInput.value;
@@ -168,6 +169,7 @@ function room_pres_handler(a, b, c) {
   return true;
 }
 
+// Function to Handle New Messages
 function onMessage(msg) {
   console.log(msg);
   var to = msg.getAttribute('to');
@@ -207,11 +209,10 @@ function onMessage(msg) {
       }
   }
 
-  // we must return true to keep the handler alive.
-  // returning false would remove it after it finishes.
   return true;
 }
 
+// Handle Stick Chat Window Scroll
 function checkChatScroll() {
   return (ChatContentWindow.scrollHeight - ChatContentWindow.offsetHeight) - ChatContentWindow.scrollTop <= 150;
 }
@@ -220,12 +221,14 @@ function scrollChatWindow() {
   ChatContentWindow.scrollTop = ChatContentWindow.scrollHeight - ChatContentWindow.clientHeight;
 }
 
+// Retrieve Room Roster and Pass to Function to Parse Occupants
 function queryOccupants() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
   parseOccupants(roomsData);
   return true;
 }
 
+// Update CHATSTATUS Variable with JID, Username, Role, & Affiliation
 function statusCheck() {
   var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
 
@@ -265,7 +268,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span>' + chatMembersArray['moderator'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
       document.getElementById('ModeratorList').appendChild(userEntry)
   }
 
@@ -275,7 +278,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
       document.getElementById('ParticipantList').appendChild(userEntry)
   }
 
@@ -286,7 +289,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
       document.getElementById('VisitorList').appendChild(userEntry)
   }
 
@@ -314,4 +317,60 @@ function addUser(username, affiliation, role) {
 function exitRoom(room) {
   console.log("Left Room: " + room);
   connection.muc.leave(room, username + '@' + server, null, null);
+}
+
+// Mod Controls
+function ban(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
+    return true;
+}
+
+function deop(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].deop();
+    return true;
+}
+
+function kick(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].kick();
+    return true;
+}
+
+function makeMember(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].member();
+    return true;
+}
+
+function op(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].op();
+    return true;
+}
+
+function revoke(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].revoke();
+    return true;
+}
+
+function devoice(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].mute();
+    return true;
+}
+
+function voice(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].voice();
+    return true;
+}
+
+// User Controls
+
+function mute(username) {
+    CHATSTATUS.muteList.push(username);
+    return true;
+}
+
+function unmute(username) {
+    var index = CHATSTATUS.muteList.indexOf(username);
+    if (index > -1) {
+        CHATSTATUS.muteList.splice(index,1);
+    }
+    return true;
 }
