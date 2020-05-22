@@ -366,6 +366,10 @@ body {
     padding-right:35px;
 }
 
+.user a:link, .user a:visited {
+    text-decoration: none;
+}
+
 .streamcard-overlay {
   position:relative;
   top: 0;
