@@ -432,6 +432,17 @@ class api_1_ListTopic(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
+@api.route('/users/<string:username>')
+@api.doc(params={'username': 'Username of OSP User'})
+class api_1_ListUser(Resource):
+    def get(self, username):
+        """
+            Get Public Info for One User
+        """
+        userQuery = Sec.User.query.filter_by(username=username).all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in userQuery]}
+
 @api.route('/xmpp/auth')
 @api.doc(params={'jid': 'JID of user', 'token': 'Jabber Token'})
 class api_1_xmppAuth(Resource):
