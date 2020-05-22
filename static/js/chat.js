@@ -414,7 +414,7 @@ function updateProfileBox(elem, username) {
     .then(function (data) {
         var profileData = data['results'];
         if (profileData.length > 0) { // Check if user exists
-            elm.querySelector("span#profileBox-username").textContent = profileData[0]['username'];
+            elem.querySelector("span#profileBox-username").textContent = profileData[0]['username'];
             var pictureData = profileData[0]['pictureLocation'];
             if (pictureData !== null && pictureData !== '/images/None' && pictureData !== 'None') { // Check for invalid profile picture location
                 // Set Picture if Valid
