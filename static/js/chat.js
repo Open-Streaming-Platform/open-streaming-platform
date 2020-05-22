@@ -416,8 +416,9 @@ function updateProfileBox(elem, username) {
             }
         }
     })
-    .catch(function() {
+    .catch(function(error) {
         console.log('Unable to get api: ' + apiEndpoint);
+        console.log(error);
     });
 }
 
