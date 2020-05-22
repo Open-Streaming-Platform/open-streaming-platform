@@ -407,6 +407,7 @@ function updateProfileBox(elem, username) {
     // Retreive API Profile from OSP
     fetch(apiEndpoint) // Call the fetch function passing the url of the API as a parameter
     .then(function(data) {
+        console.log(data);
         var profileData = data['results'];
         if (profileData.length > 0) { // Check if user exists
             var pictureData = profileData[0]['pictureLocation'];
