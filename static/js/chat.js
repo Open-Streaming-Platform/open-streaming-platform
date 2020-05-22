@@ -269,7 +269,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
       document.getElementById('ModeratorList').appendChild(userEntry)
   }
 
@@ -279,7 +279,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
       document.getElementById('ParticipantList').appendChild(userEntry)
   }
 
@@ -290,7 +290,7 @@ function parseOccupants(resp) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-2";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
+      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
       document.getElementById('VisitorList').appendChild(userEntry)
   }
 
@@ -375,6 +375,19 @@ function unmute(username) {
     return true;
 }
 
+// Generate Profile Box on Username Click
+    function displayProfileBox(elem) {
+      closeProfileBox();
+      var position = getPos(elem);
+      var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+      div.style.position = 'absolute';
+      div.style.top =  position.y;///'10px';
+      div.style.left = position.x;//'0px';
+      div.style.zIndex = 10;
+      div.style.display= "block";
+      div.id="newProfileBox";
+      elem.after(div);
+    }
 
 // Close Profile Box
 function closeProfileBox() {
