@@ -79,13 +79,13 @@ class User(db.Model, UserMixin):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'uuid': self.uuid,
             'username': self.username,
             'biography': self.biography,
-            'pictureLocation': "/images/" + self.pictureLocation,
+            'pictureLocation': "/images/" + str(self.pictureLocation),
             'channels': [obj.id for obj in self.channels],
-            'page': '/streamers/' + self.id + '/'
+            'page': '/streamers/' + str(self.id) + '/'
         }
 
 class OAuth2Token(db.Model):
