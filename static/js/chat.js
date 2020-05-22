@@ -267,7 +267,7 @@ function parseOccupants(resp) {
   document.getElementById('ModeratorList').innerHTML="";
   for (let i = 0; i < chatMembersArray['moderator'].length; i++) {
       var userEntry = document.createElement('div');
-      userEntry.className = "member my-2";
+      userEntry.className = "member my-1";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
       document.getElementById('ModeratorList').appendChild(userEntry)
@@ -277,7 +277,7 @@ function parseOccupants(resp) {
   document.getElementById('ParticipantList').innerHTML="";
   for (let i = 0; i < chatMembersArray['participant'].length; i++) {
       var userEntry = document.createElement('div');
-      userEntry.className = "member my-2";
+      userEntry.className = "member my-1";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
       document.getElementById('ParticipantList').appendChild(userEntry)
@@ -288,7 +288,7 @@ function parseOccupants(resp) {
   for (let i = 0; i < chatMembersArray['visitor'].length; i++) {
       //document.getElementById('chatMembers').append(chatMembersArray['none'][i]['username']);
       var userEntry = document.createElement('div');
-      userEntry.className = "member my-2";
+      userEntry.className = "member my-1";
       //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
       document.getElementById('VisitorList').appendChild(userEntry)
