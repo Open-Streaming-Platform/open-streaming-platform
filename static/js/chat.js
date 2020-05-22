@@ -382,7 +382,8 @@ function displayProfileBox(elem) {
     var username = elem.textContent;
 
     // Retreive API Profile from OSP
-    var profileData = (getAPIProfile(username))['results'];
+    var returnedData = getAPIProfile(username);
+    var profileData = returnedData.responseJSON.results;
     var pictureLocation = null;
     if (profileData.length > 0) { // Check if user exists
         var pictureData = profileData[0]['pictureLocation'];
@@ -414,9 +415,19 @@ function closeProfileBox() {
 }
 
 function getAPIProfile(username) {
-    $.getJSON('/apiv1/users/' + username, function (data) {
-        return data;
-    })
+    var apiEndpoint = '/apiv1/users/' + username
+    $.ajax({
+        url: apiEndpoint,
+        dataType: 'json',
+        async: false,
+        success: function(json) {
+            return json;
+        },
+        error: function() {
+            console.log('Unable to get api: ' + apiEndpoint);
+            return {};
+        }
+    });
 }
 
 // Get Position to Generate Location for Profile Box
