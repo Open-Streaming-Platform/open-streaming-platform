@@ -379,6 +379,9 @@ function unmute(username) {
 function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
+    var username = elem.textContent;
+    var profileData = getAPIProfile(username);
+
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.querySelector("span#profileBox-username").textContent = elem.textContent;
     div.style.position = 'absolute';
@@ -396,6 +399,23 @@ function closeProfileBox() {
   if (profileBox != null) {
     document.getElementById('newProfileBox').remove();
   }
+}
+
+function getAPIProfile(username) {
+    fetch('/apiv1/users/' + username, {
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        method: 'GET'
+    })
+      .then(response => {
+        return response.json()
+    })
+  .then(data => {
+       // Work with JSON data here
+       console.log(data)
+    })
+  .catch(err => {
+       // Do something for an error here
+    })
 }
 
 // Get Position to Generate Location for Profile Box
