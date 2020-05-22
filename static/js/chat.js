@@ -420,6 +420,8 @@ function updateProfileBox(elem, username) {
                 // Set Picture if Valid
                 elem.querySelector("img#profileBox-photo").src = pictureData;
             }
+        } else {
+            elem.querySelector("span#profileBox-username").textContent = username;
         }
     })
     .catch(function(error) {
