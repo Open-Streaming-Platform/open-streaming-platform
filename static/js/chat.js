@@ -382,7 +382,7 @@ function displayProfileBox(elem) {
     var username = elem.textContent;
 
     // Retreive API Profile from OSP
-    var profileData = getAPIProfile(username)['results'];
+    var profileData = (getAPIProfile(username))['results'];
     var pictureLocation = null;
     if (profileData.length > 0) { // Check if user exists
         var pictureData = profileData[0]['pictureLocation'];
@@ -414,19 +414,8 @@ function closeProfileBox() {
 }
 
 function getAPIProfile(username) {
-    fetch('/apiv1/users/' + username, {
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        method: 'GET'
-    })
-      .then(response => {
-        return response.json()
-    })
-  .then(data => {
-       // Work with JSON data here
-       return(data);
-    })
-  .catch(err => {
-       // Do something for an error here
+    $.getJSON('/apiv1/users/' + username, function (data) {
+        return data;
     })
 }
 
