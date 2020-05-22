@@ -185,6 +185,34 @@
                     </div>
                 </div>
 
+                <div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
+                  <div class="profileBoxHeader">
+                    <button type="button" class="close mr-2" data-dismiss="" aria-label="Close" onclick="closeProfileBox();">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <img src="https://picsum.photos/48" class="profileBoxPic rounded shadow m-2 float-left">
+                    <span class="py-2"><b>username</b></span><br>
+                    <div id="iconBar">
+                      <span class="iconBarIcon" id="iconBar-owner"><i class="fas fa-crown"></i></span>
+                      <span class="iconBarIcon" id="iconBar-mod"><i class="iconBarIcon fas fa-user-shield"></i></span>
+                      <span class="iconBarIcon" id="iconBar-member"><i class="iconBarIcon fas fa-award"></i></span>
+                      <span class="iconBarIcon" id="iconBar-muted"><i class="iconBarIcon fas fa-comment-slash"></i></span>
+                      <span class="iconBarIcon" id="iconBar-voice"><i class="iconBarIcon fas fa-bullhorn"></i></span>
+                    </div>
+                  </div>
+                  <div class="profileBoxBottom mt-2 mx-2">
+                    <button class="btn btn-primary shadow">Profile</button>
+                    <button class="btn btn-primary shadow">Mute</button>
+                    <div class="dropdown float-right">
+                      <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">+Voice</a>
+                        <a class="dropdown-item" href="#">+Member</a>
+                        <a class="dropdown-item" href="#">+Moderator</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
             {% endif %}
          </div>

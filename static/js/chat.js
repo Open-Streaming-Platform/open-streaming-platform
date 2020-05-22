@@ -23,6 +23,29 @@ $(window).bind('unload', function(){
       connection.disconnect();
 });
 
+// Generate Profile Box on Username Click
+$("#chatMembers a").click(function() {
+  closeProfileBox();
+  position = getPos($(this));
+	var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
+	div.style.position = 'absolute';
+	div.style.top =  position.y;///'10px';
+	div.style.left = position.x;//'0px';
+  div.style.zIndex = 10;
+  div.style.display= "block";
+  div.id="newProfileBox";
+	$(this).after(div);
+  })
+
+// Hide Profile Box on Click Outside
+$(document).mouseup(function(e)
+{
+  var container = $("#newProfileBox");
+    if (!container.is(e.target) && container.has(e.target).length === 0)
+    {
+        container.remove();
+    }
+});
 
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
@@ -361,7 +384,6 @@ function voice(username) {
 }
 
 // User Controls
-
 function mute(username) {
     CHATSTATUS.muteList.push(username);
     return true;
@@ -373,4 +395,21 @@ function unmute(username) {
         CHATSTATUS.muteList.splice(index,1);
     }
     return true;
+}
+
+
+// Close Profile Box
+function closeProfileBox() {
+  var profileBox = document.getElementById('newProfileBox');
+  if (profileBox != null) {
+    document.getElementById('newProfileBox').remove();
+  }
+}
+
+// Get Position to Generate Location for Profile Box
+function getPos(el) {
+    for (var lx=0, ly=0;
+         el != null;
+         lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
 }

@@ -366,6 +366,48 @@ body {
     padding-right:35px;
 }
 
+.profileBox {
+  background-color: white;
+  width: 450px;
+  height:115px;
+  border: 0px solid black;
+}
+
+.profileBoxHeader {
+  background-color: black;
+  border-radius: 5px 5px 0px 0px;
+  color:white;
+  height:60px;
+  width:100%;
+}
+
+.profileBoxHeader .close {
+  color:white;
+}
+
+.profileBoxPic {
+  width:40px;
+  height:40px;
+  background-color: green;
+  text-align: center;
+}
+
+#iconBar-owner {
+  color: gold;
+}
+#iconBar-mod {
+  color: orange;
+}
+#iconBar-member {
+  color:gold;
+}
+#iconBar-muted {
+  color:red;
+}
+#iconBar-voice {
+  color:white;
+}
+
 .user a:link, .user a:visited {
     text-decoration: none;
 }
