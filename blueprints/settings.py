@@ -1468,19 +1468,18 @@ def settings_channels_page():
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
                     newChannel.imageLocation = filename
 
-            if chatEnabled is True:
-                # Establish XMPP Channel
-                from app import ejabberd
-                ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
-                ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
+            # Establish XMPP Channel
+            from app import ejabberd
+            ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
+            ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
 
-                # Defautl values
-                for key, value in globalvars.room_config.items():
-                    ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+            # Defautl values
+            for key, value in globalvars.room_config.items():
+                ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
-                # Name and title
-                ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', newChannel.channelName)
-                ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + newChannel.channelName + '"')
+            # Name and title
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', newChannel.channelName)
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + newChannel.channelName + '"')
 
             db.session.add(newChannel)
             db.session.commit()
@@ -1550,19 +1549,6 @@ def settings_channels_page():
                                 os.remove(oldImage)
                             except OSError:
                                 pass
-                if chatEnabled is True:
-                    # Establish XMPP Channel
-                    from app import ejabberd
-                    ejabberd.create_room(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
-                    ejabberd.set_room_affiliation(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
-
-                    # Defautl values
-                    for key, value in globalvars.room_config.items():
-                        ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
-
-                    # Name and title
-                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', requestedChannel.channelName)
-                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + requestedChannel.channelName + '"')
 
                 flash("Channel Edited")
                 db.session.commit()
