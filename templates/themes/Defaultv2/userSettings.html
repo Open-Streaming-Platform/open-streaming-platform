@@ -47,6 +47,24 @@
 
                                 <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                                 <hr>
+                                <b>XMPP Access</b>
+                                <p>To access the chat with an external Jabber Client, use this login information:</p>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                        <b>Username: </b>
+                                    </div>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        {{current_user.username}}@{{sysSettings.siteAddress}}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                        <b>Password: </b>
+                                    </div>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                        {{current_user.xmppToken}}
+                                    </div>
+                                </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
                         </div>
