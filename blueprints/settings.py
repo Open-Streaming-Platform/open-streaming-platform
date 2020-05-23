@@ -1417,14 +1417,7 @@ def settings_dbRestore():
 @roles_required('Streamer')
 def settings_channels_page():
     sysSettings = settings.settings.query.first()
-    channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'}, {'name': 'Plain White', 'value': 'PlainWhite'},
-                            {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'},
-                            {'name': 'Terminal', 'value': 'Terminal'}, {'name': 'Lawrencium', 'value': 'Lawrencium'},
-                            {'name': 'Lush', 'value': 'Lush'}, {'name': 'Transparent', 'value': 'Transparent'}]
-    channelChatAnimationOptions = [{'name': 'No Animation', 'value': 'None'},
-                                   {'name': 'Slide-in From Left', 'value': 'slide-in-left'},
-                                   {'name': 'Slide-In Blurred From Left', 'value': 'slide-in-blurred-left'},
-                                   {'name': 'Fade-In', 'value': 'fade-in-fwd'}]
+
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
     if request.method == 'POST':
@@ -1451,10 +1444,6 @@ def settings_channels_page():
 
         if 'chatSelect' in request.form:
             chatEnabled = True
-
-        chatJoinNotifications = False
-        if 'chatJoinNotificationSelect' in request.form:
-            chatJoinNotifications = True
 
         allowComments = False
 
@@ -1499,10 +1488,6 @@ def settings_channels_page():
             streamKey = request.form['streamKey']
             origStreamKey = request.form['origStreamKey']
 
-            chatBG = request.form['chatBG']
-            chatAnimation = request.form['chatAnimation']
-            chatTextColor = request.form['chatTextColor']
-
             defaultstreamName = request.form['channelStreamName']
 
             rtmpRestreamDestination = request.form['rtmpDestination']
@@ -1519,10 +1504,6 @@ def settings_channels_page():
                 requestedChannel.chatEnabled = chatEnabled
                 requestedChannel.allowComments = allowComments
                 requestedChannel.description = description
-                requestedChannel.chatBG = chatBG
-                requestedChannel.showChatJoinLeaveNotification = chatJoinNotifications
-                requestedChannel.chatAnimation = chatAnimation
-                requestedChannel.chatTextColor = chatTextColor
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
@@ -1578,6 +1559,25 @@ def settings_channels_page():
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
 
+    # Get xmpp room options
+    from app import ejabberd
+    channelRooms = {}
+    for chan in user_channels:
+        xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+        channelOptionsDict = {}
+        if 'options' in xmppQuery:
+            for option in xmppQuery['options']:
+                key = None
+                value = None
+                for entry in option['option']:
+                    if 'name' in entry:
+                            key = entry['name']
+                    elif 'value' in entry:
+                            value = entry['value']
+                if key is not None and value is not None:
+                    channelOptionsDict[key] = value
+        channelRooms[chan.channelLoc] = channelOptionsDict 
+
     # Calculate Channel Views by Date based on Video or Live Views
     user_channels_stats = {}
     for channel in user_channels:
@@ -1622,9 +1622,40 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
-    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList,
-                           viewStats=user_channels_stats, channelChatBGOptions=channelChatBGOptions,
-                           channelChatAnimationOptions=channelChatAnimationOptions)
+    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms,
+                           viewStats=user_channels_stats)
+
+
+@settings_bp.route('/channels/chat', methods=['POST', 'GET'])
+@login_required
+@roles_required('Streamer')
+def settings_channels_chat_page():
+    sysSettings = settings.settings.query.first()
+
+    if request.method == 'POST':
+        from app import ejabberd
+        channelLoc = system.strip_html(request.form['channelLoc'])
+        roomTitle = request.form['roomTitle']
+        roomDescr = system.strip_html(request.form['roomDescr'])
+        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
+        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
+
+        if 'moderatedSelect' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "false")
+
+        if 'allowGuests' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "false")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "true")
+
+        if 'allowGuestsChat' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "true")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "false")
+
+    return redirect(url_for('settings.settings_channels_page'))
 
 
 @settings_bp.route('/api', methods=['GET'])
