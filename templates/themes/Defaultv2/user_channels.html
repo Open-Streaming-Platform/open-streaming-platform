@@ -526,20 +526,19 @@
                                         onclick="addMod('{{channel.channelLoc}}')" value="Add">
                                     </div>
                                   </div>
-                                  <div class="row" id="mods-{{channel.channelLoc}}">
-                                    <div class="col-12">
+                                  <div class="row">
+                                    <div class="col-12" id="mods-{{channel.channelLoc}}">
                                       <div class="row">
                                         <div class="col-12 mb-2"><b>Username</b></div>
                                       </div>
                                       {% for mod in channelMods[channel.channelLoc] %}
-                                      <div class="row">
+                                      <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                                           <p>{{mod}}</p>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                                           <button type="button" class="btn btn-sm btn-danger"
-                                            onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i
-                                              class="far fa-trash-alt"></i></button></td>
+                                            onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
                                         </div>
                                       </div>
                                       {% endfor %}
@@ -1722,8 +1721,22 @@ function openChannelWindow(divID, windowName) {
 <script>
     function deleteMod(mod, channelLoc) {
         socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc});
+        var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
+        modRow.parentNode.removeChild(modRow);
+        createNewBSAlert("Moderator permission revoked", "Success");
     }
 </script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('addMod', function (msg) {
+        var mod = msg['mod'];
+        var channelLoc = msg['channelLoc'];
+        console.log('addLog!!1112')
+        $('#mods-' + channelLoc).append('<div class="row" id="mod-' + channelLoc + '-' + mod + '"><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><p>' + mod + '</p></div><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><button type="button" class="btn btn-sm btn-danger" onclick="deleteMod(\'' + mod + '\', ' + '\'' + channelLoc + '\')"><i class="far fa-trash-alt"></i></button></div></div>');
+        createNewBSAlert("Moderator permission granted to " + mod, "Success");
+    });
+</script>
+
 
 <script>
     function generateInviteCode(channelID) {
