@@ -504,10 +504,8 @@
                       </div>
                     </div>
                     <hr>
-            
                     <div class="row">
                       <div class="col-12">
-            
                         <div id="moderators-{{channel.id}}">
                           <div class="row">
                             <div class="col-12">
@@ -516,20 +514,48 @@
                                   <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
                                 </div>
                                 <div class="card-body">
-            
+                                  <div class="form-row">
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
+                                          Moderator</b></label>
+                                      <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
+                                      <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                                        onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                                    </div>
+                                  </div>
+                                  <div class="row" id="mods-{{channel.channelLoc}}">
+                                    <div class="col-12">
+                                      <div class="row">
+                                        <div class="col-12 mb-2"><b>Username</b></div>
+                                      </div>
+                                      {% for mod in channelMods[channel.channelLoc] %}
+                                      <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <p>{{mod}}</p>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i
+                                              class="far fa-trash-alt"></i></button></td>
+                                        </div>
+                                      </div>
+                                      {% endfor %}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <hr>
                         </div>
+                        <hr>
                       </div>
                     </div>
-            
                   </div>
                   <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
                   <div>
-            
                   </div>
                   <div>
                     <div class="row">
@@ -1682,6 +1708,21 @@ function openChannelWindow(divID, windowName) {
     {% for channel in channels %}
     var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
+</script>
+
+<script>
+    function addMod(channelLoc) {
+        var addModTextInput = document.getElementById('addModText-' + channelLoc);
+        var JID = addModTextInput.value;
+        socket.emit('addMod', {JID: JID, channelLoc: channelLoc});
+        addModTextInput.value = "";
+    }
+</script>
+
+<script>
+    function deleteMod(mod, channelLoc) {
+        socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc});
+    }
 </script>
 
 <script>

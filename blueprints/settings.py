@@ -1562,6 +1562,7 @@ def settings_channels_page():
     # Get xmpp room options
     from app import ejabberd
     channelRooms = {}
+    channelMods = {}
     for chan in user_channels:
         xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
         channelOptionsDict = {}
@@ -1576,7 +1577,24 @@ def settings_channels_page():
                             value = entry['value']
                 if key is not None and value is not None:
                     channelOptionsDict[key] = value
-        channelRooms[chan.channelLoc] = channelOptionsDict 
+        channelRooms[chan.channelLoc] = channelOptionsDict
+
+        # Get room affiliations
+        xmppQuery = ejabberd.get_room_affiliations(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+
+        affiliationList = []
+        for affiliation in xmppQuery['affiliations']:
+            user = {}
+            for entry in affiliation['affiliation']:
+                for key, value in entry.items():
+                    user[key] = value
+            affiliationList.append(user)
+        
+        channelModList = []
+        for user in affiliationList:
+            if user['affiliation'] == "admin":
+                channelModList.append(user['username'] + "@" + user['domain'])
+        channelMods[chan.channelLoc] = channelModList
 
     # Calculate Channel Views by Date based on Video or Live Views
     user_channels_stats = {}
@@ -1622,7 +1640,7 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
-    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms,
+    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
                            viewStats=user_channels_stats)
 
 

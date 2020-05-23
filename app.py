@@ -247,6 +247,7 @@ from functions.socketio import edge
 from functions.socketio import subscription
 from functions.socketio import thumbnail
 from functions.socketio import syst
+from functions.socketio import moderators
 
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
