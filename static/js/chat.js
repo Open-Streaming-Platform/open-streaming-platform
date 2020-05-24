@@ -168,13 +168,9 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
-  var presenceMUC = presenceStatement.querySelector('x[xmlns="http://jabber.org/protocol/muc#user"]');
+  var status = $(presenceStatement).find("status");
+  console.log(status);
 
-  if (presenceMUC != undefined) {
-      var statusCodes = presenceMUC.querySelectorAll('status');
-      console.log(presenceMUC);
-      console.log(statusCodes);
-  }
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
 
