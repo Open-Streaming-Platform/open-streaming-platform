@@ -138,7 +138,6 @@ function enterRoom(room) {
   connection.muc.init(connection);
   connection.muc.join(room, username, room_msg_handler, room_pres_handler);
   connection.muc.setStatus(room, username + '@' + server, 'subscribed', 'chat');
-  connection
   console.log('Connected to: ' + room);
   return true;
 }
@@ -168,13 +167,16 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
-  var status = $(presenceStatement).find("status");
+  var status = [];
+  var statusNodes = $(presenceStatement).find("status");
+  for (let i = 0; i < statusNodes; i++) {
+      var code = statusNodes.getAttribute(code);
+      status.push(code.value);
+  }
   console.log(status);
 
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
-
-
   } else {
     var presenceType = 'online';
   }
