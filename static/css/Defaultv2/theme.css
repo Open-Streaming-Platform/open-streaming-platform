@@ -275,6 +275,10 @@ body {
 
 .chatloader {
     display: none;
+    padding: 30px;
+}
+
+.chatloader .chatloader-view {
     margin: auto;
     width: 150px;
     height: 200px;
