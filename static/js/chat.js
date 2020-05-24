@@ -377,12 +377,16 @@ function unmute(username) {
 
 function toggleMute() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    var iconSpan = document.getElementById('newProfileBox').querySelector('span#iconBar-muted');
+    var muteButton = document.getElementById('newProfileBox').querySelector('button#profileBox-muteButton');
     if (CHATSTATUS.muteList.includes(username)) {
         unmute(username);
-        document.getElementById('newProfileBox').querySelector('span#iconBar-muted').style.display='none';
+        muteButton.innerHTML = '<i class="fas fa-toggle-off"></i> Mute'
+        iconSpan.style.display='none';
     } else {
         mute(username);
-        document.getElementById('newProfileBox').querySelector('span#iconBar-muted').style.display='inline';
+        muteButton.innerHTML = '<i class="fas fa-toggle-on"></i> Mute'
+        iconSpan.style.display='inline';
     }
 }
 
@@ -418,6 +422,7 @@ function displayProfileBox(elem) {
 
     // Check if Muted by User
     if  (CHATSTATUS.muteList.includes(username)) {
+        div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute'
         div.querySelector("span#iconBar-muted").style.display = "inline";
     }
 
