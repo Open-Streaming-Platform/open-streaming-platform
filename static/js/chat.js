@@ -387,29 +387,29 @@ function displayProfileBox(elem) {
     updateProfileBox(div, username);
     var xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
 
-    if (xmppData !== null) {
+    if (xmppData !== null && xmppData !== undefined) {
         // Affiliation Checks to Display Icon
         if (xmppData.affiliation === "owner") {
-            document.querySelector("div#iconBar-owner").style.display = "block";
+            document.querySelector("span#iconBar-owner").style.display = "block";
         } else if (xmppData.affiliation === "admin") {
-            document.querySelector("div#iconBar-admin").style.display = "block";
+            document.querySelector("span#iconBar-admin").style.display = "block";
         } else if (xmppData.affiliation === "member") {
-            document.querySelector("div#iconBar-member").style.display = "block";
+            document.querySelector("span#iconBar-member").style.display = "block";
         }
 
         // Role Checks to Display Icon
         if (xmppData.role === "moderator") {
-            document.querySelector("div#iconBar-mod").style.display = "block";
+            document.querySelector("span#iconBar-mod").style.display = "block";
         } else if (xmppData.role === "participant") {
-            document.querySelector("div#iconBar-voice").style.display = "block";
+            document.querySelector("span#iconBar-voice").style.display = "block";
         } else if (xmppData.role === "vistor") {
-            document.querySelector("div#iconBar-visitor").style.display = "block";
+            document.querySelector("span#iconBar-visitor").style.display = "block";
         }
     }
 
     // Check if Muted by User
     if  (CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from))) {
-        document.querySelector("div#iconBar-muted").style.display = "block";
+        document.querySelector("span#iconBar-muted").style.display = "block";
     }
 
     // Format ProfileBox
