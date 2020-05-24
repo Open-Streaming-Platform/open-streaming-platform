@@ -275,6 +275,9 @@ body {
 
 .chatloader {
     display: none;
+    margin: auto;
+    width: 150px;
+    height: 200px;
 }
 
 .chatPanel {
