@@ -383,34 +383,35 @@ function displayProfileBox(elem) {
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
 
-    //Begin Async Call to Update Profile Data from API
-    updateProfileBox(div, username);
+    // Check User Data for Icon Bar
     var xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
-
     if (xmppData !== null && xmppData !== undefined) {
         // Affiliation Checks to Display Icon
         if (xmppData.affiliation === "owner") {
-            document.querySelector("span#iconBar-owner").style.display = "inline-block";
+            document.querySelector("span#iconBar-owner").style.display = "inline";
         } else if (xmppData.affiliation === "admin") {
-            document.querySelector("span#iconBar-admin").style.display = "inline-block";
+            document.querySelector("span#iconBar-admin").style.display = "inline";
         } else if (xmppData.affiliation === "member") {
-            document.querySelector("span#iconBar-member").style.display = "inline-block";
+            document.querySelector("span#iconBar-member").style.display = "inline";
         }
 
         // Role Checks to Display Icon
         if (xmppData.role === "moderator") {
-            document.querySelector("span#iconBar-mod").style.display = "inline-block";
+            document.querySelector("span#iconBar-mod").style.display = "inline";
         } else if (xmppData.role === "participant") {
-            document.querySelector("span#iconBar-voice").style.display = "inline-block";
+            document.querySelector("span#iconBar-voice").style.display = "inline";
         } else if (xmppData.role === "vistor") {
-            document.querySelector("span#iconBar-visitor").style.display = "inline-block";
+            document.querySelector("span#iconBar-visitor").style.display = "inline";
         }
     }
 
     // Check if Muted by User
     if  (CHATSTATUS.muteList.includes(username)) {
-        document.querySelector("span#iconBar-muted").style.display = "inline-block";
+        document.querySelector("span#iconBar-muted").style.display = "inline";
     }
+
+    //Begin Async Call to Update Profile Data from API
+    updateProfileBox(div, username);
 
     // Format ProfileBox
     div.style.position = 'absolute';
