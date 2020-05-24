@@ -408,7 +408,7 @@ function displayProfileBox(elem) {
     }
 
     // Check if Muted by User
-    if  (CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from))) {
+    if  (CHATSTATUS.muteList.includes(username)) {
         document.querySelector("span#iconBar-muted").style.display = "block";
     }
 
