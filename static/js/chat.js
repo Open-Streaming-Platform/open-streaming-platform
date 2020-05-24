@@ -166,12 +166,12 @@ function room_msg_handler(a, b, c) {
 
 function room_pres_handler(a, b, c) {
   var presenceStatement = a;
-  var from = presenceStatement.attributes.from;
-  var to = presenceStatement.attributes.to;
+  var from = presenceStatement.attributes.from.value;
+  var to = presenceStatement.attributes.to.value;
   console.log(from);
   console.log(to);
   if (presenceStatement.type !== undefined) {
-      var presenceType = presenceStatement.type;
+      var presenceType = presenceStatement.type.value;
       console.log(presenceType);
   }
 
