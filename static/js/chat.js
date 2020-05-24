@@ -168,8 +168,11 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from;
   var to = presenceStatement.attributes.to;
+  console.log(from);
+  console.log(to);
   if (presenceStatement.type !== undefined) {
       var presenceType = presenceStatement.type;
+      console.log(presenceType);
   }
 
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
