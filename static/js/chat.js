@@ -4,6 +4,9 @@ var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 
+var occupantCheck;
+var chatDataUpdate;
+
 // Start Connection on Load
 $(window).bind('load', function() {
     var url = BOSH_SERVICE;
@@ -102,8 +105,8 @@ function onConnect(status) {
     queryOccupants();
 
     CHATSTATUS['jid'] = fullJID;
-    var occupantCheck = setInterval(queryOccupants, 5000);
-    var chatDataUpdate = setInterval(statusCheck, 5000);
+    occupantCheck = setInterval(queryOccupants, 5000);
+    chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
 }
