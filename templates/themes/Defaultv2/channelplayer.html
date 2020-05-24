@@ -135,6 +135,16 @@
                           </div>
                       </div>
                   </div>
+                  <div id="unavailable" class="chatloader">
+                      <div class="chatloader-view">
+                          <h2>You have been disconnected from the chat.</h2><br>
+                          <br>
+                          <div id="disconnectReason">Reason: (<span id="reasonCode"></span>) - <span id="reasonText"></span></div><br><br>
+                          <h1><i class="fas fa-exclamation-triangle"></i></h1><br>
+                          <br>
+                          <button class="btn btn-success" onclick="connectChat();">Reconnect</button>
+                      </div>
+                  </div>
                   <div id="chatPanel" class="chatPanel my-2">
                     <div class="chatHeader my-2">
                         <div class="chatCounts">

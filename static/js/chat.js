@@ -53,6 +53,14 @@ function log(msg) {
   console.log(msg);
 }
 
+function connectChat() {
+    var url = BOSH_SERVICE;
+    connection = new Strophe.Connection(url);
+    connection.rawInput = rawInput;
+    connection.rawOutput = rawOutput;
+    connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+}
+
 // Function for Handling XMPP Connection, Joining a Room, and Initializing Intervals
 function onConnect(status) {
   if (status == Strophe.Status.CONNECTING) {
@@ -68,10 +76,12 @@ function onConnect(status) {
     console.log('Disconnecting from XMPP Server...');
   } else if (status == Strophe.Status.DISCONNECTED) {
     console.log('Disconnected from XMPP Server...');
-    document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('loader').style.display = "none";
+    document.getElementById('unavailable').style.display = "block";
 
-    $('#connect').get(0).value = 'connect';
+    document.getElementById('reasonCode').textContent = "999";
+    document.getElementById('reasonText').textContent = "Disconnected.";
   } else if (status == Strophe.Status.CONNECTED) {
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
@@ -184,8 +194,36 @@ function room_pres_handler(a, b, c) {
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
       console.log("Current User Status Change to: " + presenceType)
       if (presenceType == "unavailable") {
-          document.getElementById('chatPanel').style.display = "none";
 
+          clearInterval(occupantCheck);
+          clearInterval(chatDataUpdate);
+
+          document.getElementById('chatPanel').style.display = "none";
+          document.getElementById('loader').style.display = "none";
+          document.getElementById('unavailable').style.display = "block";
+
+          reasonCodeSpan = document.getElementById('reasonCode');
+          reasonTextSpan = document.getElementById('reasonText');
+
+          if (status.includes("307")) {
+              reasonCodeSpan.textContent = "307";
+              reasonTextSpan.textContent = "You have been kicked from the room.";
+          } else if (status.includes("301")) {
+              reasonCodeSpan.textContent = "301";
+              reasonTextSpan.textContent = "You have been banned from the room.";
+          } else if (status.includes("321")) {
+              reasonCodeSpan.textContent = "321";
+              reasonTextSpan.textContent = "You have been removed from the room due to an affiliation change.";
+          } else if (status.includes("322")) {
+              reasonCodeSpan.textContent = "322";
+              reasonTextSpan.textContent = "You have been removed from the room because it has been changed to members-only.";
+          } else if (status.includes("332")) {
+              reasonCodeSpan.textContent = "332";
+              reasonTextSpan.textContent = "You have been removed from the room because of a system shutdown.";
+          } else {
+              reasonCodeSpan.textContent = "999";
+              reasonTextSpan.textContent = "Disconnection";
+          }
       }
   }
   log('MUC: room_pres_handler');
