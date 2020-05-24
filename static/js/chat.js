@@ -165,9 +165,9 @@ function room_msg_handler(a, b, c) {
 }
 
 function room_pres_handler(a, b, c) {
-  console.log('a: ' +a);
-  console.log('b:' + b);
-  console.log('c:' + c);
+  console.log(a);
+  console.log(b);
+  console.log(c);
   log('MUC: room_pres_handler');
   return true;
 }
