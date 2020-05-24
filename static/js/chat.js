@@ -230,6 +230,18 @@ function room_pres_handler(a, b, c) {
               reasonCodeSpan.textContent = "999";
               reasonTextSpan.textContent = "Disconnection";
           }
+      } else if (presenceType == "error") {
+          error = $(presenceStatement).find("error");
+          errorCode = error[0].attributes.code.value;
+          clearInterval(occupantCheck);
+          clearInterval(chatDataUpdate);
+          document.getElementById('chatPanel').style.display = "none";
+          document.getElementById('loader').style.display = "none";
+          document.getElementById('unavailable').style.display = "block";
+          reasonCodeSpan.textContent = errorCode;
+          if (errorCode === "403") {
+              reasonTextSpan.textContent = "Unauthorized to join room"
+          }
       }
   }
   log('MUC: room_pres_handler');
