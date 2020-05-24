@@ -375,6 +375,15 @@ function unmute(username) {
     return true;
 }
 
+function toggleMute() {
+    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    if (CHATSTATUS.muteList.includes(username)) {
+        unmute(username);
+    } else {
+        mute(username);
+    }
+}
+
 // Generate Profile Box on Username Click
 function displayProfileBox(elem) {
     closeProfileBox();
