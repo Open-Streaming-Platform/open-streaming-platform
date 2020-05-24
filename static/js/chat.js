@@ -168,14 +168,16 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
-  var statusCode = presenceStatement.closest('status');
-  console.log(statusCode);
+  var presenceMUC = presenceStatement.querySelector('x[xmlns="http://jabber.org/protocol/muc#user"]');
+  var statusCodes = presenceMUC.querySelectorAll('status');
+  console.log(presenceMUC);
+  console.log(statusCodes);
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
 
 
   } else {
-    presenceType = 'online'
+    var presenceType = 'online';
   }
 
   // Check if is own status change (Kicks/Bans/Etc)
