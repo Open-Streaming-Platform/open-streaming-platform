@@ -116,7 +116,6 @@ function onPresence(presence) {
   log('onPresence:');
   var presence_type = $(presence).attr('type'); // unavailable, subscribed, etc...
   var from = $(presence).attr('from'); // the jabber_id of the contact
-  var user = from.replace(room + '@conference.' + server, '');
   if (!presence_type) presence_type = "online";
   log(' >' + from + ' --> ' + presence_type);
   if (presence_type != 'error') {
@@ -169,7 +168,7 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
-  if (presenceStatement.type !== undefined && presenceType.type !== null) {
+  if (presenceStatement.type != undefined && presenceStatement.type != null) {
       var presenceType = presenceStatement.type.value;
       console.log(presenceType);
   }
