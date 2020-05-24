@@ -168,14 +168,22 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
+  var statusCode = getElementsByTagName('status');
+  console.log(statusCode);
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
+
+
   } else {
     presenceType = 'online'
   }
 
+  // Check if is own status change (Kicks/Bans/Etc)
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
-      console.log("My Presence Change: " + presenceType)
+      console.log("Current User Status Change to: " + presenceType)
+      if (presenceType == "unavailable") {
+          document.getElementById('chatPanel').style.display = "none";
+      }
   }
 
   console.log(b);
