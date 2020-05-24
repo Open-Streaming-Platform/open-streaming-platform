@@ -23,8 +23,6 @@ $(window).bind('unload', function(){
       connection.disconnect();
 });
 
-
-
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -398,6 +396,8 @@ function displayProfileBox(elem) {
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
 
+    var modControlsBox = div.querySelector('div#profileBox-modControls');
+
     // Check User Data for Icon Bar
     var xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
     if (xmppData !== null && xmppData !== undefined) {
@@ -413,6 +413,7 @@ function displayProfileBox(elem) {
         // Role Checks to Display Icon
         if (xmppData.role === "moderator") {
             div.querySelector("span#iconBar-mod").style.display = "inline";
+            modControlsBox.style.display = "block";
         } else if (xmppData.role === "participant") {
             div.querySelector("span#iconBar-voice").style.display = "inline";
         } else if (xmppData.role === "vistor") {
