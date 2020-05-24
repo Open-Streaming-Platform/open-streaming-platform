@@ -116,12 +116,13 @@ function onPresence(presence) {
   log('onPresence:');
   var presence_type = $(presence).attr('type'); // unavailable, subscribed, etc...
   var from = $(presence).attr('from'); // the jabber_id of the contact
+  var user = from.replace(room + '@conference.' + server, '');
   if (!presence_type) presence_type = "online";
   log(' >' + from + ' --> ' + presence_type);
   if (presence_type != 'error') {
     if (presence_type === 'unavailable') {
         // Respond if Unavailable Presence is Current User
-        if (from === username) {
+        if (user === username) {
             document.getElementById('loader').style.display = "none";
         }
       // Mark contact as offline
