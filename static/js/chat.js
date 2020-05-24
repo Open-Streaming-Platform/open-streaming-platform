@@ -379,8 +379,10 @@ function toggleMute() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     if (CHATSTATUS.muteList.includes(username)) {
         unmute(username);
+        document.getElementById('newProfileBox').querySelector('span#iconBar-muted').style.display='none';
     } else {
         mute(username);
+        document.getElementById('newProfileBox').querySelector('span#iconBar-muted').style.display='inline';
     }
 }
 
