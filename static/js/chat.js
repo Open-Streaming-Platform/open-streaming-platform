@@ -10,7 +10,7 @@ $(window).bind('load', function() {
     connection = new Strophe.Connection(url);
     connection.rawInput = rawInput;
     connection.rawOutput = rawOutput;
-    connection.connect(username + '@' + server, xmppPassword, onConnect);
+    connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
 });
 
 // Disconnect XMPP on Page Unload
