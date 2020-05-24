@@ -121,10 +121,6 @@ function onPresence(presence) {
   log(' >' + from + ' --> ' + presence_type);
   if (presence_type != 'error') {
     if (presence_type === 'unavailable') {
-        // Respond if Unavailable Presence is Current User
-        if (user === username) {
-            document.getElementById('loader').style.display = "none";
-        }
       // Mark contact as offline
     } else {
       var show = $(presence).find("show").text(); // this is what gives away, dnd, etc.
@@ -169,6 +165,9 @@ function room_msg_handler(a, b, c) {
 }
 
 function room_pres_handler(a, b, c) {
+  console.log('a: ' +a);
+  console.log('b:' + b);
+  console.log('c:' + c);
   log('MUC: room_pres_handler');
   return true;
 }
