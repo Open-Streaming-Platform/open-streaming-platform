@@ -165,9 +165,18 @@ function room_msg_handler(a, b, c) {
 }
 
 function room_pres_handler(a, b, c) {
-  console.log(a);
+  var presenceStatement = a;
+  var from = presenceStatement.attributes.from;
+  var to = presenceStatement.attributes.to;
+  if (presenceStatement.type !== undefined) {
+      var presenceType = presenceStatement.type;
+  }
+
+  if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
+      console.log("My Presence Change: " + presenceType)
+  }
+
   console.log(b);
-  console.log(c);
   log('MUC: room_pres_handler');
   return true;
 }
