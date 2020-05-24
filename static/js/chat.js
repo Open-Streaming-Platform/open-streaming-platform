@@ -385,9 +385,9 @@ function displayProfileBox(elem) {
 
     //Begin Async Call to Update Profile Data from API
     updateProfileBox(div, username);
-    xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
+    var xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
 
-    if (!(xmppData === null)) {
+    if (xmppData !== null) {
         // Affiliation Checks to Display Icon
         if (xmppData.affiliation === "owner") {
             document.querySelector("div#iconBar-owner").style.display = "block";
