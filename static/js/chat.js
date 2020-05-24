@@ -413,7 +413,6 @@ function displayProfileBox(elem) {
         // Role Checks to Display Icon
         if (xmppData.role === "moderator") {
             div.querySelector("span#iconBar-mod").style.display = "inline";
-            modControlsBox.style.display = "block";
         } else if (xmppData.role === "participant") {
             div.querySelector("span#iconBar-voice").style.display = "inline";
         } else if (xmppData.role === "vistor") {
@@ -425,6 +424,10 @@ function displayProfileBox(elem) {
     if  (CHATSTATUS.muteList.includes(username)) {
         div.querySelector("span#iconBar-muted").style.display = "inline";
         div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
+    }
+
+    if (CHATSTATUS.role === "moderator") {
+        modControlsBox.style.display = "block";
     }
 
     //Begin Async Call to Update Profile Data from API
