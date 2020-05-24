@@ -388,6 +388,16 @@ function toggleMute() {
     }
 }
 
+function modKick() {
+    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    kick(username);
+}
+
+function modBan() {
+    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    ban(username);
+}
+
 // Generate Profile Box on Username Click
 function displayProfileBox(elem) {
     closeProfileBox();
@@ -395,8 +405,6 @@ function displayProfileBox(elem) {
     var username = elem.textContent;
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
-
-    var modControlsBox = div.querySelector('div#profileBox-modControls');
 
     // Check User Data for Icon Bar
     var xmppData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
@@ -426,6 +434,7 @@ function displayProfileBox(elem) {
         div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
     }
 
+    var modControlsBox = div.querySelector('div#profileBox-modControls');
     if (CHATSTATUS.role === "moderator") {
         modControlsBox.style.display = "block";
     }
