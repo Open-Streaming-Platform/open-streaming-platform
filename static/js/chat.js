@@ -120,6 +120,10 @@ function onPresence(presence) {
   log(' >' + from + ' --> ' + presence_type);
   if (presence_type != 'error') {
     if (presence_type === 'unavailable') {
+        // Respond if Unavailable Presence is Current User
+        if (from === username) {
+            document.getElementById('loader').style.display = "none";
+        }
       // Mark contact as offline
     } else {
       var show = $(presence).find("show").text(); // this is what gives away, dnd, etc.
