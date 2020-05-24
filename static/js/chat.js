@@ -381,11 +381,11 @@ function toggleMute() {
     var muteButton = document.getElementById('newProfileBox').querySelector('button#profileBox-muteButton');
     if (CHATSTATUS.muteList.includes(username)) {
         unmute(username);
-        muteButton.innerHTML = '<i class="fas fa-toggle-off"></i> Mute'
+        muteButton.innerHTML = '<i class="fas fa-toggle-off"></i> Mute';
         iconSpan.style.display='none';
     } else {
         mute(username);
-        muteButton.innerHTML = '<i class="fas fa-toggle-on"></i> Mute'
+        muteButton.innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
         iconSpan.style.display='inline';
     }
 }
@@ -422,8 +422,8 @@ function displayProfileBox(elem) {
 
     // Check if Muted by User
     if  (CHATSTATUS.muteList.includes(username)) {
-        div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute'
         div.querySelector("span#iconBar-muted").style.display = "inline";
+        div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
     }
 
     //Begin Async Call to Update Profile Data from API
