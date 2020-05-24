@@ -173,7 +173,6 @@ function room_pres_handler(a, b, c) {
       var statuscode = statusNodes[i].attributes.code.value;
       status.push(statuscode);
   }
-  console.log(status);
 
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
@@ -186,10 +185,9 @@ function room_pres_handler(a, b, c) {
       console.log("Current User Status Change to: " + presenceType)
       if (presenceType == "unavailable") {
           document.getElementById('chatPanel').style.display = "none";
+
       }
   }
-
-  console.log(b);
   log('MUC: room_pres_handler');
   return true;
 }
@@ -259,9 +257,14 @@ function statusCheck() {
 
   CHATSTATUS['username'] = roomsData.nick;
   var presumedUserObj = roomsData.roster[CHATSTATUS['username']];
-  if (presumedUserObj.jid === CHATSTATUS['jid']) {
-      CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
-      CHATSTATUS['role'] = presumedUserObj.role;
+  if (presumedUserObj != undefined) {
+      if (presumedUserObj.jid === CHATSTATUS['jid']) {
+          CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
+          CHATSTATUS['role'] = presumedUserObj.role;
+      }
+  } else {
+      CHATSTATUS['affiliation'] = "none";
+      CHATSTATUS['role'] = "none";
   }
   return true;
 }
