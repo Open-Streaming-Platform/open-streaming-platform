@@ -169,12 +169,7 @@ function room_pres_handler(a, b, c) {
   var to = presenceStatement.attributes.to.value;
   var status = [];
   var statusNodes = $(presenceStatement).find("status");
-  for (let i = 0; i < statusNodes; i++) {
-      console.log(statusNodes[i]);
-      var code = statusNodes[i].getAttribute(code);
-      status.push(code.value);
-  }
-  console.log(status);
+  console.log(statusNodes);
 
   if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
