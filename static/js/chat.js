@@ -168,7 +168,7 @@ function room_pres_handler(a, b, c) {
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
-  if (presenceStatement.attributes.type.value !== undefined) {
+  if (presenceStatement.attributes.type !== undefined && presenceStatement.attributes.type !== null) {
     var presenceType = presenceStatement.attributes.type.value;
   } else {
     presenceType = 'online'
