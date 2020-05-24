@@ -57,6 +57,7 @@ function log(msg) {
 }
 
 function connectChat() {
+
     var url = BOSH_SERVICE;
     connection = new Strophe.Connection(url);
     connection.rawInput = rawInput;
@@ -68,10 +69,12 @@ function connectChat() {
 function onConnect(status) {
   if (status == Strophe.Status.CONNECTING) {
     console.log('Connecting to XMPP Server...');
+    document.getElementById('unavailable').style.display = "none";
     document.getElementById('loader').style.display = "block";
     document.getElementById('chatPanel').style.display = "none";
   } else if (status == Strophe.Status.CONNFAIL) {
     console.log('Connection to XMPP Server Failed...');
+    document.getElementById('unavailable').style.display = "block";
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
     $('#connect').get(0).value = 'connect';
