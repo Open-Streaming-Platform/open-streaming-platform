@@ -395,6 +395,9 @@ body {
 #iconBar-owner {
   color: gold;
 }
+#iconBar-admin {
+  color: gold;
+}
 #iconBar-mod {
   color: orange;
 }
@@ -405,6 +408,9 @@ body {
   color:red;
 }
 #iconBar-voice {
+  color:white;
+}
+#iconBar-visitor {
   color:white;
 }
 
