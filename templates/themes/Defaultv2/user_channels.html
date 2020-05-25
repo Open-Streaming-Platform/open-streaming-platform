@@ -253,6 +253,13 @@
                                         <div class="col-6">
                                             <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                         </div>
+                                        <div class="col-6">
+                                            <label for="xmppToken" class="col-form-label"><b>Protected Channel XMPP Token </b></label><br>
+                                            <input type="text" class="form-control" id="xmppToken" name="xmppToken" value="{{channel.xmppToken}}" readonly required>
+                                            <small id="xmppTokenHelpBlock" class="form-text text-muted">
+                                              Given to Authorized Users to Connect to a Protected Channel's XMPP Chat Room
+                                            </small>
+                                        </div>
                                     </div>
 
                                 </div>
