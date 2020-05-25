@@ -464,21 +464,25 @@ function toggleMute() {
 function modKick() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     kick(username);
+    closeProfileBox();
 }
 
 function modBan() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     ban(username);
+    closeProfileBox();
 }
 
 function modSetAffiliation(affiliation) {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyAffiliation(affiliation);
+    closeProfileBox();
 }
 
 function modSetRole(role) {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyRole(role);
+    closeProfileBox();
 }
 
 // Generate Profile Box on Username Click
