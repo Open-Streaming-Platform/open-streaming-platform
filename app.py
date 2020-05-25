@@ -239,7 +239,6 @@ results = xmpp.sanityCheck()
 from functions.socketio import connections
 from functions.socketio import video
 from functions.socketio import stream
-from functions.socketio import chat
 from functions.socketio import vote
 from functions.socketio import invites
 from functions.socketio import webhooks
