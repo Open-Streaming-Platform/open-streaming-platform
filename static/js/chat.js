@@ -7,24 +7,7 @@ var userListActive = false;
 var occupantCheck;
 var chatDataUpdate;
 
-// Start Connection on Load
-$(window).bind('load', function() {
-    var url = BOSH_SERVICE;
-    connection = new Strophe.Connection(url);
-    connection.rawInput = rawInput;
-    connection.rawOutput = rawOutput;
-    connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
-});
 
-// Disconnect XMPP on Page Unload
-$(window).bind('unload', function(){
-      // Leave Room First
-      exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
-      // Execute XMPP Disconnection Process
-      connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
-      connection.flush();
-      connection.disconnect();
-});
 
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
