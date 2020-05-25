@@ -779,11 +779,13 @@
 
     <script>
         function openBanList() {
+            console.log("Requesting Ban List");
             socket.emit('getBanList', {channeLoc: '{{channel.channelLoc}}'});
 
         }
 
         socket.on('returnBanList', function(msg) {
+            console.log("Receiving Ban List");
             console.log(msg);
         });
     </script>
