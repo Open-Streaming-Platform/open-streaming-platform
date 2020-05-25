@@ -1038,9 +1038,6 @@ def settings_dbRestore():
                                               eval(restoredChannel['allowComments']), restoredChannel['description'])
                     channel.id = int(restoredChannel['id'])
                     channel.channelLoc = restoredChannel['channelLoc']
-                    channel.chatBG = restoredChannel['chatBG']
-                    channel.chatTextColor = restoredChannel['chatTextColor']
-                    channel.chatAnimation = restoredChannel['chatAnimation']
                     channel.views = int(restoredChannel['views'])
                     channel.protected = eval(restoredChannel['protected'])
                     channel.channelMuted = eval(restoredChannel['channelMuted'])
