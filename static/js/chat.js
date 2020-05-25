@@ -566,7 +566,10 @@ function displayProfileBox(elem) {
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
     if (CHATSTATUS.role === "moderator") {
-        modControlsBox.style.display = "block";
+        // Prevent Owner from Showing Controls on Themselves
+        if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
+            modControlsBox.style.display = "block";
+        }
     }
 
     //Begin Async Call to Update Profile Data from API
