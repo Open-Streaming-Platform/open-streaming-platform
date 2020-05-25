@@ -26,8 +26,6 @@ def buildMissingRooms():
 
             ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.username + '@' + sysSettings.siteAddress, 'owner')
 
-            for invite in channel.invitedViewers:
-                ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, invite.user.username + '@' + sysSettings.siteAddress, 'member')
     return True
 
 def verifyExistingRooms():
@@ -55,10 +53,13 @@ def verifyExistingRooms():
             ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
                                           channel.owner.username + '@' + sysSettings.siteAddress, 'owner')
 
-        for invite in channel.invitedViewers:
-            if not all((d['username'] == invite.user.username and d['affiliation'] == 'member') for d in affiliationList):
-                ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
-                                              invite.user.username + '@' + sysSettings.siteAddress, 'member')
+        if channel.protected:
+            ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'true')
+            ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', channel.xmppToken)
+        else:
+            ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', '')
+            ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'false')
+
 
 def cleanInvalidRooms():
     sysSettings = settings.query.first()
