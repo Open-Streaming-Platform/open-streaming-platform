@@ -1050,6 +1050,10 @@ def settings_dbRestore():
                         channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
                     if 'rtmpRestreamDestination' in restoredChannel:
                         channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
+                    if 'xmppToken' in restoredChannel:
+                        channel.xmppToken = restoredChannel['xmppToken']
+                    else:
+                        channel.xmppToken = str(os.urandom(32).hex())
 
                     db.session.add(channel)
                 else:
