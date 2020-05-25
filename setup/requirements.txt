@@ -10,7 +10,7 @@ Flask-Principal==0.4.0
 flask-restplus==0.12.1
 Flask-Script==2.0.6
 Flask-Security-Too==3.3.3
-Flask-SocketIO==4.2.1
+Flask-SocketIO==4.3.0
 Flask-SQLAlchemy==2.4.0
 Flask-Uploads==0.2.1
 Flask-WTF==0.14.2
@@ -27,8 +27,8 @@ psutil==5.6.6
 PyMySQL==0.9.3
 python-dateutil==2.8.0
 python-editor==1.0.4
-python-engineio==3.11.2
-python-socketio==4.4.0
+python-engineio==3.13.0
+python-socketio==4.6.0
 pytz==2019.1
 smmap2==2.0.5
 speaklater==1.3
