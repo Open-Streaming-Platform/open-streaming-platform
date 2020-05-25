@@ -163,7 +163,11 @@ function onPresence(presence) {
 function enterRoom(room) {
   console.log('Connecting to: ' + room);
   connection.muc.init(connection);
-  connection.muc.join(room, username, room_msg_handler, room_pres_handler);
+  if (CHANNELPROTECTED) {
+      connection.muc.join(room, username, room_msg_handler, room_pres_handler, null, CHANNELTOKEN);
+  } else {
+      connection.muc.join(room, username, room_msg_handler, room_pres_handler, null);
+  }
   connection.muc.setStatus(room, username + '@' + server, 'subscribed', 'chat');
   console.log('Connected to: ' + room);
   return true;

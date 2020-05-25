@@ -559,6 +559,12 @@
         var BOSH_SERVICE = serverproto + server + '/http-bind/';
         var ROOM_SERVICE = 'conference.' + server;
         var ROOMNAME = '{{channel.channelLoc}}';
+        var CHANNELPROTECTED = {{channel.protected}};
+        {% if channel.protected %}
+        var CHANNELTOKEN = '{{channel.xmppToken}}';
+        {$ else % }
+        var CHANNELTOKEN = null;
+        {% endif %}
         var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
 
         var ChatContentWindow = document.getElementById("chatContentWindow");
