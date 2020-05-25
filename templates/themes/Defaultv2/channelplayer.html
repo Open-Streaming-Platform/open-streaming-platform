@@ -562,7 +562,7 @@
         var CHANNELPROTECTED = {{channel.protected}};
         {% if channel.protected %}
         var CHANNELTOKEN = '{{channel.xmppToken}}';
-        {$ else % }
+        {% else %}
         var CHANNELTOKEN = null;
         {% endif %}
         var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
