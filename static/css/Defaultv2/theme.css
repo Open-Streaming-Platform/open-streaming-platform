@@ -351,6 +351,9 @@ body {
 .chatMembersOverlay {
     display:none;
 }
+.bannedUsersOverlay {
+    display:none;
+}
 
 #chatside {
     border-left: 1px solid #eeeeee;

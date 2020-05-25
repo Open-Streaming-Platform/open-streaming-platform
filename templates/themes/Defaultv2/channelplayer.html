@@ -155,6 +155,12 @@
                         </div>
                     </div>
                     <div id="chatContentWindow" class="chatContent">
+                        <div id="bannedUsers" class="bannedUsersOverlay slide-in-blurred-top">
+                            <div class="membersList card my-3">
+                              <div class="card-header bg-primary"><b>Banned Users</b></div>
+                              <div id="OutcastList" class="card-body"></div>
+                          </div>
+                        </div>
                         <div id="chatMembers" class="chatMembersOverlay slide-in-blurred-top">
                           <div class="membersList card my-3">
                               <div class="card-header bg-primary"><b>Moderator</b></div>
@@ -786,6 +792,20 @@
 
         socket.on('returnBanList', function(msg) {
             console.log("Receiving Ban List");
+
+            document.getElementById('bannedUsers').style.display = 'block';
+            document.getElementById('chatMembers').style.display = 'none';
+            document.getElementById('chat').style.display = 'none';
+
+            banList = document.getElementById('OutcastList');
+            banList.innerHTML = "";
+            for (let i = 0; i < msg['results'].length; i++){
+                var iDiv = document.createElement('div');
+                iDiv.className = 'bannedUser';
+                var username = msg["results"][i]["username"];
+                iDiv.innerHTML = '<span id="bannedUser-' + username + '">' + username + '</span>';
+                banList.appendChild(iDiv);
+            }
             console.log(msg);
         });
     </script>
