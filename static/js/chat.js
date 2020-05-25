@@ -3,6 +3,7 @@ var fullJID = null;
 var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
+var banListActive = false;
 
 var occupantCheck;
 var chatDataUpdate;
@@ -12,15 +13,38 @@ var chatDataUpdate;
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
+    var banList = document.getElementById('bannedUsers');
 
     if (userListActive == false) {
+        banList.style.display = "none";
         chatOccupantsDiv.style.display = "block";
         chatElementsDiv.style.display = "none";
         userListActive = true;
     } else {
+        banList.style.display = "none";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "block";
         userListActive = false;
+        scrollChatWindow();
+    }
+}
+
+function openBanList() {
+    var chatOccupantsDiv = document.getElementById('chatMembers');
+    var chatElementsDiv = document.getElementById('chat');
+    var banList = document.getElementById('bannedUsers');
+
+    if (banListActive == false) {
+        getBanList();
+        banList.style.display = "block";
+        chatOccupantsDiv.style.display = "none";
+        chatElementsDiv.style.display = "none";
+        banListActive = true;
+    } else {
+        banList.style.display = "none";
+        chatOccupantsDiv.style.display = "none";
+        chatElementsDiv.style.display = "block";
+        banListActive = false;
         scrollChatWindow();
     }
 
@@ -52,11 +76,13 @@ function connectChat() {
 function onConnect(status) {
   if (status == Strophe.Status.CONNECTING) {
     console.log('Connecting to XMPP Server...');
+    document.getElementById('bannedUsers').style.display = 'none';
     document.getElementById('unavailable').style.display = "none";
     document.getElementById('loader').style.display = "block";
     document.getElementById('chatPanel').style.display = "none";
   } else if (status == Strophe.Status.CONNFAIL) {
     console.log('Connection to XMPP Server Failed...');
+    document.getElementById('bannedUsers').style.display = 'none';
     document.getElementById('unavailable').style.display = "block";
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
@@ -65,6 +91,7 @@ function onConnect(status) {
     console.log('Disconnecting from XMPP Server...');
   } else if (status == Strophe.Status.DISCONNECTED) {
     console.log('Disconnected from XMPP Server...');
+    document.getElementById('bannedUsers').style.display = 'none';
     document.getElementById('chatPanel').style.display = "none";
     document.getElementById('loader').style.display = "none";
     document.getElementById('unavailable').style.display = "block";
@@ -187,6 +214,7 @@ function room_pres_handler(a, b, c) {
           clearInterval(occupantCheck);
           clearInterval(chatDataUpdate);
 
+          document.getElementById('bannedUsers').style.display = 'none';
           document.getElementById('chatPanel').style.display = "none";
           document.getElementById('loader').style.display = "none";
           document.getElementById('unavailable').style.display = "block";
@@ -218,6 +246,7 @@ function room_pres_handler(a, b, c) {
           errorCode = error[0].attributes.code.value;
           clearInterval(occupantCheck);
           clearInterval(chatDataUpdate);
+          document.getElementById('bannedUsers').style.display = 'none';
           document.getElementById('chatPanel').style.display = "none";
           document.getElementById('loader').style.display = "none";
           document.getElementById('unavailable').style.display = "block";
