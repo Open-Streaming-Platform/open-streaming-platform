@@ -392,6 +392,11 @@ function ban(username) {
     return true;
 }
 
+function admin(username) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].admin();
+    return true;
+}
+
 function deop(username) {
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].deop();
     return true;
@@ -468,12 +473,12 @@ function modBan() {
 
 function modSetAffiliation(affiliation) {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyAffiliation(affiliation);
 }
 
 function modSetRole(role) {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyRole(role);
 }
 
 // Generate Profile Box on Username Click
