@@ -227,14 +227,14 @@
                           <button class="dropdown-item" type="button" onclick="modBan();">Ban</button>
                           <div class="dropdown-divider"></div>
                           <h6 class="dropdown-header">Change Affiliation</h6>
-                          <button class="dropdown-item" type="button">Set as Admin</button>
-                          <button class="dropdown-item" type="button">Set as Member</button>
-                          <button class="dropdown-item" type="button">Set as None</button>
+                          <button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Admin</button>
+                          <button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Member</button>
+                          <button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as None</button>
                           <div class="dropdown-divider"></div>
                           <h6 class="dropdown-header">Change Role</h6>
-                          <button class="dropdown-item" type="button">Set as Moderator</button>
-                          <button class="dropdown-item" type="button">Set as Participant</button>
-                          <button class="dropdown-item" type="button">Set as Visitor</button>
+                          <button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button>
+                          <button class="dropdown-item" type="button" onclick="modSetRole('participant');">Set as Participant</button>
+                          <button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Set as Visitor</button>
 
                       </div>
                     </div>
@@ -536,15 +536,10 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
-            var userBoxHTML = "";
-            var userList = msg['userList'];
-            var userListLength = userList.length;
-            for (var i = 0; i < userListLength; i++) {
-                userBoxHTML = userBoxHTML.concat(userList[i],'<br>');
-            }
         });
     </script>
     <script>
+        // Settings and Event Hooks for XMPP
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
         var xmppPassword = "{{current_user.xmppToken}}";
