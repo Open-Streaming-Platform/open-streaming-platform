@@ -466,6 +466,16 @@ function modBan() {
     ban(username);
 }
 
+function modSetAffiliation(affiliation) {
+    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+
+}
+
+function modSetRole(role) {
+    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+
+}
+
 // Generate Profile Box on Username Click
 function displayProfileBox(elem) {
     closeProfileBox();
