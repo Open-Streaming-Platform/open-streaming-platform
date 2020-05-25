@@ -559,7 +559,7 @@
         var BOSH_SERVICE = serverproto + server + '/http-bind/';
         var ROOM_SERVICE = 'conference.' + server;
         var ROOMNAME = '{{channel.channelLoc}}';
-        var CHANNELPROTECTED = {{channel.protected}};
+        var CHANNELPROTECTED = {{channel.protected|lower}};
         {% if channel.protected %}
         var CHANNELTOKEN = '{{channel.xmppToken}}';
         {% else %}
