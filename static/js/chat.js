@@ -470,6 +470,10 @@ function voice(username) {
     return true;
 }
 
+function setAffiliation(username, affiliation) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(username + server, affiliation);
+}
+
 // User Controls
 function mute(username) {
     CHATSTATUS.muteList.push(username);

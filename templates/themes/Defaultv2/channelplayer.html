@@ -802,8 +802,9 @@
                 var iDiv = document.createElement('div');
                 iDiv.className = 'bannedUser';
                 var username = msg["results"][i]["username"];
-                iDiv.innerHTML = '<span id="bannedUser-' + username + '"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + username + '</a></span>';
+                iDiv.innerHTML = '<span id="bannedUser-' + username + '">' + username + '<button class="btn btn-danger" onclick="setAffiliation(' + username + ', "none");">x</button></span>';
                 banList.appendChild(iDiv);
+                getBanList();
             }
             console.log(msg);
         });
