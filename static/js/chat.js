@@ -577,7 +577,7 @@ function displayProfileBox(elem) {
 
     // Format ProfileBox
     div.style.position = 'absolute';
-    div.style.top =  position.y + "px";
+    div.style.top =  (position.y - ChatContentWindow.scrollTop) + "px";
     div.style.left = position.x + "px";
     div.style.zIndex = 10;
     div.style.display= "block";
