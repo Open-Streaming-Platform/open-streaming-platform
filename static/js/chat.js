@@ -471,7 +471,7 @@ function voice(username) {
 }
 
 function setAffiliation(username, affiliation) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(username + server, affiliation);
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(username + '@' + server, affiliation);
     return true;
 }
 
