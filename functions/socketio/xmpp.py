@@ -27,6 +27,8 @@ def addMod(message):
         emit('addMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
     else:
         pass
+    db.session.commit()
+    db.session.close()
     return 'OK'
 
 @socketio.on('deleteMod')
@@ -51,4 +53,26 @@ def deleteMod(message):
             emit('deleteMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
     else:
         pass
+    db.session.commit()
+    db.session.close()
+    return 'OK'
+
+@socketio.on('getBanList')
+def socketio_xmpp_getBanList(message):
+    sysSettings = settings.settings.query.first()
+    channelLoc = str(message['channelLoc'])
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    affiliationList = []
+    if channelQuery is not None:
+        from app import ejabbberd
+        xmppQuery = ejabbberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+        for affiliation in xmppQuery['affiliations']:
+            user = {}
+            for entry in affiliation['affiliation']:
+                for key, value in entry.items():
+                    user[key] = value
+            if user['affiliation'] == "outcast":
+                affiliationList.append(user)
+    affiliationList = {'results':affiliationList}
+    emit('returnBanList', {'results': affiliationList}, broadcast=False)
     return 'OK'

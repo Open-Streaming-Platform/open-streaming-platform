@@ -151,6 +151,7 @@
                             <h2 class="float-left">Live Chat</h2>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2"><i class="fas fa-external-link-alt"></i></button></span>
+                            <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
                         </div>
                     </div>
                     <div id="chatContentWindow" class="chatContent">
@@ -775,6 +776,18 @@
         socket.emit('toggleChannelSubscription', { channelID: chanID });
     }
     </script>
+
+    <script>
+        function openBanList() {
+            socket.emit('getBanList', {channeLoc: '{{channel.channelLoc}}'});
+
+        }
+
+        socket.on('returnBanList', function(msg) {
+            console.log(msg);
+        });
+    </script>
+
     <script>
 
     socket.on('sendChanSubResults', function (msg) {

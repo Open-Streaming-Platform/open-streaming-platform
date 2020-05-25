@@ -305,6 +305,14 @@ function statusCheck() {
       CHATSTATUS['affiliation'] = "none";
       CHATSTATUS['role'] = "none";
   }
+
+  // Update UI based on Roles
+  if (CHATSTATUS['role'] === "moderator") {
+      document.getElementById('banListButton').style.display = "inline";
+  } else {
+      document.getElementById('banListButton').style.display = "none";
+  }
+
   return true;
 }
 
