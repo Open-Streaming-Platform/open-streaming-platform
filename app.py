@@ -231,8 +231,10 @@ email.app = app
 
 # Perform XMPP Sanity Check
 from functions import xmpp
-results = xmpp.sanityCheck()
-
+try:
+    results = xmpp.sanityCheck()
+except Exception as e:
+    print("XMPP Sanity Check Failed - " + str(e))
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
