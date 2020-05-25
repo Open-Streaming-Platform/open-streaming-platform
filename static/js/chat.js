@@ -19,6 +19,7 @@ function showOccupants() {
         banList.style.display = "none";
         chatOccupantsDiv.style.display = "block";
         chatElementsDiv.style.display = "none";
+        banListActive = false;
         userListActive = true;
     } else {
         banList.style.display = "none";
@@ -39,6 +40,7 @@ function openBanList() {
         banList.style.display = "block";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "none";
+        userListActive = false;
         banListActive = true;
     } else {
         banList.style.display = "none";
