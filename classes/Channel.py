@@ -1,5 +1,6 @@
 from .shared import db
 import uuid
+import os
 
 
 class Channel(db.Model):
@@ -28,6 +29,7 @@ class Channel(db.Model):
     autoPublish = db.Column(db.Boolean)
     rtmpRestream = db.Column(db.Boolean)
     rtmpRestreamDestination = db.Column(db.String(4096))
+    xmppToken = db.Column(db.String(64))
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -58,6 +60,7 @@ class Channel(db.Model):
         self.autoPublish = True
         self.rtmpRestream = False
         self.rtmpRestreamDestination = ""
+        self.xmppToken = str(os.urandom(32).hex())
 
     def __repr__(self):
         return '<id %r>' % self.id
