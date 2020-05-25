@@ -1513,9 +1513,11 @@ def settings_channels_page():
 
                 from app import ejabberd
                 if protection is True:
-                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'members_only', 'true')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'true')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', requestedChannel.xmppToken)
                 else:
-                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'members_only', 'false')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', '')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'false')
 
                 if 'photo' in request.files:
                     file = request.files['photo']
