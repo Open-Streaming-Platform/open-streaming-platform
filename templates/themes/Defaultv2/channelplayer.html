@@ -791,7 +791,9 @@
 
         function clearBan(username, affiliation) {
             setAffiliation(username, affiliation);
-            getBanList();
+            setTimeout(function(){
+                getBanList();
+            }, 2000);
             return true;
         }
 
@@ -809,7 +811,7 @@
                 iDiv.className = 'bannedUser';
                 var username = msg["results"][i]["username"];
                 var onclickCmd = "clearBan('" + username + "','none');"
-                iDiv.innerHTML = '<span class="my-1" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '>x</button></span>';
+                iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
                 banList.appendChild(iDiv);
             }
             console.log(msg);
