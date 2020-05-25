@@ -67,8 +67,8 @@ def socketio_xmpp_getBanList(message):
         channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
         if channelQuery is not None:
-            from app import ejabbberd
-            xmppQuery = ejabbberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+            from app import ejabberd
+            xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
             for affiliation in xmppQuery['affiliations']:
                 user = {}
                 for entry in affiliation['affiliation']:
