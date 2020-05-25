@@ -198,6 +198,12 @@ def init(app, user_datastore):
             user.xmppToken = str(os.urandom(32).hex())
             db.session.commit()
 
+        # Generate XMPP Token for Channels Missing
+        channelQuery = Channel.Channel.query.filter_by(xmppToken=None).all()
+        for channel in channelQuery:
+            channel.xmppToken = str(os.urandom(32).hex())
+            db.session.commit()
+
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
