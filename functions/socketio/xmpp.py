@@ -76,6 +76,5 @@ def socketio_xmpp_getBanList(message):
                         user[key] = value
                 if user['affiliation'] == "outcast":
                     affiliationList.append(user)
-        affiliationList = {'results':affiliationList}
     emit('returnBanList', {'results': affiliationList}, broadcast=False)
     return 'OK'
