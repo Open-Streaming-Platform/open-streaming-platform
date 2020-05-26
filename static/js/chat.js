@@ -103,9 +103,9 @@ function onConnect(status) {
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
     // disco stuff
-    if (connection.disco) {
-        connection.disco.addIdentity('client', 'web');
-    }
+    //if (connection.disco) {
+    //    connection.disco.addIdentity('client', 'web');
+    //}
     // set presence
     connection.send($pres());
     // set handlers
