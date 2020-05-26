@@ -105,7 +105,6 @@ function onConnect(status) {
     // disco stuff
     if (connection.disco) {
         connection.disco.addIdentity('client', 'web');
-        connection.disco.addFeature(Strophe.NS.DISCO_INFO);
     }
     // set presence
     connection.send($pres());
