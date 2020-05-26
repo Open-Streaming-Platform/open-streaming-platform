@@ -673,7 +673,7 @@
 
     <script>
         function popoutChat() {
-            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=850');
+            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
             var chatbox = document.getElementById("chatside");
             chatbox.style.display = "none";
         }
@@ -786,9 +786,9 @@
     </script>
 
     <script>
-    function toggleChannelSub(chanID) {
-        socket.emit('toggleChannelSubscription', { channelID: chanID });
-    }
+        function toggleChannelSub(chanID) {
+            socket.emit('toggleChannelSubscription', { channelID: chanID });
+        }
     </script>
 
     <script>
