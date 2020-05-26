@@ -5,6 +5,7 @@
     <title>{{stream.streamName}} - Chat</title>
 
 <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+<script src="/static/vendor/socketio/js/socket.io.js"></script>
 <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
 <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
 <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
@@ -141,6 +142,14 @@
       </div>
     </div>
 </div>
+
+<script type="text/javascript" charset="utf-8">
+    var conn_options = {
+        'sync disconnect on unload':true
+    };
+
+    var socket = io("/", {reconnection: true, forceNew: false});
+</script>
 
 <script>
     // Settings and Event Hooks for XMPP
