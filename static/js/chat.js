@@ -102,7 +102,11 @@ function onConnect(status) {
   } else if (status == Strophe.Status.CONNECTED) {
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
-    connection.disco.info(username.toLowerCase() + '@' + server);
+    // disco stuff
+    if (connection.disco) {
+        connection.disco.addIdentity(username.toLowerCase() + '@' + server, 'web');
+        connection.disco.addFeature(Strophe.NS.DISCO_INFO);
+    }
     // set presence
     connection.send($pres());
     // set handlers
