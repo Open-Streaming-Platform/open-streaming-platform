@@ -104,7 +104,7 @@ function onConnect(status) {
     fullJID = connection.jid; // full JID
     // disco stuff
     if (connection.disco) {
-        connection.disco.addIdentity(username.toLowerCase() + '@' + server, 'web');
+        connection.disco.addIdentity('client', 'web');
         connection.disco.addFeature(Strophe.NS.DISCO_INFO);
     }
     // set presence
