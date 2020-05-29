@@ -677,7 +677,7 @@
         function popoutChat() {
             {% if current_user.is_authenticated %}
             MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
-            {$ else %}
+            {% else %}
             MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
             {% endif %}
             var chatbox = document.getElementById("chatside");
