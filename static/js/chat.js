@@ -112,6 +112,7 @@ function onConnect(status) {
     connection.addHandler(onMessage, null, 'message', null, null, null);
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
+    connection.ping.addPingHandler(onPing);
 
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
@@ -126,6 +127,11 @@ function onConnect(status) {
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
+}
+
+function onPing(pingData) {
+    connection.ping.pong(pingData);
+    return true;
 }
 
 function onSubscriptionRequest(stanza) {
