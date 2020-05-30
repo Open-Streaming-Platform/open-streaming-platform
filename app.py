@@ -258,6 +258,7 @@ from blueprints.apiv1 import api_v1
 from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
 from blueprints.streamers import streamers_bp
+from blueprints.profile import profile_bp
 from blueprints.channels import channels_bp
 from blueprints.topics import topics_bp
 from blueprints.play import play_bp
@@ -276,6 +277,7 @@ app.register_blueprint(channels_bp)
 app.register_blueprint(play_bp)
 app.register_blueprint(clip_bp)
 app.register_blueprint(streamers_bp)
+app.register_blueprint(profile_bp)
 app.register_blueprint(topics_bp)
 app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
