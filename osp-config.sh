@@ -298,7 +298,7 @@ if [ $# -eq 0 ]
           ;;
         1 )
           install_osp
-          result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nInstall Log can be found at /opt/osp/logs/install.log")
+          result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nAlso, Edit the /usr/local/ejabberd/conf/ejabberd.yml file per Install Instructions\n\nInstall Log can be found at /opt/osp/logs/install.log")
           display_result "Install OSP"
           ;;
         2 )
