@@ -588,7 +588,7 @@ function displayProfileBox(elem) {
         openProfilebutton.style.disabled = true;
         openProfilebutton.classList.add('disabled');
     } else {
-        destinationWindow = window.open('/profile/' + username, "OSP Profile","modal=yes,alwaysRaised=yes");
+        destinationWindow = 'window.open("/profile/' + username + '", "OSP Profile","modal=yes,alwaysRaised=yes")';
         openProfilebutton.setAttribute('onclick', destinationWindow);
     }
 
