@@ -165,7 +165,7 @@ extauth_program: "/usr/bin/python3 /opt/osp/setup/ejabberd/auth_osp.py"
 extauth_instances: 3
 
 host_config:
-   "osp.internal.divby0.net":
+   "CHANGEME":
      auth_method:
        - external
        - anonymous
