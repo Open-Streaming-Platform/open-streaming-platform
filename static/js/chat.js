@@ -588,8 +588,8 @@ function displayProfileBox(elem) {
         openProfilebutton.style.disabled = true;
         openProfilebutton.classList.add('disabled');
     } else {
-        destinationOnClick = 'document.location.href="/profile/' + username + '"';
-        openProfilebutton.setAttribute('onclick', destinationOnClick);
+        destinationWindow = window.open('/profile/' + username, "OSP Profile","modal=yes,alwaysRaised=yes");
+        openProfilebutton.setAttribute('onclick', destinationWindow);
     }
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
