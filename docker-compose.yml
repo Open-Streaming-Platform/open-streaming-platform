@@ -2,6 +2,7 @@ version: '3.4'
 services:
   db:
     image: mariadb
+    restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     volumes:
       - ./data/mariadb/db:/var/lib/mysql
@@ -22,6 +23,7 @@ services:
 
   redis:
     image: redis
+    restart: unless-stopped
     expose:
       - 6379
     networks:
