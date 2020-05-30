@@ -19,3 +19,5 @@ sudo systemctl daemon-reload >> $UPGRADELOG 2>&1
 sudo systemctl enable ejabberd >> $UPGRADELOG 2>&1
 sudo systemctl start ejabberd >> $UPGRADELOG 2>&1
 /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $UPGRADELOG 2>&1
+sudo systemctl restart nginx-osp
+sudo systemctl restart osp.target
