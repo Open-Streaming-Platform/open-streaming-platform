@@ -584,7 +584,7 @@ function displayProfileBox(elem) {
     }
 
     if ( /Guest[\d]+/.test(username) ) {
-        div.querySelector('button#profileBox-openProfileButton').style.disable();
+        div.querySelector('button#profileBox-openProfileButton').style.disabled = true;
     } else {
         div.querySelector('button#profileBox-openProfileButton').onclick('/profile/' + username);
     }
