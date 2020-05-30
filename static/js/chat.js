@@ -298,9 +298,6 @@ function onMessage(msg) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
           var msg = Strophe.xmlunescape(Strophe.getText(body))
-          // var nick = Strophe.getResourceFromJid(from);
-
-          // nick = nick.replace('@' + server, '');
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
@@ -321,7 +318,9 @@ function onMessage(msg) {
 
 // format message
 function format_msg(msg){
-    return msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    msg = msg.replace(/<\/?[^>]+(>|$)/g, '');
+    msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    return msg
 }
 
 // Handle Stick Chat Window Scroll
