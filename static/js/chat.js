@@ -583,7 +583,7 @@ function displayProfileBox(elem) {
         div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
     }
 
-    if ( 'Guest/\d+/'.test(username) ) {
+    if ( /Guest[\d]+/.test(username) ) {
         div.querySelector('button#profileBox-openProfileButton').style.disable();
     } else {
         div.querySelector('button#profileBox-openProfileButton').onclick('/profile/' + username);
