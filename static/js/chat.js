@@ -297,6 +297,7 @@ function onMessage(msg) {
       } else if (type == "groupchat" && messageElement.length > 0) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
+          var msg = Strophe.xmlunescape(Strophe.getText(body))
           // var nick = Strophe.getResourceFromJid(from);
 
           // nick = nick.replace('@' + server, '');
@@ -304,7 +305,7 @@ function onMessage(msg) {
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
           tempNode.querySelector("div.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
-          tempNode.querySelector("div.chatMessage").textContent = Strophe.getText(body);
+          tempNode.querySelector("div.chatMessage").innerHTML = format_msg(msg);
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
           var needsScroll = checkChatScroll()
@@ -316,6 +317,11 @@ function onMessage(msg) {
   }
 
   return true;
+}
+
+// format message
+function format_msg(msg){
+    return msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
 }
 
 // Handle Stick Chat Window Scroll
