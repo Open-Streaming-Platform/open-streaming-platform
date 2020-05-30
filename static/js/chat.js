@@ -583,10 +583,13 @@ function displayProfileBox(elem) {
         div.querySelector('button#profileBox-muteButton').innerHTML = '<i class="fas fa-toggle-on"></i> Mute';
     }
 
+    openProfilebutton = div.querySelector('button#profileBox-openProfileButton');
     if ( /Guest[\d]+/.test(username) ) {
-        div.querySelector('button#profileBox-openProfileButton').style.disabled = true;
+        openProfilebutton.style.disabled = true;
+        openProfilebutton.classList.add('disabled');
     } else {
-        div.querySelector('button#profileBox-openProfileButton').onclick('/profile/' + username);
+        destinationOnClick = 'document.location.href="/profile/' + username + '"';
+        openProfilebutton.setAttribute('onclick', destinationOnClick);
     }
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
