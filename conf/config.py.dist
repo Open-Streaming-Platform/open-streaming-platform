@@ -21,3 +21,8 @@ requireEmailRegistration=True
 
 # Enables Debug Mode
 debugMode = False
+
+# EJabberD Configuration
+ejabberdAdmin = "admin"
+ejabberdPass = "CHANGE_EJABBERD_PASS"
+ejabberdHost = "localhost"
