@@ -102,10 +102,6 @@ function onConnect(status) {
   } else if (status == Strophe.Status.CONNECTED) {
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
-    // disco stuff
-    //if (connection.disco) {
-    //    connection.disco.addIdentity('client', 'web');
-    //}
     // set presence
     connection.send($pres());
     // set handlers
@@ -150,6 +146,11 @@ function onSubscriptionRequest(stanza) {
 
 function onPresence(presence) {
   log('onPresence:');
+    // disco stuff
+    if (connection.disco) {
+        connection.disco.info(fullJID)
+        connection.disco.identity('client', 'web', 'OSP Webchat', 'en');
+    }
   var presence_type = $(presence).attr('type'); // unavailable, subscribed, etc...
   var from = $(presence).attr('from'); // the jabber_id of the contact
   if (!presence_type) presence_type = "online";
