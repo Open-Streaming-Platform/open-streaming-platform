@@ -186,7 +186,7 @@ scheduler.start()
 # Initialize ejabberdctl
 ejabberd = None
 try:
-    ejabberd = ejabberdctl('localhost', 'admin', 'password')
+    ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass)
     print(ejabberd.status())
 except Exception as e:
     print("ejabberdctl failed to load: " + str(e))

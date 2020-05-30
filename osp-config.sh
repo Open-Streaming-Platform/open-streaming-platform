@@ -165,7 +165,7 @@ install_osp() {
   fi
 
   # Grab Configuration
-  echo 40 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
+  echo 30 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
   if cd $cwd/setup/nginx
   then
           sudo cp *.conf /usr/local/nginx/conf/ >> $installLog 2>&1
@@ -174,7 +174,7 @@ install_osp() {
           exit 1
   fi
   # Enable SystemD
-  echo 45 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
+  echo 35 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
   if cd $cwd/setup/nginx
   then
           sudo cp nginx-osp.service /etc/systemd/system/nginx-osp.service >> $installLog 2>&1
@@ -184,6 +184,21 @@ install_osp() {
           echo "Unable to find downloaded Nginx config directory. Aborting." >> $installLog 2>&1
           exit 1
   fi
+
+  # Install ejabberd
+  echo 40 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
+  wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
+  sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $installLog 2>&1
+  /tmp/ejabberd-20-04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
+  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
+  mkdir /usr/local/ejabberd/conf >> $installLog 2>&1
+  cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $installLog 2>&1
+  cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
+  sudo systemctl daemon-reload >> $installLog 2>&1
+  sudo systemctl enable ejabberd >> $installLog 2>&1
+  sudo systemctl start ejabberd >> $installLog 2>&1
+  /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $installLog 2>&1
 
   echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn SystemD" 10 70 0
   if cd $cwd/setup/gunicorn
@@ -283,7 +298,7 @@ if [ $# -eq 0 ]
           ;;
         1 )
           install_osp
-          result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nInstall Log can be found at /opt/osp/logs/install.log")
+          result=$(echo "OSP Install Completed! \n\nPlease copy /opt/osp/conf/config.py.dist to /opt/osp/conf/config.py, review the settings, and start the osp service by running typing sudo systemctl start osp.target\n\nAlso, Edit the /usr/local/ejabberd/conf/ejabberd.yml file per Install Instructions\n\nInstall Log can be found at /opt/osp/logs/install.log")
           display_result "Install OSP"
           ;;
         2 )
