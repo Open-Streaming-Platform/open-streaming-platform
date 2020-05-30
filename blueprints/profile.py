@@ -15,7 +15,7 @@ from functions import themes
 
 profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
 
-@profile_bp.route('/username')
+@profile_bp.route('/<username>')
 def profile_view_page(username):
 
     userQuery = Sec.User.query.filter_by(username=username).first()
