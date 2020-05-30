@@ -4,8 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <title>{{stream.streamName}} - Chat</title>
+    <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
     <script type="text/javascript" src="/static/vendor/popper/js/popper.min.js"></script>
+    <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
+    <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
+    <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
+    <script src="/static/js/chat.js" type="text/javascript"></script>
     <link rel=stylesheet type=text/css href="/static/css/shared.css">
     <link rel=stylesheet type=text/css href="/static/css/slider.css">
     <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
@@ -91,10 +99,9 @@
                   <img class="avatar rounded shadow" src="https://picsum.photos/48">
                 </span>-->
                 <span class="chatInfo">
-                  <div class="chatTimestamp float-right"></div>
-                  <div class="chatUsername"></div>
-                  <div class="chatMessage"></div>
-                </span>
+                    <span class="chatTimestamp"></span><span class="chatUsername ml-1"></span>:
+                    <span class="chatMessage ml-1"></span>
+                  </span>
               </div>
           </div>
       
@@ -116,10 +123,10 @@
               </div>
             </div>
             <div class="profileBoxBottom mt-2 mx-2">
-              <button id="profileBox-openProfileButton" type="button" class="btn btn-primary shadow">Profile</button>
-              <button id="profileBox-muteButton" class="btn btn-primary shadow" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
+              <button id="profileBox-openProfileButton" type="button" class="btn btn-sm btn-primary shadow">Profile</button>
+              <button id="profileBox-muteButton" class="btn btn-sm btn-primary" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
               <div id="profileBox-modControls" class="dropdown dropleft float-right" style="display:none;">
-                <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <h6 class="dropdown-header">Mod Controls</h6>
                     <button class="dropdown-item" type="button" onclick="modKick();">Kick</button>

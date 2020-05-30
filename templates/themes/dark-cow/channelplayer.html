@@ -196,18 +196,17 @@
                             <div class="chatCounts">
                                 <h2 class="float-left">Live Chat</h2>
                                 <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-                                <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
                                 <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
                             </div>
                         </div>
                         <div id="chatContentWindow" class="chatContent">
-                            <div id="bannedUsers" class="bannedUsersOverlay slide-in-blurred-top">
+                            <div id="bannedUsers" class="bannedUsersOverlay">
                                 <div class="membersList card my-3">
                                   <div class="card-header bg-primary"><b>Banned Users</b></div>
                                   <div id="OutcastList" class="card-body"></div>
                               </div>
                             </div>
-                            <div id="chatMembers" class="chatMembersOverlay slide-in-blurred-top">
+                            <div id="chatMembers" class="chatMembersOverlay">
                               <div class="membersList card my-3">
                                   <div class="card-header bg-primary"><b>Moderator</b></div>
                                   <div id="ModeratorList" class="card-body"></div>
@@ -221,7 +220,7 @@
                                   <div id="VisitorList" class="card-body"></div>
                               </div>
                             </div>
-                            <div id="chat" class="chatSection slide-in-blurred-top"></div>
+                            <div id="chat" class="chatSection"></div>
                         </div>
                         <div class="chatFooter pl-1">
                           <div class="chatFooterTop"></div>
@@ -245,14 +244,13 @@
                             <img class="avatar rounded shadow" src="https://picsum.photos/48">
                           </span>-->
                           <span class="chatInfo">
-                            <div class="chatTimestamp float-right"></div>
-                            <div class="chatUsername"></div>
-                            <div class="chatMessage"></div>
+                            <span class="chatTimestamp"></span><span class="chatUsername ml-1"></span>:
+                            <span class="chatMessage ml-1"></span>
                           </span>
                         </div>
                     </div>
     
-                    <div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
+                    <div id="profileBox" class="rounded profileBox m-2" data-type="profileBoxTemplate" style="display:none;">
                       <div class="profileBoxHeader">
                         <button type="button" class="close mr-2" data-dismiss="" aria-label="Close" onclick="closeProfileBox();">
                           <span aria-hidden="true">&times;</span>
@@ -270,10 +268,10 @@
                         </div>
                       </div>
                       <div class="profileBoxBottom mt-2 mx-2">
-                        <button id="profileBox-openProfileButton" type="button" class="btn btn-primary shadow">Profile</button>
-                        <button id="profileBox-muteButton" class="btn btn-primary shadow" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
+                        <button id="profileBox-openProfileButton" type="button" class="btn btn-sm btn-primary shadow">Profile</button>
+                        <button id="profileBox-muteButton" class="btn btn-sm btn-primary" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
                         <div id="profileBox-modControls" class="dropdown dropleft float-right" style="display:none;">
-                          <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                               <h6 class="dropdown-header">Mod Controls</h6>
                               <button class="dropdown-item" type="button" onclick="modKick();">Kick</button>

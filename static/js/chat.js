@@ -300,9 +300,9 @@ function onMessage(msg) {
           var msg = Strophe.xmlunescape(Strophe.getText(body))
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-          tempNode.querySelector("div.chatTimestamp").textContent = messageTimestamp;
-          tempNode.querySelector("div.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
-          tempNode.querySelector("div.chatMessage").innerHTML = format_msg(msg);
+          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+          tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+          tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
           var needsScroll = checkChatScroll()

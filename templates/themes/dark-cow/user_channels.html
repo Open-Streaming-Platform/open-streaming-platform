@@ -237,7 +237,7 @@
                                             <label for="rtmpSelect" class="col-form-label"><b>Restream to another RTMP Server </b> - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></label>
                                         </div>
                                         <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="rtmpSelect" name="rtmpSelect" {% if channel.rtmpRestream == True %} checked {% endif %}>
+                                            <input type="checkbox" data-toggle="toggle" data-size="small" id="rtmpSelect" name="rtmpSelect" {% if channel.rtmpRestream == True %} checked {% endif %}>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -252,7 +252,7 @@
                                           <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
                                       </div>
                                       <div class="col-6">
-                                          <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                                          <input type="checkbox" data-toggle="toggle" data-size="small" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                       </div>
                                       <div class="col-12">
                                           <label for="xmppToken" class="col-form-label"><b>Protected Channel XMPP Token </b></label><br>
@@ -490,7 +490,7 @@
                           <label for="moderatedSelect" class="col-form-label"><b>Moderated </b></label>
                         </div>
                         <div class="col-6">
-                          <input type="checkbox" data-toggle="toggle" id="moderatedSelect" name="moderatedSelect"
+                          <input type="checkbox" data-toggle="toggle" data-size="small" id="moderatedSelect" name="moderatedSelect"
                             {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
                         </div>
                       </div>
@@ -499,7 +499,7 @@
                           <label for="allowGuests" class="col-form-label"><b>Allow guests to join room</b></label>
                         </div>
                         <div class="col-6">
-                          <input type="checkbox" data-toggle="toggle" id="allowGuests" name="allowGuests"
+                          <input type="checkbox" data-toggle="toggle" data-size="small" id="allowGuests" name="allowGuests"
                             {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
                         </div>
                       </div>
@@ -509,7 +509,7 @@
                           <label for="allowGuestsChat" class="col-form-label"><b>Allow guests to chat</b></label>
                         </div>
                         <div class="col-6">
-                          <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
+                          <input type="checkbox" data-toggle="toggle" data-size="small" id="allowGuestsChat" name="allowGuestsChat"
                             {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                         </div>
                       </div>

@@ -388,6 +388,8 @@ hr {
     
     .chatPanel {
       display: none;
+      scrollbar-color: #1b1e22 #272b30;
+      scrollbar-width: thin;
       flex-flow: column;
       height: calc(100vh - 170px);
     }
@@ -406,9 +408,7 @@ hr {
     }
     
     .chatPanel .chatContent .chatEntryContainer .chatEntry {
-      padding: 5px 10px 5px 10px;
-      background-color: #ECECEC;
-      min-height: 56px;
+      background-color: #272b30;
       border-radius: 10px;
       margin: 5px;
     }
@@ -424,7 +424,8 @@ hr {
     }
     
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatTimestamp {
-      color: gray;
+      color: grey;
+      font-size: 0.7em;
     }
     
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatUsername {
@@ -442,7 +443,7 @@ hr {
     }
     
     .chatPanel .chatFooter input {
-      background-color: #ECECEC;
+      background-color: #272b30;
       border: 0px solid black;
     }
     
@@ -458,7 +459,7 @@ hr {
     }
     
     #chatside {
-        border-left: 1px solid #eeeeee;
+        border-left: 1px solid #3488db;
         width:550px;
     }
     
@@ -479,16 +480,16 @@ hr {
     }
     
     .profileBox {
-      background-color: white;
+      background-color: #32383e;
       width: 450px;
       height:115px;
-      border: 0px solid black;
+      border: 1px solid black;
     }
     
     .profileBoxHeader {
-      background-color: black;
+      background-color: #272b30;
       border-radius: 5px 5px 0px 0px;
-      color:white;
+      color:#aaa;
       height:60px;
       width:100%;
     }
