@@ -142,9 +142,13 @@ install_osp() {
   if cd /tmp
   then
           sudo wget -q "http://nginx.org/download/nginx-1.17.3.tar.gz"
+          echo 26 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
+          echo 27 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "http://www.zlib.net/zlib-1.2.11.tar.gz"
+          echo 28 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz"
+          echo 29 | dialog --title "Installing OSP" --gauge "Decompressing Nginx Source and Modules" 10 70 0
           sudo tar xfz nginx-1.17.3.tar.gz
           sudo unzip -qq -o v1.2.1.zip >> $installLog 2>&1
           sudo tar xfz zlib-1.2.11.tar.gz
@@ -165,7 +169,7 @@ install_osp() {
   fi
 
   # Grab Configuration
-  echo 30 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
+  echo 37 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
   if cd $cwd/setup/nginx
   then
           sudo cp *.conf /usr/local/nginx/conf/ >> $installLog 2>&1
@@ -174,7 +178,7 @@ install_osp() {
           exit 1
   fi
   # Enable SystemD
-  echo 35 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
+  echo 38 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
   if cd $cwd/setup/nginx
   then
           sudo cp nginx-osp.service /etc/systemd/system/nginx-osp.service >> $installLog 2>&1
@@ -190,11 +194,18 @@ install_osp() {
   wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $installLog 2>&1
   /tmp/ejabberd-20-04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
+  echo 42 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
   mkdir /usr/local/ejabberd/conf >> $installLog 2>&1
   cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $installLog 2>&1
   cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
+  user_input=$(\
+  dialog --nocancel --title "Setting up Ejabberd" \
+         --inputbox "Enter your Site Address (Must match FQDN):" 8 40 \
+  3>&1 1>&2 2>&3 3>&-)
+  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $installLog 2>&1
+  echo 45 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
   sudo systemctl daemon-reload >> $installLog 2>&1
   sudo systemctl enable ejabberd >> $installLog 2>&1
   sudo systemctl start ejabberd >> $installLog 2>&1
