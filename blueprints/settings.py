@@ -796,6 +796,8 @@ def admin_page():
 
             user = Sec.User.query.filter_by(username=username).first()
             user_datastore.add_role_to_user(user, 'User')
+            user.autType = 0
+            user.confirmed_at = datetime.datetime.now()
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
