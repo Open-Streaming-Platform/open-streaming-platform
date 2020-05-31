@@ -202,7 +202,7 @@ install_osp() {
   cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up Ejabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN):" 8 40 \
+         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $installLog 2>&1
   echo 45 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0

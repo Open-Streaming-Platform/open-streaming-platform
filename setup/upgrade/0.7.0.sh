@@ -10,7 +10,7 @@ cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >>
 cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $UPGRADELOG 2>&1
 user_input=$(\
   dialog --nocancel --title "Setting up Ejabberd" \
-         --inputbox "Enter your Site Address (Per OSP Admin Settings):" 8 40 \
+         --inputbox "Enter your Site Address (Per OSP Admin Settings):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
 sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $UPGRADELOG 2>&1
 sudo systemctl daemon-reload >> $UPGRADELOG 2>&1
