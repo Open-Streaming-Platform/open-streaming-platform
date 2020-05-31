@@ -41,7 +41,7 @@ listen:
     max_stanza_size: 524288
   -
     port: 5443
-    ip: "::"
+    ip: "::FFFF:127.0.0.1"
     module: ejabberd_http
     tls: true
     request_handlers:
@@ -53,7 +53,7 @@ listen:
       /ws: ejabberd_http_ws
   -
     port: 5280
-    ip: "::"
+    ip: "::FFFF:127.0.0.1"
     module: ejabberd_http
     request_handlers:
       /admin: ejabberd_web_admin
@@ -75,7 +75,7 @@ listen:
     backlog: 1000
   -
     port: 4560
-    ip: "::"
+    ip: "::FFFF:127.0.0.1"
     module: ejabberd_xmlrpc
     access_commands:
       admin:
