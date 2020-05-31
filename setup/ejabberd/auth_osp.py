@@ -7,7 +7,7 @@ import requests
 
 def auth(user, host, password):
     payload = {'jid': user, 'host': host, 'token': password}
-    r = requests.post('http://127.0.0.1/apiv1/xmpp/auth', data=payload)
+    r = requests.post('http://' + host + '/apiv1/xmpp/auth', data=payload)
     resp = r.json()
     if 'results' in resp:
         code = resp['results']['code']
@@ -21,7 +21,7 @@ def auth(user, host, password):
         return False
 def isUser(user,host):
     payload = {'jid': user, 'host': host}
-    r = requests.post('http://127.0.0.1/apiv1/xmpp/isuser', data=payload)
+    r = requests.post('http://' + host + '/apiv1/xmpp/isuser', data=payload)
     resp = r.json()
     if 'results' in resp:
         code = resp['results']['code']
