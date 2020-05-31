@@ -1,6 +1,7 @@
 import datetime
 import random
 import uuid
+import os
 
 from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
@@ -105,6 +106,7 @@ def oAuthAuthorize(provider):
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
                 user_datastore.add_role_to_user(user, 'User')
                 user.uuid = str(uuid.uuid4())
+                user.xmppToken = str(os.urandom(32).hex())
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, user)

@@ -69,6 +69,7 @@ class User(db.Model, UserMixin):
     authType = db.Column(db.Integer)
     oAuthID = db.Column(db.String(2048))
     oAuthProvider = db.Column(db.String(40))
+    xmppToken = db.Column(db.String(64))
     oAuthToken = db.relationship('OAuth2Token', backref='userObj', lazy='joined')
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
@@ -78,13 +79,13 @@ class User(db.Model, UserMixin):
 
     def serialize(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'uuid': self.uuid,
             'username': self.username,
             'biography': self.biography,
-            'pictureLocation': "/images/" + self.pictureLocation,
+            'pictureLocation': "/images/" + str(self.pictureLocation),
             'channels': [obj.id for obj in self.channels],
-            'page': '/streamers/' + self.id + '/'
+            'page': '/streamers/' + str(self.id) + '/'
         }
 
 class OAuth2Token(db.Model):

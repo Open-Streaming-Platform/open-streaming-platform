@@ -18,10 +18,6 @@ def handle_viewer_total_request(streamData, room=None):
 
     viewers = len(r.smembers(channelLoc + '-streamSIDList'))
 
-    streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
-    if streamUserList is None:
-        streamUserList = []
-
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     if channelQuery is not None:
         channelQuery.currentViewers = viewers
@@ -29,19 +25,12 @@ def handle_viewer_total_request(streamData, room=None):
             stream.currentViewers = viewers
         db.session.commit()
 
-    decodedStreamUserList = []
-    for entry in streamUserList:
-        user = entry.decode('utf-8')
-        # Prevent Duplicate Usernames in Master List, but allow users to have multiple windows open
-        if user not in decodedStreamUserList:
-            decodedStreamUserList.append(user)
-
     db.session.commit()
     db.session.close()
     if room is None:
-        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
+        emit('viewerTotalResponse', {'data': str(viewers)})
     else:
-        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList}, room=room)
+        emit('viewerTotalResponse', {'data': str(viewers)}, room=room)
     return 'OK'
 
 @socketio.on('updateStreamData')

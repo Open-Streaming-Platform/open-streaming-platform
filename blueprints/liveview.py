@@ -56,7 +56,11 @@ def view_page(loc):
                 if hideBarReq == "True" or hideBarReq == "true":
                     hideBar = True
 
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar)
+                guestUser = None
+                if 'guestUser' in request.args and current_user.is_authenticated is False:
+                    guestUser = request.args.get("guestUser")
+
+                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 

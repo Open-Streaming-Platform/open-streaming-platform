@@ -48,6 +48,7 @@
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');" data-toggle="tooltip" data-placement="right" title="Videos"><h2><i class="fas fa-video"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');" data-toggle="tooltip" data-placement="right" title="Clips"><h2><i class="fas fa-cut"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');" data-toggle="tooltip" data-placement="right" title="Settings"><h2><i class="fas fa-cog"></i></h2></a></div>
+              <div class="my-5">{% if channel.chatEnabled == True %}<a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','chatSettingsWindow');" data-toggle="tooltip" data-placement="right" title="Chat"><h2><i class="fas fa-comment"></i></h2></a>{% else %}<a href="#" data-toggle="tooltip" data-placement="right" title="Chat is disabled"><h2><i class="far fa-comment"></i></h2></a>{% endif %}</div>
             </div>
           </div>
           <div class="col-9 col-sm-10 col-lg-11">
@@ -252,55 +253,17 @@
                                         <div class="col-6">
                                             <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                                {% for background in channelChatBGOptions %}
-                                                <option value="{{background['value']}}" {% if channel.chatBG == background['value'] %} selected {% endif %}>{{background['name']}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatAnimation-{{channel.id}}" class="col-form-label"><b>Chat Animation </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                                {% for anim in channelChatAnimationOptions %}
-                                                <option value="{{anim['value']}}" {% if channel.chatAnimation == anim['value'] %} selected {% endif %}>{{anim['name']}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatTextColor-{{channel.id}}" class="col-form-label"><b>Chat Text Color </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
-                                        </div>
-                                    </div>
-                                    <h5>Chat Preview</h5>
-                                    <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
-                                        <div class="charBar-Item-Image">
-                                            <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
-                                        </div>
-                                        <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
-                                            <b>{{current_user.username}}</b> 12:00
-                                            <br>This is just a test
+                                        <div class="col-12">
+                                            <label for="xmppToken" class="col-form-label"><b>Protected Channel XMPP Token </b></label><br>
+                                            <div class="input-group">
+                                              <div class="input-group-prepend">
+                                                  <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken-{{channel.id}}');"><i class="fas fa-copy"></i></button>
+                                              </div>
+                                              <input type="text" class="form-control" id="xmppToken-{{channel.id}}" name="xmppToken" value="{{channel.xmppToken}}" readonly required><br>
+                                            </div>
+                                            <small id="xmppTokenHelpBlock" class="form-text text-muted">
+                                                Given to Authorized Users to Connect to a Protected Channel's XMPP Chat Room
+                                            </small>
                                         </div>
                                     </div>
 
@@ -502,6 +465,118 @@
                         </div>
                     </div>
                 </form>
+            </div>
+
+            <div id="chatSettingsWindow-{{channel.id}}" style="display:none;">
+              <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
+                <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
+                  <div>
+                    <div class="row">
+                      <div class="col-xl-4 col-lg-6 col-md-12">
+                        <div class="form-group">
+                          <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
+                          <input type="text" class="form-control" name="roomTitle" id="roomTitle"
+                            value="{{channelRooms[channel.channelLoc]['title']}}">
+                        </div>
+                        <div class="form-group">
+                          <label for="roomDescr" class="col-form-label"><b>Description</b></label>
+                          <input type="text" class="form-control" name="roomDescr" id="roomDescr"
+                            value="{{channelRooms[channel.channelLoc]['description']}}">
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-md-12">
+                        <div class="form-group row">
+                          <div class="col-6">
+                            <label for="moderatedSelect" class="col-form-label"><b>Moderated </b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="moderatedSelect" name="moderatedSelect"
+                              {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <div class="col-6">
+                            <label for="allowGuests" class="col-form-label"><b>Allow guests to join room</b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="allowGuests" name="allowGuests"
+                              {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
+                          </div>
+                        </div>
+                        <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsChatTooltip"
+                          title="Has no effect if moderation is disabled">
+                          <div class="col-6">
+                            <label for="allowGuestsChat" class="col-form-label"><b>Allow guests to chat</b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
+                              {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-12">
+                        <div id="moderators-{{channel.id}}">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="card">
+                                <div class="card-header">
+                                  <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
+                                </div>
+                                <div class="card-body">
+                                  <div class="form-row">
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
+                                          Moderator</b></label>
+                                      <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
+                                      <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                                        onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-12" id="mods-{{channel.channelLoc}}">
+                                      <div class="row">
+                                        <div class="col-12 mb-2"><b>Username</b></div>
+                                      </div>
+                                      {% for mod in channelMods[channel.channelLoc] %}
+                                      <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <p>{{mod}}</p>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
+                                        </div>
+                                      </div>
+                                      {% endfor %}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr>
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
+                  <div>
+                  </div>
+                  <div>
+                    <div class="row">
+                      <div class="col-12">
+                        <input type="submit" class="btn btn-success" value="&#128393; Edit">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -1548,11 +1623,13 @@ function openChannelWindow(divID, windowName) {
     var videoWindow = document.getElementById('videoWindow-' + divID);
     var clipWindow = document.getElementById('clipWindow-' + divID);
     var settingsWindow = document.getElementById('settingsWindow-' + divID);
+    var chatSettingsWindow = document.getElementById('chatSettingsWindow-' + divID);
 
     statWindow.style.display = 'none';
     videoWindow.style.display = 'none';
     clipWindow.style.display = 'none';
     settingsWindow.style.display = 'none';
+    chatSettingsWindow.style.display = 'none';
 
     openWindow.style.display = 'block';
 }
@@ -1643,6 +1720,34 @@ function openChannelWindow(divID, windowName) {
     var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 </script>
+
+<script>
+    function addMod(channelLoc) {
+        var addModTextInput = document.getElementById('addModText-' + channelLoc);
+        var JID = addModTextInput.value;
+        socket.emit('addMod', {JID: JID, channelLoc: channelLoc});
+        addModTextInput.value = "";
+    }
+</script>
+
+<script>
+    function deleteMod(mod, channelLoc) {
+        socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc});
+        var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
+        modRow.parentNode.removeChild(modRow);
+        createNewBSAlert("Moderator permission revoked", "Success");
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8">
+    socket.on('addMod', function (msg) {
+        var mod = msg['mod'];
+        var channelLoc = msg['channelLoc'];
+        $('#mods-' + channelLoc).append('<div class="row" id="mod-' + channelLoc + '-' + mod + '"><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><p>' + mod + '</p></div><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><button type="button" class="btn btn-sm btn-danger" onclick="deleteMod(\'' + mod + '\', ' + '\'' + channelLoc + '\')"><i class="far fa-trash-alt"></i></button></div></div>');
+        createNewBSAlert("Moderator permission granted to " + mod, "Success");
+    });
+</script>
+
 
 <script>
     function generateInviteCode(channelID) {

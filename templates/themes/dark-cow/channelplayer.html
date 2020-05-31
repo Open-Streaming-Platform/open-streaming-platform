@@ -19,6 +19,14 @@
 <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
 <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+<script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
+<script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
+<script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
+<script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
+<script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
+<script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
+
+<script src="/static/js/chat.js" type="text/javascript"></script>
 
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
@@ -122,10 +130,6 @@
                                                 data-toggle="button" aria-pressed="false" autocomplete="off"
                                                 onclick="toggleChat()" href="#"><i class="fas fa-eye-slash"></i> Toggle
                                                 chat</a>
-                                            <a class="dropdown-item" id="userList" tabindex="10" data-html="true"
-                                                data-toggle="popover" title="User List" data-trigger="focus"
-                                                data-content="" data-placement="top" href="#"><i
-                                                    class="fas fa-users"></i> User list</a>
                                             <a class="dropdown-item" onClick="popoutChat();return false;"
                                                 class="btn btn-primary {% if channel.chatEnabled == False %}disabled {% endif %}"
                                                 title="Pop-out Chat" href="#"><i class="fas fa-comment"></i> Pop-out
@@ -161,17 +165,127 @@
                     </div>
                 </div>
                 {% if channel.chatEnabled == True %}
-                <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12">
-                    <div class="row ml-2 mr-1">
-                        <div class="index-video-title mb-2"><b>Chat</b></div>
-                        <div class="chatbox" id="chatBlock">
-                            <div id="chat" class="chat"></div><br>
-                            <input id="text" class="form-control shadow" {% if current_user.is_authenticated==false %}
-                                disabled placeholder="Login to Chat" {% else %} placeholder="Type Message Here..."
-                                {% endif %}>
-                            <span class="float-right"><button id="chatSubmit" class="btn btn-success btn-sm"
-                                    onclick="sendChat();">Send</button></span>
+                <div id="chatside" class="col-lg-auto col-xs-12 col-sm-12" >
+                    <div style="height:1000px;">
+                      <div id="loader" class="chatloader">
+                          <div class="chatloader-view">
+                              <h2>Connecting...</h2>
+                              <div class="d-flex justify-content-center">
+                                  <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div id="unavailable" class="chatloader">
+                          <div class="chatloader-view">
+                              <h2>You have been disconnected from the chat.</h2><br>
+                              <br>
+                              <div id="disconnectReason">Reason: (<span id="reasonCode"></span>) - <span id="reasonText"></span></div><br><br>
+                              <h1><i class="fas fa-exclamation-triangle"></i></h1><br>
+                              <br>
+                              <button class="btn btn-success" onclick="connectChat();">Reconnect</button>
+                          </div>
+                      </div>
+                      <div id="chatPanel" class="chatPanel my-2">
+                        <div class="chatHeader my-2">
+                            <div class="chatCounts">
+                                <h2 class="float-left">Live Chat</h2>
+                                <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+                                <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
+                            </div>
                         </div>
+                        <div id="chatContentWindow" class="chatContent">
+                            <div id="bannedUsers" class="bannedUsersOverlay">
+                                <div class="membersList card my-3">
+                                  <div class="card-header bg-primary"><b>Banned Users</b></div>
+                                  <div id="OutcastList" class="card-body"></div>
+                              </div>
+                            </div>
+                            <div id="chatMembers" class="chatMembersOverlay">
+                              <div class="membersList card my-3">
+                                  <div class="card-header bg-primary"><b>Moderator</b></div>
+                                  <div id="ModeratorList" class="card-body"></div>
+                              </div>
+                              <div class="membersList card my-3">
+                                  <div class="card-header bg-primary"><b>Member</b></div>
+                                  <div id="ParticipantList" class="card-body"></div>
+                              </div>
+                              <div class="membersList card my-3">
+                                  <div class="card-header bg-primary"><b>Guest</b></div>
+                                  <div id="VisitorList" class="card-body"></div>
+                              </div>
+                            </div>
+                            <div id="chat" class="chatSection"></div>
+                        </div>
+                        <div class="chatFooter pl-1">
+                          <div class="chatFooterTop"></div>
+                          <div class="chatFooterInput">
+                              <div class="input-group">
+                                  <input id="chatinput" type="text" class="form-control">
+                                  <div class="input-group-append">
+                                    <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="chatFooterBottom"></div>
+                          <div id='log' style="display:none;"></div>
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
+                        <div class="chatEntry flexbox">
+                          <!--<span class="chatImage float-left">
+                            <img class="avatar rounded shadow" src="https://picsum.photos/48">
+                          </span>-->
+                          <span class="chatInfo">
+                            <span class="chatTimestamp"></span><span class="chatUsername ml-1"></span>:
+                            <span class="chatMessage ml-1"></span>
+                          </span>
+                        </div>
+                    </div>
+    
+                    <div id="profileBox" class="rounded profileBox m-2" data-type="profileBoxTemplate" style="display:none;">
+                      <div class="profileBoxHeader">
+                        <button type="button" class="close mr-2" data-dismiss="" aria-label="Close" onclick="closeProfileBox();">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <img id="profileBox-photo" src="/static/img/user2.png" class="profileBoxPic rounded shadow m-2 float-left">
+                        <span id="profileBox-username" class="py-2 font-weight-bold"></span><br>
+                        <div id="iconBar">
+                          <span class="iconBarIcon" id="iconBar-owner" style="display:none;"><i class="fas fa-crown" data-toggle="tooltip" data-placement="bottom" title="Owner"></i></span>
+                          <span class="iconBarIcon" id="iconBar-admin" style="display:none;"><i class="fas fa-user-tie" data-toggle="tooltip" data-placement="bottom" title="Admin"></i></span>
+                          <span class="iconBarIcon" id="iconBar-member" style="display:none;"><i class="iconBarIcon fas fa-award" data-toggle="tooltip" data-placement="bottom" title="Member"></i></span>
+                          <span class="iconBarIcon" id="iconBar-mod" style="display:none;"><i class="iconBarIcon fas fa-user-shield" data-toggle="tooltip" data-placement="bottom" title="Moderator"></i></span>
+                          <span class="iconBarIcon" id="iconBar-voice" style="display:none;"><i class="iconBarIcon fas fa-bullhorn" data-toggle="tooltip" data-placement="bottom" title="Participant"></i></span>
+                          <span class="iconBarIcon" id="iconBar-visitor" style="display:none;"><i class="fas fa-user" data-toggle="tooltip" data-placement="bottom" title="Visitor"></i></span>
+                          <span class="iconBarIcon" id="iconBar-muted" style="display:none;"><i class="iconBarIcon fas fa-comment-slash" data-toggle="tooltip" data-placement="bottom" title="Muted"></i></span>
+                        </div>
+                      </div>
+                      <div class="profileBoxBottom mt-2 mx-2">
+                        <button id="profileBox-openProfileButton" type="button" class="btn btn-sm btn-primary shadow">Profile</button>
+                        <button id="profileBox-muteButton" class="btn btn-sm btn-primary" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
+                        <div id="profileBox-modControls" class="dropdown dropleft float-right" style="display:none;">
+                          <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <h6 class="dropdown-header">Mod Controls</h6>
+                              <button class="dropdown-item" type="button" onclick="modKick();">Kick</button>
+                              <button class="dropdown-item" type="button" onclick="modBan();">Ban</button>
+                              <div class="dropdown-divider"></div>
+                              <h6 class="dropdown-header">Change Role</h6>
+                              <button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Moderator</button>
+                              <button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Member</button>
+                              <button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as Guest</button>
+                              <div class="dropdown-divider"></div>
+                              <h6 class="dropdown-header">Channel Voice Controls</h6>
+                              <!--<button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button>-->
+                              <button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button>
+                              <button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button>
+    
+                          </div>
+                        </div>
+                      </div>
                     </div>
                 </div>
                 {% endif %}
@@ -459,64 +573,73 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
-            var userBoxHTML = "";
-            var userList = msg['userList'];
-            var userListLength = userList.length;
-            for (var i = 0; i < userListLength; i++) {
-                userBoxHTML = userBoxHTML.concat(userList[i], '<br>');
-            }
-            var userListElement = document.getElementById("userList");
-            userListElement.setAttribute("data-content", userBoxHTML);
         });
     </script>
 
-    <script>
-        var chatTimer;
-        var chatThrottled = false;
-        var chatTimeout = 2000;
+<script>
+    // Settings and Event Hooks for XMPP
+    {% if current_user.is_authenticated %}
+    var username = "{{current_user.username}}";
+    var xmppPassword = "{{current_user.xmppToken}}";
+    {% else %}
+    var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+    var xmppPassword = "fakepw";
+    {% endif %}
+    var serverproto = '{{sysSettings.siteProtocol}}';
+    var server = '{{sysSettings.siteAddress}}';
+    var BOSH_SERVICE = serverproto + server + '/http-bind/';
+    var ROOM_SERVICE = 'conference.' + server;
+    var ROOMNAME = '{{channel.channelLoc}}';
+    var CHANNELPROTECTED = {{channel.protected|lower}};
+    {% if channel.protected %}
+    var CHANNELTOKEN = '{{channel.xmppToken}}';
+    {% else %}
+    var CHANNELTOKEN = null;
+    {% endif %}
+    var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
 
-        function chatThrottleDisable() {
-            chatThrottled = false;
+    var ChatContentWindow = document.getElementById("chatContentWindow");
+    var ChatInputBar = document.getElementById('chatinput');
+    ChatInputBar.placeholder = "Send Message As " + username + "...";
+
+    $('#chatinput').on('keyup', function(e) {
+        if (e.keyCode === 13) {
+            sendMessage();
         }
+    });
 
-        function sendChat() {
-            if (chatThrottled == false) {
-                text = $('#text').val();
-                $('#text').val('');
-                socket.emit('text', {msg: text, room: '{{channel.channelLoc}}'});
-                chatThrottled = true;
-                chatTimer = setTimeout(chatThrottleDisable, chatTimeout);
-            }
+    // Hide Profile Box on Click Outside
+    $(document).mouseup(function(e)
+    {
+      var container = $("#newProfileBox");
+        if (!container.is(e.target) && container.has(e.target).length === 0)
+        {
+            container.remove();
+        }
+    });
 
-        };
+    // Start Connection on Load
+    $(window).bind('load', function() {
+        var url = BOSH_SERVICE;
+        connection = new Strophe.Connection(url);
+        connection.rawInput = rawInput;
+        connection.rawOutput = rawOutput;
+        connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+    });
 
-        $('#text').keypress(function(e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
-                sendChat();
-            }
-        });
-    </script>
-
-    <script>
-
-        socket.on('message', function (data) {
-            var today = new Date();
-            var h = today.getHours();
-            var m = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes();
-            var s = today.getSeconds();
-            //var message = decodeURIComponent((escape(decodeURIComponent(data['msg']))));
-            var message = data['msg'];
-            if (data['flags'] === 'Owner') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-crown"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            } else if (data['flags'] === 'Bot') {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> <i class="fas fa-robot"></i> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            } else {
-                $('#chat').append('<div class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}"><div class="charBar-Item-Image"><img src="' + data['image'] + '" width="52px" height="52px"></div><div class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};"><b>' + data['user'] + '</b> ' + h + ':' + m + '<br>' + message + '</div></div>');
-            }
-            $('#chat').animate({ scrollTop: 1000000 }, "fast");
-        });
-    </script>
+    // Disconnect XMPP on Page Unload
+    $(window).bind('unload', function(){
+          // Leave Room First
+          exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+          // Execute XMPP Disconnection Process
+          connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+          connection.flush();
+          connection.disconnect();
+          // Disconnect from SocketIO
+          socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+          socket.close();
+    });
+</script>
 
     <script>
         $(function () {
@@ -580,13 +703,17 @@
         }
     </script>
 
-    <script>
-        function popoutChat() {
-            MyWindows = window.open('/view/{{channel.channelLoc}}/?chatOnly=True', 'myWindow', 'width=500,height=850');
-            var chatbox = document.getElementById("chatside");
-            chatbox.style.display = "none";
-        }
-    </script>
+<script>
+    function popoutChat() {
+        {% if current_user.is_authenticated %}
+        MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
+        {% else %}
+        MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
+        {% endif %}
+        var chatbox = document.getElementById("chatside");
+        chatbox.style.display = "none";
+    }
+</script>
 
     <script>
         function submitStreamChanges() {
@@ -699,6 +826,42 @@
             socket.emit('toggleChannelSubscription', { channelID: chanID });
         }
     </script>
+
+<script>
+    function getBanList() {
+        console.log("Requesting Ban List");
+        socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
+    }
+
+    function clearBan(username, affiliation) {
+        setAffiliation(username, affiliation);
+        setTimeout(function(){
+            getBanList();
+        }, 2000);
+        return true;
+    }
+
+    socket.on('returnBanList', function(msg) {
+        console.log("Receiving Ban List");
+
+        document.getElementById('bannedUsers').style.display = 'block';
+        document.getElementById('chatMembers').style.display = 'none';
+        document.getElementById('chat').style.display = 'none';
+
+        banList = document.getElementById('OutcastList');
+        banList.innerHTML = "";
+        for (let i = 0; i < msg['results'].length; i++){
+            var iDiv = document.createElement('div');
+            iDiv.className = 'bannedUser';
+            var username = msg["results"][i]["username"];
+            var onclickCmd = "clearBan('" + username + "','none');"
+            iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
+            banList.appendChild(iDiv);
+        }
+        console.log(msg);
+    });
+</script>
+
     <script>
 
         socket.on('sendChanSubResults', function (msg) {

@@ -68,28 +68,6 @@ def handle_new_viewer(streamData):
 
     join_room(streamData['data'])
 
-    if requestedChannel.showChatJoinLeaveNotification:
-        if current_user.is_authenticated:
-            pictureLocation = current_user.pictureLocation
-            if current_user.pictureLocation is None:
-                pictureLocation = '/static/img/user2.png'
-            else:
-                pictureLocation = '/images/' + pictureLocation
-
-            streamUserList = r.smembers(channelLoc + '-streamUserList')
-            if streamUserList is None:
-                r.rpush(channelLoc + '-streamUserList', current_user.username)
-            elif current_user.username.encode('utf-8') not in streamUserList:
-                r.rpush(channelLoc + '-streamUserList', current_user.username)
-
-            emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
-        else:
-            emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-
-    else:
-        if current_user.is_authenticated:
-            r.rpush(channelLoc + '-streamUserList', current_user.username)
-
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
         if current_user.pictureLocation is None:
@@ -145,24 +123,6 @@ def handle_leaving_viewer(streamData):
             stream.currentViewers = 0
         db.session.commit()
     leave_room(streamData['data'])
-
-    if current_user.is_authenticated:
-        streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
-        if streamUserList is not None:
-            r.lrem(channelLoc + '-streamUserList', 1, current_user.username)
-
-        if requestedChannel.showChatJoinLeaveNotification:
-            pictureLocation = current_user.pictureLocation
-            if current_user.pictureLocation is None:
-                pictureLocation = '/static/img/user2.png'
-            else:
-                pictureLocation = '/images/' + pictureLocation
-
-            emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
-    else:
-        if requestedChannel.showChatJoinLeaveNotification:
-            emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-
 
     handle_viewer_total_request(streamData, room=streamData['data'])
 
