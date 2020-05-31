@@ -459,8 +459,8 @@ hr {
     }
     
     #chatside {
-        border-left: 1px solid #3488db;
-        width:550px;
+        border-left: 1px solid #32383e;
+        width:400px;
     }
     
     .chatbox-popout {
@@ -481,7 +481,7 @@ hr {
     
     .profileBox {
       background-color: #32383e;
-      width: 450px;
+      width: 300px;
       height:115px;
       border: 1px solid black;
     }

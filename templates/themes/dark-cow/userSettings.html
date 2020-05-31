@@ -80,7 +80,13 @@
     </div>
 </div>
 
-
+<script>
+    function CopyAPI(divVal) {
+      var copyText = document.getElementById(divVal);
+      copyText.select();
+      document.execCommand("copy");
+    }
+</script>
 
 <script>
     var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
