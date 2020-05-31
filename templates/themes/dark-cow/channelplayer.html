@@ -573,14 +573,6 @@
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
-            var userBoxHTML = "";
-            var userList = msg['userList'];
-            var userListLength = userList.length;
-            for (var i = 0; i < userListLength; i++) {
-                userBoxHTML = userBoxHTML.concat(userList[i], '<br>');
-            }
-            var userListElement = document.getElementById("userList");
-            userListElement.setAttribute("data-content", userBoxHTML);
         });
     </script>
 
