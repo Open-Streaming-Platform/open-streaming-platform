@@ -95,6 +95,7 @@ RUN cp /opt/osp/setup/nginx/mime.types /usr/local/nginx/conf/
 
 # Install Python, Gunicorn, and uWSGI
 RUN apk add python3 \
+  py3-pip \
   py3-setuptools \
   python3-dev \
   py3-gunicorn \
