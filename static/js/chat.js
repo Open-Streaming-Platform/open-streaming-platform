@@ -108,6 +108,7 @@ function onConnect(status) {
     connection.addHandler(onMessage, null, 'message', null, null, null);
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
+    connection.disco.addFeature(Strophe.NS.PING);
     connection.ping.addPingHandler(onPing);
 
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
@@ -125,8 +126,8 @@ function onConnect(status) {
   }
 }
 
-function onPing(pingData) {
-    connection.ping.pong(pingData);
+function onPing(ping) {
+    connection.ping.pong(ping);
     return true;
 }
 
