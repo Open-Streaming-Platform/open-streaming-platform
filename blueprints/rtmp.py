@@ -54,7 +54,6 @@ def streamkey_check():
 
                 validAddress = system.formatSiteAddress(sysSettings.siteAddress)
 
-                externalIP = socket.gethostbyname(validAddress)
                 existingStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).all()
                 if existingStreamQuery:
                     for stream in existingStreamQuery:
