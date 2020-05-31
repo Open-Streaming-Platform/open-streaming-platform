@@ -1,3 +1,16 @@
+0.7.0
+==============================================
+Fixed an issue where Authenticate Type was not set to local when creating a user via the Admin Settings Page
+Removed Resolvable Hostname Check which was unused
+Safari Improvements to Dark-Cow
+Updated Flask-SocketIO to 4.3.0
+Updated Python-EngineIO to 3.13.0
+Updated Python-SocketIO to 4.6.0
+Fixes for Renaming Clips which was causing a crash
+Fixes for places where Password Fields were autocompleting in dark-cow
+Docker fixes for latest Alphine release
+
+
 Beta-6d
 ==============================================
 Fix for Missing CSS file for Stream Iframe Embeds
