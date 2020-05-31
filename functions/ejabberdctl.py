@@ -246,7 +246,8 @@ class ejabberdctl(object):
     # TODO def get_room_occupants(self, name, service):
     # Get the list of occupants of a MUC room
 
-    # TODO def get_room_occupants_number(self, name, service):
+    def get_room_occupants_number(self, name, service):
+        return self.ctl('get_room_occupants_number', {'name': name, 'service': service})
     # Get the number of occupants of a MUC room
 
     def get_room_options(self, name, service):
