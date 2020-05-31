@@ -9,6 +9,7 @@ from classes import settings
 from functions import system
 from functions import webhookFunc
 from functions import templateFilters
+from functions import xmpp
 
 from app import r
 
@@ -16,7 +17,7 @@ from app import r
 def handle_viewer_total_request(streamData, room=None):
     channelLoc = str(streamData['data'])
 
-    viewers = len(r.smembers(channelLoc + '-streamSIDList'))
+    viewers = xmpp.getChannelCounts(channelLoc)
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     if channelQuery is not None:

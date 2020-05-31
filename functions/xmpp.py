@@ -75,3 +75,11 @@ def cleanInvalidRooms():
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
     print('Invalid Rooms Pruned: ' + str(count) )
+
+def getChannelCounts(channelLoc):
+    sysSettings = settings.query.first()
+
+    roomOccupantsJSON = ejabberd.get_room_occupants_number(channelLoc, "conference." + sysSettings.siteAddress)
+    currentViewers = roomOccupantsJSON['occupants']
+
+    return currentViewers
