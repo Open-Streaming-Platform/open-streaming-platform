@@ -9,6 +9,7 @@ from classes import Stream
 
 from functions import webhookFunc
 from functions import templateFilters
+from functions import xmpp
 
 from functions.socketio.stream import handle_viewer_total_request
 
@@ -16,14 +17,14 @@ from app import r
 
 @socketio.on('disconnect')
 def disconnect():
-    userSID = request.sid
-    ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
-    for chan in ChannelQuery:
-        streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
-        if userSID in streamSIDList:
-            r.srem(chan.channelLoc + '-streamSIDList', userSID)
-    db.session.commit()
-    db.session.close()
+    #userSID = request.sid
+    #ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
+    #for chan in ChannelQuery:
+    #    streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
+    #    if userSID in streamSIDList:
+    #        r.srem(chan.channelLoc + '-streamSIDList', userSID)
+    #db.session.commit()
+    #db.session.close()
     return 'OK'
 
 @socketio.on('newViewer')
@@ -36,14 +37,15 @@ def handle_new_viewer(streamData):
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     #userSID = request.cookies.get('ospSession')
-    userSID = request.sid
-    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    if streamSIDList is None:
-        r.sadd(channelLoc + '-streamSIDList', userSID)
-    elif userSID.encode('utf-8') not in streamSIDList:
-        r.sadd(channelLoc + '-streamSIDList', userSID)
+    #userSID = request.sid
+    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    #if streamSIDList is None:
+    #    r.sadd(channelLoc + '-streamSIDList', userSID)
+    #elif userSID.encode('utf-8') not in streamSIDList:
+    #    r.sadd(channelLoc + '-streamSIDList', userSID)
 
-    currentViewers = len(streamSIDList)
+    #currentViewers = len(streamSIDList)
+    currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     streamName = ""
     streamTopic = 0
@@ -100,17 +102,20 @@ def handle_new_viewer(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
+    sysSettings = settings.settings.query.first()
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     #userSID = request.cookies.get('ospSession')
-    userSID = request.sid
+    #userSID = request.sid
 
-    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    if streamSIDList is not None:
-        r.srem(channelLoc + '-streamSIDList', userSID)
+    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    #if streamSIDList is not None:
+    #    r.srem(channelLoc + '-streamSIDList', userSID)
 
-    currentViewers = len(streamSIDList)
+    # currentViewers = len(streamSIDList)
+    currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     requestedChannel.currentViewers = currentViewers
     if requestedChannel.currentViewers < 0:

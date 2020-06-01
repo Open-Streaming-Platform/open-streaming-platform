@@ -193,7 +193,7 @@ install_osp() {
   echo 40 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
   wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $installLog 2>&1
-  /tmp/ejabberd-20-04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
+  /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
   echo 42 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
