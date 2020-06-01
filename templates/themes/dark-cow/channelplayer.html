@@ -6,10 +6,10 @@
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
 <meta property="og:title" content="{{channel.channelName}}" />
 <meta property="og:type" content="video.other" />
-<meta property="og:url" content="{{request.url|normalize_url}}" />
-<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/images/{{channel.imageLocation}}" />
+<meta property="og:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/view/{{channel.channelLoc}}" />
+<meta property="og:image" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/images/{{channel.imageLocation}}" />
 <meta property="og:description" content="{{channel.description}}" />
-<meta property="og:video" content="{{request.url_root|normalize_urlroot}}{{streamURL}}" />
+<meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
 <meta property="og:video:type" content="application/x-mpegURL" />
 
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>

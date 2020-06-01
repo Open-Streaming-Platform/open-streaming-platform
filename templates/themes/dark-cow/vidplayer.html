@@ -5,15 +5,15 @@
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
 <meta property="og:title" content="{{video.channelName}}" />
 <meta property="og:type" content="video.other" />
-<meta property="og:url" content="{{request.url|normalize_url}}" />
-<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/videos/{{video.thumbnailLocation}}" />
+<meta property="og:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/{{video.id}}" />
+<meta property="og:image" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/videos/{{video.thumbnailLocation}}" />
 <meta property="og:description" content="{{video.description}}" />
 <meta property="description" content="{{video.description}}" />
-<meta property="og:video" content="{{request.url_root|normalize_urlroot}}{{streamURL}}" />
+<meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
 <meta property="og:video:type" content="video/mp4" />
 <meta name="twitter:title" content="{{video.channelName}}" />
 <meta name="twitter:card" content="player"/>
-<meta name="twitter:url" content="{{request.url|normalize_url}}" />
+<meta name="twitter:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/{{video.id}}" />
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 
