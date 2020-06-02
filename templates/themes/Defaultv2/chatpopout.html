@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="col-12">
-  <div>
+    <div>
       <div id="loader" class="chatloader">
           <div class="chatloader-view">
               <h2>Connecting...</h2>
@@ -42,11 +42,12 @@
               <button class="btn btn-success" onclick="connectChat();">Reconnect</button>
           </div>
       </div>
-      <div id="chatPanel" class="chatPanel my-2" style="height: calc(100vh - 20px)">
+      <div id="chatPanel" class="chatPanel my-2">
         <div class="chatHeader my-2">
             <div class="chatCounts">
                 <h2 class="float-left">Live Chat</h2>
                 <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+                <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
                 <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
             </div>
         </div>
@@ -92,9 +93,9 @@
     <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
         <div class="chatEntry flexbox">
           <span class="chatInfo">
-            <div class="chatTimestamp float-right"></div>
-            <div class="chatUsername"></div>
-            <div class="chatMessage"></div>
+            <div><span class="chatTimestamp float-right"></span></div>
+            <div><span class="chatUsername"></span></div>
+            <div><span class="chatMessage"></span></div>
           </span>
         </div>
     </div>
