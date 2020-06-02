@@ -176,6 +176,8 @@
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
         var xmppPassword = "{{current_user.xmppToken}}";
+        {% if guestUser != None and current_user.is_authenticated == False %}
+        var username = "{{guestUser}}";
         {% else %}
         var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
         var xmppPassword = "fakepw";
