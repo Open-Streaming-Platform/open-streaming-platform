@@ -348,7 +348,7 @@ body {
 }
 
 .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatTimestamp {
-  color: gray;
+  color: white;
 }
 
 .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatUsername {
@@ -366,7 +366,7 @@ body {
 }
 
 .chatPanel .chatFooter input {
-  background-color: #ECECEC;
+  background-color: #262424;
   border: 0px solid black;
 }
 
