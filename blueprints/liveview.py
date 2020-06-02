@@ -64,7 +64,7 @@ def view_page(loc):
                     userQuery = Sec.User.query.filter_by(username=guestUser).first()
                     if userQuery is not None:
                         flash("Invalid User","error")
-                        return(redirect(url_for("main_page")))
+                        return(redirect(url_for("root.main_page")))
 
                 return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser)
             else:
