@@ -91,9 +91,6 @@
 
     <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
         <div class="chatEntry flexbox">
-          <!--<span class="chatImage float-left">
-            <img class="avatar rounded shadow" src="https://picsum.photos/48">
-          </span>-->
           <span class="chatInfo">
             <div class="chatTimestamp float-right"></div>
             <div class="chatUsername"></div>
@@ -145,117 +142,140 @@
     </div>
 </div>
 
-<script type="text/javascript" charset="utf-8">
-    var conn_options = {
-        'sync disconnect on unload':true
-    };
+    <script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload':true
+        };
 
-    var socket = io("/", {reconnection: true, forceNew: false});
-</script>
+        var socket = io("/", {reconnection: true, forceNew: false});
+    </script>
 
-<script>
-    // Settings and Event Hooks for XMPP
-    {% if current_user.is_authenticated %}
-    var username = "{{current_user.username}}";
-    var xmppPassword = "{{current_user.xmppToken}}";
-    {% else %}
-    {% if guestUser != None and current_user.is_authenticated == False %}
-    var username = '{{guestUser}}';
-    {% else %}
-    var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
-    {% endif %}
-    var xmppPassword = "fakepw";
-    {% endif %}
-    var serverproto = '{{sysSettings.siteProtocol}}';
-    var server = '{{sysSettings.siteAddress}}';
-    var BOSH_SERVICE = serverproto + server + '/http-bind/';
-    var ROOM_SERVICE = 'conference.' + server;
-    var ROOMNAME = '{{channel.channelLoc}}';
-    var CHANNELPROTECTED = {{channel.protected|lower}};
-    {% if channel.protected %}
-    var CHANNELTOKEN = '{{channel.xmppToken}}';
-    {% else %}
-    var CHANNELTOKEN = null;
-    {% endif %}
-    var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
+    <script>
+        socket.on('connect', function() {
+            socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
 
-    var ChatContentWindow = document.getElementById("chatContentWindow");
-    var ChatInputBar = document.getElementById('chatinput');
-    ChatInputBar.placeholder = "Send Message As " + username + "...";
+    <script>
+        socket.on('disconnect', function() {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+        });
+    </script>
 
-    $('#chatinput').on('keyup', function(e) {
-        if (e.keyCode === 13) {
-            sendMessage();
-        }
-    });
 
-    // Hide Profile Box on Click Outside
-    $(document).mouseup(function(e)
-    {
-      var container = $("#newProfileBox");
-        if (!container.is(e.target) && container.has(e.target).length === 0)
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+            return null;
+        });
+    </script>
+
+    <script>
+        // Settings and Event Hooks for XMPP
+        {% if current_user.is_authenticated %}
+        var username = "{{current_user.username}}";
+        var xmppPassword = "{{current_user.xmppToken}}";
+        {% else %}
+        var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+        var xmppPassword = "fakepw";
+        {% endif %}
+        var serverproto = '{{sysSettings.siteProtocol}}';
+        var server = '{{sysSettings.siteAddress}}';
+        var BOSH_SERVICE = serverproto + server + '/http-bind/';
+        var ROOM_SERVICE = 'conference.' + server;
+        var ROOMNAME = '{{channel.channelLoc}}';
+        var CHANNELPROTECTED = {{channel.protected|lower}};
+        {% if channel.protected %}
+        var CHANNELTOKEN = '{{channel.xmppToken}}';
+        {% else %}
+        var CHANNELTOKEN = null;
+        {% endif %}
+        var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
+
+        var ChatContentWindow = document.getElementById("chatContentWindow");
+        var ChatInputBar = document.getElementById('chatinput');
+        ChatInputBar.placeholder = "Send Message As " + username + "...";
+
+        $('#chatinput').on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                sendMessage();
+            }
+        });
+
+        // Hide Profile Box on Click Outside
+        $(document).mouseup(function(e)
         {
-            container.remove();
+          var container = $("#newProfileBox");
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                container.remove();
+            }
+        });
+
+        // Start Connection on Load
+        $(window).bind('load', function() {
+            var url = BOSH_SERVICE;
+            connection = new Strophe.Connection(url);
+            connection.rawInput = rawInput;
+            connection.rawOutput = rawOutput;
+            connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+        });
+
+        // Disconnect XMPP on Page Unload
+        $(window).bind('unload', function(){
+              // Leave Room First
+              exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+              // Execute XMPP Disconnection Process
+              connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+              connection.flush();
+              connection.disconnect();
+              // Disconnect from SocketIO
+              socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
+              socket.close();
+        });
+    </script>
+
+
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+    <script>
+        function getBanList() {
+            console.log("Requesting Ban List");
+            socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
         }
-    });
 
-    // Start Connection on Load
-    $(window).bind('load', function() {
-        var url = BOSH_SERVICE;
-        connection = new Strophe.Connection(url);
-        connection.rawInput = rawInput;
-        connection.rawOutput = rawOutput;
-        connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
-    });
-
-    // Disconnect XMPP on Page Unload
-    $(window).bind('unload', function(){
-          // Leave Room First
-          exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
-          // Execute XMPP Disconnection Process
-          connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
-          connection.flush();
-          connection.disconnect();
-          // Disconnect from SocketIO
-          socket.emit('removeViewer', {data: '{{channel.channelLoc}}'});
-          socket.close();
-    });
-</script>
-
-<script>
-    function getBanList() {
-        console.log("Requesting Ban List");
-        socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
-    }
-
-    function clearBan(username, affiliation) {
-        setAffiliation(username, affiliation);
-        setTimeout(function(){
-            getBanList();
-        }, 2000);
-        return true;
-    }
-
-    socket.on('returnBanList', function(msg) {
-        console.log("Receiving Ban List");
-
-        document.getElementById('bannedUsers').style.display = 'block';
-        document.getElementById('chatMembers').style.display = 'none';
-        document.getElementById('chat').style.display = 'none';
-
-        banList = document.getElementById('OutcastList');
-        banList.innerHTML = "";
-        for (let i = 0; i < msg['results'].length; i++){
-            var iDiv = document.createElement('div');
-            iDiv.className = 'bannedUser';
-            var username = msg["results"][i]["username"];
-            var onclickCmd = "clearBan('" + username + "','none');"
-            iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
-            banList.appendChild(iDiv);
+        function clearBan(username, affiliation) {
+            setAffiliation(username, affiliation);
+            setTimeout(function(){
+                getBanList();
+            }, 2000);
+            return true;
         }
-        console.log(msg);
-    });
-</script>
+
+        socket.on('returnBanList', function(msg) {
+            console.log("Receiving Ban List");
+
+            document.getElementById('bannedUsers').style.display = 'block';
+            document.getElementById('chatMembers').style.display = 'none';
+            document.getElementById('chat').style.display = 'none';
+
+            banList = document.getElementById('OutcastList');
+            banList.innerHTML = "";
+            for (let i = 0; i < msg['results'].length; i++){
+                var iDiv = document.createElement('div');
+                iDiv.className = 'bannedUser';
+                var username = msg["results"][i]["username"];
+                var onclickCmd = "clearBan('" + username + "','none');"
+                iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
+                banList.appendChild(iDiv);
+            }
+            console.log(msg);
+        });
+    </script>
 
 
 </body>
