@@ -696,7 +696,7 @@
                             <div class="col-12">
                                 <div class="card shadow searchable">
                                     <div class="card-header {% if user.active == False %} bg-primary{% endif %} text-white">
-                                        <b><a href="/streamers/{{user.id}}/">{{user.username}}</a></b>
+                                        <b><a href="/streamer/{{user.id}}/">{{user.username}}</a></b>
                                         <div class="float-right">
                                             <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.id == current_user.id %} disabled {% endif %} {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
                                             <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>

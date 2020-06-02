@@ -710,7 +710,7 @@
 
         onlineBadge = document.getElementById('liveIndicatorBadge');
 
-        $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
+        $.getJSON('/apiv1/channel/{{channel.channelLoc}}', function(data) {
             var channelList = data['results'][0];
             var streamIDList = channelList['stream'];
 
@@ -732,7 +732,7 @@
                 }
 
 
-                $.getJSON('/apiv1/streams/' + currentStreamID, function(data) {
+                $.getJSON('/apiv1/stream/' + currentStreamID, function(data) {
                     var streamData = data['results'][0];
                     var currentStreamTopic = streamData['topic'];
                     var currentStreamName = streamData['streamName'];

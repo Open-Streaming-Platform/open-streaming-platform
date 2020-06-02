@@ -107,7 +107,7 @@
               <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clipEntry.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
               <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clipEntry.recordedVideo.channel.id}}/"> {{clipEntry.recordedVideo.channel.channelName}}</a>
               <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{clipEntry.recordedVideo.videoDate|normalize_date}}</span><br />
-              <i class="fas fa-user mr-2"></i><a href="/streamers/{{clipEntry.recordedVideo.owningUser}}"> {{clipEntry.recordedVideo.owningUser|get_userName}}</a>
+              <i class="fas fa-user mr-2"></i><a href="/streamer/{{clipEntry.recordedVideo.owningUser}}"> {{clipEntry.recordedVideo.owningUser|get_userName}}</a>
               <span class="float-right"><i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{clipEntry.recordedVideo.topic}}/"> {{clipEntry.recordedVideo.channel.topic|get_topicName}}</a></span><br />
               <i class="fas fa-thumbs-up mr-2"></i> {{clipEntry.id|get_Clip_Upvotes}}</span>
               <i class="fas fa-eye mx-2"></i> {{clipEntry.views}}</span>

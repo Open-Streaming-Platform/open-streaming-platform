@@ -114,7 +114,7 @@
         offlineWindow = document.getElementById('offlineImage');
 
 
-        $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function(data) {
+        $.getJSON('/apiv1/channel/{{channel.channelLoc}}', function(data) {
             var channelList = data['results'][0];
             var streamIDList = channelList['stream'];
 

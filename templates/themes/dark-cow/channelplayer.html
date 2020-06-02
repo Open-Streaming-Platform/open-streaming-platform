@@ -330,7 +330,7 @@
                                 <br />
                                 <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a>
                                 <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</span><br />
-                                <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}">{{video.owningUser|get_userName}}</a>
+                                <i class="fas fa-user mr-2"></i><a href="/streamer/{{video.owningUser}}">{{video.owningUser|get_userName}}</a>
                                 <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></span><br />
                                 <span class="upvotes"><i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
                                 <span class="views"><i class="fas fa-eye mx-2"></i> {{video.views}}</span>
@@ -381,7 +381,7 @@
                                 {% endif %}<br />
                                 <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/">{{clip.recordedVideo.channel.channelName}}</a>
                                 <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</span><br />
-                                <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.recordedVideo.owningUser}}">{{clip.recordedVideo.owningUser|get_userName}}</a>
+                                <i class="fas fa-user mr-2"></i><a href="/streamer/{{clip.recordedVideo.owningUser}}">{{clip.recordedVideo.owningUser|get_userName}}</a>
                                 <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.recordedVideo.topic}}/">{{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
                                 <span class="upvotes"><i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
                                 <span class="views"><i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
@@ -740,7 +740,7 @@
 
             onlineBadge = document.getElementById('liveIndicatorBadge');
 
-            $.getJSON('/apiv1/channels/{{channel.channelLoc}}', function (data) {
+            $.getJSON('/apiv1/channel/{{channel.channelLoc}}', function (data) {
                 var channelList = data['results'][0];
                 var streamIDList = channelList['stream'];
 
@@ -762,7 +762,7 @@
                     }
 
 
-                    $.getJSON('/apiv1/streams/' + currentStreamID, function (data) {
+                    $.getJSON('/apiv1/stream/' + currentStreamID, function (data) {
                         var streamData = data['results'][0];
                         var currentStreamTopic = streamData['topic'];
                         var currentStreamName = streamData['streamName'];

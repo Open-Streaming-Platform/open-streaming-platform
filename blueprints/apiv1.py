@@ -90,7 +90,7 @@ class api_1_Server(Resource):
         db.session.commit()
         return {'results': serverSettings.serialize() }
 
-@api.route('/channels/')
+@api.route('/channel/')
 class api_1_ListChannels(Resource):
     # Channel - Get all Channels
     def get(self):
@@ -120,7 +120,7 @@ class api_1_ListChannels(Resource):
                     return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
         return {'results': {'message':"Request Error"}}, 400
 
-@api.route('/channels/<string:channelEndpointID>')
+@api.route('/channel/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
@@ -199,7 +199,7 @@ class api_1_ListChannel(Resource):
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
-@api.route('/streams/')
+@api.route('/stream/')
 class api_1_ListStreams(Resource):
     def get(self):
         """
@@ -209,7 +209,7 @@ class api_1_ListStreams(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
 
-@api.route('/streams/<int:streamID>')
+@api.route('/stream/<int:streamID>')
 @api.doc(params={'streamID': 'ID Number for the Stream'})
 class api_1_ListStream(Resource):
     def get(self, streamID):
@@ -248,7 +248,7 @@ class api_1_ListStream(Resource):
                             return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
-@api.route('/vids/')
+@api.route('/video/')
 class api_1_ListVideos(Resource):
     def get(self):
         """
@@ -258,7 +258,7 @@ class api_1_ListVideos(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
-@api.route('/vids/<int:videoID>')
+@api.route('/video/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
 class api_1_ListVideo(Resource):
     def get(self, videoID):
@@ -335,7 +335,7 @@ class api_1_ListVideo(Resource):
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
-@api.route('/clips/')
+@api.route('/clip/')
 class api_1_ListClips(Resource):
     def get(self):
         """
@@ -345,7 +345,7 @@ class api_1_ListClips(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipsList]}
 
-@api.route('/clips/<int:clipID>')
+@api.route('/clip/<int:clipID>')
 @api.doc(params={'clipID': 'ID Number for the Clip'})
 class api_1_ListClip(Resource):
     def get(self, clipID):
@@ -410,7 +410,7 @@ class api_1_ListClip(Resource):
         return {'results': {'message': 'Request Error'}}, 400
 
 
-@api.route('/topics/')
+@api.route('/topic/')
 class api_1_ListTopics(Resource):
     def get(self):
         """
@@ -420,7 +420,7 @@ class api_1_ListTopics(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
-@api.route('/topics/<int:topicID>')
+@api.route('/topic/<int:topicID>')
 @api.doc(params={'topicID': 'ID Number for Topic'})
 class api_1_ListTopic(Resource):
 
@@ -432,7 +432,7 @@ class api_1_ListTopic(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
-@api.route('/users/<string:username>')
+@api.route('/user/<string:username>')
 @api.doc(params={'username': 'Username of OSP User'})
 class api_1_ListUser(Resource):
     def get(self, username):

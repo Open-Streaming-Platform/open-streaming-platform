@@ -624,7 +624,7 @@ function closeProfileBox() {
 }
 
 function updateProfileBox(elem, username) {
-    var apiEndpoint = '/apiv1/users/' + username;
+    var apiEndpoint = '/apiv1/user/' + username;
 
     // Retreive API Profile from OSP
     fetch(apiEndpoint) // Call the fetch function passing the url of the API as a parameter
