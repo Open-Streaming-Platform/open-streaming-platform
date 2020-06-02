@@ -11,6 +11,7 @@ from classes import topics
 from classes import views
 from classes import Channel
 from classes import Stream
+from classes import Sec
 
 from functions import themes
 from functions import securityFunc
@@ -59,6 +60,11 @@ def view_page(loc):
                 guestUser = None
                 if 'guestUser' in request.args and current_user.is_authenticated is False:
                     guestUser = request.args.get("guestUser")
+
+                    userQuery = Sec.User.query.filter_by(username=guestUser).first()
+                    if userQuery is not None:
+                        flash("Invalid User","error")
+                        return(redirect(url_for("main_page")))
 
                 return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser)
             else:
