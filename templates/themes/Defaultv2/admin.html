@@ -5,6 +5,7 @@
 
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/vendor/datatables/css/datatables.css"/>
 
 {% endblock %}
@@ -1091,66 +1092,26 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="/static/js/admin.js"></script>
-<script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
 <script>
+    var viewerChartWidth = 1024;
+    var viewerChartHeight = 380;
+    var viewerChartDataLive = [
+        {% for entry in statsViewsDay['live'] %}
+            {x:'{{entry['t']}}',y:{{entry['y']}}},
+        {% endfor %}
+    ];
+    var viewerChartDataVideo = [
+        {% for entry in statsViewsDay['recorded'] %}
+            {x:'{{entry['t']}}', y:{{entry['y']}}},
+        {% endfor %}
+    ];
+
     $(document).ready(function() {
         $('#logTable').DataTable({
             "order": [[ 0, "desc" ]]
         });
     } );
-
-    var ctx = document.getElementById('viewershipChart').getContext('2d');
-    ctx.canvas.width = 1024
-    ctx.canvas.height = 380;
-    var chart = new Chart(ctx, {
-        // The type of chart we want to create
-        type: 'bar',
-
-        // The data for our dataset
-        data: {
-
-            datasets: [{
-                label: "Live Viewers",
-                fill: true,
-                borderColor: 'rgb(40, 90, 150)',
-                backgroundColor: 'rgb(40, 90, 150)',
-                spanGaps: true,
-                lineTension: 0,
-                data:[
-                    {% for entry in statsViewsDay['live'] %}
-                        {x:'{{entry['t']}}',y:{{entry['y']}}},
-                    {% endfor %}
-                ]},
-                {
-                label: "Video Viewers",
-                fill: true,
-                borderColor: 'rgb(90, 150, 40)',
-                backgroundColor: 'rgb(90, 150, 40)',
-                spanGaps: true,
-                lineTension: 0,
-                data:[
-                    {% for entry in statsViewsDay['recorded'] %}
-                        {x:'{{entry['t']}}', y:{{entry['y']}}},
-                    {% endfor %}
-                ]
-            }]
-        },
-
-        // Configuration options go here
-        options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                        parser: 'YYYY-MM-DD',
-                        unit: 'day'
-                    }
-                }],
-            }
-        }
-    });
 </script>
-
+<script type="text/javascript" src="/static/js/admin.js"></script>
 {% endblock %}
 
