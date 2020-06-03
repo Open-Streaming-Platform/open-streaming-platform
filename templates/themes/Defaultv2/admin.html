@@ -1067,14 +1067,6 @@
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
                                         <label class="custom-file-label" for="restoreData">Upload Backup File</label>
-                                        <script>
-                                            $('#restoreData').on('change',function(){
-                                                //get the file name
-                                                var fileName = $(this).val();
-                                                //replace the "Choose a file" label
-                                                $(this).next('.custom-file-label').html(fileName);
-                                            })
-                                        </script>
                                     </div>
                                     <br><br>
                                     <h5>Restore Options</h5>
@@ -1163,6 +1155,15 @@
     });
 
     // Input Handlers
+
+    $('#restoreData').on('change',function(){
+        //get the file name
+        var fileName = $(this).val();
+        //replace the "Choose a file" label
+        $(this).next('.custom-file-label').html(fileName);
+    })
+
+
     $(document).on("click", ".edit-oAuth-Button", function () {
          var oAuthID = $(this).data('id');
          var oAuthName = $(this).data('name');
