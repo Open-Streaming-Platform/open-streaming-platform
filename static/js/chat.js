@@ -146,7 +146,6 @@ function onSubscriptionRequest(stanza) {
 }
 
 function onPresence(presence) {
-  log('onPresence:');
     // disco stuff
     if (connection.disco) {
         connection.disco.info(fullJID)
@@ -205,7 +204,6 @@ function room_msg_handler(a, b, c) {
 }
 
 function room_pres_handler(a, b, c) {
-  console.log(a);
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
@@ -278,7 +276,6 @@ function room_pres_handler(a, b, c) {
 
 // Function to Handle New Messages
 function onMessage(msg) {
-  console.log(msg);
   var to = msg.getAttribute('to');
   var from = msg.getAttribute('from');
   var type = msg.getAttribute('type');
