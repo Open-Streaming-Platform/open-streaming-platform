@@ -344,7 +344,7 @@
 </script>
 
 <script>
-  socket.on('checkClipScreenShot', function (msg) {
+  socket.on('checkScreenShot', function (msg) {
     document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
     $("#newSSModal").modal()
   });
