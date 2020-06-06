@@ -52,7 +52,10 @@ def oAuthAuthorize(provider):
 
         # Default expiration time to 365 days into the future
         if 'expires_at' not in token:
-            token['expires_at'] = time() + (365 * 24 * 3600)
+            if 'expires_in' in token:
+                token['expires_at'] = datetime.timedelta(seconds=int(token['exipires_in'])) + datetime.datetime.now()
+            else:
+                token['expires_at'] = time() + (365 * 24 * 3600)
 
         # If oAuth ID, Provider, and Auth Type Match - Initiate Login
         if userQuery is not None:
