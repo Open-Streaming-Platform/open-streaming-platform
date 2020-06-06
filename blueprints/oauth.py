@@ -13,6 +13,8 @@ from classes.shared import oauth, db
 
 import json
 
+from time import time
+
 from app import user_datastore
 from functions.oauth import fetch_token, discord_processLogin, reddit_processLogin, facebook_processLogin
 from functions.system import newLog
@@ -47,6 +49,10 @@ def oAuthAuthorize(provider):
         userDataDict = userData.json()
 
         userQuery = Sec.User.query.filter_by(oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider, authType=1).first()
+
+        # Default expiration time to 365 days into the future
+        if 'expires_at' not in token:
+            token['expires_at'] = time() + (365 * 24 * 3600)
 
         # If oAuth ID, Provider, and Auth Type Match - Initiate Login
         if userQuery is not None:
