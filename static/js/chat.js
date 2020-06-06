@@ -8,8 +8,6 @@ var banListActive = false;
 var occupantCheck;
 var chatDataUpdate;
 
-
-
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -270,7 +268,6 @@ function room_pres_handler(a, b, c) {
           }
       }
   }
-  log('MUC: room_pres_handler');
   return true;
 }
 
