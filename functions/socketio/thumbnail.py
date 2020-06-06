@@ -31,7 +31,7 @@ def newScreenShot(message):
 
     if 'clipID' in message:
         video = message['clipID']
-        clipQuery = RecordedVideo.Clips.quer.filter_by(id=int(video)).first()
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=int(video)).first()
         if clipQuery is not None and clipQuery.recordedVideo.owningUser == current_user.id:
             videoLocation = videos_root + clipQuery.videoLocation
             thumbnailLocation = videos_root + clipQuery.channel.channelLoc + '/tempThumbnail.png'
