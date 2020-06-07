@@ -9,7 +9,7 @@ Updated Python-EngineIO to 3.13.0
 Updated Python-SocketIO to 4.6.0
 Fixes for Renaming Clips which was causing a crash
 Fixes for places where Password Fields were autocompleting in dark-cow
-Docker fixes for latest Alphine release
+Docker Files has been decoupled from the primary repository and are now located at https://gitlab.com/Deamos/open-streaming-platform-docker
 Fixes for Opengraph Meta data to use the system settings for protocol and site address
 Updated JQuery to 3.5.1
 Adjusted APIv1 Endpoints to match singular
