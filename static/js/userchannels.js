@@ -13,17 +13,7 @@ var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecke
 var easymdeClipEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipEditDescription")});
 var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
 
-var chanDescriptionMDE = [];
-for (var i = 0; i < channelIDList; ++i) {
-    new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-" + channelIDList[i]) });
-}
-
 // Event Listeners
-for (var i = 0; i < channelIDList; ++i) {
-    document.getElementById('generateGUID-' + channelIDList[i]).addEventListener('click', function () {
-        document.getElementById('streamKey-' + channelIDList[i]).value = guid();
-    })
-}
 
 window.addEventListener("beforeunload", function (e) {
   socket.emit('cancelUpload', { data: videofilename });
