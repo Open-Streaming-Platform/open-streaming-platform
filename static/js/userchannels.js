@@ -15,7 +15,7 @@ var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: fal
 
 var chanDescriptionMDE = [];
 for (var i = 0; i < channelIDList; ++i) {
-    chanDescriptionMDE[channelIDList[i]] = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-" + channelIDList[i]) });
+    new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-" + channelIDList[i]) });
 }
 
 // Event Listeners
