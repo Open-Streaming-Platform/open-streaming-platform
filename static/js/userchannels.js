@@ -794,13 +794,11 @@ function saveUploadedThumbnail() {
     createNewBSAlert("Thumbnail Updated", "Success");
 }
 
-function openClipSSModal(clipID, videoID, videoLocation, startTime) {
+function openClipSSModal(clipID, videoID, videoLocation) {
     clipssplayer.pause();
 
     clipssplayer.src(videoLocation);
     clipssplayer.load();
-
-    clipssplayer.on('loadedmetadata', function() {this.currentTime(startTime)});
 
     document.getElementById("clipssID").value = clipID;
     document.getElementById("clipvideossID").value = videoID;
@@ -829,7 +827,7 @@ function newClipScreenShot() {
     clipssplayer.pause();
     window.whereYouAt = clipssplayer.currentTime();
     document.getElementById("clipSSTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, timeStamp: window.whereYouAt, clip:true });
+    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, 'clipID': document.getElementById('clipssID').value, timeStamp: window.whereYouAt, clip:true });
 }
 
 function setScreenShot() {
