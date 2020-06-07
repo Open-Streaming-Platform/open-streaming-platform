@@ -29,6 +29,7 @@ else
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $UPGRADELOG 2>&1
   /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $UPGRADELOG 2>&1
 fi
+sudo cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf/osp-redirects.conf
 
 sudo systemctl restart nginx-osp
 sudo systemctl restart osp.target
