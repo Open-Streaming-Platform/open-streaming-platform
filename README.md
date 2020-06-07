@@ -26,6 +26,10 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 Installation Instructions may be found at the [OSP Wiki Page](https://wiki.openstreamingplatform.com)
 
+Docker
+----
+Docker Files can be found at the [Open Streaming Platform Docker Repository](https://gitlab.com/Deamos/open-streaming-platform-docker) as they become available.
+
 Attribution
 ----
 See our [Attribution Page](https://wiki.openstreamingplatform.com/en/Attribution)
