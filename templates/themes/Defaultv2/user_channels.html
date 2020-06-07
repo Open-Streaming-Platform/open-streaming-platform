@@ -1135,26 +1135,19 @@
   </div>
 </div>
 
-<script src="/static/vendor/videojs/js/video.js"></script>
-<script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+
 <script>
     var siteProtocol = "{{sysSettings.siteProtocol}}";
     var siteAddress = "{{sysSettings.siteAddress}}";
     var maxClipLength = {{sysSettings.maxClipLength}};
+    var channelIDList = [];
+    {% for channel in channels %}
+    channelIDList.push(channel.id);
+    {% endfor %}
 </script>
+<script src="/static/vendor/videojs/js/video.js"></script>
+<script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
 <script src="/static/js/userchannels.js"></script>
-
-<script>
-    {% for channel in channels %}
-    var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
-    {% endfor %}
-
-    {% for channel in channels %}
-    document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
-      document.getElementById('streamKey-{{channel.id}}').value = guid();
-    })
-    {% endfor %}
-</script>
 
 {% for chan in viewStats %}
 <script>
@@ -1210,7 +1203,5 @@
     });
 </script>
 {% endfor %}
-
-
 
 {% endblock %}
