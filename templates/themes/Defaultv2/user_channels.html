@@ -1142,7 +1142,7 @@
     var maxClipLength = {{sysSettings.maxClipLength}};
     var channelIDList = [];
     {% for channel in channels %}
-    channelIDList.push(channel.id);
+    channelIDList.push({{channel.id}});
     {% endfor %}
 </script>
 <script src="/static/vendor/videojs/js/video.js"></script>
