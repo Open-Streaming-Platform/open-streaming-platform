@@ -9,6 +9,7 @@ from classes import Stream
 
 from functions import webhookFunc
 from functions import templateFilters
+from functions import xmpp
 
 from functions.socketio.stream import handle_viewer_total_request
 
@@ -16,14 +17,14 @@ from app import r
 
 @socketio.on('disconnect')
 def disconnect():
-    userSID = request.sid
-    ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
-    for chan in ChannelQuery:
-        streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
-        if userSID in streamSIDList:
-            r.srem(chan.channelLoc + '-streamSIDList', userSID)
-    db.session.commit()
-    db.session.close()
+    #userSID = request.sid
+    #ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
+    #for chan in ChannelQuery:
+    #    streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
+    #    if userSID in streamSIDList:
+    #        r.srem(chan.channelLoc + '-streamSIDList', userSID)
+    #db.session.commit()
+    #db.session.close()
     return 'OK'
 
 @socketio.on('newViewer')
@@ -36,14 +37,15 @@ def handle_new_viewer(streamData):
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     #userSID = request.cookies.get('ospSession')
-    userSID = request.sid
-    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    if streamSIDList is None:
-        r.sadd(channelLoc + '-streamSIDList', userSID)
-    elif userSID.encode('utf-8') not in streamSIDList:
-        r.sadd(channelLoc + '-streamSIDList', userSID)
+    #userSID = request.sid
+    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    #if streamSIDList is None:
+    #    r.sadd(channelLoc + '-streamSIDList', userSID)
+    #elif userSID.encode('utf-8') not in streamSIDList:
+    #    r.sadd(channelLoc + '-streamSIDList', userSID)
 
-    currentViewers = len(streamSIDList)
+    #currentViewers = len(streamSIDList)
+    currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     streamName = ""
     streamTopic = 0
@@ -67,28 +69,6 @@ def handle_new_viewer(streamData):
         channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
     join_room(streamData['data'])
-
-    if requestedChannel.showChatJoinLeaveNotification:
-        if current_user.is_authenticated:
-            pictureLocation = current_user.pictureLocation
-            if current_user.pictureLocation is None:
-                pictureLocation = '/static/img/user2.png'
-            else:
-                pictureLocation = '/images/' + pictureLocation
-
-            streamUserList = r.smembers(channelLoc + '-streamUserList')
-            if streamUserList is None:
-                r.rpush(channelLoc + '-streamUserList', current_user.username)
-            elif current_user.username.encode('utf-8') not in streamUserList:
-                r.rpush(channelLoc + '-streamUserList', current_user.username)
-
-            emit('message', {'user':'Server','msg': current_user.username + ' has entered the room.', 'image': pictureLocation}, room=streamData['data'])
-        else:
-            emit('message', {'user':'Server','msg': 'Guest has entered the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-
-    else:
-        if current_user.is_authenticated:
-            r.rpush(channelLoc + '-streamUserList', current_user.username)
 
     if current_user.is_authenticated:
         pictureLocation = current_user.pictureLocation
@@ -122,17 +102,20 @@ def handle_new_viewer(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
+    sysSettings = settings.settings.query.first()
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
     #userSID = request.cookies.get('ospSession')
-    userSID = request.sid
+    #userSID = request.sid
 
-    streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    if streamSIDList is not None:
-        r.srem(channelLoc + '-streamSIDList', userSID)
+    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
+    #if streamSIDList is not None:
+    #    r.srem(channelLoc + '-streamSIDList', userSID)
 
-    currentViewers = len(streamSIDList)
+    # currentViewers = len(streamSIDList)
+    currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     requestedChannel.currentViewers = currentViewers
     if requestedChannel.currentViewers < 0:
@@ -145,24 +128,6 @@ def handle_leaving_viewer(streamData):
             stream.currentViewers = 0
         db.session.commit()
     leave_room(streamData['data'])
-
-    if current_user.is_authenticated:
-        streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
-        if streamUserList is not None:
-            r.lrem(channelLoc + '-streamUserList', 1, current_user.username)
-
-        if requestedChannel.showChatJoinLeaveNotification:
-            pictureLocation = current_user.pictureLocation
-            if current_user.pictureLocation is None:
-                pictureLocation = '/static/img/user2.png'
-            else:
-                pictureLocation = '/images/' + pictureLocation
-
-            emit('message', {'user':'Server', 'msg': current_user.username + ' has left the room.', 'image': pictureLocation}, room=streamData['data'])
-    else:
-        if requestedChannel.showChatJoinLeaveNotification:
-            emit('message', {'user':'Server', 'msg': 'Guest has left the room.', 'image': '/static/img/user2.png'}, room=streamData['data'])
-
 
     handle_viewer_total_request(streamData, room=streamData['data'])
 

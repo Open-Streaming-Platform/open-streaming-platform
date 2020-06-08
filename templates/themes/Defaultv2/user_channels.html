@@ -48,6 +48,7 @@
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');" data-toggle="tooltip" data-placement="right" title="Videos"><h2><i class="fas fa-video"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');" data-toggle="tooltip" data-placement="right" title="Clips"><h2><i class="fas fa-cut"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');" data-toggle="tooltip" data-placement="right" title="Settings"><h2><i class="fas fa-cog"></i></h2></a></div>
+              <div class="my-5">{% if channel.chatEnabled == True %}<a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','chatSettingsWindow');" data-toggle="tooltip" data-placement="right" title="Chat"><h2><i class="fas fa-comment"></i></h2></a>{% else %}<a href="#" data-toggle="tooltip" data-placement="right" title="Chat is disabled"><h2><i class="far fa-comment"></i></h2></a>{% endif %}</div>
             </div>
           </div>
           <div class="col-9 col-sm-10 col-lg-11">
@@ -117,7 +118,7 @@
                             </div>
                             <div class="mt-2">
                               <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
-                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.recordedVideo.videoLocation}}', {{clip.startTime}});"><i class="fas fa-camera"></i></button>
+                              <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
                               <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
                               <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
                             </div>
@@ -252,55 +253,17 @@
                                         <div class="col-6">
                                             <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatJoinNotificationSelect" class="col-form-label"><b>Show Chat Join & Leaving Notifications</b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="chatJoinNotificationSelect" name="chatJoinNotificationSelect" {% if channel.showChatJoinLeaveNotification == True %} checked {% endif %}>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatBG-{{channel.id}}" class="col-form-label"><b>Chat Background Theme </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="chatBG-{{channel.id}}" name="chatBG" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                                {% for background in channelChatBGOptions %}
-                                                <option value="{{background['value']}}" {% if channel.chatBG == background['value'] %} selected {% endif %}>{{background['name']}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatAnimation-{{channel.id}}" class="col-form-label"><b>Chat Animation </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <select id="chatAnimation-{{channel.id}}" name="chatAnimation" class="form-control" onchange="updateChatPreview({{channel.id}})">
-                                                {% for anim in channelChatAnimationOptions %}
-                                                <option value="{{anim['value']}}" {% if channel.chatAnimation == anim['value'] %} selected {% endif %}>{{anim['name']}}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="chatTextColor-{{channel.id}}" class="col-form-label"><b>Chat Text Color </b></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="color" id="chatTextColor-{{channel.id}}" name="chatTextColor" value="{{channel.chatTextColor}}" onchange="updateChatPreview({{channel.id}})">
-                                        </div>
-                                    </div>
-                                    <h5>Chat Preview</h5>
-                                    <div id="chatPreviewBox-{{channel.id}}" class="chatBar-Item chat-{{channel.chatBG}} {{channel.chatAnimation}}">
-                                        <div class="charBar-Item-Image">
-                                            <img src="/images/{{current_user.pictureLocation}}" width="52px" height="52px" onerror="this.src='/static/img/user2.png';">
-                                        </div>
-                                        <div id="chatPreviewText-{{channel.id}}" class="chatBar-Item-Text" style="color:{{channel.chatTextColor}};">
-                                            <b>{{current_user.username}}</b> 12:00
-                                            <br>This is just a test
+                                        <div class="col-12">
+                                            <label for="xmppToken" class="col-form-label"><b>Protected Channel XMPP Token </b></label><br>
+                                            <div class="input-group">
+                                              <div class="input-group-prepend">
+                                                  <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken-{{channel.id}}');"><i class="fas fa-copy"></i></button>
+                                              </div>
+                                              <input type="text" class="form-control" id="xmppToken-{{channel.id}}" name="xmppToken" value="{{channel.xmppToken}}" readonly required><br>
+                                            </div>
+                                            <small id="xmppTokenHelpBlock" class="form-text text-muted">
+                                                Given to Authorized Users to Connect to a Protected Channel's XMPP Chat Room
+                                            </small>
                                         </div>
                                     </div>
 
@@ -502,6 +465,118 @@
                         </div>
                     </div>
                 </form>
+            </div>
+
+            <div id="chatSettingsWindow-{{channel.id}}" style="display:none;">
+              <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
+                <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
+                  <div>
+                    <div class="row">
+                      <div class="col-xl-4 col-lg-6 col-md-12">
+                        <div class="form-group">
+                          <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
+                          <input type="text" class="form-control" name="roomTitle" id="roomTitle"
+                            value="{{channelRooms[channel.channelLoc]['title']}}">
+                        </div>
+                        <div class="form-group">
+                          <label for="roomDescr" class="col-form-label"><b>Description</b></label>
+                          <input type="text" class="form-control" name="roomDescr" id="roomDescr"
+                            value="{{channelRooms[channel.channelLoc]['description']}}">
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-md-12">
+                        <div class="form-group row">
+                          <div class="col-6">
+                            <label for="moderatedSelect" class="col-form-label"><b>Moderated </b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="moderatedSelect" name="moderatedSelect"
+                              {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <div class="col-6">
+                            <label for="allowGuests" class="col-form-label"><b>Allow guests to join room</b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="allowGuests" name="allowGuests"
+                              {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
+                          </div>
+                        </div>
+                        <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsChatTooltip"
+                          title="Has no effect if moderation is disabled">
+                          <div class="col-6">
+                            <label for="allowGuestsChat" class="col-form-label"><b>Allow guests to chat</b></label>
+                          </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
+                              {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-12">
+                        <div id="moderators-{{channel.id}}">
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="card">
+                                <div class="card-header">
+                                  <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
+                                </div>
+                                <div class="card-body">
+                                  <div class="form-row">
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
+                                          Moderator</b></label>
+                                      <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+                                    </div>
+                                    <div class="form-group col-12 col-lg-6">
+                                      <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
+                                      <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                                        onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-12" id="mods-{{channel.channelLoc}}">
+                                      <div class="row">
+                                        <div class="col-12 mb-2"><b>Username</b></div>
+                                      </div>
+                                      {% for mod in channelMods[channel.channelLoc] %}
+                                      <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <p>{{mod}}</p>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                          <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
+                                        </div>
+                                      </div>
+                                      {% endfor %}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr>
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
+                  <div>
+                  </div>
+                  <div>
+                    <div class="row">
+                      <div class="col-12">
+                        <input type="submit" class="btn btn-success" value="&#128393; Edit">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -1061,395 +1136,24 @@
 </div>
 
 <script>
-    function CopyAPI(divVal) {
-      var copyText = document.getElementById(divVal);
-      copyText.select();
-      document.execCommand("copy");
-    }
+    var siteProtocol = "{{sysSettings.siteProtocol}}";
+    var siteAddress = "{{sysSettings.siteAddress}}";
+    var maxClipLength = {{sysSettings.maxClipLength}};
 </script>
-
-<script>
-    function CopyInviteCode(divVal, type) {
-        var copyText = document.getElementById(divVal).value;
-        if (type == 'link') {
-            copyText = '{{sysSettings.siteAddress}}/settings/user/addInviteCode?inviteCode=' + copyText;
-        }
-
-        var dummy = document.createElement("input");
-        document.body.appendChild(dummy);
-        dummy.setAttribute('value', copyText);
-        dummy.select();
-        document.execCommand("copy");
-        document.body.removeChild(dummy);
-    }
-</script>
-
 <script src="/static/vendor/videojs/js/video.js"></script>
+<script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+<script src="/static/js/userchannels.js"></script>
 
 <script>
-  var clipplayer = videojs('videoClip', { autoplay: false });
-  var ssplayer = videojs('videoSSClip', { autoplay: false });
-  var clipssplayer = videojs('clipSS', {autoplay: false});
-</script>
-
-<script>
-  function openClipModal(videoID,videoLocation) {
-    clipplayer.pause();
-
-    var startInput = document.getElementById('clipStartTime');
-    startInput.value = null;
-
-    var stopInput = document.getElementById('clipStopTime');
-    stopInput.value = null;
-
-    var clipName = document.getElementById('clipName');
-    clipName.value = null;
-
-    clipplayer.src(videoLocation);
-
-    document.getElementById("clipVideoID").value = videoID;
-
-    $("#videoClipModal").modal();
-
-    var clipDescriptionInput = document.getElementById('clipDescription');
-    clipDescriptionInput.value = null;
-    easymdeVideoClip.value("");
-    easymdeVideoClip.codemirror.refresh();
-  }
-
-  function setClipStart() {
-    var startInput = document.getElementById('clipStartTime');
-    startInput.value = clipplayer.currentTime();
-    checkClipConstraints();
-  }
-
-  function setClipStop() {
-    var stopInput = document.getElementById('clipStopTime');
-    stopInput.value = clipplayer.currentTime();
-    checkClipConstraints();
-  }
-
-    function checkClipConstraints() {
-    var startTime = document.getElementById('clipStartTime').value;
-    var stopTime = document.getElementById('clipStopTime').value;
-    var systemMaxClipLength = {{sysSettings.maxClipLength}};
-    var clipErrorDiv = document.getElementById('clipError');
-    var clipSubmitButton = document.getElementById('clipSubmitButton');
-
-    if (systemMaxClipLength < 301) {
-      if ((startTime != "") && (stopTime != "")) {
-        var clipLength = stopTime - startTime;
-        if (clipLength > systemMaxClipLength) {
-          clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
-          clipErrorDiv.style.display = "block";
-          clipSubmitButton.disabled = true;
-        } else if (startTime > stopTime) {
-          clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
-          clipErrorDiv.style.display = "block";
-          clipSubmitButton.disabled = true;
-        } else {
-          clipErrorDiv.innerHTML = "";
-          clipErrorDiv.style.display = "none";
-          clipSubmitButton.disabled = false;
-
-        }
-      }
-    }
-  }
-
-  function openSSModal(videoID,videoLocation) {
-    ssplayer.pause();
-
-    ssplayer.src(videoLocation);
-
-    document.getElementById("videossID").value = videoID;
-
-    document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
-
-    $("#videoNewSSModal").modal();
-
-  }
-
-  function openClipSSModal(clipID, videoID, videoLocation, startTime) {
-    clipssplayer.pause();
-
-    clipssplayer.src(videoLocation);
-    clipssplayer.load();
-
-    clipssplayer.on('loadedmetadata', function() {this.currentTime(startTime)});
-
-    document.getElementById("clipssID").value = clipID;
-    document.getElementById("clipvideossID").value = videoID;
-
-    document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
-
-    $("#clipNewSSModal").modal();
-
-  }
-
-  function newScreenShot() {
-    ssplayer.pause();
-    window.whereYouAt = ssplayer.currentTime();
-    document.getElementById("SSTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: document.getElementById('videossID').value, timeStamp: window.whereYouAt });
-  }
-
-  function newClipScreenShot() {
-    clipssplayer.pause();
-    window.whereYouAt = clipssplayer.currentTime();
-    document.getElementById("clipSSTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, timeStamp: window.whereYouAt, clip:true });
-  }
-
-  function setScreenShot() {
-    var timestamp = document.getElementById("SSTimestamp").value;
-    socket.emit('setScreenShot', { loc: document.getElementById('videossID').value, timeStamp: timestamp });
-    var videoID = document.getElementById('videossID').value;
-    ssplayer.pause();
-    setTimeout(function() {
-        document.getElementById('videoThumb-' + videoID).src = document.getElementById('videoThumb-' + videoID).src + '?t=' + new Date().getTime();
-        }, 4000);
-    createNewBSAlert("Thumbnail Updated", "Success");
-  }
-
-  function setClipScreenShot() {
-    var timestamp = document.getElementById("clipSSTimestamp").value;
-    socket.emit('setScreenShot', { clipID: document.getElementById('clipssID').value, timeStamp: timestamp });
-    var clipID = document.getElementById('clipssID').value;
-    clipssplayer.pause();
-    setTimeout(function() {
-        document.getElementById('clipThumb-' + clipID).src = document.getElementById('clipThumb-' + clipID).src + '?t=' + new Date().getTime();
-        }, 4000);
-    createNewBSAlert("Thumbnail Updated", "Success");
-  }
-
-    var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("editVideoDescription")});
-    var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription")});
-    var easymdeClipEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipEditDescription")});
-
-    $(document).on("click", ".videoDeleteModalButton", function () {
-        var videoID = $(this).data('videoid');
-        $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
-    });
-
-    $(document).on("click", ".clipDeleteModalButton", function () {
-        var clipID = $(this).data('clipid');
-        $("#clipDeleteButton").attr("onclick","deleteClip(" + clipID + ")");
-    });
-
-    function deleteVideo(videoID) {
-        var videoEntry = document.getElementById('video-' + videoID);
-        videoEntry.parentNode.removeChild(videoEntry);
-        socket.emit('deleteVideo', {videoID: videoID});
-        createNewBSAlert("Video Deleted", "Success");
-    }
-
-    function deleteClip(clipID) {
-        var clipEntry = document.getElementById('clip-' + clipID);
-        clipEntry.parentNode.removeChild(clipEntry);
-        socket.emit('deleteClip', {clipID: clipID});
-        createNewBSAlert("Clip Deleted", "Success");
-    }
-
-    $(document).on("click", ".videoShareModalButton", function () {
-        var videoID = $(this).data('videoid');
-        $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "','facebook-share-dialog','width=626,height=436');return false;");
-        $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
-        $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
-        $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/" + videoID);
-    });
-
-    $(document).on("click", ".clipShareModalButton", function () {
-        var clipID = $(this).data('clipid');
-        $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "','facebook-share-dialog','width=626,height=436');return false;");
-        $("#TwitterShareBtn").attr("onclick","window.open('https://twitter.com/share?url={{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "&text=Check out this Video!','twitter-share-dialog','width=626,height=436');return false;");
-        $("#embedURLInput").attr('value',"<iframe src='{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
-        $("#linkShareInput").attr('value',"{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/clip/" + clipID);
-    });
-
-    $(document).on("click", ".clipEditModalButton", function () {
-
-       var clipID = $(this).data('clipid');
-       var clipName = document.getElementById('clipName-' + clipID).innerText;
-       var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
-
-
-       $("#editClipID").val(clipID);
-       $("#editClipName").val(clipName);
-
-
-       document.getElementById("clipEditDescription").value = clipDescription;
-       easymdeClipEditor.value(clipDescription);
-       var doc = easymdeClipEditor.codemirror.getDoc();
-       doc.setValue(doc.getValue());
-
-    });
-
-    function editClipSubmit() {
-        var editClipIDInput = document.getElementById("editClipID").value;
-        var editClipNameInput = document.getElementById("editClipName").value;
-        var editClipDescriptionInput = document.getElementById("clipEditDescription");
-
-        var clipDescription = easymdeClipEditor.value();
-
-        editClipDescriptionInput.value = "";
-        easymdeClipEditor.value("");
-        var doc = easymdeClipEditor.codemirror.getDoc();
-        doc.setValue(doc.getValue());
-
-        document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
-        document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
-
-        createNewBSAlert("Clip Metadata Edited", "Success");
-
-        socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription});
-    }
-
-    $(document).on("click", ".videoEditModalButton", function () {
-
-       var videoID = $(this).data('videoid');
-       var videoName = document.getElementById('vidName-' + videoID).innerText;
-       var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
-       var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
-       var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
-
-
-       $("#editVideoID").val(videoID);
-       $("#editVideoName").val(videoName);
-
-       if ((videoAllowComments == "true") || (videoAllowComments == "True") || (videoAllowComments == "on")) {
-           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
-           videoAllowCommentCheckBox.checked = true;
-           videoAllowCommentCheckBox.parentElement.classList.remove("off");
-       } else {
-           var videoAllowCommentCheckBox = document.getElementById("editVideoAllowComments");
-           videoAllowCommentCheckBox.checked = false;
-           videoAllowCommentCheckBox.parentElement.classList.add("off");
-       }
-
-       $("#editVideoTopic").val(videoTopic);
-
-       document.getElementById("editVideoDescription").value = videoDescription;
-       easymdeVideoEditor.value(videoDescription);
-       var doc = easymdeVideoEditor.codemirror.getDoc();
-       doc.setValue(doc.getValue());
-
-    });
-
-    function editVideoSubmit() {
-        var editVideoIDInput = document.getElementById("editVideoID");
-        var editVideoNameInput = document.getElementById("editVideoName");
-        var editVideoTopicInput = document.getElementById("editVideoTopic");
-        var editVideoDescriptionInput = document.getElementById("editVideoDescription");
-        var editVideoAllowCommentsInput = document.getElementById("editVideoAllowComments");
-        var videoID = editVideoIDInput.value;
-
-        var topicInputText = editVideoTopicInput.options[editVideoTopicInput.selectedIndex].text;
-
-        var videoDescription = easymdeVideoEditor.value();
-
-        document.getElementById("vidName-" + videoID).innerText = editVideoNameInput.value;
-        document.getElementById("vidTopic-" + videoID).innerText = editVideoTopicInput.value;
-        document.getElementById("vidTopicText-" + videoID).innerText = topicInputText;
-        document.getElementById("vidDescription-" + videoID).innerText = videoDescription;
-        document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.checked;
-
-        editVideoDescriptionInput.value = "";
-        easymdeVideoEditor.value("");
-        var doc = easymdeVideoEditor.codemirror.getDoc();
-        doc.setValue(doc.getValue());
-
-        var allowComments = "False";
-        if (editVideoAllowCommentsInput.checked) {
-            allowComments = "True";
-        }
-
-        socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
-        createNewBSAlert("Video Metadata Edited", "Success");
-    }
-
-    function createVideoClipSubmit() {
-        clipplayer.pause();
-        var videoID = document.getElementById("clipVideoID").value;
-        var clipName = document.getElementById("clipName").value;
-        var clipDescription = easymdeVideoClip.value();
-        var clipStart = document.getElementById("clipStartTime").value;
-        var clipStop = document.getElementById("clipStopTime").value;
-
-        socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
-        createNewBSAlert("Clip Created", "Success");
-    }
-
-    $(document).on("click", ".videoMoveModalButton", function () {
-        var videoID = $(this).data('videoid');
-        document.getElementById('moveVideoID').value=videoID;
-        document.getElementById('moveToChannelInput').selectedIndex =0;
-    });
-
-    function moveVideoSubmit() {
-        var videoID = document.getElementById('moveVideoID').value;
-        var destinationChannelInput = document.getElementById('moveToChannelInput');
-        var destinationChannel = destinationChannelInput.options[destinationChannelInput.selectedIndex].value;
-
-        $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
-
-        socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
-        createNewBSAlert("Video Moved", "Success");
-    }
-
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-
-    $(document).on("click", ".videoThumbnailUploadModalButton", function () {
-        document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
-        var videoID = $(this).data('videoid');
-        videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        document.getElementById('videoThumbnailID').value = videoID;
-        document.getElementById('videothumbnailFilenameDisplay').value = '';
-        document.getElementById('videothumbnailFilename').value = '';
-
-    });
-
-    function saveUploadedThumbnail() {
-        var videoID = document.getElementById('videoThumbnailID').value;
-        socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'} );
-        var thumbnailDiv = document.getElementById('videoThumb-' + videoID);
-        var thumbnailURL = thumbnailDiv.src;
-        setTimeout(function() {
-            thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
-        }, 4000);
-        createNewBSAlert("Thumbnail Updated", "Success");
-    }
-
-    function togglePublished(videoID) {
-        socket.emit('togglePublished', {videoID: videoID});
-    }
-
-    function togglePublishedClip(clipID) {
-        socket.emit('togglePublishedClip', {clipID: clipID});
-    }
-
-
-    function guid() {
-          return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-            s4() + '-' + s4() + s4() + s4();
-        }
-
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
+    {% for channel in channels %}
+    var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
+    {% endfor %}
 
     {% for channel in channels %}
     document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
       document.getElementById('streamKey-{{channel.id}}').value = guid();
     })
     {% endfor %}
-
 </script>
 
 {% for chan in viewStats %}
@@ -1507,555 +1211,4 @@
 </script>
 {% endfor %}
 
-<script>
-function updateChatPreview(channelID) {
-    var chatBG = document.getElementById("chatBG-".concat(channelID));
-    var chatAnimation = document.getElementById("chatAnimation-".concat(channelID));
-    var chatTextColor = document.getElementById("chatTextColor-".concat(channelID)).value;
-
-    chatBG = chatBG.options[chatBG.selectedIndex].value;
-    chatAnimation = chatAnimation.options[chatAnimation.selectedIndex].value;
-
-    var chatPreviewBox = document.getElementById("chatPreviewBox-".concat(channelID));
-    var chatPreviewText = document.getElementById("chatPreviewText-".concat(channelID));
-
-    chatPreviewBox.style.animation = 'none';
-    chatPreviewBox.offsetHeight; /* trigger reflow */
-    chatPreviewBox.style.animation = null;
-
-    chatPreviewBox.style.display = "none";
-
-    chatPreviewBox.className = '';
-    chatPreviewBox.classList.add('chatBar-Item');
-    chatPreviewBox.classList.add('chat-'.concat(chatBG));
-    chatPreviewBox.classList.add(chatAnimation);
-
-    chatPreviewText.style.color=chatTextColor;
-
-    chatPreviewBox.style.display = "block";
-}
-</script>
-
-<script>
-function toggleDiv(divID) {
-  var x = document.getElementById(divID);
-  $(x).slideToggle();
-}
-
-function openChannelWindow(divID, windowName) {
-    var openWindow = document.getElementById(windowName + '-' + divID);
-    var statWindow = document.getElementById('statWindow-' + divID);
-    var videoWindow = document.getElementById('videoWindow-' + divID);
-    var clipWindow = document.getElementById('clipWindow-' + divID);
-    var settingsWindow = document.getElementById('settingsWindow-' + divID);
-
-    statWindow.style.display = 'none';
-    videoWindow.style.display = 'none';
-    clipWindow.style.display = 'none';
-    settingsWindow.style.display = 'none';
-
-    openWindow.style.display = 'block';
-}
-
-</script>
-
-<script type="text/javascript" charset="utf-8">
-    var conn_options = {
-        'sync disconnect on unload':true
-    };
-
-    var socket = io();
-</script>
-
-<script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
-
-<script type="text/javascript">
-    Dropzone.autoDiscover = false;
-</script>
-
-<script>
-
-    socket.on('checkScreenShot', function (msg) {
-        document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-    });
-
-    socket.on('checkClipScreenShot', function (msg) {
-        document.getElementById("newClipScreenShotImg").src = msg['thumbnailLocation'];
-    });
-
-    socket.on('disconnect', function () {
-      socket.emit('cancelUpload', { data: videofilename });
-    });
-    window.addEventListener("beforeunload", function (e) {
-      socket.emit('cancelUpload', { data: videofilename });
-      return null;
-    });
-
-    $('#videoThumbnailUploadModal').on('hidden.bs.modal', function () {
-        socket.emit('cancelUpload', { data: videofilename });
-    });
-
-    var uploadthumbnaildropper = new Dropzone(
-      '#videothumbnaildropper', {
-      acceptedFiles: 'image/png',
-      previewTemplate: '<div></div>',
-      clickable: '#videothumbnailuploadbutton',
-      addRemoveLinks: true,
-      paramName: 'file',
-      chunking: true,
-      forceChunking: true,
-      url: '/upload/video-files',
-      maxFilesize: 5, // megabytes
-      chunkSize: 1000000 // bytes
-    }
-    );
-    uploadthumbnaildropper.on('sending', function (file, xhr, formData) {
-      formData.append('ospfilename', videofilename + '.png');
-    });
-    uploadthumbnaildropper.on("uploadprogress", function (file, progress, bytesSent) {
-      progress = Math.floor(bytesSent / file.size * 100);
-      $('#videothumbnailuploadprogress').width(progress + "%");
-      document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = '<b>' + progress + '%</b>';
-    });
-    uploadthumbnaildropper.on("addedfile", function (file) {
-      document.getElementById('videothumbnailFilename').value = videofilename + '.png';
-      document.getElementById('videothumbnailFilenameDisplay').value = file.name;
-      videouploadsocket();
-
-    });
-    uploadthumbnaildropper.on("success", function (file) {
-      document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
-      document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = 'Upload complete';
-      document.getElementById('videothumbnailuploadpreview').src = '/videos/temp/' + videofilename + '.png';
-
-    });
-    uploadthumbnaildropper.on('error', function (file, response) {
-      document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
-      document.getElementById('videothumbnailFilenameDisplay').value = 'Error: ' + response;
-    });
-
-</script>
-
-<script>
-    var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
-
-    {% for channel in channels %}
-    var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
-    {% endfor %}
-</script>
-
-<script>
-    function generateInviteCode(channelID) {
-        var newInviteTextInput = document.getElementById('newInviteCodeText-' + channelID);
-        var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
-        var daysToExpire = newInviteElementInput.value;
-        var customInviteCode = newInviteTextInput.value;
-        socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire, inviteCode: customInviteCode});
-        newInviteElementInput.value = null;
-        newInviteTextInput.value = "";
-    }
-</script>
-
-<script>
-    function addInvitedUser(channelID) {
-        var invitedUsernameDiv = document.getElementById('newInvitedUsername-' + channelID);
-        var invitedUsername = invitedUsernameDiv.value;
-
-        var daystoExpireDiv = document.getElementById('newInvitedUserDays-' + channelID);
-        var daystoExpire = daystoExpireDiv.value;
-
-        socket.emit('addUserChannelInvite', {chanID: channelID, username: invitedUsername, daysToExpiration: daystoExpire});
-    }
-</script>
-
-<script>
-    function deleteInviteCode(code) {
-        socket.emit('deleteInviteCode', {code: code});
-        var inviteCodeRow = document.getElementById('inviteCodeRow-' + code);
-        inviteCodeRow.parentNode.removeChild(inviteCodeRow);
-        createNewBSAlert("Invite Code Removed", "Success");
-    }
-</script>
-
-<script>
-    function deleteInvitedUser(inviteID) {
-        socket.emit('deleteInvitedUser', {inviteID: inviteID});
-        var inviteUserRow = document.getElementById('invitedUserRow-' + inviteID);
-        inviteUserRow.parentNode.removeChild(inviteUserRow);
-        createNewBSAlert("Invite Removed", "Success");
-    }
-</script>
-
-<script>
-    function deleteWebhookModal(webhookID) {
-        document.getElementById('deleteWebhookID').value = webhookID;
-        $('#confirmDeleteWebhookModal').modal('show');
-    }
-
-    function deleteWebhook() {
-        var webhookID = document.getElementById('deleteWebhookID').value;
-        socket.emit('deleteWebhook', {webhookID: webhookID});
-        var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
-        webhookTableRow.parentNode.removeChild(webhookTableRow);
-        createNewBSAlert("Webhook Deleted", "Success");
-    }
-
-    function testWebhook(webhookID, channelID) {
-        socket.emit('testWebhook', {webhookID: webhookID, channelID: channelID, webhookType: 'channel'});
-        createNewBSAlert("Webhook Test Sent","success")
-    }
-</script>
-
-<script>
-    function openNewWebhookModal(chanID) {
-        $('#newWebhookModal').modal('show');
-        var webhookName = document.getElementById('webhookName');
-        var webhookEndpoint = document.getElementById('webhookEndpoint');
-        var webhookHeader = document.getElementById('webhookHeader');
-        var webhookPayload = document.getElementById('webhookPayload');
-        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
-        var webhookTriggerElement = document.getElementById('webhookTrigger');
-        var webhookChannelID = (document.getElementById('webhookChannelIDInput'));
-        var webhookInputAction = document.getElementById('webhookInputAction');
-        var webhookInputID = document.getElementById('webhookID');
-
-        webhookInputID.value = 'New';
-
-        webhookName.value = "";
-        webhookEndpoint.value = "";
-        webhookHeader.value = "";
-        webhookPayload.value = "";
-        webhookReqTypeElement.value = 0;
-        webhookTriggerElement.value = 0;
-        webhookChannelID.value = chanID;
-        webhookInputAction.value = 'new';
-    }
-</script>
-
-<script type="text/javascript" charset="utf-8">
-    socket.on('newInviteCode', function (msg) {
-        var code = msg['code'];
-        var expiration = msg['expiration'];
-        var channelID = msg['channelID'];
-
-        var tableRef = document.getElementById('inviteCodeTable-' + channelID).getElementsByTagName('tbody')[0];
-
-        var newRow = tableRef.insertRow(tableRef.rows.length);
-        newRow.id = 'inviteCodeRow-' + code;
-
-        var codeCell = newRow.insertCell(0);
-        var expirationCell = newRow.insertCell(1);
-        var usesCell = newRow.insertCell(2);
-        var buttonCell = newRow.insertCell(3);
-
-        var codeCellText = '<div class="input-group mb-3"><div class="input-group-prepend"><button type="button" class="btn btn-primary" onclick="CopyInviteCode(\'inviteCodeRO-' + code + '\',\'code\')"><i class="fas fa-copy"></i></button>' +
-            '<button type="button" class="btn btn-success" onclick="CopyInviteCode(\'inviteCodeRO-' + code + '\',\'link\')"><i class="fas fa-link"></i></button></div>' +
-            '<input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-' + code + '" value="' + code + '" readonly aria-describedby="inviteCodeRO required"></div>';
-        var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode(\''+ code + '\')"><i class="far fa-trash-alt"></i></button>';
-
-        codeCell.innerHTML = codeCellText;
-        expirationCell.appendChild(document.createTextNode(expiration));
-        usesCell.appendChild(document.createTextNode('0'));
-        buttonCell.innerHTML = buttonText;
-    });
-</script>
-
-<script type="text/javascript" charset="utf-8">
-    socket.on('invitedUserAck', function (msg) {
-
-        var username = msg['username'];
-        var addedDate = msg['added'];
-        var expiration = msg['expiration'];
-        var channelID = msg['channelID'];
-        var inviteID = msg['id'];
-
-        var tableRef = document.getElementById('invitedUsersTable-' + channelID).getElementsByTagName('tbody')[0];
-
-        var newRow = tableRef.insertRow(tableRef.rows.length);
-        newRow.id = 'invitedUserRow-' + inviteID;
-
-        var usernameCell = newRow.insertCell(0);
-        var addedDateCell = newRow.insertCell(1);
-        var expirationDateCell = newRow.insertCell(2);
-        var usedCodeCell = newRow.insertCell(3);
-        var buttonCell = newRow.insertCell(4);
-
-        var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser(\'' + inviteID + '\')"><i class="far fa-trash-alt"></i></button>';
-
-        usernameCell.appendChild(document.createTextNode(username));
-        addedDateCell.appendChild(document.createTextNode(addedDate));
-        expirationDateCell.appendChild(document.createTextNode(expiration));
-        buttonCell.innerHTML = buttonText;
-        createNewBSAlert("Invite Created", "Success");
-    });
-
-</script>
-
-<script>
-	function submitWebhook() {
-        var webhookName = document.getElementById('webhookName').value;
-        var webhookEndpoint = document.getElementById('webhookEndpoint').value;
-        var webhookHeader = document.getElementById('webhookHeader').value;
-        var webhookPayload = document.getElementById('webhookPayload').value;
-        var webhookReqTypeElement = (document.getElementById('webhookReqType'));
-        var webhookTriggerElement = document.getElementById('webhookTrigger');
-        var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
-        var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
-        var webhookChannelID = (document.getElementById('webhookChannelIDInput')).value;
-        var webhookInputAction = document.getElementById('webhookInputAction').value;
-        var webhookInputID = document.getElementById('webhookID').value;
-
-        if (webhookName == '') {
-            (document.getElementById('webhookName')).setCustomValidity('Name is Required');
-        }
-        if (webhookEndpoint == '') {
-            (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
-        }
-
-        socket.emit('submitWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, webhookChannelID:webhookChannelID, inputAction:webhookInputAction, webhookInputID:webhookInputID});
-	}
-</script>
-
-<script>
-    function editWebhook(webhookID, chanID) {
-        var webHookChannelIDInput = document.getElementById('webhookChannelIDInput');
-        var webhookTrigger = document.getElementById('webhookTrigger');
-        var webhookName = document.getElementById('webhookName');
-        var webhookEndpoint = document.getElementById('webhookEndpoint');
-        var webhookHeader = document.getElementById('webhookHeader');
-        var webhookPayload = document.getElementById('webhookPayload');
-        var webhookReqTypeElement = document.getElementById('webhookReqType');
-        var webhookInputAction = document.getElementById('webhookInputAction');
-        var webhookInputID = document.getElementById('webhookID');
-
-        var triggerVal = document.getElementById('webhookRowTrigger-' + webhookID).innerText;
-
-        switch(triggerVal) {
-          case 'Stream Start':
-            triggerVal = 0;
-            break;
-          case 'Stream End':
-            triggerVal = 1;
-            break;
-          case 'Stream Viewer Join':
-            triggerVal = 2;
-            break;
-          case 'Stream Viewer Upvote':
-            triggerVal = 3;
-            break;
-          case 'Stream Name Change':
-            triggerVal = 4;
-            break;
-          case 'Chat Message':
-            triggerVal = 5;
-            break;
-          case 'New Video':
-            triggerVal = 6;
-            break;
-          case 'Video Comment':
-            triggerVal = 7;
-            break;
-          case 'Video Upvote':
-            triggerVal = 8;
-            break;
-          case 'Video Name Change':
-            triggerVal = 9;
-            break;
-          case 'Channel Subscription':
-            triggerVal = 10;
-            break;
-          default:
-            triggerVal = 0;
-        }
-
-        webhookName.value = document.getElementById('webhookRowName-' + webhookID).innerText;
-        webhookEndpoint.value = document.getElementById('webhookRowEndpoint-' + webhookID).innerText;
-        webhookHeader.value = document.getElementById('webhookRowHeader-' + webhookID).innerText;
-        webhookPayload.value = document.getElementById('webhookRowPayload-' + webhookID).innerText;
-        webhookReqTypeElement.value = document.getElementById('webhookRowType-' + webhookID).innerText;
-        webhookTrigger.value = triggerVal;
-        webHookChannelIDInput.value = chanID;
-        webhookInputAction.value = 'edit';
-        webhookInputID.value = webhookID;
-
-        $('#newWebhookModal').modal('show');
-        webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
-        webhookPayload.value = JSON.stringify(JSON.parse(webhookPayload.value), undefined, 2);
-    }
-</script>
-
-<script type="text/javascript" charset="utf-8">
-    socket.on('newWebhookAck', function (msg) {
-        var webhookName = msg['webhookName'];
-        var webhookURL = msg['requestURL'];
-        var webhookHeader = msg['requestHeader'];
-        var webhookPayload = msg['requestPayload'];
-        var webhookRequestType = msg['requestType'];
-        var webhookTrigger = msg['requestTrigger'];
-        var webhookID = msg['requestID'];
-        var channelID = msg['channelID'];
-
-        var tableRef = document.getElementById('webhookTable-' + channelID).getElementsByTagName('tbody')[0];
-
-        var newRow = tableRef.insertRow(tableRef.rows.length);
-        newRow.id = 'webhookTableRow-' + webhookID;
-
-        var webhookNameCell = newRow.insertCell(0);
-        var endpointURLCell = newRow.insertCell(1);
-        var requestTriggerCell = newRow.insertCell(2);
-        var requestTypeCell = newRow.insertCell(3);
-        var requestHeaderCell = newRow.insertCell(4);
-        var requestPayloadCell = newRow.insertCell(5);
-        var buttonCell = newRow.insertCell(6);
-
-        webhookNameCell.id = "webhookRowName-" + webhookID;
-        endpointURLCell.id = "webhookRowEndpoint-" + webhookID;
-        requestTriggerCell.id = "webhookRowTrigger-" + webhookID;
-        requestTypeCell.id = "webhookRowType-" + webhookID;
-        requestHeaderCell.id = "webhookRowHeader-" + webhookID;
-        requestPayloadCell.id = "webhookRowPayload-" + webhookID;
-
-        endpointURLCell.style.display = 'none';
-        requestTypeCell.style.display = 'none';
-        requestHeaderCell.style.display = 'none';
-        requestPayloadCell.style.display = 'none';
-
-        var buttonText = '<button type="button" class="btn btn-sm btn-warning" onclick="editWebhook(\'' + webhookID + '\',\'' + channelID + '\')"><i class="fas fa-edit"></i></button> <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal(\'' + webhookID + '\')"><i class="far fa-trash-alt"></i></button>';
-
-        var triggerVal = 'Unknown';
-
-        switch(webhookTrigger) {
-          case 0:
-            triggerVal = 'Stream Start';
-            break;
-          case 1:
-            triggerVal = 'Stream End';
-            break;
-          case 2:
-            triggerVal = 'Stream Viewer Join';
-            break;
-          case 3:
-            triggerVal = 'Stream Viewer Upvote';
-            break;
-          case 4:
-            triggerVal = 'Stream Name Change';
-            break;
-          case 5:
-            triggerVal = 'Chat Message';
-            break;
-          case 6:
-            triggerVal = 'New Video';
-            break;
-          case 7:
-            triggerVal = 'Video Comment';
-            break;
-          case 8:
-            triggerVal = 'Video Upvote';
-            break;
-          case 9:
-            triggerVal = 'Video Name Change';
-            break;
-          case 'Channel Subscription':
-            triggerVal = 10;
-            break;
-          default:
-            triggerVal = 'Unknown';
-
-        }
-
-
-        webhookNameCell.appendChild(document.createTextNode(webhookName));
-        endpointURLCell.appendChild(document.createTextNode(webhookURL));
-        requestTriggerCell.appendChild(document.createTextNode(triggerVal));
-        requestTypeCell.appendChild(document.createTextNode(webhookRequestType));
-        requestHeaderCell.appendChild(document.createTextNode(webhookHeader));
-        requestPayloadCell.appendChild(document.createTextNode(webhookPayload));
-        buttonCell.innerHTML = buttonText;
-        createNewBSAlert("Webhook Added", "Success");
-
-    });
-    </script>
-
-<script type="text/javascript" charset="utf-8">
-    socket.on('changeWebhookAck', function (msg) {
-        var webhookName = msg['webhookName'];
-        var webhookURL = msg['requestURL'];
-        var webhookHeader = msg['requestHeader'];
-        var webhookPayload = msg['requestPayload'];
-        var webhookRequestType = msg['requestType'];
-        var webhookTrigger = msg['requestTrigger'];
-        var webhookID = msg['requestID'];
-
-        webhookNameCell = document.getElementById('webhookRowName-' + webhookID);
-        endpointURLCell = document.getElementById('webhookRowEndpoint-' + webhookID);
-        requestTriggerCell = document.getElementById('webhookRowTrigger-' + webhookID);
-        requestTypeCell = document.getElementById('webhookRowType-' + webhookID);
-        requestHeaderCell = document.getElementById('webhookRowHeader-' + webhookID);
-        requestPayloadCell = document.getElementById('webhookRowPayload-' + webhookID);
-
-        var triggerVal = 'Unknown';
-
-        switch(webhookTrigger) {
-          case 0:
-            triggerVal = 'Stream Start';
-            break;
-          case 1:
-            triggerVal = 'Stream End';
-            break;
-          case 2:
-            triggerVal = 'Stream Viewer Join';
-            break;
-          case 3:
-            triggerVal = 'Stream Viewer Upvote';
-            break;
-          case 4:
-            triggerVal = 'Stream Name Change';
-            break;
-          case 5:
-            triggerVal = 'Chat Message';
-            break;
-          case 6:
-            triggerVal = 'New Video';
-            break;
-          case 7:
-            triggerVal = 'Video Comment';
-            break;
-          case 8:
-            triggerVal = 'Video Upvote';
-            break;
-          case 9:
-            triggerVal = 'Video Name Change';
-            break;
-          case 'Channel Subscription':
-            triggerVal = 10;
-            break;
-          default:
-            triggerVal = 'Unknown';
-        }
-
-        webhookNameCell.innerText = webhookName;
-        endpointURLCell.innerText = webhookURL;
-        requestTriggerCell.innerText = triggerVal;
-        requestTypeCell.innerText = webhookRequestType;
-        requestHeaderCell.innerText = webhookHeader;
-        requestPayloadCell.innerText = webhookPayload;
-        createNewBSAlert("Webhook Edited", "Success");
-    });
-    </script>
-
-    <script>
-    function deleteChannelModal(channelID) {
-        document.getElementById('deleteChannelID').value = channelID;
-        $('#confirmDeleteChannelModal').modal('show');
-    }
-
-    function deleteChannel() {
-        var channelID = document.getElementById('deleteChannelID').value;
-        socket.emit('deleteChannel', {channelID: channelID});
-        var channelTableRow = document.getElementById('channelEntry-' + channelID);
-        channelTableRow.parentNode.removeChild(channelTableRow);
-        var channelDashRow = document.getElementById('channelDash-' + channelID);
-        channelDashRow.parentNode.removeChild(channelDashRow);
-    }
-    </script>
 {% endblock %}

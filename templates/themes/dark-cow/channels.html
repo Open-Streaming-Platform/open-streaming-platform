@@ -42,7 +42,7 @@
                             <span class="badge badge-secondary">Offline</span>
                             {% endif %}
                         </span><br />
-                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
+                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
                         {% if channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
                         <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/"><span class="topic">{{channel.topic|get_topicName}}</span></a>
                         <span class="float-right">

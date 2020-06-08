@@ -8,6 +8,7 @@ from flask_restplus import Api, Resource, reqparse
 import shutil
 import uuid
 
+from classes import Sec
 from classes import Channel
 from classes import Stream
 from classes import RecordedVideo
@@ -17,7 +18,6 @@ from classes import apikey
 from classes import views
 from classes import settings
 from classes.shared import db
-from classes.shared import socketio
 
 from globals import globalvars
 
@@ -70,12 +70,14 @@ videoParserPut.add_argument('topicID', type=int)
 clipParserPut = reqparse.RequestParser()
 clipParserPut.add_argument('clipName', type=str)
 clipParserPut.add_argument('description', type=str)
-# TODO Add Clip Post Arguments
 
-chatParserPost = reqparse.RequestParser()
-chatParserPost.add_argument('username', type=str, required=True)
-chatParserPost.add_argument('message', type=str, required=True)
-chatParserPost.add_argument('userImage', type=str)
+xmppAuthParserPost = reqparse.RequestParser()
+xmppAuthParserPost.add_argument('jid', type=str)
+xmppAuthParserPost.add_argument('token', type=str)
+
+xmppIsUserParserPost = reqparse.RequestParser()
+xmppIsUserParserPost.add_argument('jid', type=str)
+# TODO Add Clip Post Arguments
 
 @api.route('/server')
 class api_1_Server(Resource):
@@ -88,7 +90,7 @@ class api_1_Server(Resource):
         db.session.commit()
         return {'results': serverSettings.serialize() }
 
-@api.route('/channels/')
+@api.route('/channel/')
 class api_1_ListChannels(Resource):
     # Channel - Get all Channels
     def get(self):
@@ -118,7 +120,7 @@ class api_1_ListChannels(Resource):
                     return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
         return {'results': {'message':"Request Error"}}, 400
 
-@api.route('/channels/<string:channelEndpointID>')
+@api.route('/channel/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
@@ -197,32 +199,7 @@ class api_1_ListChannel(Resource):
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
-
-@api.route('/channels/chat/<string:channelEndpointID>')
-@api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
-class api_1_ChannelChat(Resource):
-    @api.expect(chatParserPost)
-    @api.doc(security='apikey')
-    @api.doc(responses={200: 'Success', 400: 'Request Error'})
-    def post(self, channelEndpointID):
-        """
-            Creates a New Chat Message in the Channel
-        """
-        if 'X-API-KEY' in request.headers:
-            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey is not None:
-                if requestAPIKey.isValid():
-                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
-                    if channelQuery is not None:
-                        args = chatParserPost.parse_args()
-                        userImage = '/static/img/user2.png'
-                        if 'userImage' in args:
-                            if args['userImage'] is not None:
-                                userImage = args['userImage']
-                        socketio.emit('message', {'user': args['username'], 'image': userImage, 'msg': args['message'], 'flags': 'Bot'}, room=channelEndpointID)
-                        return {'results': {'message': 'Message Posted'}}, 200
-        return {'results': {'message': 'Request Error'}}, 400
-@api.route('/streams/')
+@api.route('/stream/')
 class api_1_ListStreams(Resource):
     def get(self):
         """
@@ -232,7 +209,7 @@ class api_1_ListStreams(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
 
-@api.route('/streams/<int:streamID>')
+@api.route('/stream/<int:streamID>')
 @api.doc(params={'streamID': 'ID Number for the Stream'})
 class api_1_ListStream(Resource):
     def get(self, streamID):
@@ -271,7 +248,7 @@ class api_1_ListStream(Resource):
                             return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
-@api.route('/vids/')
+@api.route('/video/')
 class api_1_ListVideos(Resource):
     def get(self):
         """
@@ -281,7 +258,7 @@ class api_1_ListVideos(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
 
-@api.route('/vids/<int:videoID>')
+@api.route('/video/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
 class api_1_ListVideo(Resource):
     def get(self, videoID):
@@ -358,7 +335,7 @@ class api_1_ListVideo(Resource):
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
-@api.route('/clips/')
+@api.route('/clip/')
 class api_1_ListClips(Resource):
     def get(self):
         """
@@ -368,7 +345,7 @@ class api_1_ListClips(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipsList]}
 
-@api.route('/clips/<int:clipID>')
+@api.route('/clip/<int:clipID>')
 @api.doc(params={'clipID': 'ID Number for the Clip'})
 class api_1_ListClip(Resource):
     def get(self, clipID):
@@ -433,7 +410,7 @@ class api_1_ListClip(Resource):
         return {'results': {'message': 'Request Error'}}, 400
 
 
-@api.route('/topics/')
+@api.route('/topic/')
 class api_1_ListTopics(Resource):
     def get(self):
         """
@@ -443,9 +420,10 @@ class api_1_ListTopics(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
-@api.route('/topics/<int:topicID>')
+@api.route('/topic/<int:topicID>')
 @api.doc(params={'topicID': 'ID Number for Topic'})
 class api_1_ListTopic(Resource):
+
     def get(self, topicID):
         """
              Returns Info on a Single Topic
@@ -453,3 +431,57 @@ class api_1_ListTopic(Resource):
         topicList = topics.topics.query.filter_by(id=topicID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
+
+@api.route('/user/<string:username>')
+@api.doc(params={'username': 'Username of OSP User'})
+class api_1_ListUser(Resource):
+    def get(self, username):
+        """
+            Get Public Info for One User
+        """
+        userQuery = Sec.User.query.filter_by(username=username).all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in userQuery]}
+
+@api.route('/xmpp/auth')
+@api.doc(params={'jid': 'JID of user', 'token': 'Jabber Token'})
+class api_1_xmppAuth(Resource):
+    @api.expect(xmppAuthParserPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Verify Chat Authentication
+        """
+        args = xmppAuthParserPost.parse_args()
+        if 'jid' in args:
+            jid = args['jid']
+            if 'token' in args:
+                token = args['token']
+                sysSettings = settings.settings.query.first()
+                if sysSettings is not None:
+                    username = jid.replace("@" + sysSettings.siteAddress,"")
+                    userQuery = Sec.User.query.filter_by(username=username, active=True).first()
+                    if userQuery != None:
+                        if userQuery.xmppToken == token:
+                            return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
+        return {'results': {'message': 'Request Error', 'code':400}}, 400
+
+@api.route('/xmpp/isuser')
+@api.doc(params={'jid': 'JID of user'})
+class api_1_xmppisuser(Resource):
+    @api.expect(xmppIsUserParserPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Verify if User
+        """
+        args = xmppIsUserParserPost.parse_args()
+        if 'jid' in args:
+            jid = args['jid']
+            sysSettings = settings.settings.query.first()
+            if sysSettings is not None:
+                username = jid.replace("@" + sysSettings.siteAddress,"")
+                userQuery = Sec.User.query.filter_by(username=username).first()
+                if userQuery != None:
+                    return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
+        return {'results': {'message': 'Request Error', 'code':400}}, 400

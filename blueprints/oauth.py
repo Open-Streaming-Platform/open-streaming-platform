@@ -1,6 +1,7 @@
 import datetime
 import random
 import uuid
+import os
 
 from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
@@ -11,6 +12,8 @@ from classes import Sec
 from classes.shared import oauth, db
 
 import json
+
+from time import time
 
 from app import user_datastore
 from functions.oauth import fetch_token, discord_processLogin, reddit_processLogin, facebook_processLogin
@@ -46,6 +49,13 @@ def oAuthAuthorize(provider):
         userDataDict = userData.json()
 
         userQuery = Sec.User.query.filter_by(oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider, authType=1).first()
+
+        # Default expiration time to 365 days into the future
+        if 'expires_at' not in token:
+            if 'expires_in' in token:
+                token['expires_at'] = datetime.timedelta(seconds=int(token['exipires_in'])) + datetime.datetime.now()
+            else:
+                token['expires_at'] = time() + (365 * 24 * 3600)
 
         # If oAuth ID, Provider, and Auth Type Match - Initiate Login
         if userQuery is not None:
@@ -105,6 +115,7 @@ def oAuthAuthorize(provider):
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
                 user_datastore.add_role_to_user(user, 'User')
                 user.uuid = str(uuid.uuid4())
+                user.xmppToken = str(os.urandom(32).hex())
 
                 if oAuthProviderQuery.preset_auth_type == "Discord":
                     discord_processLogin(userDataDict, user)

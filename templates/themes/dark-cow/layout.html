@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
   <link rel="stylesheet" href="/static/css/dark-cow/simplemde-theme-dark.min.css">
   <script src="/static/vendor/socketio/js/socket.io.js"></script>
-  <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
   <script src="/static/vendor/easymde/js/easymde.min.js"></script>
   
@@ -53,7 +53,7 @@
           <a class="nav-link" href="/topic">Topics</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/streamers">Streamers</a>
+          <a class="nav-link" href="/streamer">Streamers</a>
         </li>
         {% if current_user.is_authenticated == False %}
         <li class="nav-item">
@@ -306,7 +306,7 @@
   
   {% endblock %}
   
-  <script src="/static/vendor/jquery/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
   <script src="/static/vendor/popper/js/popper.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="/static/vendor/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
@@ -327,7 +327,7 @@
           date.setTime(date.getTime() + (days*24*60*60*1000));
           expires = "; expires=" + date.toUTCString();
       }
-      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+      document.cookie = name + "=" + (value || "")  + expires + "; path=/; SameSite=Lax";
     }
 
     function getCookie(name) {

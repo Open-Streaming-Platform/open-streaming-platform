@@ -67,6 +67,7 @@ if config.dbLocation[:6] != "sqlite":
 else:
     pass
 app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_COOKIE_SAMESITE'] = "Lax"
 app.config['SESSION_COOKIE_NAME'] = 'ospSession'
 app.config['SECRET_KEY'] = config.secretKey
 app.config['SECURITY_PASSWORD_HASH'] = "pbkdf2_sha512"
@@ -122,7 +123,7 @@ from functions import system
 from functions import securityFunc
 from functions import votes
 from functions import webhookFunc
-
+from functions.ejabberdctl import ejabberdctl
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
@@ -146,9 +147,9 @@ r.flushdb()
 # Initialize Flask-SocketIO
 from classes.shared import socketio
 if config.redisPassword == '' or config.redisPassword is None:
-    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort),  cors_allowed_origins=[])
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 else:
-    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort),  cors_allowed_origins=[])
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 
 # Begin Database Initialization
 from classes.shared import db
@@ -181,6 +182,19 @@ md = Markdown(app, extensions=['tables'])
 scheduler = BackgroundScheduler()
 #scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
 scheduler.start()
+
+# Initialize ejabberdctl
+ejabberd = None
+
+ejabberdServer = "127.0.0.1"
+if hasattr(config,'ejabberdServer'):
+    ejabberdServer = config.ejabberdServer
+
+try:
+    ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=ejabberdServer)
+    print(ejabberd.status())
+except Exception as e:
+    print("ejabberdctl failed to load: " + str(e))
 
 # Attempt Database Load and Validation
 try:
@@ -220,13 +234,18 @@ from classes.shared import email
 email.init_app(app)
 email.app = app
 
+# Perform XMPP Sanity Check
+from functions import xmpp
+try:
+    results = xmpp.sanityCheck()
+except Exception as e:
+    print("XMPP Sanity Check Failed - " + str(e))
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
 from functions.socketio import connections
 from functions.socketio import video
 from functions.socketio import stream
-from functions.socketio import chat
 from functions.socketio import vote
 from functions.socketio import invites
 from functions.socketio import webhooks
@@ -234,6 +253,7 @@ from functions.socketio import edge
 from functions.socketio import subscription
 from functions.socketio import thumbnail
 from functions.socketio import syst
+from functions.socketio import xmpp
 
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
@@ -243,6 +263,7 @@ from blueprints.apiv1 import api_v1
 from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
 from blueprints.streamers import streamers_bp
+from blueprints.profile import profile_bp
 from blueprints.channels import channels_bp
 from blueprints.topics import topics_bp
 from blueprints.play import play_bp
@@ -261,6 +282,7 @@ app.register_blueprint(channels_bp)
 app.register_blueprint(play_bp)
 app.register_blueprint(clip_bp)
 app.register_blueprint(streamers_bp)
+app.register_blueprint(profile_bp)
 app.register_blueprint(topics_bp)
 app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
@@ -333,6 +355,7 @@ def user_registered_sighandler(app, user, confirm_token):
     default_role = user_datastore.find_role("User")
     user_datastore.add_role_to_user(user, default_role)
     user.authType = 0
+    user.xmppToken = str(os.urandom(32).hex())
     user.uuid = str(uuid.uuid4())
     webhookFunc.runWebhook("ZZZ", 20, user=user.username)
     system.newLog(1, "A New User has Registered - Username:" + str(user.username))

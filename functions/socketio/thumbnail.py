@@ -21,26 +21,40 @@ from functions import system
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):
+
     video = message['loc']
     timeStamp = message['timeStamp']
     videos_root = globalvars.videoRoot + 'videos/'
+    videoLocation = None
+    thumbnailLocation = None
+    channelLocation = None
 
-    if video is not None:
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
-        if videoQuery is not None and videoQuery.owningUser == current_user.id:
-            videoLocation = videos_root + videoQuery.videoLocation
-            thumbnailLocation = videos_root + videoQuery.channel.channelLoc + '/tempThumbnail.png'
-            try:
-                os.remove(thumbnailLocation)
-            except OSError:
-                pass
-            result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
-            tempLocation = '/videos/' + videoQuery.channel.channelLoc + '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
-            if 'clip' in message:
-                emit('checkClipScreenShot', {'thumbnailLocation': tempLocation, 'timestamp': timeStamp}, broadcast=False)
-            else:
-                emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
-            db.session.close()
+    if 'clipID' in message:
+        video = message['clipID']
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=int(video)).first()
+        if clipQuery is not None and clipQuery.recordedVideo.owningUser == current_user.id:
+            videoLocation = videos_root + clipQuery.videoLocation
+            thumbnailLocation = videos_root + clipQuery.recordedVideo.channel.channelLoc + '/tempThumbnail.png'
+            channelLocation = clipQuery.recordedVideo.channel.channelLoc
+    else:
+        if video is not None:
+            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
+            if videoQuery is not None and videoQuery.owningUser == current_user.id:
+                videoLocation = videos_root + videoQuery.videoLocation
+                thumbnailLocation = videos_root + videoQuery.channel.channelLoc + '/tempThumbnail.png'
+                channelLocation = videoQuery.channel.channelLoc
+    if videoLocation is not None and thumbnailLocation is not None and channelLocation is not None:
+        try:
+            os.remove(thumbnailLocation)
+        except OSError:
+            pass
+        result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', thumbnailLocation])
+        tempLocation = '/videos/' + channelLocation+ '/tempThumbnail.png?dummy=' + str(random.randint(1,50000))
+        if 'clip' in message:
+            emit('checkClipScreenShot', {'thumbnailLocation': tempLocation, 'timestamp': timeStamp}, broadcast=False)
+        else:
+            emit('checkScreenShot', {'thumbnailLocation': tempLocation, 'timestamp':timeStamp}, broadcast=False)
+    db.session.close()
     db.session.commit()
     db.session.close()
     return 'OK'
@@ -84,7 +98,7 @@ def setScreenShot(message):
         if clipQuery is not None and current_user.id == clipQuery.recordedVideo.owningUser:
             thumbnailLocation = clipQuery.thumbnailLocation
             fullthumbnailLocation = videos_root + thumbnailLocation
-            videoLocation = videos_root + clipQuery.recordedVideo.videoLocation
+            videoLocation = videos_root + clipQuery.videoLocation
             newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
             fullNewClipThumbnailLocation = videos_root + newClipThumbnail
             clipQuery.thumbnailLocation = newClipThumbnail

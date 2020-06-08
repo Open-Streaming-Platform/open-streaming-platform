@@ -67,6 +67,10 @@ def deleteChannelAdmin(message):
             if filePath != globalvars.videoRoot:
                 shutil.rmtree(filePath, ignore_errors=True)
 
+            from app import ejabberd
+            sysSettings = settings.settings.query.first()
+            ejabberd.destroy_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
+
             system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
             db.session.delete(channelQuery)
             db.session.commit()

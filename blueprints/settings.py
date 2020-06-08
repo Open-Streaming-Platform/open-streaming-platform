@@ -796,6 +796,8 @@ def admin_page():
 
             user = Sec.User.query.filter_by(username=username).first()
             user_datastore.add_role_to_user(user, 'User')
+            user.autType = 0
+            user.confirmed_at = datetime.datetime.now()
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
@@ -993,6 +995,8 @@ def settings_dbRestore():
                     user.oAuthID = restoredUser['oAuthID']
                 if 'oAuthProvider' in restoredUser:
                     user.oAuthProvider = restoredUser['oAuthProvider']
+                if 'xmppToken' in restoredUser:
+                    user.xmppToken = restoredUser['xmppToken']
 
                 if restoredUser['confirmed_at'] != "None":
                     try:
@@ -1036,9 +1040,6 @@ def settings_dbRestore():
                                               eval(restoredChannel['allowComments']), restoredChannel['description'])
                     channel.id = int(restoredChannel['id'])
                     channel.channelLoc = restoredChannel['channelLoc']
-                    channel.chatBG = restoredChannel['chatBG']
-                    channel.chatTextColor = restoredChannel['chatTextColor']
-                    channel.chatAnimation = restoredChannel['chatAnimation']
                     channel.views = int(restoredChannel['views'])
                     channel.protected = eval(restoredChannel['protected'])
                     channel.channelMuted = eval(restoredChannel['channelMuted'])
@@ -1051,6 +1052,10 @@ def settings_dbRestore():
                         channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
                     if 'rtmpRestreamDestination' in restoredChannel:
                         channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
+                    if 'xmppToken' in restoredChannel:
+                        channel.xmppToken = restoredChannel['xmppToken']
+                    else:
+                        channel.xmppToken = str(os.urandom(32).hex())
 
                     db.session.add(channel)
                 else:
@@ -1415,57 +1420,10 @@ def settings_dbRestore():
 @roles_required('Streamer')
 def settings_channels_page():
     sysSettings = settings.settings.query.first()
-    channelChatBGOptions = [{'name': 'Default', 'value': 'Standard'}, {'name': 'Plain White', 'value': 'PlainWhite'},
-                            {'name': 'Deep Space', 'value': 'DeepSpace'}, {'name': 'Blood Red', 'value': 'BloodRed'},
-                            {'name': 'Terminal', 'value': 'Terminal'}, {'name': 'Lawrencium', 'value': 'Lawrencium'},
-                            {'name': 'Lush', 'value': 'Lush'}, {'name': 'Transparent', 'value': 'Transparent'}]
-    channelChatAnimationOptions = [{'name': 'No Animation', 'value': 'None'},
-                                   {'name': 'Slide-in From Left', 'value': 'slide-in-left'},
-                                   {'name': 'Slide-In Blurred From Left', 'value': 'slide-in-blurred-left'},
-                                   {'name': 'Fade-In', 'value': 'fade-in-fwd'}]
+
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
-    if request.method == 'GET':
-        if request.args.get("action") is not None:
-            action = request.args.get("action")
-            streamKey = request.args.get("streamkey")
-
-            requestedChannel = Channel.Channel.query.filter_by(streamKey=streamKey).first()
-
-            if action == "delete":
-                if current_user.id == requestedChannel.owningUser:
-
-                    filePath = videos_root + requestedChannel.channelLoc
-                    if filePath != videos_root:
-                        shutil.rmtree(filePath, ignore_errors=True)
-
-                    channelVid = requestedChannel.recordedVideo
-                    channelUpvotes = requestedChannel.upvotes
-                    channelStreams = requestedChannel.stream
-
-                    for entry in channelVid:
-
-                        vidComments = channelVid.comments
-                        for comment in vidComments:
-                            db.session.delete(comment)
-
-                        vidViews = views.views.query.filter_by(viewType=1, itemID=channelVid.id)
-                        for view in vidViews:
-                            db.session.delete(view)
-
-                        db.session.delete(entry)
-                    for entry in channelUpvotes:
-                        db.session.delete(entry)
-                    for entry in channelStreams:
-                        db.session.delete(entry)
-
-                    db.session.delete(requestedChannel)
-                    db.session.commit()
-                    flash("Channel Deleted")
-                else:
-                    flash("Invalid Deletion Attempt", "Error")
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
 
         requestType = request.form['type']
         channelName = system.strip_html(request.form['channelName'])
@@ -1490,10 +1448,6 @@ def settings_channels_page():
         if 'chatSelect' in request.form:
             chatEnabled = True
 
-        chatJoinNotifications = False
-        if 'chatJoinNotificationSelect' in request.form:
-            chatJoinNotifications = True
-
         allowComments = False
 
         if 'allowComments' in request.form:
@@ -1517,16 +1471,25 @@ def settings_channels_page():
                     filename = photos.save(request.files['photo'], name=str(uuid.uuid4()) + '.')
                     newChannel.imageLocation = filename
 
+            # Establish XMPP Channel
+            from app import ejabberd
+            ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
+            ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
+
+            # Defautl values
+            for key, value in globalvars.room_config.items():
+                ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+
+            # Name and title
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', newChannel.channelName)
+            ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + newChannel.channelName + '"')
+
             db.session.add(newChannel)
             db.session.commit()
 
         elif requestType == 'change':
             streamKey = request.form['streamKey']
             origStreamKey = request.form['origStreamKey']
-
-            chatBG = request.form['chatBG']
-            chatAnimation = request.form['chatAnimation']
-            chatTextColor = request.form['chatTextColor']
 
             defaultstreamName = request.form['channelStreamName']
 
@@ -1544,15 +1507,19 @@ def settings_channels_page():
                 requestedChannel.chatEnabled = chatEnabled
                 requestedChannel.allowComments = allowComments
                 requestedChannel.description = description
-                requestedChannel.chatBG = chatBG
-                requestedChannel.showChatJoinLeaveNotification = chatJoinNotifications
-                requestedChannel.chatAnimation = chatAnimation
-                requestedChannel.chatTextColor = chatTextColor
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
                 requestedChannel.rtmpRestream = rtmpRestream
                 requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+
+                from app import ejabberd
+                if protection is True:
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'true')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', requestedChannel.xmppToken)
+                else:
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password', '')
+                    ejabberd.change_room_option(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'false')
 
                 if 'photo' in request.files:
                     file = request.files['photo']
@@ -1596,6 +1563,43 @@ def settings_channels_page():
 
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+
+    # Get xmpp room options
+    from app import ejabberd
+    channelRooms = {}
+    channelMods = {}
+    for chan in user_channels:
+        xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+        channelOptionsDict = {}
+        if 'options' in xmppQuery:
+            for option in xmppQuery['options']:
+                key = None
+                value = None
+                for entry in option['option']:
+                    if 'name' in entry:
+                            key = entry['name']
+                    elif 'value' in entry:
+                            value = entry['value']
+                if key is not None and value is not None:
+                    channelOptionsDict[key] = value
+        channelRooms[chan.channelLoc] = channelOptionsDict
+
+        # Get room affiliations
+        xmppQuery = ejabberd.get_room_affiliations(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+
+        affiliationList = []
+        for affiliation in xmppQuery['affiliations']:
+            user = {}
+            for entry in affiliation['affiliation']:
+                for key, value in entry.items():
+                    user[key] = value
+            affiliationList.append(user)
+        
+        channelModList = []
+        for user in affiliationList:
+            if user['affiliation'] == "admin":
+                channelModList.append(user['username'] + "@" + user['domain'])
+        channelMods[chan.channelLoc] = channelModList
 
     # Calculate Channel Views by Date based on Video or Live Views
     user_channels_stats = {}
@@ -1641,9 +1645,40 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
-    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList,
-                           viewStats=user_channels_stats, channelChatBGOptions=channelChatBGOptions,
-                           channelChatAnimationOptions=channelChatAnimationOptions)
+    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
+                           viewStats=user_channels_stats)
+
+
+@settings_bp.route('/channels/chat', methods=['POST', 'GET'])
+@login_required
+@roles_required('Streamer')
+def settings_channels_chat_page():
+    sysSettings = settings.settings.query.first()
+
+    if request.method == 'POST':
+        from app import ejabberd
+        channelLoc = system.strip_html(request.form['channelLoc'])
+        roomTitle = request.form['roomTitle']
+        roomDescr = system.strip_html(request.form['roomDescr'])
+        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
+        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
+
+        if 'moderatedSelect' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "false")
+
+        if 'allowGuests' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "false")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "true")
+
+        if 'allowGuestsChat' in request.form:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "true")
+        else:
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "false")
+
+    return redirect(url_for('settings.settings_channels_page'))
 
 
 @settings_bp.route('/api', methods=['GET'])
@@ -1745,6 +1780,7 @@ def initialSetup():
             user.uuid = str(uuid.uuid4())
             user.authType = 0
             user.confirmed_at = datetime.datetime.now()
+            user.xmppToken = str(os.urandom(32).hex())
 
             user_datastore.find_or_create_role(name='Admin', description='Administrator')
             user_datastore.find_or_create_role(name='User', description='User')

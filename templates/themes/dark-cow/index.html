@@ -81,7 +81,7 @@
                         {% if video.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
                         <i class="fas fa-podcast mr-2"></i> {{video.ChanName}}
                         <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
-                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
+                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
                         <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a></span><br />
                         <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}</span>
                         <i class="fas fa-eye mx-2"></i> {{video.views}}</span>
@@ -114,7 +114,7 @@
                                     class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
                         <i class="fas fa-podcast mr-2"></i> {{clip.channelName}}</a>
                         <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i> {{clip.videoDate|normalize_date}}</span><br />
-                        <i class="fas fa-user mr-2"></i><a href="/streamers/{{clip.owningUser}}"> {{clip.owningUser|get_userName}}</a>
+                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{clip.owningUser}}"> {{clip.owningUser|get_userName}}</a>
                         <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.topic}}/"> {{clip.topic|get_topicName}}</a></span><br />
                         <i class="fas fa-thumbs-up mr-2"></i> {{clip.id|get_Clip_Upvotes}}</span>
                         <i class="fas fa-eye mx-2"></i> {{clip.views}}</span>
