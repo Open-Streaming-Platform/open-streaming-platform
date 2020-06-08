@@ -17,7 +17,7 @@
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12">
                 <div class="viewerText">
                     <h2 class="display-5"><b>{{channelData.channelName}}</b></h2>
-                    <a href="/streamers/{{channelData.owningUser}}/">
+                    <a href="/streamer/{{channelData.owningUser}}/">
                         <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
                     </a>
                     {% if channelData.stream|length > 0 %}

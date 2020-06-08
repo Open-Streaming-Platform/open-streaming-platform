@@ -33,7 +33,7 @@
             <ul class="itemList d-flex flex-wrap justify-content-start">
                 {% for streamer in streamerList %}
                     <li class="streamerCard mx-4 my-3">
-                        <a href="/streamers/{{streamer.id}}/">
+                        <a href="/streamer/{{streamer.id}}/">
                         <img class="shadow lazy zoom" src="/images/{{streamer.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                         <div class="card-data">
                             <div class="card-cut-text name"><b>{{streamer.username}}</b></div>

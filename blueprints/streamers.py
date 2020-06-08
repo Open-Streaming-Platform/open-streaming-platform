@@ -13,7 +13,7 @@ from classes import Sec
 
 from functions import themes
 
-streamers_bp = Blueprint('streamers', __name__, url_prefix='/streamers')
+streamers_bp = Blueprint('streamers', __name__, url_prefix='/streamer')
 
 @streamers_bp.route('/')
 def streamers_page():

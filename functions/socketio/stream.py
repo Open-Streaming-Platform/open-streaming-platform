@@ -9,6 +9,7 @@ from classes import settings
 from functions import system
 from functions import webhookFunc
 from functions import templateFilters
+from functions import xmpp
 
 from app import r
 
@@ -16,11 +17,7 @@ from app import r
 def handle_viewer_total_request(streamData, room=None):
     channelLoc = str(streamData['data'])
 
-    viewers = len(r.smembers(channelLoc + '-streamSIDList'))
-
-    streamUserList = r.lrange(channelLoc + '-streamUserList', 0, -1)
-    if streamUserList is None:
-        streamUserList = []
+    viewers = xmpp.getChannelCounts(channelLoc)
 
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     if channelQuery is not None:
@@ -29,19 +26,12 @@ def handle_viewer_total_request(streamData, room=None):
             stream.currentViewers = viewers
         db.session.commit()
 
-    decodedStreamUserList = []
-    for entry in streamUserList:
-        user = entry.decode('utf-8')
-        # Prevent Duplicate Usernames in Master List, but allow users to have multiple windows open
-        if user not in decodedStreamUserList:
-            decodedStreamUserList.append(user)
-
     db.session.commit()
     db.session.close()
     if room is None:
-        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList})
+        emit('viewerTotalResponse', {'data': str(viewers)})
     else:
-        emit('viewerTotalResponse', {'data': str(viewers), 'userList': decodedStreamUserList}, room=room)
+        emit('viewerTotalResponse', {'data': str(viewers)}, room=room)
     return 'OK'
 
 @socketio.on('updateStreamData')

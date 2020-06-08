@@ -48,6 +48,29 @@
 
                             <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                             <hr>
+                            <b>XMPP Access</b>
+                            <p>To access the chat with an external Jabber Client, use this login information:</p>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                    <b>Username: </b>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    {{current_user.username}}@{{sysSettings.siteAddress}}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                    <b>Password: </b>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                    <div class="input-group">
+                                          <div class="input-group-prepend">
+                                              <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken')"><i class="fas fa-copy"></i></button>
+                                          </div>
+                                          <input type="text" name="xmppToken" id="xmppToken" class="form-control" readonly value="{{current_user.xmppToken}}">
+                                    </div>
+                                </div>
+                            </div>
                             <button type="submit" class="btn btn-success">Submit</button>
                         </form>
                     </div>
@@ -57,7 +80,13 @@
     </div>
 </div>
 
-
+<script>
+    function CopyAPI(divVal) {
+      var copyText = document.getElementById(divVal);
+      copyText.select();
+      document.execCommand("copy");
+    }
+</script>
 
 <script>
     var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
