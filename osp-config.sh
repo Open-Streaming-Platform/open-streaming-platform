@@ -108,14 +108,14 @@ install_osp() {
   if  $arch
   then
           echo "Installing for Arch" >> $installLog
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
+          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python curl libpq-dev ffmpeg --needed >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
           # Get Dependencies
-          sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
+          sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
           sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $installLog 2>&1
@@ -360,7 +360,7 @@ if [ $# -eq 0 ]
                    upgrade_osp
                    UPGRADECHECKVERSION="/opt/osp/setup/upgrade/${NEWVERSION::-1}.sh"
                    if [[ -f $UPGRADECHECKVERSION ]]; then
-                      bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
+                      sudo bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
                    fi
                    version=$NEWVERSION
                    result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
