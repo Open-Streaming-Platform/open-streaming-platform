@@ -108,7 +108,7 @@ install_osp() {
   if  $arch
   then
           echo "Installing for Arch" >> $installLog
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev libmysqlclient-dev ffmpeg --needed >> $installLog 2>&1
+          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev ffmpeg --needed >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt
   else
