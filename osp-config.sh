@@ -118,7 +118,7 @@ install_osp() {
           sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools libmysqlclient-dev -y >> $installLog 2>&1
+          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $installLog 2>&1
           echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install wheel >> $installLog 2>&1
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
