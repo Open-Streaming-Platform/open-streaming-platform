@@ -1271,12 +1271,13 @@ def settings_dbRestore():
                     except ValueError:
                         invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'],
                                                                       '%Y-%m-%d %H:%M:%S.%f')
-                    try:
-                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
-                                                                       '%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
-                                                                       '%Y-%m-%d %H:%M:%S.%f')
+                    if restoredInvitedViewer['expiration'] is not None:
+                        try:
+                            invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
+                                                                           '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
+                                                                           '%Y-%m-%d %H:%M:%S.%f')
                     if 'inviteCode' in restoredInvitedViewer:
                         if restoredInvitedViewer['inviteCode'] is not None:
                             invite.inviteCode = int(restoredInvitedViewer['inviteCode'])
