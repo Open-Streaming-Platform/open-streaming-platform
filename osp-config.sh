@@ -40,6 +40,43 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+reset_ejabberd() {
+  RESETLOG="/opt/osp/logs/reset.log"
+  echo 5 | dialog --title "Reset EJabberD Configuration" --gauge "Stopping EJabberD" 10 70 0
+  sudo systemctl stop ejabberd > $RESETLOG 2>&1
+  echo 10 | dialog --title "Reset EJabberD Configuration" --gauge "Removing EJabberD" 10 70 0
+  sudo rm -rf /usr/local/ejabberd >> $RESETLOG 2>&1
+  echo 20 | dialog --title "Reset EJabberD Configuration" --gauge "Downloading EJabberD" 10 70 0
+  wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $RESETLOG 2>&1
+  sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run >> $RESETLOG 2>&1
+  echo 30 | dialog --title "Reset EJabberD Configuration" --gauge "Reinstalling EJabbedD" 10 70 0
+  /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $RESETLOG 2>&1
+  echo 50 | dialog --title "Reset EJabberD Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
+  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py $RESETLOG 2>&1
+  sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
+  sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $RESETLOG 2>&1
+  echo 60 | dialog --title "Reset EJabberD Configuration" --gauge "Install EJabberD Configuration File" 10 70 0
+  mkdir /usr/local/ejabberd/conf >> $RESETLOG 2>&1
+  cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $RESETLOG 2>&1
+  cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $RESETLOG 2>&1
+  user_input=$(\
+  dialog --nocancel --title "Setting up Ejabberd" \
+         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+  echo 80 | dialog --title "Reset EJabberD Configuration" --gauge "Updating EJabberD Config File" 10 70 0
+  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $RESETLOG 2>&1
+  echo 85 | dialog --title "Reset EJabberD Configuration" --gauge "Restarting EJabberD" 10 70 0
+  sudo systemctl daemon-reload >> $RESETLOG 2>&1
+  sudo systemctl enable ejabberd >> $RESETLOG 2>&1
+  sudo systemctl start ejabberd >> $RESETLOG 2>&1
+  echo 90 | dialog --title "Reset EJabberD Configuration" --gauge "Setting EJabberD Local Admin" 10 70 0
+  /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $RESETLOG 2>&1
+  /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $RESETLOG 2>&1
+  echo 95 | dialog --title "Reset EJabberD Configuration" --gauge "Restarting OSP" 10 70 0
+  sudo systemctl restart osp.target
+}
+
 reset_nginx() {
    RESETLOG="/opt/osp/logs/reset.log"
    echo 25 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Backup Nginx-RTMP Configurations" 10 70 0
@@ -108,17 +145,17 @@ install_osp() {
   if  $arch
   then
           echo "Installing for Arch" >> $installLog
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python libpq-dev libmysqlclient-dev ffmpeg --needed >> $installLog 2>&1
+          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python curl ffmpeg --needed --noconfirm >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install -r $cwd/setup/requirements.txt
   else
           echo "Installing for Debian - based" >> $installLog 2>&1
 
           # Get Dependencies
-          sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev git -y >> $installLog 2>&1
+          sudo apt-get install build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $installLog 2>&1
           echo 5 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           # Setup Python
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools libmysqlclient-dev -y >> $installLog 2>&1
+          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $installLog 2>&1
           echo 7 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
           sudo pip3 install wheel >> $installLog 2>&1
           sudo pip3 install -r $cwd/setup/requirements.txt >> $installLog 2>&1
@@ -287,6 +324,7 @@ if [ $# -eq 0 ]
         "4" "Upgrade to Latest Build" \
         "5" "Upgrade DB Only" \
         "6" "Reset Nginx Configuration" \
+        "7" "Reset EJabberD Configuration" \
         2>&1 1>&3)
       exit_status=$?
       exec 3>&-
@@ -360,7 +398,7 @@ if [ $# -eq 0 ]
                    upgrade_osp
                    UPGRADECHECKVERSION="/opt/osp/setup/upgrade/${NEWVERSION::-1}.sh"
                    if [[ -f $UPGRADECHECKVERSION ]]; then
-                      bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
+                      sudo bash $UPGRADECHECKVERSION >> /opt/osp/logs/${NEWVERSION::-1}.log 2>&1
                    fi
                    version=$NEWVERSION
                    result=$(echo "OSP $BRANCH/$VERSION$CURRENTCOMMIT has been updated to $BRANCH/$NEWVERSION$REMOTECOMMIT\n\nUpgrade logs can be found at /opt/osp/logs/upgrade.log")
@@ -378,8 +416,14 @@ if [ $# -eq 0 ]
           result=$(echo "Database Upgrade Complete!")
           display_result "Upgrade Results"
           ;;
-        6 ) reset_nginx
+        6 )
+          reset_nginx
           result=$(echo "Nginx Configuration has been reset.\n\nBackup of nginx.conf was stored at /usr/local/nginx/conf/nginx.conf.bak")
+          display_result "Reset Results"
+          ;;
+        7 )
+          reset_ejabberd
+          result=$(echo "EJabberD has been reset and OSP has been restarted")
           display_result "Reset Results"
           ;;
       esac
@@ -396,6 +440,7 @@ if [ $# -eq 0 ]
         echo "upgrade: Upgrades OSP"
         echo "dbupgrade: Upgrades the Database Only"
         echo "resetnginx: Resets the Nginx Configuration and Restarts"
+        echo "resetejabberd: Resets EJabberD configuration and Restarts"
         ;;
       install )
         install_osp
@@ -414,6 +459,9 @@ if [ $# -eq 0 ]
         ;;
       resetnginx )
         reset_nginx
+        ;;
+      resetejabberd )
+        reset_ejabberd
         ;;
     esac
     fi

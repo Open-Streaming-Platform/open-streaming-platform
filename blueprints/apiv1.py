@@ -454,7 +454,7 @@ class api_1_xmppAuth(Resource):
         """
         args = xmppAuthParserPost.parse_args()
         if 'jid' in args:
-            jid = args['jid']
+            jid = args['jid'].replace("_"," ")
             if 'token' in args:
                 token = args['token']
                 sysSettings = settings.settings.query.first()
@@ -477,7 +477,7 @@ class api_1_xmppisuser(Resource):
         """
         args = xmppIsUserParserPost.parse_args()
         if 'jid' in args:
-            jid = args['jid']
+            jid = args['jid'].replace("_"," ")
             sysSettings = settings.settings.query.first()
             if sysSettings is not None:
                 username = jid.replace("@" + sysSettings.siteAddress,"")

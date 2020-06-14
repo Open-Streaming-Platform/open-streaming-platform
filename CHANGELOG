@@ -1,3 +1,11 @@
+0.7.1
+==============================================
+Fixes to Typos that caused new users to generate 500 error
+Fixes to XMPP where users with a space in their username would cause chat to never connect
+Fixes to Restoring DB backups which would cause a 500 error if an invited user had an infinite expiration
+Added new option to osp-config.sh to allow reinstallations of EJabberD installs to correct any issues
+Modifications to Arch Install Packages per Issue #238
+
 0.7.0
 ==============================================
 Chat has been reworked! All chat now uses an XMPP backend via ejabberd.  Config files for ejabberd can be found in /usr/local/ejabberd/conf/ejabberd.yml
