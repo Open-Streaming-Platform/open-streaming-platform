@@ -68,11 +68,20 @@
 
         socket.emit('checkUniqueUsername', {username: username});
     }
+    function preventSpaces() {
+        var usernameDiv = document.getElementById('username');
+        if (/\s/.test(usernameDiv.value)) {
+            usernameDiv.setCustomValidity('Username Cannot Contain Spaces');
+        } else {
+           usernameDiv.setCustomValidity('');
+        }
+    }
 </script>
 
 <script>
     $('#username').change(function() {
     checkUniqueUsername();
+    preventSpaces();
 });
 </script>
 
