@@ -11,6 +11,9 @@ class ExtendedRegisterForm(RegisterForm):
 
     def validate(self):
         success = True
+        if " " in self.username.data:
+            self.username.errors.append("Username Cannot Contain Spaces")
+            success = False
         if not super(ExtendedRegisterForm, self).validate():
             success = False
         if db.session.query(User).filter(User.username == self.username.data.strip()).first():
