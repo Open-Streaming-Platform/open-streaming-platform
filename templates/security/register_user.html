@@ -62,38 +62,19 @@
 </script>
 
 <script>
-    function checkUniqueUsername() {
-        var usernameDiv = document.getElementById('username');
-        username = usernameDiv.value;
+    function validateForm() {
+        var validForm = true;
 
-        socket.emit('checkUniqueUsername', {username: username});
-    }
-    function preventSpaces() {
+        // Check for Spaces in Username
         var usernameDiv = document.getElementById('username');
         if (/\s/.test(usernameDiv.value)) {
             usernameDiv.setCustomValidity('Username Cannot Contain Spaces');
+            validForm = false;
         } else {
            usernameDiv.setCustomValidity('');
         }
+
+        return validForm;
     }
-</script>
-
-<script>
-    function validateForm() {
-        checkUniqueUsername();
-        preventSpaces();
-    };
-</script>
-
-<script type="text/javascript" charset="utf-8">
-    socket.on('checkUniqueUsernameAck', function (msg) {
-        var checkResults = msg['results'];
-        var usernameDiv = document.getElementById('username');
-        if (checkResults == '0') {
-            usernameDiv.setCustomValidity('Invalid User');
-        } else {
-            usernameDiv.setCustomValidity('');
-        }
-    });
 </script>
 {% endblock %}
