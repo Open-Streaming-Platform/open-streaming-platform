@@ -67,7 +67,7 @@
 
         // Check for Spaces in Username
         var usernameDiv = document.getElementById('username');
-        if ((usernameDiv.value).indexOf(' ') !== -1) {
+        if (document.getElementById('username').value.indexOf(' ') !== -1) {
             usernameDiv.setCustomValidity('Username Cannot Contain Spaces');
             validForm = false;
         } else {
