@@ -173,7 +173,7 @@ def init(app, user_datastore):
 
         userQuery = Sec.User.query.all()
         for user in userQuery:
-            if " " in user:
+            if " " in user.username:
                 user.username = user.username.replace(" ","_")
                 db.session.commit()
 
