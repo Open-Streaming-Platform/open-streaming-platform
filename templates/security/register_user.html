@@ -62,9 +62,10 @@
 </script>
 
 <script>
-    $("#username").change(function(){
-        $("#username").setCustomValidity('');
-}   );
+
+    document.getElementById('username').addEventListener('change', function() {
+        document.getElementById('username').setCustomValidity('');
+    });
 
     function validateForm() {
         var validForm = true;
