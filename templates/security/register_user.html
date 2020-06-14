@@ -62,6 +62,10 @@
 </script>
 
 <script>
+    $("#username").change(function(){
+        $("#username").setCustomValidity('');
+}   );
+
     function validateForm() {
         var validForm = true;
 
@@ -70,8 +74,6 @@
         if (document.getElementById('username').value.indexOf(' ') !== -1) {
             usernameDiv.setCustomValidity('Username Cannot Contain Spaces');
             validForm = false;
-        } else {
-           usernameDiv.setCustomValidity('');
         }
 
         return validForm;
