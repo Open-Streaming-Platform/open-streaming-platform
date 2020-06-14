@@ -171,6 +171,12 @@ def init(app, user_datastore):
             user.authType = 0
             db.session.commit()
 
+        userQuery = Sec.User.query.all()
+        for user in userQuery:
+            if " " in user:
+                user.username = user.username.replace(" ","_")
+                db.session.commit()
+
         # Create the stream-thumb directory if it does not exist
         if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
             try:

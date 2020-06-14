@@ -1,12 +1,12 @@
 from flask import flash
-from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm
+from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm, validators
 from flask_security import UserMixin, RoleMixin
 from .shared import db
 from classes import Sec
 from uuid import uuid4
 
 class ExtendedRegisterForm(RegisterForm):
-    username = StringField('username', [Required()])
+    username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
     email = StringField('email', [Required()])
 
     def validate(self):
