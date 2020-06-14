@@ -796,7 +796,7 @@ def admin_page():
 
             user = Sec.User.query.filter_by(username=username).first()
             user_datastore.add_role_to_user(user, 'User')
-            user.autType = 0
+            user.authType = 0
             user.confirmed_at = datetime.datetime.now()
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
@@ -1271,12 +1271,13 @@ def settings_dbRestore():
                     except ValueError:
                         invite.addedDate = datetime.datetime.strptime(restoredInvitedViewer['addedDate'],
                                                                       '%Y-%m-%d %H:%M:%S.%f')
-                    try:
-                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
-                                                                       '%Y-%m-%d %H:%M:%S')
-                    except ValueError:
-                        invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
-                                                                       '%Y-%m-%d %H:%M:%S.%f')
+                    if restoredInvitedViewer['expiration'] is not None:
+                        try:
+                            invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
+                                                                           '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            invite.expiration = datetime.datetime.strptime(restoredInvitedViewer['expiration'],
+                                                                           '%Y-%m-%d %H:%M:%S.%f')
                     if 'inviteCode' in restoredInvitedViewer:
                         if restoredInvitedViewer['inviteCode'] is not None:
                             invite.inviteCode = int(restoredInvitedViewer['inviteCode'])

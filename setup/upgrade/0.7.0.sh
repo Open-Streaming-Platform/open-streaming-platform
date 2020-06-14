@@ -17,7 +17,7 @@ sudo systemctl daemon-reload >> $UPGRADELOG 2>&1
 sudo systemctl enable ejabberd >> $UPGRADELOG 2>&1
 sudo systemctl start ejabberd >> $UPGRADELOG 2>&1
 
-if grep -Fxq "ejabberdHost" /opt/osp/conf/config.py
+if grep -q "ejabberdHost" /opt/osp/conf/config.py
 then
     echo "Config Lines Exist"
 else
