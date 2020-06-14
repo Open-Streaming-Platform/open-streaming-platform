@@ -35,11 +35,11 @@
                                 {% endif %}
                               {{ register_user_form.hidden_tag() }}
                                 <b><i class="fas fa-user-circle"></i> Username</b><br>
-                              {{ render_field(register_user_form.username, class_="form-control") }}
+                              {{ render_field(register_user_form.username, class_="form-control", autocomplete="off") }}
                                 <b><i class="far fa-envelope"></i> Email Address</b><br>
-                              {{ render_field(register_user_form.email, class_="form-control") }}
+                              {{ render_field(register_user_form.email, class_="form-control", autocomplete="off") }}
                                 <b><i class="fas fa-key"></i> Password</b><br>
-                              {{ render_field(register_user_form.password, class_="form-control") }}
+                              {{ render_field(register_user_form.password, class_="form-control", autocomplete="off") }}
                               {% if register_user_form.password_confirm %}
                                 <b><i class="fas fa-key"></i> Confirm Password</b><br>
                                 {{ render_field(register_user_form.password_confirm, class_="form-control") }}

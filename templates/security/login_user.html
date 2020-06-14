@@ -35,9 +35,9 @@
                                 <hr>
                                 {% endif %}
                                 <b><i class="fas fa-user-circle"></i> Username</b><br>
-                              {{ render_field(login_user_form.email, class_="form-control") }}
+                              {{ render_field(login_user_form.email, class_="form-control", autocomplete="off") }}
                                 <b><i class="fas fa-key"></i> Password</b><br>
-                              {{ render_field(login_user_form.password, class_="form-control") }}
+                              {{ render_field(login_user_form.password, class_="form-control", autocomplete="off") }}
                                 <div><a href="/reset"><b>Forgot Password</b></a></div><br>
                                 <div style="float:left;padding-right:10px;"><b><i class="far fa-save"></i> Remember Me  </b></div>
                                 {{ render_field(login_user_form.remember, class_="form-check-label") }}
