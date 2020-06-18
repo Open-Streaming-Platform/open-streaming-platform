@@ -54,6 +54,10 @@ reset_ejabberd() {
   echo 50 | dialog --title "Reset EJabberD Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py $RESETLOG 2>&1
+  sudo sed -i '/^ejabberdHost/d' /opt/osp/conf/config.py $RESETLOG 2>&1
+  sudo sed -i '/^ejabberdAdmin/d' /opt/osp/conf/config.py $RESETLOG 2>&1
+  sudo echo 'ejabberdAdmin = "admin"' >> /opt/osp/conf/config.py
+  sudo echo 'ejabberdHost = "localhost"' >> /opt/osp/conf/config.py
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
   sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $RESETLOG 2>&1
   echo 60 | dialog --title "Reset EJabberD Configuration" --gauge "Install EJabberD Configuration File" 10 70 0
