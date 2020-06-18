@@ -155,7 +155,7 @@ def oAuthConvert(provider):
     password = request.form['password']
     existingUserID = request.form['existingUserID']
 
-    userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName, authType=0).first()
+    userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName.replace(" ", "_"), authType=0).first()
     if userQuery is not None:
         passwordMatch = verify_password(password, userQuery.password)
         if passwordMatch is True:
