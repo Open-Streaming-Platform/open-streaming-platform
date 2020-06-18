@@ -47,19 +47,20 @@ reset_ejabberd() {
   echo 10 | dialog --title "Reset EJabberD Configuration" --gauge "Removing EJabberD" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $RESETLOG 2>&1
   echo 20 | dialog --title "Reset EJabberD Configuration" --gauge "Downloading EJabberD" 10 70 0
-  wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $RESETLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $RESETLOG 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run >> $RESETLOG 2>&1
   echo 30 | dialog --title "Reset EJabberD Configuration" --gauge "Reinstalling EJabbedD" 10 70 0
-  /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $RESETLOG 2>&1
+  sudo /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $RESETLOG 2>&1
   echo 50 | dialog --title "Reset EJabberD Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
-  sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py $RESETLOG 2>&1
+  sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py $RESETLOG 2>&1
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
-  sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $RESETLOG 2>&1
+  sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $RESETLOG 2>&1
   echo 60 | dialog --title "Reset EJabberD Configuration" --gauge "Install EJabberD Configuration File" 10 70 0
-  mkdir /usr/local/ejabberd/conf >> $RESETLOG 2>&1
-  cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $RESETLOG 2>&1
-  cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $RESETLOG 2>&1
+  sudo mkdir /usr/local/ejabberd/conf >> $RESETLOG 2>&1
+  sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $RESETLOG 2>&1
+  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $RESETLOG  2>&1
+  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $RESETLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up Ejabberd" \
          --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
@@ -71,8 +72,8 @@ reset_ejabberd() {
   sudo systemctl enable ejabberd >> $RESETLOG 2>&1
   sudo systemctl start ejabberd >> $RESETLOG 2>&1
   echo 90 | dialog --title "Reset EJabberD Configuration" --gauge "Setting EJabberD Local Admin" 10 70 0
-  /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $RESETLOG 2>&1
-  /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $RESETLOG 2>&1
+  sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $RESETLOG 2>&1
+  sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $RESETLOG 2>&1
   echo 95 | dialog --title "Reset EJabberD Configuration" --gauge "Restarting OSP" 10 70 0
   sudo systemctl restart osp.target
 }
@@ -80,20 +81,20 @@ reset_ejabberd() {
 reset_nginx() {
    RESETLOG="/opt/osp/logs/reset.log"
    echo 25 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Backup Nginx-RTMP Configurations" 10 70 0
-   cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak >> $RESETLOG 2>&1
+   sudo cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak >> $RESETLOG 2>&1
    echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Copying Nginx-RTMP Configurations" 10 70 0
-   cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
-   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   sudo cp /opt/osp/setup/nginx/nginx.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf >> $RESETLOG 2>&1
    echo 50 | dialog --title "Reset Nginx-RTMP Configuration" --gauge "Restarting Nginx" 10 70 0
-   systemctl restart nginx-osp $RESETLOG 2>&1
+   sudo systemctl restart nginx-osp $RESETLOG 2>&1
 }
 
 upgrade_db() {
   UPGRADELOG="/opt/osp/logs/upgrade.log"
   echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
-  systemctl stop osp.target >> $UPGRADELOG 2>&1
+  sudo systemctl stop osp.target >> $UPGRADELOG 2>&1
   echo 15 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
   python3 manage.py db init >> $UPGRADELOG 2>&1
   echo 25 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
@@ -101,27 +102,27 @@ upgrade_db() {
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
   python3 manage.py db upgrade >> $UPGRADELOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
-  systemctl start osp.target >> $UPGRADELOG 2>&1
+  sudo systemctl start osp.target >> $UPGRADELOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
 }
 
 upgrade_osp() {
    UPGRADELOG="/opt/osp/logs/upgrade.log"
    echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
-   git stash > $UPGRADELOG 2>&1
-   git pull >> $UPGRADELOG 2>&1
+   sudo git stash > $UPGRADELOG 2>&1
+   sudo git pull >> $UPGRADELOG 2>&1
    echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
-   chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
+   sudo chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
    echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
    systemctl stop osp.target >> $UPGRADELOG 2>&1
    echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
    systemctl stop nginx-osp >> $UPGRADELOG 2>&1
    echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
-   pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
+   sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
    echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
-   cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
-   cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
-   cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
+   sudo cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf $UPGRADELOG 2>&1
    echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db init >> $UPGRADELOG 2>&1
    echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
@@ -129,9 +130,9 @@ upgrade_osp() {
    echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
    python3 manage.py db upgrade >> $UPGRADELOG 2>&1
    echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
-   systemctl start osp.target >> $UPGRADELOG 2>&1
+   sudo systemctl start osp.target >> $UPGRADELOG 2>&1
    echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
-   systemctl start nginx-osp >> $UPGRADELOG 2>&1
+   sudo systemctl start nginx-osp >> $UPGRADELOG 2>&1
    echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
 }
 
@@ -228,15 +229,16 @@ install_osp() {
 
   # Install ejabberd
   echo 40 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
-  wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
+  sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $installLog 2>&1
   /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
   echo 42 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
   mkdir /usr/local/ejabberd/conf >> $installLog 2>&1
-  cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $installLog 2>&1
-  cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
+  sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $installLog 2>&1
+  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $installLog  2>&1
+  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up Ejabberd" \
          --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
