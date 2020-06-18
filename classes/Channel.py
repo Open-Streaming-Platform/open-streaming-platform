@@ -20,7 +20,7 @@ class Channel(db.Model):
     chatAnimation = db.Column(db.String(255))
     imageLocation = db.Column(db.String(255))
     offlineImageLocation = db.Column(db.String(255))
-    description = db.Column(db.String(2048))
+    description = db.Column(db.String(4096))
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
     channelMuted = db.Column(db.Boolean)

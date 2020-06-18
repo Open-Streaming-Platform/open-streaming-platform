@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
     password = db.Column(db.String(255))
-    biography = db.Column(db.String(2048))
+    biography = db.Column(db.String(4096))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     last_login_at = db.Column(db.DateTime())
