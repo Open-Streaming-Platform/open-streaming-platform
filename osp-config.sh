@@ -323,7 +323,7 @@ if [ $# -eq 0 ]
         --title "Menu" \
         --clear \
         --cancel-label "Exit" \
-        --menu "Please select:" $HEIGHT $WIDTH 6 \
+        --menu "Please select:" $HEIGHT $WIDTH 7 \
         "1" "Install/Reinstall OSP" \
         "2" "Restart Nginx" \
         "3" "Restart OSP" \
