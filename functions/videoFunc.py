@@ -208,7 +208,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
 
             # FFMPEG Subprocess to Clip Video and generate Thumbnails
-            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), '-c:v', 'copy', '-c:a', 'copy',  fullvideoLocation])
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
