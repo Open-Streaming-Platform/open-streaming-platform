@@ -6,6 +6,7 @@ sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/do
 sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $UPGRADELOG 2>&1
 sudo /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $UPGRADELOG 2>&1
 sudo mkdir /usr/local/ejabberd/conf >> $UPGRADELOG 2>&1
+sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $UPGRADELOG 2>&1
 sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $UPGRADELOG 2>&1
 sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $UPGRADELOG 2>&1
 user_input=$(\
