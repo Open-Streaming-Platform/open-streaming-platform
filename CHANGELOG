@@ -1,3 +1,8 @@
+0.7.2
+==============================================
+Removed ability to have spaces in username. ** All existing users with spaces will be converted to having an underscore in the space location! **
+Additional tweaks to the osp-config.sh file regarding install/reinstall of ejabberd
+
 0.7.1
 ==============================================
 Fixes to Typos that caused new users to generate 500 error
