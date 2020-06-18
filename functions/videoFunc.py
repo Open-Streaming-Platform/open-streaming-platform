@@ -178,6 +178,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
         if clipStop > clipStart:
             videos_root = globalvars.videoRoot + 'videos/'
 
+            # Generate Clip Object
             newClip = RecordedVideo.Clips(recordedVidQuery.id, None, clipStart, clipStop, clipName, clipDescription)
             newClip.published = False
             db.session.add(newClip)
@@ -187,22 +188,27 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
             videoLocation = videos_root + recordedVidQuery.videoLocation
 
+            # Establish Locations for Clips and Thumbnails
             clipVideoLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".mp4"
             clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
             clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
 
+            # Set Clip Object Values for Locations
             newClipQuery.videoLocation = clipVideoLocation
             newClipQuery.thumbnailLocation = clipThumbNailLocation
             newClipQuery.gifLocation = clipGifLocation
 
+            # Set Full Path for Locations to be handled by FFMPEG
             fullvideoLocation = videos_root + clipVideoLocation
             fullthumbnailLocation = videos_root + clipThumbNailLocation
             fullgifLocation = videos_root + clipGifLocation
 
+            # Create Clip Directory if doesn't exist
             if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
                 os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
 
-            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-c', 'copy', '-t', str(newClipQuery.length), '-avoid_negative_ts', '1', fullvideoLocation])
+            # FFMPEG Subprocess to Clip Video and generate Thumbnails
+            clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
             processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 

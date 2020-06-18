@@ -1,3 +1,12 @@
+0.7.2
+==============================================
+Removed ability to have spaces in username. ** All existing users with spaces will be converted to having an underscore in the space location! **
+Additional tweaks to the osp-config.sh file regarding install/reinstall of ejabberd
+Changed Video Clipping Process to transcode the video to prevent audio desync.  Clips may take a few seconds longer, depending on length and quality.
+Added sysctl.d tweak to /opt/osp/setup/sysctl.d directory - See https://wiki.openstreamingplatform.com/en/Install/Tweaks#tcp-tweaks
+Changed new DB length for Biographies and Channel Description from 2048 to 4096.
+** Note: If upgrading from a version prior to 0.7.0, please run the /opt/osp/setup/upgrade/0.7.0.sh file after running the standard upgrade from osp-config.sh **
+
 0.7.1
 ==============================================
 Fixes to Typos that caused new users to generate 500 error
@@ -5,6 +14,7 @@ Fixes to XMPP where users with a space in their username would cause chat to nev
 Fixes to Restoring DB backups which would cause a 500 error if an invited user had an infinite expiration
 Added new option to osp-config.sh to allow reinstallations of EJabberD installs to correct any issues
 Modifications to Arch Install Packages per Issue #238
+** Note: If upgrading from a version prior to 0.7.0, please run the /opt/osp/setup/upgrade/0.7.0.sh file after running the standard upgrade from osp-config.sh **
 
 0.7.0
 ==============================================
