@@ -393,6 +393,9 @@ def admin_page():
         oAuthProvidersList = settings.oAuthProvider.query.all()
 
         from app import ejabberd
+        if ejabberd is None:
+            flash("EJabberD is not connected and is required to access this page.  Contact your administrator", "error")
+            return redirect(url_for("root.main_page"))
 
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
