@@ -84,8 +84,8 @@ class User(db.Model, UserMixin):
             'username': self.username,
             'biography': self.biography,
             'pictureLocation': "/images/" + str(self.pictureLocation),
-            'channels': [obj.id for obj in self.channels],
-            'page': '/streamer/' + str(self.id) + '/'
+            'channels': [obj.channelLoc for obj in self.channels],
+            'page': '/profile/' + str(self.username) + '/'
         }
 
 class OAuth2Token(db.Model):
