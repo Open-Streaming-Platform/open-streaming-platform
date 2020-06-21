@@ -25,7 +25,7 @@ class settings(db.Model):
     sortMainBy = db.Column(db.Integer)
     restreamMaxBitrate = db.Column(db.Integer)
     serverMessageTitle = db.Column(db.String(256))
-    serverMessage = db.Column(db.String(2048))
+    serverMessage = db.Column(db.String(8192))
     maxClipLength = db.Column(db.Integer)
     maintenanceMode = db.Column(db.Boolean)
     allowRegistration = db.Column(db.Boolean) # Moved to config.py
