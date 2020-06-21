@@ -6,6 +6,8 @@ Changed Video Clipping Process to transcode the video to prevent audio desync.  
 Added sysctl.d tweak to /opt/osp/setup/sysctl.d directory - See https://wiki.openstreamingplatform.com/en/Install/Tweaks#tcp-tweaks
 Changed new DB length for Biographies and Channel Description from 2048 to 4096.
 Changed new DB Length for Server MOTD from 2048 to 8192.
+Changed the /user API endpoint to list owned channe UUIDs, not just IDs
+Changed the /user API endpoint to point to the Profile Page, not the streamer page
 Added EJabberD Indicator to the Admin Dashboard Page to indicate if there is an issue
 Increased Thumbnail Generation delay from every 60s to every 120s to assist with slower CPUs handling ffmpeg thumbnail generation per issue #214
 ** Note: If upgrading from a version prior to 0.7.0, please run the /opt/osp/setup/upgrade/0.7.0.sh file after running the standard upgrade from osp-config.sh **
