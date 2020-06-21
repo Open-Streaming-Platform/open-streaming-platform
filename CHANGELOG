@@ -5,6 +5,7 @@ Additional tweaks to the osp-config.sh file regarding install/reinstall of ejabb
 Changed Video Clipping Process to transcode the video to prevent audio desync.  Clips may take a few seconds longer, depending on length and quality.
 Added sysctl.d tweak to /opt/osp/setup/sysctl.d directory - See https://wiki.openstreamingplatform.com/en/Install/Tweaks#tcp-tweaks
 Changed new DB length for Biographies and Channel Description from 2048 to 4096.
+Added EJabberD Indicator to the Admin Dashboard Page to indicate if there is an issue
 ** Note: If upgrading from a version prior to 0.7.0, please run the /opt/osp/setup/upgrade/0.7.0.sh file after running the standard upgrade from osp-config.sh **
 
 0.7.1
