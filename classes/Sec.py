@@ -1,12 +1,12 @@
 from flask import flash
-from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm
+from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm, validators
 from flask_security import UserMixin, RoleMixin
 from .shared import db
 from classes import Sec
 from uuid import uuid4
 
 class ExtendedRegisterForm(RegisterForm):
-    username = StringField('username', [Required()])
+    username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
     email = StringField('email', [Required()])
 
     def validate(self):
@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
     password = db.Column(db.String(255))
-    biography = db.Column(db.String(2048))
+    biography = db.Column(db.String(4096))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     last_login_at = db.Column(db.DateTime())
@@ -84,8 +84,8 @@ class User(db.Model, UserMixin):
             'username': self.username,
             'biography': self.biography,
             'pictureLocation': "/images/" + str(self.pictureLocation),
-            'channels': [obj.id for obj in self.channels],
-            'page': '/streamer/' + str(self.id) + '/'
+            'channels': [obj.channelLoc for obj in self.channels],
+            'page': '/profile/' + str(self.username) + '/'
         }
 
 class OAuth2Token(db.Model):

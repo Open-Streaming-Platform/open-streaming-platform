@@ -14,7 +14,7 @@ Flask-SocketIO==4.3.0
 Flask-SQLAlchemy==2.4.0
 Flask-Uploads==0.2.1
 Flask-WTF==0.14.2
-gevent==1.4.0
+gevent==1.5.0
 gevent-websocket==0.10.1
 gitdb2==2.0.5
 GitPython==2.1.11

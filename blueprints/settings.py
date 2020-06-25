@@ -392,6 +392,11 @@ def admin_page():
 
         oAuthProvidersList = settings.oAuthProvider.query.all()
 
+        from app import ejabberd
+        if ejabberd is None:
+            flash("EJabberD is not connected and is required to access this page.  Contact your administrator", "error")
+            return redirect(url_for("root.main_page"))
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -400,7 +405,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery,
-                               logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
