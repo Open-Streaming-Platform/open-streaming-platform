@@ -103,8 +103,10 @@ def oAuthAuthorize(provider):
 
             # No Username Match - Create New User
             if existingEmailQuery is None:
-                existingUsernameQuery = Sec.User.query.filter_by(username=userDataDict[oAuthProviderQuery.username_value]).first()
-                requestedUsername = userDataDict[oAuthProviderQuery.username_value]
+                convertedUsername = userDataDict[oAuthProviderQuery.username_value].replace(" ", "_")
+                userData[oAuthProviderQuery.username_value] = convertedUsername
+                existingUsernameQuery = Sec.User.query.filter_by(username=convertedUsername).first()
+                requestedUsername = convertedUsername
                 if existingUsernameQuery is not None:
                     requestedUsername = requestedUsername + str(random.randint(1,9999))
                 if hasEmail is True:
@@ -153,7 +155,7 @@ def oAuthConvert(provider):
     password = request.form['password']
     existingUserID = request.form['existingUserID']
 
-    userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName, authType=0).first()
+    userQuery = Sec.User.query.filter_by(id=int(existingUserID), username=oAuthUserName.replace(" ", "_"), authType=0).first()
     if userQuery is not None:
         passwordMatch = verify_password(password, userQuery.password)
         if passwordMatch is True:

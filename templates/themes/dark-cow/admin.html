@@ -63,6 +63,7 @@
                                         <b>Database Version:</b> {{appDBVer}} <br><br>
                                         <b>NGINX Version:</b> {{nginxStatData['rtmp']['nginx_version']}}<br>
                                         <b>NGINX-RTMP Version</b> {{nginxStatData['rtmp']['nginx_rtmp_version']}}<br>
+                                        <b>EJabberD Status:</b> {% if ejabberd == None %} <span style="color:red;">Not Connected</span> {% else %} <span style="color:green">Online</span>{% endif %}<br>
                                         <b>Uptime:</b> {{nginxStatData['rtmp']['uptime']|hms_format}}
                                     </div>
                                 </div><br>
