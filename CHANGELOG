@@ -1,3 +1,7 @@
+0.7.3
+==============================================
+Fixes to OAuth2 that prevented new users
+
 0.7.2
 ==============================================
 Removed ability to have spaces in username. ** All existing users with spaces will be converted to having an underscore in the space location! **
