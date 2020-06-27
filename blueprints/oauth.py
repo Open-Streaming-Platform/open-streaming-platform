@@ -104,7 +104,7 @@ def oAuthAuthorize(provider):
             # No Username Match - Create New User
             if existingEmailQuery is None:
                 convertedUsername = userDataDict[oAuthProviderQuery.username_value].replace(" ", "_")
-                userData[oAuthProviderQuery.username_value] = convertedUsername
+                userDataDict[oAuthProviderQuery.username_value] = convertedUsername
                 existingUsernameQuery = Sec.User.query.filter_by(username=convertedUsername).first()
                 requestedUsername = convertedUsername
                 if existingUsernameQuery is not None:

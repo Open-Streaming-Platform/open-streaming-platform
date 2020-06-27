@@ -42,16 +42,16 @@ display_result() {
 
 reset_ejabberd() {
   RESETLOG="/opt/osp/logs/reset.log"
-  echo 5 | dialog --title "Reset EJabberD Configuration" --gauge "Stopping EJabberD" 10 70 0
+  echo 5 | dialog --title "Reset eJabberd Configuration" --gauge "Stopping eJabberd" 10 70 0
   sudo systemctl stop ejabberd > $RESETLOG 2>&1
-  echo 10 | dialog --title "Reset EJabberD Configuration" --gauge "Removing EJabberD" 10 70 0
+  echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $RESETLOG 2>&1
-  echo 20 | dialog --title "Reset EJabberD Configuration" --gauge "Downloading EJabberD" 10 70 0
+  echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
   sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $RESETLOG 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run >> $RESETLOG 2>&1
-  echo 30 | dialog --title "Reset EJabberD Configuration" --gauge "Reinstalling EJabbedD" 10 70 0
+  echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
   sudo /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $RESETLOG 2>&1
-  echo 50 | dialog --title "Reset EJabberD Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
+  echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py $RESETLOG 2>&1
   sudo sed -i '/^ejabberdHost/d' /opt/osp/conf/config.py $RESETLOG 2>&1
@@ -60,25 +60,25 @@ reset_ejabberd() {
   sudo echo 'ejabberdHost = "localhost"' >> /opt/osp/conf/config.py
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
   sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $RESETLOG 2>&1
-  echo 60 | dialog --title "Reset EJabberD Configuration" --gauge "Install EJabberD Configuration File" 10 70 0
+  echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
   sudo mkdir /usr/local/ejabberd/conf >> $RESETLOG 2>&1
   sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $RESETLOG 2>&1
   sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $RESETLOG  2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $RESETLOG 2>&1
   user_input=$(\
-  dialog --nocancel --title "Setting up Ejabberd" \
+  dialog --nocancel --title "Setting up eJabberd" \
          --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
-  echo 80 | dialog --title "Reset EJabberD Configuration" --gauge "Updating EJabberD Config File" 10 70 0
+  echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $RESETLOG 2>&1
-  echo 85 | dialog --title "Reset EJabberD Configuration" --gauge "Restarting EJabberD" 10 70 0
+  echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $RESETLOG 2>&1
   sudo systemctl enable ejabberd >> $RESETLOG 2>&1
   sudo systemctl start ejabberd >> $RESETLOG 2>&1
-  echo 90 | dialog --title "Reset EJabberD Configuration" --gauge "Setting EJabberD Local Admin" 10 70 0
+  echo 90 | dialog --title "Reset eJabberd Configuration" --gauge "Setting eJabberd Local Admin" 10 70 0
   sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $RESETLOG 2>&1
   sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $RESETLOG 2>&1
-  echo 95 | dialog --title "Reset EJabberD Configuration" --gauge "Restarting OSP" 10 70 0
+  echo 95 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting OSP" 10 70 0
   sudo systemctl restart osp.target
 }
 
@@ -232,11 +232,11 @@ install_osp() {
   fi
 
   # Install ejabberd
-  echo 40 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
+  echo 40 | dialog --title "Installing OSP" --gauge "Installing eJabberd" 10 70 0
   sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run" >> $installLog 2>&1
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run $installLog 2>&1
   /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $installLog 2>&1
-  echo 42 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
+  echo 42 | dialog --title "Installing OSP" --gauge "Installing eJabberd" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
   mkdir /usr/local/ejabberd/conf >> $installLog 2>&1
@@ -244,11 +244,11 @@ install_osp() {
   sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $installLog  2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
   user_input=$(\
-  dialog --nocancel --title "Setting up Ejabberd" \
+  dialog --nocancel --title "Setting up eJabberd" \
          --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml>> $installLog 2>&1
-  echo 45 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
+  echo 45 | dialog --title "Installing OSP" --gauge "Installing eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $installLog 2>&1
   sudo systemctl enable ejabberd >> $installLog 2>&1
   sudo systemctl start ejabberd >> $installLog 2>&1
@@ -446,7 +446,7 @@ if [ $# -eq 0 ]
         echo "upgrade: Upgrades OSP"
         echo "dbupgrade: Upgrades the Database Only"
         echo "resetnginx: Resets the Nginx Configuration and Restarts"
-        echo "resetejabberd: Resets EJabberD configuration and Restarts"
+        echo "resetejabberd: Resets eJabberd configuration and Restarts"
         ;;
       install )
         install_osp
