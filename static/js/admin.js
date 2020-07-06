@@ -588,7 +588,7 @@ function updateDefaultRoles() {
     var streamerChecked = document.getElementById("drole-streamer").checked;
     var recorderChecked = document.getElementById("drole-recorder").checked;
     var uploaderChecked = document.getElementById("drole-uploader").checked;
-    socket.emit('updateDefaultRoles',{streamer:streamerChecked, recorder:recorderChecked, uploader:uploaderChecked});
+    socket.emit('updateDefaultRoles',{streamer: streamerChecked, recorder: recorderChecked, uploader: uploaderChecked});
 }
 
 function toggleDiv(selDiv){

@@ -160,21 +160,22 @@ def handle_videoupload_disconnect(videofilename):
 def update_default_roles(msg):
     if current_user.has_role('Admin'):
 
+        print(msg)
         UserRoleQuery = Sec.Role.query.filter_by(name="User").first()
         UserRoleQuery.default = True
         db.session.commit()
 
-        hasStreamer = eval(msg['streamer'])
+        hasStreamer = msg['streamer']
         StreamerRoleQuery = Sec.Role.query.filter_by(name="Streamer").first()
         StreamerRoleQuery.default = hasStreamer
         db.session.commit()
 
-        hasRecorder = eval(msg['recorder'])
+        hasRecorder = msg['recorder']
         RecorderRoleQuery = Sec.Role.query.filter_by(name="Recorder").first()
         RecorderRoleQuery.default = hasRecorder
         db.session.commit()
 
-        hasUploader = eval(msg['uploader'])
+        hasUploader = msg['uploader']
         UploaderRoleQuery = Sec.Role.query.filter_by(name="Uploader").first()
         UploaderRoleQuery.default = hasUploader
         db.session.commit()
