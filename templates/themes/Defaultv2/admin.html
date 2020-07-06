@@ -809,7 +809,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
+                                      <input id="drole-user" name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="User" value="User">
@@ -818,7 +818,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input name="role-streamer" type="checkbox" aria-label="Checkbox for Streamer">
+                                      <input id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" aria-label="Checkbox for Streamer">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
@@ -827,7 +827,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input name="role-recorder" type="checkbox" aria-label="Checkbox for Recorder">
+                                      <input id="drole-recorder" name="role-recorder" type="checkbox" aria-label="Checkbox for Recorder">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
@@ -836,7 +836,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input name="role-uploader" type="checkbox" aria-label="Checkbox for Uploaderr">
+                                      <input id="drole-uploader" name="role-uploader" type="checkbox" aria-label="Checkbox for Uploaderr">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">
@@ -844,7 +844,7 @@
                           </div>
                           <div class="modal-footer">
                               <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                              <button type="button" class="btn btn-success" data-dismiss="model">Save</button>
+                              <button type="button" class="btn btn-success" data-dismiss="model" onclick="updateDefaultRoles();">Save</button>
                           </div>
                         </div>
                       </div>
