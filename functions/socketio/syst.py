@@ -164,17 +164,17 @@ def update_default_roles(msg):
         UserRoleQuery.default = True
         db.session.commit()
 
-        hasStreamer = eval(msg['streamer'].lower().capitalize())
+        hasStreamer = eval(msg['streamer'])
         StreamerRoleQuery = Sec.Role.query.filter_by(name="Streamer").first()
         StreamerRoleQuery.default = hasStreamer
         db.session.commit()
 
-        hasRecorder = eval(msg['recorder'].lower().capitalize())
+        hasRecorder = eval(msg['recorder'])
         RecorderRoleQuery = Sec.Role.query.filter_by(name="Recorder").first()
         RecorderRoleQuery.default = hasRecorder
         db.session.commit()
 
-        hasUploader = eval(msg['uploader'].lower().capitalize())
+        hasUploader = eval(msg['uploader'])
         UploaderRoleQuery = Sec.Role.query.filter_by(name="Uploader").first()
         UploaderRoleQuery.default = hasUploader
         db.session.commit()
