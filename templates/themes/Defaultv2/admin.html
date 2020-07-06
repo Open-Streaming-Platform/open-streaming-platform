@@ -794,7 +794,6 @@
                         </div>
                       </div>
                     </div>
-                    </div>
                     <div class="modal fade" id="defaultRolesModal" tabindex="-1" role="dialog" aria-labelledby="defaultRolesModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                         <div class="modal-content">
@@ -810,7 +809,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input name="role-user" type="checkbox" readonly checked aria-label="Checkbox for User">
+                                      <input name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="User" value="User">
@@ -851,7 +850,6 @@
                       </div>
                     </div>
                 </div>
-
                 <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
                     <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
                     <div class="container-fluid">
