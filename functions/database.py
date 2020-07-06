@@ -57,7 +57,7 @@ def init(app, user_datastore):
     db.session.commit()
 
     # Query Null Default Roles and Set
-    roleQuery = Sec.Role.query.all(default=None)
+    roleQuery = Sec.Role.query.filter_by(default=None).all()
     for role in roleQuery:
         if role.name == "User":
             role.default = True
