@@ -11,6 +11,7 @@ import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password
+from flask_mail import Mail
 from sqlalchemy.sql.expression import func
 
 from werkzeug.utils import secure_filename
@@ -529,7 +530,7 @@ def admin_page():
                 SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
                 SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
-            email.init_app(current_app)
+            email = Mail()
             email.init_app(current_app)
             email.app = current_app
 
