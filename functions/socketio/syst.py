@@ -160,7 +160,6 @@ def handle_videoupload_disconnect(videofilename):
 def update_default_roles(msg):
     if current_user.has_role('Admin'):
 
-        print(msg)
         UserRoleQuery = Sec.Role.query.filter_by(name="User").first()
         UserRoleQuery.default = True
         db.session.commit()
