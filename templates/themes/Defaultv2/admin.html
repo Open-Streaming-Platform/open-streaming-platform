@@ -818,7 +818,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" aria-label="Checkbox for Streamer">
+                                      <input id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" {% if defaultRoleDict["Streamer"] %} checked {% endif %} aria-label="Checkbox for Streamer">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
@@ -827,7 +827,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input id="drole-recorder" name="role-recorder" type="checkbox" aria-label="Checkbox for Recorder">
+                                      <input id="drole-recorder" name="role-recorder" type="checkbox" {% if defaultRoleDict["Recorder"] %} checked {% endif %} aria-label="Checkbox for Recorder">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
@@ -836,7 +836,7 @@
                               <div class="input-group mb-3">
                                   <div class="input-group-prepend">
                                     <div class="input-group-text">
-                                      <input id="drole-uploader" name="role-uploader" type="checkbox" aria-label="Checkbox for Uploaderr">
+                                      <input id="drole-uploader" name="role-uploader" type="checkbox" {% if defaultRoleDict["Uploader"] %} checked {% endif %} aria-label="Checkbox for Uploader">
                                     </div>
                                   </div>
                                   <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">

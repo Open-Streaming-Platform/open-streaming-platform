@@ -345,6 +345,10 @@ def admin_page():
         topicsList = topics.topics.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
 
+        defaultRoles = {}
+        for role in roleList:
+            defaultRoles[role.name] = role.default
+
         # 30 Days Viewer Stats
         viewersTotal = 0
 
@@ -405,7 +409,7 @@ def admin_page():
                                repoSHA=repoSHA, repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
-                               globalHooks=globalWebhookQuery,
+                               globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
     elif request.method == 'POST':
 
