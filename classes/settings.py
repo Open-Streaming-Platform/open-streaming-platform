@@ -145,3 +145,12 @@ class oAuthProvider(db.Model):
     def __repr__(self):
         return '<id %r>' % self.id
 
+class defaultRole(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    roleID = db.Column(db.Integer, db.ForeignKey('Role.id'))
+
+    def __init__(self, roleID):
+        self.roleID = roleID
+
+    def __repr__(self):
+        return '<id %r>' % self.id

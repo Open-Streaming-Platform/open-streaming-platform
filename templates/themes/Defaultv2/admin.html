@@ -687,7 +687,9 @@
                     </div>
                 </div>
                 <div class="tab-pane fade {% if page == 'users' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
-                    <h5>User List <button class="btn btn-primary" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button></h5>
+                    <h5>User List</h5><br>
+                    <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#defaultRoles"><i class="fas fa-shield-alt"></i> Default Roles</button>
                     <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
                         <div class="input-group">
                             <div class="input-group-prepend shadow">
@@ -698,7 +700,6 @@
                     </div>
                     <br>
                     <div class="container-fluid">
-
                     {% for user in userList %}
                         <div class="row">
                             <div class="col-12">
@@ -743,57 +744,114 @@
                         <br>
                     {% endfor %}
                     </div>
-                        <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                            <div class="modal-content">
-                              <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                  <div class="container">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="username">Username</label>
-                                            <input type="text" name="username" id="username" class="form-control" required autocomplete="new-password">
-                                        </div>
+                    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="username">Username</label>
+                                        <input type="text" name="username" id="username" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="emailaddress">Email Address</label>
+                                        <input type="text" name="emailaddress" id="emailaddress" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="password1">Password</label>
+                                        <input type="password" name="password1" id="password1" class="form-control" required autocomplete="new-password">
                                     </div>
                                     <br>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="emailaddress">Email Address</label>
-                                            <input type="text" name="emailaddress" id="emailaddress" class="form-control" required autocomplete="new-password">
-                                        </div>
+                                    <div class="col-12">
+                                        <label for="password2">Confirm Password</label>
+                                        <input type="password" name="password2" id="password2" class="form-control" required autocomplete="new-password">
                                     </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label for="password1">Password</label>
-                                            <input type="password" name="password1" id="password1" class="form-control" required autocomplete="new-password">
-                                        </div>
-                                        <br>
-                                        <div class="col-12">
-                                            <label for="password2">Confirm Password</label>
-                                            <input type="password" name="password2" id="password2" class="form-control" required autocomplete="new-password">
-                                        </div>
-                                    </div>
-                                    <br>
+                                </div>
+                                <br>
 
+                              </div>
+                              <input type="hidden" value="newuser" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Create">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    <div class="modal fade" id="defaultRolesModal" tabindex="-1" role="dialog" aria-labelledby="defaultRolesModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="defaultRolesModalTitle">Set Default Roles</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                              <h4>Set the default roles for new users:</h4><br>
+                              <!--User-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input name="role-user" type="checkbox" readonly checked aria-label="Checkbox for User">
+                                    </div>
                                   </div>
-                                  <input type="hidden" value="newuser" id="settingType" name="settingType">
+                                  <input type="text" class="form-control" readonly aria-label="User" value="User">
                               </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                                <input type="submit" class="btn btn-success" value="Create">
+                              <!--Streamer-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input name="role-streamer" type="checkbox" aria-label="Checkbox for Streamer">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
                               </div>
-                              </form>
-                            </div>
+                              <!--Recorder-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input name="role-recorder" type="checkbox" aria-label="Checkbox for Recorder">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
+                              </div>
+                              <!--Uploader-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input name="role-uploader" type="checkbox" aria-label="Checkbox for Uploaderr">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-success" data-dismiss="model">Save</button>
                           </div>
                         </div>
+                      </div>
                     </div>
+                </div>
+
                 <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
                     <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
                     <div class="container-fluid">
