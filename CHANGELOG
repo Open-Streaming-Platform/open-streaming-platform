@@ -1,3 +1,7 @@
+0.7.4
+==============================================
+Added Ability to set a default role set for new users - Issue #110
+
 0.7.3
 ==============================================
 Fixes to OAuth2 that prevented new users
