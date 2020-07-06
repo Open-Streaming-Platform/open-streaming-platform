@@ -42,11 +42,11 @@ def init(app, user_datastore):
         pass
 
     # Setup Default User Roles
-    user_datastore.find_or_create_role(name='Admin', description='Administrator')
-    user_datastore.find_or_create_role(name='User', description='User')
-    user_datastore.find_or_create_role(name='Streamer', description='Streamer')
-    user_datastore.find_or_create_role(name='Recorder', description='Recorder')
-    user_datastore.find_or_create_role(name='Uploader', description='Uploader')
+    user_datastore.find_or_create_role(name='Admin', description='Administrator', default=False)
+    user_datastore.find_or_create_role(name='User', description='User', default=True)
+    user_datastore.find_or_create_role(name='Streamer', description='Streamer', default=False)
+    user_datastore.find_or_create_role(name='Recorder', description='Recorder', default=False)
+    user_datastore.find_or_create_role(name='Uploader', description='Uploader', default=False)
 
     topicList = [("Other","None")]
     for topic in topicList:
@@ -55,6 +55,15 @@ def init(app, user_datastore):
             newTopic = topics.topics(topic[0], topic[1])
             db.session.add(newTopic)
     db.session.commit()
+
+    # Query Null Default Roles and Set
+    roleQuery = Sec.Role.query.all(default=None)
+    for role in roleQuery:
+        if role.name == "User":
+            role.default = True
+        else:
+            role.default = False
+        db.session.commit()
 
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = settings.settings.query.first()
