@@ -1,6 +1,8 @@
 0.7.4
 ==============================================
 Added Ability to set a default role set for new users - Issue #110
+Added countViewers url argument for embedded streams.  Set ?countViewers=false on url for live streams to prevent live viewers from counting against live view counts
+Added server-wide max_users setting to the default ejabberd config file and set default to 2500
 
 0.7.3
 ==============================================
