@@ -50,7 +50,7 @@
         var $ = jQuery;
 
         var player = videojs('video', {
-            autoplay: {{isAutoPlay}},
+            autoplay: {{isAutoPlay|lower}},
             errorDisplay: false,
             liveui: true,
             liveTracker: {
