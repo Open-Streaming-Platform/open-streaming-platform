@@ -755,7 +755,8 @@
                         try {
                             videoJSObj.reset();
                             videoJSObj.src('{{streamURL}}');
-                            videoJSObj.pause().trigger('loadstart');
+                            videoJSObj.pause();
+                            videoJSObj.trigger('loadstart');
                             videoJSObj.play();
                         } catch (e) {
                             console.log("OSP tried restarting the stream but had an issue:" + e)

@@ -78,7 +78,7 @@ def view_page(loc):
 
         requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
-        if isEmbedded is None or isEmbedded == "False":
+        if isEmbedded is None or isEmbedded == "False" or isEmbedded == "false":
 
             secureHash = None
             rtmpURI = None
@@ -120,7 +120,15 @@ def view_page(loc):
                 isAutoPlay = True
             else:
                 isAutoPlay = False
-            return render_template(themes.checkOverride('channelplayer_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
+
+            countViewers = request.args.get("countViewers")
+            if countViewers is None:
+                countViewers = True
+            elif countViewers.lower() == 'false':
+                countViewers = False
+            else:
+                countViewers = False
+            return render_template(themes.checkOverride('channelplayer_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, countViewers=countViewers)
 
     else:
         flash("No Live Stream at URL","error")

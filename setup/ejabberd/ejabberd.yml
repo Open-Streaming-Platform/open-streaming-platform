@@ -216,6 +216,7 @@ modules:
       allow_private_messages_from_visitors: nobody
       allow_visitor_status: false
       members_by_default: false
+    max_users: 2500
 
   mod_muc_admin: {}
   mod_offline:

@@ -352,8 +352,9 @@ def inject_topics():
 #----------------------------------------------------------------------------#
 @user_registered.connect_via(app)
 def user_registered_sighandler(app, user, confirm_token):
-    default_role = user_datastore.find_role("User")
-    user_datastore.add_role_to_user(user, default_role)
+    defaultRoleQuery = Sec.Role.query.filter_by(default=True)
+    for role in defaultRoleQuery:
+        user_datastore.add_role_to_user(user, role.name)
     user.authType = 0
     user.xmppToken = str(os.urandom(32).hex())
     user.uuid = str(uuid.uuid4())
