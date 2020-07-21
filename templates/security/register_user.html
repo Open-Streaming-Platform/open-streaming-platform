@@ -77,6 +77,11 @@
             validForm = false;
         }
 
+        if (document.getElementById('username').value.indexOf('&') !== -1) {
+            usernameDiv.setCustomValidity('Username Cannot Contain &');
+            validForm = false;
+        }
+
         return validForm;
     }
 </script>
