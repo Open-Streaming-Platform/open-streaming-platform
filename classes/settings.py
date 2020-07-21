@@ -144,4 +144,3 @@ class oAuthProvider(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
-

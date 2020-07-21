@@ -155,3 +155,29 @@ def handle_videoupload_disconnect(videofilename):
             os.remove(videoFilename)
 
     return 'OK'
+
+@socketio.on('updateDefaultRoles')
+def update_default_roles(msg):
+    if current_user.has_role('Admin'):
+
+        UserRoleQuery = Sec.Role.query.filter_by(name="User").first()
+        UserRoleQuery.default = True
+        db.session.commit()
+
+        hasStreamer = msg['streamer']
+        StreamerRoleQuery = Sec.Role.query.filter_by(name="Streamer").first()
+        StreamerRoleQuery.default = hasStreamer
+        db.session.commit()
+
+        hasRecorder = msg['recorder']
+        RecorderRoleQuery = Sec.Role.query.filter_by(name="Recorder").first()
+        RecorderRoleQuery.default = hasRecorder
+        db.session.commit()
+
+        hasUploader = msg['uploader']
+        UploaderRoleQuery = Sec.Role.query.filter_by(name="Uploader").first()
+        UploaderRoleQuery.default = hasUploader
+        db.session.commit()
+    db.session.close()
+    return 'OK'
+

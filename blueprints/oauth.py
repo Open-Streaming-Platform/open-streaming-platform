@@ -115,7 +115,9 @@ def oAuthAuthorize(provider):
                     user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
-                user_datastore.add_role_to_user(user, 'User')
+                defaultRoleQuery = Sec.Role.query.filter_by(default=True)
+                for role in defaultRoleQuery:
+                    user_datastore.add_role_to_user(user, role.name)
                 user.uuid = str(uuid.uuid4())
                 user.xmppToken = str(os.urandom(32).hex())
 
