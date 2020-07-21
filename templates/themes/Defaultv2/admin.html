@@ -700,49 +700,53 @@
                     </div>
                     <br>
                     <div class="container-fluid">
-                    {% for user in userList %}
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card shadow searchable">
-                                    <div class="card-header {% if user.active == true %} bg-success{% endif %}">
-                                        <b><a href="/streamer/{{user.id}}/" class="text-dark">{{user.username}}</a></b>
-                                        <div class="float-right">
-                                            <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm {% if user.id == current_user.id %} disabled {% endif %} {% if user.active == True %}btn-secondary {% else %} btn-success {% endif %} shadow"><i class="fas {% if user.active == True %}fa-user-slash{% else %}fa-user{% endif %}"></i></a>
-                                            <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                          <div class="col-xl-1 col-sm-12">
-                                            <img src="/images/{{user.pictureLocation}}" width="64px" height="64px" onerror="this.src='/static/img/user2.png';">
-                                          </div>
-                                          <div class="col-xl-2 col-sm-12">
-                                            <i class="fas fa-at"></i> {{user.email}}<br>
-                                            <i class="fas fa-passport"></i> <span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span><br>
-                                            {% if user.authType == 1 %}<i class="fas fa-file-contract"></i> {{user.oAuthProvider}} {% endif %}
-                                          </div>
-                                          <div class="col-xl-3 col-sm-12">
-                                            <i class="fas fa-key"></i> Roles: <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
-                                          <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
-                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
-                                              {% if user.has_role('Streamer') %}
-                                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
-                                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
-                                              {% endif %}
-                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
-                                            </div><br>
-                                            {% for role in user.roles %}
-                                            <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
-                                          {% endfor %}
-                                          </div>
-                                        </div>
-                                    </div>
+                        <table id="users"class="table table-hover">
+                          <thead class="shadow">
+                            <tr>
+                              <th></th>
+                              <th><i class="fas fa-portrait"></i> Image</th>
+                              <th><i class="fas fa-user"></i> Username</th>
+                              <th><i class="fas fa-at"></i> Email</th>
+                              <th><i class="fas fa-passport"></i> Auth Type</th>
+                              <th><i class="fas fa-file-contract"></i> Provider</th>
+                              <th><i class="fas fa-user-clock"></i> Active</th>
+                              <th><i class="fas fa-user-shield"></i> Roles</th>
+                              <th><i class="fas fa-cog"></i> Options</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                           {% for user in userList %}
+                           <tr>
+                              <td><input type="checkbox" value="{{user.id}}"></td>
+                              <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
+                              <td><a href="/streamer/{{user.id}}/" class="text-dark">{{user.username}}</a></td>
+                              <td>{{user.email}}</td>
+                              <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
+                              <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
+                               <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
+                              <td>
+                                {% for role in user.roles %}
+                                    <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
+                                {% endfor %}
+                              </td>
+                              <td>
+                                <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                      {% if user.has_role('Streamer') %}
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                                      {% endif %}
+                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                                 </div>
-                            </div>
-                        </div>
-                        <br>
-                    {% endfor %}
+                                <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow"><i class="fas fa-user"></i></a>
+                                <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
+                              </td>
+                           </tr>
+                           {% endfor %}
+                          </tbody>
+                        </table>
                     </div>
                     <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1162,6 +1166,18 @@
             {x:'{{entry['t']}}', y:{{entry['y']}}},
         {% endfor %}
     ];
+
+    $(document).ready(function() {
+        $('#users').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,7] },
+          { 'orderable': false, 'targets': [0,1,7] }
+          ]
+        }
+      );
+    } );
 
     $(document).ready(function() {
         $('#logTable').DataTable({
