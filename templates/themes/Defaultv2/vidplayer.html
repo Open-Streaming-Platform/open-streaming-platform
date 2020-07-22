@@ -119,8 +119,8 @@
         <div class="comment mb-2">
           <div class="row">
             <div class="col-auto mr-auto">
-              <a href="/streamer/{{comment.userID}}/"><b>{{comment.userID|get_userName}}</b><br>
-              <img src="{{comment.userID|get_pictureLocation}}" width="64px" height="64px" onerror="this.src='/static/img/user2.png';"></a>
+              <a href="/profile/{{comment.userID}}/"><b>{{comment.userID|get_userName}}</b><br>
+              <img src="{{comment.userID|get_pictureLocation}}" class="rounded" width="64px" height="64px" onerror="this.src='/static/img/user2.png';"></a>
             </div>
             <div class="col">
               <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
