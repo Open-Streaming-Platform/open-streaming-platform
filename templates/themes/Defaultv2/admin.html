@@ -712,7 +712,7 @@
                            <tr>
                               <td><input type="checkbox" value="{{user.id}}"></td>
                               <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
-                              <td><a href="/profile/{{user.username}}/" class="text-dark">{{user.username}}</a></td>
+                              <td><a href="/profile/{{user.username}}" class="text-dark">{{user.username}}</a></td>
                               <td>{{user.email}}</td>
                               <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                               <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
