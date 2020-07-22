@@ -1007,32 +1007,36 @@
                     </div>
                     <br>
                     <div class="container-fluid">
-                        {% for stream in streamList %}
-                        <div id="streamCard-{{stream.id}}" class="row">
-                            <div class="col-12">
-                                <div class="card shadow searchable">
-                                  <div class="card-header">
-                                      <span class="video-title"><a href="/view/{{stream.channel.channelLoc}}/"><b>{{stream.streamName}}</b></a></span>
-                                      <div class="float-right"><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></div>
-                                  </div>
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-xl-3 col-sm-12">
-                                        <img width="100%" src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';"><br>
-                                      </div>
-                                      <div class="col-xl-3 col-sm-12">
-                                        <i class="fas fa-video"></i> {{stream.channel.channelName}} <br>
-                                        <i class="fas fa-user"></i> {{stream.channel.owningUser|get_userName}} <br>
-                                        <i class="fas fa-hashtag"></i> {{stream.channel.topic|get_topicName}} <br>
-                                        <i class="fas fa-eye"></i> {{stream.currentViewers}} <br>
-                                        <i class="fas fa-users"></i> {{stream.totalViewers}} <br>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
+                        <table id="streamsTable" class="table table-hover">
+                          <thead class="shadow">
+                            <tr id="streamCard-{{stream.id}}">
+                              <th></th>
+                              <th><i class="fas fa-portrait"></i> Image</th>
+                              <th><i class="fas fa-video"></i> Stream Name</th>
+                              <th><i class="fas fa-tv"></i> Channel Name</th>
+                              <th><i class="fas fa-user"></i> Owner</th>
+                              <th><i class="fas fa-hashtag"></i> Topic</th>
+                              <th><i class="fas fa-terminal"></i> Current Views</th>
+                              <th><i class="fas fa-eye"></i> Total Views</th>
+                              <th><i class="fas fa-cog"></i> Options</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for stream in streamList %}
+                            <tr>
+                              <td><input type="checkbox" value="{{stream.id}}"></td>
+                              <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
+                              <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
+                              <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
+                              <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
+                              <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
+                              <td>{{stream.currentViewers}}</td>
+                              <td>{{stream.totalViewers}}</td>
+                              <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>
+                            {% endfor %}
+                          <tbody>
+                        </table>
                     </div>
                     <div class="modal fade" id="deleteStreamModal" tabindex="-1" role="dialog" aria-labelledby="deleteStreamModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
