@@ -954,7 +954,7 @@
                           <tbody>
                             {% for channel in channelList %}
                             <tr id="channelCardRow-{{channel.id}}">
-                              <td><input type="checkbox" value="{{user.id}}"></td>
+                              <td><input type="checkbox" value="{{channel.id}}"></td>
                               <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
                               <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
                               <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
