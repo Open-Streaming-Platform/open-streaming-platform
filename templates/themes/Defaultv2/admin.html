@@ -1188,6 +1188,18 @@
     } );
 
     $(document).ready(function() {
+        $('#streamsTable').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,6,7,8] },
+          { 'orderable': false, 'targets': [0,1,8] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
         $('#logTable').DataTable({
             "order": [[ 0, "desc" ]]
         });
