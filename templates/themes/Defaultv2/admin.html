@@ -931,50 +931,46 @@
                 </div>
                 <div class="tab-pane fade {% if page == 'channels' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-channels" id="channelsList">
                     <h5>Channels List</h5>
-                    <div class="container-fluid justify-content-center" style="width:100%;padding-top:15px;">
-                        <div class="input-group">
-                            <div class="input-group-prepend shadow">
-                                <div class="input-group-text"><i class="fas fa-search"></i></div>
-                            </div>
-                            <input type="text" id="search" name="search" class="searchBar form-control shadow" placeholder="Search">
-                        </div>
-                    </div>
                     <br>
                     <div class="container-fluid">
-                        {% for channel in channelList %}
-                        <div id="channelCardRow-{{channel.id}}" class="row">
-                            <div class="col-12">
-                                <div class="card shadow searchable">
-                                  <div class="card-header">
-                                      <b><span class="video-title"><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></span></b>
-                                    <div class="float-right"><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></div>
-                                  </div>
-                                  <div class="card-body">
-                                    <div class="row">
-                                      <div class="col-md-3 col-12 displayCard"><img class="channel-img" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></div>
-                                      <div class="col-md-3 col-12">
-                                        <i class="fas fa-hashtag"></i> {{channel.topic|get_topicName}} <br>
-                                        <i class="fas fa-user"></i> {{channel.owningUser|get_userName}} <br>
-                                        <i class="fas fa-terminal"></i> {{channel.channelLoc}} <br>
-                                        <i class="fas fa-eye"></i> {{channel.views}} <br>
-                                        <i class="fas fa-hdd"></i> {{channel.channelLoc|get_diskUsage}} <br>
-                                      </div>
-                                      <div class="col-md-4 col-12">
-                                        <i class="fas fa-paragraph"></i> {{channel.description}}<br>
-                                      </div>
-                                      <div class="col-md-2 col-12">
-                                        <i class="fas fa-comment"></i> <span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span> <br>
-                                        <i class="fas fa-save"></i> <span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span> <br>
-                                        <i class="fas fa-comments"></i> <span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span> <br>
-                                        <i class="fas fa-lock"></i> <span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span><br>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        {% endfor %}
+                        <table id="channelsTable" class="table table-hover">
+                          <thead class="shadow">
+                            <tr>
+                              <th></th>
+                              <th><i class="fas fa-portrait"></i> Image</th>
+                              <th><i class="fas fa-tv"></i> Channel Name</th>
+                              <th><i class="fas fa-user"></i> Owner</th>
+                              <th><i class="fas fa-hashtag"></i> Topic</th>
+                              <th><i class="fas fa-terminal"></i> Location</th>
+                              <th><i class="fas fa-eye"></i> Views</th>
+                              <th><i class="fas fa-hdd"></i> Storage Usage</th>
+                              <th><i class="fas fa-comment"></i> Chat</th>
+                              <th><i class="fas fa-save"></i> Recording</th>
+                              <th><i class="fas fa-comments"></i> Comments</th>
+                              <th><i class="fas fa-lock"></i> Protected</th>
+                              <th><i class="fas fa-cog"></i> Options</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for channel in channelList %}
+                            <tr id="channelCardRow-{{channel.id}}">
+                              <td><input type="checkbox" value="{{user.id}}"></td>
+                              <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                              <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
+                              <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                              <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
+                              <td>{{channel.channelLoc}}</td>
+                              <td>{{channel.views}}</td>
+                              <td>{{channel.channelLoc|get_diskUsage}}</td>
+                              <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                              <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
+                              <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
+                              <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
+                              <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                            </tr>
+                            {% endfor %}
+                          <tbody>
+                        </table>
                     </div>
                     <div class="modal fade" id="confirmDeleteChannelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteChannelModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1170,6 +1166,18 @@
           'columnDefs': [
           { 'searchable': false, 'targets': [0,1,8] },
           { 'orderable': false, 'targets': [0,1,8] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#channelsTable').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,7,12] },
+          { 'orderable': false, 'targets': [0,1,12] }
           ]
         }
       );
