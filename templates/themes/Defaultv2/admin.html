@@ -712,20 +712,20 @@
                            <tr>
                               <td><input type="checkbox" value="{{user.id}}"></td>
                               <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
-                              <td><a href="/streamer/{{user.id}}/" class="text-dark">{{user.username}}</a></td>
+                              <td><a href="/profile/{{user.username}}/" class="text-dark">{{user.username}}</a></td>
                               <td>{{user.email}}</td>
                               <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                               <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
                                <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
                               <td>
                                 {% for role in user.roles %}
-                                    <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="far fa-trash-alt"></i></a></span><br>
+                                    <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a></span><br>
                                 {% endfor %}
                               </td>
                               <td>
                                 <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                    <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
                                     <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
                                       {% if user.has_role('Streamer') %}
                                         <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
@@ -733,7 +733,7 @@
                                       {% endif %}
                                     <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                                 </div>
-                                <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow"><i class="fas fa-user"></i></a>
+                                <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" ><i class="fas fa-user"></i></a>
                                 <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
                               </td>
                            </tr>
