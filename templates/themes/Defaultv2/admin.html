@@ -1009,7 +1009,7 @@
                     <div class="container-fluid">
                         <table id="streamsTable" class="table table-hover">
                           <thead class="shadow">
-                            <tr id="streamCard-{{stream.id}}">
+                            <tr>
                               <th></th>
                               <th><i class="fas fa-portrait"></i> Image</th>
                               <th><i class="fas fa-video"></i> Stream Name</th>
@@ -1023,7 +1023,7 @@
                           </thead>
                           <tbody>
                             {% for stream in streamList %}
-                            <tr>
+                            <tr id="streamCard-{{stream.id}}">
                               <td><input type="checkbox" value="{{stream.id}}"></td>
                               <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
                               <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
