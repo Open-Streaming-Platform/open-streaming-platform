@@ -224,7 +224,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Save Changes">
+          <input type="submit" class="btn btn-primary" onclick="showSpinner();" value="Save Changes">
         </div>
       </form>
     </div>
@@ -246,7 +246,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        <a href="/play/{{video.id}}/delete" class="btn btn-danger">Delete</a>
+        <a href="/play/{{video.id}}/delete" class="btn btn-danger" onclick="showSpinner();">Delete</a>
       </div>
     </div>
   </div>
@@ -300,7 +300,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-warning">Move</button>
+          <button type="submit" class="btn btn-warning" onclick="showSpinner();">Move</button>
         </div>
       </form>
     </div>
@@ -355,7 +355,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button id="clipSubmitButton" type="submit" class="btn btn-success">Create</button>
+          <button id="clipSubmitButton" type="submit" class="btn btn-success" onclick="showSpinner();">Create</button>
         </div>
       </form>
     </div>
