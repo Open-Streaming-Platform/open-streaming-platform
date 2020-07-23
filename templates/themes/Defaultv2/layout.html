@@ -309,6 +309,10 @@
   </div>
   {% endif %}
 
+  <div id="loading-spinner" class="spinner-overlay">
+      <div class="spinner"></div>
+  </div>
+
   {% block body %}
 
   {% endblock %}
@@ -326,6 +330,16 @@
 
   {% endblock %}
   <script>
+
+  function showSpinner() {
+    loader = document.getElementById('loading-spinner');
+    loader.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    loader = document.getElementById('loading-spinner');
+    loader.style.display = 'none';
+  }
 
   function setCookie(name,value,days) {
     var expires = "";
