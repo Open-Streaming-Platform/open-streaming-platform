@@ -35,7 +35,11 @@ def view_page(loc):
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
-                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+                from conf import config
+                if hasattr(config, 's3URL'):
+                    streamURL = config.s3URL + '/live/' + requestedChannel.channelLoc + '/index.m3u8'
+                else:
+                    streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
         else:
             # Handle Selecting the Node using Round Robin Logic
             if sysSettings.adaptiveStreaming is True:
