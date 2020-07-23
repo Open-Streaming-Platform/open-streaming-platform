@@ -655,6 +655,40 @@ hr {
     overflow:hidden;
     background-color:black;
 }
+
+.spinner-overlay {
+	position: absolute;
+	background: transparent;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 10000;
+	background: var(--spinner-backdrop-color);
+}
+.spinner {
+	border-left: var(--spinner-border-width) solid var(--spinner-color-two);
+	border-top: 4px solid var(--spinner-color-one);
+	border-bottom: 4px solid var(--spinner-color-one);
+	border-right: 4px solid var(--spinner-color-one);
+	border-radius: var(--spinner-border-rad);
+	animation: spinner var(--spinner-speed) infinite linear;
+	width: var(--spinner-size);
+	height: var(--spinner-size);
+	z-index: 100001;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(-360deg);
+	}
+}
+
 @media screen and (min-width : 992px) and (max-width : 1854px) {
     .displayCard-other .card-data {
         margin-left:0px;

@@ -271,6 +271,28 @@
   {% endblock %}
     <script>
 
+    function showSpinner() {
+      disableScrolling();
+      loader = document.getElementById('loading-spinner');
+      loader.style.display = 'flex';
+    }
+
+    function hideSpinner() {
+      enableScrolling();
+      loader = document.getElementById('loading-spinner');
+      loader.style.display = 'none';
+    }
+
+    function disableScrolling(){
+      var x=window.scrollX;
+      var y=window.scrollY;
+      window.onscroll=function(){window.scrollTo(x, y);};
+    }
+
+    function enableScrolling(){
+        window.onscroll=function(){};
+    }
+
     function setCookie(name,value,days) {
       var expires = "";
       if (days) {
