@@ -2,6 +2,7 @@
 ==============================================
 Changed Comment links to point to /profile/username
 Reworked Admin List UI for Users, Channels, Topics, & Streams
+Added Loading Spinner to Some Buttons
 
 0.7.4
 ==============================================
