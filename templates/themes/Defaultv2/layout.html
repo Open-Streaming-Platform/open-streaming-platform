@@ -331,16 +331,24 @@
   {% endblock %}
   <script>
 
+  $(function() {
+    $("a").click(function () {
+      showSpinner();
+    });
+  });
+
   function showSpinner() {
     disableScrolling();
     loader = document.getElementById('loading-spinner');
     loader.style.display = 'flex';
+    loader.hide();
+    loader.fadeIn();
   }
 
   function hideSpinner() {
     enableScrolling();
     loader = document.getElementById('loading-spinner');
-    loader.style.display = 'none';
+    loader.fadeOut();
   }
 
   function disableScrolling(){
