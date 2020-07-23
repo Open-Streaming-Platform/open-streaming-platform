@@ -693,53 +693,55 @@
                         <button class="btn btn-primary" data-toggle="modal" data-target="#defaultRolesModal"><i class="fas fa-shield-alt"></i> Default Roles</button>
                     </div>
                     <div class="container-fluid">
-                        <table id="users"class="table table-hover">
-                          <thead class="shadow">
-                            <tr>
-                              <th></th>
-                              <th><i class="fas fa-portrait"></i> Image</th>
-                              <th><i class="fas fa-user"></i> Username</th>
-                              <th><i class="fas fa-at"></i> Email</th>
-                              <th><i class="fas fa-passport"></i> Auth Type</th>
-                              <th><i class="fas fa-file-contract"></i> Provider</th>
-                              <th><i class="fas fa-user-clock"></i> Active</th>
-                              <th><i class="fas fa-user-shield"></i> Roles</th>
-                              <th><i class="fas fa-cog"></i> Options</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                           {% for user in userList %}
-                           <tr>
-                              <td><input type="checkbox" value="{{user.id}}"></td>
-                              <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
-                              <td><a href="/profile/{{user.username}}" class="text-dark">{{user.username}}</a></td>
-                              <td>{{user.email}}</td>
-                              <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
-                              <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
-                               <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
-                              <td>
-                                {% for role in user.roles %}
-                                    <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a></span><br>
-                                {% endfor %}
-                              </td>
-                              <td>
-                                <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
-                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
-                                      {% if user.has_role('Streamer') %}
-                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
-                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
-                                      {% endif %}
-                                    <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
-                                </div>
-                                <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" ><i class="fas fa-user"></i></a>
-                                <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
-                              </td>
-                           </tr>
-                           {% endfor %}
-                          </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="users"class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-user"></i> Username</th>
+                                  <th><i class="fas fa-at"></i> Email</th>
+                                  <th><i class="fas fa-passport"></i> Auth Type</th>
+                                  <th><i class="fas fa-file-contract"></i> Provider</th>
+                                  <th><i class="fas fa-user-clock"></i> Active</th>
+                                  <th><i class="fas fa-user-shield"></i> Roles</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                               {% for user in userList %}
+                               <tr>
+                                  <td><input type="checkbox" value="{{user.id}}"></td>
+                                  <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
+                                  <td><a href="/profile/{{user.username}}" class="text-dark">{{user.username}}</a></td>
+                                  <td>{{user.email}}</td>
+                                  <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
+                                  <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
+                                   <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
+                                  <td>
+                                    {% for role in user.roles %}
+                                        <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a></span><br>
+                                    {% endfor %}
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                          {% if user.has_role('Streamer') %}
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                                          {% endif %}
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                                    </div>
+                                    <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" ><i class="fas fa-user"></i></a>
+                                    <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
+                                  </td>
+                               </tr>
+                               {% endfor %}
+                              </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -933,44 +935,46 @@
                     <h5>Channels List</h5>
                     <br>
                     <div class="container-fluid">
-                        <table id="channelsTable" class="table table-hover">
-                          <thead class="shadow">
-                            <tr>
-                              <th></th>
-                              <th><i class="fas fa-portrait"></i> Image</th>
-                              <th><i class="fas fa-tv"></i> Channel Name</th>
-                              <th><i class="fas fa-user"></i> Owner</th>
-                              <th><i class="fas fa-hashtag"></i> Topic</th>
-                              <th><i class="fas fa-terminal"></i> Location</th>
-                              <th><i class="fas fa-eye"></i> Views</th>
-                              <th><i class="fas fa-hdd"></i> Storage Usage</th>
-                              <th><i class="fas fa-comment"></i> Chat</th>
-                              <th><i class="fas fa-save"></i> Recording</th>
-                              <th><i class="fas fa-comments"></i> Comments</th>
-                              <th><i class="fas fa-lock"></i> Protected</th>
-                              <th><i class="fas fa-cog"></i> Options</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for channel in channelList %}
-                            <tr id="channelCardRow-{{channel.id}}">
-                              <td><input type="checkbox" value="{{channel.id}}"></td>
-                              <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
-                              <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
-                              <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
-                              <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
-                              <td>{{channel.channelLoc}}</td>
-                              <td>{{channel.views}}</td>
-                              <td>{{channel.channelLoc|get_diskUsage}}</td>
-                              <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
-                              <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
-                              <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
-                              <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
-                              <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></td>
-                            </tr>
-                            {% endfor %}
-                          <tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="channelsTable" class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-tv"></i> Channel Name</th>
+                                  <th><i class="fas fa-user"></i> Owner</th>
+                                  <th><i class="fas fa-hashtag"></i> Topic</th>
+                                  <th><i class="fas fa-terminal"></i> Location</th>
+                                  <th><i class="fas fa-eye"></i> Views</th>
+                                  <th><i class="fas fa-hdd"></i> Storage Usage</th>
+                                  <th><i class="fas fa-comment"></i> Chat</th>
+                                  <th><i class="fas fa-save"></i> Recording</th>
+                                  <th><i class="fas fa-comments"></i> Comments</th>
+                                  <th><i class="fas fa-lock"></i> Protected</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for channel in channelList %}
+                                <tr id="channelCardRow-{{channel.id}}">
+                                  <td><input type="checkbox" value="{{channel.id}}"></td>
+                                  <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                                  <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
+                                  <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                                  <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
+                                  <td>{{channel.channelLoc}}</td>
+                                  <td>{{channel.views}}</td>
+                                  <td>{{channel.channelLoc|get_diskUsage}}</td>
+                                  <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                                  <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
+                                  <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
+                                  <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
+                                  <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                {% endfor %}
+                              <tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal fade" id="confirmDeleteChannelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteChannelModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -999,36 +1003,38 @@
                     <h5>Stream List</h5>
                     <br>
                     <div class="container-fluid">
-                        <table id="streamsTable" class="table table-hover">
-                          <thead class="shadow">
-                            <tr>
-                              <th></th>
-                              <th><i class="fas fa-portrait"></i> Image</th>
-                              <th><i class="fas fa-video"></i> Stream Name</th>
-                              <th><i class="fas fa-tv"></i> Channel Name</th>
-                              <th><i class="fas fa-user"></i> Owner</th>
-                              <th><i class="fas fa-hashtag"></i> Topic</th>
-                              <th><i class="fas fa-terminal"></i> Current Views</th>
-                              <th><i class="fas fa-eye"></i> Total Views</th>
-                              <th><i class="fas fa-cog"></i> Options</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for stream in streamList %}
-                            <tr id="streamCard-{{stream.id}}">
-                              <td><input type="checkbox" value="{{stream.id}}"></td>
-                              <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
-                              <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
-                              <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
-                              <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
-                              <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
-                              <td>{{stream.currentViewers}}</td>
-                              <td>{{stream.totalViewers}}</td>
-                              <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></td>
-                            </tr>
-                            {% endfor %}
-                          <tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="streamsTable" class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-video"></i> Stream Name</th>
+                                  <th><i class="fas fa-tv"></i> Channel Name</th>
+                                  <th><i class="fas fa-user"></i> Owner</th>
+                                  <th><i class="fas fa-hashtag"></i> Topic</th>
+                                  <th><i class="fas fa-terminal"></i> Current Views</th>
+                                  <th><i class="fas fa-eye"></i> Total Views</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for stream in streamList %}
+                                <tr id="streamCard-{{stream.id}}">
+                                  <td><input type="checkbox" value="{{stream.id}}"></td>
+                                  <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
+                                  <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
+                                  <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
+                                  <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
+                                  <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
+                                  <td>{{stream.currentViewers}}</td>
+                                  <td>{{stream.totalViewers}}</td>
+                                  <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                                {% endfor %}
+                              <tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal fade" id="deleteStreamModal" tabindex="-1" role="dialog" aria-labelledby="deleteStreamModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
