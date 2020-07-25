@@ -50,7 +50,11 @@ def view_vid_page(videoID):
 
         if recordedVid.length is None:
             fullVidPath = videos_root + recordedVid.videoLocation
-            duration = videoFunc.getVidLength(fullVidPath)
+            duration = None
+            try:
+                duration = videoFunc.getVidLength(fullVidPath)
+            except:
+                return render_template(themes.checkOverride('notready.html'), video=recordedVid)
             recordedVid.length = duration
         db.session.commit()
 

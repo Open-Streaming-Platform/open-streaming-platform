@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{sysSettings.siteName}} - Video not ready</title>
+</head>
+<body>
+<style>
+    .left-col {
+      width:200px;
+      height:95vh;
+      float: left;
+    }
+
+    .center-col {
+      padding-top: 30px;
+      padding-bottom: -30px;
+    }
+
+    .center-content {
+      font-family: Arial, Sans-serif;
+    }
+
+    .siteTitle {
+      font-size: 4em;
+    }
+
+    .errorType {
+      font-size: 3.5em;
+    }
+
+    .errorDescription {
+      padding-top:50px;
+      font-size: 2.5em;
+    }
+
+    .errorSubDescription {
+        padding-top:10px;
+        padding-bottom:10px;
+        padding-right: 30px;
+        font-family: monospace;
+        font-size: .40em;
+    }
+
+    .pageLink {
+      position: fixed;
+      bottom:50px;
+      left: 215px;
+      font-size:2em;
+    }
+
+    .pageLink a:link, .pageLink a:visited {
+      text-decoration: none;
+      color: black;
+    }
+
+    .pageLink a:hover, .pageLink a:active {
+      text-decoration: underline;
+    }
+
+    .tvImage {
+      position:fixed;
+      right:25px;
+      bottom: 50px;
+    }
+
+    .tvImage img {
+        width: 375px;
+        height: 265px;
+    }
+
+    @media screen and (max-width : 1028px) {
+        .tvImage {
+            padding-top: 50px;
+            position: initial;
+            display: block;
+            margin: auto;
+            width: 375px;
+        }
+
+        .pageLink {
+            position: initial;
+            margin-top: 10px;
+        }
+    }
+
+    @media screen and (max-width : 800px) {
+        .left-col {
+            display: none;
+        }
+    }
+
+</style>
+    <div class="left-col">
+      <img src="/static/img/logo.png" style="width:96px;height:96px;display:block;margin:auto;padding-top:25px;">
+    </div>
+    <div class="center-col">
+      <div class="center-content">
+        <div class="siteTitle">
+          <b>{{sysSettings.siteName}}</b>
+        </div>
+        <div class="errorType">
+          <b>Video not ready</b>
+        </div>
+        <div class="errorDescription">
+          <b>The requested video is currently processing. Please try again later</b><br><br>
+            <a href="/play/{{video.id}}">Try Again...</a><br>
+        </div>
+        <div class="pageLink">
+            <a href="#" onclick="history.back(-1)">Return to the previous page</a>
+        </div>
+        <div class="tvImage">
+          <img src="/static/img/error-tv.gif">
+        </div>
+      </div>
+    </div>
+</body>
+</html>
