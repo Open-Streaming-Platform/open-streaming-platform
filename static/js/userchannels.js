@@ -114,6 +114,15 @@ $(document).on("click", ".videoThumbnailUploadModalButton", function () {
 
 });
 
+$('#vanityURL').on('change keydown paste input', function(){
+      var vanityURLInputDiv = document.getElementById('vanityURL');
+      var vanityURLData = vanityURLInputDiv.val;
+      vanityURLData = vanityURLData.replace(/[^a-zA-Z0-9]/g, "");
+      var vanityURLHintDiv = document.getElementById('vanityURLExample');
+      vanityURLHintDiv.innerHTML = vanityURLData;
+      vanityURLInputDiv.val = vanityURLData;
+});
+
 // SocketIO Handlers
 socket.on('newWebhookAck', function (msg) {
     var webhookName = msg['webhookName'];
