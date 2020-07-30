@@ -197,6 +197,15 @@ def unsubscribe_page():
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
 
+# Link to Profile Via Username
+@root_bp.route('/u/<username>')
+def vanityURL_username_link(username):
+    userQuery = Sec.User.query.filter_by(username=username).first()
+    if userQuery is not None:
+        return redirect(url_for('profile.profile_view_page'))
+    flash("Invalid Username","error")
+    return redirect(url_for('root.main_page'))
+
 # Link to Channels Via Vanity URLs
 @root_bp.route('/c/<vanityURL>')
 def vanityURL_channel_link(vanityURL):
