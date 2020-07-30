@@ -202,7 +202,7 @@ def static_from_root():
 def vanityURL_channel_link(vanityURL):
     channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
     if channelQuery is not None:
-        return redirect(url_for('channels_bp.channel_view_page',chanID=channelQuery.id))
+        return redirect(url_for('channel.channel_view_page',chanID=channelQuery.id))
     flash('Invalid Link URL','error')
     return redirect(url_for('root.main_page'))
 
@@ -211,7 +211,7 @@ def vanityURL_channel_link(vanityURL):
 def vanityURL_live_link(vanityURL):
     channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
     if channelQuery is not None:
-        return redirect(url_for('liveview_bp.view_page',loc=channelQuery.channelLoc))
+        return redirect(url_for('liveview.view_page',loc=channelQuery.channelLoc))
     flash('Invalid Link URL','error')
     return redirect(url_for('root.main_page'))
 
