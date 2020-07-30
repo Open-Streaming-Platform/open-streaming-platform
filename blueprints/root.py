@@ -198,7 +198,7 @@ def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
 
 # Link to Channels Via Vanity URLs
-@root_bp.route('/a/<vanityURL>')
+@root_bp.route('/c/<vanityURL>')
 def vanityURL_channel_link(vanityURL):
     channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
     if channelQuery is not None:
@@ -207,7 +207,7 @@ def vanityURL_channel_link(vanityURL):
     return redirect(url_for('root.main_page'))
 
 # Link to a Channel's Live Page Via Vanity URLs
-@root_bp.route('/a/<vanityURL>/live')
+@root_bp.route('/c/<vanityURL>/live')
 def vanityURL_live_link(vanityURL):
     channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
     if channelQuery is not None:
