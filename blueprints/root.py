@@ -202,7 +202,7 @@ def static_from_root():
 def vanityURL_username_link(username):
     userQuery = Sec.User.query.filter_by(username=username).first()
     if userQuery is not None:
-        return redirect(url_for('profile.profile_view_page'))
+        return redirect(url_for('profile.profile_view_page',username=username))
     flash("Invalid Username","error")
     return redirect(url_for('root.main_page'))
 
