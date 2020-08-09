@@ -592,7 +592,7 @@ function updateDefaultRoles() {
 }
 // TODO Add endpoint for Bulk Add Role
 function bulkAddRole(role) {
-    var userIDArray;
+    var userIDArray = [];
     $("input:checkbox[name=selector-user]:checked").each(function(){
         userIDArray.push($(this).val());
     });
