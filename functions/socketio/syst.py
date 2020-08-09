@@ -37,6 +37,7 @@ def deleteInvitedUser(message):
 def bulkAddRoles(message):
     userList = message['users']
     role = message['role']
+    print(userList)
     if current_user.has_role('Admin'):
         roleQuery = Sec.Role.query.filter_by(name=role).first()
         if roleQuery is not None:
