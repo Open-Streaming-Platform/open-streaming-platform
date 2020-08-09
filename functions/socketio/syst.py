@@ -17,6 +17,8 @@ from classes import views
 
 from functions import system
 
+from app import user_datastore
+
 from globals import globalvars
 
 @socketio.on('checkUniqueUsername')
@@ -29,6 +31,19 @@ def deleteInvitedUser(message):
         emit('checkUniqueUsernameAck', {'results': str(0)}, broadcast=False)
     db.session.commit()
     db.session.close()
+    return 'OK'
+
+@socketio.on('bulkAddRoles')
+def bulkAddRoles(message):
+    userList = message['users']
+    role = message['role']
+    if current_user.has_role('Admin'):
+        roleQuery = Sec.Role.query.filter_by(name=(role)).first()
+        if roleQuery is not None:
+            for userID in userList:
+                userQuery = Sec.User.query.filter_by(id=userID).first()
+                if userQuery is not None:
+                    user_datastore.add_role_to_user(userQuery, roleQuery.name)
     return 'OK'
 
 @socketio.on('deleteChannel')
