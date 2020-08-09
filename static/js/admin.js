@@ -598,7 +598,7 @@ function bulkAddRole(role) {
     });
 
     socket.emit('bulkAddRoles',{users: userIDArray, role: role})
-    window.location.reload(false);
+    //window.location.reload(false);
 }
 
 function toggleDiv(selDiv){
