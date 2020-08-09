@@ -42,6 +42,8 @@ def bulkAddRoles(message):
             userQuery = Sec.User.query.filter_by(id=int(userID)).first()
             if userQuery is not None:
                 user_datastore.add_role_to_user(userQuery, role)
+        db.session.commit()
+        db.session.close()
     return 'OK'
 
 @socketio.on('deleteChannel')
