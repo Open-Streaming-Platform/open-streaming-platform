@@ -591,14 +591,13 @@ function updateDefaultRoles() {
     socket.emit('updateDefaultRoles',{streamer: streamerChecked, recorder: recorderChecked, uploader: uploaderChecked});
 }
 // TODO Add endpoint for Bulk Add Role
-function bulkAddRole(role) {
+function bulkAddRole(rolename) {
     var userIDArray = [];
     $("input:checkbox[name=selector-user]:checked").each(function(){
         userIDArray.push($(this).val());
     });
 
-    socket.emit('bulkAddRoles',{users: userIDArray, role: role});
-    console.log(userIDArray);
+    socket.emit('bulkAddRoles',{users: userIDArray, role: rolename});
     //window.location.reload(false);
 }
 
