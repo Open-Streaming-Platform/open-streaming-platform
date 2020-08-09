@@ -691,6 +691,14 @@
                     <div class="mb-2">
                         <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button>
                         <button class="btn btn-primary" data-toggle="modal" data-target="#defaultRolesModal"><i class="fas fa-shield-alt"></i> Default Roles</button>
+                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Admin</a>
+                            <a class="dropdown-item" href="#">Streamer</a>
+                            <a class="dropdown-item" href="#">Recorder</a>
+                            <a class="dropdown-item" href="#">Uploader</a>
+                            <a class="dropdown-item" href="#">User</a>
+                        </div>
                     </div>
                     <div class="container-fluid">
                         <div class="table-responsive">
@@ -710,8 +718,8 @@
                               </thead>
                               <tbody>
                                {% for user in userList %}
-                               <tr>
-                                  <td><input type="checkbox" value="{{user.id}}"></td>
+                               <tr id="user-row-{{user.id}}">
+                                  <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
                                   <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
                                   <td><a href="/profile/{{user.username}}" class="text-dark">{{user.username}}</a></td>
                                   <td>{{user.email}}</td>

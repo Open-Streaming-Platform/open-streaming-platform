@@ -590,6 +590,14 @@ function updateDefaultRoles() {
     var uploaderChecked = document.getElementById("drole-uploader").checked;
     socket.emit('updateDefaultRoles',{streamer: streamerChecked, recorder: recorderChecked, uploader: uploaderChecked});
 }
+// TODO Add endpoint for Bulk Add Role
+function bulkAddRole(roleID) {
+    var userIDArray;
+    $("input:checkbox[name=selector-user]:checked").each(function(){
+        userIDArray.push($(this).val());
+    });
+
+}
 
 function toggleDiv(selDiv){
     var divid = '#' + selDiv;
