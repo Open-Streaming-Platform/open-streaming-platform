@@ -590,7 +590,7 @@ function updateDefaultRoles() {
     var uploaderChecked = document.getElementById("drole-uploader").checked;
     socket.emit('updateDefaultRoles',{streamer: streamerChecked, recorder: recorderChecked, uploader: uploaderChecked});
 }
-// TODO Add endpoint for Bulk Add Role
+
 function bulkAddRole(rolename) {
     var userIDArray = [];
     $("input:checkbox[name=selector-user]:checked").each(function(){
@@ -598,7 +598,7 @@ function bulkAddRole(rolename) {
     });
 
     socket.emit('bulkAddRoles',{users: userIDArray, role: rolename});
-    //window.location.reload(false);
+    window.location.replace("/settings/admin?page=users");
 }
 
 function toggleDiv(selDiv){
