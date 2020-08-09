@@ -37,14 +37,11 @@ def deleteInvitedUser(message):
 def bulkAddRoles(message):
     userList = message['users']
     role = message['role']
-    print(userList)
     if current_user.has_role('Admin'):
-        roleQuery = Sec.Role.query.filter_by(name=role).first()
-        if roleQuery is not None:
-            for userID in userList:
-                userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-                if userQuery is not None:
-                    user_datastore.add_role_to_user(userQuery, roleQuery.name)
+        for userID in userList:
+            userQuery = Sec.User.query.filter_by(id=int(userID)).first()
+            if userQuery is not None:
+                user_datastore.add_role_to_user(userQuery, role)
     return 'OK'
 
 @socketio.on('deleteChannel')
