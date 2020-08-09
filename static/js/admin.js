@@ -597,7 +597,7 @@ function bulkAddRole(role) {
         userIDArray.push($(this).val());
     });
 
-    socket.emit('bulkAddRoles',{users: userIDArray, role: role})
+    socket.emit('bulkAddRoles',{users: userIDArray, role: role});
     //window.location.reload(false);
 }
 
