@@ -197,6 +197,11 @@ def unsubscribe_page():
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
 
+# Serve Service Worker from Project Root
+@root_bp.route('/sw.js')
+def static_from_root_sw():
+    return send_from_directory(current_app.static_folder, request.path[1:])
+
 # Link to Profile Via Username
 @root_bp.route('/u/<username>')
 def vanityURL_username_link(username):
