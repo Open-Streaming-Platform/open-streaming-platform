@@ -7,6 +7,7 @@ Added Loading Spinner to Some Buttons
 Added Video Not Ready Error page when a video is still processing
 Added Short Links - A channel unique short url for channels and live views.  Accessed at http(s)://fqdn/c/<shortlink> and http(s)://fqdn/c/<shortlink>/live - Issue #259
 Added Short Link for User Profiles - Accessed at http(s)://fqdn/u/<username>
+Added Basic Service Workers - Pull Request !211
 
 0.7.4
 ==============================================
