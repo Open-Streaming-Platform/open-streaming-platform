@@ -680,6 +680,34 @@ function testWebhook(webhookID, channelID) {
     createNewBSAlert("Webhook Test Sent","success")
 }
 
+function openNewRestreamModal(chanID) {
+    $('#newRestreamModal').modal('show');
+    var restreamName = document.getElementById('restreamName');
+    var restreamURL = document.getElementById('restreamURL');
+    var restreamChannelID = document.getElementById('restreamChannelIDInput');
+
+    restreamName.value = "";
+    restreamURL.value = "";
+
+    restreamChannelID.value = chanID;
+}
+
+function submitNewRestream() {
+    var restreamName = document.getElementById('restreamName');
+    var restreamURL = document.getElementById('restreamURL');
+    var restreamChannelID = document.getElementById('restreamChannelIDInput');
+
+    socket.emit('newRestream', {name: restreamName, restreamURL:restreamURL, restreamChannelID: restreamChannelID});
+}
+
+function toggleRestream(restreamID) {
+    socket.emit('toggleRestream',{id:restreamID});
+}
+
+function deleteRestream(restreamID) {
+    socket.emit('deleteRestream', {id:restreamID});
+}
+
 function openNewWebhookModal(chanID) {
     $('#newWebhookModal').modal('show');
     var webhookName = document.getElementById('webhookName');
