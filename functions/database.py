@@ -256,11 +256,13 @@ def init(app, user_datastore):
         for topic in topicQuery:
             globalvars.topicCache[topic.id] = topic.name
 
-        ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
+        ## Direct DB Alterations
         if config.dbLocation[:6] != "sqlite":
             try:
                 dbEngine = db.engine
                 dbConnection = dbEngine.connect()
+
+                ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
                 dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
 
                 sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
@@ -269,6 +271,14 @@ def init(app, user_datastore):
                 for row in results:
                     sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
                     db.Connection.execute(sql)
+
+                ## Extends oAuth2 Token Store - per MR !213
+                sql = "ALTER TABLE OAuth2Token ALTER COLUMN access_token VARCHAR (2048) ;"
+                results = dbConnection.execute(sql)
+
+                sql = "ALTER TABLE OAuth2Token ALTER COLUMN refresh_token VARCHAR (2048) ;"
+                results = dbConnection.execute(sql)
+
                 db.close()
             except:
                 pass

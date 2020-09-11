@@ -6,6 +6,7 @@ import uuid
 import socket
 import xmltodict
 import git
+import re
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
@@ -1523,6 +1524,19 @@ def settings_channels_page():
                 requestedChannel.autoPublish = autoPublish
                 requestedChannel.rtmpRestream = rtmpRestream
                 requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+
+                vanityURL = None
+                if 'vanityURL' in request.form:
+                    requestedVanityURL = request.form['vanityURL']
+                    requestedVanityURL = re.sub('[^A-Za-z0-9]+', '', requestedVanityURL)
+                    if requestedVanityURL != '':
+                        existingChannnelQuery = Channel.Channel.query.filter_by(vanityURL=requestedVanityURL).first()
+                        if existingChannnelQuery is None:
+                            vanityURL = requestedVanityURL
+                        else:
+                            flash("Short link not saved. Link with same name exists!", "error")
+
+                requestedChannel.vanityURL = vanityURL
 
                 from app import ejabberd
                 if protection is True:

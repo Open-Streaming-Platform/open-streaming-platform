@@ -146,7 +146,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" value="Save Changes">
+          <input type="submit" class="btn btn-primary" value="Save Changes" onclick="showSpinner();">
         </div>
       </form>
     </div>
@@ -168,7 +168,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        <a href="/clip/{{clip.id}}/delete" class="btn btn-danger">Delete</a>
+        <a href="/clip/{{clip.id}}/delete" class="btn btn-danger" onclick="showSpinner();">Delete</a>
       </div>
     </div>
   </div>

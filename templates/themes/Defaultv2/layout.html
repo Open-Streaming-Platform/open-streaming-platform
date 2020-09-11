@@ -309,6 +309,10 @@
   </div>
   {% endif %}
 
+  <div id="loading-spinner" class="spinner-overlay">
+      <div class="spinner"></div>
+  </div>
+
   {% block body %}
 
   {% endblock %}
@@ -326,6 +330,30 @@
 
   {% endblock %}
   <script>
+
+  function showSpinner() {
+    disableScrolling();
+    loader = document.getElementById('loading-spinner');
+    loader.style.display = 'flex';
+    loader.hide();
+    loader.fadeIn();
+  }
+
+  function hideSpinner() {
+    enableScrolling();
+    loader = document.getElementById('loading-spinner');
+    loader.fadeOut();
+  }
+
+  function disableScrolling(){
+    var x=window.scrollX;
+    var y=window.scrollY;
+    window.onscroll=function(){window.scrollTo(x, y);};
+  }
+
+  function enableScrolling(){
+      window.onscroll=function(){};
+  }
 
   function setCookie(name,value,days) {
     var expires = "";
@@ -580,8 +608,29 @@
     }
 
   </script>
+<!-- Removed Due to breaking seeking
+<script>
+  (async () => {
 
+    if ("serviceWorker" in navigator) {
 
+        // Register the Service Worker
+        const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });   
+
+        // when Service Worker is Updated
+        registration.onupdatefound = () => {
+
+            registration.installing.onstatechange = function () {
+                console.log(`Service worker... ${this.state}`);
+            };
+        };
+
+    }
+
+  })()
+  .catch(e => console.log(`${e}`)); 
+  </script>
+-->
 </body>
 
 

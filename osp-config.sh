@@ -63,7 +63,7 @@ reset_ejabberd() {
   echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
   sudo mkdir /usr/local/ejabberd/conf >> $RESETLOG 2>&1
   sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $RESETLOG 2>&1
-  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $RESETLOG  2>&1
+  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc >> $RESETLOG  2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $RESETLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
@@ -241,7 +241,7 @@ install_osp() {
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py.dist >> $installLog 2>&1
   mkdir /usr/local/ejabberd/conf >> $installLog 2>&1
   sudo cp /opt/osp/setup/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $installLog 2>&1
-  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc $installLog  2>&1
+  sudo cp /opt/osp/setup/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc >> $installLog  2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $installLog 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
