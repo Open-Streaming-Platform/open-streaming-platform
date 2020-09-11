@@ -48,7 +48,7 @@ def toggleRestream(message):
     db.session.close()
     return 'OK'
 
-@socketio('deleteRestream')
+@socketio.on('deleteRestream')
 def deleteRestream(message):
     restreamID = message['id']
     restreamQuery = Channel.restreamDestinations.query.filter_by(id=int(restreamID)).first()
