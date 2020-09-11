@@ -33,7 +33,7 @@ def toggleRestream(message):
     restreamID = message['id']
     restreamQuery = Channel.restreamDestinations.query.filter_by(id=int(restreamID)).first()
     if restreamQuery is not None:
-        if restreamQuery.channel.owningUser == current_user.id:
+        if restreamQuery.channelData.owningUser == current_user.id:
             restreamQuery.enabled = not restreamQuery.enabled
             db.session.commit()
         else:
@@ -53,7 +53,7 @@ def deleteRestream(message):
     restreamID = message['id']
     restreamQuery = Channel.restreamDestinations.query.filter_by(id=int(restreamID)).first()
     if restreamQuery is not None:
-        if restreamQuery.channel.owningUser == current_user.id:
+        if restreamQuery.channelData.owningUser == current_user.id:
             db.session.delete(restreamQuery)
             db.session.commit()
         else:

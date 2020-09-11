@@ -38,7 +38,7 @@ class Channel(db.Model):
     invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="joined")
     subscriptions = db.relationship('channelSubs', backref='channel', cascade="all, delete-orphan", lazy="joined")
     webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
-    restreamDestinations = db.relationship('restreamDestinations', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
