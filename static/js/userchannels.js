@@ -698,7 +698,6 @@ function submitNewRestream() {
     var restreamChannelID = document.getElementById('restreamChannelIDInput');
 
     socket.emit('newRestream', {name: restreamName.value, restreamURL:restreamURL.value, restreamChannelID: restreamChannelID.value});
-    console.log("Emitted:" + restreamName.value +":" + restreamURL.value +":" + restreamChannelID.value);
 }
 
 function toggleRestream(restreamID) {
