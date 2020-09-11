@@ -405,7 +405,7 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <h6><b><i class="fas fa-globe"></i>Restream Destinations</b>
-                                                            <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onchange="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
+                                                            <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
                                                         </h6>
                                                     </div>
                                                     <div class="card-body">
@@ -425,7 +425,7 @@
                                                                         <tr id="restreamTableRow-{{restreamDestination.id}}">
                                                                             <td>{{restreamDestination.name}}</td>
                                                                             <td>{{restreamDestination.url}}</td>
-                                                                            <td><input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onclick="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
+                                                                            <td><input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
                                                                             <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
                                                                         </tr>
                                                                         {% endfor %}
