@@ -425,7 +425,7 @@
                                                                         <tr id="restreamTableRow-{{restreamDestination.id}}">
                                                                             <td>{{restreamDestination.name}}</td>
                                                                             <td>{{restreamDestination.url}}</td>
-                                                                            <td><input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onclick="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif % ></td>
+                                                                            <td><input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onclick="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
                                                                             <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
                                                                         </tr>
                                                                         {% endfor %}
