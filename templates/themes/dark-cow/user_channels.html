@@ -193,6 +193,13 @@
                                         <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                                     </div>
                                     <div class="form-group">
+                                        <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
+                                        <input type="text" class="form-control" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %}} placeholder="No Spaces or Special Characters">
+                                        <small id="vanityURLHelpBlock" class="form-text text-muted">
+                                            Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
+                                        </small>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">

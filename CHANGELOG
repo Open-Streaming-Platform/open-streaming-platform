@@ -1,3 +1,14 @@
+0.7.5
+==============================================
+Changed Comment links to point to /profile/username
+Reworked Admin List UI for Users, Channels, Topics, & Streams
+Added Ability to Bulk Add Roles to Users - Per Issue #213
+Added Loading Spinner to Some Buttons
+Added Video Not Ready Error page when a video is still processing
+Added Short Links - A channel unique short url for channels and live views.  Accessed at http(s)://fqdn/c/<shortlink> and http(s)://fqdn/c/<shortlink>/live - Issue #259
+Added Short Link for User Profiles - Accessed at http(s)://fqdn/u/<username>
+Fixes for Custom oAuth authentication
+
 0.7.4
 ==============================================
 Added Ability to set a default role set for new users - Issue #110
