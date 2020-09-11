@@ -706,6 +706,9 @@ function toggleRestream(restreamID) {
 
 function deleteRestream(restreamID) {
     socket.emit('deleteRestream', {id:restreamID});
+    var restreamTableRow = document.getElementById('restreamTableRow-' + restreamID);
+    restreamTableRow.parentNode.removeChild(restreamTableRow);
+    createNewBSAlert("Restream Destination Deleted", "Success");
 }
 
 function openNewWebhookModal(chanID) {
