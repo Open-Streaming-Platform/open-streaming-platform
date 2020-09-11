@@ -702,6 +702,7 @@ function submitNewRestream() {
 
 function toggleRestream(restreamID) {
     socket.emit('toggleRestream',{id:restreamID});
+    console.log(restreamid);
 }
 
 function deleteRestream(restreamID) {
