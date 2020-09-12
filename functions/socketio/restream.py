@@ -18,7 +18,7 @@ def newRestream(message):
             db.session.add(newRestreamObject)
             db.session.commit()
 
-            restreamQuery = Channel.restreamDestinations.query.filter_by(name=restreamName, restreamURL=restreamURL, channel=int(restreamChannel)).first()
+            restreamQuery = Channel.restreamDestinations.query.filter_by(name=restreamName, url=restreamURL, channel=int(restreamChannel), enable=False).first()
             restreamID = restreamQuery.id
 
             emit('newRestreamAck', {'restreamName': restreamName, 'restreamURL': restreamURL, 'restreamID': str(restreamID), 'channelID': str(restreamChannel)}, broadcast=False)
