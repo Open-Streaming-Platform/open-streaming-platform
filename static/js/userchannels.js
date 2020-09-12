@@ -297,7 +297,7 @@ socket.on('newRestreamAck', function (msg) {
     restreamNameCell.id = "restreamRowName-" + restreamID;
     restreamURLCell.id = "restreamRowURL-" + restreamID;
 
-    var restreamEnableText = '<div class="toggle btn btn-primary" data-toggle="toggle" style="width: 0px; height: 0px;"><input type="checkbox" data-toggle="toggle" onchange="toggleRestream(\'' + restreamID +'\')" ><div class="toggle-group"><label class="btn btn-primary toggle-on"></label><label class="btn btn-default active toggle-off"></label><span class="toggle-handle btn btn-default"></span></div></div>';
+    var restreamEnableText = '<div class="toggle btn btn-primary off" data-toggle="toggle" style="width: 0px; height: 0px;"><input type="checkbox" data-toggle="toggle" onchange="toggleRestream(\'' + restreamID +'\')" ><div class="toggle-group"><label class="btn btn-primary toggle-on"></label><label class="btn btn-default active toggle-off"></label><span class="toggle-handle btn btn-default"></span></div></div>';
 
     var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream(\'' + restreamID + '\')"><i class="far fa-trash-alt"></i></button>';
 
