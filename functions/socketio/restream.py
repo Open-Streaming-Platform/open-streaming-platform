@@ -20,7 +20,7 @@ def newRestream(message):
             db.session.add(newRestreamObject)
             db.session.commit()
 
-            socketio.emit('newRestreamAck', {'restreamName': restreamName, 'restreamURL': restreamURL, 'restreamID': str(restreamID), 'channelID': str(restreamChannel)}, broadcast=False)
+            emit('newRestreamAck', {'restreamName': restreamName, 'restreamURL': restreamURL, 'restreamID': str(restreamID), 'channelID': str(restreamChannel)}, broadcast=False)
         else:
             db.session.commit()
             db.session.close()
