@@ -14,8 +14,13 @@ def newRestream(message):
             restreamName = message['name']
             restreamURL = message['restreamURL']
             newRestreamObject = Channel.restreamDestinations(channelQuery.id, restreamName, restreamURL)
+
+            restreamID = newRestreamObject.id
+
             db.session.add(newRestreamObject)
             db.session.commit()
+
+            socketio.emit('newRestreamAck', {'restreamName': restreamName, 'restreamURL': restreamURL, 'restreamID': str(restreamID), 'channelID': str(restreamChannel)}, broadcast=False)
         else:
             db.session.commit()
             db.session.close()

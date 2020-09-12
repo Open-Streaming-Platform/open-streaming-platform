@@ -278,6 +278,36 @@ socket.on('changeWebhookAck', function (msg) {
     createNewBSAlert("Webhook Edited", "Success");
 });
 
+socket.on('newRestreamAck', function (msg) {
+    var restreamName = msg['restreamName'];
+    var restreamURL = msg['restreamURL'];
+    var restreamID = msg['restreamID'];
+    var channelID = msg['channelID'];
+
+    var tableRef = document.getElementById('restreamTable-' + channelID).getElementsByTagName('tbody')[0];
+
+    var newRow = tableRef.insertRow(tableRef.rows.length);
+    newRow.id = 'restreamTableRow-' + restreamID;
+
+    var restreamNameCell = newRow.insertCell(0);
+    var restreamURLCell = newRow.insertCell(1);
+    var restreamEnableCell = newRow.insertCell(2);
+    var buttonCell = newRow.insertCell(3);
+
+    restreamNameCell.id = "restreamRowName-" + restreamID;
+    restreamURLCell.id = "restreamRowURL-" + restreamID;
+
+    var restreamEnableText = '<input type="checkbox" data-toggle="toggle" onchange="toggleRestream(\'' + restreamID + '\')">';
+    var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream(\'' + restreamID + '\')"><i class="far fa-trash-alt"></i></button>';
+
+    restreamNameCell.appendChild(document.createTextNode(restreamName));
+    restreamURLCell.appendChild(document.createTextNode(restreamURL));
+    restreamEnableCell.innerHTML = restreamEnableText;
+    buttonCell.innerHTML = buttonText;
+    createNewBSAlert("Restream Destination Added", "Success");
+
+});
+
 socket.on('invitedUserAck', function (msg) {
     var username = msg['username'];
     var addedDate = msg['added'];
