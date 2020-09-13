@@ -254,6 +254,7 @@ from functions.socketio import subscription
 from functions.socketio import thumbnail
 from functions.socketio import syst
 from functions.socketio import xmpp
+from functions.socketio import restream
 
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports

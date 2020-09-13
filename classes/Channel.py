@@ -30,7 +30,7 @@ class Channel(db.Model):
     rtmpRestream = db.Column(db.Boolean)
     rtmpRestreamDestination = db.Column(db.String(4096))
     xmppToken = db.Column(db.String(64))
-    vanityURL = db.Column(db.String(1024), unique=True)
+    vanityURL = db.Column(db.String(1024))
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -38,6 +38,7 @@ class Channel(db.Model):
     invitedViewers = db.relationship('invitedViewer', backref='channel', cascade="all, delete-orphan", lazy="joined")
     subscriptions = db.relationship('channelSubs', backref='channel', cascade="all, delete-orphan", lazy="joined")
     webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
         self.owningUser = owningUser
@@ -89,3 +90,20 @@ class Channel(db.Model):
             'upvotes': self.get_upvotes(),
             'protected': self.protected
         }
+
+class restreamDestinations(db.Model):
+    __tablename__ = "restreamDestinations"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    channel = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    enabled = db.Column(db.Boolean)
+    url = db.Column(db.String(4096))
+
+    def __init__(self, channel, name, url):
+        self.channel = int(channel)
+        self.name = name
+        self.enabled = False
+        self.url = url
+
+    def __repr__(self):
+        return '<id %r>' % self.id

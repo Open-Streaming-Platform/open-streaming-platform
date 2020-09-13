@@ -1059,10 +1059,10 @@ def settings_dbRestore():
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
                     channel.autoPublish = eval(restoredChannel['autoPublish'])
-                    if 'rtmpRestream' in restoredChannel:
-                        channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
-                    if 'rtmpRestreamDestination' in restoredChannel:
-                        channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
+                    #if 'rtmpRestream' in restoredChannel:
+                    #    channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
+                    #if 'rtmpRestreamDestination' in restoredChannel:
+                    #    channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
                     if 'xmppToken' in restoredChannel:
                         channel.xmppToken = restoredChannel['xmppToken']
                     else:
@@ -1451,9 +1451,9 @@ def settings_channels_page():
         if 'publishSelect' in request.form:
             autoPublish = True
 
-        rtmpRestream = False
-        if 'rtmpSelect' in request.form:
-            rtmpRestream = True
+        #rtmpRestream = False
+        #if 'rtmpSelect' in request.form:
+        #    rtmpRestream = True
 
         chatEnabled = False
 
@@ -1505,7 +1505,7 @@ def settings_channels_page():
 
             defaultstreamName = request.form['channelStreamName']
 
-            rtmpRestreamDestination = request.form['rtmpDestination']
+            #rtmpRestreamDestination = request.form['rtmpDestination']
 
             # TODO Validate ChatBG and chatAnimation
 
@@ -1522,8 +1522,8 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
-                requestedChannel.rtmpRestream = rtmpRestream
-                requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+                #requestedChannel.rtmpRestream = rtmpRestream
+                #requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
 
                 vanityURL = None
                 if 'vanityURL' in request.form:
