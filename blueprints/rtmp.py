@@ -135,10 +135,12 @@ def user_auth_check():
             inputLocation = "rtmp://" + coreNginxRTMPAddress + ":1935/live/" + requestedChannel.channelLoc
 
             # Begin RTMP Restream Function
-            if requestedChannel.rtmpRestream is True:
-
-                p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", requestedChannel.rtmpRestreamDestination, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                globalvars.restreamSubprocesses[requestedChannel.channelLoc] = p
+            if requestedChannel.restreamDestinations != []:
+                globalvars.restreamSubprocesses[requestedChannel.channelLoc] = []
+                for rtmpRestream in requestedChannel.restreamDestinations:
+                    if rtmpRestream.enabled == True:
+                        p = subprocess.Popen(["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", rtmpRestream.url, "-c:v", "libx264", "-maxrate", str(sysSettings.restreamMaxBitrate) + "k", "-bufsize", "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        globalvars.restreamSubprocesses[requestedChannel.channelLoc].append(p)
 
             # Start OSP Edge Nodes
             ospEdgeNodeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
@@ -227,14 +229,15 @@ def user_deauth_check():
             db.session.commit()
 
             # End RTMP Restream Function
-            if channelRequest.rtmpRestream is True:
+            if channelRequest.restreamDestinations != []:
                 if channelRequest.channelLoc in globalvars.restreamSubprocesses:
-                    p = globalvars.restreamSubprocesses[channelRequest.channelLoc]
-                    p.kill()
-                    try:
-                        del globalvars.restreamSubprocesses[channelRequest.channelLoc]
-                    except KeyError:
-                        pass
+                    for restream in globalvars.restreamSubprocesses[channelRequest.channelLoc]:
+                        p = globalvars.restreamSubprocesses[channelRequest.channelLoc][restream]
+                        p.kill()
+                try:
+                    del globalvars.restreamSubprocesses[channelRequest.channelLoc]
+                except KeyError:
+                    pass
 
             if channelRequest.channelLoc in globalvars.edgeRestreamSubprocesses:
                 for p in globalvars.edgeRestreamSubprocesses[channelRequest.channelLoc]:
