@@ -729,6 +729,7 @@ function submitNewRestream() {
     var restreamChannelID = document.getElementById('restreamChannelIDInput');
 
     socket.emit('newRestream', {name: restreamName.value, restreamURL:restreamURL.value, restreamChannelID: restreamChannelID.value});
+    createNewBSAlert("Restream Destination Created", "Success");
 }
 
 function toggleRestream(restreamID) {
