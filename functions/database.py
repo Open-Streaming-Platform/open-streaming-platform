@@ -224,7 +224,7 @@ def init(app, user_datastore):
         if channelQuery is not []:
             for channel in channelQuery:
                 # Create new restream object
-                newRestream = Channel.restreamDestinations(channel.id, channel.rtmpRestreamDestination)
+                newRestream = Channel.restreamDestinations(channel.id, "Default", channel.rtmpRestreamDestination)
                 newRestream.enabled = channel.rtmpRestream
                 db.session.add(newRestream)
                 # Null old restream entry
