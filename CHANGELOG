@@ -1,3 +1,7 @@
+0.7.7
+==============================================
+Fix to Topics showing as "None"
+
 0.7.6
 ==============================================
 Implemented Multiple RTMP Restreams. Accessible at the bottom of the Channel's settings screen.
