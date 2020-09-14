@@ -1,6 +1,7 @@
 0.7.7
 ==============================================
 Fix to Topics showing as "None"
+Fixes to the way multistreams are terminated
 
 0.7.6
 ==============================================
