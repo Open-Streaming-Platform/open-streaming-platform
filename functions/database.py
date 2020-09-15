@@ -219,20 +219,6 @@ def init(app, user_datastore):
             channel.xmppToken = str(os.urandom(32).hex())
             db.session.commit()
 
-        # Migrate Old Restream Row to restream table
-        channelQuery = Channel.Channel.query.filter(Channel.Channel.rtmpRestreamDestination.isnot(None)).all()
-        if channelQuery is not []:
-            for channel in channelQuery:
-                # Create new restream object
-                newRestream = Channel.restreamDestinations(channel.id, "Default", channel.rtmpRestreamDestination)
-                newRestream.enabled = channel.rtmpRestream
-                db.session.add(newRestream)
-                # Null old restream entry
-                channel.rtmpRestreamDestination = None
-                channel.rtmpRestream = False
-
-                db.session.commit()
-
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
