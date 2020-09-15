@@ -1,7 +1,14 @@
+0.7.7
+==============================================
+Fix to Topics showing as "None"
+Fixes to the way multistreams are terminated
+
 0.7.6
 ==============================================
 Implemented Multiple RTMP Restreams. Accessible at the bottom of the Channel's settings screen.
 Fixed a bug with VanityURL causing a "Specified key was too long; max key length is 3072 bytes" on new DB Creation
+Added New API Endpoint /channel/authed - Provides authenticated details for a channel using API Keys
+Fixed missing restore value for Channel's VanityURL on DB Restore
 
 0.7.5
 ==============================================

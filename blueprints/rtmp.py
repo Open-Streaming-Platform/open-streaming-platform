@@ -232,8 +232,8 @@ def user_deauth_check():
             if channelRequest.restreamDestinations != []:
                 if channelRequest.channelLoc in globalvars.restreamSubprocesses:
                     for restream in globalvars.restreamSubprocesses[channelRequest.channelLoc]:
-                        p = globalvars.restreamSubprocesses[channelRequest.channelLoc][restream]
-                        p.kill()
+                        #p = globalvars.restreamSubprocesses[channelRequest.channelLoc][restream]
+                        restream.kill()
                 try:
                     del globalvars.restreamSubprocesses[channelRequest.channelLoc]
                 except KeyError:
