@@ -1067,6 +1067,8 @@ def settings_dbRestore():
                         channel.xmppToken = restoredChannel['xmppToken']
                     else:
                         channel.xmppToken = str(os.urandom(32).hex())
+                    if 'vanityURL' in restoredChannel:
+                        channel.vanityURL = restoredChannel['vanityURL']
 
                     db.session.add(channel)
                 else:
