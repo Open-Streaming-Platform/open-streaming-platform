@@ -91,6 +91,29 @@ class Channel(db.Model):
             'protected': self.protected
         }
 
+    def authed_serialize(self):
+        return {
+            'id': self.id,
+            'channelEndpointID': self.channelLoc,
+            'owningUser': self.owningUser,
+            'channelName': self.channelName,
+            'description': self.description,
+            'channelImage': "/images/" + str(self.imageLocation),
+            'offlineImageLocation': "/images/" + str(self.offlineImageLocation),
+            'topic': self.topic,
+            'views': self.views,
+            'currentViews': self.currentViewers,
+            'recordingEnabled': self.record,
+            'chatEnabled': self.chatEnabled,
+            'stream': [obj.id for obj in self.stream],
+            'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
+            'upvotes': self.get_upvotes(),
+            'protected': self.protected,
+            'xmppToken': self.xmppToken,
+            'streamKey': self.streamKey,
+            'vanityURL': self.vanityURL
+        }
+
 class restreamDestinations(db.Model):
     __tablename__ = "restreamDestinations"
     id = db.Column(db.Integer, primary_key=True)
