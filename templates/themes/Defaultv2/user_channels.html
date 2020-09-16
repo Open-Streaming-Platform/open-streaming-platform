@@ -192,6 +192,13 @@
                                         <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                                     </div>
                                     <div class="form-group">
+                                        <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
+                                        <input type="text" class="form-control" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %}} placeholder="No Spaces or Special Characters">
+                                        <small id="vanityURLHelpBlock" class="form-text text-muted">
+                                            Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
+                                        </small>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
@@ -231,19 +238,6 @@
                                             <input type="checkbox" data-toggle="toggle" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <div class="col-6">
-                                            <label for="rtmpSelect" class="col-form-label"><b>Restream to another RTMP Server </b> - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="checkbox" data-toggle="toggle" id="rtmpSelect" name="rtmpSelect" {% if channel.rtmpRestream == True %} checked {% endif %}>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="rtmpDestination" class="col-form-label"><b>Restream RTMP Server URL</b></label>
-                                        <input type="text" class="form-control" name="rtmpDestination" id="rtmpDestination" value="{{channel.rtmpRestreamDestination}}">
-                                    </div>
-
                                     <hr>
                                     <h4><b>Chat Options</b></h4>
                                     <div class="form-group row">
@@ -400,6 +394,54 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--RTMP Restream Dropdown-->
+                            <div class="row">
+                                <div class="col-12">
+                                    <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
+                                    <div id="restream-{{channel.id}}" style="display:none;">
+                                         <hr>
+                                         <div class="row">
+                                            <div class="col-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h6><b><i class="fas fa-globe"></i>Restream Destinations</b>
+                                                            <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
+                                                        </h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div id="restreamList">
+                                                            <div class="table-responsive">
+                                                                <table id="restreamTable-{{channel.id}}" class="table" width="100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Restream Destination Name</th>
+                                                                            <th>URL</th>
+                                                                            <th>Enabled</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {% for restreamDestination in channel.restreamDestinations %}
+                                                                        <tr id="restreamTableRow-{{restreamDestination.id}}">
+                                                                            <td>{{restreamDestination.name}}</td>
+                                                                            <td>{{restreamDestination.url}}</td>
+                                                                            <td><input type="checkbox" data-size="small" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
+                                                                            <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                         <hr>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Webhook Dropdown-->
                             <div class="row">
                                 <div class="col-12">
                                     <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
@@ -626,6 +668,41 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="newRestreamModal" tabindex="-1" role="dialog" aria-labelledby="newRestreamModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newRestreamModalTitle">Add Restream Destination</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="row">
+             <div class="col-12">
+                 <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="restreamName">Name</label>
+                        <input id="restreamName" type="text" class="form-control">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="restreamURL">Restream URL</label>
+                        <input id="restreamURL" type="text" class="form-control">
+                    </div>
+                    <input id="restreamChannelIDInput" type="hidden">
+                 </div>
+             </div>
+         </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitNewRestream()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">

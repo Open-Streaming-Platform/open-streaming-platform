@@ -94,8 +94,8 @@ class OAuth2Token(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40))
     token_type = db.Column(db.String(40))
-    access_token = db.Column(db.String(200))
-    refresh_token = db.Column(db.String(200))
+    access_token = db.Column(db.String(2048))
+    refresh_token = db.Column(db.String(2048))
     expires_at = db.Column(db.Integer)
     user = db.Column(db.ForeignKey(User.id))
 

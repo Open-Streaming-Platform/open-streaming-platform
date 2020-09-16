@@ -1,3 +1,26 @@
+0.7.7
+==============================================
+Fix to Topics showing as "None"
+Fixes to the way multistreams are terminated
+Added New API Endpoint /channel/authed - Provides authenticated details for a channel using API Keys
+Fixed missing restore value for Channel's VanityURL on DB Restore
+
+0.7.6
+==============================================
+Implemented Multiple RTMP Restreams. Accessible at the bottom of the Channel's settings screen.
+Fixed a bug with VanityURL causing a "Specified key was too long; max key length is 3072 bytes" on new DB Creation
+
+0.7.5
+==============================================
+Changed Comment links to point to /profile/username
+Reworked Admin List UI for Users, Channels, Topics, & Streams
+Added Ability to Bulk Add Roles to Users - Per Issue #213
+Added Loading Spinner to Some Buttons
+Added Video Not Ready Error page when a video is still processing
+Added Short Links - A channel unique short url for channels and live views.  Accessed at http(s)://fqdn/c/<shortlink> and http(s)://fqdn/c/<shortlink>/live - Issue #259
+Added Short Link for User Profiles - Accessed at http(s)://fqdn/u/<username>
+Fixes for Custom oAuth authentication
+
 0.7.4
 ==============================================
 Added Ability to set a default role set for new users - Issue #110

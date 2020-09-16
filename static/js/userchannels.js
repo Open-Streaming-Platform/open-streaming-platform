@@ -114,6 +114,15 @@ $(document).on("click", ".videoThumbnailUploadModalButton", function () {
 
 });
 
+$('#vanityURL').on('change keydown paste input', function(){
+      var vanityURLInputDiv = document.getElementById('vanityURL');
+      var vanityURLData = vanityURLInputDiv.value;
+      vanityURLData = vanityURLData.replace(/[^a-zA-Z0-9]/g, "");
+      var vanityURLHintDiv = document.getElementById('vanityURLExample');
+      vanityURLHintDiv.innerHTML = vanityURLData;
+      vanityURLInputDiv.value = vanityURLData;
+});
+
 // SocketIO Handlers
 socket.on('newWebhookAck', function (msg) {
     var webhookName = msg['webhookName'];
@@ -267,6 +276,37 @@ socket.on('changeWebhookAck', function (msg) {
     requestHeaderCell.innerText = webhookHeader;
     requestPayloadCell.innerText = webhookPayload;
     createNewBSAlert("Webhook Edited", "Success");
+});
+
+socket.on('newRestreamAck', function (msg) {
+    var restreamName = msg['restreamName'];
+    var restreamURL = msg['restreamURL'];
+    var restreamID = msg['restreamID'];
+    var channelID = msg['channelID'];
+
+    var tableRef = document.getElementById('restreamTable-' + channelID).getElementsByTagName('tbody')[0];
+
+    var newRow = tableRef.insertRow(tableRef.rows.length);
+    newRow.id = 'restreamTableRow-' + restreamID;
+
+    var restreamNameCell = newRow.insertCell(0);
+    var restreamURLCell = newRow.insertCell(1);
+    var restreamEnableCell = newRow.insertCell(2);
+    var buttonCell = newRow.insertCell(3);
+
+    restreamNameCell.id = "restreamRowName-" + restreamID;
+    restreamURLCell.id = "restreamRowURL-" + restreamID;
+
+    var restreamEnableText = '<input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-' + restreamID + '" name="restreamEnableToggle-' + restreamID + '" onchange="toggleRestream(\'' + restreamID +'\')">';
+
+    var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream(\'' + restreamID + '\')"><i class="far fa-trash-alt"></i></button>';
+
+    restreamNameCell.appendChild(document.createTextNode(restreamName));
+    restreamURLCell.appendChild(document.createTextNode(restreamURL));
+    restreamEnableCell.innerHTML = restreamEnableText;
+    buttonCell.innerHTML = buttonText;
+    createNewBSAlert("Restream Destination Added", "Success");
+
 });
 
 socket.on('invitedUserAck', function (msg) {
@@ -669,6 +709,38 @@ function deleteWebhook() {
 function testWebhook(webhookID, channelID) {
     socket.emit('testWebhook', {webhookID: webhookID, channelID: channelID, webhookType: 'channel'});
     createNewBSAlert("Webhook Test Sent","success")
+}
+
+function openNewRestreamModal(chanID) {
+    $('#newRestreamModal').modal('show');
+    var restreamName = document.getElementById('restreamName');
+    var restreamURL = document.getElementById('restreamURL');
+    var restreamChannelID = document.getElementById('restreamChannelIDInput');
+
+    restreamName.value = "";
+    restreamURL.value = "";
+
+    restreamChannelID.value = chanID;
+}
+
+function submitNewRestream() {
+    var restreamName = document.getElementById('restreamName');
+    var restreamURL = document.getElementById('restreamURL');
+    var restreamChannelID = document.getElementById('restreamChannelIDInput');
+
+    socket.emit('newRestream', {name: restreamName.value, restreamURL:restreamURL.value, restreamChannelID: restreamChannelID.value});
+    createNewBSAlert("Restream Destination Created", "Success");
+}
+
+function toggleRestream(restreamID) {
+    socket.emit('toggleRestream',{id:restreamID});
+}
+
+function deleteRestream(restreamID) {
+    socket.emit('deleteRestream', {id:restreamID});
+    var restreamTableRow = document.getElementById('restreamTableRow-' + restreamID);
+    restreamTableRow.parentNode.removeChild(restreamTableRow);
+    createNewBSAlert("Restream Destination Deleted", "Success");
 }
 
 function openNewWebhookModal(chanID) {

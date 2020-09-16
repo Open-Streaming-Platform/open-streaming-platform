@@ -15,3 +15,6 @@ Disallow: /live/
 Disallow: /live-adapt/
 Disallow: /stream-thumb/
 Disallow: /videos/
+Disallow: /unsubscribe
+Disallow: /notifications
+Disallow: /auth

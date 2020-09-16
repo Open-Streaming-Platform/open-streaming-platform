@@ -6,6 +6,7 @@ import uuid
 import socket
 import xmltodict
 import git
+import re
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
@@ -1058,14 +1059,16 @@ def settings_dbRestore():
                     channel.imageLocation = restoredChannel['imageLocation']
                     channel.offlineImageLocation = restoredChannel['offlineImageLocation']
                     channel.autoPublish = eval(restoredChannel['autoPublish'])
-                    if 'rtmpRestream' in restoredChannel:
-                        channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
-                    if 'rtmpRestreamDestination' in restoredChannel:
-                        channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
+                    #if 'rtmpRestream' in restoredChannel:
+                    #    channel.rtmpRestream = eval(restoredChannel['rtmpRestream'])
+                    #if 'rtmpRestreamDestination' in restoredChannel:
+                    #    channel.rtmpRestreamDestination = restoredChannel['rtmpRestreamDestination']
                     if 'xmppToken' in restoredChannel:
                         channel.xmppToken = restoredChannel['xmppToken']
                     else:
                         channel.xmppToken = str(os.urandom(32).hex())
+                    if 'vanityURL' in restoredChannel:
+                        channel.vanityURL = restoredChannel['vanityURL']
 
                     db.session.add(channel)
                 else:
@@ -1450,9 +1453,9 @@ def settings_channels_page():
         if 'publishSelect' in request.form:
             autoPublish = True
 
-        rtmpRestream = False
-        if 'rtmpSelect' in request.form:
-            rtmpRestream = True
+        #rtmpRestream = False
+        #if 'rtmpSelect' in request.form:
+        #    rtmpRestream = True
 
         chatEnabled = False
 
@@ -1504,7 +1507,7 @@ def settings_channels_page():
 
             defaultstreamName = request.form['channelStreamName']
 
-            rtmpRestreamDestination = request.form['rtmpDestination']
+            #rtmpRestreamDestination = request.form['rtmpDestination']
 
             # TODO Validate ChatBG and chatAnimation
 
@@ -1521,8 +1524,21 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
-                requestedChannel.rtmpRestream = rtmpRestream
-                requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+                #requestedChannel.rtmpRestream = rtmpRestream
+                #requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+
+                vanityURL = None
+                if 'vanityURL' in request.form:
+                    requestedVanityURL = request.form['vanityURL']
+                    requestedVanityURL = re.sub('[^A-Za-z0-9]+', '', requestedVanityURL)
+                    if requestedVanityURL != '':
+                        existingChannnelQuery = Channel.Channel.query.filter_by(vanityURL=requestedVanityURL).first()
+                        if existingChannnelQuery is None:
+                            vanityURL = requestedVanityURL
+                        else:
+                            flash("Short link not saved. Link with same name exists!", "error")
+
+                requestedChannel.vanityURL = vanityURL
 
                 from app import ejabberd
                 if protection is True:

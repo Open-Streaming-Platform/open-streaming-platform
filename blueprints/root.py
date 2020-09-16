@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort
+from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
 
@@ -196,6 +196,38 @@ def unsubscribe_page():
 @root_bp.route('/robots.txt')
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
+
+# Serve Service Worker from Project Root
+@root_bp.route('/sw.js')
+def static_from_root_sw():
+    return send_from_directory(current_app.static_folder, request.path[1:])
+
+# Link to Profile Via Username
+@root_bp.route('/u/<username>')
+def vanityURL_username_link(username):
+    userQuery = Sec.User.query.filter_by(username=username).first()
+    if userQuery is not None:
+        return redirect(url_for('profile.profile_view_page',username=username))
+    flash("Invalid Username","error")
+    return redirect(url_for('root.main_page'))
+
+# Link to Channels Via Vanity URLs
+@root_bp.route('/c/<vanityURL>')
+def vanityURL_channel_link(vanityURL):
+    channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
+    if channelQuery is not None:
+        return redirect(url_for('channel.channel_view_page',chanID=channelQuery.id))
+    flash('Invalid Link URL','error')
+    return redirect(url_for('root.main_page'))
+
+# Link to a Channel's Live Page Via Vanity URLs
+@root_bp.route('/c/<vanityURL>/live')
+def vanityURL_live_link(vanityURL):
+    channelQuery = Channel.Channel.query.filter_by(vanityURL=vanityURL).first()
+    if channelQuery is not None:
+        return redirect(url_for('liveview.view_page',loc=channelQuery.channelLoc))
+    flash('Invalid Link URL','error')
+    return redirect(url_for('root.main_page'))
 
 @root_bp.route('/auth', methods=["POST","GET"])
 def auth_check():
