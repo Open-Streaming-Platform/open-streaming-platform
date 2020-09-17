@@ -1,5 +1,11 @@
 ########################################################################
-#Setup
+# Configuration
+########################################################################
+protocol = "http"
+ospAPIServer = "127.0.0.1"
+
+########################################################################
+# Code
 ########################################################################
 
 import sys, logging, struct
@@ -7,7 +13,12 @@ import requests
 
 def auth(user, host, password):
     payload = {'jid': user, 'host': host, 'token': password}
-    r = requests.post('http://' + host + '/apiv1/xmpp/auth', data=payload)
+
+    global ospAPIServer
+    if ospAPIServer != "127.0.0.1" or ospAPIServer != "localhost":
+        ospAPIServer = host
+
+    r = requests.post(protocol + '://' + ospAPIServer + '/apiv1/xmpp/auth', data=payload)
     resp = r.json()
     if 'results' in resp:
         code = resp['results']['code']
@@ -21,7 +32,12 @@ def auth(user, host, password):
         return False
 def isUser(user,host):
     payload = {'jid': user, 'host': host}
-    r = requests.post('http://' + host + '/apiv1/xmpp/isuser', data=payload)
+
+    global ospAPIServer
+    if ospAPIServer != "127.0.0.1" or ospAPIServer != "localhost":
+        ospAPIServer = host
+
+    r = requests.post(protocol + '://' + ospAPIServer + '/apiv1/xmpp/isuser', data=payload)
     resp = r.json()
     if 'results' in resp:
         code = resp['results']['code']
