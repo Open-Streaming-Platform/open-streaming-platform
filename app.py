@@ -186,12 +186,11 @@ scheduler.start()
 # Initialize ejabberdctl
 ejabberd = None
 
-ejabberdServer = "127.0.0.1"
 if hasattr(config,'ejabberdServer'):
-    ejabberdServer = config.ejabberdServer
+    globalvars.ejabberdServer = config.ejabberdServer
 
 try:
-    ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=ejabberdServer)
+    ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
     print(ejabberd.status())
 except Exception as e:
     print("ejabberdctl failed to load: " + str(e))

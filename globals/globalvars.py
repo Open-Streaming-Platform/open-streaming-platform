@@ -31,3 +31,6 @@ restreamSubprocesses = {}
 # Build Edge Restream Subprocess Dictionary
 activeEdgeNodes = []
 edgeRestreamSubprocesses = {}
+
+# ejabberd Server Configuration
+ejabberdServer = "127.0.0.1"

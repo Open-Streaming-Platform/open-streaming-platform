@@ -13,6 +13,8 @@ from classes import Channel
 from classes import Stream
 from classes import Sec
 
+from globals.globalvars import ejabberdServer
+
 from functions import themes
 from functions import securityFunc
 
@@ -21,6 +23,11 @@ liveview_bp = Blueprint('liveview', __name__, url_prefix='/view')
 @liveview_bp.route('/<loc>/')
 def view_page(loc):
     sysSettings = settings.settings.query.first()
+
+    xmppserver = sysSettings.siteAddress
+    if ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
+        xmppserver = ejabberdServer
+
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     if requestedChannel is not None:
@@ -66,7 +73,7 @@ def view_page(loc):
                         flash("Invalid User","error")
                         return(redirect(url_for("root.main_page")))
 
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser)
+                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser, xmppserver=xmppserver)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -111,7 +118,7 @@ def view_page(loc):
                     subState = True
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:
@@ -128,7 +135,7 @@ def view_page(loc):
                 countViewers = False
             else:
                 countViewers = False
-            return render_template(themes.checkOverride('channelplayer_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, countViewers=countViewers)
+            return render_template(themes.checkOverride('channelplayer_embed.html'), channel=requestedChannel, stream=streamData, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, countViewers=countViewers, xmppserver=xmppserver)
 
     else:
         flash("No Live Stream at URL","error")
