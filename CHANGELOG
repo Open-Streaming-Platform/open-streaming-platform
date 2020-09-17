@@ -1,3 +1,8 @@
+0.7.9
+==============================================
+Corrected an issue where guests popping out chat did not load under defaultv2 based themes
+Decoupled ejabberD server addresses from OSP core.  Can be defined as ejabberdServer in the config.py.  Must be FQDN and match the OSP http(s) protocol.  Leave blank to use server address.
+
 0.7.8
 ==============================================
 Fix to Dark-Cow missing RTMP Restream modal
