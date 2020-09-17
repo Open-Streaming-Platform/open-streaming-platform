@@ -186,7 +186,7 @@
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
         var server = '{{sysSettings.siteAddress}}';
-        var BOSH_SERVICE = serverproto + 'xmppserver' + '/http-bind/';
+        var BOSH_SERVICE = serverproto + '{{xmppserver}}' + '/http-bind/';
         var ROOM_SERVICE = 'conference.' + server;
         var ROOMNAME = '{{channel.channelLoc}}';
         var CHANNELPROTECTED = {{channel.protected|lower}};
