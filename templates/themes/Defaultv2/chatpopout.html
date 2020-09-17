@@ -181,8 +181,8 @@
             var username = "{{guestUser}}";
             {% else %}
             var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
-            var xmppPassword = "fakepw";
             {% endif %}
+            var xmppPassword = "fakepw";
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
         var server = '{{sysSettings.siteAddress}}';
