@@ -50,10 +50,10 @@ def view_page(loc):
             else:
                 streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
 
-        requestedChannel.views = requestedChannel.views + 1
-        if streamData is not None:
-            streamData.totalViewers = streamData.totalViewers + 1
-        db.session.commit()
+        #requestedChannel.views = requestedChannel.views + 1
+        #if streamData is not None:
+        #    streamData.totalViewers = streamData.totalViewers + 1
+        #db.session.commit()
 
         topicList = topics.topics.query.all()
         chatOnly = request.args.get("chatOnly")
@@ -79,9 +79,9 @@ def view_page(loc):
 
         isEmbedded = request.args.get("embedded")
 
-        newView = views.views(0, requestedChannel.id)
-        db.session.add(newView)
-        db.session.commit()
+        #newView = views.views(0, requestedChannel.id)
+        #db.session.add(newView)
+        #db.session.commit()
 
         requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
