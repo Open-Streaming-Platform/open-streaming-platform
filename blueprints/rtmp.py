@@ -106,6 +106,7 @@ def user_auth_check():
 
             authedStream.currentViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
             authedStream.totalViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
+            db.session.commit()
 
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
             print(returnMessage)
