@@ -2,6 +2,8 @@
 ==============================================
 Corrected an issue where guests popping out chat did not load under defaultv2 based themes
 Decoupled ejabberD server addresses from OSP core.  Can be defined as ejabberdServer in the config.py.  Must be FQDN and match the OSP http(s) protocol.  Leave blank to use server address. More info at https://wiki.openstreamingplatform.com/en/Install/Chat#external-server
+Made modifications to the Defaultv2 Live View Themes to prevent video screen shuttering/bouncing
+Adjusted method for counting total views of a live stream to prevent inaccurate numbers
 
 0.7.8
 ==============================================
