@@ -130,6 +130,21 @@ def init(app, user_datastore):
             chan.defaultStreamName = ""
             db.session.commit()
 
+        # Fix for user roles primary key
+        roleAssociationQuery = Sec.roles_users.query.filter_by(id=0).all();
+        if len(roleAssociationQuery) > 1:
+            seq = 0
+            for entry in roleAssociationQuery:
+                try:
+                    entry.id = seq
+                    db.session.commit()
+                    seq = seq + 1
+                except:
+                    seq = seq + 1
+                    entry.id = seq
+                    db.session.commit()
+                    seq = seq + 1
+
         # Fix for Beta 6 Switch from Fake Clips to real clips
         clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
         videos_root = globalvars.videoRoot + 'videos/'
@@ -277,6 +292,9 @@ def init(app, user_datastore):
                 results = dbConnection.execute(sql)
 
                 sql = "ALTER TABLE OAuth2Token MODIFY COLUMN refresh_token VARCHAR (2048) ;"
+                results = dbConnection.execute(sql)
+
+                sql = "ALTER TABLE table roles_users ADD PRIMARY KEY (id) ;"
                 results = dbConnection.execute(sql)
 
                 db.close()
