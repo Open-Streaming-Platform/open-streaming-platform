@@ -279,9 +279,6 @@ def init(app, user_datastore):
                 sql = "ALTER TABLE OAuth2Token MODIFY COLUMN refresh_token VARCHAR (2048) ;"
                 results = dbConnection.execute(sql)
 
-                sql = "ALTER TABLE table roles_users ADD PRIMARY KEY (id) ;"
-                results = dbConnection.execute(sql)
-
                 db.close()
             except:
                 pass
