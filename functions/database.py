@@ -131,16 +131,13 @@ def init(app, user_datastore):
             db.session.commit()
 
         # Fix for user roles primary key
-        roleAssociationQuery = Sec.roles_users.query.filter_by(id=0).all();
+        roleAssociationQuery = Sec.roles_users.query.filter_by(id=0).all()
         if len(roleAssociationQuery) > 1:
             seq = 0
             for entry in roleAssociationQuery:
-                try:
-                    entry.id = seq
-                    db.session.commit()
+                if seq == entry.id:
                     seq = seq + 1
-                except:
-                    seq = seq + 1
+                else:
                     entry.id = seq
                     db.session.commit()
                     seq = seq + 1
