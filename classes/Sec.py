@@ -42,7 +42,6 @@ class OSPLoginForm(LoginForm):
         return False
 
 roles_users = db.Table('roles_users',
-        db.Column('id', db.Integer(), primary_key=True, autoincrement=True),
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 

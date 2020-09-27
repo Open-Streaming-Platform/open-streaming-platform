@@ -130,18 +130,6 @@ def init(app, user_datastore):
             chan.defaultStreamName = ""
             db.session.commit()
 
-        # Fix for user roles primary key
-        roleAssociationQuery = Sec.roles_users.query.filter_by(id=0).all()
-        if roleAssociationQuery.count() > 1:
-            seq = 0
-            for entry in roleAssociationQuery:
-                if seq == entry.id:
-                    seq = seq + 1
-                else:
-                    entry.id = seq
-                    db.session.commit()
-                    seq = seq + 1
-
         # Fix for Beta 6 Switch from Fake Clips to real clips
         clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
         videos_root = globalvars.videoRoot + 'videos/'
