@@ -132,7 +132,7 @@ def init(app, user_datastore):
 
         # Fix for user roles primary key
         roleAssociationQuery = Sec.roles_users.query.filter_by(id=0).all()
-        if len(roleAssociationQuery) > 1:
+        if roleAssociationQuery.count() > 1:
             seq = 0
             for entry in roleAssociationQuery:
                 if seq == entry.id:
