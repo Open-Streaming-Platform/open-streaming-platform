@@ -5,6 +5,7 @@ Decoupled ejabberD server addresses from OSP core.  Can be defined as ejabberdSe
 Made modifications to the Defaultv2 Live View Themes to prevent video screen shuttering/bouncing
 Adjusted method for counting total views of a live stream to prevent inaccurate numbers
 Added a new check for new streams to pull the values of current XMPP channel members for current viewers and total viewers
+Added RTMP ingest hint under streamkey in User Channels page per Issue #283
 
 0.7.8
 ==============================================
