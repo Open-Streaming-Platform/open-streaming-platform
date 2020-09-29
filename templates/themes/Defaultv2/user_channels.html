@@ -205,14 +205,14 @@
                                                 <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
                                             </div>
                                             <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
-                                            <small id="streamKeyHelpBlock" class="form-text text-muted">
-                                                RTMP Ingest: rtmp://{{sysSettings.siteAddress}}/stream/
-                                            </small>
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
                                             </div>
                                         </div>
                                     </div>
+                                    <small id="streamKeyHelpBlock" class="form-text text-muted">
+                                        RTMP Ingest: rtmp://{{sysSettings.siteAddress}}/stream/
+                                    </small>
                                     <hr>
                                     <h4><b>Recording Options</b></h4>
                                     {% if sysSettings.allowRecording == False %} Recording Disabled at Server Level {% endif %}
