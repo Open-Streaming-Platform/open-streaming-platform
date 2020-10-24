@@ -35,7 +35,7 @@
 
 {% block body %}
 <div class="container-fluid">
-     <div class="row">
+     <div class="row px-2">
          <div class="col-lg col-xs-12 col-sm-12">
               <div class="index-video-title ml-2 my-2">
                   <span class="float-left" id="channelName"><b>{{channel.channelName}}</b></span>
@@ -68,7 +68,7 @@
               </ul>
          </div>
      </div>
-    <div class="tab-content" id="tabList">
+    <div class="tab-content px-2" id="tabList">
         <div class="tab-pane fade show active" id="livechannel" role="tabpanel" aria-labelledby="channel-tab">
         <div class="row">
             <div class="{% if channel.chatEnabled == True %}col-lg{% else %} col-12{% endif %} col-xs-12 col-sm-12" id="videoWindow">
@@ -522,6 +522,7 @@
     <script>
         socket.on('connect', function() {
             socket.emit('newViewer', {data: '{{channel.channelLoc}}'});
+            socket.emit('addUserCount',{data: '{{channel.channelLoc}}'});
         });
     </script>
 
@@ -555,7 +556,7 @@
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
         var server = '{{sysSettings.siteAddress}}';
-        var BOSH_SERVICE = serverproto + server + '/http-bind/';
+        var BOSH_SERVICE = serverproto + '{{xmppserver}}' + '/http-bind/';
         var ROOM_SERVICE = 'conference.' + server;
         var ROOMNAME = '{{channel.channelLoc}}';
         var CHANNELPROTECTED = {{channel.protected|lower}};

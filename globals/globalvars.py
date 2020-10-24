@@ -1,4 +1,4 @@
-version = "0.7.8"
+version = "0.7.9"
 appDBVersion = 0.70
 
 videoRoot = "/var/www/"
@@ -31,3 +31,6 @@ restreamSubprocesses = {}
 # Build Edge Restream Subprocess Dictionary
 activeEdgeNodes = []
 edgeRestreamSubprocesses = {}
+
+# ejabberd Server Configuration
+ejabberdServer = "127.0.0.1"

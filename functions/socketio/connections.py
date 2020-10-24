@@ -6,6 +6,7 @@ from classes.shared import db, socketio
 from classes import settings
 from classes import Channel
 from classes import Stream
+from classes import views
 
 from functions import webhookFunc
 from functions import templateFilters
@@ -17,14 +18,7 @@ from app import r
 
 @socketio.on('disconnect')
 def disconnect():
-    #userSID = request.sid
-    #ChannelQuery = Channel.Channel.query.with_entities(Channel.Channel.channelLoc).all()
-    #for chan in ChannelQuery:
-    #    streamSIDList = r.smembers(chan.channelLoc + '-streamSIDList')
-    #    if userSID in streamSIDList:
-    #        r.srem(chan.channelLoc + '-streamSIDList', userSID)
-    #db.session.commit()
-    #db.session.close()
+
     return 'OK'
 
 @socketio.on('newViewer')
@@ -36,15 +30,6 @@ def handle_new_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    #userSID = request.cookies.get('ospSession')
-    #userSID = request.sid
-    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    #if streamSIDList is None:
-    #    r.sadd(channelLoc + '-streamSIDList', userSID)
-    #elif userSID.encode('utf-8') not in streamSIDList:
-    #    r.sadd(channelLoc + '-streamSIDList', userSID)
-
-    #currentViewers = len(streamSIDList)
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     streamName = ""
@@ -98,6 +83,28 @@ def handle_new_viewer(streamData):
     db.session.close()
     return 'OK'
 
+@socketio.on('addUserCount')
+def handle_add_usercount(streamData):
+    channelLoc = str(streamData['data'])
+
+    sysSettings = settings.settings.query.first()
+
+    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+
+    requestedChannel.views = requestedChannel.views + 1
+    if streamData is not None:
+       streamData.totalViewers = streamData.totalViewers + 1
+    db.session.commit()
+
+    newView = views.views(0, requestedChannel.id)
+    db.session.add(newView)
+    db.session.commit()
+
+    db.session.commit()
+    db.session.close()
+    return 'OK'
+
 @socketio.on('removeViewer')
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
@@ -107,14 +114,6 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
-    #userSID = request.cookies.get('ospSession')
-    #userSID = request.sid
-
-    #streamSIDList = r.smembers(channelLoc + '-streamSIDList')
-    #if streamSIDList is not None:
-    #    r.srem(channelLoc + '-streamSIDList', userSID)
-
-    # currentViewers = len(streamSIDList)
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     requestedChannel.currentViewers = currentViewers
