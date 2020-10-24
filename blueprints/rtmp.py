@@ -22,6 +22,7 @@ from functions import system
 from functions import templateFilters
 from functions import subsFunc
 from functions import videoFunc
+from functions import xmpp
 
 from globals import globalvars
 from app import coreNginxRTMPAddress
@@ -102,6 +103,11 @@ def user_auth_check():
         authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
         if authedStream is not None:
+
+            authedStream.currentViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
+            authedStream.totalViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
+            db.session.commit()
+
             returnMessage = {'time': str(datetime.datetime.now()), 'status': 'Successful Channel Auth', 'key': str(requestedChannel.streamKey), 'channelName': str(requestedChannel.channelName), 'ipAddress': str(ipaddress)}
             print(returnMessage)
 
