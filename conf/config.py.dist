@@ -26,3 +26,4 @@ debugMode = False
 ejabberdAdmin = "admin"
 ejabberdPass = "CHANGE_EJABBERD_PASS"
 ejabberdHost = "localhost"
+#ejabberdServer ="127.0.0.1"

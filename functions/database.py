@@ -273,10 +273,10 @@ def init(app, user_datastore):
                     db.Connection.execute(sql)
 
                 ## Extends oAuth2 Token Store - per MR !213
-                sql = "ALTER TABLE OAuth2Token ALTER COLUMN access_token VARCHAR (2048) ;"
+                sql = "ALTER TABLE OAuth2Token MODIFY COLUMN access_token VARCHAR (2048) ;"
                 results = dbConnection.execute(sql)
 
-                sql = "ALTER TABLE OAuth2Token ALTER COLUMN refresh_token VARCHAR (2048) ;"
+                sql = "ALTER TABLE OAuth2Token MODIFY COLUMN refresh_token VARCHAR (2048) ;"
                 results = dbConnection.execute(sql)
 
                 db.close()
