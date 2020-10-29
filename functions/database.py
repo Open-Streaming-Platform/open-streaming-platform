@@ -40,7 +40,6 @@ def init(app, user_datastore):
         dbVersionQuery.version = globalvars.appDBVersion
         db.session.commit()
         pass
-    print({"level": "info", "message":"Completed DB Version Check"})
 
     # Setup Default User Roles
     user_datastore.find_or_create_role(name='Admin', description='Administrator', default=False)
@@ -48,7 +47,6 @@ def init(app, user_datastore):
     user_datastore.find_or_create_role(name='Streamer', description='Streamer', default=False)
     user_datastore.find_or_create_role(name='Recorder', description='Recorder', default=False)
     user_datastore.find_or_create_role(name='Uploader', description='Uploader', default=False)
-    print({"level": "info", "message": "Completed Default Role Checks"})
 
     topicList = [("Other","None")]
     for topic in topicList:
@@ -57,7 +55,6 @@ def init(app, user_datastore):
             newTopic = topics.topics(topic[0], topic[1])
             db.session.add(newTopic)
     db.session.commit()
-    print({"level": "info", "message": "Completed Default Topic Check"})
 
     # Query Null Default Roles and Set
     roleQuery = Sec.Role.query.filter_by(default=None).all()
@@ -67,14 +64,11 @@ def init(app, user_datastore):
         else:
             role.default = False
         db.session.commit()
-    print({"level": "info", "message": "Completed Null Default Role Check"})
 
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = settings.settings.query.first()
-    print({"level": "info", "message": "Loaded System Settings"})
 
     if sysSettings is not None:
-        print({"level": "info", "message": "Initiated DB Sanity Checks and Fixes"})
         # Set/Update the system version attribute
         if sysSettings.version is None or sysSettings.version != globalvars.version:
             sysSettings.version = globalvars.version
@@ -225,7 +219,6 @@ def init(app, user_datastore):
             channel.xmppToken = str(os.urandom(32).hex())
             db.session.commit()
 
-        print({"level": "info", "message": "Reloading System Settings after DB Sanity Check"})
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
@@ -247,7 +240,6 @@ def init(app, user_datastore):
         app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
 
-        print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
         # Initialize the OSP Edge Configuration - Mostly for Docker
         try:
             system.rebuildOSPEdgeConf()
@@ -256,39 +248,38 @@ def init(app, user_datastore):
 
         # Import Theme Data into Theme Dictionary
         with open('templates/themes/' + sysSettings.systemTheme +'/theme.json') as f:
+
             globalvars.themeData = json.load(f)
-        print({"level": "info", "message": "Theme Data Imported"})
 
         # Initialize the Topic Cache
         topicQuery = topics.topics.query.all()
         for topic in topicQuery:
             globalvars.topicCache[topic.id] = topic.name
-        print({"level": "info", "message": "Topics Data Imported into Global Cache"})
 
         ## Direct DB Alterations
-        #if config.dbLocation[:6] != "sqlite":
-        #    try:
-        #        dbEngine = db.engine
-        #        dbConnection = dbEngine.connect()
+        if config.dbLocation[:6] != "sqlite":
+            try:
+                dbEngine = db.engine
+                dbConnection = dbEngine.connect()
 
-        #        ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
-        #        dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
+                ## Begin DB UTF8MB4 Fixes To Convert The DB if Needed
+                dbConnection.execute("ALTER DATABASE `%s` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'" % dbEngine.url.database)
 
-        #        sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
+                sql = "SELECT DISTINCT(table_name) FROM information_schema.columns WHERE table_schema = '%s'" % dbEngine.url.database
 
-        #        results = dbConnection.execute(sql)
-        #        for row in results:
-        #            sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
-        #            db.Connection.execute(sql)
+                results = dbConnection.execute(sql)
+                for row in results:
+                    sql = "ALTER TABLE `%s` convert to character set DEFAULT COLLATE DEFAULT" % (row[0])
+                    db.Connection.execute(sql)
 
                 ## Extends oAuth2 Token Store - per MR !213
-        #        sql = "ALTER TABLE OAuth2Token MODIFY COLUMN access_token VARCHAR (2048) ;"
-        #        results = dbConnection.execute(sql)
+                sql = "ALTER TABLE OAuth2Token MODIFY COLUMN access_token VARCHAR (2048) ;"
+                results = dbConnection.execute(sql)
 
-        #        sql = "ALTER TABLE OAuth2Token MODIFY COLUMN refresh_token VARCHAR (2048) ;"
-        #        results = dbConnection.execute(sql)
+                sql = "ALTER TABLE OAuth2Token MODIFY COLUMN refresh_token VARCHAR (2048) ;"
+                results = dbConnection.execute(sql)
 
-        #        db.close()
-        #    except:
-        #        pass
-        ### End DB UT8MB4 Fixes
+                db.close()
+            except:
+                pass
+        ## End DB UT8MB4 Fixes
