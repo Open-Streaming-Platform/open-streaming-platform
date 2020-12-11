@@ -9,7 +9,7 @@ class RecordedVideo(db.Model):
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
     channelName = db.Column(db.String(255))
     channelID = db.Column(db.Integer,db.ForeignKey('Channel.id'))
-    description = db.Column(db.String(2048))
+    description = db.Column(db.String(4096))
     topic = db.Column(db.Integer)
     views = db.Column(db.Integer)
     length = db.Column(db.Float)
