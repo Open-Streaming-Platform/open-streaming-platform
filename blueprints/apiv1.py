@@ -45,7 +45,7 @@ def checkRTMPAuthIP(requestData):
                     for resolved in resolveResults:
                         if parsedip == resolved[4][0]:
                             authorized = True
-
+    print(requestIP)
     return (authorized, requestIP)
 
 class fixedAPI(Api):
