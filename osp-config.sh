@@ -316,7 +316,6 @@ install_ejabberd() {
 generate_ejabberd_admin() {
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py
-  sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp-rtmp/conf/config.py
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml
   sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS
   sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS
