@@ -16,7 +16,6 @@ read -p "Continue? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][e
 
 sudo systemctl stop osp.target
 sudo systemctl stop nginx-osp
-sudo copy /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
 sudo rm /usr/local/nginx/conf/osp-*.conf
 echo ''
 echo ''
