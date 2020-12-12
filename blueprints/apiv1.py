@@ -48,7 +48,7 @@ def checkRTMPAuthIP(requestData):
     returnedIP = ""
     for ip in requestIP:
         returnedIP = returnedIP + ip + " "
-
+    print(returnedIP)
     return (authorized, returnedIP)
 
 class fixedAPI(Api):
