@@ -560,8 +560,7 @@ def admin_page():
                 SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
             # ReInitialize Flask-Security
-            security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                                confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
+            #security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
             email = Mail()
             email.init_app(current_app)
