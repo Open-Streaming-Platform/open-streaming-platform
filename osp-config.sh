@@ -244,7 +244,12 @@ install_osp_rtmp() {
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services
   sudo mkdir /opt/osp-rtmp
+
+  # Setup Nginx-RTMP Socket Directory
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp
+  sudo mkdir /opt/osp-rtmp/rtmpsocket
+  sudo chown -R www-data /opt/osp-rtmp/rtmpsocket
+
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service
   sudo systemctl daemon-reload
   sudo systemctl enable osp-rtmp.service
@@ -271,6 +276,11 @@ install_osp_edge () {
   # Setup Configuration with IP
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf
+
+  # Make OSP-Edge Directory for RTMP sockets
+  sudo mkdir /opt/osp-edge
+  sudo mkdir /opt/osp-edge/rtmpsocket
+  sudo chown -R www-data:www-data /opt/osp-edge/rtmpsocket
 
   # Create HLS directory
   sudo mkdir -p /var/www
