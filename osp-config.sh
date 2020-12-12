@@ -65,8 +65,9 @@ reset_ejabberd() {
   sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py 
   echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
   sudo mkdir /usr/local/ejabberd/conf 
-  sudo cp /opt/osp/install/ejabberd/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml 
-  sudo cp /opt/osp/install/ejabberd/inetrc /usr/local/ejabberd/conf/inetrc 
+  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml
+  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc
+  sudo cp /opt/osp/install/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service 
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
