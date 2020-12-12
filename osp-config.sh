@@ -248,7 +248,7 @@ install_osp_rtmp() {
   # Setup Nginx-RTMP Socket Directory
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp
   sudo mkdir /opt/osp-rtmp/rtmpsocket
-  sudo chown -R www-data /opt/osp-rtmp/rtmpsocket
+  sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket
 
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service
   sudo systemctl daemon-reload
