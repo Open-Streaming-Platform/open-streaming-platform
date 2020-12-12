@@ -91,6 +91,38 @@ body {
     padding-bottom: 16px;
 }
 
+.file-upload-button {
+    display: block;
+    position: relative;
+    width: 64px;
+    margin: 10px 0px 0px 0px;
+    cursor: pointer;
+    border: 0;
+    height: 25px;
+    border-radius: 5px;
+    outline: 0;
+    overflow: hidden;
+}
+.file-upload-button:hover:after {
+    background: #5978f8;
+}
+.file-upload-button:after {
+    transition: 200ms all ease;
+    background: #0275d8;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    content: 'Upload';
+    line-height: 20px;
+    border-radius: 2px;
+}
+
 .modal-content {
     background-color: #303030;
 }

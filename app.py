@@ -15,7 +15,7 @@ import json
 import uuid
 
 # Import 3rd Party Libraries
-from flask import Flask, redirect, request, abort, flash
+from flask import Flask, redirect, request, abort, flash, current_app
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.signals import user_registered
@@ -77,6 +77,7 @@ app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = config.requireEmailRegistration
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = config.requireEmailRegistration
 app.config['SECURITY_CHANGABLE'] = True
+app.config['SECURITY_TRACKABLE'] = True
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
@@ -91,7 +92,16 @@ app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
-logger = logging.getLogger('gunicorn.error').handlers
+# Initialize Recaptcha
+if hasattr(config, 'RECAPTCHA_ENABLED'):
+    if config.RECAPTCHA_ENABLED is True:
+        globalvars.recaptchaEnabled = True
+        try:
+            app.config['RECAPTCHA_PUBLIC_KEY'] = config.RECAPTCHA_SITE_KEY
+            app.config['RECAPTCHA_PRIVATE_KEY'] = config.RECAPTCHA_SECRET_KEY
+        except:
+            print("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
+            globalvars.recaptchaEnabled = False
 
 #----------------------------------------------------------------------------#
 # Modal Imports
@@ -127,6 +137,8 @@ from functions.ejabberdctl import ejabberdctl
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
+logger = logging.getLogger('gunicorn.error').handlers
+
 # Initialize Flask-Limiter
 if config.redisPassword == '' or config.redisPassword is None:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
@@ -178,9 +190,31 @@ patch_request_class(app)
 # Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
 
-# Initialize Scheduler
+##############################################
+# Initialize Scheduler and Jobs
+##############################################
+
+# Updates Room Live Counts on Interval
+def checkRoomCounts():
+    sysSettings = settings.settings.query.first()
+    channelQuery = Channel.Channel.query.all()
+    for chan in channelQuery:
+
+        roomOccupantsJSON = ejabberd.get_room_occupants_number(chan.channelLoc, "conference." + sysSettings.siteAddress)
+        currentViewers = roomOccupantsJSON['occupants']
+
+        count = currentViewers
+        if chan.currentViewers != count:
+            chan.currentViewers = count
+            db.session.commit()
+        for liveStream in chan.stream:
+            if liveStream.currentViewers != count:
+                liveStream.currentViewers = count
+                db.session.commit()
+    db.session.commit()
+
 scheduler = BackgroundScheduler()
-#scheduler.add_job(func=processAllHubConnections, trigger="interval", seconds=180)
+#scheduler.add_job(func=checkRoomCounts, trigger="interval", seconds=120)
 scheduler.start()
 
 # Initialize ejabberdctl
@@ -201,6 +235,7 @@ try:
 except:
     print("DB Load Fail due to Upgrade or Issues")
 
+print({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
 from functions.oauth import fetch_token
@@ -227,18 +262,22 @@ try:
 except:
     print("Failed Loading oAuth Providers")
 
+print({"level": "info", "message": "Initializing Flask-Mail"})
 # Initialize Flask-Mail
 from classes.shared import email
 
 email.init_app(app)
 email.app = app
 
+print({"level": "info", "message": "Performing XMPP Sanity Checks"})
 # Perform XMPP Sanity Check
 from functions import xmpp
 try:
     results = xmpp.sanityCheck()
 except Exception as e:
     print("XMPP Sanity Check Failed - " + str(e))
+
+print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
@@ -254,7 +293,9 @@ from functions.socketio import thumbnail
 from functions.socketio import syst
 from functions.socketio import xmpp
 from functions.socketio import restream
+from functions.socketio import rtmp
 
+print({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 #----------------------------------------------------------------------------#
@@ -289,6 +330,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
 app.register_blueprint(oauth_bp)
 
+print({"level": "info", "message": "Initializing Template Filters"})
 #----------------------------------------------------------------------------#
 # Template Filter Imports
 #----------------------------------------------------------------------------#
@@ -297,12 +339,14 @@ from functions import templateFilters
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
 
+print({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
 #----------------------------------------------------------------------------#
 # Jinja 2 Gloabl Environment Functions
 #----------------------------------------------------------------------------#
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 
+print({"level": "info", "message": "Setting Flask Context Processors"})
 #----------------------------------------------------------------------------#
 # Context Processors
 #----------------------------------------------------------------------------#
@@ -316,6 +360,11 @@ def inject_notifications():
                 notificationList.append(entry)
         notificationList.sort(key=lambda x: x.timestamp, reverse=True)
     return dict(notifications=notificationList)
+
+@app.context_processor
+def inject_recaptchaEnabled():
+    recaptchaEnabled = globalvars.recaptchaEnabled
+    return dict(recaptchaEnabled=recaptchaEnabled)
 
 @app.context_processor
 def inject_oAuthProviders():
@@ -347,12 +396,13 @@ def inject_topics():
     topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
     return dict(uploadTopics=topicQuery)
 
+print({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
 @user_registered.connect_via(app)
-def user_registered_sighandler(app, user, confirm_token):
-    defaultRoleQuery = Sec.Role.query.filter_by(default=True)
+def user_registered_sighandler(app, user, confirm_token, form_data=None):
+    defaultRoleQuery = Sec.Role.query.filter_by(default=True).all()
     for role in defaultRoleQuery:
         user_datastore.add_role_to_user(user, role.name)
     user.authType = 0
@@ -371,11 +421,12 @@ def user_registered_sighandler(app, user, confirm_token):
 def shutdown_session(exception=None):
     db.session.remove()
 
+print({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 # Finalize App Init
 #----------------------------------------------------------------------------#
 system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-
+print({"level": "info", "message": "OSP Core Node Started Successfully" + str(globalvars.version)})
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False

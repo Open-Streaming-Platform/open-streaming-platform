@@ -175,6 +175,7 @@
         // Settings and Event Hooks for XMPP
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
+        var userUUID = "{{current_user.uuid}}";
         var xmppPassword = "{{current_user.xmppToken}}";
         {% else %}
             {% if guestUser != None and current_user.is_authenticated == False %}
@@ -182,6 +183,7 @@
             {% else %}
             var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
             {% endif %}
+            var userUUID = username;
             var xmppPassword = "fakepw";
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
@@ -223,7 +225,7 @@
             connection = new Strophe.Connection(url);
             connection.rawInput = rawInput;
             connection.rawOutput = rawOutput;
-            connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+            connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
         });
 
         // Disconnect XMPP on Page Unload
