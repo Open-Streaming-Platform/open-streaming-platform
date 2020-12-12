@@ -22,6 +22,7 @@ from classes import settings
 from classes.shared import db
 
 from functions import rtmpFunc
+from functions import system
 
 from globals import globalvars
 
@@ -35,8 +36,10 @@ def checkRTMPAuthIP(requestData):
 
     authorizedRTMPServers = settings.rtmpServer.query.all()
 
-    requestIP = requestIP.split(',')
-    for ip in requestIP:
+    receivedIP = requestIP
+    ipList = requestIP.split(',')
+    confirmedIP = ""
+    for ip in ipList:
         parsedip = ip.strip()
         for server in authorizedRTMPServers:
             if authorized is False:
@@ -45,8 +48,13 @@ def checkRTMPAuthIP(requestData):
                     for resolved in resolveResults:
                         if parsedip == resolved[4][0]:
                             authorized = True
-    print(requestIP)
-    return (authorized, requestIP)
+                            confirmedIP = resolved[4][0]
+
+    if authorized is False:
+        confirmedIP = receivedIP
+        system.newLog("error", "Unauthorized RTMP Server - " + confirmedIP)
+
+    return (authorized, confirmedIP)
 
 class fixedAPI(Api):
     # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
