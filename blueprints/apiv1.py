@@ -45,11 +45,8 @@ def checkRTMPAuthIP(requestData):
                     for resolved in resolveResults:
                         if parsedip == resolved[4][0]:
                             authorized = True
-    returnedIP = ""
-    for ip in requestIP:
-        returnedIP = returnedIP + ip + " "
-    print(returnedIP)
-    return (authorized, returnedIP)
+
+    return (authorized, requestIP)
 
 class fixedAPI(Api):
     # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
