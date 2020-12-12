@@ -7,10 +7,11 @@ import socket
 import xmltodict
 import git
 import re
+import psutil
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
-from flask_security import current_user, login_required, roles_required
+from flask_security import Security, SQLAlchemyUserDatastore, current_user, login_required, roles_required
 from flask_security.utils import hash_password
 from flask_mail import Mail
 from sqlalchemy.sql.expression import func
@@ -49,7 +50,27 @@ settings_bp = Blueprint('settings', __name__, url_prefix='/settings')
 @login_required
 def user_page():
     if request.method == 'GET':
-        return render_template(themes.checkOverride('userSettings.html'))
+        # Checks Total Used Space
+        userChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+        totalSpaceUsed = 0
+        channelUsage = []
+        for chan in userChannels:
+            try:
+                videos_root = globalvars.videoRoot + 'videos/'
+                channelLocation = videos_root + chan.channelLoc
+
+                total_size = 0
+                for dirpath, dirnames, filenames in os.walk(channelLocation):
+                    for f in filenames:
+                        fp = os.path.join(dirpath, f)
+                        total_size += os.path.getsize(fp)
+            except FileNotFoundError:
+                total_size = 0
+            channelUsage.append({'name': chan.channelName, 'usage': total_size})
+            totalSpaceUsed = totalSpaceUsed + total_size
+
+        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage)
+
     elif request.method == 'POST':
 
         biography = request.form['biography']
@@ -344,6 +365,7 @@ def admin_page():
         channelList = Channel.Channel.query.all()
         streamList = Stream.Stream.query.all()
         topicsList = topics.topics.query.all()
+        rtmpServers = settings.rtmpServer.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
 
         defaultRoles = {}
@@ -382,9 +404,11 @@ def admin_page():
         for stream in streamList:
             currentViewers = currentViewers + stream.currentViewers
 
-        nginxStatDataRequest = requests.get('http://127.0.0.1:9000/stats')
-        nginxStatData = (json.loads(json.dumps(xmltodict.parse(nginxStatDataRequest.text))))
-
+        try:
+            nginxStatDataRequest = requests.get('http://127.0.0.1:9000/stats')
+            nginxStatData = (json.loads(json.dumps(xmltodict.parse(nginxStatDataRequest.text))))
+        except:
+            nginxStatData = None
         globalWebhookQuery = webhook.globalWebhook.query.all()
 
         themeList = []
@@ -411,7 +435,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
-                               logsList=logsList, edgeNodes=edgeNodes, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -535,6 +559,10 @@ def admin_page():
                 SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
                 SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
+            # ReInitialize Flask-Security
+            security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm,
+                                confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
+
             email = Mail()
             email.init_app(current_app)
             email.app = current_app
@@ -603,6 +631,21 @@ def admin_page():
 
             db.session.commit()
             return redirect(url_for('.admin_page', page="topics"))
+
+        elif settingType == "rtmpServer":
+            address = request.form['address']
+
+            existingServer = settings.rtmpServer.query.filter_by(address=address).first()
+
+            if existingServer is None:
+                newServer = settings.rtmpServer(address)
+                db.session.add(newServer)
+                db.session.commit()
+                flash("Server Added", "success")
+            else:
+                flash("Server Already Exists","error")
+
+            return redirect(url_for('.admin_page', page="osprtmp"))
 
         elif settingType == "edgeNode":
             address = request.form['address']
@@ -806,8 +849,12 @@ def admin_page():
             db.session.commit()
 
             user = Sec.User.query.filter_by(username=username).first()
-            user_datastore.add_role_to_user(user, 'User')
+            defaultRoleQuery = Sec.Role.query.filter_by(default=True).all()
+            for role in defaultRoleQuery:
+                user_datastore.add_role_to_user(user, role.name)
             user.authType = 0
+            user.xmppToken = str(os.urandom(32).hex())
+            user.uuid = str(uuid.uuid4())
             user.confirmed_at = datetime.datetime.now()
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
@@ -1488,7 +1535,7 @@ def settings_channels_page():
             # Establish XMPP Channel
             from app import ejabberd
             ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
-            ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.username) + "@" + sysSettings.siteAddress, "owner")
+            ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.uuid) + "@" + sysSettings.siteAddress, "owner")
 
             # Defautl values
             for key, value in globalvars.room_config.items():
@@ -1596,7 +1643,24 @@ def settings_channels_page():
     channelRooms = {}
     channelMods = {}
     for chan in user_channels:
-        xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+        try:
+            xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+        except AttributeError:
+            # If Channel Doesn't Exist in ejabberd, Create
+            ejabberd.create_room(chan.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
+            ejabberd.set_room_affiliation(chan.channelLoc, 'conference.' + sysSettings.siteAddress, (current_user.uuid) + "@" + sysSettings.siteAddress, "owner")
+
+            # Default values
+            for key, value in globalvars.room_config.items():
+                ejabberd.change_room_option(chan.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+
+            # Name and title
+            ejabberd.change_room_option(chan.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', chan.channelName)
+            ejabberd.change_room_option(chan.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', current_user.username + 's chat room for the channel "' + chan.channelName + '"')
+            xmppQuery = ejabberd.get_room_options(chan.channelLoc, 'conference.' + sysSettings.siteAddress)
+        except:
+            # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
+            return redirect(url_for("settings.settings_channels_page"))
         channelOptionsDict = {}
         if 'options' in xmppQuery:
             for option in xmppQuery['options']:
@@ -1850,6 +1914,10 @@ def initialSetup():
                     SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
                     SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
+
+                # ReInitialize Flask-Security
+                security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm,
+                                    confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
                 email.init_app(current_app)
                 email.app = current_app

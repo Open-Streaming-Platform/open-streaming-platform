@@ -32,6 +32,7 @@ def init(context):
     context.jinja_env.filters['get_logType'] = get_logType
     context.jinja_env.filters['format_clipLength'] = format_clipLength
     context.jinja_env.filters['processClientCount'] = processClientCount
+    context.jinja_env.filters['formatSpace'] = formatSpace
 
 
 #----------------------------------------------------------------------------#
@@ -72,6 +73,25 @@ def limit_title(titleStr):
         return titleStr[:37] + "..."
     else:
         return titleStr
+
+def formatSpace(B):
+    'Return the given bytes as a human friendly KB, MB, GB, or TB string'
+    B = float(B)
+    KB = float(1024)
+    MB = float(KB ** 2)  # 1,048,576
+    GB = float(KB ** 3)  # 1,073,741,824
+    TB = float(KB ** 4)  # 1,099,511,627,776
+
+    if B < KB:
+        return '{0} {1}'.format(B, 'Bytes' if 0 == B > 1 else 'Byte')
+    elif KB <= B < MB:
+        return '{0:.2f} KB'.format(B / KB)
+    elif MB <= B < GB:
+        return '{0:.2f} MB'.format(B / MB)
+    elif GB <= B < TB:
+        return '{0:.2f} GB'.format(B / GB)
+    elif TB <= B:
+        return '{0:.2f} TB'.format(B / TB)
 
 def format_kbps(bits):
     bits = int(bits)
@@ -138,7 +158,7 @@ def get_diskUsage(channelLocation):
             for f in filenames:
                 fp = os.path.join(dirpath, f)
                 total_size += os.path.getsize(fp)
-        return "{:,}".format(total_size)
+        return total_size
 
 def testList(obj):
     if type(obj) == list:

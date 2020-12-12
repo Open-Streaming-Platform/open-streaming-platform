@@ -75,8 +75,10 @@ class settings(db.Model):
             'allowUploads': self.allowUploads,
             'allowComments': self.allowComments,
             'version': self.version,
+            'restreamMaxBitRate': self.restreamMaxBitrate,
             'maxClipLength': self.maxClipLength,
             'protectionEnabled': self.protectionEnabled,
+            'adaptiveStreaming': self.adaptiveStreaming,
             'maintenanceMode': self.maintenanceMode
         }
 
@@ -102,10 +104,29 @@ class edgeStreamer(db.Model):
         return {
             'id': self.id,
             'address': self.address,
-            'customPort': self.customPort,
+            'port': self.port,
             'active': self.active,
             'status': self.status,
             'loadPct': self.loadPct
+        }
+
+class rtmpServer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(1024))
+    active = db.Column(db.Boolean)
+
+    def __init__(self, address):
+        self.address = address
+        self.active = True
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'address': self.address,
+            'active': self.active
         }
 
 class oAuthProvider(db.Model):

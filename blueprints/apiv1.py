@@ -7,6 +7,8 @@ from flask_restplus import Api, Resource, reqparse
 
 import shutil
 import uuid
+import datetime
+import socket
 
 from classes import Sec
 from classes import Channel
@@ -19,7 +21,31 @@ from classes import views
 from classes import settings
 from classes.shared import db
 
+from functions import rtmpFunc
+
 from globals import globalvars
+
+def checkRTMPAuthIP(requestData):
+    authorized = False
+    requestIP = "0.0.0.0"
+    if requestData.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        requestIP = requestData.environ['REMOTE_ADDR']
+    else:
+        requestIP = requestData.environ['HTTP_X_FORWARDED_FOR']
+
+    authorizedRTMPServers = settings.rtmpServer.query.all()
+
+    requestIP = requestIP.split(',')
+    for ip in requestIP:
+        parsedip = ip.strip()
+        for server in authorizedRTMPServers:
+            if authorized is False:
+                if server.active is True:
+                    resolveResults = socket.getaddrinfo(server.address, 0)
+                    for resolved in resolveResults:
+                        if parsedip == resolved[4][0]:
+                            authorized = True
+    return (authorized, requestIP)
 
 class fixedAPI(Api):
     # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
@@ -77,6 +103,26 @@ xmppAuthParserPost.add_argument('token', type=str)
 
 xmppIsUserParserPost = reqparse.RequestParser()
 xmppIsUserParserPost.add_argument('jid', type=str)
+
+rtmpStage1Auth = reqparse.RequestParser()
+rtmpStage1Auth.add_argument('name', type=str)
+rtmpStage1Auth.add_argument('addr', type=str)
+
+rtmpStage2Auth = reqparse.RequestParser()
+rtmpStage2Auth.add_argument('name', type=str)
+rtmpStage2Auth.add_argument('addr', type=str)
+
+rtmpRecCheck = reqparse.RequestParser()
+rtmpRecCheck.add_argument('name', type=str)
+
+rtmpStreamClose = reqparse.RequestParser()
+rtmpStreamClose.add_argument('name', type=str)
+rtmpStreamClose.add_argument('addr', type=str)
+
+rtmpRecClose = reqparse.RequestParser()
+rtmpRecClose.add_argument('name', type=str)
+rtmpRecClose.add_argument('path', type=str)
+
 # TODO Add Clip Post Arguments
 
 @api.route('/server')
@@ -89,6 +135,18 @@ class api_1_Server(Resource):
         serverSettings = settings.settings.query.all()[0]
         db.session.commit()
         return {'results': serverSettings.serialize() }
+
+@api.route('/server/edges')
+class api_1_Edges(Resource):
+    # Server - Get Edge Serves
+    def get(self):
+        """
+            Displays a Listing of Edge Servers
+        """
+
+        edgeList = settings.edgeStreamer.query.all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in edgeList]}
 
 @api.route('/channel/')
 class api_1_ListChannels(Resource):
@@ -114,6 +172,23 @@ class api_1_ListChannels(Resource):
                 if requestAPIKey.isValid():
                     args = channelParserPost.parse_args()
                     newChannel = Channel.Channel(int(requestAPIKey.userID), str(uuid.uuid4()), args['channelName'], int(args['topicID']), args['recordEnabled'], args['chatEnabled'], args['commentsEnabled'], args['description'])
+
+                    userQuery = Sec.User.query.filter_by(id=int(requestAPIKey.userID)).first()
+
+                    # Establish XMPP Channel
+                    from app import ejabberd
+                    sysSettings = settings.settings.query.all()[0]
+                    ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
+                    ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, int(requestAPIKey.userID) + "@" + sysSettings.siteAddress, "owner")
+
+                    # Default values
+                    for key, value in globalvars.room_config.items():
+                        ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
+
+                    # Name and title
+                    ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'title', newChannel.channelName)
+                    ejabberd.change_room_option(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, 'description', userQuery.username + 's chat room for the channel "' + newChannel.channelName + '"')
+
                     db.session.add(newChannel)
                     db.session.commit()
 
@@ -199,6 +274,39 @@ class api_1_ListChannel(Resource):
                         db.session.commit()
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+# TODO Add Ability to Add/Delete/Change
+@api.route('/channel/<string:channelEndpointID>/restreams')
+@api.doc(security='apikey')
+@api.doc(params={'channelEndpointID': 'GUID Channel Location'})
+class api_1_GetRestreams(Resource):
+    def get(self, channelEndpointID):
+        """
+             Returns all restream destinations for a channel
+        """
+
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+
+        else:
+            # Perform RTMP IP Authorization Check
+            authorized = checkRTMPAuthIP(request)
+            if authorized[0] is False:
+                return {'results': {'message': "Unauthorized RTMP Server or Missing User API Key - " + authorized[1]}}, 400
+
+            channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+
+        if channelData is not None:
+            restreamDestinations = channelData.restreamDestinations
+            db.session.commit()
+            return {'results': [ob.serialize() for ob in restreamDestinations]}
+
+        else:
+            db.session.commit()
+            return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/channel/authed/')
 class api_1_ListChannelAuthed(Resource):
@@ -501,7 +609,7 @@ class api_1_xmppAuth(Resource):
                 sysSettings = settings.settings.query.first()
                 if sysSettings is not None:
                     username = jid.replace("@" + sysSettings.siteAddress,"")
-                    userQuery = Sec.User.query.filter_by(username=username, active=True).first()
+                    userQuery = Sec.User.query.filter_by(uuid=username, active=True).first()
                     if userQuery != None:
                         if userQuery.xmppToken == token:
                             return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
@@ -522,7 +630,145 @@ class api_1_xmppisuser(Resource):
             sysSettings = settings.settings.query.first()
             if sysSettings is not None:
                 username = jid.replace("@" + sysSettings.siteAddress,"")
-                userQuery = Sec.User.query.filter_by(username=username).first()
+                userQuery = Sec.User.query.filter_by(uuid=username).first()
                 if userQuery != None:
                     return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
         return {'results': {'message': 'Request Error', 'code':400}}, 400
+
+@api.route('/rtmp/stage1')
+@api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
+class api_1_rtmp_stage1(Resource):
+    @api.expect(rtmpStage1Auth)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Initialize Stage 1 of RTMP Authentication
+        """
+        # Perform RTMP IP Authorization Check
+        authorized = checkRTMPAuthIP(request)
+        if authorized[0] is False:
+            return {'results': {'message':"Unauthorized RTMP Server - " + authorized[1]}}, 400
+
+        args = rtmpStage1Auth.parse_args()
+
+        if 'name' in args and 'addr' in args:
+            name = args['name']
+            addr = args['addr']
+            results = rtmpFunc.rtmp_stage1_streamkey_check(name, addr)
+            if results['success'] is True:
+                return {'results': results}, 200
+            else:
+                return {'results': results}, 400
+        else:
+            return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
+@api.route('/rtmp/stage2')
+@api.doc(params={'name': 'Channel Location of Channel Processed Under Stage 1', 'addr':'IP Address of Endpoint Making Request'})
+class api_1_rtmp_stage2(Resource):
+    @api.expect(rtmpStage2Auth)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Initialize Stage 2 of RTMP Authentication
+        """
+
+        # Perform RTMP IP Authorization Check
+        authorized = checkRTMPAuthIP(request)
+        if authorized[0] is False:
+            return {'results': {'message':"Unauthorized RTMP Server - " + authorized[1]}}, 400
+
+        args = rtmpStage2Auth.parse_args()
+
+        if 'name' in args and 'addr' in args:
+            name = args['name']
+            addr = args['addr']
+            results = rtmpFunc.rtmp_stage2_user_auth_check(name, addr)
+            if results['success'] is True:
+                return {'results': results}, 200
+            else:
+                return {'results': results}, 400
+        else:
+            return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage2', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
+@api.route('/rtmp/reccheck')
+@api.doc(params={'name': 'Stream Key of Channel'})
+class api_1_rtmp_reccheck(Resource):
+    @api.expect(rtmpRecCheck)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Initialize Recording Check for RTMP
+        """
+
+        # Perform RTMP IP Authorization Check
+        authorized = checkRTMPAuthIP(request)
+        if authorized[0] is False:
+            return {'results': {'message':"Unauthorized RTMP Server - " + authorized[1]}}, 400
+
+        args = rtmpRecCheck.parse_args()
+
+        if 'name' in args:
+            name = args['name']
+            results = rtmpFunc.rtmp_record_auth_check(name)
+            if results['success'] is True:
+                return {'results': results}, 200
+            else:
+                return {'results': results}, 400
+        else:
+            return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordCheck', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
+@api.route('/rtmp/streamclose')
+@api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
+class api_1_rtmp_streamclose(Resource):
+    @api.expect(rtmpStreamClose)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Close an Open Stream
+        """
+
+        # Perform RTMP IP Authorization Check
+        authorized = checkRTMPAuthIP(request)
+        if authorized[0] is False:
+            return {'results': {'message':"Unauthorized RTMP Server -" + authorized[1]}}, 400
+
+        args = rtmpStreamClose.parse_args()
+
+        if 'name' in args and 'addr' in args:
+            name = args['name']
+            addr = args['addr']
+            results = rtmpFunc.rtmp_user_deauth_check(name, addr)
+            if results['success'] is True:
+                return {'results': results}, 200
+            else:
+                return {'results': results}, 400
+        else:
+            return {'results': {'time': str(datetime.datetime.now()), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
+@api.route('/rtmp/recclose')
+@api.doc(params={'name': 'Channel Location of Video to Close', 'path':'Nginx-rtmp Full Path of Preprocessed Video'})
+class api_1_rtmp_recclose(Resource):
+    @api.expect(rtmpRecClose)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Finalize Processing of a Recorded Video
+        """
+
+        # Perform RTMP IP Authorization Check
+        authorized = checkRTMPAuthIP(request)
+        if authorized[0] is False:
+            return {'results': {'message':"Unauthorized RTMP Server - " + authorized[1]}}, 400
+
+        args = rtmpRecClose.parse_args()
+
+        if 'name' in args and 'path' in args:
+            name = args['name']
+            path = args['path']
+            results = rtmpFunc.rtmp_rec_Complete_handler(name, path)
+            if results['success'] is True:
+                return {'results': results}, 200
+            else:
+                return {'results': results}, 400
+        else:
+            return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
