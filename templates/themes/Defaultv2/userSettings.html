@@ -5,73 +5,106 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-12 col-md-9 col-lg-8 mx-auto">
+            <div class="col-12 col-md-10 mx-auto">
                 <div class="card my-5">
                     <h5 class="card-header text-white bg-dark mb-3">
                         Settings
                     </h5>
                     <div class="card-body text-left">
                         <div class="card-text">
-                            <form action="/settings/user" enctype=multipart/form-data method="post">
-                                <div class="form-group">
-                                    <label for="userName"><b>User Name</b></label>
-                                    <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <form action="/settings/user" enctype=multipart/form-data method="post">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <img width="64" height="64" class="userPhoto rounded" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                                                <div class="file-upload">
+                                                  <input type="file" name="photo" class="file-upload-button" id="userphotoupload">
+                                                </div>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="form-group">
+                                                    <label for="userName"><b>User Name</b></label>
+                                                    <input type="text" name="userName" id="userName" class="form-control" value="{{current_user.username}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group">
+                                            <label for="emailAddress"><b>Email Address</b></label>
+                                            <input type="email" name="emailAddress" id="emailAddress" class="form-control" value="{{current_user.email}}" required>
+                                        </div>
+                                        {% if current_user.authType == 0 %}
+                                        <hr>
+                                        <div class="form-group">
+                                            <label for="password"><b>Change Password</b></label>
+                                            <input type="password" id="password" class="form-control" name="password1" placeholder="New Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" id="password2" class="form-control" name="password2" placeholder="Confirm New Password">
+                                        </div>
+                                        {% endif %}
+                                        <hr>
+                                        <div class="form-group">
+                                            <label for="biography" class="col-form-label"><b>Biography</b></label>
+                                            <textarea class="form-control" name="biography" id="biography-{{current_user.id}}" value="" maxlength="2048">{{current_user.biography}}</textarea>
+                                        </div>
+                                        <hr>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
                                 </div>
-                                <div class="form-group">
-                                    <label for="emailAddress"><b>Email Address</b></label>
-                                    <input type="email" name="emailAddress" id="emailAddress" class="form-control" value="{{current_user.email}}" required>
-                                </div>
-                                {% if current_user.authType == 0 %}
-                                <hr>
-                                <div class="form-group">
-                                    <label for="password"><b>Change Password</b></label>
-                                    <input type="password" id="password" class="form-control" name="password1" placeholder="New Password">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" id="password2" class="form-control" name="password2" placeholder="Confirm New Password">
-                                </div>
-                                {% endif %}
-                                <hr>
-                                <div class="form-group">
-                                    <label for="biography" class="col-form-label"><b>Biography</b></label>
-                                    <textarea class="form-control" name="biography" id="biography-{{current_user.id}}" value="" maxlength="2048">{{current_user.biography}}</textarea>
-                                </div>
-                                <hr>
-                                <b>User Picture</b><br>
-                                <small style="color:red;">Recommended Resolution: 128x128</small><br>
-                                <div class="d-flex justify-content-center">
-                                    <img width="128" height="128" class="userPhoto" src="/images/{{current_user.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-                                </div>
-
-                                <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-                                <hr>
-                                <b>XMPP Access</b>
-                                <p>To access the chat with an external Jabber Client, use this login information:</p>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                        <b>Username: </b>
-                                    </div>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        {{current_user.username}}@{{sysSettings.siteAddress}}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-                                        <b>Password: </b>
-                                    </div>
-                                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                        <div class="input-group">
-                                              <div class="input-group-prepend">
-                                                  <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken')"><i class="fas fa-copy"></i></button>
-                                              </div>
-                                              <input type="text" name="xmppToken" id="xmppToken" class="form-control" readonly value="{{current_user.xmppToken}}">
+                                <div class="col-12 col-md-6">
+                                    <b>XMPP Access</b>
+                                    <p>To access the chat with an external Jabber Client, use this login information:</p>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                            <b>Username: </b>
+                                        </div>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            {{current_user.uuid}}@{{sysSettings.siteAddress}}
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                                            <b>Password: </b>
+                                        </div>
+                                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                                            <div class="input-group">
+                                                  <div class="input-group-prepend">
+                                                      <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken')"><i class="fas fa-copy"></i></button>
+                                                  </div>
+                                                  <input type="text" name="xmppToken" id="xmppToken" class="form-control" readonly value="{{current_user.xmppToken}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <b>Storage Usage</b>
+                                    <div class="mt-2">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Channel Name</th>
+                                                    <th>Usage</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for chan in channelUsage %}
+                                                <tr>
+                                                    <td>{{ chan['name'] }}</td>
+                                                    <td>{{ chan['usage'] | formatSpace }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                <tr>
+                                                    <td></td>
+                                                    <td>{{ totalSpaceUsed | formatSpace }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>

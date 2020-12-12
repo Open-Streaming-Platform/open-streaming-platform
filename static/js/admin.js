@@ -427,6 +427,16 @@ function toggleActiveEdge(edgeID) {
     socket.emit('toggleOSPEdge', {edgeID: edgeID});
 }
 
+function deleteRTMP(rtmpID) {
+    socket.emit('deleteOSPRTMP', {rtmpID: rtmpID});
+    var rtmpTableRow = document.getElementById('rtmpTableRow-' + rtmpID);
+    rtmpTableRow.parentNode.removeChild(rtmpTableRow);
+}
+
+function toggleActiveRTMP(rtmpID) {
+    socket.emit('toggleOSPRTMP', {rtmpID: rtmpID});
+}
+
 function checkEdge(edgeID) {
     var oldStatusDiv = document.getElementById('nodeStatus-' + edgeID);
     oldStatusDiv.innerHTML = '<span id="nodeStatus-' + edgeID + '"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></span>';

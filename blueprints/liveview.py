@@ -29,11 +29,18 @@ def view_page(loc):
         xmppserver = ejabberdServer
 
 
+
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     if requestedChannel is not None:
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
+
+        # Pull ejabberd Chat Options for Room
+        #from app import ejabberd
+        #chatOptions = ejabberd.get_room_options(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress)
+        #for option in chatOptions:
+        #    print(option)
 
         streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
         streamURL = ''
@@ -49,11 +56,6 @@ def view_page(loc):
                 streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
                 streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
-
-        #requestedChannel.views = requestedChannel.views + 1
-        #if streamData is not None:
-        #    streamData.totalViewers = streamData.totalViewers + 1
-        #db.session.commit()
 
         topicList = topics.topics.query.all()
         chatOnly = request.args.get("chatOnly")
@@ -78,10 +80,6 @@ def view_page(loc):
                 flash("Chat is Not Enabled For This Stream","error")
 
         isEmbedded = request.args.get("embedded")
-
-        #newView = views.views(0, requestedChannel.id)
-        #db.session.add(newView)
-        #db.session.commit()
 
         requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 

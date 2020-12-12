@@ -25,6 +25,9 @@
                     <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">OAuth Providers</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'osprtmp' %} active {% endif %}" role="tab" id="admin-nav-rtmp" href="#rtmpSettings" data-toggle="pill" aria-controls="admin-nav-rtmp" aria-selected="false">RTMP Servers</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
                 </li>
                 <li class="nav-item">
@@ -42,9 +45,6 @@
                 <li class="nav-item">
                     <a class="nav-link {% if page == 'streams' %} active {% endif %}" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
                 </li>
-                {# <li class="nav-item">
-                    <a class="nav-link {% if page == 'hub' %} active {% endif %}" role="tab" id="admin-nav-hub" href="#hubSettings" data-toggle="pill" aria-controls="admin-nav-hub" aria-selected="false">Hub</a>
-                </li> #}
                 <li class="nav-item">
                     <a class="nav-link {% if page == 'logs' %} active {% endif %}" role="tab" id="admin-nav-logs" href="#logs" data-toggle="pill" aria-controls="admin-nav-logs" aria-selected="false">Logs</a>
                 </li>
@@ -67,12 +67,13 @@
                                         <b>Git Branch:</b> {{repoBranch}} <br>
                                         <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
                                         <b>Database Version:</b> {{appDBVer}} <br><br>
-                                        <b>NGINX Version:</b> {{nginxStatData['rtmp']['nginx_version']}}<br>
-                                        <b>NGINX-RTMP Version</b> {{nginxStatData['rtmp']['nginx_rtmp_version']}}<br>
+                                        <b>NGINX Version:</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['nginx_version']}}{% else %} No Local NGINX-RTMP{% endif %}<br>
+                                        <b>NGINX-RTMP Version</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['nginx_rtmp_version']}}{% else %} No Local NGINX-RTMP{% endif %}<br>
                                         <b>EJabberD Status:</b> {% if ejabberd == None %} <span style="color:red;">Not Connected</span> {% else %} <span style="color:green">Online</span>{% endif %}<br>
-                                        <b>Uptime:</b> {{nginxStatData['rtmp']['uptime']|hms_format}}
+                                        <b>Uptime:</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['uptime']|hms_format}}{% else %} No Local NGINX-RTMP{% endif %}
                                     </div>
                                 </div><br>
+                                {% if nginxStatData != None %}
                                 <div class="card">
                                     <div class="card-header"><i class="fas fa-video"></i> <a href="/settings/admin/rtmpstat/localhost">RTMP Stats</a></div>
                                     <div class="card-body">
@@ -113,7 +114,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div>{% endif %}
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="card">
@@ -448,6 +449,76 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
                             <input type="submit" class="btn btn-danger" value="Delete">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'osprtmp' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-rtmp" id="rtmpSettings">
+                    <h5>
+                        Authorized OSP-RTMP Servers
+                    </h5>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    List of Authorized OSP-RTMP Servers
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newRTMPModal"><i class="fas fa-plus"></i></button></span><br>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="rtmpTable" class="table table-borderless" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>RTMP Server Address</th>
+                                                    <th>Active?</th>
+                                                    <th>Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for server in rtmpServers %}
+                                                <tr id="rtmpTableRow-{{ server.id }}">
+                                                    <td>{{ server.address }}</td>
+                                                    <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeRTMPNode" name="activeRTMPSelect" autocomplete="new-password"
+                                                           {% if server.active == True %} checked {% endif %} onchange="toggleActiveRTMP('{{server.id}}');"></td>
+                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteRTMP('{{server.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                </tr>
+                                            {%  endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newRTMPModal" tabindex="-1" role="dialog" aria-labelledby="newRTMPModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newRTMPModalTitle">Add a New RTMP Server</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="rtmpAddress">Full Qualified Domain Name or IP Address:</label>
+                                        <input type="text" name="address" id="rtmpAddress" class="form-control"
+                                               pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^(?:(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){6})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:::(?:(?:(?:[0-9a-fA-F]{1,4})):){5})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){4})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,1}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){3})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,2}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){2})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,3}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:[0-9a-fA-F]{1,4})):)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,4}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,5}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,6}(?:(?:[0-9a-fA-F]{1,4})))?::))))$"
+                                               required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                              </div>
+                              <input type="hidden" value="rtmpServer" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add">
                           </div>
                           </form>
                         </div>
@@ -972,7 +1043,7 @@
                                   <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
                                   <td>{{channel.channelLoc}}</td>
                                   <td>{{channel.views}}</td>
-                                  <td>{{channel.channelLoc|get_diskUsage}}</td>
+                                  <td>{{channel.channelLoc|get_diskUsage|formatSpace}}</td>
                                   <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
                                   <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
                                   <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
