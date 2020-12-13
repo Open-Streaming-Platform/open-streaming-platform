@@ -661,7 +661,18 @@ if [ $# -eq 0 ]
         echo "resetejabberd: Resets eJabberd configuration and Restarts"
         ;;
       install )
+        install_nginx_core
+        install_redis
+        install_ejabberd
+        install_osp_rtmp
         install_osp
+        sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py
+        sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+        generate_ejabberd_admin
+        install_mysql
+        sudo systemctl restart nginx-osp
+        sudo systemctl start osp.target
+        sudo systemctl start osp-rtmp
         ;;
       restartnginx )
         systemctl restart nginx-osp
