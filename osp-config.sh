@@ -135,11 +135,14 @@ install_prereq() {
   if  $arch
   then
           # Get Arch Dependencies
+          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Arch" 10 70 0
           sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python curl ffmpeg --needed --noconfirm
   else
+          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
           # Get Deb Dependencies
           sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y
           # Setup Python
+          echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Arch" 10 70 0
           sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y
           sudo pip3 install wheel
   fi
@@ -147,24 +150,32 @@ install_prereq() {
 
 install_ffmpeg() {
   #Setup FFMPEG for recordings and Thumbnails
-  echo 80 | dialog --title "Installing OSP" --gauge "Installing FFMPEG" 10 70 0
+  echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   if [ "$arch" = "false" ]
   then
+          echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
           sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
+          echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
           sudo apt-get update
+          echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
           sudo apt-get install ffmpeg -y
   fi
 }
 
 install_mysql(){
   SQLPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  echo 10 | dialog --title "Installing MySQL" --gauge "Installing MySQL Server" 10 70 0
   sudo apt-get install mysql-server -y
+  echo 25 | dialog --title "Installing MySQL" --gauge "Copying MySQL Configuration" 10 70 0
   sudo cp $DIR/setup/mysql/mysqld.cnf /etc/mysql/my.cnf
+  echo 50 | dialog --title "Installing MySQL" --gauge "Restarting MySQL Server" 10 70 0
   sudo systemctl restart mysql
+  echo 75 | dialog --title "Installing MySQL" --gauge "Building Database" 10 70 0
   sudo mysql -e "create database osp"
   sudo mysql -e "CREATE USER 'osp'@'localhost' IDENTIFIED BY '$SQLPASS'"
   sudo mysql -e "GRANT ALL PRIVILEGES ON osp.* TO 'osp'@'localhost'"
   sudo mysql -e "flush privileges"
+  echo 100 | dialog --title "Installing MySQL" --gauge "Updating OSP Configuration File" 10 70 0
   sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp-rtmp/conf/config.py
   sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp/conf/config.py
 }
@@ -172,26 +183,26 @@ install_mysql(){
 install_nginx_core() {
   install_prereq
   # Build Nginx with RTMP module
-  echo 25 | dialog --title "Installing OSP" --gauge "Downloading Nginx Source" 10 70 0
+  echo 10 | dialog --title "Installing Nginx-Core" --gauge "Downloading Nginx Source" 10 70 0
   if cd /tmp
   then
           sudo wget -q "http://nginx.org/download/nginx-1.17.3.tar.gz"
-          echo 26 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
+          echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
-          echo 27 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
+          echo 20 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "http://www.zlib.net/zlib-1.2.11.tar.gz"
-          echo 28 | dialog --title "Installing OSP" --gauge "Downloading Required Modules" 10 70 0
+          echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz"
-          echo 29 | dialog --title "Installing OSP" --gauge "Decompressing Nginx Source and Modules" 10 70 0
+          echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
           sudo tar xfz nginx-1.17.3.tar.gz
           sudo unzip -qq -o v1.2.1.zip
           sudo tar xfz zlib-1.2.11.tar.gz
           sudo tar xfz master.tar.gz
-          echo 30 | dialog --title "Installing OSP" --gauge "Building Nginx from Source" 10 70 0
+          echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-1.17.3
           then
                   ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11 --with-cc-opt="-Wimplicit-fallthrough=0"
-                  echo 35 | dialog --title "Installing OSP" --gauge "Installing Nginx" 10 70 0
+                  echo 50 | dialog --title "Installing Nginx-Core" --gauge "Installing Nginx" 10 70 0
                   sudo make install
           else
                   echo "Unable to Build Nginx! Aborting."
@@ -203,7 +214,7 @@ install_nginx_core() {
   fi
 
   # Grab Configuration
-  echo 37 | dialog --title "Installing OSP" --gauge "Copying Nginx Config Files" 10 70 0
+  echo 65 | dialog --title "Installing Nginx-Core" --gauge "Copying Nginx Config Files" 10 70 0
 
   sudo cp $DIR/installs/nginx-core/nginx.conf /usr/local/nginx/conf/
   sudo cp $DIR/installs/nginx-core/mime.types /usr/local/nginx/conf/
@@ -213,7 +224,7 @@ install_nginx_core() {
   sudo mkdir /usr/local/nginx/conf/services
 
   # Enable SystemD
-  echo 38 | dialog --title "Installing OSP" --gauge "Setting up Nginx SystemD" 10 70 0
+  echo 75 | dialog --title "Installing Nginx-Core" --gauge "Setting up Nginx SystemD" 10 70 0
 
   sudo cp $DIR/installs/nginx-core/nginx-osp.service /etc/systemd/system/nginx-osp.service
   sudo systemctl daemon-reload
@@ -222,27 +233,32 @@ install_nginx_core() {
   install_ffmpeg
 
   # Create HLS directory
-  echo 60 | dialog --title "Installing OSP" --gauge "Creating OSP Video Directories" 10 70 0
+  echo 80 | dialog --title "Installing Nginx-Core" --gauge "Creating OSP Video Directories" 10 70 0
   sudo mkdir -p "$web_root"
   sudo mkdir -p "$web_root/live"
   sudo mkdir -p "$web_root/videos"
   sudo mkdir -p "$web_root/live-adapt"
   sudo mkdir -p "$web_root/stream-thumb"
 
-  echo 70 | dialog --title "Installing OSP" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
+  echo 90 | dialog --title "Installing Nginx-Core" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
   sudo chown -R "$http_user:$http_user" "$web_root"
 
   # Start Nginx
-  echo 100 | dialog --title "Installing OSP" --gauge "Starting Nginx" 10 70 0
+  echo 100 | dialog --title "Installing Nginx-Core" --gauge "Starting Nginx" 10 70 0
   sudo systemctl start nginx-osp.service 
 
 }
 
 install_osp_rtmp() {
+  echo 10 | dialog --title "Installing OSP-RTMP" --gauge "Intalling Prereqs" 10 70 0
   install_prereq
+  echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt
+  echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services
+
+  echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Install OSP-RTMP Application" 10 70 0
   sudo mkdir /opt/osp-rtmp
 
   # Setup Nginx-RTMP Socket Directory
@@ -250,6 +266,7 @@ install_osp_rtmp() {
   sudo mkdir /opt/osp-rtmp/rtmpsocket
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket
 
+echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service
   sudo systemctl daemon-reload
   sudo systemctl enable osp-rtmp.service
@@ -257,7 +274,9 @@ install_osp_rtmp() {
 
 install_redis() {
   # Install Redis
+  echo 50 | dialog --title "Installing Redis" --gauge "Installing Redis Server" 10 70 0
   sudo apt-get install redis -y
+  echo 25 | dialog --title "Installing Redis" --gauge "Configuring Redis" 10 70 0
   sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf
 }
 
@@ -642,7 +661,18 @@ if [ $# -eq 0 ]
         echo "resetejabberd: Resets eJabberd configuration and Restarts"
         ;;
       install )
+        install_nginx_core
+        install_redis
+        install_ejabberd
+        install_osp_rtmp
         install_osp
+        sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py
+        sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+        generate_ejabberd_admin
+        install_mysql
+        sudo systemctl restart nginx-osp
+        sudo systemctl start osp.target
+        sudo systemctl start osp-rtmp
         ;;
       restartnginx )
         systemctl restart nginx-osp
