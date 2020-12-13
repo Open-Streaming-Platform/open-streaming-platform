@@ -186,6 +186,7 @@ install_nginx_core() {
   echo 10 | dialog --title "Installing Nginx-Core" --gauge "Downloading Nginx Source" 10 70 0
   if cd /tmp
   then
+          echo 5 | dialog --title "Installing Nginx-Core" --gauge "Downloading Nginx Source" 10 70 0
           sudo wget -q "http://nginx.org/download/nginx-1.17.3.tar.gz"
           echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip"
@@ -288,15 +289,18 @@ install_osp_edge () {
   3>&1 1>&2 2>&3 3>&-)
 
   # Grab Configuration
+  echo 10 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sudo cp $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations
   sudo cp $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers
   sudo cp $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services
 
   # Setup Configuration with IP
+  echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf
 
   # Make OSP-Edge Directory for RTMP sockets
+  echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
   sudo mkdir /opt/osp-edge
   sudo mkdir /opt/osp-edge/rtmpsocket
   sudo chown -R www-data:www-data /opt/osp-edge/rtmpsocket
@@ -308,24 +312,27 @@ install_osp_edge () {
 
   sudo chown -R www-data:www-data /var/www
 
+  echo 75 | dialog --title "Installing OSP-Edge" --gauge "Setting up FFMPEG" 10 70 0
   #Setup FFMPEG for recordings and Thumbnails
-  sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y
-  sudo apt-get update
-  sudo apt-get install ffmpeg -y
+  install_ffmpeg
 
   # Start Nginx
+  echo 90 | dialog --title "Installing OSP-Edge" --gauge "Restarting Nginx Core" 10 70 0
   sudo systemctl restart nginx-osp.service
 }
 
 install_ejabberd() {
-
+  echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
   install_prereq
   sudo pip3 install requests
 
   # Install ejabberd
+  echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
   sudo wget -O "/tmp/ejabberd-20.04-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.04/ejabberd-20.04-linux-x64.run"
+  echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-20.04-linux-x64.run
   /tmp/ejabberd-20.04-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0
+  echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /usr/local/ejabberd/conf 
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml
   sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py
@@ -335,10 +342,13 @@ install_ejabberd() {
   dialog --nocancel --title "Setting up eJabberd" \
          --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
+  echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml
+  echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
   sudo systemctl daemon-reload
   sudo systemctl enable ejabberd
   sudo systemctl start ejabberd
+  echo 95 | dialog --title "Installing ejabberd" --gauge "Installing Nginx File" 10 70 0
   sudo cp $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/
 }
 
@@ -504,23 +514,35 @@ install_menu() {
         display_result "Install OSP"
         ;;
       2 )
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP Core" 10 70 0
         install_osp
+        echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp
         ;;
       3 )
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP-RTMP" 10 70 0
         install_osp_rtmp
+        echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp
         ;;
       4 )
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP-EDGE" 10 70 0
         install_osp_edge
+        echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp
         ;;
       5 )
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
         install_ejabberd
+        echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp
         ;;
     esac
