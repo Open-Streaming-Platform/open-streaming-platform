@@ -477,17 +477,28 @@ install_menu() {
         echo "Program terminated."
         ;;
       1 )
+        echo 10 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 20 | dialog --title "Installing OSP" --gauge "Installing Redis" 10 70 0
         install_redis
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
         install_ejabberd
+        echo 40 | dialog --title "Installing OSP" --gauge "Installing OSP-RTMP" 10 70 0
         install_osp_rtmp
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP Core" 10 70 0
         install_osp
+        echo 65 | dialog --title "Installing OSP" --gauge "Setting Up Configuration Files" 10 70 0
         sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py
         sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+        echo 75 | dialog --title "Installing OSP" --gauge "Setting up ejabberd" 10 70 0
         generate_ejabberd_admin
+        echo 80 | dialog --title "Installing OSP" --gauge "Installing MySQL" 10 70 0
         install_mysql
+        echo 85 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp
+        echo 90 | dialog --title "Installing OSP" --gauge "Starting OSP Core" 10 70 0
         sudo systemctl start osp.target
+        echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp
         result=$(echo "OSP Install Completed! \n\nVisit http:\\FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
         display_result "Install OSP"
