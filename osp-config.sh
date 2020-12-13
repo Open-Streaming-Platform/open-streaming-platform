@@ -685,47 +685,108 @@ if [ $# -eq 0 ]
         echo "Available Commands:"
         echo ""
         echo "help: Displays this help"
-        echo "install: Installs/Reinstalls OSP"
-        echo "restartnginx: Restarts Nginx"
-        echo "restartosp: Restarts OSP"
-        echo "upgrade: Upgrades OSP"
-        echo "dbupgrade: Upgrades the Database Only"
-        echo "resetnginx: Resets the Nginx Configuration and Restarts"
-        echo "resetejabberd: Resets eJabberd configuration and Restarts"
+        echo "install: Installs/Reinstalls OSP Components - Options: osp, osp-core, nginx, rtmp, edge, ejabberd"
+        echo "restart: Restarts OSP Components - Options: osp, osp-core, nginx, rtmp, ejabberd"
+        echo "upgrade: Upgrades OSP Components - Options: osp, osp-core, rtmp, ejabberd, db"
+        echo "reset: Resets OSP Compoents to Defaults - Options: nginx, ejabberd"
         ;;
       install )
-        install_nginx_core
-        install_redis
-        install_ejabberd
-        install_osp_rtmp
-        install_osp
-        sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py
-        sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
-        generate_ejabberd_admin
-        install_mysql
-        sudo systemctl restart nginx-osp
-        sudo systemctl start osp.target
-        sudo systemctl start osp-rtmp
+        case $2 in
+          osp )
+            install_nginx_core
+            install_redis
+            install_ejabberd
+            install_osp_rtmp
+            install_osp
+            sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py
+            sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py
+            generate_ejabberd_admin
+            install_mysql
+            sudo systemctl restart nginx-osp
+            sudo systemctl start osp.target
+            sudo systemctl start osp-rtmp
+            ;;
+          nginx )
+            install_nginx_core
+            ;;
+          rtmp )
+            install_nginx_core
+            install_osp_rtmp
+            ;;
+          edge )
+            install_nginx_core
+            install_osp_edge
+            ;;
+          ejabberd )
+            install_nginx_core
+            install_ejabberd
+            ;;
+          osp-core )
+            install_nginx_core
+            install_osp
+            ;;
+        esac
         ;;
-      restartnginx )
-        systemctl restart nginx-osp
-        ;;
-      restartosp )
-        systemctl restart osp.target
+      restart )
+        case $2 in
+          osp )
+            sudo systemctl restart ejabberd
+            sudo systemctl restart nginx-osp
+            sudo systemctl restart osp-rtmp
+            sudo systemctl restart osp.target
+            ;;
+          osp-core )
+            sudo systemctl restart osp.target
+            ;;
+          nginx )
+            sudo systemctl restart nginx-osp
+            ;;
+          rtmp )
+            sudo systemctl restart osp-rtmp
+            ;;
+          ejabberd )
+            sudo systemctl restart ejabberd
+            ;;
+        esac
         ;;
       upgrade )
-        upgrade_osp
+        case $2 in
+          osp )
+            upgrade_osp
+            upgrade_rtmp
+            upgrade_ejabberd
+            upgrade_db
+            sudo systemctl restart ejabberd
+            sudo systemctl restart nginx-osp
+            sudo systemctl restart osp.target
+            sudo systemctl restart osp-rtmp
+            ;;
+          osp-core )
+            upgrade_osp
+            sudo systemctl restart osp.target
+            ;;
+          rtmp )
+            upgrade_rtmp
+            ;;
+          ejabberd )
+            upgrade_ejabberd
+            ;;
+          db )
+            upgrade_db
+            ;;
+        esac
         ;;
-      dbupgrade )
-        upgrade_db
-        ;;
-      resetnginx )
-        reset_nginx
-        ;;
-      resetejabberd )
-        reset_ejabberd
-        ;;
-    esac
+      reset )
+        case $2 in
+          nginx )
+            reset_nginx
+            ;;
+          ejabberd )
+            reset_ejabberd
+            ;;
+          esac
+          ;;
+      esac
     fi
 
 #######################################################
