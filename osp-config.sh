@@ -131,7 +131,7 @@ upgrade_osp() {
 }
 
 install_prereq() {
-  if  $arch
+  if  [ "$arch" = "false" ]
   then
           # Get Arch Dependencies
           echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Arch" 10 70 0
@@ -500,6 +500,8 @@ install_menu() {
         sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py >> $OSPLOG 2>&1
         echo 75 | dialog --title "Installing OSP" --gauge "Setting up ejabberd" 10 70 0
         generate_ejabberd_admin
+        echo 78 | dialog --title "Installing OSP" --gauge "Restarting ejabberd" 10 70 0
+        sudo systemctl restart ejabberd >> $OSPLOG 2>&1
         echo 80 | dialog --title "Installing OSP" --gauge "Installing MySQL" 10 70 0
         install_mysql
         echo 85 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
