@@ -2,7 +2,6 @@
 # OSP Control Script
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OSPLOG="/var/log/osp/installer.log"
-echo '' > $OSPLOG 2>&1
 VERSION=$(<version)
 
 DIALOG_CANCEL=1
