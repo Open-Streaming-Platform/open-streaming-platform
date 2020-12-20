@@ -128,5 +128,14 @@ class restreamDestinations(db.Model):
         self.enabled = False
         self.url = url
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'channel': self.channelData.channelLoc,
+            'name': self.name,
+            'enabled': self.enabled,
+            'url': self.url
+        }
+
     def __repr__(self):
         return '<id %r>' % self.id

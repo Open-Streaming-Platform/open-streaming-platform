@@ -1,13 +1,16 @@
-from flask import flash
+from flask import flash, current_app
+from flask_wtf import RecaptchaField
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm, validators
 from flask_security import UserMixin, RoleMixin
 from .shared import db
 from classes import Sec
-from uuid import uuid4
+from globals import globalvars
 
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
     email = StringField('email', [Required()])
+    if globalvars.recaptchaEnabled is True:
+        recaptcha = RecaptchaField()
 
     def validate(self):
         success = True
@@ -22,24 +25,40 @@ class ExtendedRegisterForm(RegisterForm):
         return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
-    username = StringField('username', [Required()])
+    username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
+    email = StringField('email', [Required()])
+    if globalvars.recaptchaEnabled is True:
+        recaptcha = RecaptchaField()
+
+    def validate(self):
+        success = True
+        if not super(ExtendedConfirmRegisterForm, self).validate():
+            success = False
+        if db.session.query(User).filter(User.username == self.username.data.strip()).first():
+            self.username.errors.append("Username already taken")
+            success = False
+        if db.session.query(User).filter(User.email == self.email.data.strip()).first():
+            self.email.errors.append("Email address already taken")
+            success = False
+        return success
 
 class OSPLoginForm(LoginForm):
 
     def validate(self):
-
         isvalid = False
         userQuery = Sec.User.query.filter_by(username=self.email.data.strip(), authType=0).first()
         if userQuery is not None:
             isvalid = True
-        userQuery = Sec.User.query.filter_by(email=self.email.data.strip(), authType=0).first()
-        if userQuery is not None:
-            isvalid = True
+        if isvalid is False:
+            userQuery = Sec.User.query.filter_by(email=self.email.data.strip(), authType=0).first()
+            if userQuery is not None:
+                isvalid = True
         if isvalid is True:
             response = super(OSPLoginForm, self).validate()
             return response
-        flash("Invalid Username or Password","error")
-        return False
+        else:
+            flash("Invalid Username or Password","error")
+            return False
 
 roles_users = db.Table('roles_users',
         db.Column('id', db.Integer(), primary_key=True),
