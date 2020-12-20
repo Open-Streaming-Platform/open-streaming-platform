@@ -194,10 +194,10 @@ install_nginx_core() {
           echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" >> $OSPLOG 2>&1
           echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
-          sudo tar xfz nginx-1.17.3.tar.gz >> $OSPLOG 2>&1
+          sudo tar xfz nginx-1.17.3.tar.gz
           sudo unzip -qq -o v1.2.1.zip >> $OSPLOG 2>&1
-          sudo tar xfz zlib-1.2.11.tar.gz >> $OSPLOG 2>&1
-          sudo tar xfz master.tar.gz >> $OSPLOG 2>&1
+          sudo tar xfz zlib-1.2.11.tar.gz
+          sudo tar xfz master.tar.gz
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-1.17.3
           then
