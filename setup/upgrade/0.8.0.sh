@@ -17,7 +17,8 @@ read -p "Continue? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][e
 sudo systemctl stop osp.target
 sudo systemctl stop nginx-osp
 sudo rm /usr/local/nginx/conf/osp-*.conf
-echo ''
+sudo systemctl stop ejabberd
+sudo rm -rf /usr/local/ejabberd
 echo ''
 sudo cp /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.old
 echo 'Your original nginx.conf file has been moved to /usr/local/nginx/conf/nginx.conf.old.  Please update the new nginx.conf file with any customizations before running.'
@@ -25,5 +26,5 @@ echo ''
 sudo cp /opt/osp/conf/config.py /opt/osp/conf/config.py.old
 echo 'Your original OSP config.py has been moved to /opt/osp/conf/config.py.old.  Please update the new config.py with any customizations before running.'
 echo ''
-echo 'Please run the osp-config.py installer and select Install > Install OSP - Single Server'
+echo 'Please run the osp-config.py installer and select Install > Install OSP - Single Server.  During the after the install process, you will need to transpose your original SQL user and password to the new config.py and restart osp.target'
 exit 1
