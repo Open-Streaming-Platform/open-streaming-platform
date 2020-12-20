@@ -1,0 +1,7 @@
+# Flask Secret Key
+secretKey="CHANGEME"
+
+# Enables Debug Mode
+debugMode = False
+
+ospCoreAPI = "http://127.0.0.1:5010"

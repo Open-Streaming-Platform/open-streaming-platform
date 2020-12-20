@@ -1,4 +1,4 @@
-version = "0.7.9"
+version = "0.8.0"
 appDBVersion = 0.70
 
 videoRoot = "/var/www/"
@@ -34,3 +34,7 @@ edgeRestreamSubprocesses = {}
 
 # ejabberd Server Configuration
 ejabberdServer = "127.0.0.1"
+
+recaptchaEnabled = False
+RECAPTCHA_PUBLIC_KEY = ''
+RECAPTCHA_PRIVATE_KEY = ''

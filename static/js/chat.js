@@ -68,7 +68,7 @@ function connectChat() {
     connection = new Strophe.Connection(url);
     connection.rawInput = rawInput;
     connection.rawOutput = rawOutput;
-    connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+    connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
 }
 
 // Function for Handling XMPP Connection, Joining a Room, and Initializing Intervals
@@ -218,6 +218,32 @@ function room_pres_handler(a, b, c) {
     var presenceType = 'online';
   }
 
+  // Handle Public Presence Notifications
+  var messageTimestamp = moment().format('hh:mm A');
+  if (presenceType == "unavailable") {
+
+      var msgfrom = "SERVER";
+      if (status.includes("307")) {
+          msg = Strophe.getResourceFromJid(from) + " was kicked from the room.";
+      } else if (status.includes("301")) {
+          msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
+      } else {
+          msg = Strophe.getResourceFromJid(from) + " has left the room.";
+      }
+
+      var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+      tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+      tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + msgfrom + '</span>';
+      tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
+      tempNode.style.display = "block";
+      chatDiv = document.getElementById("chat");
+      var needsScroll = checkChatScroll()
+      chatDiv.appendChild(tempNode);
+      if (needsScroll) {
+          scrollChatWindow();
+      }
+  }
+
   // Check if is own status change (Kicks/Bans/Etc)
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
       console.log("Current User Status Change to: " + presenceType)
@@ -278,6 +304,11 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
+
+  if (Strophe.getResourceFromJid(from) == null) {
+      from = ROOMNAME + "@" + ROOM_SERVICE + "/SERVER";
+  }
+
   if  (!(CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from)))) {
 
       if (timestampElement[0] != undefined) {
@@ -296,7 +327,11 @@ function onMessage(msg) {
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-          tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+          if (Strophe.getResourceFromJid(from) == 'SERVER') {
+              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+          } else {
+              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+          }
           tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
@@ -386,7 +421,6 @@ function parseOccupants(resp) {
   for (let i = 0; i < chatMembersArray['moderator'].length; i++) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-1";
-      //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['owner'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
       document.getElementById('ModeratorList').appendChild(userEntry)
   }
@@ -396,7 +430,6 @@ function parseOccupants(resp) {
   for (let i = 0; i < chatMembersArray['participant'].length; i++) {
       var userEntry = document.createElement('div');
       userEntry.className = "member my-1";
-      //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['participant'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
       document.getElementById('ParticipantList').appendChild(userEntry)
   }
@@ -404,10 +437,8 @@ function parseOccupants(resp) {
   // Visitor
   document.getElementById('VisitorList').innerHTML="";
   for (let i = 0; i < chatMembersArray['visitor'].length; i++) {
-      //document.getElementById('chatMembers').append(chatMembersArray['none'][i]['username']);
       var userEntry = document.createElement('div');
       userEntry.className = "member my-1";
-      //userEntry.innerHTML = '<img class="rounded shadow" src="https://picsum.photos/48"> ' + '<span>' + chatMembersArray['visitor'][i]['username'] + '</span>';
       userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
       document.getElementById('VisitorList').appendChild(userEntry)
   }
@@ -436,6 +467,10 @@ function addUser(username, affiliation, role) {
 function exitRoom(room) {
   console.log("Left Room: " + room);
   connection.muc.leave(room, username + '@' + server, null, null);
+}
+
+function hideUserMessages(nickname) {
+    $("div > .chatUsername:contains(nickname)").parent().parent().parent().parent().hide();
 }
 
 // Mod Controls

@@ -19,17 +19,19 @@ def buildMissingRooms():
         try:
             xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
         except:
+            print({"level": "info", "message": "Rebuilding missing ejabberd room - " + str(channel.channelLoc)})
             ejabberd.create_room(channel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
 
             for key, value in room_config.items():
                 ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
-            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.username + '@' + sysSettings.siteAddress, 'owner')
+            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.uuid + '@' + sysSettings.siteAddress, 'owner')
 
     return True
 
 def verifyExistingRooms():
     sysSettings = settings.query.first()
+    print({"level": "info", "message": "Verifying existing ejabberd Rooms"})
     for channel in Channel.Channel.query.all():
         xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
 
@@ -43,15 +45,15 @@ def verifyExistingRooms():
 
         for user in affiliationList:
             if user['domain'] != sysSettings.siteAddress:
-                userQuery = User.query.filter_by(username=user['username']).first()
+                userQuery = User.query.filter_by(uuid=user['username']).first()
                 if userQuery is not None:
                     ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
-                                                  userQuery.username + '@' + sysSettings.siteAddress, user['affiliation'])
+                                                  userQuery.uuid + '@' + sysSettings.siteAddress, user['affiliation'])
 
-        if not all((d['username'] == channel.owner.username and d['domain'] == sysSettings.siteAddress) for d in
+        if not all((d['username'] == channel.owner.uuid and d['domain'] == sysSettings.siteAddress) for d in
                    affiliationList):
             ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
-                                          channel.owner.username + '@' + sysSettings.siteAddress, 'owner')
+                                          channel.owner.uuid + '@' + sysSettings.siteAddress, 'owner')
 
         if channel.protected:
             ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'true')
@@ -74,7 +76,7 @@ def cleanInvalidRooms():
             if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
-    print('Invalid Rooms Pruned: ' + str(count) )
+    print({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
 
 def getChannelCounts(channelLoc):
     sysSettings = settings.query.first()

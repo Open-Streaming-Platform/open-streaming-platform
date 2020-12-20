@@ -549,9 +549,11 @@
         // Settings and Event Hooks for XMPP
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
+        var userUUID = "{{current_user.uuid}}";
         var xmppPassword = "{{current_user.xmppToken}}";
         {% else %}
         var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+        var userUUID = username;
         var xmppPassword = "fakepw";
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
@@ -594,15 +596,15 @@
             connection = new Strophe.Connection(url);
             connection.rawInput = rawInput;
             connection.rawOutput = rawOutput;
-            connection.connect(username.toLowerCase() + '@' + server, xmppPassword, onConnect);
+            connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
         });
 
         // Disconnect XMPP on Page Unload
-        $(window).bind('unload', function(){
+        $(window).bind('beforeunload', function(){
               // Leave Room First
               exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
               // Execute XMPP Disconnection Process
-              connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+              //connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
               connection.flush();
               connection.disconnect();
               // Disconnect from SocketIO

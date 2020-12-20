@@ -1,3 +1,17 @@
+0.8.0
+==============================================
+Split all subsystems of OSP into separate services.  This will allow OSP to be scaled to multiple servers/processes.
+Enabled SECURITY_TRACKABLE to allow for future IP Address filtering
+Added Google ReCaptcha to Registration as an option for Reducing Spam Bots from Registering Users
+ejabberd Usernames are now tracked by User UUID to prevent issues where a username may contain invalid characters.  User UUIDs can be found in the user settings screen
+Fixed an issue where Users created in the Admin Console did not have XMPP Tokens or UUIDs
+Changed Formatting of User Settings Page
+Added Storage Usage to User Settings Pages
+Removed userSettings.html from Dark Cow
+Moved RTMP Authentication Checks to Separate Function
+Added APIv1 Endpoint for RTMP Authentication Checks and Processing
+
+
 0.7.9
 ==============================================
 Corrected an issue where guests popping out chat did not load under defaultv2 based themes
@@ -6,7 +20,6 @@ Made modifications to the Defaultv2 Live View Themes to prevent video screen shu
 Adjusted method for counting total views of a live stream to prevent inaccurate numbers
 Added a new check for new streams to pull the values of current XMPP channel members for current viewers and total viewers
 Added RTMP ingest hint under streamkey in User Channels page per Issue #283
-** Important Note ** This will be the last version to support SQLite as a database option.  Future versions will require MySQL or MariaDB for databases.  It is recommended that you migrate now!
 
 0.7.8
 ==============================================

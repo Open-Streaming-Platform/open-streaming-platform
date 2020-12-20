@@ -55,7 +55,7 @@
                                     <b>Username: </b>
                                 </div>
                                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                                    {{current_user.username}}@{{sysSettings.siteAddress}}
+                                    {{current_user.uuid}}@{{sysSettings.siteAddress}}
                                 </div>
                             </div>
                             <div class="row">
@@ -70,6 +70,30 @@
                                           <input type="text" name="xmppToken" id="xmppToken" class="form-control" readonly value="{{current_user.xmppToken}}">
                                     </div>
                                 </div>
+                            </div>
+                            <hr>
+                            <b>Storage Usage</b>
+                            <div class="row mt-1">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Channel Name</th>
+                                            <th>Usage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for chan in channelUsage %}
+                                        <tr>
+                                            <td>{{ chan['name'] }}</td>
+                                            <td>{{ chan['usage'] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td></td>
+                                            <td>{{ totalSpaceUsed }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <button type="submit" class="btn btn-success">Submit</button>
                         </form>
