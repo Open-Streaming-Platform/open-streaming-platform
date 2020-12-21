@@ -1,8 +1,7 @@
 #!/bin/bash
 # OSP Control Script
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-OSPLOG="/opt/osp/logs/installer.log"
-echo '' > $OSPLOG 2>&1
+OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
 DIALOG_CANCEL=1
@@ -643,7 +642,7 @@ upgrade_menu() {
 ##########################################################
 # Start Main Script Execution
 ##########################################################
-
+sudo mkdir /var/log/osp/ >> /dev/null
 if [ $# -eq 0 ]
   then
     while true; do
