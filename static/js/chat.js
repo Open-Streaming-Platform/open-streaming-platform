@@ -222,8 +222,6 @@ function room_pres_handler(a, b, c) {
     var presenceType = presenceStatement.attributes.type.value;
   } else {
     var presenceType = 'online';
-    msg = Strophe.getResourceFromJid(from) + " joined the room.";
-    serverMessage(msg);
   }
 
   // Handle Public Presence Notifications
@@ -238,18 +236,10 @@ function room_pres_handler(a, b, c) {
       } else {
           msg = Strophe.getResourceFromJid(from) + " has left the room.";
       }
-
-      var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-      tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-      tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + msgfrom + '</span>';
-      tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
-      tempNode.style.display = "block";
-      chatDiv = document.getElementById("chat");
-      var needsScroll = checkChatScroll()
-      chatDiv.appendChild(tempNode);
-      if (needsScroll) {
-          scrollChatWindow();
-      }
+      serverMessage(msg);
+  } else if (presenceType == 'online') {
+      msg = Strophe.getResourceFromJid(from) + " joined the room.";
+      serverMessage(msg);
   }
 
   // Check if is own status change (Kicks/Bans/Etc)
@@ -305,6 +295,7 @@ function room_pres_handler(a, b, c) {
   return true;
 }
 
+// Function for Showing Messages as Server to Client
 function serverMessage(msg) {
     var msgfrom = "SERVER";
     var messageTimestamp = moment().format('hh:mm A');
