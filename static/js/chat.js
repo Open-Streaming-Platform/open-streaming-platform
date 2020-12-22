@@ -222,6 +222,8 @@ function room_pres_handler(a, b, c) {
     var presenceType = presenceStatement.attributes.type.value;
   } else {
     var presenceType = 'online';
+    msg = Strophe.getResourceFromJid(from) + " joined the room.";
+    serverMessage(msg);
   }
 
   // Handle Public Presence Notifications
@@ -301,6 +303,23 @@ function room_pres_handler(a, b, c) {
       }
   }
   return true;
+}
+
+function serverMessage(msg) {
+    var msgfrom = "SERVER";
+    var messageTimestamp = moment().format('hh:mm A');
+
+    var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+    tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+    tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + msgfrom + '</span>';
+    tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
+    tempNode.style.display = "block";
+    chatDiv = document.getElementById("chat");
+    var needsScroll = checkChatScroll()
+    chatDiv.appendChild(tempNode);
+    if (needsScroll) {
+        scrollChatWindow();
+    }
 }
 
 // Function to Handle New Messages
