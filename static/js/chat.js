@@ -148,7 +148,7 @@ function onPresence(presence) {
     // disco stuff
     if (connection.disco) {
         connection.disco.info(fullJID)
-        connection.disco.identity('client', 'web', 'OSP Webchat', 'en');
+        connection.disco.addIdentity('client', 'web', 'OSP Webchat', 'en');
     }
   var presence_type = $(presence).attr('type'); // unavailable, subscribed, etc...
   var from = $(presence).attr('from'); // the jabber_id of the contact
