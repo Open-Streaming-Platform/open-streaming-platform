@@ -1,3 +1,7 @@
+0.8.1
+==============================================
+OSP-Core: Added Missing Chat Join Messages
+
 0.8.0
 ==============================================
 Split all subsystems of OSP into separate services.  This will allow OSP to be scaled to multiple servers/processes.
