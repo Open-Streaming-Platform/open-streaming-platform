@@ -1,3 +1,4 @@
+var debug = false;
 var connection = null;
 var fullJID = null;
 var OccupantsArray = [];
@@ -147,7 +148,7 @@ function onPresence(presence) {
     // disco stuff
     if (connection.disco) {
         connection.disco.info(fullJID)
-        connection.disco.identity('client', 'web', 'OSP Webchat', 'en');
+        connection.disco.addIdentity('client', 'web', 'OSP Webchat', 'en');
     }
   var presence_type = $(presence).attr('type'); // unavailable, subscribed, etc...
   var from = $(presence).attr('from'); // the jabber_id of the contact
@@ -172,9 +173,9 @@ function enterRoom(room) {
   console.log('Connecting to: ' + room);
   connection.muc.init(connection);
   if (CHANNELPROTECTED) {
-      connection.muc.join(room, username, room_msg_handler, room_pres_handler, null, CHANNELTOKEN);
+      connection.muc.join(room, username, room_msg_handler, room_pres_handler, room_roster_handler, CHANNELTOKEN);
   } else {
-      connection.muc.join(room, username, room_msg_handler, room_pres_handler, null);
+      connection.muc.join(room, username, room_msg_handler, room_pres_handler, room_roster_handler);
   }
   connection.muc.setStatus(room, username + '@' + server, 'subscribed', 'chat');
   console.log('Connected to: ' + room);
@@ -197,11 +198,21 @@ function sendMessage() {
 
 
 function room_msg_handler(a, b, c) {
-  log('MUC: room_msg_handler');
+    if (debug == true) {
+        console.log(a);
+        console.log(b);
+        console.log(c);
+    }
+  //log('MUC: room_msg_handler');
   return true;
 }
 
 function room_pres_handler(a, b, c) {
+  if (debug == true) {
+      console.log(a);
+      console.log(b);
+      console.log(c);
+  }
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
@@ -230,18 +241,10 @@ function room_pres_handler(a, b, c) {
       } else {
           msg = Strophe.getResourceFromJid(from) + " has left the room.";
       }
-
-      var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-      tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-      tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + msgfrom + '</span>';
-      tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
-      tempNode.style.display = "block";
-      chatDiv = document.getElementById("chat");
-      var needsScroll = checkChatScroll()
-      chatDiv.appendChild(tempNode);
-      if (needsScroll) {
-          scrollChatWindow();
-      }
+      serverMessage(msg);
+  } else if (presenceType == 'online') {
+      msg = Strophe.getResourceFromJid(from) + " joined the room.";
+      serverMessage(msg);
   }
 
   // Check if is own status change (Kicks/Bans/Etc)
@@ -295,6 +298,32 @@ function room_pres_handler(a, b, c) {
       }
   }
   return true;
+}
+
+function room_roster_handler(a,b,c) {
+    if (debug == true) {
+        console.log(a);
+        console.log(b);
+        console.log(c);
+    }
+}
+
+// Function for Showing Messages as Server to Client
+function serverMessage(msg) {
+    var msgfrom = "SERVER";
+    var messageTimestamp = moment().format('hh:mm A');
+
+    var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+    tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+    tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + msgfrom + '</span>';
+    tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
+    tempNode.style.display = "block";
+    chatDiv = document.getElementById("chat");
+    var needsScroll = checkChatScroll()
+    chatDiv.appendChild(tempNode);
+    if (needsScroll) {
+        scrollChatWindow();
+    }
 }
 
 // Function to Handle New Messages
