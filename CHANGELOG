@@ -1,6 +1,7 @@
 0.8.1
 ==============================================
 OSP-Core: Added Missing Chat Join Messages
+OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
 
 0.8.0
 ==============================================
