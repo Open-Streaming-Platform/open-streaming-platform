@@ -1,3 +1,4 @@
+var debug = false;
 var connection = null;
 var fullJID = null;
 var OccupantsArray = [];
@@ -202,6 +203,11 @@ function room_msg_handler(a, b, c) {
 }
 
 function room_pres_handler(a, b, c) {
+  if (debug == true) {
+      console.log(a);
+      console.log(b);
+      console.log(c);
+  }
   var presenceStatement = a;
   var from = presenceStatement.attributes.from.value;
   var to = presenceStatement.attributes.to.value;
