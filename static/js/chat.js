@@ -499,7 +499,9 @@ function exitRoom(room) {
 }
 
 function hideUserMessages(nickname) {
-    $("div > .chatUsername:contains(nickname)").parent().parent().parent().parent().hide();
+    var msgDivs = $("div > .chatUsername:contains('" + nickname + "')");
+    msgDivs.parent().parent().parent().parent().hide();
+    return true;
 }
 
 // Mod Controls
