@@ -11,3 +11,15 @@ class banList(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class ipList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ipAddress = db.Column(db.String(1024), unique=True)
+    reason = db.Column(db.String(2048))
+
+    def __init__(self, ipAddress, reason="None"):
+        self.ipAddress = ipAddress
+        self.reason = reason
+
+    def __repr__(self):
+        return '<id %r>' % self.id
