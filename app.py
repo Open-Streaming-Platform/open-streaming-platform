@@ -428,7 +428,7 @@ def do_before_request():
 
     banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
     if banQuery != None:
-        return {'error': 'banned', 'reason':banQuery.reason}
+        return str({'error': 'banned', 'reason':banQuery.reason})
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
