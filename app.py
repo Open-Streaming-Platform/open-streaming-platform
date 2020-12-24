@@ -419,18 +419,16 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 #----------------------------------------------------------------------------#
 
 # Check all IP Requests for banned IP Addresses
-#@app.before_request
-#def do_before_request():
-#    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-#        requestIP = request.environ['REMOTE_ADDR']
-#    else:
-#        requestIP = request.environ['HTTP_X_FORWARDED_FOR']
+@app.before_request
+def do_before_request():
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        requestIP = request.environ['REMOTE_ADDR']
+    else:
+        requestIP = request.environ['HTTP_X_FORWARDED_FOR']
 
-#    banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
-#    if banQuery != None:
-#        return {'error': 'banned', 'reason':banQuery.reason}
-#    else:
-#        return True
+    banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
+    if banQuery != None:
+        return {'error': 'banned', 'reason':banQuery.reason}
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
