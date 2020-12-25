@@ -166,7 +166,7 @@
             {% else %}
             var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
             {% endif %}
-            var userUUID = username;
+            var userUUID = "{{session['guestUUID']}}";
             var xmppPassword = "fakepw";
         {% endif %}
         var serverproto = '{{sysSettings.siteProtocol}}';
