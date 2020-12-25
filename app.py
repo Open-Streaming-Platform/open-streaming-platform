@@ -432,10 +432,19 @@ def do_before_request():
     if banQuery != None:
         return str({'error': 'banned', 'reason':banQuery.reason})
 
-    # Apply Guest UUID in Session
+    # Apply Guest UUID in Session and Handle Object
     if current_user.is_authenticated is False:
         if 'guestUUID' not in session:
             session['guestUUID'] = str(uuid.uuid4())
+        GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
+        if GuestQuery is not None:
+            GuestQuery.last_active_at = datetime.datetime.now()
+            GuestQuery.last_active_ip = requestIP
+            db.session.commit()
+        else:
+            NewGuest = Sec.Guest(session['guestUUID'], requestIP)
+            db.session.add(NewGuest)
+            db.session.commit()
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
