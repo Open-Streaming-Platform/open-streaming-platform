@@ -15,7 +15,7 @@ import json
 import uuid
 
 # Import 3rd Party Libraries
-from flask import Flask, redirect, request, abort, flash, current_app
+from flask import Flask, redirect, request, abort, flash, current_app, session
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.signals import user_registered
@@ -418,9 +418,11 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 # Additional Handlers.
 #----------------------------------------------------------------------------#
 
-# Check all IP Requests for banned IP Addresses
+
 @app.before_request
 def do_before_request():
+
+    # Check all IP Requests for banned IP Addresses
     if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
         requestIP = request.environ['REMOTE_ADDR']
     else:
@@ -429,6 +431,11 @@ def do_before_request():
     banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
     if banQuery != None:
         return str({'error': 'banned', 'reason':banQuery.reason})
+
+    # Apply Guest UUID in Session
+    if current_user.is_authenticated is False:
+        if 'guestUUID' not in session:
+            session['guestUUID'] = str(uuid.uuid4())
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
