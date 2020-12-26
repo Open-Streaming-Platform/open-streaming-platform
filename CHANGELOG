@@ -2,7 +2,10 @@
 ==============================================
 OSP-Core: Added Missing Chat Join Messages
 OSP-Core: Added the Ability for Guests to View Protected Channels using Invite Codes.  Codes are Stored in the Guest's Server-Side Session Store and are Removed on OSP Restart
+OSP-Core: Added StreamHistory Table for Future Use
 OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
+OSP-Core: Fixed an early closure of the database when processing recordings, causing a logging error.
+OSP-Core: Rewrote process for determining video length.  Should no longer report the length as Unknown on long videos
 
 0.8.0
 ==============================================
