@@ -65,7 +65,7 @@ reset_ejabberd() {
   sudo mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/osp/install/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
