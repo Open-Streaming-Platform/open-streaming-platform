@@ -17,6 +17,7 @@ class logs(db.Model):
         return '<id %r>' % self.id
 
 class streamHistory(db.Model):
+    __tablename__ = "streamHistory"
     id = db.Column(db.Integer, primary_key=True)
     streamUUID = db.Column(db.String(255))
     streamerID = db.Column(db.Integer)
