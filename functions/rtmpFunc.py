@@ -14,6 +14,8 @@ from classes import Channel
 from classes import Stream
 from classes import settings
 from classes import upvotes
+from classes import logs
+from classes import topics
 
 from functions import webhookFunc
 from functions import system
@@ -169,15 +171,30 @@ def rtmp_user_deauth_check(key, ipaddress):
             streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", pending=True).first()
 
+            wasRecorded = False
+            recordingID = None
+
             if pendingVideo is not None:
                 pendingVideo.channelName = stream.streamName
                 pendingVideo.views = stream.totalViewers
                 pendingVideo.topic = stream.topic
+                wasRecorded = True
+                recordingID = pendingVideo.id
 
                 for upvote in streamUpvotes:
                     newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
                     db.session.add(newVideoUpvote)
                 db.session.commit()
+
+            topicName = "Unknown"
+            topicQuery = topics.topics.query.filter_by(id=stream.topic).first()
+            if topicQuery is not None:
+                topicName = topicQuery.name
+
+            newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
+                                                  stream.startTimestamp, datetime.datetime.now(), stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
+            db.session.add(newStreamHistory)
+            db.session.commit()
 
             for vid in streamUpvotes:
                 db.session.delete(vid)
