@@ -41,7 +41,7 @@ def check_isValidChannelViewer(channelID):
             inviteCodeQuery = invites.inviteCode.query.filter_by(channelID=channelID).all()
             for code in inviteCodeQuery:
                 if code.code in session['inviteCodes']:
-                    if code.is_valid():
+                    if code.isValid():
                         return True
                     else:
                         session['inviteCodes'].remove(code.code)
