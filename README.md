@@ -10,7 +10,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
 
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
- - Multiple Channels per User, allowing a single user to broadcast multiple streams at the same time without needing muiltiple accounts.
+ - Multiple Channels per User, allowing a single user to broadcast multiple streams at the same time without needing multiple accounts.
  - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/nCawXQs.jpg)](https://i.imgur.com/nCawXQs.jpg)
  - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://imgur.com/73Z3VB1.jpg)](https://imgur.com/73Z3VB1.jpg)
  - Manual Video Uploading of MP4s that are sourced outside of OSP
