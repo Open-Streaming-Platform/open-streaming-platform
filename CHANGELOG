@@ -1,6 +1,7 @@
 0.8.1
 ==============================================
 OSP-Core: Added Missing Chat Join Messages
+OSP-Core: Added the Ability for Guests to View Protected Channels using Invite Codes.  Codes are Stored in the Guest's Server-Side Session Store and are Removed on OSP Restart
 OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
 
 0.8.0
