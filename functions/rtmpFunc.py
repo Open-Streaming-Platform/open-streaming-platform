@@ -272,8 +272,8 @@ def rtmp_rec_Complete_handler(channelLoc, path):
             pendingVideo.length = videoFunc.getVidLength(fullVidPath)
             db.session.commit()
 
-        db.session.close()
         returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': None, 'message': 'Success - Recorded Video Processing Complete'}
+        db.session.close()
         return returnMessage
     else:
         returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': False, 'channelLoc': channelLoc, 'ipAddress': None, 'message': 'Failed - Requested Channel Does Not Exist'}
