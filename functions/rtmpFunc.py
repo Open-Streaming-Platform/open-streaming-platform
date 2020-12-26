@@ -173,8 +173,11 @@ def rtmp_user_deauth_check(key, ipaddress):
 
             wasRecorded = False
             recordingID = None
+            endTimestamp = datetime.datetime.now()
+            length = (endTimestamp - stream.startTimestamp).total_seconds()
 
             if pendingVideo is not None:
+                pendingVideo.length = length
                 pendingVideo.channelName = stream.streamName
                 pendingVideo.views = stream.totalViewers
                 pendingVideo.topic = stream.topic
@@ -192,7 +195,7 @@ def rtmp_user_deauth_check(key, ipaddress):
                 topicName = topicQuery.name
 
             newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
-                                                  stream.startTimestamp, datetime.datetime.now(), stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
+                                                  stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
             db.session.add(newStreamHistory)
             db.session.commit()
 
@@ -284,10 +287,6 @@ def rtmp_rec_Complete_handler(channelLoc, path):
 
         while not os.path.exists(fullVidPath):
             time.sleep(1)
-
-        if os.path.isfile(fullVidPath):
-            pendingVideo.length = videoFunc.getVidLength(fullVidPath)
-            db.session.commit()
 
         returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': None, 'message': 'Success - Recorded Video Processing Complete'}
         db.session.close()
