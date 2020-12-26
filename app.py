@@ -301,7 +301,6 @@ print({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 from blueprints.errorhandler import errorhandler_bp
 from blueprints.apiv1 import api_v1
-from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
 from blueprints.streamers import streamers_bp
 from blueprints.profile import profile_bp
@@ -317,7 +316,6 @@ from blueprints.oauth import oauth_bp
 # Register all Blueprints
 app.register_blueprint(errorhandler_bp)
 app.register_blueprint(api_v1)
-app.register_blueprint(rtmp_bp)
 app.register_blueprint(root_bp)
 app.register_blueprint(channels_bp)
 app.register_blueprint(play_bp)
