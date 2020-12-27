@@ -7,6 +7,7 @@ OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
 OSP-Core: Fixed an early closure of the database when processing recordings, causing a logging error.
 OSP-Core: Rewrote process for determining video length.  Should no longer report the length as Unknown on long videos
 OSP-Config: Fixed an incorrect path for auth_osp.py when performing an ejabberd reset
+OSP-Config: Fixed an issue where FFMPEG was not installed with OSP-RTMP
 
 0.8.0
 ==============================================
