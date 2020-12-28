@@ -5,6 +5,7 @@ OSP-Core: Added the Ability for Guests to View Protected Channels using Invite C
 OSP-Core: Added StreamHistory Table for Future Use
 OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
 OSP-Core: Fixed an early closure of the database when processing recordings, causing a logging error.
+OSP-Core: Fixed an issue where Flask-Security was attempting to load itself twice, causing a blueprint conflict on first run.
 OSP-Core: Rewrote process for determining video length.  Should no longer report the length as Unknown on long videos
 OSP-Config: Fixed an incorrect path for auth_osp.py when performing an ejabberd reset
 OSP-Config: Fixed an issue where FFMPEG was not installed with OSP-RTMP
