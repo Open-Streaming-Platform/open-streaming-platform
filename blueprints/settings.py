@@ -1925,10 +1925,6 @@ def initialSetup():
                     SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
 
-                # ReInitialize Flask-Security
-                security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                                    confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
-
                 email.init_app(current_app)
                 email.app = current_app
 
