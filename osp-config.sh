@@ -497,6 +497,7 @@ install_menu() {
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 90 | dialog --title "Installing OSP" --gauge "Starting OSP Core" 10 70 0
         sudo systemctl start osp.target >> $OSPLOG 2>&1
+        upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
         result=$(echo "OSP Install Completed! \n\nVisit http:\\FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
@@ -552,6 +553,7 @@ upgrade_menu() {
       "3" "Upgrade OSP-RTMP" \
       "4" "Upgrade OSP-Edge" \
       "5" "Upgrade eJabberd" \
+      "6" "Upgrade DB" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -626,6 +628,10 @@ upgrade_menu() {
         result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
+      6)
+        upgrade_db
+        result=$(echo "Database Upgrade Complete")
+        display_result "Upgrade OSP"
     esac
   done
 }
