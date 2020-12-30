@@ -98,6 +98,7 @@ upgrade_db() {
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
+  cd $DIR
 }
 
 upgrade_osp() {
