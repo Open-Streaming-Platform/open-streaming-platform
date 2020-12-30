@@ -88,6 +88,7 @@ upgrade_db() {
   UPGRADELOG="/opt/osp/logs/upgrade.log"
   echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
+  cd /opt/osp
   echo 15 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
   python3 manage.py db init >> $OSPLOG 2>&1
   echo 25 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
