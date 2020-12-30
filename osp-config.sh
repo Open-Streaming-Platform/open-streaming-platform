@@ -130,34 +130,24 @@ upgrade_osp() {
 }
 
 install_prereq() {
-  if $arch
-  then
-          # Get Arch Dependencies
-          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Arch" 10 70 0
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python curl ffmpeg --needed --noconfirm >> $OSPLOG 2>&1
-  else
-          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
-          # Get Deb Dependencies
-          sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
-          # Setup Python
-          echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
-          sudo pip3 install wheel >> $OSPLOG 2>&1
-  fi
+    echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
+    # Get Deb Dependencies
+    sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
+    # Setup Python
+    echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
+    sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
+    sudo pip3 install wheel >> $OSPLOG 2>&1
 }
 
 install_ffmpeg() {
   #Setup FFMPEG for recordings and Thumbnails
   echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  if $arch
-  then
-          echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
-          echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo apt-get update >> $OSPLOG 2>&1
-          echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
-  fi
+  echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
+  echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo apt-get update >> $OSPLOG 2>&1
+  echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
 }
 
 install_mysql(){
