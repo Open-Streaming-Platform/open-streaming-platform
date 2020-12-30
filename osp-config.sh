@@ -245,7 +245,7 @@ install_osp_rtmp() {
   install_prereq
   echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
-  install_ffmpeg
+
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
@@ -304,8 +304,6 @@ install_osp_edge () {
   sudo chown -R www-data:www-data /var/www >> $OSPLOG 2>&1
 
   echo 75 | dialog --title "Installing OSP-Edge" --gauge "Setting up FFMPEG" 10 70 0
-  #Setup FFMPEG for recordings and Thumbnails
-  install_ffmpeg
 
   # Start Nginx
   echo 90 | dialog --title "Installing OSP-Edge" --gauge "Restarting Nginx Core" 10 70 0
@@ -396,8 +394,6 @@ install_osp() {
 
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
-
-  install_ffmpeg
 
   # Setup Logrotate
   echo 90 | dialog --title "Installing OSP" --gauge "Setting Up Log Rotation" 10 70 0
