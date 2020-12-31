@@ -14,6 +14,8 @@ from classes import Channel
 from classes import Stream
 from classes import settings
 from classes import upvotes
+from classes import logs
+from classes import topics
 
 from functions import webhookFunc
 from functions import system
@@ -136,6 +138,7 @@ def rtmp_record_auth_check(channelLoc):
     if channelRequest is not None:
         userQuery = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
 
+
         if channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
             existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
             if existingRecordingQuery:
@@ -143,7 +146,13 @@ def rtmp_record_auth_check(channelLoc):
                     db.session.delete(recording)
                     db.session.commit()
 
+            streamID = None
+            existingStream = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).first()
+            if existingStream is not None:
+                streamID = existingStream.id
+
             newRecording = RecordedVideo.RecordedVideo(userQuery.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
+            newRecording.originalStreamID = streamID
             db.session.add(newRecording)
             db.session.commit()
 
@@ -167,17 +176,35 @@ def rtmp_user_deauth_check(key, ipaddress):
     if authedStream is not []:
         for stream in authedStream:
             streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", pending=True).first()
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", originalStreamID=stream.id).first()
+
+            wasRecorded = False
+            recordingID = None
+            endTimestamp = datetime.datetime.now()
+            length = (endTimestamp - stream.startTimestamp).total_seconds()
 
             if pendingVideo is not None:
+                pendingVideo.length = length
                 pendingVideo.channelName = stream.streamName
                 pendingVideo.views = stream.totalViewers
                 pendingVideo.topic = stream.topic
+                wasRecorded = True
+                recordingID = pendingVideo.id
 
                 for upvote in streamUpvotes:
                     newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
                     db.session.add(newVideoUpvote)
                 db.session.commit()
+
+            topicName = "Unknown"
+            topicQuery = topics.topics.query.filter_by(id=stream.topic).first()
+            if topicQuery is not None:
+                topicName = topicQuery.name
+
+            newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
+                                                  stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
+            db.session.add(newStreamHistory)
+            db.session.commit()
 
             for vid in streamUpvotes:
                 db.session.delete(vid)
@@ -268,12 +295,8 @@ def rtmp_rec_Complete_handler(channelLoc, path):
         while not os.path.exists(fullVidPath):
             time.sleep(1)
 
-        if os.path.isfile(fullVidPath):
-            pendingVideo.length = videoFunc.getVidLength(fullVidPath)
-            db.session.commit()
-
-        db.session.close()
         returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': None, 'message': 'Success - Recorded Video Processing Complete'}
+        db.session.close()
         return returnMessage
     else:
         returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': False, 'channelLoc': channelLoc, 'ipAddress': None, 'message': 'Failed - Requested Channel Does Not Exist'}

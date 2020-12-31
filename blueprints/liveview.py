@@ -99,6 +99,9 @@ def view_page(loc):
                         secureHash = hashlib.sha256((current_user.username + requestedChannel.channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
                     username = current_user.username
                     rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc + "?username=" + username + "&hash=" + secureHash
+                else:
+                    # TODO Add method for Unauthenticated Guest Users with an invite code to view RTMP
+                    rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
             else:
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 

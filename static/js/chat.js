@@ -242,9 +242,9 @@ function room_pres_handler(a, b, c) {
           msg = Strophe.getResourceFromJid(from) + " has left the room.";
       }
       serverMessage(msg);
-  } else if (presenceType == 'online') {
-      msg = Strophe.getResourceFromJid(from) + " joined the room.";
-      serverMessage(msg);
+  //} else if (presenceType == 'online') {
+  //    msg = Strophe.getResourceFromJid(from) + " joined the room.";
+  //    serverMessage(msg);
   }
 
   // Check if is own status change (Kicks/Bans/Etc)
@@ -499,7 +499,9 @@ function exitRoom(room) {
 }
 
 function hideUserMessages(nickname) {
-    $("div > .chatUsername:contains(nickname)").parent().parent().parent().parent().hide();
+    var msgDivs = $("div > .chatUsername:contains('" + nickname + "')");
+    msgDivs.parent().parent().parent().parent().hide();
+    return true;
 }
 
 // Mod Controls

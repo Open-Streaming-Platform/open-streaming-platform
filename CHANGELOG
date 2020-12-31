@@ -1,7 +1,17 @@
 0.8.1
 ==============================================
-OSP-Core: Added Missing Chat Join Messages
+OSP-Core: Added the Ability for Guests to View Protected Channels using Invite Codes.  Codes are Stored in the Guest's Server-Side Session Store and are Removed on OSP Restart
+OSP-Core: Added StreamHistory Table for Future Use
 OSP-Core: Fixed an invalid call for adding XMPP Disco Identity
+OSP-Core: Fixed an early closure of the database when processing recordings, causing a logging error.
+OSP-Core: Fixed an issue where Flask-Security was attempting to load itself twice, causing a blueprint conflict on first run.
+OSP-Core: Rewrote process for determining video length.  Should no longer report the length as Unknown on long videos
+OSP-Core: Added check if video exists in location prior to loading
+OSP-Config: Fixed an incorrect path for auth_osp.py when performing an ejabberd reset
+OSP-Config: Fixed an issue where FFMPEG was not installed with OSP-RTMP
+OSP-Config: Removed superfluous FFMPEG install calls
+OSP-Config: Fixed an issue where the OSP-RTMP would not stream until restarted one time
+OSP-Config: Added an extra dialog on installing OSP-Edge for the OSP-Core Server IP
 
 0.8.0
 ==============================================

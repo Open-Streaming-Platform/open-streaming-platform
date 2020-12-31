@@ -69,6 +69,13 @@ def init(app, user_datastore):
             role.default = False
         db.session.commit()
 
+    # Checks for local RTMP Server Authorization
+    rtmpServers = settings.rtmpServer.query.filter_by(address="127.0.0.1").first()
+    if rtmpServers is None:
+        localRTMP = settings.rtmpServer("127.0.0.1")
+        db.session.add(localRTMP)
+        db.session.commit()
+
     print({"level": "info", "message": "Querying Default System Settings"})
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = settings.settings.query.first()
@@ -135,13 +142,6 @@ def init(app, user_datastore):
         for chan in channelQuery:
             chan.defaultStreamName = ""
             db.session.commit()
-        # Checks for local RTMP Server Authorization
-        rtmpServers = settings.rtmpServer.query.filter_by(address="127.0.0.1").first()
-        if rtmpServers is None:
-            localRTMP = settings.rtmpServer("127.0.0.1")
-            db.session.add(localRTMP)
-            db.session.commit()
-
 
         print({"level": "info", "message": "Checking for 0.7.x Clips"})
         # Fix for Beta 6 Switch from Fake Clips to real clips
