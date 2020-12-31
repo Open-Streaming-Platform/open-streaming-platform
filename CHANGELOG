@@ -11,6 +11,7 @@ OSP-Config: Fixed an incorrect path for auth_osp.py when performing an ejabberd 
 OSP-Config: Fixed an issue where FFMPEG was not installed with OSP-RTMP
 OSP-Config: Removed superfluous FFMPEG install calls
 OSP-Config: Fixed an issue where the OSP-RTMP would not stream until restarted one time
+OSP-Config: Added an extra dialog on installing OSP-Edge for the OSP-Core Server IP
 
 0.8.0
 ==============================================
