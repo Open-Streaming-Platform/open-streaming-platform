@@ -279,6 +279,11 @@ install_osp_edge () {
          --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
 
+  core_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
   # Grab Configuration
   echo 10 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sudo cp $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
@@ -288,7 +293,7 @@ install_osp_edge () {
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/CHANGEME/$core_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
