@@ -441,6 +441,11 @@ upgrade_ejabberd() {
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
 }
 
+upgrade_edge() {
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
+}
+
 ##########################################################
 # Menu Options
 ##########################################################
@@ -620,6 +625,11 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       4 )
+        echo 50 | dialog --title "Upgrade OSP" --gauge "Upgrading Edge" 10 70 0
+        upgrade_edge
+        sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
+        result=$(echo "OSP-Edge Upgrade Completed!")
+        display_result "Upgrade OSP"
         ;;
       5 )
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
