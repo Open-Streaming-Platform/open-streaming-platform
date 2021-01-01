@@ -1,5 +1,14 @@
 0.8.1
 ==============================================
+OSP-Core: Changed OSP-Edge Playback endpoint redirect
+OSP-Core: Set OSP-Edge Configuration File Rebuild on Boot as an option, Defaults to True
+OSP-Core: Added Manual OSP-Edge Conf Rebuild Button
+OSP-RTMP: Changed OSP-Edge Restream endpoint
+OSP-Edge: Changed Ingest RTMP and Playback endpoints
+OSP-Config: Added Missing OSP-Edge Upgrade Option
+
+0.8.1
+==============================================
 OSP-Core: Added the Ability for Guests to View Protected Channels using Invite Codes.  Codes are Stored in the Guest's Server-Side Session Store and are Removed on OSP Restart
 OSP-Core: Added StreamHistory Table for Future Use
 OSP-Core: Fixed an invalid call for adding XMPP Disco Identity

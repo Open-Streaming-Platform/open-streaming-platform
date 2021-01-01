@@ -475,8 +475,12 @@ def admin_page():
             allowComments = False
             smtpTLS = False
             smtpSSL = False
+            buildEdgeOnRestart = False
             protectionEnabled = False
             maintenanceMode = False
+
+            if 'buildEdgeOnRestartSelect' in request.form:
+                buildEdgeOnRestart = True
 
             if 'recordSelect' in request.form:
                 recordSelect = True
@@ -542,6 +546,7 @@ def admin_page():
             sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
             sysSettings.maintenanceMode = maintenanceMode
             sysSettings.maxClipLength = int(clipMaxLength)
+            sysSettings.buildEdgeOnRestart = buildEdgeOnRestart
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo

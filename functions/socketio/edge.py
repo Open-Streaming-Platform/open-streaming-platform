@@ -41,12 +41,14 @@ def checkEdgeNode(message):
 @socketio.on('toggleOSPEdge')
 def toggleEdgeNode(message):
     if current_user.has_role('Admin'):
+        sysSettings = settings.settings.query.all()[0]
         edgeID = int(message['edgeID'])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
             edgeNodeQuery.active = not edgeNodeQuery.active
             db.session.commit()
-            system.rebuildOSPEdgeConf()
+            if sysSettings.buildEdgeOnRestart is True:
+                system.rebuildOSPEdgeConf()
             db.session.close()
             return 'OK'
         else:
@@ -64,9 +66,11 @@ def deleteEdgeNode(message):
         edgeID = int(message['edgeID'])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
+            sysSettings = settings.settings.query.all()[0]
             db.session.delete(edgeNodeQuery)
             db.session.commit()
-            system.rebuildOSPEdgeConf()
+            if sysSettings.buildEdgeOnRestart is True:
+                system.rebuildOSPEdgeConf()
             db.session.close()
             return 'OK'
         else:
@@ -77,3 +81,9 @@ def deleteEdgeNode(message):
         db.session.commit()
         db.session.close()
         return abort(401)
+
+@socketio.on('rebuildEdgeConf')
+def rebuildEdgeConfiguration(message):
+    if current_user.has_role("Admin"):
+        system.rebuildOSPEdgeConf()
+        emit('rebuildEdgeConfConfirm', {'results': str(True)}, broadcast=False)
