@@ -19,6 +19,7 @@ class RecordedVideo(db.Model):
     pending = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     published = db.Column(db.Boolean)
+    originalStreamID = db.Column(db.Integer)
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     comments = db.relationship('videoComments', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")

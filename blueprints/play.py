@@ -1,6 +1,7 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
+from os import path
 
 from classes.shared import db
 from classes import settings
@@ -45,9 +46,11 @@ def view_vid_page(videoID):
             if not securityFunc.check_isValidChannelViewer(recordedVid.channel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
-        recordedVid.views = recordedVid.views + 1
-        recordedVid.channel.views = recordedVid.channel.views + 1
+        # Check if the file exists in location yet and redirect if not ready
+        if path.exists(videos_root + recordedVid.videoLocation) is False:
+            return render_template(themes.checkOverride('notready.html'), video=recordedVid)
 
+        # Check if the DB entry for the video has a length, if not try to determine or fail
         if recordedVid.length is None:
             fullVidPath = videos_root + recordedVid.videoLocation
             duration = None
@@ -57,6 +60,9 @@ def view_vid_page(videoID):
                 return render_template(themes.checkOverride('notready.html'), video=recordedVid)
             recordedVid.length = duration
         db.session.commit()
+
+        recordedVid.views = recordedVid.views + 1
+        recordedVid.channel.views = recordedVid.channel.views + 1
 
         topicList = topics.topics.query.all()
 

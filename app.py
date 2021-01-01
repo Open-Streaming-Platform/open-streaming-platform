@@ -15,7 +15,7 @@ import json
 import uuid
 
 # Import 3rd Party Libraries
-from flask import Flask, redirect, request, abort, flash, current_app
+from flask import Flask, redirect, request, abort, flash, current_app, session
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
 from flask_security.signals import user_registered
@@ -301,7 +301,6 @@ print({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 from blueprints.errorhandler import errorhandler_bp
 from blueprints.apiv1 import api_v1
-from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
 from blueprints.streamers import streamers_bp
 from blueprints.profile import profile_bp
@@ -317,7 +316,6 @@ from blueprints.oauth import oauth_bp
 # Register all Blueprints
 app.register_blueprint(errorhandler_bp)
 app.register_blueprint(api_v1)
-app.register_blueprint(rtmp_bp)
 app.register_blueprint(root_bp)
 app.register_blueprint(channels_bp)
 app.register_blueprint(play_bp)
@@ -417,6 +415,37 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 #----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
+
+
+@app.before_request
+def do_before_request():
+    try:
+        # Check all IP Requests for banned IP Addresses
+        if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+            requestIP = request.environ['REMOTE_ADDR']
+        else:
+            requestIP = request.environ['HTTP_X_FORWARDED_FOR']
+
+        banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
+        if banQuery != None:
+            return str({'error': 'banned', 'reason':banQuery.reason})
+
+        # Apply Guest UUID in Session and Handle Object
+        if current_user.is_authenticated is False:
+            if 'guestUUID' not in session:
+                session['guestUUID'] = str(uuid.uuid4())
+            GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
+            if GuestQuery is not None:
+                GuestQuery.last_active_at = datetime.datetime.now()
+                GuestQuery.last_active_ip = requestIP
+                db.session.commit()
+            else:
+                NewGuest = Sec.Guest(session['guestUUID'], requestIP)
+                db.session.add(NewGuest)
+                db.session.commit()
+    except:
+        pass
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
@@ -425,8 +454,11 @@ print({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 # Finalize App Init
 #----------------------------------------------------------------------------#
-system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-print({"level": "info", "message": "OSP Core Node Started Successfully" + str(globalvars.version)})
+try:
+    system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
+    print({"level": "info", "message": "OSP Core Node Started Successfully" + str(globalvars.version)})
+except:
+    pass
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
