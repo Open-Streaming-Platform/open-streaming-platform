@@ -340,14 +340,14 @@ socket.on('testEmailResults', function(msg) {
 });
 
 socket.on('rebuildEdgeConfConfirm'), function(msg) {
-    createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect","success")
+    createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect","success");
 }
 
 // Functions
 
 function rebuildEdgeConf(){
     socket.emit('rebuildEdgeConf', {message: 'true'});
-    console.log('Requested Edge Conf Rebuild')
+    console.log('Requested Edge Conf Rebuild');
 }
 
 function testEmail(){
