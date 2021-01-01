@@ -211,6 +211,9 @@
                                       </div>
                                   </div>
                                   <hr>
+                                  Build OSP-Edge Redirect File on Restart & Changes:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="buildEdgeOnRestartSelect" name="buildEdgeOnRestart" autocomplete="new-password" {% if sysSettings.buildEdgeOnRestart == True %} checked {% endif %}>
+                                  <br>
                                   Allow Users to Record:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" autocomplete="new-password" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                                   <br>
@@ -534,7 +537,11 @@
                             <div class="card">
                                 <div class="card-header">
                                     List of OSP Edge Streamer Nodes
-                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span><br>
+                                    <span class="float-right">
+                                        <button class="btn btn-sm btn-info shadow" type="button" data-toggle="modal" onclick="rebuildEdgeConf();">Rebuild Config</button>
+                                        <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button>
+                                    </span>
+                                    <br>
                                     <note style="color:red;">*** A Reload of NGINX is required after any changes for OSP Streaming to work ***</note><br>
                                 </div>
                                 <div class="card-body">

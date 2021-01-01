@@ -69,6 +69,13 @@ def init(app, user_datastore):
             role.default = False
         db.session.commit()
 
+    # Checks for local RTMP Server Authorization
+    rtmpServers = settings.rtmpServer.query.filter_by(address="127.0.0.1").first()
+    if rtmpServers is None:
+        localRTMP = settings.rtmpServer("127.0.0.1")
+        db.session.add(localRTMP)
+        db.session.commit()
+
     print({"level": "info", "message": "Querying Default System Settings"})
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = settings.settings.query.first()
@@ -135,13 +142,6 @@ def init(app, user_datastore):
         for chan in channelQuery:
             chan.defaultStreamName = ""
             db.session.commit()
-        # Checks for local RTMP Server Authorization
-        rtmpServers = settings.rtmpServer.query.filter_by(address="127.0.0.1").first()
-        if rtmpServers is None:
-            localRTMP = settings.rtmpServer("127.0.0.1")
-            db.session.add(localRTMP)
-            db.session.commit()
-
 
         print({"level": "info", "message": "Checking for 0.7.x Clips"})
         # Fix for Beta 6 Switch from Fake Clips to real clips
@@ -182,6 +182,11 @@ def init(app, user_datastore):
             db.session.commit()
         if sysSettings.restreamMaxBitrate is None:
             sysSettings.restreamMaxBitrate = 3500
+            db.session.commit()
+
+        #Fix for Edge Conf Build on Restart
+        if sysSettings.buildEdgeOnRestart is None:
+            sysSettings.buildEdgeOnRestart = True
             db.session.commit()
 
         # Fixes for Server Settings Missing the Main Page Sort Option
@@ -258,10 +263,13 @@ def init(app, user_datastore):
 
         print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
         # Initialize the OSP Edge Configuration - Mostly for Docker
-        try:
-            system.rebuildOSPEdgeConf()
-        except:
-            print("Error Rebuilding Edge Config")
+        if sysSettings.buildEdgeOnRestart is True:
+            try:
+                system.rebuildOSPEdgeConf()
+            except:
+                print("Error Rebuilding Edge Config")
+        else:
+            print({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
 
         print({"level": "info", "message": "Importing Theme Data into Global Cache"})
         # Import Theme Data into Theme Dictionary

@@ -88,6 +88,7 @@ upgrade_db() {
   UPGRADELOG="/opt/osp/logs/upgrade.log"
   echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
+  cd /opt/osp
   echo 15 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
   python3 manage.py db init >> $OSPLOG 2>&1
   echo 25 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
@@ -97,6 +98,7 @@ upgrade_db() {
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
+  cd $DIR
 }
 
 upgrade_osp() {
@@ -130,34 +132,24 @@ upgrade_osp() {
 }
 
 install_prereq() {
-  if $arch
-  then
-          # Get Arch Dependencies
-          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Arch" 10 70 0
-          sudo pacman -S python-pip base-devel unzip wget git redis gunicorn uwsgi-plugin-python curl ffmpeg --needed --noconfirm >> $OSPLOG 2>&1
-  else
-          echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
-          # Get Deb Dependencies
-          sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
-          # Setup Python
-          echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Arch" 10 70 0
-          sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
-          sudo pip3 install wheel >> $OSPLOG 2>&1
-  fi
+    echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
+    # Get Deb Dependencies
+    sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
+    # Setup Python
+    echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
+    sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
+    sudo pip3 install wheel >> $OSPLOG 2>&1
 }
 
 install_ffmpeg() {
   #Setup FFMPEG for recordings and Thumbnails
   echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  if $arch
-  then
-          echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
-          echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo apt-get update >> $OSPLOG 2>&1
-          echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-          sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
-  fi
+  echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
+  echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo apt-get update >> $OSPLOG 2>&1
+  echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
 }
 
 install_mysql(){
@@ -253,6 +245,7 @@ install_osp_rtmp() {
   install_prereq
   echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
+
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
@@ -286,6 +279,11 @@ install_osp_edge () {
          --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
 
+  core_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
   # Grab Configuration
   echo 10 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sudo cp $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
@@ -295,7 +293,7 @@ install_osp_edge () {
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
   sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/CHANGEME/$core_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
@@ -311,8 +309,6 @@ install_osp_edge () {
   sudo chown -R www-data:www-data /var/www >> $OSPLOG 2>&1
 
   echo 75 | dialog --title "Installing OSP-Edge" --gauge "Setting up FFMPEG" 10 70 0
-  #Setup FFMPEG for recordings and Thumbnails
-  install_ffmpeg
 
   # Start Nginx
   echo 90 | dialog --title "Installing OSP-Edge" --gauge "Restarting Nginx Core" 10 70 0
@@ -404,8 +400,6 @@ install_osp() {
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
 
-  install_ffmpeg
-
   # Setup Logrotate
   echo 90 | dialog --title "Installing OSP" --gauge "Setting Up Log Rotation" 10 70 0
   if cd /etc/logrotate.d
@@ -445,6 +439,11 @@ upgrade_ejabberd() {
   sudo git pull >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
+}
+
+upgrade_edge() {
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
 }
 
 ##########################################################
@@ -506,6 +505,7 @@ install_menu() {
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 90 | dialog --title "Installing OSP" --gauge "Starting OSP Core" 10 70 0
         sudo systemctl start osp.target >> $OSPLOG 2>&1
+        upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
         result=$(echo "OSP Install Completed! \n\nVisit http:\\FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
@@ -561,6 +561,7 @@ upgrade_menu() {
       "3" "Upgrade OSP-RTMP" \
       "4" "Upgrade OSP-Edge" \
       "5" "Upgrade eJabberd" \
+      "6" "Upgrade DB" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -624,6 +625,11 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       4 )
+        echo 50 | dialog --title "Upgrade OSP" --gauge "Upgrading Edge" 10 70 0
+        upgrade_edge
+        sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
+        result=$(echo "OSP-Edge Upgrade Completed!")
+        display_result "Upgrade OSP"
         ;;
       5 )
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
@@ -635,6 +641,10 @@ upgrade_menu() {
         result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
+      6)
+        upgrade_db
+        result=$(echo "Database Upgrade Complete")
+        display_result "Upgrade OSP"
     esac
   done
 }
