@@ -346,7 +346,8 @@ socket.on('rebuildEdgeConfConfirm'), function(msg) {
 // Functions
 
 function rebuildEdgeConf(){
-    socket.emit('rebuildEdgeConf');
+    socket.emit('rebuildEdgeConf', {message: 'true'});
+    console.log('Requested Edge Conf Rebuild')
 }
 
 function testEmail(){
