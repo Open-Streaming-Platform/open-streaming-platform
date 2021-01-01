@@ -129,37 +129,48 @@ def subscription_page():
 
 
 @settings_bp.route('/user/addInviteCode')
-@login_required
 def user_addInviteCode():
     if 'inviteCode' in request.args:
         inviteCode = request.args.get("inviteCode")
         inviteCodeQuery = invites.inviteCode.query.filter_by(code=inviteCode).first()
         if inviteCodeQuery is not None:
             if inviteCodeQuery.isValid():
-                existingInviteQuery = invites.invitedViewer.query.filter_by(inviteCode=inviteCodeQuery.id,
-                                                                            userID=current_user.id).first()
-                if existingInviteQuery is None:
-                    if inviteCodeQuery.expiration is not None:
-                        remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                # Add Check if User is Authenticated to Add Code
+                if current_user.is_authenticated:
+                    existingInviteQuery = invites.invitedViewer.query.filter_by(inviteCode=inviteCodeQuery.id,
+                                                                                userID=current_user.id).first()
+                    if existingInviteQuery is None:
+                        if inviteCodeQuery.expiration is not None:
+                            remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                        else:
+                            remainingDays = 0
+                        newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays,
+                                                               inviteCode=inviteCodeQuery.id)
+                        inviteCodeQuery.uses = inviteCodeQuery.uses + 1
+                        db.session.add(newInvitedUser)
+                        db.session.commit()
+                        system.newLog(3,
+                                      "User Added Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(
+                                          inviteCodeQuery.channelID))
+                        flash("Added Invite Code to Channel", "success")
+                        if 'redirectURL' in request.args:
+                            return redirect(request.args.get("redirectURL"))
                     else:
-                        remainingDays = 0
-                    newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays,
-                                                           inviteCode=inviteCodeQuery.id)
-                    inviteCodeQuery.uses = inviteCodeQuery.uses + 1
-                    db.session.add(newInvitedUser)
-                    db.session.commit()
-                    system.newLog(3,
-                                  "User Added Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(
-                                      inviteCodeQuery.channelID))
-                    flash("Added Invite Code to Channel", "success")
-                    if 'redirectURL' in request.args:
-                        return redirect(request.args.get("redirectURL"))
+                        flash("Invite Code Already Applied", "error")
                 else:
-                    flash("Invite Code Already Applied", "error")
+                    if 'inviteCodes' not in session:
+                        session['inviteCodes'] = []
+                    if inviteCodeQuery.code not in session['inviteCodes']:
+                        session['inviteCodes'].append(inviteCodeQuery.code)
+                        inviteCodeQuery.uses = inviteCodeQuery.uses + 1
+                        system.newLog(3, "User Added Invite Code to Account - Username:" + 'Guest' + '-' + session['guestUUID'] + " Channel ID #" + str(inviteCodeQuery.channelID))
+                    else:
+                        flash("Invite Code Already Applied", "error")
             else:
-                system.newLog(3,
-                              "User Attempted to add Expired Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(
-                                  inviteCodeQuery.channelID))
+                if current_user.is_authenticated:
+                    system.newLog(3, "User Attempted to add Expired Invite Code to Account - Username:" + current_user.username + " Channel ID #" + str(inviteCodeQuery.channelID))
+                else:
+                    system.newLog(3, "User Attempted to add Expired Invite Code to Account - Username:" + 'Guest' + '-' + session['guestUUID'] + " Channel ID #" + str(inviteCodeQuery.channelID))
                 flash("Invite Code Expired", "error")
         else:
             flash("Invalid Invite Code", "error")
@@ -1913,10 +1924,6 @@ def initialSetup():
                     SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
                     SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
                     SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
-
-                # ReInitialize Flask-Security
-                security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm,
-                                    confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
                 email.init_app(current_app)
                 email.app = current_app

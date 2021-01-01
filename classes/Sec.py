@@ -6,6 +6,8 @@ from .shared import db
 from classes import Sec
 from globals import globalvars
 
+import datetime
+
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
     email = StringField('email', [Required()])
@@ -134,3 +136,15 @@ class OAuth2Token(db.Model):
             refresh_token=self.refresh_token,
             expires_at=self.expires_at,
         )
+
+class Guest(db.Model):
+    __tablename__ = "Guest"
+    id = db.Column(db.Integer, primary_key=True)
+    UUID = db.Column(db.String(255))
+    last_active_at = db.Column(db.DateTime())
+    last_active_ip = db.Column(db.String(100))
+
+    def __init__(self, UUID, current_login_ip):
+        self.UUID = UUID
+        self.last_active_at = datetime.datetime.now()
+        self.last_active_ip = current_login_ip
