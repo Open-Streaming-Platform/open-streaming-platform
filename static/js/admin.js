@@ -343,7 +343,7 @@ socket.on('testEmailResults', function(msg) {
 
 function rebuildEdgeConf(){
     socket.emit('rebuildEdgeConf', {message: 'true'});
-    createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect", "success");
+    createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect", "Success");
 }
 
 function testEmail(){
