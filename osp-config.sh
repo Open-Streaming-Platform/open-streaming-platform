@@ -231,9 +231,12 @@ install_nginx_core() {
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
-  echo 90 | dialog --title "Installing Nginx-Core" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
-  sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
-
+  s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
+  if test $s3DriveMount -eq 0
+  then
+    echo 90 | dialog --title "Installing Nginx-Core" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
+    sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  fi
   # Start Nginx
   echo 100 | dialog --title "Installing Nginx-Core" --gauge "Starting Nginx" 10 70 0
   sudo systemctl start nginx-osp.service >> $OSPLOG 2>&1
@@ -394,8 +397,12 @@ install_osp() {
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
-  echo 70 | dialog --title "Installing OSP" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
-  sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
+  if test $s3DriveMount -eq 0
+  then
+    echo 70 | dialog --title "Installing OSP" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
+    sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  fi
 
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
