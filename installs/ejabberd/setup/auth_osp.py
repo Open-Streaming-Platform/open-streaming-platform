@@ -2,7 +2,7 @@
 # Configuration
 ########################################################################
 protocol = "http"
-ospAPIServer = "127.0.0.1"
+ospAPIServer = "127.0.0.1:5010"
 
 ########################################################################
 # Code
@@ -15,7 +15,7 @@ def auth(user, host, password):
     payload = {'jid': user, 'host': host, 'token': password}
 
     global ospAPIServer
-    if ospAPIServer != "127.0.0.1" or ospAPIServer != "localhost":
+    if ospAPIServer != "127.0.0.1" and ospAPIServer != "localhost" and ospAPIServer != "127.0.0.1:5010":
         ospAPIServer = host
 
     r = requests.post(protocol + '://' + ospAPIServer + '/apiv1/xmpp/auth', data=payload)
