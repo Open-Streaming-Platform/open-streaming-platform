@@ -6,6 +6,7 @@ OSP-Core: Added Manual OSP-Edge Conf Rebuild Button
 OSP-RTMP: Changed OSP-Edge Restream endpoint
 OSP-Edge: Changed Ingest RTMP and Playback endpoints
 OSP-Config: Added Missing OSP-Edge Upgrade Option
+ejabberd: Fixed a bug in the auth_osp.py where is was ignoring accessing the local host api endpoint and was using the given xmpp domain address
 
 0.8.1
 ==============================================
