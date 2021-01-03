@@ -279,13 +279,32 @@ install_osp_edge () {
 
   user_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a rtmpArray <<< $user_input
+  rtmpString=""
+  for i in "${rtmpArray[@]}"
+  do
+        NL=$'\n'
+        newline="allow publish $i;${NL}"
+        rtmpString+="$newline"
+  done
+
 
   core_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-Core IP Address:" 8 80 \
+         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a coreArray <<< $core_input
+  coreString=""
+  for i in "${coreArray[@]}"
+  do
+        NL=$'\n'
+        newline="allow $i;${NL}"
+        coreString+="$newline"
+  done
 
   # Grab Configuration
   echo 10 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
@@ -295,8 +314,8 @@ install_osp_edge () {
 
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/CHANGEME/$core_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWRTMP/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
