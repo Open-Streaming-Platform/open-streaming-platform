@@ -286,11 +286,8 @@ install_osp_edge () {
   rtmpString=""
   for i in "${rtmpArray[@]}"
   do
-        NL=$'\n'
-        newline="allow publish $i;${NL}"
-        rtmpString+="$newline"
+        rtmpString+="allow publish $i;\n"
   done
-
 
   core_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
@@ -301,9 +298,7 @@ install_osp_edge () {
   coreString=""
   for i in "${coreArray[@]}"
   do
-        NL=$'\n'
-        newline="allow $i;${NL}"
-        coreString+="$newline"
+        coreString+="allow $i;\n"
   done
 
   # Grab Configuration
@@ -314,8 +309,8 @@ install_osp_edge () {
 
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
