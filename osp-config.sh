@@ -231,9 +231,12 @@ install_nginx_core() {
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
-  echo 90 | dialog --title "Installing Nginx-Core" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
-  sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
-
+  s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
+  if test $s3DriveMount -eq 0
+  then
+    echo 90 | dialog --title "Installing Nginx-Core" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
+    sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  fi
   # Start Nginx
   echo 100 | dialog --title "Installing Nginx-Core" --gauge "Starting Nginx" 10 70 0
   sudo systemctl start nginx-osp.service >> $OSPLOG 2>&1
@@ -276,13 +279,27 @@ install_osp_edge () {
 
   user_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a rtmpArray <<< $user_input
+  rtmpString=""
+  for i in "${rtmpArray[@]}"
+  do
+        rtmpString+="allow publish $i;\n"
+  done
 
   core_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a coreArray <<< $core_input
+  coreString=""
+  for i in "${coreArray[@]}"
+  do
+        coreString+="allow $i;\n"
+  done
 
   # Grab Configuration
   echo 10 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
@@ -292,8 +309,8 @@ install_osp_edge () {
 
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/CHANGEME/$user_input/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/CHANGEME/$core_input/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
@@ -394,8 +411,12 @@ install_osp() {
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
-  echo 70 | dialog --title "Installing OSP" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
-  sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
+  if test $s3DriveMount -eq 0
+  then
+    echo 70 | dialog --title "Installing OSP" --gauge "Setting Ownership of OSP Video Directories" 10 70 0
+    sudo chown -R "$http_user:$http_user" "$web_root" >> $OSPLOG 2>&1
+  fi
 
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
@@ -442,8 +463,35 @@ upgrade_ejabberd() {
 }
 
 upgrade_edge() {
+  user_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a rtmpArray <<< $user_input
+  rtmpString=""
+  for i in "${rtmpArray[@]}"
+  do
+        rtmpString+="allow publish $i;\n"
+  done
+
+  core_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a coreArray <<< $core_input
+  coreString=""
+  for i in "${coreArray[@]}"
+  do
+        coreString+="allow $i;\n"
+  done
+
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
+
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 }
 
 ##########################################################
