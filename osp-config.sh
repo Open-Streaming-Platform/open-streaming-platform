@@ -284,7 +284,7 @@ install_osp_edge () {
 
   core_input=$(\
   dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address:" 8 80 \
+         --inputbox "Enter your OSP-Core IP Address:" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
 
   # Grab Configuration
