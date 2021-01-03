@@ -463,8 +463,35 @@ upgrade_ejabberd() {
 }
 
 upgrade_edge() {
+  user_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a rtmpArray <<< $user_input
+  rtmpString=""
+  for i in "${rtmpArray[@]}"
+  do
+        rtmpString+="allow publish $i;\n"
+  done
+
+  core_input=$(\
+  dialog --nocancel --title "Setting up OSP-Edge" \
+         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+
+  IFS="," read -a coreArray <<< $core_input
+  coreString=""
+  for i in "${coreArray[@]}"
+  do
+        coreString+="allow $i;\n"
+  done
+
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
+
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 }
 
 ##########################################################
