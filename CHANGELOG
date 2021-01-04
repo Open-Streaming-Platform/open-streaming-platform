@@ -5,6 +5,7 @@ OSP-Core: Set OSP-Edge Configuration File Rebuild on Boot as an option, Defaults
 OSP-Core: Added Manual OSP-Edge Conf Rebuild Button
 OSP-RTMP: Changed OSP-Edge Restream endpoint
 OSP-Edge: Changed Ingest RTMP and Playback endpoints
+OSP-Edge: Added Checks for Idle/Dropped Streams
 OSP-Config: Added Missing OSP-Edge Upgrade Option
 OSP-Config: OSP-Edge Install and Upgrades now allow for multiple IPs for configuring the authorized RTMP and Core Servers with commas
 ejabberd: Fixed a bug in the auth_osp.py where is was ignoring accessing the local host api endpoint and was using the given xmpp domain address
