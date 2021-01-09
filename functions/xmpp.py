@@ -90,7 +90,11 @@ def getChannelAffiliations(channelLoc):
     sysSettings = settings.query.first()
     roomAffiliationJSON = ejabberd.get_room_affiliations(channelLoc, 'conference.' + sysSettings.siteAddress)
     userList = {}
-    for entry in roomAffiliationJSON['affiliation']:
-        for key, value in entry.items():
-            userList[key] = value
+    for entry in roomAffiliationJSON['affiliations']:
+        data = {}
+        for user in entry['affiliation']:
+            for key, value in user.items():
+                data[key] = value
+        print(data)
+        userList[data['username']] = data['affiliation']
     return userList
