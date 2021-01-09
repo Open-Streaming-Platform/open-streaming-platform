@@ -506,7 +506,7 @@ function hideUserMessages(nickname) {
 
 // Mod Controls
 function ban(username) {
-    var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid'].split('@'[0])
+    var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid'].split('@')[0]
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
     socket.emit('banUser', {channelLoc: ROOMNAME, banUsername: username, banUserUUID: userUUID});
     return true;
