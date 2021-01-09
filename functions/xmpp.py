@@ -85,3 +85,12 @@ def getChannelCounts(channelLoc):
     currentViewers = roomOccupantsJSON['occupants']
 
     return currentViewers
+
+def getChannelAffiliations(channelLoc):
+    sysSettings = settings.query.first()
+    roomAffiliationJSON = ejabberd.get_room_affiliations(channelLoc, 'conference.' + sysSettings.siteAddress)
+    userList = {}
+    for entry in roomAffiliationJSON['affiliation']:
+        for key, value in entry.items():
+            userList[key] = value
+    return userList
