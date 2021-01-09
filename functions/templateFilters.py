@@ -179,7 +179,7 @@ def processClientCount(data):
 
 def uuid_to_username(uuid):
     if '@' in uuid:
-        JID=uuid.splt('@')[0]
+        JID=uuid.split('@')[0]
     else:
         JID = uuid
     userQuery = Sec.User.query.filter_by(uuid=JID).first()
