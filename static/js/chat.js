@@ -506,7 +506,15 @@ function hideUserMessages(nickname) {
 
 // Mod Controls
 function ban(username) {
+    var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username][jid].split('@'[0])
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
+    socket.emit('banUser', {channelLoc: ROOMNAME, banUsername: username, banUserUUID: userUUID});
+    return true;
+}
+
+function unban(uuid) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(uuid + '@' + server, 'none');
+    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid});
     return true;
 }
 
