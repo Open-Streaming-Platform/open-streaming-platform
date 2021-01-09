@@ -19,7 +19,7 @@ def addMod(message):
         username = str(message['JID'])
         userQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(username)).first()
         if userQuery is not None:
-            JID = username + '@' + sysSettings.siteAddress
+            JID = userQuery.uuid + '@' + sysSettings.siteAddress
 
     channelLoc = str(message['channelLoc'])
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
@@ -43,19 +43,11 @@ def deleteMod(message):
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
 
     user = JID.split('@')[0]
-    userQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(user)).first()
 
     if channelQuery is not None:
-        if userQuery and current_user != user:
-            from app import ejabberd
-            ejabberd.set_room_affiliation(channelLoc, 'conference.' + sysSettings.siteAddress, JID, 'member')
-            emit('deleteMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
-        elif userQuery is None:
-            from app import ejabberd
-            ejabberd.set_room_affiliation(channelLoc, 'conference.' + sysSettings.siteAddress, JID, 'none')
-            emit('deleteMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
-    else:
-        pass
+        from app import ejabberd
+        ejabberd.set_room_affiliation(channelLoc, 'conference.' + sysSettings.siteAddress, JID, 'none')
+        emit('deleteMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
     db.session.commit()
     db.session.close()
     return 'OK'
