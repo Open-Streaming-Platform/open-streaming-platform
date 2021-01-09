@@ -838,8 +838,8 @@
         socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
     }
 
-    function clearBan(username, affiliation) {
-        setAffiliation(username, affiliation);
+    function clearBan(username) {
+        unban(username);
         setTimeout(function(){
             getBanList();
         }, 2000);
@@ -859,7 +859,8 @@
             var iDiv = document.createElement('div');
             iDiv.className = 'bannedUser';
             var username = msg["results"][i]["username"];
-            var onclickCmd = "clearBan('" + username + "','none');"
+            var useruuid = msg["results"][i]["useruuid"];
+            var onclickCmd = "clearBan('" + useruuid + "');"
             iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
             banList.appendChild(iDiv);
         }
