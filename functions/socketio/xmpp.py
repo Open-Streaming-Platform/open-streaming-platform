@@ -70,7 +70,7 @@ def socketio_xmpp_banUser(message):
             if channelQuery is not None:
                 user = Sec.User.query.filter_by(id=current_user.id).first()
                 channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
-                if channelAffiliations.has_key(user.uuid):
+                if user.uuid in channelAffiliations:
                     userAffiliation = channelAffiliations[user.uuid]
                     if userAffiliation == 'owner' or userAffiliation == 'admin':
                         banUsername = str(message['banUsername'])
@@ -93,7 +93,7 @@ def socketio_xmpp_unbanUser(message):
             if channelQuery is not None:
                 user = Sec.User.query.filter_by(id=current_user.id).first()
                 channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
-                if channelAffiliations.has_key(user.uuid):
+                if user.uuid in channelAffiliations:
                     userAffiliation = channelAffiliations[user.uuid]
                     if userAffiliation == 'owner' or userAffiliation == 'admin':
                         unbanUserUUID = str(message['userUUID'])
