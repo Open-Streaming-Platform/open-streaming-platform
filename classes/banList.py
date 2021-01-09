@@ -23,3 +23,17 @@ class ipList(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class channelBanList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    channelLoc = db.Column(db.String(255))
+    username = db.Column(db.String(255))
+    userUUID = db.Column(db.String(255))
+
+    def __init__(self, channelLoc, username, userUUID):
+        self.channelLoc = channelLoc
+        self.username = username
+        self.userUUID = userUUID
+
+    def __repr__(self):
+        return '<id %r>' % self.id
