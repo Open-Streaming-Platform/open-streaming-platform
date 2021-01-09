@@ -75,7 +75,7 @@ def socketio_xmpp_banUser(message):
                     if userAffiliation == 'owner' or userAffiliation == 'admin':
                         banUsername = str(message['banUsername'])
                         banUserUUID = str(message['banUserUUID'])
-                        existingBan = banList.query.filter_by(userUUID=banUserUUID, channelLoc=channelLoc).first()
+                        existingBan = banList.channelBanList.query.filter_by(userUUID=banUserUUID, channelLoc=channelLoc).first()
                         if existingBan is not None:
                             newBan = banList.channelBanList(channelLoc,banUsername,banUserUUID)
                             db.session.add(newBan)
