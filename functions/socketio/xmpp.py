@@ -106,22 +106,16 @@ def socketio_xmpp_unbanUser(message):
 
 @socketio.on('getBanList')
 def socketio_xmpp_getBanList(message):
-    sysSettings = settings.settings.query.first()
-    affiliationList = []
+    bannedUserList = []
     if 'channelLoc' in message:
-
         channelLoc = str(message['channelLoc'])
         channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-
         if channelQuery is not None:
-            from app import ejabberd
-            xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
-            for affiliation in xmppQuery['affiliations']:
-                user = {}
-                for entry in affiliation['affiliation']:
-                    for key, value in entry.items():
-                        user[key] = value
-                if user['affiliation'] == "outcast":
-                    affiliationList.append(user)
-    emit('returnBanList', {'results': affiliationList}, broadcast=False)
+            channelBanListQuery = banList.channelBanList.query.filter_by(channelLoc=channelLoc).all()
+            bannedUserList = []
+            for entry in channelBanListQuery:
+                newEntry = {'username': entry.username, 'useruuid':entry.userUUID}
+                bannedUserList.append(newEntry)
+
+    emit('returnBanList', {'results': bannedUserList}, broadcast=False)
     return 'OK'
