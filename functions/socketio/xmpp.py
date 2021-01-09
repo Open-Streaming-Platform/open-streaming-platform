@@ -8,6 +8,8 @@ from classes import Sec
 from classes import settings
 from classes import banList
 
+from functions import xmpp
+
 @socketio.on('addMod')
 def addMod(message):
     sysSettings = settings.settings.query.first()
@@ -64,22 +66,20 @@ def socketio_xmpp_banUser(message):
         if 'channelLoc' in message:
             from app import ejabberd
             channelLoc = str(message['channelLoc'])
-            sysSettings = settings.settings.query.first()
             channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
             if channelQuery is not None:
                 user = Sec.User.query.filter_by(id=current_user.id).first()
-                xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
-                if user is not None:
-                    if user.uuid in xmppQuery['affiliations']['affiliation']:
-                        userAffiliation = xmppQuery['affiliations']['affiliation'][user.uuid]
-                        if userAffiliation == 'owner' or userAffiliation == 'admin':
-                            banUsername = str(message['banUsername'])
-                            banUserUUID = str(message['banUserUUID'])
-                            existingBan = banList.query.filter_by(userUUID=banUserUUID, channelLoc=channelLoc).first()
-                            if existingBan is not None:
-                                newBan = banList.channelBanList(channelLoc,banUsername,banUserUUID)
-                                db.session.add(newBan)
-                                db.session.commit()
+                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
+                if channelAffiliations.has_key(user.uuid):
+                    userAffiliation = channelAffiliations[user.uuid]
+                    if userAffiliation == 'owner' or userAffiliation == 'admin':
+                        banUsername = str(message['banUsername'])
+                        banUserUUID = str(message['banUserUUID'])
+                        existingBan = banList.query.filter_by(userUUID=banUserUUID, channelLoc=channelLoc).first()
+                        if existingBan is not None:
+                            newBan = banList.channelBanList(channelLoc,banUsername,banUserUUID)
+                            db.session.add(newBan)
+                            db.session.commit()
     db.session.close()
     return 'OK'
 
@@ -89,20 +89,18 @@ def socketio_xmpp_unbanUser(message):
         if 'channelLoc' in message:
             from app import ejabberd
             channelLoc = str(message['channelLoc'])
-            sysSettings = settings.settings.query.first()
             channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
             if channelQuery is not None:
                 user = Sec.User.query.filter_by(id=current_user.id).first()
-                xmppQuery = ejabberd.get_room_affiliations(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
-                if user is not None:
-                    if user.uuid in xmppQuery['affiliations']['affiliation']:
-                        userAffiliation = xmppQuery['affiliations']['affiliation'][user.uuid]
-                        if userAffiliation == 'owner' or userAffiliation == 'admin':
-                            unbanUserUUID = str(message['userUUID'])
-                            existingBanQuery = banList.channelBanList.query.filter_by(channelLoc=channelLoc, userUUID=unbanUserUUID).first()
-                            if existingBanQuery is not None:
-                                db.session.delete(existingBanQuery)
-                                db.session.commit()
+                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
+                if channelAffiliations.has_key(user.uuid):
+                    userAffiliation = channelAffiliations[user.uuid]
+                    if userAffiliation == 'owner' or userAffiliation == 'admin':
+                        unbanUserUUID = str(message['userUUID'])
+                        existingBanQuery = banList.channelBanList.query.filter_by(channelLoc=channelLoc, userUUID=unbanUserUUID).first()
+                        if existingBanQuery is not None:
+                            db.session.delete(existingBanQuery)
+                            db.session.commit()
     db.session.close()
     return 'OK'
 
