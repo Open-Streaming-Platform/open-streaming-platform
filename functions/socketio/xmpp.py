@@ -13,21 +13,19 @@ from functions import xmpp
 @socketio.on('addMod')
 def addMod(message):
     sysSettings = settings.settings.query.first()
-    if '@' in str(message['JID']):
-        JID = str(message['JID'])
-    else:
-        username = str(message['JID'])
-        userQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(username)).first()
-        if userQuery is not None:
-            JID = userQuery.uuid + '@' + sysSettings.siteAddress
+    JID = None
+    username = str(message['JID'])
+    userQuery = Sec.User.query.filter(func.lower(Sec.User.username) == func.lower(username)).first()
+    if userQuery is not None:
+        JID = userQuery.uuid + '@' + sysSettings.siteAddress
 
     channelLoc = str(message['channelLoc'])
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
 
-    if channelQuery is not None and JID != "":
+    if channelQuery is not None and JID is not None:
         from app import ejabberd
         ejabberd.set_room_affiliation(channelLoc, 'conference.' + sysSettings.siteAddress, JID, 'admin')
-        emit('addMod', {'mod': str(JID),  'channelLoc':str(channelLoc)}, broadcast=False)
+        emit('addMod', {'mod': str(JID),  'channelLoc':str(channelLoc), 'username': str(userQuery.username)}, broadcast=False)
     else:
         pass
     db.session.commit()
