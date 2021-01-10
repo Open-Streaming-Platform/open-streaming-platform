@@ -12,6 +12,7 @@ from classes import views
 from classes import Channel
 from classes import Stream
 from classes import Sec
+from classes import banList
 
 from globals.globalvars import ejabberdServer
 
@@ -28,8 +29,6 @@ def view_page(loc):
     if ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
         xmppserver = ejabberdServer
 
-
-
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     if requestedChannel is not None:
         if requestedChannel.protected and sysSettings.protectionEnabled:
@@ -41,6 +40,12 @@ def view_page(loc):
         #chatOptions = ejabberd.get_room_options(requestedChannel.channelLoc, 'conference.' + sysSettings.siteAddress)
         #for option in chatOptions:
         #    print(option)
+
+        # Generate CSV String for Banned Chat List
+        bannedWordQuery = banList.chatBannedWords.query.all()
+        bannedWordArray = []
+        for bannedWord in bannedWordQuery:
+            bannedWordArray.append(bannedWord.word)
 
         streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
         streamURL = ''
@@ -75,7 +80,7 @@ def view_page(loc):
                         flash("Invalid User","error")
                         return(redirect(url_for("root.main_page")))
 
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser, xmppserver=xmppserver)
+                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser, xmppserver=xmppserver, bannedWords=bannedWordArray)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -119,7 +124,7 @@ def view_page(loc):
                     subState = True
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, bannedWords=bannedWordArray)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:
