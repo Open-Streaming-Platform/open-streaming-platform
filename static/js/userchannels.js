@@ -365,7 +365,8 @@ socket.on('newInviteCode', function (msg) {
 socket.on('addMod', function (msg) {
     var mod = msg['mod'];
     var channelLoc = msg['channelLoc'];
-    $('#mods-' + channelLoc).append('<div class="row" id="mod-' + channelLoc + '-' + mod + '"><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><p>' + mod + '</p></div><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><button type="button" class="btn btn-sm btn-danger" onclick="deleteMod(\'' + mod + '\', ' + '\'' + channelLoc + '\')"><i class="far fa-trash-alt"></i></button></div></div>');
+    var username = msg['username'];
+    $('#mods-' + channelLoc).append('<div class="row" id="mod-' + channelLoc + '-' + mod + '"><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><p>' + username + '</p></div><div class="col-xs-12 col-sm-12 col-md-12 col-lg-6"><button type="button" class="btn btn-sm btn-danger" onclick="deleteMod(\'' + mod + '\', ' + '\'' + channelLoc + '\')"><i class="far fa-trash-alt"></i></button></div></div>');
     createNewBSAlert("Moderator permission granted to user", "Success");
 });
 
