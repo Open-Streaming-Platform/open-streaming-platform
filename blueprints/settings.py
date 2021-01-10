@@ -516,9 +516,9 @@ def admin_page():
             if 'maintenanceMode' in request.form:
                 maintenanceMode = True
 
+            print(request.form['bannedChatWords'])
             if 'bannedChatWords' in request.form:
                 bannedWordListString = request.form['bannedChatWords']
-                print(bannedWordListString)
                 bannedWordList = bannedWordListString.split(',')
                 existingWordList = banList.chatBannedWords.query.all()
                 for currentWord in existingWordList:
