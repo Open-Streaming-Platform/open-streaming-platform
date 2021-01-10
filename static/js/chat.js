@@ -379,6 +379,12 @@ function onMessage(msg) {
 function format_msg(msg){
     msg = msg.replace(/<\/?[^>]+(>|$)/g, '');
     msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    for (var i = 0; i < bannedWords.length; i++) {
+        var searchMask = bannedWords[i];
+        var regEx = new RegExp(searchMask, "ig");
+        var replaceMask = "****";
+        msg = msg.replace(regEx, replaceMask);
+    }
     return msg
 }
 

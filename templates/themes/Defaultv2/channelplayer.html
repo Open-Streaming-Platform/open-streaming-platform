@@ -547,6 +547,7 @@
     </script>
     <script>
         // Settings and Event Hooks for XMPP
+        var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
         var userUUID = "{{current_user.uuid}}";
