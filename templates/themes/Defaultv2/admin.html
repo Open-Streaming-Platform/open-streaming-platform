@@ -12,6 +12,17 @@
 {% endblock %}
 
 {% block body %}
+<style>
+    .bootstrap-tagsinput {
+        max-width: 100%;
+        line-height: 22px;
+        overflow-y: scroll;
+        overflow-x: scroll;
+        height: 65px;
+        cursor: text;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-md-12" style="margin-top:15px;">
@@ -261,7 +272,7 @@
                                   </div>
                                   <div class="form-group">
                                       <label for="bannedChatWords" class="col-form-label"><b>Banned Chat Words</b></label>
-                                      <textarea id="bannedChatWords" name="bannedChatWords" data-role="tagsinput" class="form-control" rows="5"> {{bannedWords}}</textarea>
+                                      <input type="test" id="bannedChatWords" name="bannedChatWords" data-role="tagsinput" class="form-control" rows="5"> {{bannedWords}}</input>
                                   </div>
                               </div>
                               <hr>
