@@ -37,3 +37,13 @@ class channelBanList(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class chatBannedWords(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(1028))
+
+    def __init__(self, word):
+        self.word = word
+
+    def __repr__(self):
+        return '<id %r>' % self.id

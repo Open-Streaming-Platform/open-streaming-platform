@@ -438,6 +438,14 @@ def admin_page():
             flash("EJabberD is not connected and is required to access this page.  Contact your administrator", "error")
             return redirect(url_for("root.main_page"))
 
+        # Generate CSV String for Banned Chat List
+        bannedWordQuery = banList.chatBannedWords.query.all()
+        bannedWordArray = []
+        for bannedWord in bannedWordQuery:
+            bannedWordArray.append(bannedWord.word)
+        bannedWordArray = sorted(bannedWordArray)
+        bannedWordString = ','.join(bannedWordArray)
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -446,7 +454,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
-                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, bannedWords=bannedWordString, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -507,6 +515,21 @@ def admin_page():
                 protectionEnabled = True
             if 'maintenanceMode' in request.form:
                 maintenanceMode = True
+
+            if 'bannedChatWords' in request.form:
+                bannedWordListString = request.form['bannedChatWords']
+                bannedWordList = bannedWordListString.split(',')
+                existingWordList = banList.chatBannedWords.query.all()
+                for currentWord in existingWordList:
+                    if currentWord.word not in bannedWordList:
+                        db.session.delete(currentWord)
+                    else:
+                        bannedWordList.remove(currentWord.word)
+                db.session.commit()
+                for currentWord in bannedWordList:
+                    newWord = banList.chatBannedWords(currentWord)
+                    db.session.add(newWord)
+                    db.session.commit()
 
             systemLogo = None
             if 'photo' in request.files:
