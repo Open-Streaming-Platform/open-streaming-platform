@@ -516,7 +516,8 @@ def admin_page():
             if 'maintenanceMode' in request.form:
                 maintenanceMode = True
 
-            print(request.form['bannedChatWords'])
+            return str(request.form['bannedChatWords'])
+
             if 'bannedChatWords' in request.form:
                 bannedWordListString = request.form['bannedChatWords']
                 bannedWordList = bannedWordListString.split(',')
