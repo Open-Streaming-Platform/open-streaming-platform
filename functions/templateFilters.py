@@ -33,7 +33,7 @@ def init(context):
     context.jinja_env.filters['format_clipLength'] = format_clipLength
     context.jinja_env.filters['processClientCount'] = processClientCount
     context.jinja_env.filters['formatSpace'] = formatSpace
-
+    context.jinja_env.filters['uuid_to_username'] = uuid_to_username
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -176,6 +176,18 @@ def processClientCount(data):
     else:
         count = 1
     return count
+
+def uuid_to_username(uuid):
+    if '@' in uuid:
+        JID=uuid.split('@')[0]
+    else:
+        JID = uuid
+    userQuery = Sec.User.query.filter_by(uuid=JID).first()
+    if userQuery is not None:
+        result = userQuery.username
+    else:
+        result = None
+    return result
 
 def get_webhookTrigger(webhookTrigger):
 

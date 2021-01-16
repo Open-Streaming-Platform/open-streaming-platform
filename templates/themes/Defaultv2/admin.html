@@ -5,12 +5,14 @@
 
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="/static/vendor/bootstrap-tagsinput/tagsinput.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/vendor/datatables/css/datatables.css"/>
 <link rel="stylesheet" type="text/css" href="/static/vendor/datatables/css/datatables.boostrap4.css"/>
-
+<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap-tagsinput/tagsinput.css"/>
 {% endblock %}
 
 {% block body %}
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-md-12" style="margin-top:15px;">
@@ -211,6 +213,9 @@
                                       </div>
                                   </div>
                                   <hr>
+                                  Build OSP-Edge Redirect File on Restart & Changes:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="buildEdgeOnRestartSelect" name="buildEdgeOnRestart" autocomplete="new-password" {% if sysSettings.buildEdgeOnRestart == True %} checked {% endif %}>
+                                  <br>
                                   Allow Users to Record:<br>
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" autocomplete="new-password" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                                   <br>
@@ -254,6 +259,10 @@
                                   <div class="form-group">
                                     <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label>
                                     <textarea class="form-control" name="serverMessage" id="serverMessage" value="" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="bannedChatWords" class="col-form-label"><b>Banned Chat Words</b></label>
+                                      <input type="text" id="bannedChatWords" name="bannedChatWords" data-role="tagsinput" class="form-control" value="{{bannedWords}}">
                                   </div>
                               </div>
                               <hr>
@@ -534,7 +543,11 @@
                             <div class="card">
                                 <div class="card-header">
                                     List of OSP Edge Streamer Nodes
-                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button></span><br>
+                                    <span class="float-right">
+                                        <button class="btn btn-sm btn-info shadow" type="button" data-toggle="modal" onclick="rebuildEdgeConf();">Rebuild Config</button>
+                                        <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button>
+                                    </span>
+                                    <br>
                                     <note style="color:red;">*** A Reload of NGINX is required after any changes for OSP Streaming to work ***</note><br>
                                 </div>
                                 <div class="card-body">

@@ -379,6 +379,12 @@ function onMessage(msg) {
 function format_msg(msg){
     msg = msg.replace(/<\/?[^>]+(>|$)/g, '');
     msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    for (var i = 0; i < bannedWords.length; i++) {
+        var searchMask = bannedWords[i];
+        var regEx = new RegExp(searchMask, "ig");
+        var replaceMask = "****";
+        msg = msg.replace(regEx, replaceMask);
+    }
     return msg
 }
 
@@ -506,7 +512,17 @@ function hideUserMessages(nickname) {
 
 // Mod Controls
 function ban(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
+    if (typeof(connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid']) !== 'undefined') {
+        var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid'].split('@')[0]
+        connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
+        socket.emit('banUser', {channelLoc: ROOMNAME, banUsername: username, banUserUUID: userUUID});
+        return true;
+    }
+}
+
+function unban(uuid) {
+    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(uuid + '@' + server, 'none');
+    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid});
     return true;
 }
 

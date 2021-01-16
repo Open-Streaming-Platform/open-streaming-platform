@@ -52,7 +52,7 @@ def checkRTMPAuthIP(requestData):
 
     if authorized is False:
         confirmedIP = receivedIP
-        system.newLog("error", "Unauthorized RTMP Server - " + confirmedIP)
+        system.newLog(1, "Unauthorized RTMP Server - " + confirmedIP)
 
     return (authorized, confirmedIP)
 
