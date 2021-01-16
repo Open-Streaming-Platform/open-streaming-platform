@@ -1682,7 +1682,8 @@ def settings_channels_page():
         address = server.address
         if address == "127.0.0.1" or address == "localhost":
             address = sysSettings.siteAddress
-        activeRTMPList.append(address)
+        if address not in activeRTMPList:
+            activeRTMPList.append(address)
 
     # Get xmpp room options
     from app import ejabberd
