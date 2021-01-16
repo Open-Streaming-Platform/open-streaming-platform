@@ -6,6 +6,7 @@ OSP-Core: Added Manual OSP-Edge Conf Rebuild Button
 OSP-Core: Added Table channelBanList for future full channel banning and tracking of chat channel bans
 OSP-Core: Fixes in channelplayer.html for Chat Banned Users List Showing User's UUID instead of Username.
 OSP-Core: Fixed an error where an invalid RTMP server error log generated was incorrectly typed as a string
+OSP-Core: Updated List of RTMP Ingests on User Channels page to include all active RTMP servers Authorized
 OSP-RTMP: Changed OSP-Edge Restream endpoint
 OSP-RTMP: Changed RTMP HLS Fragment Naming Scheme to Sequential
 OSP-Edge: Changed Ingest RTMP and Playback endpoints
