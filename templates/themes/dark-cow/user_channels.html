@@ -211,7 +211,7 @@
                                             </div>
                                         </div>
                                         <small id="streamKeyHelpBlock" class="form-text text-muted">
-                                            RTMP Ingest: rtmp://{{sysSettings.siteAddress}}/stream/
+                                            RTMP Ingests: {% for server in rtmpList %}rtmp://{{server}}/stream/ {% endfor %}}
                                         </small>
                                     </div>
                                     <hr>
