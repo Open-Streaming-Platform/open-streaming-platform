@@ -28,6 +28,7 @@ class settings(db.Model):
     serverMessage = db.Column(db.String(8192))
     maxClipLength = db.Column(db.Integer)
     maintenanceMode = db.Column(db.Boolean)
+    buildEdgeOnRestart = db.Column(db.Boolean)
     allowRegistration = db.Column(db.Boolean) # Moved to config.py
     requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
 
@@ -56,6 +57,7 @@ class settings(db.Model):
         self.serverMessage = ""
         self.restreamMaxBitrate = 3500
         self.maxClipLength = 90
+        self.buildEdgeOnRestart = True
         self.protectionEnabled = False
         self.maintenanceMode = False
 

@@ -88,9 +88,9 @@ def user_auth_check():
 
                             # Sets Destination Endpoint based on System Adaptive Streaming Results
                             if sysSettingsResults['results']['adaptiveStreaming'] is True:
-                                subprocessConstructor.append("rtmp://" + node['address'] + "/stream-data-adapt/" + channelLocation)
+                                subprocessConstructor.append("rtmp://" + node['address'] + "/edge-data-adapt/" + channelLocation)
                             else:
-                                subprocessConstructor.append("rtmp://" + node['address'] + "/stream-data/" + channelLocation)
+                                subprocessConstructor.append("rtmp://" + node['address'] + "/edge-data/" + channelLocation)
 
                             p = subprocess.Popen(subprocessConstructor, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                             globalvars.edgeRestreamSubprocesses[channelLocation].append(p)
