@@ -184,6 +184,11 @@ def init(app, user_datastore):
             sysSettings.restreamMaxBitrate = 3500
             db.session.commit()
 
+        #Fix for Edge Conf Build on Restart
+        if sysSettings.buildEdgeOnRestart is None:
+            sysSettings.buildEdgeOnRestart = True
+            db.session.commit()
+
         # Fixes for Server Settings Missing the Main Page Sort Option
         if sysSettings.sortMainBy is None:
             sysSettings.sortMainBy = 0
@@ -258,10 +263,13 @@ def init(app, user_datastore):
 
         print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
         # Initialize the OSP Edge Configuration - Mostly for Docker
-        try:
-            system.rebuildOSPEdgeConf()
-        except:
-            print("Error Rebuilding Edge Config")
+        if sysSettings.buildEdgeOnRestart is True:
+            try:
+                system.rebuildOSPEdgeConf()
+            except:
+                print("Error Rebuilding Edge Config")
+        else:
+            print({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
 
         print({"level": "info", "message": "Importing Theme Data into Global Cache"})
         # Import Theme Data into Theme Dictionary

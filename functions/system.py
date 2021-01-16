@@ -106,7 +106,7 @@ def newLog(logType, message):
     return True
 
 def rebuildOSPEdgeConf():
-    f = open("conf/osp-edge.conf", "w")
+    f = open("/opt/osp/conf/osp-edge.conf", "w")
     ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
     f.write('split_clients "${remote_addr}AAA" $ospedge_node {\n')
     if ospEdgeQuery != []:

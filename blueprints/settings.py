@@ -438,6 +438,14 @@ def admin_page():
             flash("EJabberD is not connected and is required to access this page.  Contact your administrator", "error")
             return redirect(url_for("root.main_page"))
 
+        # Generate CSV String for Banned Chat List
+        bannedWordQuery = banList.chatBannedWords.query.all()
+        bannedWordArray = []
+        for bannedWord in bannedWordQuery:
+            bannedWordArray.append(bannedWord.word)
+        bannedWordArray = sorted(bannedWordArray)
+        bannedWordString = ','.join(bannedWordArray)
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -446,7 +454,7 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
-                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, bannedWords=bannedWordString, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -475,8 +483,12 @@ def admin_page():
             allowComments = False
             smtpTLS = False
             smtpSSL = False
+            buildEdgeOnRestart = False
             protectionEnabled = False
             maintenanceMode = False
+
+            if 'buildEdgeOnRestartSelect' in request.form:
+                buildEdgeOnRestart = True
 
             if 'recordSelect' in request.form:
                 recordSelect = True
@@ -503,6 +515,21 @@ def admin_page():
                 protectionEnabled = True
             if 'maintenanceMode' in request.form:
                 maintenanceMode = True
+
+            if 'bannedChatWords' in request.form:
+                bannedWordListString = request.form['bannedChatWords']
+                bannedWordList = bannedWordListString.split(',')
+                existingWordList = banList.chatBannedWords.query.all()
+                for currentWord in existingWordList:
+                    if currentWord.word not in bannedWordList:
+                        db.session.delete(currentWord)
+                    else:
+                        bannedWordList.remove(currentWord.word)
+                db.session.commit()
+                for currentWord in bannedWordList:
+                    newWord = banList.chatBannedWords(currentWord)
+                    db.session.add(newWord)
+                    db.session.commit()
 
             systemLogo = None
             if 'photo' in request.files:
@@ -542,6 +569,7 @@ def admin_page():
             sysSettings.restreamMaxBitrate = int(restreamMaxBitrate)
             sysSettings.maintenanceMode = maintenanceMode
             sysSettings.maxClipLength = int(clipMaxLength)
+            sysSettings.buildEdgeOnRestart = buildEdgeOnRestart
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
@@ -1648,6 +1676,15 @@ def settings_channels_page():
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
 
+    activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True).all()
+    activeRTMPList = []
+    for server in activeRTMPQuery:
+        address = server.address
+        if address == "127.0.0.1" or address == "localhost":
+            address = sysSettings.siteAddress
+        if address not in activeRTMPList:
+            activeRTMPList.append(address)
+
     # Get xmpp room options
     from app import ejabberd
     channelRooms = {}
@@ -1747,7 +1784,7 @@ def settings_channels_page():
         user_channels_stats[channel.id] = statsViewsDay
 
     return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
-                           viewStats=user_channels_stats)
+                           viewStats=user_channels_stats, rtmpList=activeRTMPList)
 
 
 @settings_bp.route('/channels/chat', methods=['POST', 'GET'])
