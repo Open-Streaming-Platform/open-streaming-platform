@@ -1,3 +1,7 @@
+0.8.3
+==============================================
+OSP-Core: Fixed a bug in chat.js that caused all chat messages to have **** after every letter if the banned chat list was blank
+
 0.8.2
 ==============================================
 OSP-Core: Changed OSP-Edge Playback endpoint redirect
