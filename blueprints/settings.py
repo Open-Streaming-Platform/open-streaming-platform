@@ -881,6 +881,19 @@ def admin_page():
             emailAddress = request.form['emailaddress']
             username = request.form['username']
 
+            # Check for Existing Users
+            existingUserQuery = Sec.User.query.filter_by(username=username).first()
+            if existingUserQuery is not None:
+                flash("A user already exists with this username","error")
+                db.session.commit()
+                return redirect(url_for('.admin_page', page="users"))
+
+            existingUserQuery = Sec.User.query.filter_by(email=emailAddress).first()
+            if existingUserQuery is not None:
+                flash("A user already exists with this email address", "error")
+                db.session.commit()
+                return redirect(url_for('.admin_page', page="users"))
+
             passwordhash = hash_password(password)
 
             user_datastore.create_user(email=emailAddress, username=username, password=passwordhash)
