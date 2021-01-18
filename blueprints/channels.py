@@ -66,7 +66,7 @@ def channel_view_link_page(channelLoc):
 
 # Retrieves Custom CSS for a channel
 @channels_bp.route('/<channelLoc>/custom.css')
-def channel_css_link_page(channelLoc):
+def channel_stream_link_page(channelLoc):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
     if requestedChannel is not None:
         if requestedChannel.customCSS is not None and requestedChannel.customCSS != "":
