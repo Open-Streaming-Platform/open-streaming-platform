@@ -648,7 +648,11 @@
                                         <thead class="shadow">
                                             <tr>
                                                 <th>Webhook Name</th>
+                                                <th style="display:none;"></th>
                                                 <th>Trigger</th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
                                                 <th>Options</th>
                                             </tr>
                                         </thead>
@@ -1248,7 +1252,11 @@
         $('#webhookTable').DataTable(
         {
           'order': [[ 0, "asc" ]],
-          'stateSave': true
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [3,4,5,6] },
+          { 'orderable': false, 'targets': [3,4,5,6] }
+          ]
         }
       );
     } );
