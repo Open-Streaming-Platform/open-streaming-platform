@@ -64,15 +64,6 @@ def channel_view_link_page(channelLoc):
     flash("Invalid Channel Location", "error")
     return redirect(url_for("root.main_page"))
 
-# Retrieves Custom CSS for a channel
-@channels_bp.route('/<channelLoc>/custom.css')
-def channel_css_link_page(channelLoc):
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=str(channelLoc)).first()
-    if requestedChannel is not None:
-        if requestedChannel.customCSS is not None and requestedChannel.customCSS != "":
-            return str(requestedChannel.customCSS)
-    return ""
-
 # Allow a direct link to any open stream for a channel
 @channels_bp.route('/<loc>/stream')
 def channel_stream_link_page(loc):
