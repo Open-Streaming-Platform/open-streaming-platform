@@ -778,7 +778,7 @@
                     </div>
                     <div class="container-fluid">
                         <div class="table-responsive">
-                            <table id="users"class="table table-hover">
+                            <table id="users" class="table table-hover">
                               <thead class="shadow">
                                 <tr>
                                   <th></th>
@@ -1248,11 +1248,7 @@
         $('#webhookTable').DataTable(
         {
           'order': [[ 0, "asc" ]],
-          'stateSave': true,
-          'columnDefs': [
-          { 'searchable': false, 'targets': 2 },
-          { 'orderable': false, 'targets': 2 }
-          ]
+          'stateSave': true
         }
       );
     } );
