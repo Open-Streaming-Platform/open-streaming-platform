@@ -641,43 +641,35 @@
                 <h5>Global Webhooks</h5>
                      <div class="row">
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
-                                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i></button></span>
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div id="webhookList">
-                                        <div class="table-responsive">
-                                            <table id="webhookTable" class="table table-borderless" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Webhook Name</th>
-                                                        <th>Trigger</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for webhook in globalHooks %}
-                                                    <tr id="webhookTableRow-{{webhook.id}}">
-                                                        <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
-                                                        <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
-                                                        <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
-                                                        <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
-                                                        <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
-                                                        <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                            <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i> Add Webhook</button>
+                            <div id="webhookList">
+                                <div class="table-responsive">
+                                    <table id="webhookTable" class="table table-borderless" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Webhook Name</th>
+                                                <th>Trigger</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for webhook in globalHooks %}
+                                            <tr id="webhookTableRow-{{webhook.id}}">
+                                                <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -1251,6 +1243,19 @@
             {x:'{{entry['t']}}', y:{{entry['y']}}},
         {% endfor %}
     ];
+
+    $(document).ready(function() {
+        $('#webhookTable').DataTable(
+        {
+          'order': [[ 0, "asc" ]],
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [2] },
+          { 'orderable': false, 'targets': [2] }
+          ]
+        }
+      );
+    } );
 
     $(document).ready(function() {
         $('#users').DataTable(
