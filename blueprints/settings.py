@@ -1625,9 +1625,6 @@ def settings_channels_page():
                 #requestedChannel.rtmpRestream = rtmpRestream
                 #requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
 
-                if 'customcss' in request.form:
-                    requestedChannel.customCSS = request.form['customcss']
-
                 vanityURL = None
                 if 'vanityURL' in request.form:
                     requestedVanityURL = request.form['vanityURL']
