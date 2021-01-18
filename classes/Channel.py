@@ -31,6 +31,7 @@ class Channel(db.Model):
     rtmpRestreamDestination = db.Column(db.String(4096))
     xmppToken = db.Column(db.String(64))
     vanityURL = db.Column(db.String(1024))
+    customCSS = db.Column(db.Text)
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -64,6 +65,7 @@ class Channel(db.Model):
         self.rtmpRestreamDestination = ""
         self.xmppToken = str(os.urandom(32).hex())
         self.vanityURL = None
+        self.customCSS = ""
 
     def __repr__(self):
         return '<id %r>' % self.id
