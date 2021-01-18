@@ -645,11 +645,11 @@
                             <div id="webhookList">
                                 <div class="table-responsive">
                                     <table id="webhookTable" class="table table-borderless" width="100%">
-                                        <thead>
+                                        <thead class="shadow">
                                             <tr>
                                                 <th>Webhook Name</th>
                                                 <th>Trigger</th>
-                                                <th></th>
+                                                <th>Options</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1250,8 +1250,8 @@
           'order': [[ 0, "asc" ]],
           'stateSave': true,
           'columnDefs': [
-          { 'searchable': false, 'targets': [2] },
-          { 'orderable': false, 'targets': [2] }
+          { 'searchable': false, 'targets': 2 },
+          { 'orderable': false, 'targets': 2 }
           ]
         }
       );
