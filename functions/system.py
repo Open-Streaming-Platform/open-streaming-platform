@@ -151,7 +151,7 @@ def systemFixes(app):
     return True
 
 def initializeThemes():
-    sysSettings = settings.settings.query.all()
+    sysSettings = settings.settings.query.first()
 
     print({"level": "info", "message": "Importing Theme Data into Global Cache"})
     # Import Theme Data into Theme Dictionary
@@ -160,7 +160,7 @@ def initializeThemes():
     return True
 
 def checkOSPEdgeConf():
-    sysSettings = settings.settings.query.all()
+    sysSettings = settings.settings.query.first()
 
     print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
     # Initialize the OSP Edge Configuration - Mostly for Docker
