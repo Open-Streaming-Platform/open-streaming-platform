@@ -1845,10 +1845,24 @@ def settings_apikeys_page():
 @roles_required('Streamer')
 def settings_apikeys_post_page(action):
     if action == "new":
-        newapi = apikey.apikey(current_user.id, 1, request.form['keyName'], request.form['expiration'])
-        db.session.add(newapi)
+        validKeyTypes = [1,2]
+        validRequest = False
+        if 'keyType' in request.form:
+            requestedKeyType = int(request.form['keyType'])
+            if requestedKeyType in validKeyTypes:
+                if requestedKeyType == 2:
+                    if current_user.has_role('Admin'):
+                        validRequest = True
+                else:
+                    validRequest = True
+        if validRequest is True:
+            newapi = apikey.apikey(current_user.id, requestedKeyType, request.form['keyName'], request.form['expiration'])
+            db.session.add(newapi)
+            flash("New API Key Added", "success")
+        else:
+            flash("Invalid Key Type","error")
         db.session.commit()
-        flash("New API Key Added", "success")
+
     elif action == "delete":
         apiQuery = apikey.apikey.query.filter_by(key=request.form['key']).first()
         if apiQuery.userID == current_user.id:
