@@ -1,14 +1,20 @@
 from threading import Thread
 from functools import wraps
+import subprocess
+import os
 import datetime
 import smtplib
-
+from flask import flash
 from html.parser import HTMLParser
 import ipaddress
+import json
+
+from globals import globalvars
 
 from classes.shared import db
 from classes import settings
 from classes import logs
+from classes import RecordedVideo
 
 def asynch(func):
 
@@ -119,4 +125,51 @@ def rebuildOSPEdgeConf():
         f.write("100% 127.0.0.1;\n")
     f.write("}")
     f.close()
+    return True
+
+def systemFixes(app):
+
+    print({"level": "info", "message": "Checking for 0.7.x Clips"})
+    # Fix for Beta 6 Switch from Fake Clips to real clips
+    clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
+    videos_root = globalvars.videoRoot + 'videos/'
+    for clip in clipQuery:
+        originalVideo = videos_root + clip.recordedVideo.videoLocation
+        clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
+        fullvideoLocation = videos_root + clipVideoLocation
+        clip.videoLocation = clipVideoLocation
+        clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-avoid_negative_ts', '1', fullvideoLocation])
+        db.session.commmit()
+
+    # Create the stream-thumb directory if it does not exist
+    if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
+        try:
+            os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
+        except OSError:
+            flash("Unable to create <web-root>/stream-thumb", "error")
+
+    return True
+
+def initializeThemes():
+    sysSettings = settings.settings.query.all()
+
+    print({"level": "info", "message": "Importing Theme Data into Global Cache"})
+    # Import Theme Data into Theme Dictionary
+    with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
+        globalvars.themeData = json.load(f)
+    return True
+
+def checkOSPEdgeConf():
+    sysSettings = settings.settings.query.all()
+
+    print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
+    # Initialize the OSP Edge Configuration - Mostly for Docker
+    if sysSettings.buildEdgeOnRestart is True:
+        try:
+            rebuildOSPEdgeConf()
+        except:
+            print("Error Rebuilding Edge Config")
+            return False
+    else:
+        print({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
     return True

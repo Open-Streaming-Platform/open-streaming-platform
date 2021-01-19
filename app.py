@@ -235,6 +235,12 @@ try:
 except:
     print("DB Load Fail due to Upgrade or Issues")
 
+# Perform System Fixes
+system.systemFixes(app)
+
+# Checking OSP-Edge Redirection Conf File
+system.checkOSPEdgeConf()
+
 print({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
@@ -276,6 +282,12 @@ try:
     results = xmpp.sanityCheck()
 except Exception as e:
     print("XMPP Sanity Check Failed - " + str(e))
+
+print({"level": "info", "message": "Importing Topic Data into Global Cache"})
+# Initialize the Topic Cache
+topicQuery = topics.topics.query.all()
+for topic in topicQuery:
+    globalvars.topicCache[topic.id] = topic.name
 
 print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
@@ -415,7 +427,6 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 #----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
-
 
 @app.before_request
 def do_before_request():
