@@ -34,6 +34,7 @@ def init(context):
     context.jinja_env.filters['processClientCount'] = processClientCount
     context.jinja_env.filters['formatSpace'] = formatSpace
     context.jinja_env.filters['uuid_to_username'] = uuid_to_username
+    context.jinja_env.filters['format_keyType'] = format_keyType
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -225,3 +226,11 @@ def get_logType(logType):
         '10': 'Hub'
     }
     return logTypeNames[logType]
+
+def format_keyType(keyType):
+    keyType = str(keyType)
+    keyTypeNames = {
+        '1': 'User',
+        '2': 'Admin'
+    }
+    return keyTypeNames[keyType]
