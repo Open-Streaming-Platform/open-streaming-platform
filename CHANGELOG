@@ -1,3 +1,9 @@
+0.8.4
+==============================================
+OSP-Core: Changed Admin Webhooks Formatting
+OSP-Core: Added Vanity URL to Public Channel APIv1 Return
+OSP-Core: Refactoring of OSP-Core Startup Processes
+
 0.8.3
 ==============================================
 OSP-Core: Fixed a bug in chat.js that caused all chat messages to have **** after every letter if the banned chat list was blank
