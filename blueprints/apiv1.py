@@ -26,6 +26,8 @@ from functions import system
 
 from globals import globalvars
 
+from .apis import server as server_ns
+
 def checkRTMPAuthIP(requestData):
     authorized = False
     requestIP = "0.0.0.0"
@@ -56,6 +58,19 @@ def checkRTMPAuthIP(requestData):
 
     return (authorized, confirmedIP)
 
+def isValidAdminKey(apikey):
+    validKey = False
+    apiKeyQuery = apikey.apikey.query.filter_by(type=2, key=apikey).first()
+    if apiKeyQuery is not None:
+        if apiKeyQuery.isValid() is True:
+            userID = apiKeyQuery.userID
+            userQuery = Sec.User.query.filter_by(id=userID).first()
+            if userQuery is not None:
+                if userQuery.has_role("Admin"):
+                    validKey = True
+    return validKey
+
+
 class fixedAPI(Api):
     # Monkeyfixed API IAW https://github.com/noirbizarre/flask-restplus/issues/223
     @property
@@ -67,6 +82,7 @@ class fixedAPI(Api):
         '''
         return url_for(self.endpoint('specs'), _external=False)
 
+
 authorizations = {
     'apikey': {
         'type': 'apiKey',
@@ -77,6 +93,8 @@ authorizations = {
 
 api_v1 = Blueprint('api', __name__, url_prefix='/apiv1')
 api = fixedAPI(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
+
+api.add_namespace(server_ns)
 
 ### Start API Functions ###
 
@@ -134,28 +152,9 @@ rtmpRecClose.add_argument('path', type=str)
 
 # TODO Add Clip Post Arguments
 
-@api.route('/server')
-class api_1_Server(Resource):
-    # Server - Get Basic Server Information
-    def get(self):
-        """
-            Displays a Listing of Server Settings
-        """
-        serverSettings = settings.settings.query.all()[0]
-        db.session.commit()
-        return {'results': serverSettings.serialize() }
 
-@api.route('/server/edges')
-class api_1_Edges(Resource):
-    # Server - Get Edge Serves
-    def get(self):
-        """
-            Displays a Listing of Edge Servers
-        """
 
-        edgeList = settings.edgeStreamer.query.all()
-        db.session.commit()
-        return {'results': [ob.serialize() for ob in edgeList]}
+
 
 @api.route('/channel/')
 class api_1_ListChannels(Resource):
@@ -167,6 +166,7 @@ class api_1_ListChannels(Resource):
         channelList = Channel.Channel.query.all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
+
     # Channel - Create Channel
     @api.expect(channelParserPost)
     @api.doc(security='apikey')
@@ -204,6 +204,7 @@ class api_1_ListChannels(Resource):
                     return {'results': {'message':'Channel Created', 'apiKey':newChannel.streamKey}}, 200
         return {'results': {'message':"Request Error"}}, 400
 
+
 @api.route('/channel/<string:channelEndpointID>')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
@@ -214,6 +215,7 @@ class api_1_ListChannel(Resource):
         channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in channelList]}
+
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
     @api.doc(security='apikey')
@@ -241,12 +243,12 @@ class api_1_ListChannel(Resource):
                                 if possibleTopics is not None:
                                     channelQuery.topic = int(args['topicID'])
                         db.session.commit()
-                        return {'results': {'message':'Channel Updated'}}, 200
-        return {'results': {'message':'Request Error'}},400
+                        return {'results': {'message': 'Channel Updated'}}, 200
+        return {'results': {'message': 'Request Error'}},400
 
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
-    def delete(self,channelEndpointID):
+    def delete(self, channelEndpointID):
         """
             Deletes a Channel
         """
@@ -284,6 +286,7 @@ class api_1_ListChannel(Resource):
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+
 # TODO Add Ability to Add/Delete/Change
 @api.route('/channel/<string:channelEndpointID>/restreams')
 @api.doc(security='apikey')
@@ -316,6 +319,7 @@ class api_1_GetRestreams(Resource):
         else:
             db.session.commit()
             return {'results': {'message': 'Request Error'}}, 400
+
 
 @api.route('/channel/authed/')
 class api_1_ListChannelAuthed(Resource):
@@ -357,6 +361,7 @@ class api_1_ListChannelAuthed(Resource):
                         return {'results': [ob.authed_serialize() for ob in channelQuery]}
         return {'results': {'message': 'Request Error'}}, 400
 
+
 @api.route('/stream/')
 class api_1_ListStreams(Resource):
     def get(self):
@@ -366,6 +371,7 @@ class api_1_ListStreams(Resource):
         streamList = Stream.Stream.query.all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
+
 
 @api.route('/stream/<int:streamID>')
 @api.doc(params={'streamID': 'ID Number for the Stream'})
@@ -406,6 +412,7 @@ class api_1_ListStream(Resource):
                             return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+
 @api.route('/video/')
 class api_1_ListVideos(Resource):
     def get(self):
@@ -415,6 +422,7 @@ class api_1_ListVideos(Resource):
         videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
+
 
 @api.route('/video/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
@@ -426,6 +434,7 @@ class api_1_ListVideo(Resource):
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList]}
+
     @api.expect(videoParserPut)
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
@@ -455,9 +464,10 @@ class api_1_ListVideo(Resource):
                             db.session.commit()
                             return {'results': {'message': 'Video Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
-    def delete(self,videoID):
+    def delete(self, videoID):
         """
             Deletes a Video
         """
@@ -493,6 +503,7 @@ class api_1_ListVideo(Resource):
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
+
 @api.route('/clip/')
 class api_1_ListClips(Resource):
     def get(self):
@@ -502,6 +513,7 @@ class api_1_ListClips(Resource):
         clipsList = RecordedVideo.Clips.query.filter_by(published=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in clipsList]}
+
 
 @api.route('/clip/<int:clipID>')
 @api.doc(params={'clipID': 'ID Number for the Clip'})
@@ -578,6 +590,7 @@ class api_1_ListTopics(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
+
 @api.route('/topic/<int:topicID>')
 @api.doc(params={'topicID': 'ID Number for Topic'})
 class api_1_ListTopic(Resource):
@@ -590,6 +603,7 @@ class api_1_ListTopic(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 
+
 @api.route('/user/<string:username>')
 @api.doc(params={'username': 'Username of OSP User'})
 class api_1_ListUser(Resource):
@@ -600,6 +614,7 @@ class api_1_ListUser(Resource):
         userQuery = Sec.User.query.filter_by(username=username).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in userQuery]}
+
 
 @api.route('/xmpp/auth')
 @api.doc(params={'jid': 'JID of user', 'token': 'Jabber Token'})
@@ -624,6 +639,7 @@ class api_1_xmppAuth(Resource):
                             return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
         return {'results': {'message': 'Request Error', 'code':400}}, 400
 
+
 @api.route('/xmpp/isuser')
 @api.doc(params={'jid': 'JID of user'})
 class api_1_xmppisuser(Resource):
@@ -643,6 +659,7 @@ class api_1_xmppisuser(Resource):
                 if userQuery != None:
                     return {'results': {'message': 'Successful Authentication', 'code': 200}}, 200
         return {'results': {'message': 'Request Error', 'code':400}}, 400
+
 
 @api.route('/rtmp/stage1')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
@@ -670,6 +687,7 @@ class api_1_rtmp_stage1(Resource):
                 return {'results': results}, 400
         else:
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
 
 @api.route('/rtmp/stage2')
 @api.doc(params={'name': 'Channel Location of Channel Processed Under Stage 1', 'addr':'IP Address of Endpoint Making Request'})
@@ -699,6 +717,7 @@ class api_1_rtmp_stage2(Resource):
         else:
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage2', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
+
 @api.route('/rtmp/reccheck')
 @api.doc(params={'name': 'Stream Key of Channel'})
 class api_1_rtmp_reccheck(Resource):
@@ -725,6 +744,7 @@ class api_1_rtmp_reccheck(Resource):
                 return {'results': results}, 400
         else:
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordCheck', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
 
 @api.route('/rtmp/streamclose')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
@@ -753,6 +773,7 @@ class api_1_rtmp_streamclose(Resource):
                 return {'results': results}, 400
         else:
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
 
 @api.route('/rtmp/recclose')
 @api.doc(params={'name': 'Channel Location of Video to Close', 'path':'Nginx-rtmp Full Path of Preprocessed Video'})
