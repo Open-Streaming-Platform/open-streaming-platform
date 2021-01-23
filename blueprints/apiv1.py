@@ -2,29 +2,9 @@ import sys
 from os import path, remove
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-from flask import Blueprint, request, url_for
+from flask import Blueprint, url_for
 from flask_restplus import Api, Resource, reqparse
 
-import shutil
-import uuid
-import datetime
-import socket
-
-from classes import Sec
-from classes import Channel
-from classes import Stream
-from classes import RecordedVideo
-from classes import topics
-from classes import upvotes
-from classes import apikey
-from classes import views
-from classes import settings
-from classes.shared import db
-
-from functions import rtmpFunc
-from functions import system
-
-from globals import globalvars
 
 from .apis.server_ns import api as serverNS
 from .apis.channel_ns import api as channelNS
@@ -35,19 +15,6 @@ from .apis.topic_ns import api as topicNS
 from .apis.user_ns import api as userNS
 from .apis.xmpp_ns import api as xmppNS
 from .apis.rtmp_ns import api as rtmpNS
-
-
-def isValidAdminKey(apikey):
-    validKey = False
-    apiKeyQuery = apikey.apikey.query.filter_by(type=2, key=apikey).first()
-    if apiKeyQuery is not None:
-        if apiKeyQuery.isValid() is True:
-            userID = apiKeyQuery.userID
-            userQuery = Sec.User.query.filter_by(id=userID).first()
-            if userQuery is not None:
-                if userQuery.has_role("Admin"):
-                    validKey = True
-    return validKey
 
 
 class fixedAPI(Api):
