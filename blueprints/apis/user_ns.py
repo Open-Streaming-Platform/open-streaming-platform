@@ -3,9 +3,9 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import Sec
 from classes.shared import db
 
-api = Namespace('User', description='User Related Queries and Functions')
+api = Namespace('user', description='User Related Queries and Functions')
 
-@api.route('/user/<string:username>')
+@api.route('/<string:username>')
 @api.doc(params={'username': 'Username of OSP User'})
 class api_1_ListUser(Resource):
     def get(self, username):

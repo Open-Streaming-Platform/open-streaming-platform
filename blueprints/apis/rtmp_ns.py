@@ -39,7 +39,7 @@ def checkRTMPAuthIP(requestData):
 
     return (authorized, confirmedIP)
 
-api = Namespace('RTMP', description='RTMP Related Queries and Functions')
+api = Namespace('rtmp', description='RTMP Related Queries and Functions')
 
 rtmpStage1Auth = reqparse.RequestParser()
 rtmpStage1Auth.add_argument('name', type=str)
@@ -60,7 +60,7 @@ rtmpRecClose = reqparse.RequestParser()
 rtmpRecClose.add_argument('name', type=str)
 rtmpRecClose.add_argument('path', type=str)
 
-@api.route('/rtmp/stage1')
+@api.route('/stage1')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
 class api_1_rtmp_stage1(Resource):
     @api.expect(rtmpStage1Auth)
@@ -88,7 +88,7 @@ class api_1_rtmp_stage1(Resource):
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
-@api.route('/rtmp/stage2')
+@api.route('/stage2')
 @api.doc(params={'name': 'Channel Location of Channel Processed Under Stage 1', 'addr':'IP Address of Endpoint Making Request'})
 class api_1_rtmp_stage2(Resource):
     @api.expect(rtmpStage2Auth)
@@ -117,7 +117,7 @@ class api_1_rtmp_stage2(Resource):
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage2', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
-@api.route('/rtmp/reccheck')
+@api.route('/reccheck')
 @api.doc(params={'name': 'Stream Key of Channel'})
 class api_1_rtmp_reccheck(Resource):
     @api.expect(rtmpRecCheck)
@@ -145,7 +145,7 @@ class api_1_rtmp_reccheck(Resource):
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordCheck', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
-@api.route('/rtmp/streamclose')
+@api.route('/streamclose')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
 class api_1_rtmp_streamclose(Resource):
     @api.expect(rtmpStreamClose)
@@ -174,7 +174,7 @@ class api_1_rtmp_streamclose(Resource):
             return {'results': {'time': str(datetime.datetime.now()), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
-@api.route('/rtmp/recclose')
+@api.route('/recclose')
 @api.doc(params={'name': 'Channel Location of Video to Close', 'path':'Nginx-rtmp Full Path of Preprocessed Video'})
 class api_1_rtmp_recclose(Resource):
     @api.expect(rtmpRecClose)

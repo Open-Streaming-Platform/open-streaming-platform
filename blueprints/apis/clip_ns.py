@@ -9,13 +9,13 @@ from classes.shared import db
 
 from globals import globalvars
 
-api = Namespace('Clip', description='Clip Related Queries and Functions')
+api = Namespace('clip', description='Clip Related Queries and Functions')
 
 clipParserPut = reqparse.RequestParser()
 clipParserPut.add_argument('clipName', type=str)
 clipParserPut.add_argument('description', type=str)
 
-@api.route('/clip/')
+@api.route('/')
 class api_1_ListClips(Resource):
     def get(self):
         """
@@ -26,7 +26,7 @@ class api_1_ListClips(Resource):
         return {'results': [ob.serialize() for ob in clipsList]}
 
 
-@api.route('/clip/<int:clipID>')
+@api.route('/<int:clipID>')
 @api.doc(params={'clipID': 'ID Number for the Clip'})
 class api_1_ListClip(Resource):
     def get(self, clipID):

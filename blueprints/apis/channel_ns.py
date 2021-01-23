@@ -17,7 +17,7 @@ from functions import system
 
 from globals import globalvars
 
-api = Namespace('Channel', description='Channels Related Queries and Functions')
+api = Namespace('channel', description='Channels Related Queries and Functions')
 
 channelParserPut = reqparse.RequestParser()
 channelParserPut.add_argument('channelName', type=str)
@@ -63,7 +63,7 @@ def checkRTMPAuthIP(requestData):
     return (authorized, confirmedIP)
 
 
-@api.route('/channel/')
+@api.route('/')
 class api_1_ListChannels(Resource):
     # Channel - Get all Channels
     def get(self):
@@ -112,7 +112,7 @@ class api_1_ListChannels(Resource):
         return {'results': {'message':"Request Error"}}, 400
 
 
-@api.route('/channel/<string:channelEndpointID>')
+@api.route('/<string:channelEndpointID>')
 @api.doc(security='apikey')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
@@ -206,7 +206,7 @@ class api_1_ListChannel(Resource):
 
 
 # TODO Add Ability to Add/Delete/Change
-@api.route('/channel/<string:channelEndpointID>/restreams')
+@api.route('/<string:channelEndpointID>/restreams')
 @api.doc(security='apikey')
 @api.doc(params={'channelEndpointID': 'GUID Channel Location'})
 class api_1_GetRestreams(Resource):
@@ -239,7 +239,7 @@ class api_1_GetRestreams(Resource):
             return {'results': {'message': 'Request Error'}}, 400
 
 
-@api.route('/channel/authed/')
+@api.route('/authed/')
 class api_1_ListChannelAuthed(Resource):
     # Channel - Get Authenticated View of a Single Channel
     @api.doc(security='apikey')

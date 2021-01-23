@@ -3,9 +3,9 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import topics
 from classes.shared import db
 
-api = Namespace('Topic', description='Topic Related Queries and Functions')
+api = Namespace('topic', description='Topic Related Queries and Functions')
 
-@api.route('/topic/')
+@api.route('/')
 class api_1_ListTopics(Resource):
     def get(self):
         """
@@ -16,7 +16,7 @@ class api_1_ListTopics(Resource):
         return {'results': [ob.serialize() for ob in topicList]}
 
 
-@api.route('/topic/<int:topicID>')
+@api.route('/<int:topicID>')
 @api.doc(params={'topicID': 'ID Number for Topic'})
 class api_1_ListTopic(Resource):
 
