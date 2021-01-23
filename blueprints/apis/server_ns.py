@@ -3,7 +3,7 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import settings
 from classes.shared import db
 
-api = Namespace('server', description='Server Related Queries and Functions')
+api = Namespace('Server', description='Server Related Queries and Functions')
 
 @api.route('/server')
 class api_1_Server(Resource):
