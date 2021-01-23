@@ -26,7 +26,7 @@ from functions import system
 
 from globals import globalvars
 
-from blueprints.apis import server as server_ns
+import blueprints.apis.server as server_ns
 
 def checkRTMPAuthIP(requestData):
     authorized = False
