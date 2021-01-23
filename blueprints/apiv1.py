@@ -26,6 +26,7 @@ from functions import system
 
 from globals import globalvars
 
+from .apis import server as server_ns
 
 def checkRTMPAuthIP(requestData):
     authorized = False
@@ -93,6 +94,8 @@ authorizations = {
 api_v1 = Blueprint('api', __name__, url_prefix='/apiv1')
 api = fixedAPI(api_v1, version='1.0', title='OSP API', description='OSP API for Users, Streamers, and Admins', default='Primary', default_label='OSP Primary Endpoints', authorizations=authorizations)
 
+api.add_namespace(server_ns)
+
 ### Start API Functions ###
 
 channelParserPut = reqparse.RequestParser()
@@ -150,29 +153,7 @@ rtmpRecClose.add_argument('path', type=str)
 # TODO Add Clip Post Arguments
 
 
-@api.route('/server')
-class api_1_Server(Resource):
-    # Server - Get Basic Server Information
-    def get(self):
-        """
-            Displays a Listing of Server Settings
-        """
-        serverSettings = settings.settings.query.all()[0]
-        db.session.commit()
-        return {'results': serverSettings.serialize() }
 
-
-@api.route('/server/edges')
-class api_1_Edges(Resource):
-    # Server - Get Edge Serves
-    def get(self):
-        """
-            Displays a Listing of Edge Servers
-        """
-
-        edgeList = settings.edgeStreamer.query.all()
-        db.session.commit()
-        return {'results': [ob.serialize() for ob in edgeList]}
 
 
 @api.route('/channel/')
