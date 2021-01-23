@@ -225,15 +225,26 @@ class api_1_ListChannels(Resource):
 
 
 @api.route('/channel/<string:channelEndpointID>')
+@api.doc(security='apikey')
 @api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
 class api_1_ListChannel(Resource):
     def get(self, channelEndpointID):
         """
             Get Info for One Channel
         """
-        channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
-        db.session.commit()
-        return {'results': [ob.serialize() for ob in channelList]}
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).all()
+                    if channelQuery != []:
+                        db.session.commit()
+                        return {'results': [ob.authed_serialize() for ob in channelQuery]}
+                return {'results': {'message': 'Request Error'}}, 400
+        else:
+            channelList = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).all()
+            db.session.commit()
+            return {'results': [ob.serialize() for ob in channelList]}
 
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
@@ -358,28 +369,6 @@ class api_1_ListChannelAuthed(Resource):
                         db.session.commit()
                         return {'results': [ob.authed_serialize() for ob in channelQuery]}
         return {'results': {'message': 'Request Error'}}, 400
-
-
-@api.route('/channel/authed/<string:channelEndpointID>')
-@api.doc(params={'channelEndpointID': 'Channel Endpoint Descriptor, Expressed in a UUID Value(ex:db0fe456-7823-40e2-b40e-31147882138e)'})
-class api_1_ListChannelAuthed(Resource):
-    # Channel - Get Authenticated View of a Single Channel
-    @api.doc(security='apikey')
-    @api.doc(responses={200: 'Success', 400: 'Request Error'})
-    def get(self, channelEndpointID):
-        """
-            Gets an authenticated view of the settings of a Channel
-        """
-        if 'X-API-KEY' in request.headers:
-            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
-            if requestAPIKey is not None:
-                if requestAPIKey.isValid():
-                    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).all()
-                    if channelQuery != []:
-                        db.session.commit()
-                        return {'results': [ob.authed_serialize() for ob in channelQuery]}
-        return {'results': {'message': 'Request Error'}}, 400
-
 
 @api.route('/stream/')
 class api_1_ListStreams(Resource):
