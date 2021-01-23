@@ -4,7 +4,7 @@ from classes import settings
 from classes import Sec
 from classes.shared import db
 
-api = Namespace('XMPP', description='XMPP Chat Related Queries and Functions')
+api = Namespace('xmpp', description='XMPP Chat Related Queries and Functions')
 
 xmppAuthParserPost = reqparse.RequestParser()
 xmppAuthParserPost.add_argument('jid', type=str)
@@ -13,7 +13,7 @@ xmppAuthParserPost.add_argument('token', type=str)
 xmppIsUserParserPost = reqparse.RequestParser()
 xmppIsUserParserPost.add_argument('jid', type=str)
 
-@api.route('/xmpp/auth')
+@api.route('/auth')
 @api.doc(params={'jid': 'JID of user', 'token': 'Jabber Token'})
 class api_1_xmppAuth(Resource):
     @api.expect(xmppAuthParserPost)
@@ -37,7 +37,7 @@ class api_1_xmppAuth(Resource):
         return {'results': {'message': 'Request Error', 'code':400}}, 400
 
 
-@api.route('/xmpp/isuser')
+@api.route('/isuser')
 @api.doc(params={'jid': 'JID of user'})
 class api_1_xmppisuser(Resource):
     @api.expect(xmppIsUserParserPost)

@@ -3,9 +3,9 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import settings
 from classes.shared import db
 
-api = Namespace('Server', description='Server Related Queries and Functions')
+api = Namespace('server', description='Server Related Queries and Functions')
 
-@api.route('/server')
+@api.route('/')
 class api_1_Server(Resource):
     # Server - Get Basic Server Information
     def get(self):
@@ -17,7 +17,7 @@ class api_1_Server(Resource):
         return {'results': serverSettings.serialize() }
 
 
-@api.route('/server/edges')
+@api.route('/edges')
 class api_1_Edges(Resource):
     # Server - Get Edge Serves
     def get(self):

@@ -6,14 +6,14 @@ from classes import apikey
 from classes import topics
 from classes.shared import db
 
-api = Namespace('Stream', description='Stream Related Queries and Functions')
+api = Namespace('stream', description='Stream Related Queries and Functions')
 
 streamParserPut = reqparse.RequestParser()
 streamParserPut.add_argument('streamName', type=str)
 streamParserPut.add_argument('topicID', type=int)
 
 
-@api.route('/stream/')
+@api.route('/')
 class api_1_ListStreams(Resource):
     def get(self):
         """
@@ -24,7 +24,7 @@ class api_1_ListStreams(Resource):
         return {'results': [ob.serialize() for ob in streamList]}
 
 
-@api.route('/stream/<int:streamID>')
+@api.route('/<int:streamID>')
 @api.doc(params={'streamID': 'ID Number for the Stream'})
 class api_1_ListStream(Resource):
     def get(self, streamID):

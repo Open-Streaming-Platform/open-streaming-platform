@@ -11,14 +11,14 @@ from classes.shared import db
 
 from globals import globalvars
 
-api = Namespace('Video', description='Video Related Queries and Functions')
+api = Namespace('video', description='Video Related Queries and Functions')
 
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
 videoParserPut.add_argument('description', type=str)
 videoParserPut.add_argument('topicID', type=int)
 
-@api.route('/video/')
+@api.route('/')
 class api_1_ListVideos(Resource):
     def get(self):
         """
@@ -29,7 +29,7 @@ class api_1_ListVideos(Resource):
         return {'results': [ob.serialize() for ob in videoList]}
 
 
-@api.route('/video/<int:videoID>')
+@api.route('/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
 class api_1_ListVideo(Resource):
     def get(self, videoID):
