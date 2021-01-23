@@ -336,6 +336,7 @@ def admin_page():
                     dbDump['roles'][user.username] = []
                     for role in userroles:
                         dbDump['roles'][user.username].append(role.name)
+                dbDump.pop('logs',None)
                 dbDumpJson = json.dumps(dbDump)
                 system.newLog(1, "User " + current_user.username + " Performed DB Backup Dump")
                 return Response(dbDumpJson, mimetype='application/json', headers={
