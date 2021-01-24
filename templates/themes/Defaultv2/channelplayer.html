@@ -103,6 +103,7 @@
                                   {% endif %}
                              </span>
                              <span class="float-right">
+                                  <i class="fas fa-clock mx-2">{{ stream.startTimestamp }}</i>
                                   <i class="fas fa-users mx-2"></i> {{channel.views}}
                                   <i class="fas fa-eye mx-2"></i> <span id="currentViewers">{{channel.currentViewers}}</span>
                                   <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true"{% endif %}>
