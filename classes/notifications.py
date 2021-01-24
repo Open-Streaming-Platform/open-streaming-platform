@@ -15,7 +15,7 @@ class userNotification(db.Model):
 
     def __init__(self, message, link, image, userID):
         self.notificationID = str(uuid4())
-        self.timestamp = datetime.now()
+        self.timestamp = datetime.utcnow()
         self.message = message
         self.link = link
         self.image = image

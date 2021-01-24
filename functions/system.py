@@ -106,7 +106,7 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
     return True
 
 def newLog(logType, message):
-    newLogItem = logs.logs(datetime.datetime.now(), str(message), logType)
+    newLogItem = logs.logs(datetime.datetime.utcnow(), str(message), logType)
     db.session.add(newLogItem)
     db.session.commit()
     return True

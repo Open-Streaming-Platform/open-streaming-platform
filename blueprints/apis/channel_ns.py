@@ -241,7 +241,6 @@ class api_1_GetRestreams(Resource):
 
 @api.route('/authed/')
 class api_1_ListChannelAuthed(Resource):
-    # Channel - Get Authenticated View of a Single Channel
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def get(self):

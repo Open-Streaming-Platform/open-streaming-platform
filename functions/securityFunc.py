@@ -23,7 +23,7 @@ def check_isValidChannelViewer(channelID):
             if channelQuery.owningUser is current_user.id:
                 if channelID not in globalvars.inviteCache:
                     globalvars.inviteCache[channelID] = {}
-                globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.now()}
+                globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.utcnow()}
                 return True
             else:
                 inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
@@ -31,7 +31,7 @@ def check_isValidChannelViewer(channelID):
                     if invite.isValid():
                         if channelID not in globalvars.inviteCache:
                             globalvars.inviteCache[channelID] = {}
-                        globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.now()}
+                        globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.utcnow()}
                         return True
                     else:
                         db.session.delete(invite)

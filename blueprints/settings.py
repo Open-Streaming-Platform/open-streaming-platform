@@ -141,7 +141,7 @@ def user_addInviteCode():
                                                                                 userID=current_user.id).first()
                     if existingInviteQuery is None:
                         if inviteCodeQuery.expiration is not None:
-                            remainingDays = (inviteCodeQuery.expiration - datetime.datetime.now()).days
+                            remainingDays = (inviteCodeQuery.expiration - datetime.datetime.utcnow()).days
                         else:
                             remainingDays = 0
                         newInvitedUser = invites.invitedViewer(current_user.id, inviteCodeQuery.channelID, remainingDays,
@@ -340,7 +340,7 @@ def admin_page():
                 dbDumpJson = json.dumps(dbDump)
                 system.newLog(1, "User " + current_user.username + " Performed DB Backup Dump")
                 return Response(dbDumpJson, mimetype='application/json', headers={
-                    'Content-Disposition': 'attachment;filename=OSPBackup-' + str(datetime.datetime.now()) + '.json'})
+                    'Content-Disposition': 'attachment;filename=OSPBackup-' + str(datetime.datetime.utcnow()) + '.json'})
 
             return redirect(url_for('.admin_page'))
 
@@ -390,7 +390,7 @@ def admin_page():
         # Create List of 30 Day Viewer Stats
         statsViewsLiveDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
             views.views.viewType == 0).filter(
-            views.views.date > (datetime.datetime.now() - datetime.timedelta(days=30))).group_by(
+            views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(
             func.date(views.views.date)).all()
         statsViewsLiveDayArray = []
         for entry in statsViewsLiveDay:
@@ -399,7 +399,7 @@ def admin_page():
 
         statsViewsRecordedDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
             views.views.viewType == 1).filter(
-            views.views.date > (datetime.datetime.now() - datetime.timedelta(days=30))).group_by(
+            views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(
             func.date(views.views.date)).all()
         statsViewsRecordedDayArray = []
 
@@ -907,7 +907,7 @@ def admin_page():
             user.authType = 0
             user.xmppToken = str(os.urandom(32).hex())
             user.uuid = str(uuid.uuid4())
-            user.confirmed_at = datetime.datetime.now()
+            user.confirmed_at = datetime.datetime.utcnow()
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
@@ -1762,7 +1762,7 @@ def settings_channels_page():
 
         statsViewsLiveDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
             views.views.viewType == 0).filter(views.views.itemID == channel.id).filter(
-            views.views.date > (datetime.datetime.now() - datetime.timedelta(days=30))).group_by(
+            views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(
             func.date(views.views.date)).all()
         statsViewsLiveDayArray = []
         for entry in statsViewsLiveDay:
@@ -1775,7 +1775,7 @@ def settings_channels_page():
         for vid in channel.recordedVideo:
             statsViewsRecordedDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
                 views.views.viewType == 1).filter(views.views.itemID == vid.id).filter(
-                views.views.date > (datetime.datetime.now() - datetime.timedelta(days=30))).group_by(
+                views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(
                 func.date(views.views.date)).all()
 
             for entry in statsViewsRecordedDay:
@@ -1945,7 +1945,7 @@ def initialSetup():
             user = Sec.User.query.filter_by(username=username).first()
             user.uuid = str(uuid.uuid4())
             user.authType = 0
-            user.confirmed_at = datetime.datetime.now()
+            user.confirmed_at = datetime.datetime.utcnow()
             user.xmppToken = str(os.urandom(32).hex())
 
             user_datastore.find_or_create_role(name='Admin', description='Administrator')

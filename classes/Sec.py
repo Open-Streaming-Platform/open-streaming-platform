@@ -146,5 +146,5 @@ class Guest(db.Model):
 
     def __init__(self, UUID, current_login_ip):
         self.UUID = UUID
-        self.last_active_at = datetime.datetime.now()
+        self.last_active_at = datetime.datetime.utcnow()
         self.last_active_ip = current_login_ip

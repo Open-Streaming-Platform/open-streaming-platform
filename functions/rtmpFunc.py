@@ -29,7 +29,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
 
     channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
 
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     if channelRequest is not None:
         userQuery = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
@@ -77,7 +77,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
 def rtmp_stage2_user_auth_check(channelLoc, ipaddress):
     sysSettings = settings.settings.query.first()
 
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
@@ -133,7 +133,7 @@ def rtmp_record_auth_check(channelLoc):
 
     sysSettings = settings.settings.query.first()
     channelRequest = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     if channelRequest is not None:
         userQuery = Sec.User.query.filter_by(id=channelRequest.owningUser).first()
@@ -167,7 +167,7 @@ def rtmp_record_auth_check(channelLoc):
 def rtmp_user_deauth_check(key, ipaddress):
     sysSettings = settings.settings.query.first()
 
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     authedStream = Stream.Stream.query.filter_by(streamKey=key).all()
 
@@ -180,7 +180,7 @@ def rtmp_user_deauth_check(key, ipaddress):
 
             wasRecorded = False
             recordingID = None
-            endTimestamp = datetime.datetime.now()
+            endTimestamp = datetime.datetime.utcnow()
             length = (endTimestamp - stream.startTimestamp).total_seconds()
 
             if pendingVideo is not None:
@@ -236,7 +236,7 @@ def rtmp_user_deauth_check(key, ipaddress):
 def rtmp_rec_Complete_handler(channelLoc, path):
     sysSettings = settings.settings.query.first()
 
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 

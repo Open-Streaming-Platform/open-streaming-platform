@@ -447,7 +447,7 @@ def do_before_request():
                 session['guestUUID'] = str(uuid.uuid4())
             GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
             if GuestQuery is not None:
-                GuestQuery.last_active_at = datetime.datetime.now()
+                GuestQuery.last_active_at = datetime.datetime.utcnow()
                 GuestQuery.last_active_ip = requestIP
                 db.session.commit()
             else:
