@@ -548,7 +548,7 @@
     </script>
     <script>
         // Handing of Stream Timer
-        String.prototype.toHHMMSS = function () {
+        function convertToHMS (timestamp) {
             var sec_num = parseInt(this, 10); // don't forget the second param
             var hours   = Math.floor(sec_num / 3600);
             var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
@@ -565,7 +565,7 @@
         function updateTimer() {
             var currentTimestamp = new Date()
             var timerDif = (currentTimestamp.getTime() - streamTimeStamp.getTime()) / 1000;
-            var timerDifParsed = timerDif.toHHMMSS();
+            var timerDifParsed = convertToHMS(timerDif);
             document.getElementById('streamTime').innerHTML = timerDifParsed;
         }
 
