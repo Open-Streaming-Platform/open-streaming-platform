@@ -11,7 +11,7 @@ class views(db.Model):
     def __init__(self, viewType, itemID):
         self.viewType = viewType
         self.itemID = itemID
-        self.date = datetime.datetime.now()
+        self.date = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<id %r>' % self.id

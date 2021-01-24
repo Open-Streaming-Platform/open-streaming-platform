@@ -19,7 +19,7 @@ class Stream(db.Model):
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
         self.uuid = str(uuid4())
-        self.startTimestamp = datetime.datetime.now()
+        self.startTimestamp = datetime.datetime.utcnow()
         self.streamKey = streamKey
         self.streamName = streamName
         self.linkedChannel = linkedChannel

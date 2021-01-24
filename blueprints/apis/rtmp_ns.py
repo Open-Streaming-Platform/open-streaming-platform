@@ -85,7 +85,7 @@ class api_1_rtmp_stage1(Resource):
             else:
                 return {'results': results}, 400
         else:
-            return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
 @api.route('/stage2')
@@ -114,7 +114,7 @@ class api_1_rtmp_stage2(Resource):
             else:
                 return {'results': results}, 400
         else:
-            return {'results': {'time': str(datetime.datetime.now()), 'request': 'Stage2', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'Stage2', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
 @api.route('/reccheck')
@@ -142,7 +142,7 @@ class api_1_rtmp_reccheck(Resource):
             else:
                 return {'results': results}, 400
         else:
-            return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordCheck', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordCheck', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
 @api.route('/streamclose')
@@ -171,7 +171,7 @@ class api_1_rtmp_streamclose(Resource):
             else:
                 return {'results': results}, 400
         else:
-            return {'results': {'time': str(datetime.datetime.now()), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 
 @api.route('/recclose')
@@ -200,4 +200,4 @@ class api_1_rtmp_recclose(Resource):
             else:
                 return {'results': results}, 400
         else:
-            return {'results': {'time': str(datetime.datetime.now()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400

@@ -12,7 +12,7 @@ class videoComments(db.Model):
 
     def __init__(self, userID, comment, videoID):
         self.userID = userID
-        self.timestamp = datetime.now()
+        self.timestamp = datetime.utcnow()
         self.comment = comment
         self.videoID = videoID
 

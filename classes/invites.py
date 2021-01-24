@@ -19,20 +19,20 @@ class invitedViewer(db.Model):
     def __init__(self, userID, channelID, expirationDays, inviteCode=None):
         self.userID = userID
         self.channelID = channelID
-        self.addedDate = datetime.datetime.now()
+        self.addedDate = datetime.datetime.utcnow()
         if inviteCode is not None:
             self.inviteCode = inviteCode
 
         if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.now() + datetime.timedelta(days=int(expirationDays))
+            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(days=int(expirationDays))
 
     def __repr__(self):
         return '<id %r>' % self.id
 
     def isValid(self):
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
         if self.expiration is None:
             return True
         elif now < self.expiration:
@@ -57,13 +57,13 @@ class inviteCode(db.Model):
         if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.now() + datetime.timedelta(days=int(expirationDays))
+            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(days=int(expirationDays))
 
     def __repr__(self):
         return '<id %r>' % self.id
 
     def isValid(self):
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
         if self.expiration is None:
             return True
         elif now < self.expiration:
