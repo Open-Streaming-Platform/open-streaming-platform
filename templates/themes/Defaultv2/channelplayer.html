@@ -563,7 +563,8 @@
         const streamTimeStamp = new Date('{{ stream.startTimestamp }} UTC');
         var timer = setInterval( updateTimer, 1000);
         function updateTimer() {
-            var timerDif = Date.now().getTime() - streamTimeStamp.getTime();
+            var currentTimestamp = new Date()
+            var timerDif = (currentTimestamp.getTime() - streamTimeStamp.getTime()) / 1000;
             var timerDifParsed = timerDif.toHHMMSS();
             document.getElementById('streamTime').innerHTML = timerDifParsed;
         }
