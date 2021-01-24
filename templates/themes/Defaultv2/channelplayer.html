@@ -560,7 +560,7 @@
             return hours+':'+minutes+':'+seconds;
         }
 
-        const streamTimeStamp = new Date({{ stream.startTimestamp }} + ' UTC');
+        const streamTimeStamp = new Date('{{ stream.startTimestamp }} UTC');
         var timer = setInterval( updateTimer, 1000);
         function updateTimer() {
             var timerDif = Date.now().getTime() - streamTimeStamp.getTime();
