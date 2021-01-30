@@ -486,7 +486,7 @@ hr {
     .chatMembersOverlay {
         display:none;
     }
-    .bannedUsersOverlay {
+    .modDisplayOverlay {
         display:none;
     }
     
