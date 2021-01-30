@@ -154,11 +154,11 @@
                             <h2 class="float-left">Live Chat</h2>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
-                            <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
+                            <span id="modDisplayButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
                         </div>
                     </div>
                     <div id="chatContentWindow" class="chatContent">
-                        <div id="bannedUsers" class="bannedUsersOverlay slide-in-blurred-top">
+                        <div id="modDisplay" class="bannedUsersOverlay slide-in-blurred-top">
                             <div class="membersList card my-3">
                               <div class="card-header bg-primary"><b>Banned Users</b></div>
                               <div id="OutcastList" class="card-body"></div>
@@ -573,8 +573,6 @@
                 document.getElementById('streamTime').innerHTML = timerDifParsed;
             }
         }
-
-
     </script>
 
     <script>
@@ -851,7 +849,7 @@
         socket.on('returnBanList', function(msg) {
             console.log("Receiving Ban List");
 
-            document.getElementById('bannedUsers').style.display = 'block';
+            document.getElementById('modDisplay').style.display = 'block';
             document.getElementById('chatMembers').style.display = 'none';
             document.getElementById('chat').style.display = 'none';
 
