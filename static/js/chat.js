@@ -4,7 +4,7 @@ var fullJID = null;
 var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
-var banListActive = false;
+var modDisplayActive = false;
 
 var occupantCheck;
 var chatDataUpdate;
@@ -12,16 +12,16 @@ var chatDataUpdate;
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
-    var banList = document.getElementById('modDisplay');
+    var modDisplay = document.getElementById('modDisplay');
 
     if (userListActive == false) {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "block";
         chatElementsDiv.style.display = "none";
-        banListActive = false;
+        modDisplayActive = false;
         userListActive = true;
     } else {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "block";
         userListActive = false;
@@ -29,23 +29,23 @@ function showOccupants() {
     }
 }
 
-function openBanList() {
+function openModDisplay() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
-    var banList = document.getElementById('modDisplay');
+    var modDisplay = document.getElementById('modDisplay');
 
-    if (banListActive == false) {
+    if (modDisplayActive == false) {
         getBanList();
-        banList.style.display = "block";
+        modDisplay.style.display = "block";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "none";
         userListActive = false;
-        banListActive = true;
+        modDisplayActive = true;
     } else {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "block";
-        banListActive = false;
+        modDisplayActive = false;
         scrollChatWindow();
     }
 
@@ -425,9 +425,9 @@ function statusCheck() {
 
   // Update UI based on Roles
   if (CHATSTATUS['role'] === "moderator") {
-      document.getElementById('banListButton').style.display = "inline";
+      document.getElementById('modDisplayButton').style.display = "inline";
   } else {
-      document.getElementById('banListButton').style.display = "none";
+      document.getElementById('modDisplayButton').style.display = "none";
   }
 
   return true;
