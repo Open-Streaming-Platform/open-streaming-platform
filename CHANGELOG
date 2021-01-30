@@ -4,6 +4,7 @@ OSP-Core: Changed Admin Webhooks Formatting
 OSP-Core: Added Vanity URL to Public Channel APIv1 Return
 OSP-Core: Refactored OSP-Core Startup Processes
 OSP-Core: Refactored OSP-APIv1 into Namespaces
+OSP-Core: Changed BanList Display Pannel ID from bannedUsers to modDisplay in channeplayer.html
 OSP-Core: API Change - Moved /channel/authed/<channelLoc> into /channel/<channelLoc> and added option for optional authenticated view using api-key
 
 0.8.3

@@ -197,7 +197,7 @@
                             </div>
                         </div>
                         <div id="chatContentWindow" class="chatContent">
-                            <div id="bannedUsers" class="bannedUsersOverlay">
+                            <div id="modDisplay" class="bannedUsersOverlay">
                                 <div class="membersList card my-3">
                                   <div class="card-header bg-primary"><b>Banned Users</b></div>
                                   <div id="OutcastList" class="card-body"></div>
@@ -882,7 +882,7 @@
     socket.on('returnBanList', function(msg) {
         console.log("Receiving Ban List");
 
-        document.getElementById('bannedUsers').style.display = 'block';
+        document.getElementById('modDisplay').style.display = 'block';
         document.getElementById('chatMembers').style.display = 'none';
         document.getElementById('chat').style.display = 'none';
 
