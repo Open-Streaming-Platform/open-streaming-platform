@@ -119,8 +119,7 @@
                         </div>
                      </div>
                      <div class="row m-2" style="white-space: pre-wrap;">
-                        <div class="channeldescription">{% if channel.description != None %}<p>
-                            {{channel.description|markdown}}</p> {% else %}No Description Available {% endif %}
+                        <div class="channeldescription">{% if channel.description != None %}{{channel.description|markdown}}{% else %}No Description Available {% endif %}
                         </div>
                      </div>
                 </div>
