@@ -80,14 +80,14 @@
         // Check for Spaces in Username
         var usernameDiv = document.getElementById('username');
         usernameRegEx = new RegExp("[\w]+");
-        if (usernameRegEx.test(usernameDiv.valueOf() === false)) {
+        if (usernameRegEx.test(usernameDiv.value === false)) {
             usernameDiv.setCustomValidity('Username Cannot Contain Special Characters');
             validForm = false;
         }
 
         var emailDiv = document.getElementById('email');
         emailRegEx = new RegExp("\t\n/^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$/");
-        if (emailRegEx.test(emailDiv.valueOf()) === false) {
+        if (emailRegEx.test(emailDiv.value) === false) {
             emailDiv.setCustomValidity('Must be a valid email');
             validForm = false;
         }
