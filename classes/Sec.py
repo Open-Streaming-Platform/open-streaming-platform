@@ -9,8 +9,8 @@ from globals import globalvars
 import datetime
 
 class ExtendedRegisterForm(RegisterForm):
-    username = StringField('username', [validators.Regexp("['\w']+"), Required()], message='Username Can Not Contain Special Characters or Spaces')
-    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', message='Email is invalid')])
+    username = StringField('username', [validators.Regexp("['\w']+"), Required()])
+    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -27,8 +27,8 @@ class ExtendedRegisterForm(RegisterForm):
         return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
-    username = StringField('username', [validators.Regexp("['\w']+"), Required()], message='Username Can Not Contain Special Characters or Spaces')
-    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', message='Email is invalid')])
+    username = StringField('username', [validators.Regexp("['\w']+"), Required()])
+    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
