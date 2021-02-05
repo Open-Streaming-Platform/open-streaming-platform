@@ -83,7 +83,7 @@
         // Check for Spaces in Username
         var usernameDiv = document.getElementById('username');
         usernameRegEx = new RegExp("[\w]+");
-        if (usernameRegEx.test(usernameDiv.value === false)) {
+        if (usernameRegEx.test(usernameDiv.value) === false) {
             usernameDiv.setCustomValidity('Username Cannot Contain Special Characters');
             validForm = false;
         }
