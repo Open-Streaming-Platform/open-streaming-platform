@@ -64,6 +64,12 @@ rtmpRecClose = reqparse.RequestParser()
 rtmpRecClose.add_argument('name', type=str)
 rtmpRecClose.add_argument('path', type=str)
 
+rtmpAuthCheck = reqparse.RequestParser()
+rtmpAuthCheck.add_argument('name', type=str)
+rtmpAuthCheck.add_argument('addr', type=str)
+rtmpAuthCheck.add_argument('username', type=str)
+rtmpAuthCheck.add_argument('hash', type=str)
+
 @api.route('/stage1')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
 class api_1_rtmp_stage1(Resource):
@@ -207,7 +213,10 @@ class api_1_rtmp_recclose(Resource):
             return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 @api.route('/playbackauth')
+@api.doc(params={'stream': 'Stream Location ID', 'addr':'Client IP Address', 'username':'Requesting Username', 'hash':'OSP Generated Security Hash for User and Stream'})
 class api_1_rtmp_playbackauth(Resource):
+    @api.expect(rtmpAuthCheck)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def post(self):
         stream = request.form['name']
         clientIP = request.form['addr']
