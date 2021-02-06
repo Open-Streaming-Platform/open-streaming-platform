@@ -12,7 +12,7 @@ def playback_auth_handler():
     username = request.form['username']
     secureHash = request.form['hash']
 
-    r = requests.post(globalvars.apiVersion + '/apiv1/rtmp/playbackauth', data={'name': stream, 'addr': clientIP, 'username': username, 'hash': secureHash})
+    r = requests.post(globalvars.apiLocation+ '/apiv1/rtmp/playbackauth', data={'name': stream, 'addr': clientIP, 'username': username, 'hash': secureHash})
     if r.status_code == 200:
         return 'OK'
     else:
