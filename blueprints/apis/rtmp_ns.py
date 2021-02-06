@@ -218,8 +218,9 @@ class api_1_rtmp_playbackauth(Resource):
     @api.expect(rtmpAuthCheck)
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def post(self):
-        stream = request.form['name']
-        clientIP = request.form['addr']
+        args = rtmpAuthCheck.parse_args()
+        stream = args['name']
+        clientIP = args['addr']
 
         if clientIP == "127.0.0.1" or clientIP == "localhost":
             return 'OK'
@@ -231,8 +232,8 @@ class api_1_rtmp_playbackauth(Resource):
                     db.session.close()
                     return {'results': True}, 200
                 else:
-                    username = request.form['username']
-                    secureHash = request.form['hash']
+                    username = args['username']
+                    secureHash = args['hash']
 
                     if streamQuery is not None:
                         requestedUser = Sec.User.query.filter_by(username=username).first()
