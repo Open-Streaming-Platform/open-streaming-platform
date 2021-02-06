@@ -9,8 +9,12 @@ root_bp = Blueprint('root', __name__)
 def playback_auth_handler():
     stream = request.form['name']
     clientIP = request.form['addr']
-    username = request.form['username']
-    secureHash = request.form['hash']
+    username = ""
+    secureHash = ""
+    if 'username' in request.form:
+        username = request.form['username']
+    if 'hash' in request.form:
+        secureHash = request.form['hash']
 
     r = requests.post(apiLocation + '/apiv1/rtmp/playbackauth', data={'name': stream, 'addr': clientIP, 'username': username, 'hash': secureHash})
     results = r.json()
