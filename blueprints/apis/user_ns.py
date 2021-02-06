@@ -20,6 +20,9 @@ newUserPost.add_argument('username', type=str)
 newUserPost.add_argument('email', type=str)
 newUserPost.add_argument('password', type=str)
 
+deleteUser = reqparse.RequestParser()
+deleteUser.add_argument('username', type=str)
+
 @api.route('/<string:username>')
 @api.doc(params={'username': 'Username of OSP User'})
 class api_1_ListUser(Resource):
@@ -31,8 +34,8 @@ class api_1_ListUser(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in userQuery]}
 
-@api.route('/new')
-class api_1_CreateUser(Resource):
+@api.route('/admin')
+class api_1_AdminUser(Resource):
     @api.expect(newUserPost)
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
@@ -51,14 +54,17 @@ class api_1_CreateUser(Resource):
 
                     # Email Address Validation
                     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                        db.session.commit()
                         return {'results': {'message': "Invalid Email Format"}}, 400
 
                     # Perform Existing Checks
                     existingUserQuery = Sec.User.query.filter_by(username=username).first()
                     if existingUserQuery != None:
+                        db.session.commit()
                         return {'results': {'message': "Username already Exists"}}, 400
                     existingEmailQuery = Sec.User.query.filter_by(email=email).first()
                     if existingEmailQuery != None:
+                        db.session.commit()
                         return {'results': {'message': "Email Address already Exists"}}, 400
 
                     password = hash_password(args['password'])
@@ -73,4 +79,28 @@ class api_1_CreateUser(Resource):
                     db.session.commit()
                     return {'results': newUserQuery.serialize()}
 
+        return {'results': {'message': "Request Error"}}, 400
+
+    @api.expect(deleteUser)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def delete(self):
+        """
+        Delete a User - **Admin API Key Required**
+        """
+        if 'X-API-KEY' in request.headers:
+            apiKey = request.headers['X-API-KEY']
+            adminKeyCheck = apiFunc.isValidAdminKey(apiKey)
+            if adminKeyCheck is True:
+                args = deleteUser.parse_args()
+                if 'username' in args:
+                    username = args['username']
+                    userQuery = Sec.User.query.filter_by(username=username).first()
+                    if userQuery != None:
+                        db.session.delete(userQuery)
+                        db.session.commit()
+                        return {'results': {'message': 'User ' + username +' deleted'}}
+                    else:
+                        db.session.commit()
+                        return {'results': {'message': "No Such Username"}}, 400
         return {'results': {'message': "Request Error"}}, 400
