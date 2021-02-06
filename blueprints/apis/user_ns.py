@@ -32,11 +32,12 @@ class api_1_ListUser(Resource):
 
 @api.route('/new')
 class api_1_CreateUser(Resource):
+    @api.expect(newUserPost)
     @api.doc(security='apikey')
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def post(self):
         """
-            **Admin API Key Required** - Create a New User
+            Create a New User - **Admin API Key Required**
         """
         if 'X-API-KEY' in request.headers:
             apiKey = request.headers['X-API-KEY']
@@ -46,6 +47,15 @@ class api_1_CreateUser(Resource):
                 if 'username' in args and 'email' in args and 'password' in args:
                     username = args['username']
                     email = args['email']
+
+                    # Perform Existing Checks
+                    existingUserQuery = Sec.User.query.filter_by(username=username).first()
+                    if existingUserQuery != None:
+                        return {'results': {'message': "Username already Exists"}}, 400
+                    existingEmailQuery = Sec.User.query.filter_by(email=email).first()
+                    if existingEmailQuery != None:
+                        return {'results': {'message': "Email Address already Exists"}}, 400
+
                     password = hash_password(args['password'])
                     user_datastore.creatuser_datastore.create_user(email=email, username=username, password=password, active=True, confirmed_at=datetime.datetime.utcnow(), authType=0)
                     defaultRoleQuery = Sec.Role.query.filter_by(default=True).all()
