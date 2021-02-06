@@ -79,6 +79,8 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
+    tf_primary_method = db.Column(db.String(140))
+    tf_totp_secret = db.Column(db.String(255))
     password = db.Column(db.String(255))
     biography = db.Column(db.String(4096))
     active = db.Column(db.Boolean())
