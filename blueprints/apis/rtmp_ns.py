@@ -2,12 +2,16 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from flask import request
 import datetime
 import socket
+import hashlib
 
 from classes import settings
+from classes import Channel
+from classes import Sec
 from classes.shared import db
 
 from functions import rtmpFunc
 from functions import system
+from functions import securityFunc
 
 def checkRTMPAuthIP(requestData):
     authorized = False
@@ -59,6 +63,12 @@ rtmpStreamClose.add_argument('addr', type=str)
 rtmpRecClose = reqparse.RequestParser()
 rtmpRecClose.add_argument('name', type=str)
 rtmpRecClose.add_argument('path', type=str)
+
+rtmpAuthCheck = reqparse.RequestParser()
+rtmpAuthCheck.add_argument('name', type=str)
+rtmpAuthCheck.add_argument('addr', type=str)
+rtmpAuthCheck.add_argument('username', type=str)
+rtmpAuthCheck.add_argument('hash', type=str)
 
 @api.route('/stage1')
 @api.doc(params={'name': 'Stream Key of Channel', 'addr':'IP Address of Endpoint Making Request'})
@@ -201,3 +211,47 @@ class api_1_rtmp_recclose(Resource):
                 return {'results': results}, 400
         else:
             return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
+
+@api.route('/playbackauth')
+@api.doc(params={'stream': 'Stream Location ID', 'addr':'Client IP Address', 'username':'Requesting Username', 'hash':'OSP Generated Security Hash for User and Stream'})
+class api_1_rtmp_playbackauth(Resource):
+    @api.expect(rtmpAuthCheck)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        stream = request.form['name']
+        clientIP = request.form['addr']
+
+        if clientIP == "127.0.0.1" or clientIP == "localhost":
+            return 'OK'
+        else:
+            streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+            if streamQuery is not None:
+
+                if streamQuery.protected is False:
+                    db.session.close()
+                    return {'results': True}, 200
+                else:
+                    username = request.form['username']
+                    secureHash = request.form['hash']
+
+                    if streamQuery is not None:
+                        requestedUser = Sec.User.query.filter_by(username=username).first()
+                        if requestedUser is not None:
+                            isValid = False
+                            validHash = None
+                            if requestedUser.authType == 0:
+                                validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.password).encode('utf-8')).hexdigest()
+                            else:
+                                validHash = hashlib.sha256((requestedUser.username + streamQuery.channelLoc + requestedUser.oAuthID).encode('utf-8')).hexdigest()
+                            if secureHash == validHash:
+                                isValid = True
+                            if isValid is True:
+                                if streamQuery.owningUser == requestedUser.id:
+                                    db.session.close()
+                                    return {'results': True}, 200
+                                else:
+                                    if securityFunc.check_isUserValidRTMPViewer(requestedUser.id,streamQuery.id):
+                                        db.session.close()
+                                        return {'results': True}, 200
+        db.session.close()
+        return {'results': False}, 400
