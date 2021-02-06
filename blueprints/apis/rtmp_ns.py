@@ -213,7 +213,7 @@ class api_1_rtmp_recclose(Resource):
             return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
 @api.route('/playbackauth')
-@api.doc(params={'stream': 'Stream Location ID', 'addr':'Client IP Address', 'username':'Requesting Username', 'hash':'OSP Generated Security Hash for User and Stream'})
+@api.doc(params={'name': 'Stream Location ID', 'addr':'Client IP Address', 'username':'Requesting Username', 'hash':'OSP Generated Security Hash for User and Stream'})
 class api_1_rtmp_playbackauth(Resource):
     @api.expect(rtmpAuthCheck)
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
