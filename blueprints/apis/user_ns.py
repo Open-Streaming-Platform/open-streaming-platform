@@ -4,6 +4,7 @@ from flask import request
 import datetime
 import uuid
 import os
+import re
 
 from classes import Sec
 from classes.shared import db
@@ -47,6 +48,10 @@ class api_1_CreateUser(Resource):
                 if 'username' in args and 'email' in args and 'password' in args:
                     username = args['username']
                     email = args['email']
+
+                    # Email Address Validation
+                    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                        return {'results': {'message': "Invalid Email Format"}}, 400
 
                     # Perform Existing Checks
                     existingUserQuery = Sec.User.query.filter_by(username=username).first()
