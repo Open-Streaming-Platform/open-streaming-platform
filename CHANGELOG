@@ -4,6 +4,8 @@ OSP-Core: Changed Admin Webhooks Formatting
 OSP-Core: Added Vanity URL to Public Channel APIv1 Return
 OSP-Core: Refactored OSP-Core Startup Processes
 OSP-Core: Refactored OSP-APIv1 into Namespaces
+OSP-Core: Due to a change in Flask-Security-Too, the Login page will now only allow login via registered email address, instead of username.
+OSP-Core: Added TOTP 2FA.  Users can now add 2FA using Google Authenticator, Authy, Duo, or any other TOTP App
 OSP-Core: Removed /playbackauth and added /apiv1/rtmp/playbackauth for moving rtmp playback authentication verification to OSP-RTMP
 OSP-Core: Set New User Username and Email Validation to require real values.  Usernames now restricted to [a-zA-Z0-9_-]
 OSP-Core: Changed BanList Display Panel ID from bannedUsers to modDisplay in channeplayer.html

@@ -84,7 +84,6 @@ app.config['SECURITY_TWO_FACTOR'] = True
 app.config['SECURITY_TWO_FACTOR_ALWAYS_VALIDATE']=False
 app.config['SECURITY_TWO_FACTOR_LOGIN_VALIDITY']='1 week'
 app.config['SECURITY_TOTP_SECRETS'] = {"1": config.secretKey}
-app.config['SECURITY_TOTP_ISSUER'] = 'Open Streaming Platform'
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['UPLOADED_DEFAULT_DEST'] = app.config['WEB_ROOT'] + 'images'
@@ -188,6 +187,11 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
+try:
+    sysSettings = settings.settings.query.first()
+    app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
+except:
+    app.config['SECURITY_TOTP_ISSUER'] = "OSP"
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
     {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
 ]
