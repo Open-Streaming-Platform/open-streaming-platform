@@ -39,7 +39,7 @@
                                         {% if current_user.authType == 0 %}
                                         <hr>
                                         <div>
-                                            <b>Two Factor Authentication Status:</b> {%  if current_user.tf_primary_method == "authenticator" %} <span style="color:green">Enabled</span> {% else %} <span style="color:red">Disabled</span><br>
+                                            <b>Two Factor Authentication Status:</b> {%  if current_user.tf_primary_method == "authenticator" %} <span style="color:green">Enabled</span> {% else %} <span style="color:red">Disabled</span>{% endif %}<br>
                                             <a href="/tf-setup" class="btn btn-success">Configure 2FA</a>
                                         </div>
                                         <hr>
