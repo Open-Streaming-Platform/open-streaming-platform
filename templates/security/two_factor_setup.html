@@ -47,7 +47,7 @@
                                     <ul class="list-group">
                                         {% for subfield in two_factor_setup_form.setup %}
                                             {% if subfield.data in choices %}
-                                                <li class="list-group-item">{{ render_field_with_errors(subfield, class="form-check-input") }}</li>
+                                                <li class="list-group-item">{{ render_field_with_errors(subfield) }}</li>
                                             {% endif %}
                                         {% endfor %}
                                     </ul>
