@@ -218,6 +218,9 @@ class api_1_rtmp_playbackauth(Resource):
     @api.expect(rtmpAuthCheck)
     @api.doc(responses={200: 'Success', 400: 'Request Error'})
     def post(self):
+        """
+            Validate playback of a direct RTMP Stream
+        """
         args = rtmpAuthCheck.parse_args()
         stream = args['name']
         clientIP = args['addr']
