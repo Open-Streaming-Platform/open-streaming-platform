@@ -189,8 +189,8 @@ toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
-    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}},
-    {"username": {"mapper": securityFunc.uia_username_mapper, "case_insensitive": True}}
+    {"username": {"mapper": securityFunc.uia_username_mapper, "case_insensitive": True}},
+    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
 ]
 
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
