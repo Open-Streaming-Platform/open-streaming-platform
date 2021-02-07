@@ -24,7 +24,7 @@ from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
-from flask.ext.babelex import Babel
+from flask_babelex import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import redis
