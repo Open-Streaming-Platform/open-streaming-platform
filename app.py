@@ -24,6 +24,7 @@ from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
+from flask.ext.babelex import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import redis
@@ -143,6 +144,9 @@ from functions.ejabberdctl import ejabberdctl
 # Begin App Initialization
 #----------------------------------------------------------------------------#
 logger = logging.getLogger('gunicorn.error').handlers
+
+# Initialize Flask-BabelEx
+babel = Babel(app)
 
 # Initialize Flask-Limiter
 if config.redisPassword == '' or config.redisPassword is None:
