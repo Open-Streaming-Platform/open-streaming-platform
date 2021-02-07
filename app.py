@@ -17,7 +17,7 @@ import uuid
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash, current_app, session
 from flask_session import Session
-from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
+from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required, uia_email_mapper
 from flask_security.signals import user_registered
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_migrate import Migrate
@@ -78,7 +78,6 @@ app.config['SECURITY_CONFIRMABLE'] = config.requireEmailRegistration
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = config.requireEmailRegistration
 app.config['SECURITY_CHANGABLE'] = True
 app.config['SECURITY_TRACKABLE'] = True
-app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
 app.config['SECURITY_TWO_FACTOR_ENABLED_METHODS'] = ['authenticator']
 app.config['SECURITY_TWO_FACTOR'] = True
 app.config['SECURITY_TWO_FACTOR_ALWAYS_VALIDATE']=False
@@ -185,6 +184,11 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
+app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
+    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}},
+    {"username": {"mapper": securityFunc.uia_username_mapper, "case_insensitive": True}}
+]
+
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 

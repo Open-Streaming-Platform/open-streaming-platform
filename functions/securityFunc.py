@@ -1,6 +1,7 @@
 from flask import session
 from flask_security import current_user
 import datetime
+import bleach
 
 from classes.shared import db, limiter
 from classes import Channel
@@ -69,3 +70,7 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.commit()
                         db.session.close()
     return False
+
+def uia_username_mapper(identity):
+    # we allow pretty much anything - but we bleach it.
+    return bleach.clean(identity, strip=True)
