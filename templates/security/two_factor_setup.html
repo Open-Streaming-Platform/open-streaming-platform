@@ -45,11 +45,11 @@
                                 {{ two_factor_setup_form.hidden_tag() }}
                                 {% for subfield in two_factor_setup_form.setup %}
                                     {% if subfield.data in choices %}
-                                        {{ render_field_with_errors(subfield, class_="form-control", autocomplete="off") }}
+                                        {{ render_field_with_errors(subfield) }}
                                     {% endif %}
                                 {% endfor %}
                                 {{ render_field_errors(two_factor_setup_form.setup) }}
-                                {{ render_field(two_factor_setup_form.submit, class_="form-control") }}
+                                {{ render_field(two_factor_setup_form.submit) }}
                                 {% if chosen_method=="authenticator" and chosen_method in choices %}
                                   <hr>
                                   <div class="center">
