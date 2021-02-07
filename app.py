@@ -189,7 +189,6 @@ toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
 app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
-    {"username": {"mapper": securityFunc.uia_username_mapper, "case_insensitive": True}},
     {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
 ]
 
