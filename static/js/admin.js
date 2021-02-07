@@ -422,6 +422,20 @@ function resetOAuthForm() {
     updateOAuthModalWindowLayout();
 }
 
+function disable2FAModal(userID) {
+    var userIDInputDiv = document.getElementById('disable2FAUser');
+    userIDInputDiv.value = userID;
+    $('#disable2faModal').modal('show');
+}
+
+function disable2FA() {
+    var userIDInputDiv = document.getElementById('disable2FAUser');
+    var userID = userIDInputDiv.value;
+    socket.emit('disable2FA', {userID: userID});
+    var buttonSelector = document.getElementById('2fa-active-button-' + userID);
+    buttonSelector.disabled = true;
+}
+
 function deleteEdge(edgeID) {
     socket.emit('deleteOSPEdge', {edgeID: edgeID});
     var edgeTableRow = document.getElementById('edgeTableRow-' + edgeID);
