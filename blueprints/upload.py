@@ -87,7 +87,7 @@ def upload_vid():
         flash("Video Upload Disabled", "error")
         return redirect(url_for('root.main_page'))
 
-    currentTime = datetime.datetime.now()
+    currentTime = datetime.datetime.utcnow()
 
     channel = int(request.form['uploadToChannelID'])
     topic = int(request.form['uploadTopic'])

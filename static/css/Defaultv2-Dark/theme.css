@@ -409,7 +409,7 @@ body {
 .chatMembersOverlay {
     display:none;
 }
-.bannedUsersOverlay {
+.modDisplayOverlay {
     display:none;
 }
 

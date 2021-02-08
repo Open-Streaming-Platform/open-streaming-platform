@@ -73,19 +73,25 @@
     document.getElementById('username').addEventListener('change', function() {
         document.getElementById('username').setCustomValidity('');
     });
+    document.getElementById('email').addEventListener('change', function() {
+        document.getElementById('email').setCustomValidity('');
+    });
 
     function validateForm() {
         var validForm = true;
 
         // Check for Spaces in Username
         var usernameDiv = document.getElementById('username');
-        if (document.getElementById('username').value.indexOf(' ') !== -1) {
-            usernameDiv.setCustomValidity('Username Cannot Contain Spaces');
+        usernameRegEx = new RegExp("[\\w]+$");
+        if (usernameRegEx.test(usernameDiv.value) === false) {
+            usernameDiv.setCustomValidity('Username Cannot Contain Special Characters');
             validForm = false;
         }
 
-        if (document.getElementById('username').value.indexOf('&') !== -1) {
-            usernameDiv.setCustomValidity('Username Cannot Contain &');
+        var emailDiv = document.getElementById('email');
+        emailRegEx = new RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$');
+        if (emailRegEx.test(emailDiv.value) === false) {
+            emailDiv.setCustomValidity('Must be a valid email');
             validForm = false;
         }
 

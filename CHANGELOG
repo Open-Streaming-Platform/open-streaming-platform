@@ -1,3 +1,23 @@
+0.8.4
+==============================================
+OSP-Core: Changed Admin Webhooks Formatting
+OSP-Core: Added Vanity URL to Public Channel APIv1 Return
+OSP-Core: Refactored OSP-Core Startup Processes
+OSP-Core: Refactored OSP-APIv1 into Namespaces
+OSP-Core: Due to a change in Flask-Security-Too, the Login page will now only allow login via registered email address, instead of username.
+OSP-Core: Added TOTP 2FA.  Users can now add 2FA using Google Authenticator, Authy, Duo, or any other TOTP App in User Settings
+OSP-Core: Added Option for Admins to Disable 2FA for a User
+OSP-Core: Removed /playbackauth and added /apiv1/rtmp/playbackauth for moving rtmp playback authentication verification to OSP-RTMP
+OSP-Core: Added /apiv1/user/ endpoint for user creation and deletion
+OSP-Core: Added /apiv1/user/role endpoint for role assignment and removal
+OSP-Core: Set New User Username and Email Validation to require real values.  Usernames now restricted to [a-zA-Z0-9_-]
+OSP-Core: Changed BanList Display Panel ID from bannedUsers to modDisplay in channeplayer.html
+OSP-Core: Changed Ban List Display Button ID from banListButton to modDisplayButton and onclick from openBanList() to openModDisplay() in channelplayer.html
+OSP-Core: Changed banListOverlay CSS Class to modDisplayOverlay in channelplayer.html and theme.css files
+OSP-Core: Added Restriction of 750 Characters per XMPP Chat Message
+OSP-Core: API Change - Moved /channel/authed/<channelLoc> into /channel/<channelLoc> and added option for optional authenticated view using api-key
+OSP-RTMP: Set RTMP playback auth to query OSP-Core API
+
 0.8.3
 ==============================================
 OSP-Core: Fixed a bug in chat.js that caused all chat messages to have **** after every letter if the banned chat list was blank

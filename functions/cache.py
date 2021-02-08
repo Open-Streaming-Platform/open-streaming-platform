@@ -11,7 +11,7 @@ def checkInviteCache(channelID):
         if channelID in globalvars.inviteCache:
             if current_user.id in globalvars.inviteCache[channelID]:
                 if globalvars.inviteCache[channelID][current_user.id]["invited"]:
-                    if datetime.datetime.now() < globalvars.inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
+                    if datetime.datetime.utcnow() < globalvars.inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
                         db.session.close()
                         return True
                     else:

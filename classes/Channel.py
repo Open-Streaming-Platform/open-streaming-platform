@@ -88,7 +88,8 @@ class Channel(db.Model):
             'stream': [obj.id for obj in self.stream],
             'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
             'upvotes': self.get_upvotes(),
-            'protected': self.protected
+            'protected': self.protected,
+            'vanityURL': self.vanityURL
         }
 
     def authed_serialize(self):
