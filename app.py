@@ -192,9 +192,9 @@ try:
     app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
 except:
     app.config['SECURITY_TOTP_ISSUER'] = "OSP"
-app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
-    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
-]
+    app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
+        {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
+    ]
 
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
@@ -253,11 +253,16 @@ except:
     print("DB Load Fail due to Upgrade or Issues")
 
 # Perform System Fixes
-system.systemFixes(app)
+try:
+    system.systemFixes(app)
+except:
+    print({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
 # Checking OSP-Edge Redirection Conf File
-system.checkOSPEdgeConf()
-
+try:
+    system.checkOSPEdgeConf()
+except:
+    print({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
 print({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
