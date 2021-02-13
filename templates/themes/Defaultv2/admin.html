@@ -1227,9 +1227,21 @@
                                 <h4>Restore the OSP Database</h4>
                                 <p>** Restoring a backup will wipe all existing data! **</p>
                                 <form action="/settings/dbRestore" enctype=multipart/form-data method="post">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
-                                        <label class="custom-file-label" for="restoreData">Upload Backup File</label>
+                                    <span>Restore File<span id="restoreFileUploadStatus"></span></span>
+                                    <!-- hidden dropzone -->
+                                    <div class="dropzone" id="restoreFileDropper" enctype="multipart/form-data"></div>
+                                    <div class="form-group row">
+                                      <div class="col-2 my-auto">
+                                        <button id="restoreFileUploadButton" type="button" class="btn btn-sm btn-primary">Browse</button>
+                                      </div>
+                                      <div class="col-10">
+                                        <input class="form-control pl-2 form-control" id="restoeFilenameDisplay" name="restoreFilename" placeholder="Filename" disabled />
+                                        <input type="hidden" class="form-control pl-2 form-control" id="restoreFilename" name="restoreFilename" placeholder="Filename" />
+                                      </div>
+                                    </div>
+
+                                    <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                      <div id="restoreFileUploadProgress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
                                     </div>
                                     <br><br>
                                     <h5>Restore Options</h5>
@@ -1327,6 +1339,44 @@
         });
     } );
 </script>
+
+<script>
+    var restoreFileDropper = new Dropzone(
+      '#thumbnaildropper', {
+      acceptedFiles: 'application/json',
+      previewTemplate: '<div></div>',
+      clickable: '#thumbnailuploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/backup',
+      maxFilesize: 300, // megabytes
+      chunkSize: 1000000 // bytes
+    }
+    );
+
+    thumbnaildropper.on("uploadprogress", function (file, progress, bytesSent) {
+      progress = Math.floor(bytesSent / file.size * 100);
+      $('#restoreFileUploadProgress').width(progress + "%");
+      document.getElementById('restoreFileUploadProgress').innerHTML = document.getElementById('restoreFileUploadProgress').innerHTML = '<b>' + progress + '%</b>';
+    });
+    thumbnaildropper.on("addedfile", function (file) {
+      document.getElementById('restoreFilename').value = file.name;
+      document.getElementById('restoreFilenameDisplay').value = file.name;
+
+    });
+    thumbnaildropper.on("success", function (file) {
+      document.getElementById('restoreFileUploadStatus').innerHTML = document.getElementById('restoreFileUploadStatus').innerHTML = ' <i class="fas fa-check">';
+      document.getElementById('restoreFileUploadProgress').innerHTML = document.getElementById('restoreFileUploadProgress').innerHTML = 'Upload complete';
+
+    });
+    thumbnaildropper.on('error', function (file, response) {
+      document.getElementById('restoreFileUploadStatus').innerHTML = document.getElementById('restoreFileUploadStatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
+      document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response;
+    });
+</script>
+
 <script type="text/javascript" src="/static/js/admin.js"></script>
 {% endblock %}
 
