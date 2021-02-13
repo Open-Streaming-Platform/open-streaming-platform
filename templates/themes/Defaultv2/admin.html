@@ -50,9 +50,6 @@
                 <li class="nav-item">
                     <a class="nav-link {% if page == 'logs' %} active {% endif %}" role="tab" id="admin-nav-logs" href="#logs" data-toggle="pill" aria-controls="admin-nav-logs" aria-selected="false">Logs</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if page == 'backup' %} active {% endif %}" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
-                </li>
             </ul>
 
             <div class="tab-content" id="admin-content">
@@ -641,43 +638,39 @@
                 <h5>Global Webhooks</h5>
                      <div class="row">
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
-                                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i></button></span>
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div id="webhookList">
-                                        <div class="table-responsive">
-                                            <table id="webhookTable" class="table table-borderless" width="100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Webhook Name</th>
-                                                        <th>Trigger</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for webhook in globalHooks %}
-                                                    <tr id="webhookTableRow-{{webhook.id}}">
-                                                        <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
-                                                        <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
-                                                        <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
-                                                        <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
-                                                        <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
-                                                        <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
-                                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                            <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i> Add Webhook</button><br>
+                            <div id="webhookList">
+                                <div class="table-responsive">
+                                    <table id="webhookTable" class="table table-borderless" width="100%">
+                                        <thead class="shadow">
+                                            <tr>
+                                                <th>Webhook Name</th>
+                                                <th style="display:none;"></th>
+                                                <th>Trigger</th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
+                                                <th>Options</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for webhook in globalHooks %}
+                                            <tr id="webhookTableRow-{{webhook.id}}">
+                                                <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -786,7 +779,7 @@
                     </div>
                     <div class="container-fluid">
                         <div class="table-responsive">
-                            <table id="users"class="table table-hover">
+                            <table id="users" class="table table-hover">
                               <thead class="shadow">
                                 <tr>
                                   <th></th>
@@ -826,14 +819,37 @@
                                           {% endif %}
                                         <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                                     </div>
-                                    <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" ><i class="fas fa-user"></i></a>
-                                    <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a>
+                                    <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});" {% if user.tf_primary_method == None %}disabled{% endif %}><i class="fas fa-user-lock"></i></button>
+                                    <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="fas fa-user"></i></a>
+                                    <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Delete User" ><i class="far fa-trash-alt"></i></a>
                                   </td>
                                </tr>
                                {% endfor %}
                               </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="modal fade" id="disable2faModal" tabindex="-1" role="dialog" aria-labelledby="disable2faModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="disable2faModalTitle">Disable 2FA for User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                Are you sure you want to disable Two-Factor Authentication for this user?
+                              </div>
+                              <input type="hidden" value="" id="disable2FAUser" name="disable2FAUser">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="disable2FA();" value="Disable" data-dismiss="modal">Disable</button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -1050,7 +1066,7 @@
                                 {% for channel in channelList %}
                                 <tr id="channelCardRow-{{channel.id}}">
                                   <td><input type="checkbox" value="{{channel.id}}"></td>
-                                  <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                                  <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;object-fit:cover;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
                                   <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
                                   <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
                                   <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
@@ -1161,7 +1177,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <table class="table table-hover" id="logTable">
-                                    <thead class="thead-light">
+                                    <thead class="shadow">
                                     <tr>
                                         <th>
                                             <b>Timestamp</b>
@@ -1194,40 +1210,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade {% if page == 'backup' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-6 col-md-12">
-                                <h4>Backup the OSP Database</h4>
-                                <a href="/settings/admin?action=backup" class="btn btn-primary">Download</a>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-12">
-                                <h4>Restore the OSP Database</h4>
-                                <p>** Restoring a backup will wipe all existing data! **</p>
-                                <form action="/settings/dbRestore" enctype=multipart/form-data method="post">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
-                                        <label class="custom-file-label" for="restoreData">Upload Backup File</label>
-                                    </div>
-                                    <br><br>
-                                    <h5>Restore Options</h5>
-                                    <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreVideos" id="restoreVideos">
-                                      <label class="form-check-label" for="restoreVideos">
-                                        Restore Recorded Video DB Table
-                                      </label>
-                                    </div>
-                                    <br>
-                                    <input type="hidden" value="dbRestore" id="settingType" name="settingType">
-                                    <input type="submit" class="btn btn-warning" value="Restore">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1251,6 +1233,19 @@
             {x:'{{entry['t']}}', y:{{entry['y']}}},
         {% endfor %}
     ];
+
+    $(document).ready(function() {
+        $('#webhookTable').DataTable(
+        {
+          'order': [[ 0, "asc" ]],
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [3,4,5,6] },
+          { 'orderable': false, 'targets': [3,4,5,6] }
+          ]
+        }
+      );
+    } );
 
     $(document).ready(function() {
         $('#users').DataTable(
@@ -1295,6 +1290,7 @@
         });
     } );
 </script>
+
 <script type="text/javascript" src="/static/js/admin.js"></script>
 {% endblock %}
 

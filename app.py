@@ -17,13 +17,14 @@ import uuid
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash, current_app, session
 from flask_session import Session
-from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required
+from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required, uia_email_mapper
 from flask_security.signals import user_registered
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from flask_migrate import Migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
+from flask_babelex import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import redis
@@ -78,7 +79,11 @@ app.config['SECURITY_CONFIRMABLE'] = config.requireEmailRegistration
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = config.requireEmailRegistration
 app.config['SECURITY_CHANGABLE'] = True
 app.config['SECURITY_TRACKABLE'] = True
-app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = ['username','email']
+app.config['SECURITY_TWO_FACTOR_ENABLED_METHODS'] = ['authenticator']
+app.config['SECURITY_TWO_FACTOR'] = True
+app.config['SECURITY_TWO_FACTOR_ALWAYS_VALIDATE']=False
+app.config['SECURITY_TWO_FACTOR_LOGIN_VALIDITY']='1 week'
+app.config['SECURITY_TOTP_SECRETS'] = {"1": config.secretKey}
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['UPLOADED_DEFAULT_DEST'] = app.config['WEB_ROOT'] + 'images'
@@ -139,6 +144,9 @@ from functions.ejabberdctl import ejabberdctl
 #----------------------------------------------------------------------------#
 logger = logging.getLogger('gunicorn.error').handlers
 
+# Initialize Flask-BabelEx
+babel = Babel(app)
+
 # Initialize Flask-Limiter
 if config.redisPassword == '' or config.redisPassword is None:
     app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
@@ -179,6 +187,15 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
+try:
+    sysSettings = settings.settings.query.first()
+    app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
+except:
+    app.config['SECURITY_TOTP_ISSUER'] = "OSP"
+app.config['SECURITY_USER_IDENTITY_ATTRIBUTES'] = [
+    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}}
+]
+
 user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
@@ -235,6 +252,12 @@ try:
 except:
     print("DB Load Fail due to Upgrade or Issues")
 
+# Perform System Fixes
+system.systemFixes(app)
+
+# Checking OSP-Edge Redirection Conf File
+system.checkOSPEdgeConf()
+
 print({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
@@ -276,6 +299,12 @@ try:
     results = xmpp.sanityCheck()
 except Exception as e:
     print("XMPP Sanity Check Failed - " + str(e))
+
+print({"level": "info", "message": "Importing Topic Data into Global Cache"})
+# Initialize the Topic Cache
+topicQuery = topics.topics.query.all()
+for topic in topicQuery:
+    globalvars.topicCache[topic.id] = topic.name
 
 print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
@@ -416,7 +445,6 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 # Additional Handlers.
 #----------------------------------------------------------------------------#
 
-
 @app.before_request
 def do_before_request():
     try:
@@ -436,7 +464,7 @@ def do_before_request():
                 session['guestUUID'] = str(uuid.uuid4())
             GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
             if GuestQuery is not None:
-                GuestQuery.last_active_at = datetime.datetime.now()
+                GuestQuery.last_active_at = datetime.datetime.utcnow()
                 GuestQuery.last_active_ip = requestIP
                 db.session.commit()
             else:

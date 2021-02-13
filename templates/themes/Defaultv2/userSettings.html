@@ -38,6 +38,11 @@
                                         </div>
                                         {% if current_user.authType == 0 %}
                                         <hr>
+                                        <div>
+                                            <b>Two Factor Authentication Status:</b> {%  if current_user.tf_primary_method == "authenticator" %} <span style="color:green">Enabled</span> {% else %} <span style="color:red">Disabled</span>{% endif %}<br>
+                                            <a href="/tf-setup" class="btn btn-success">Configure 2FA</a>
+                                        </div>
+                                        <hr>
                                         <div class="form-group">
                                             <label for="password"><b>Change Password</b></label>
                                             <input type="password" id="password" class="form-control" name="password1" placeholder="New Password">

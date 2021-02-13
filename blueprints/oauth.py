@@ -53,7 +53,7 @@ def oAuthAuthorize(provider):
         # Default expiration time to 365 days into the future
         if 'expires_at' not in token:
             if 'expires_in' in token:
-                token['expires_at'] = datetime.timedelta(seconds=int(token['exipires_in'])) + datetime.datetime.now()
+                token['expires_at'] = datetime.timedelta(seconds=int(token['exipires_in'])) + datetime.datetime.utcnow()
             else:
                 token['expires_at'] = time() + (365 * 24 * 3600)
 
@@ -110,9 +110,9 @@ def oAuthAuthorize(provider):
                 if existingUsernameQuery is not None:
                     requestedUsername = requestedUsername + str(random.randint(1,9999))
                 if hasEmail is True:
-                    user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
+                    user_datastore.create_user(email=userDataDict[oAuthProviderQuery.email_value], username=requestedUsername, active=True, confirmed_at=datetime.datetime.utcnow(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
                 else:
-                    user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.now(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
+                    user_datastore.create_user(email=None, username=requestedUsername, active=True, confirmed_at=datetime.datetime.utcnow(), authType=1, oAuthID=userDataDict[oAuthProviderQuery.id_value], oAuthProvider=provider)
                 db.session.commit()
                 user = Sec.User.query.filter_by(username=requestedUsername).first()
                 defaultRoleQuery = Sec.Role.query.filter_by(default=True)

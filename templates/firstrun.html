@@ -38,14 +38,6 @@
           <div class="card-body">
             <h5 class="card-title"><i class="fas fa-cogs"></i> Initial Setup Wizard</h5><br>
 
-            <ul class="nav nav-pills mb-3" id="admin-nav" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active"  role="tab" id="default-firstrun" href="#default" data-toggle="pill" aria-controls="default-firstrun" aria-selected="true">Setup as New</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" role="tab" id="default-restore" href="#restore" data-toggle="pill" aria-controls="default-restore" aria-selected="false">Restore from Backup</a>
-                </li>
-            </ul>
             <div class="tab-content" id="admin-content">
               <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="default-firstrun" id="default">
                 <p class="card-text">In order to ensure proper operation of OSP, please provide the following information:</p>
@@ -123,39 +115,6 @@
                   </div>
                 </form>
             </div>
-              <div class="tab-pane fade" role="tabpanel" aria-labelledby="default-restore" id="restore">
-                <div class="row">
-                    <div class="col-lg-6 col-md-12">
-                        <h4>Restore the OSP Database</h4>
-                        <p>** Restoring a backup will wipe all existing data! **</p>
-                        <form action="/settings/dbRestore" enctype=multipart/form-data method="post">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
-                                <label class="custom-file-label" for="restoreData">Upload Backup File</label>
-                                <script>
-                                    $('#restoreData').on('change',function(){
-                                        //get the file name
-                                        var fileName = $(this).val();
-                                        //replace the "Choose a file" label
-                                        $(this).next('.custom-file-label').html(fileName);
-                                    })
-                                </script>
-                            </div>
-                            <br><br>
-                            <h5>Restore Options</h5>
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" value="" name="restoreVideos" id="restoreVideos">
-                              <label class="form-check-label" for="restoreVideos">
-                                Restore Recorded Video DB Table
-                              </label>
-                            </div>
-                            <br>
-                            <input type="hidden" value="dbRestore" id="settingType" name="settingType">
-                            <input type="submit" class="btn btn-warning" value="Restore">
-                        </form>
-                    </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

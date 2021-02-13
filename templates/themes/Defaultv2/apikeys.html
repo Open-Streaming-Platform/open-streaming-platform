@@ -30,6 +30,10 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group col-lg-1">
+                                        <label class="form-check-label" for="type-{{key.id}}"><i class="fas fa-award"></i> Type </label>
+                                        <input type="text" name="keyType" id="type-{{key.id}}" class="form-control" value="{{key.type|format_keyType}}" disabled>
+                                    </div>
                                     <div class="form-group col-lg-2">
                                         <label class="form-check-label" for="created-{{key.id}}"><i class="fas fa-calendar-alt"></i> Created </label>
                                         <input type="text" name="createdDate" id="created-{{key.id}}" class="form-control" value="{{key.createdOn|normalize_date}}" disabled>
@@ -74,6 +78,15 @@
                                     <div class="form-group col-lg-3">
                                         <label class="form-check-label" for="keyname"><i class="fas fa-hashtag"></i> Key Name </label>
                                         <input type="text" name="keyName" id="keyName" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-lg-1">
+                                        <label class="form-check-label" for="keyTypeForm"><i class="fas fa-award"></i> Key Type </label>
+                                        <select name="keyType" id="keyTypeForm" class="form-control" required>
+                                            <option value="1">User</option>
+                                            {% if current_user.has_role('Admin') %}
+                                            <option value="2">Admin</option>
+                                            {% endif %}
+                                        </select>
                                     </div>
                                     <div class="form-group col-lg-3">
                                         <label class="form-check-label" for="expires"><i class="fas fa-calendar-alt"></i> Days Key Valid </label>

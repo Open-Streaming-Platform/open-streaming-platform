@@ -9,8 +9,8 @@ from globals import globalvars
 import datetime
 
 class ExtendedRegisterForm(RegisterForm):
-    username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
-    email = StringField('email', [Required()])
+    username = StringField('username', [validators.Regexp("['\w']+"), Required()])
+    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -27,8 +27,8 @@ class ExtendedRegisterForm(RegisterForm):
         return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
-    username = StringField('username', [validators.Regexp("[^' ']+"), Required()])
-    email = StringField('email', [Required()])
+    username = StringField('username', [validators.Regexp("['\w']+"), Required()])
+    email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -79,6 +79,8 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(255), unique=True)
     email = db.Column(db.String(255), unique=True)
     fs_uniquifier = db.Column(db.String(255))
+    tf_primary_method = db.Column(db.String(140))
+    tf_totp_secret = db.Column(db.String(255))
     password = db.Column(db.String(255))
     biography = db.Column(db.String(4096))
     active = db.Column(db.Boolean())
@@ -146,5 +148,5 @@ class Guest(db.Model):
 
     def __init__(self, UUID, current_login_ip):
         self.UUID = UUID
-        self.last_active_at = datetime.datetime.now()
+        self.last_active_at = datetime.datetime.utcnow()
         self.last_active_ip = current_login_ip
