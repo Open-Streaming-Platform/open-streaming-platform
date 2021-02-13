@@ -23,31 +23,6 @@ from globals import globalvars
 
 upload_bp = Blueprint('upload', __name__, url_prefix='/upload')
 
-@upload_bp.route('/backup', methods=['GET', 'POST'])
-def upload_backup():
-    sysSettings = settings.settings.query.all()
-    if sysSettings == []:
-        if request.files['file']:
-            file = request.files['file']
-            save_path = "/tmp/osprestore.json"
-            current_chunk = int(request.form['dzchunkindex'])
-            if os.path.exists(save_path) and current_chunk == 0:
-                open(save_path, 'w').close()
-            try:
-                with open(save_path, 'ab') as f:
-                    f.seek(int(request.form['dzchunkbyteoffset']))
-                    f.write(file.stream.read())
-            except OSError:
-                return "Back Restore Failed.", 500
-
-            total_chunks = int(request.form['dztotalchunkcount'])
-
-            if current_chunk + 1 == total_chunks:
-                if os.path.getsize(save_path) != int(request.form['dztotalfilesize']):
-                    return "Size mismatch", 500
-
-            return "success", 200
-
 @upload_bp.route('/video-files', methods=['GET', 'POST'])
 @login_required
 @roles_required('Uploader')
