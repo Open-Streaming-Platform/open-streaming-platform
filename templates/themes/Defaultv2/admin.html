@@ -50,9 +50,6 @@
                 <li class="nav-item">
                     <a class="nav-link {% if page == 'logs' %} active {% endif %}" role="tab" id="admin-nav-logs" href="#logs" data-toggle="pill" aria-controls="admin-nav-logs" aria-selected="false">Logs</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if page == 'backup' %} active {% endif %}" role="tab" id="admin-nav-backuprestore" href="#backuprestore" data-toggle="pill" aria-controls="admin-nav-backuprestore" aria-selected="false">Backup/Restore</a>
-                </li>
             </ul>
 
             <div class="tab-content" id="admin-content">
@@ -1213,40 +1210,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade {% if page == 'backup' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-backuprestore" id="backuprestore">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-6 col-md-12">
-                                <h4>Backup the OSP Database</h4>
-                                <a href="/settings/admin?action=backup" class="btn btn-primary">Download</a>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-12">
-                                <h4>Restore the OSP Database</h4>
-                                <p>** Restoring a backup will wipe all existing data! **</p>
-                                <form action="/settings/dbRestore" enctype=multipart/form-data method="post">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name=restoreData id="restoreData" required>
-                                        <label class="custom-file-label" for="restoreData">Upload Backup File</label>
-                                    </div>
-                                    <br><br>
-                                    <h5>Restore Options</h5>
-                                    <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" value="" name="restoreVideos" id="restoreVideos">
-                                      <label class="form-check-label" for="restoreVideos">
-                                        Restore Recorded Video DB Table
-                                      </label>
-                                    </div>
-                                    <br>
-                                    <input type="hidden" value="dbRestore" id="settingType" name="settingType">
-                                    <input type="submit" class="btn btn-warning" value="Restore">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1327,6 +1290,7 @@
         });
     } );
 </script>
+
 <script type="text/javascript" src="/static/js/admin.js"></script>
 {% endblock %}
 
