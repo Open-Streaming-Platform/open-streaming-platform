@@ -103,6 +103,7 @@
                                   {% endif %}
                              </span>
                              <span class="float-right">
+                                  <i class="fas fa-clock mx-2"></i> <span id="streamTime"> 00:00:00</span>
                                   <i class="fas fa-users mx-2"></i> {{channel.views}}
                                   <i class="fas fa-eye mx-2"></i> <span id="currentViewers">{{channel.currentViewers}}</span>
                                   <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote();" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true"{% endif %}>
@@ -118,8 +119,7 @@
                         </div>
                      </div>
                      <div class="row m-2" style="white-space: pre-wrap;">
-                        <div class="channeldescription">{% if channel.description != None %}<p>
-                            {{channel.description|markdown}}</p> {% else %}No Description Available {% endif %}
+                        <div class="channeldescription">{% if channel.description != None %}{{channel.description|markdown}}{% else %}No Description Available {% endif %}
                         </div>
                      </div>
                 </div>
@@ -153,15 +153,15 @@
                             <h2 class="float-left">Live Chat</h2>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
                             <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
-                            <span id="banListButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openBanList();"><i class="fas fa-user-shield"></i></button></span>
+                            <span id="modDisplayButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
                         </div>
                     </div>
                     <div id="chatContentWindow" class="chatContent">
-                        <div id="bannedUsers" class="bannedUsersOverlay slide-in-blurred-top">
+                        <div id="modDisplay" class="modDisplayOverlay slide-in-blurred-top">
                             <div class="membersList card my-3">
                               <div class="card-header bg-primary"><b>Banned Users</b></div>
                               <div id="OutcastList" class="card-body"></div>
-                          </div>
+                            </div>
                         </div>
                         <div id="chatMembers" class="chatMembersOverlay slide-in-blurred-top">
                           <div class="membersList card my-3">
@@ -183,7 +183,7 @@
                       <div class="chatFooterTop"></div>
                       <div class="chatFooterInput">
                           <div class="input-group">
-                              <input id="chatinput" type="text" class="form-control" autocomplete="off">
+                              <input id="chatinput" type="text" class="form-control" maxlength="750" autocomplete="off">
                               <div class="input-group-append">
                                 <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
                               </div>
@@ -546,6 +546,35 @@
         });
     </script>
     <script>
+        // Handing of Stream Timer
+        function convertToHMS (timestamp) {
+            var sec_num = parseInt(timestamp, 10); // don't forget the second param
+            var hours   = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (hours   < 10) {hours   = "0"+hours;}
+            if (minutes < 10) {minutes = "0"+minutes;}
+            if (seconds < 10) {seconds = "0"+seconds;}
+            return hours+':'+minutes+':'+seconds;
+        }
+
+        var streamTimeStamp = new Date('{{ stream.startTimestamp }} UTC');
+
+        var timer = setInterval( updateTimer, 1000);
+        function updateTimer() {
+            if (isNaN(streamTimeStamp.getTime())) {
+                document.getElementById('streamTime').innerHTML = '--:--:--';
+            } else {
+                var currentTimestamp = new Date()
+                var timerDif = Math.floor((currentTimestamp.getTime() - streamTimeStamp.getTime()) / 1000);
+                var timerDifParsed = convertToHMS(timerDif);
+                document.getElementById('streamTime').innerHTML = timerDifParsed;
+            }
+        }
+    </script>
+
+    <script>
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
@@ -739,6 +768,7 @@
                     var streamData = data['results'][0];
                     var currentStreamTopic = streamData['topic'];
                     var currentStreamName = streamData['streamName'];
+                    streamTimeStamp = new Date(streamData['startTimestamp'] + ' UTC');
 
                     var topicDiv = document.getElementById('streamMetadataTopic');
                     var nameDiv = document.getElementById('streamMetadataName');
@@ -770,6 +800,7 @@
                     offlineWindow.style.display = "block";
                     var currentStreamName = "No Stream";
                     var nameDiv = document.getElementById('streamMetadataName');
+                    streamTimeStamp = new Date('UTC');
                     var nameDivHTML = '<span><b> ' + currentStreamName +  '</b></span>';
                     nameDiv.innerHTML = nameDivHTML;
 
@@ -817,7 +848,7 @@
         socket.on('returnBanList', function(msg) {
             console.log("Receiving Ban List");
 
-            document.getElementById('bannedUsers').style.display = 'block';
+            document.getElementById('modDisplay').style.display = 'block';
             document.getElementById('chatMembers').style.display = 'none';
             document.getElementById('chat').style.display = 'none';
 

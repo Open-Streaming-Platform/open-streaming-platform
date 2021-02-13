@@ -4,7 +4,7 @@ var fullJID = null;
 var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
-var banListActive = false;
+var modDisplayActive = false;
 
 var occupantCheck;
 var chatDataUpdate;
@@ -12,16 +12,16 @@ var chatDataUpdate;
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
-    var banList = document.getElementById('bannedUsers');
+    var modDisplay = document.getElementById('modDisplay');
 
     if (userListActive == false) {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "block";
         chatElementsDiv.style.display = "none";
-        banListActive = false;
+        modDisplayActive = false;
         userListActive = true;
     } else {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "block";
         userListActive = false;
@@ -29,23 +29,23 @@ function showOccupants() {
     }
 }
 
-function openBanList() {
+function openModDisplay() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
-    var banList = document.getElementById('bannedUsers');
+    var modDisplay = document.getElementById('modDisplay');
 
-    if (banListActive == false) {
+    if (modDisplayActive == false) {
         getBanList();
-        banList.style.display = "block";
+        modDisplay.style.display = "block";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "none";
         userListActive = false;
-        banListActive = true;
+        modDisplayActive = true;
     } else {
-        banList.style.display = "none";
+        modDisplay.style.display = "none";
         chatOccupantsDiv.style.display = "none";
         chatElementsDiv.style.display = "block";
-        banListActive = false;
+        modDisplayActive = false;
         scrollChatWindow();
     }
 
@@ -76,13 +76,13 @@ function connectChat() {
 function onConnect(status) {
   if (status == Strophe.Status.CONNECTING) {
     console.log('Connecting to XMPP Server...');
-    document.getElementById('bannedUsers').style.display = 'none';
+    document.getElementById('modDisplay').style.display = 'none';
     document.getElementById('unavailable').style.display = "none";
     document.getElementById('loader').style.display = "block";
     document.getElementById('chatPanel').style.display = "none";
   } else if (status == Strophe.Status.CONNFAIL) {
     console.log('Connection to XMPP Server Failed...');
-    document.getElementById('bannedUsers').style.display = 'none';
+    document.getElementById('modDisplay').style.display = 'none';
     document.getElementById('unavailable').style.display = "block";
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
@@ -91,7 +91,7 @@ function onConnect(status) {
     console.log('Disconnecting from XMPP Server...');
   } else if (status == Strophe.Status.DISCONNECTED) {
     console.log('Disconnected from XMPP Server...');
-    document.getElementById('bannedUsers').style.display = 'none';
+    document.getElementById('modDisplay').style.display = 'none';
     document.getElementById('chatPanel').style.display = "none";
     document.getElementById('loader').style.display = "none";
     document.getElementById('unavailable').style.display = "block";
@@ -186,6 +186,9 @@ function enterRoom(room) {
 function sendMessage() {
     var chatInput = document.getElementById('chatinput');
     var message = chatInput.value;
+    if (message.length > 750) {
+        message = message.slice(0,750);
+    }
     if (message != '') {
         var o = {to: ROOMNAME + '@' + ROOM_SERVICE, type: 'groupchat'};
         var m = $msg(o);
@@ -255,7 +258,7 @@ function room_pres_handler(a, b, c) {
           clearInterval(occupantCheck);
           clearInterval(chatDataUpdate);
 
-          document.getElementById('bannedUsers').style.display = 'none';
+          document.getElementById('modDisplay').style.display = 'none';
           document.getElementById('chatPanel').style.display = "none";
           document.getElementById('loader').style.display = "none";
           document.getElementById('unavailable').style.display = "block";
@@ -287,7 +290,7 @@ function room_pres_handler(a, b, c) {
           errorCode = error[0].attributes.code.value;
           clearInterval(occupantCheck);
           clearInterval(chatDataUpdate);
-          document.getElementById('bannedUsers').style.display = 'none';
+          document.getElementById('modDisplay').style.display = 'none';
           document.getElementById('chatPanel').style.display = "none";
           document.getElementById('loader').style.display = "none";
           document.getElementById('unavailable').style.display = "block";
@@ -425,9 +428,9 @@ function statusCheck() {
 
   // Update UI based on Roles
   if (CHATSTATUS['role'] === "moderator") {
-      document.getElementById('banListButton').style.display = "inline";
+      document.getElementById('modDisplayButton').style.display = "inline";
   } else {
-      document.getElementById('banListButton').style.display = "none";
+      document.getElementById('modDisplayButton').style.display = "none";
   }
 
   return true;
