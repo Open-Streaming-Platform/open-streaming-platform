@@ -129,6 +129,7 @@ from classes import webhook
 from classes import logs
 from classes import subscriptions
 from classes import notifications
+from classes import stickers
 
 #----------------------------------------------------------------------------#
 # Function Imports
@@ -201,7 +202,8 @@ security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
 
 # Initialize Flask-Uploads
 photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
+stickerUploads = UploadSet('stickers', IMAGES)
+configure_uploads(app, (photos, stickerUploads))
 patch_request_class(app)
 
 # Initialize Flask-Markdown
