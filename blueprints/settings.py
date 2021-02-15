@@ -616,6 +616,7 @@ def admin_page():
                         file = request.files['stickerUpload']
                         if file.filename != '':
                             fileName = stickerUploads.save(request.files['stickerUpload'], name=stickerName + '.', folder='stickers')
+                            fileName = fileName.replace('stickers/',"")
                             newSticker = stickers.stickers(stickerName, fileName)
                             db.session.add(newSticker)
                             db.session.commit()
