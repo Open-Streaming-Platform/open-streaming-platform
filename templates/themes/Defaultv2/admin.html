@@ -777,10 +777,12 @@
                                 <div class="card-body">
                                     {% for sticker in globalStickers %}
                                     <span class="m-2" style="width:250px;height:350px;">
-                                        <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;"><br>
-                                        <input type="text" class=form-control" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}"><br>
-                                        <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                        <img class="mx-auto my-2" src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;"><br>
+                                        <input type="text" class="form-control" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}"><br>
+                                        <span class="mx-auto my-2">
+                                            <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                        </span>
                                     </span>
                                     {% endfor %}
                                 </div>
