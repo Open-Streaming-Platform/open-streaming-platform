@@ -35,6 +35,7 @@ from classes import invites
 from classes import webhook
 from classes import logs
 from classes import subscriptions
+from classes import stickers
 
 from functions import system
 from functions import themes
@@ -43,6 +44,7 @@ from globals import globalvars
 
 from app import user_datastore
 from app import photos
+from app import stickerUploads
 
 settings_bp = Blueprint('settings', __name__, url_prefix='/settings')
 
@@ -427,6 +429,8 @@ def admin_page():
         bannedWordArray = sorted(bannedWordArray)
         bannedWordString = ','.join(bannedWordArray)
 
+        globalStickers = stickers.stickers.query.filter_by(channelID=None).all()
+
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -435,7 +439,8 @@ def admin_page():
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
-                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList, ejabberdStatus=ejabberd, bannedWords=bannedWordString, page=page)
+                               logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
+                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -601,6 +606,24 @@ def admin_page():
             system.newLog(1, "User " + current_user.username + " altered System Settings")
 
             return redirect(url_for('.admin_page', page="settings"))
+
+        elif settingType == "newSticker":
+            if 'stickerName' in request.form:
+                stickerName = request.form['stickerName']
+                existingStickerNameQuery = stickers.stickers.query.filter_by(name=stickerName).first()
+                if existingStickerNameQuery is None:
+                    if 'stickerUpload' in request.files:
+                        file = request.files['stickerUpload']
+                        if file.filename != '':
+                            fileName = stickerUploads.save(request.files['stickerUpload'], name=stickerName + '.', folder='stickers')
+                            newSticker = stickers.stickers(stickerName, fileName)
+                            db.session.add(newSticker)
+                            db.session.commit()
+                else:
+                    flash("Sticker Name Already Exists","error")
+            else:
+                flash("Sticker Name Missing", "error")
+            return redirect(url_for('.admin_page', page="topics"))
 
         elif settingType == "topics":
 
