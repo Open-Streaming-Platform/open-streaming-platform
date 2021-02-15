@@ -775,16 +775,18 @@
                                     <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newStickerModal"><i class="fas fa-plus"></i></button></span>
                                 </div>
                                 <div class="card-body">
-                                    {% for sticker in globalStickers %}
-                                    <span class="m-2" style="width:250px;height:350px;">
-                                        <img class="mx-auto my-2" src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;"><br>
-                                        <input type="text" class="form-control" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}"><br>
-                                        <span class="mx-auto my-2">
-                                            <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
-                                            <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                        </span>
-                                    </span>
-                                    {% endfor %}
+                                    <div class="d-flex flex-wrap justify-content-start">
+                                        {% for sticker in globalStickers %}
+                                        <div class="m-2" style="width:250px;height:350px;">
+                                            <img class="mx-auto my-2" src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;"><br>
+                                            <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}"><br>
+                                            <span class="mx-auto my-1">
+                                                <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                            </span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
