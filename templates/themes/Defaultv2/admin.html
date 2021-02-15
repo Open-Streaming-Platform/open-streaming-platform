@@ -778,12 +778,14 @@
                                     <div class="d-flex flex-wrap justify-content-start">
                                         {% for sticker in globalStickers %}
                                         <div class="m-2" style="width:250px;height:350px;">
-                                            <img class="mx-auto my-2" src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;"><br>
+                                            <div class="mx-auto my-2">
+                                                <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;">
+                                            </div>
                                             <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}"><br>
-                                            <span class="mx-auto my-1">
+                                            <div class="mx-auto">
                                                 <button class="btn btn-warning"><i class="fas fa-edit"></i></button>
                                                 <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                            </span>
+                                            </div>
                                         </div>
                                         {% endfor %}
                                     </div>
