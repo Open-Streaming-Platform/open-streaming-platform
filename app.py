@@ -86,6 +86,7 @@ app.config['SECURITY_TWO_FACTOR_LOGIN_VALIDITY']='1 week'
 app.config['SECURITY_TOTP_SECRETS'] = {"1": config.secretKey}
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
+app.config['UPLOADED_STICKERS_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['UPLOADED_DEFAULT_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = '/'
