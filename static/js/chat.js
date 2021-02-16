@@ -333,8 +333,8 @@ function serverMessage(msg) {
 
 
 function process_stickers(msg) {
-  var result;
-  while ((result = stickerRegex.exec(msg)) !== null) {
+  var result = stickerRegex.exec(msg);
+  while (result !== null) {
     var stickerName = result[1];
     var stickerData = stickerList.filter(d => d.name === stickerName);
     if ((stickerData !== null) && (stickerData !== []) && (typeof(stickerData) !== "undefined")) {
@@ -343,6 +343,7 @@ function process_stickers(msg) {
     } else {
         msg = msg.replace(`:${stickerName}:`, '');
     }
+    result = stickerRegex.exec(msg);
   }
   return msg;
 }
