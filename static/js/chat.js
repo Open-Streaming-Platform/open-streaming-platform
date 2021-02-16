@@ -333,6 +333,7 @@ function serverMessage(msg) {
 
 
 function process_stickers(msg) {
+  var result;
   if (result = stickerRegex.exec(msg) !== null) {
     var stickerName = result[1];
     var stickerData = stickerList.filter(d => d.name === stickerName);
