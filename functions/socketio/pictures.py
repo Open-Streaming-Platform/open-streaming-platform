@@ -1,6 +1,4 @@
 from flask_security import current_user
-from flask_socketio import emit
-from sqlalchemy.sql.expression import func
 
 from classes.shared import db, socketio
 from classes import stickers
@@ -14,7 +12,7 @@ def editSticker(message):
         # TODO Stub for Channel Level Stickers
         pass
     else:
-        if current_user.has_role('admin'):
+        if current_user.has_role('Admin'):
             stickerQuery = stickers.stickers.query.filter_by(id=stickerID).first()
             if stickerQuery is not None:
                 stickerQuery.name = stickerName
@@ -29,7 +27,7 @@ def deleteSticker(message):
         # TODO Stub for Channel Level Stickers
         pass
     else:
-        if current_user.has_role('admin'):
+        if current_user.has_role('Admin'):
             stickerQuery = stickers.stickers.query.filter_by(id=stickerID).first()
             if stickerQuery is not None:
                 db.session.delete(stickerQuery)
