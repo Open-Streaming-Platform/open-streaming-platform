@@ -333,8 +333,7 @@ function serverMessage(msg) {
 
 
 function process_stickers(msg) {
-  var result = stickerRegex.exec(msg);
-  while (result !== null) {
+  while (result = stickerRegex.exec(msg)) {
     var stickerName = result[1];
     var stickerData = stickerList.filter(d => d.name === stickerName);
     if (stickerData !== []) {
@@ -343,7 +342,7 @@ function process_stickers(msg) {
     } else {
         msg = msg.replace(`:${stickerName}:`, '');
     }
-    result = stickerRegex.exec(msg);
+    stickerRegex.lastIndex++;
   }
   return msg;
 }
