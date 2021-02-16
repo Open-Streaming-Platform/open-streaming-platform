@@ -791,10 +791,6 @@ body {
     border-bottom: 1px solid #edeff1;
 }
 .chatsticker-composer-popover-input {
-    background-image: url(https://js.chatstickercdn.com/images/search.7ae40c25.png);
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-    background-position: 0 12px;
     font-weight: 400;
     font-size: 14px;
     color: #6e7a89;
@@ -802,8 +798,7 @@ body {
     height: 40px;
     width: 100%;
     box-sizing: border-box;
-    background-image: url(https://js.chatstickercdn.com/images/search@2x.9f02b9f3.png);
-    border:none;
+    border-bottom: 1px solid black;
     outline: none;
 }
 .chatsticker-composer-popover-body {
