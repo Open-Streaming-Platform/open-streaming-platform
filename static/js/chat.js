@@ -781,12 +781,12 @@ $(document).on("click",".chatsticker-emoji-picker-emoji",function(e){
   chatInputBox.value = chatInputBox.value + selectedEmoji;
 });
 
-$('.chatsticker-composer-popover-input').on('input', function() {
-    var query = this.value;
+function searchSticker() {
+    var query = $('.chatsticker-composer-popover-input')[0].value;
     if(query !== ""){
       $(".chatsticker-emoji-picker-emoji:not([title*="+ query +"])").hide();
     }
     else{
       $(".chatsticker-emoji-picker-emoji").show();
     }
-});
+};
