@@ -334,15 +334,17 @@ function serverMessage(msg) {
 
 function process_stickers(msg) {
   var result = msg.match(stickerRegex);
-  for (var i = 0; i < result.length; i++) {
-    var stickerName = result[i].replaceAll(':','');
-    var stickerData = stickerList.filter(d => d.name === stickerName);
-    if (stickerData.length !== 0) {
-        var stickerFilename = stickerData[0]['file'];
-        msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="48px" alt=":${stickerName}:" title=":${stickerName}:" />`);
-    } else {
-        msg = msg.replace(`:${stickerName}:`, '');
-    }
+  if (result !== null) {
+      for (var i = 0; i < result.length; i++) {
+          var stickerName = result[i].replaceAll(':', '');
+          var stickerData = stickerList.filter(d => d.name === stickerName);
+          if (stickerData.length !== 0) {
+              var stickerFilename = stickerData[0]['file'];
+              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="48px" alt=":${stickerName}:" title=":${stickerName}:" />`);
+          } else {
+              msg = msg.replace(`:${stickerName}:`, '');
+          }
+      }
   }
   return msg;
 }
