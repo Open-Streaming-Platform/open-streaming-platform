@@ -9,7 +9,7 @@ var modDisplayActive = false;
 var occupantCheck;
 var chatDataUpdate;
 
-const stickerRegex = /\:([A-Za-z0-9_-]+)\:/;
+const stickerRegex = /\:([A-Za-z0-9_-]+)\:/g;
 
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
