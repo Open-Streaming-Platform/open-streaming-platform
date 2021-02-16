@@ -624,7 +624,7 @@ def admin_page():
                     flash("Sticker Name Already Exists","error")
             else:
                 flash("Sticker Name Missing", "error")
-            return redirect(url_for('.admin_page', page="topics"))
+            return redirect(url_for('.admin_page', page="stickers"))
 
         elif settingType == "topics":
 
