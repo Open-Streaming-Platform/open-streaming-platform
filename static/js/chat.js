@@ -342,7 +342,6 @@ function process_stickers(msg) {
     } else {
         msg = msg.replace(`:${stickerName}:`, '');
     }
-    stickerRegex.lastIndex++;
   }
   return msg;
 }
