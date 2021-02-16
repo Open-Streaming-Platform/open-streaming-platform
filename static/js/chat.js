@@ -336,7 +336,7 @@ function process_stickers(msg) {
   var result;
   while((result = stickerRegex.exec(msg)) !== null) {
     var stickerName = result;
-    var stickerData = stickerList.filter(obj => obj.name === stickerName)
+    var stickerData = stickerList.filter(d => d.name === stickerName)
     if ((stickerData !== null) || (stickerData !== [])) {
         var stickerFilename = stickerData[0]['file']
         msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="64px" alt=":${stickerName}:" title=":${stickerName}:" />`);
