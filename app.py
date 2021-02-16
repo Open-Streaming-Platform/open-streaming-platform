@@ -331,6 +331,7 @@ from functions.socketio import syst
 from functions.socketio import xmpp
 from functions.socketio import restream
 from functions.socketio import rtmp
+from functions.socketio import pictures
 
 print({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
