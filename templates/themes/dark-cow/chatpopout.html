@@ -187,6 +187,8 @@
         var ChatInputBar = document.getElementById('chatinput');
         ChatInputBar.placeholder = "Send Message As " + username + "...";
 
+        var stickerList = {{ stickerList | safe }}
+
         $('#chatinput').on('keyup', function(e) {
             if (e.keyCode === 13) {
                 sendMessage();
