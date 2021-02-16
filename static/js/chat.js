@@ -384,8 +384,8 @@ function onMessage(msg) {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
           }
 
-          var formatted_message = format_msg(msg)
-          msg = process_stickers(formatted_message);
+          var msg = format_msg(msg)
+          //msg = process_stickers(msg);
 
           tempNode.querySelector("span.chatMessage").innerHTML = msg;
           tempNode.style.display = "block";
