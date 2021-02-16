@@ -762,3 +762,31 @@ function getPos(el) {
          lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
     return {x: lx,y: ly};
 }
+
+// Sticker Selector Popup Handler
+$(document).on("click","#openEmojiButton",function(e){
+   e.stopPropagation();
+    $('.chatsticker-composer-emoji-popover').toggleClass("active");
+});
+
+$(document).click(function (e) {
+    if ($(e.target).attr('class') !== '.chatsticker-composer-emoji-popover' && $(e.target).parents(".chatsticker-composer-emoji-popover").length === 0) {
+        $(".chatsticker-composer-emoji-popover").removeClass("active");
+    }
+});
+
+$(document).on("click",".chatsticker-emoji-picker-emoji",function(e){
+  var chatInputBox = document.getElementById('chatinput');
+  var selectedEmoji = ' :' + $(this).attr('title') + ': ';
+  chatInputBox.value = chatInputBox.value + selectedEmoji;
+});
+
+$('.chatsticker-composer-popover-input').on('input', function() {
+    var query = this.value;
+    if(query != ""){
+      $(".chatsticker-emoji-picker-emoji:not([title*='"+query+"'])").hide();
+    }
+    else{
+      $(".chatsticker-emoji-picker-emoji").show();
+    }
+});
