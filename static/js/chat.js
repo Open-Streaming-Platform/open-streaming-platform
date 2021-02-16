@@ -783,8 +783,8 @@ $(document).on("click",".chatsticker-emoji-picker-emoji",function(e){
 
 $('.chatsticker-composer-popover-input').on('input', function() {
     var query = this.value;
-    if(query != ""){
-      $(".chatsticker-emoji-picker-emoji:not([title*='"+query+"'])").hide();
+    if(query !== ""){
+      $(".chatsticker-emoji-picker-emoji:not([title*="+ query +"])").hide();
     }
     else{
       $(".chatsticker-emoji-picker-emoji").show();
