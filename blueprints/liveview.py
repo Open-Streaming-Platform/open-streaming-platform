@@ -13,6 +13,7 @@ from classes import Channel
 from classes import Stream
 from classes import Sec
 from classes import banList
+from classes import stickers
 
 from globals.globalvars import ejabberdServer
 
@@ -64,6 +65,15 @@ def view_page(loc):
 
         topicList = topics.topics.query.all()
         chatOnly = request.args.get("chatOnly")
+
+        # Grab List of Stickers for Chat
+        stickerFolder = "/images/stickers/"
+        stickerList = []
+        globalStickers = stickers.stickers.query.all()
+        for sticker in globalStickers:
+            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': 'Server'}
+            stickerList.append(newSticker)
+
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled:
                 hideBar = False
@@ -80,7 +90,8 @@ def view_page(loc):
                         flash("Invalid User","error")
                         return(redirect(url_for("root.main_page")))
 
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser, xmppserver=xmppserver, bannedWords=bannedWordArray)
+                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser,
+                                       xmppserver=xmppserver, stickerList=stickerList, bannedWords=bannedWordArray)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -124,7 +135,7 @@ def view_page(loc):
                     subState = True
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, bannedWords=bannedWordArray)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, bannedWords=bannedWordArray)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:
