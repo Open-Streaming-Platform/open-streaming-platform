@@ -373,7 +373,6 @@ function onMessage(msg) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
           var msg = Strophe.xmlunescape(Strophe.getText(body));
-          msg = process_stickers(msg);
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
@@ -382,7 +381,11 @@ function onMessage(msg) {
           } else {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
           }
-          tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
+
+          var formatted_message = format_msg(msg)
+          msg = process_stickers(formatted_message);
+
+          tempNode.querySelector("span.chatMessage").innerHTML = msg;
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
           var needsScroll = checkChatScroll()
