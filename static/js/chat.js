@@ -9,6 +9,8 @@ var modDisplayActive = false;
 var occupantCheck;
 var chatDataUpdate;
 
+const stickerRegex = /\:([A-Za-z0-9_-]+)\:/;
+
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -329,6 +331,21 @@ function serverMessage(msg) {
     }
 }
 
+
+function process_stickers(msg) {
+  var result;
+  while((result = stickerRegex.exec(msg)) !== null) {
+    var stickerName = result;
+    var stickerData = stickerList.filter(obj => obj.name === stickerName)
+    if ((stickerData !== null) || (stickerData !== [])) {
+        var stickerFilename = stickerData[0]['file']
+        msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="64px" alt=":${stickerName}:" title=":${stickerName}:" />`);
+    }
+  }
+  return msg;
+}
+
+
 // Function to Handle New Messages
 function onMessage(msg) {
   var to = msg.getAttribute('to');
@@ -355,7 +372,8 @@ function onMessage(msg) {
       } else if (type == "groupchat" && messageElement.length > 0) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
-          var msg = Strophe.xmlunescape(Strophe.getText(body))
+          var msg = Strophe.xmlunescape(Strophe.getText(body));
+          msg = process_stickers(msg);
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
