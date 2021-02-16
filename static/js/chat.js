@@ -340,6 +340,8 @@ function process_stickers(msg) {
     if ((stickerData !== null) || (stickerData !== []) || (typeof(stickerData) === "undefined")) {
         var stickerFilename = stickerData[0]['file']
         msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="64px" alt=":${stickerName}:" title=":${stickerName}:" />`);
+    } else {
+        break;
     }
   }
   return msg;
