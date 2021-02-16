@@ -69,10 +69,13 @@ def view_page(loc):
         # Grab List of Stickers for Chat
         stickerFolder = "/images/stickers/"
         stickerList = []
+        stickerSelectorList = {'global': [], 'channel': []}
         globalStickers = stickers.stickers.query.all()
+
         for sticker in globalStickers:
             newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': 'Server'}
             stickerList.append(newSticker)
+            stickerSelectorList['global'].append(newSticker)
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled:
@@ -91,7 +94,7 @@ def view_page(loc):
                         return(redirect(url_for("root.main_page")))
 
                 return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser,
-                                       xmppserver=xmppserver, stickerList=stickerList, bannedWords=bannedWordArray)
+                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -135,7 +138,7 @@ def view_page(loc):
                     subState = True
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, bannedWords=bannedWordArray)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:
