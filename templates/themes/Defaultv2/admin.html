@@ -820,6 +820,15 @@
                                                 <label id="stickerUploadFilename" class="custom-file-label" for="stickerUpload">Upload Sticker</label>
                                               </div>
                                           </div>
+                                          <script>
+                                            $('#stickerUpload').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('#stickerUploadFilename').html(fileName);
+                                            })
+                                          </script>
+
                                     </div>
                                   </div>
                                   <input type="hidden" value="newSticker" id="settingType" name="settingType">
