@@ -115,7 +115,7 @@ function onConnect(status) {
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
         scrollChatWindow();
-    }, 2000);
+    }, 3500);
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "flex";
     queryOccupants();

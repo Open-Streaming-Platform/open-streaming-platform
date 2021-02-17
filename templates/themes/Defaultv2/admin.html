@@ -779,7 +779,7 @@
                                         {% for sticker in globalStickers %}
                                         <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
                                             <div class="mx-auto my-2" style="width:128px;">
-                                                <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;">
+                                                <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
                                             </div>
                                             <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
                                             <div class="mx-auto my-2" style="width:96px;">
@@ -820,6 +820,15 @@
                                                 <label id="stickerUploadFilename" class="custom-file-label" for="stickerUpload">Upload Sticker</label>
                                               </div>
                                           </div>
+                                          <script>
+                                            $('#stickerUpload').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('#stickerUploadFilename').html(fileName);
+                                            })
+                                          </script>
+
                                     </div>
                                   </div>
                                   <input type="hidden" value="newSticker" id="settingType" name="settingType">
