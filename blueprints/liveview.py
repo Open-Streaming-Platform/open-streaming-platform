@@ -69,13 +69,39 @@ def view_page(loc):
         # Grab List of Stickers for Chat
         stickerFolder = "/images/stickers/"
         stickerList = []
-        stickerSelectorList = {'global': [], 'channel': []}
-        globalStickers = stickers.stickers.query.all()
+        stickerSelectorList = {'builtin': [], 'global': [], 'channel': []}
 
-        for sticker in globalStickers:
-            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': 'Server'}
+        # Build Built-In Stickers
+        builtinStickerList = [
+            {'name': 'oe-angry', 'filename': 'angry.png'},
+            {'name': 'oe-smiling', 'filename': 'smiling.png'},
+            {'name': 'oe-frown', 'filename': 'frown.png'},
+            {'name': 'oe-laugh', 'filename': 'laugh.png'},
+            {'name': 'oe-think', 'filename': 'thinking.png'},
+            {'name': 'oe-thumbsup', 'filename': 'thumbsup.png'},
+            {'name': 'oe-thumbsdown', 'filename': 'angry.png'},
+            {'name': 'oe-heart', 'filename': 'heart.png'},
+            {'name': 'oe-fire', 'filename': 'fire.png'},
+            {'name': 'oe-checkmark', 'filename': 'checkmark.png'}
+        ]
+        for sticker in builtinStickerList:
+            newSticker = {'name': sticker['name'], 'file': '/static/img/stickers/' + sticker['filename'], 'category': 'builtin'}
             stickerList.append(newSticker)
-            stickerSelectorList['global'].append(newSticker)
+            stickerSelectorList['builtin'].append(newSticker)
+
+        # Build Global and Channel Stickers
+        stickerQuery = stickers.stickers.query.all()
+        for sticker in stickerQuery:
+            category = 'Unsorted'
+            if sticker.channelID is None:
+                category = 'global'
+            else:
+                category = 'channel'
+            if category not in stickerSelectorList:
+                stickerSelectorList[category] = []
+            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
+            stickerList.append(newSticker)
+            stickerSelectorList[category].append(newSticker)
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled:
