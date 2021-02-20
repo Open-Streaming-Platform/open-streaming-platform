@@ -514,9 +514,9 @@
             </div>
 
             <div id="chatSettingsWindow-{{channel.id}}" style="display:none;">
-              <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                 <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
-                  <div>
+                  <div id="generalChatSettings-{{ channel.id }}">
+                    <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                     <div class="row">
                       <div class="col-xl-4 col-lg-6 col-md-12">
                         <div class="form-group">
@@ -561,8 +561,12 @@
                         </div>
                       </div>
                     </div>
+                    <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Edit</button>
+                    </form>
                     <hr>
-                    <div class="row">
+                  </div>
+                  <div class="row">
                       <div class="col-12">
                         <div id="moderators-{{channel.id}}">
                           <div class="row">
@@ -610,19 +614,7 @@
                         <hr>
                       </div>
                     </div>
-                  </div>
-                  <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
-                  <div>
-                  </div>
-                  <div>
-                    <div class="row">
-                      <div class="col-12">
-                        <input type="submit" class="btn btn-success" value="&#128393; Edit">
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </form>
             </div>
           </div>
         </div>
