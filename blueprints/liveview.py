@@ -75,12 +75,15 @@ def view_page(loc):
         builtinStickerList = [
             {'name': 'oe-angry', 'filename': 'angry.png'},
             {'name': 'oe-smiling', 'filename': 'smiling.png'},
+            {'name': 'oe-surprised', 'filename': 'surprised.png'},
+            {'name': 'oe-cry', 'filename': 'cry.png'},
             {'name': 'oe-frown', 'filename': 'frown.png'},
             {'name': 'oe-laugh', 'filename': 'laugh.png'},
             {'name': 'oe-think', 'filename': 'thinking.png'},
             {'name': 'oe-thumbsup', 'filename': 'thumbsup.png'},
             {'name': 'oe-thumbsdown', 'filename': 'angry.png'},
             {'name': 'oe-heart', 'filename': 'heart.png'},
+            {'name': 'oe-star', 'filename': 'star.png'},
             {'name': 'oe-fire', 'filename': 'fire.png'},
             {'name': 'oe-checkmark', 'filename': 'checkmark.png'}
         ]
