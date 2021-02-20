@@ -70,8 +70,27 @@ def view_page(loc):
         stickerFolder = "/images/stickers/"
         stickerList = []
         stickerSelectorList = {'builtin': [], 'global': [], 'channel': []}
-        stickerQuery = stickers.stickers.query.all()
 
+        # Build Built-In Stickers
+        builtinStickerList = [
+            {'name': 'oe-angry', 'filename': 'angry.png'},
+            {'name': 'oe-smiling', 'filename': 'smiling.png'},
+            {'name': 'oe-frown', 'filename': 'frown.png'},
+            {'name': 'oe-laugh', 'filename': 'laugh.png'},
+            {'name': 'oe-think', 'filename': 'thinking.png'},
+            {'name': 'oe-thumbsup', 'filename': 'thumbsup.png'},
+            {'name': 'oe-thumbsdown', 'filename': 'angry.png'},
+            {'name': 'oe-heart', 'filename': 'heart.png'},
+            {'name': 'oe-fire', 'filename': 'fire.png'},
+            {'name': 'oe-checkmark', 'filename': 'checkmark.png'}
+        ]
+        for sticker in builtinStickerList:
+            newSticker = {'name': sticker['name'], 'file': '/static/img/stickers/' + sticker['filename'], 'category': 'builtin'}
+            stickerList.append(newSticker)
+            stickerSelectorList['builtin'].append(newSticker)
+
+        # Build Global and Channel Stickers
+        stickerQuery = stickers.stickers.query.all()
         for sticker in stickerQuery:
             category = 'Unsorted'
             if sticker.channelID is None:
