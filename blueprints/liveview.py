@@ -81,7 +81,7 @@ def view_page(loc):
             {'name': 'oe-laugh', 'filename': 'laugh.png'},
             {'name': 'oe-think', 'filename': 'thinking.png'},
             {'name': 'oe-thumbsup', 'filename': 'thumbsup.png'},
-            {'name': 'oe-thumbsdown', 'filename': 'angry.png'},
+            {'name': 'oe-thumbsdown', 'filename': 'thumbsdown.png'},
             {'name': 'oe-heart', 'filename': 'heart.png'},
             {'name': 'oe-star', 'filename': 'star.png'},
             {'name': 'oe-fire', 'filename': 'fire.png'},
