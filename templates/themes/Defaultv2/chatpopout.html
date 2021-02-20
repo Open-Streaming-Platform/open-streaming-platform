@@ -90,8 +90,20 @@
                            <div class="chatsticker-composer-popover-body">
                               <div class="chatsticker-emoji-picker-groups">
                                  <div class="chatsticker-emoji-picker-group">
+                                     <div class="chatsticker-emoji-picker-group-title">Default</div>
+                                     {% for sticker in stickerSelectorList['builtin'] %}
+                                    <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                                     {% endfor %}
+                                 </div>
+                                 <div class="chatsticker-emoji-picker-group">
                                     <div class="chatsticker-emoji-picker-group-title">Global</div>
                                      {% for sticker in stickerSelectorList['global'] %}
+                                    <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                                     {% endfor %}
+                                 </div>
+                                 <div class="chatsticker-emoji-picker-group">
+                                     <div class="chatsticker-emoji-picker-group-title">Channel</div>
+                                     {% for sticker in stickerSelectorList['channel'] %}
                                     <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
                                      {% endfor %}
                                  </div>

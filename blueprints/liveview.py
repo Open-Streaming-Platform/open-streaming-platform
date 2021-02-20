@@ -69,13 +69,20 @@ def view_page(loc):
         # Grab List of Stickers for Chat
         stickerFolder = "/images/stickers/"
         stickerList = []
-        stickerSelectorList = {'global': [], 'channel': []}
-        globalStickers = stickers.stickers.query.all()
+        stickerSelectorList = {'builtin': [], 'global': [], 'channel': []}
+        stickerQuery = stickers.stickers.query.all()
 
-        for sticker in globalStickers:
-            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': 'Server'}
+        for sticker in stickerQuery:
+            category = 'Unsorted'
+            if sticker.channelID is None:
+                category = 'global'
+            else:
+                category = 'channel'
+            if category not in stickerSelectorList:
+                stickerSelectorList[category] = []
+            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
             stickerList.append(newSticker)
-            stickerSelectorList['global'].append(newSticker)
+            stickerSelectorList[category].append(newSticker)
 
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled:
