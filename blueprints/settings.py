@@ -1100,8 +1100,8 @@ def settings_channels_page():
             redirect(url_for('.settings_channels_page'))
 
         elif requestType == "newSticker":
-            if 'channelID' in request.form:
-                channelQuery = Channel.Channel.query.filter_by(id=int(request.form['channelID'])).first()
+            if 'stickerChannelID' in request.form:
+                channelQuery = Channel.Channel.query.filter_by(id=int(request.form['stickerChannelID'])).first()
                 if channelQuery is not None:
                     if 'stickerName' in request.form:
                         stickerName = request.form['stickerName']
