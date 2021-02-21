@@ -1099,6 +1099,32 @@ def settings_channels_page():
                 flash("Invalid Change Attempt", "Error")
             redirect(url_for('.settings_channels_page'))
 
+        elif requestType == "newSticker":
+            if 'channelID' in request.form:
+                channelQuery = Channel.Channel.query.filter_by(id=int(request.form['channelID'])).first()
+                if channelQuery is not None:
+                    if 'stickerName' in request.form:
+                        stickerName = request.form['stickerName']
+                        existingStickerNameQuery = stickers.stickers.query.filter_by(name=stickerName).first()
+                        if existingStickerNameQuery is None:
+                            if 'stickerUpload' in request.files:
+                                file = request.files['stickerUpload']
+                                if file.filename != '':
+                                    fileName = stickerUploads.save(request.files['stickerUpload'], name=stickerName + '.', folder='stickers/' + channelQuery.channelLoc)
+                                    fileName = fileName.replace('stickers/' + channelQuery.channelLoc + '/', "")
+                                    newSticker = stickers.stickers(stickerName, fileName)
+                                    newSticker.channelID = channelQuery.id
+                                    db.session.add(newSticker)
+                                    db.session.commit()
+                                    flash("Sticker Added", "Success")
+                        else:
+                            flash("Sticker Name Already Exists", "Error")
+                    else:
+                        flash("Sticker Name Missing", "Error")
+                else:
+                    flash("Sticker Did Not Define Channel ID", "Error")
+            return redirect(url_for('settings_channels_page'))
+
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
 

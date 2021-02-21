@@ -12,8 +12,16 @@ def editSticker(message):
     stickerName = str(message['stickerName'])
 
     if 'channelID' in message:
-        # TODO Stub for Channel Level Stickers
-        pass
+        channelID = int(message['channelID'])
+        stickerQuery = stickers.stickers.query.filter_by(id=stickerID, channelID=channelID).first()
+        if stickerQuery != None:
+            if stickerQuery.channel.owningUser == current_user.id:
+                stickerQuery.name = stickerName
+                stickerExt = (stickerQuery.filename).split('.')[1]
+                newFilename = stickerName + '.' + stickerExt
+                os.rename(stickerLocation + stickerQuery.channel.channelLoc + '/' + stickerQuery.filename, stickerLocation + stickerQuery.channel.channelLoc + '/' + newFilename)
+                stickerQuery.filename = newFilename
+                db.session.commit()
     else:
         if current_user.has_role('Admin'):
             stickerQuery = stickers.stickers.query.filter_by(id=stickerID).first()
@@ -31,8 +39,16 @@ def editSticker(message):
 def deleteSticker(message):
     stickerID = int(message['stickerID'])
     if 'channelID' in message:
-        # TODO Stub for Channel Level Stickers
-        pass
+        channelID = int(message['channelID'])
+        stickerQuery = stickers.stickers.query.filter_by(id=stickerID, channelID=channelID).first()
+        if stickerQuery != None:
+            if stickerQuery.channel.owningUser == current_user.id:
+                try:
+                    os.remove(stickerLocation + stickerQuery.filename)
+                except OSError:
+                    pass
+                db.session.delete(stickerQuery)
+                db.session.commit()
     else:
         if current_user.has_role('Admin'):
             stickerQuery = stickers.stickers.query.filter_by(id=stickerID).first()
