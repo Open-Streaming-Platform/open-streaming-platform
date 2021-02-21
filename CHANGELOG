@@ -1,7 +1,7 @@
 0.8.6
 ==============================================
-OSP-Core: Added Global Chat Stickers
-OSP-RTMP: Fixes to RTMP Adaptive Streaming
+OSP-Core: Added Chat Stickers.  Stickers can be added at the Global Level or Channel Level.  Also includes a small set of OpenEmoji Built-In Stickers
+OSP-RTMP: Fixes to RTMP Adaptive Streaming caused by a fix done in 0.8.4 regarding RTMP playback authentication
 
 0.8.5
 ==============================================
