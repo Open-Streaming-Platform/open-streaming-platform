@@ -976,7 +976,7 @@ def settings_channels_page():
                         flash("Sticker Name Missing", "Error")
                 else:
                     flash("Sticker Did Not Define Channel ID", "Error")
-            return redirect(url_for('settings_channels_page'))
+            return redirect(url_for('settings.settings_channels_page'))
 
         channelName = system.strip_html(request.form['channelName'])
         topic = request.form['channeltopic']
