@@ -67,7 +67,7 @@ def view_page(loc):
         chatOnly = request.args.get("chatOnly")
 
         # Grab List of Stickers for Chat
-        stickerFolder = "/images/stickers/"
+
         stickerList = []
         stickerSelectorList = {'builtin': [], 'global': [], 'channel': []}
 
@@ -98,8 +98,10 @@ def view_page(loc):
             category = 'Unsorted'
             if sticker.channelID is None:
                 category = 'global'
+                stickerFolder = "/images/stickers/"
             else:
                 category = 'channel'
+                stickerFolder = "/images/stickers/" + requestedChannel.channelLoc + "/"
             if category not in stickerSelectorList:
                 stickerSelectorList[category] = []
             newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
