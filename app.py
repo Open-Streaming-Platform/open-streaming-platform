@@ -456,16 +456,19 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 
 @app.before_request
 def do_before_request():
-    try:
-        # Check all IP Requests for banned IP Addresses
-        if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-            requestIP = request.environ['REMOTE_ADDR']
-        else:
-            requestIP = request.environ['HTTP_X_FORWARDED_FOR']
+    # Check all IP Requests for banned IP Addresses
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        requestIP = request.environ['REMOTE_ADDR']
+    else:
+        requestIP = request.environ['HTTP_X_FORWARDED_FOR']
 
+    if requestIP == "127.0.0.1":
+        return 'OK'
+
+    try:
         banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
         if banQuery != None:
-            return str({'error': 'banned', 'reason':banQuery.reason})
+            return str({'error': 'banned', 'reason': banQuery.reason})
 
         # Apply Guest UUID in Session and Handle Object
         if current_user.is_authenticated is False:
@@ -477,9 +480,16 @@ def do_before_request():
                 GuestQuery.last_active_ip = requestIP
                 db.session.commit()
             else:
-                NewGuest = Sec.Guest(session['guestUUID'], requestIP)
-                db.session.add(NewGuest)
-                db.session.commit()
+                # Check if a previous access from an IP Address was Used
+                GuestQuery = Sec.Guest.query.filter_by(last_active_ip=requestIP).first()
+                if GuestQuery is not None:
+                    GuestQuery.last_active_at = datetime.datetime.utcnow()
+                    GuestQuery.UUID = session['guestUUID']
+                    db.session.commit()
+                else:
+                    NewGuest = Sec.Guest(session['guestUUID'], requestIP)
+                    db.session.add(NewGuest)
+                    db.session.commit()
     except:
         pass
 
