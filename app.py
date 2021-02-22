@@ -467,6 +467,9 @@ def do_before_request():
         if banQuery != None:
             return str({'error': 'banned', 'reason':banQuery.reason})
 
+        if requestIP == "127.0.0.1":
+            return 'OK'
+
         # Apply Guest UUID in Session and Handle Object
         if current_user.is_authenticated is False:
             if 'guestUUID' not in session:
