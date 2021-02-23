@@ -927,6 +927,11 @@ body {
         font-size:1em;
         top: initial;
     }
+
+    #chatside {
+        border: 0;
+        width:100%;
+    }
     
     .streamerCard {
         width: 100%;
