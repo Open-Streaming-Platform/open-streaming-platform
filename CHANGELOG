@@ -2,6 +2,9 @@
 ==============================================
 OSP-Core: Added Chat Stickers.  Stickers can be added at the Global Level or Channel Level.  Also includes a small set of OpenEmoji Built-In Stickers
 OSP-Core: Added Sanity Checks for fs_uniquifier to ensure a random value has been assigned
+OSP-Core: Fixes to Guest IP/UUID Tracking running off the rails and generating unneeded Database entries
+OSP-Core: Fixed an issue where Custom Theme HTML Override was not applying when restarting OSP
+OSP-Core: Altered the Chat Window Size on Defaultv2 and Defaultv2-Dark from 550px width to 35%
 OSP-RTMP: Fixes to RTMP Adaptive Streaming caused by a fix done in 0.8.4 regarding RTMP playback authentication
 
 0.8.5
