@@ -314,6 +314,9 @@ topicQuery = topics.topics.query.all()
 for topic in topicQuery:
     globalvars.topicCache[topic.id] = topic.name
 
+# Initialize First Theme Overrides
+system.initializeThemes()
+
 print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
