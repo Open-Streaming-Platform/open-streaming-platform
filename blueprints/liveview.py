@@ -13,6 +13,7 @@ from classes import Channel
 from classes import Stream
 from classes import Sec
 from classes import banList
+from classes import stickers
 
 from globals.globalvars import ejabberdServer
 
@@ -64,6 +65,49 @@ def view_page(loc):
 
         topicList = topics.topics.query.all()
         chatOnly = request.args.get("chatOnly")
+
+        # Grab List of Stickers for Chat
+
+        stickerList = []
+        stickerSelectorList = {'builtin': [], 'global': [], 'channel': []}
+
+        # Build Built-In Stickers
+        builtinStickerList = [
+            {'name': 'oe-angry', 'filename': 'angry.png'},
+            {'name': 'oe-smiling', 'filename': 'smiling.png'},
+            {'name': 'oe-surprised', 'filename': 'surprised.png'},
+            {'name': 'oe-cry', 'filename': 'cry.png'},
+            {'name': 'oe-frown', 'filename': 'frown.png'},
+            {'name': 'oe-laugh', 'filename': 'laugh.png'},
+            {'name': 'oe-think', 'filename': 'thinking.png'},
+            {'name': 'oe-thumbsup', 'filename': 'thumbsup.png'},
+            {'name': 'oe-thumbsdown', 'filename': 'thumbsdown.png'},
+            {'name': 'oe-heart', 'filename': 'heart.png'},
+            {'name': 'oe-star', 'filename': 'star.png'},
+            {'name': 'oe-fire', 'filename': 'fire.png'},
+            {'name': 'oe-checkmark', 'filename': 'checkmark.png'}
+        ]
+        for sticker in builtinStickerList:
+            newSticker = {'name': sticker['name'], 'file': '/static/img/stickers/' + sticker['filename'], 'category': 'builtin'}
+            stickerList.append(newSticker)
+            stickerSelectorList['builtin'].append(newSticker)
+
+        # Build Global and Channel Stickers
+        stickerQuery = stickers.stickers.query.all()
+        for sticker in stickerQuery:
+            category = 'Unsorted'
+            if sticker.channelID is None:
+                category = 'global'
+                stickerFolder = "/images/stickers/"
+            else:
+                category = 'channel'
+                stickerFolder = "/images/stickers/" + requestedChannel.channelLoc + "/"
+            if category not in stickerSelectorList:
+                stickerSelectorList[category] = []
+            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
+            stickerList.append(newSticker)
+            stickerSelectorList[category].append(newSticker)
+
         if chatOnly == "True" or chatOnly == "true":
             if requestedChannel.chatEnabled:
                 hideBar = False
@@ -80,7 +124,8 @@ def view_page(loc):
                         flash("Invalid User","error")
                         return(redirect(url_for("root.main_page")))
 
-                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser, xmppserver=xmppserver, bannedWords=bannedWordArray)
+                return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser,
+                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -124,7 +169,7 @@ def view_page(loc):
                     subState = True
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, bannedWords=bannedWordArray)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:

@@ -925,3 +925,31 @@ function setClipScreenShot() {
         }, 4000);
     createNewBSAlert("Thumbnail Updated", "Success");
 }
+
+function newStickerModal(channelID) {
+    document.getElementById('stickerChannelID').value = channelID;
+    $('#newStickerModal').modal('show');
+}
+
+
+function deleteStickerModal(stickerID, channelID) {
+    document.getElementById('deleteStickerID').value = stickerID;
+    document.getElementById('deleteStickerChannelID').value = channelID
+    $('#deleteStickerModal').modal('show');
+}
+
+function deleteSticker() {
+    stickerID = document.getElementById('deleteStickerID').value;
+    channelID = document.getElementById('deleteStickerChannelID').value
+    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID});
+    stickerDiv = document.getElementById('sticker-' + stickerID);
+    stickerDiv.parentNode.removeChild(stickerDiv);
+    document.getElementById('deleteStickerID').value = "";
+    createNewBSAlert("Sticker Deleted","success")
+}
+
+function editStickerModal(stickerID, channelID) {
+    stickerName = document.getElementById('sticker-name-' + stickerID).value;
+    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName, channelID: channelID});
+    createNewBSAlert("Sticker Edited","success")
+}

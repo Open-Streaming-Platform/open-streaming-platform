@@ -9,6 +9,8 @@ var modDisplayActive = false;
 var occupantCheck;
 var chatDataUpdate;
 
+const stickerRegex = /\:([A-Za-z0-9_-]+)\:/g;
+
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -113,7 +115,7 @@ function onConnect(status) {
     enterRoom(ROOMNAME + '@' + ROOM_SERVICE);
     setTimeout(function () {
         scrollChatWindow();
-    }, 2000);
+    }, 3500);
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "flex";
     queryOccupants();
@@ -329,6 +331,25 @@ function serverMessage(msg) {
     }
 }
 
+
+function process_stickers(msg) {
+  var result = msg.match(stickerRegex);
+  if (result !== null) {
+      for (var i = 0; i < result.length; i++) {
+          var stickerName = result[i].replaceAll(':', '');
+          var stickerData = stickerList.filter(d => d.name === stickerName);
+          if (stickerData.length !== 0) {
+              var stickerFilename = stickerData[0]['file'];
+              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="48px" alt="${stickerName}" title="${stickerName}" />`);
+          } else {
+              msg = msg.replace(`:${stickerName}:`, '');
+          }
+      }
+  }
+  return msg;
+}
+
+
 // Function to Handle New Messages
 function onMessage(msg) {
   var to = msg.getAttribute('to');
@@ -355,7 +376,7 @@ function onMessage(msg) {
       } else if (type == "groupchat" && messageElement.length > 0) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
-          var msg = Strophe.xmlunescape(Strophe.getText(body))
+          var msg = Strophe.xmlunescape(Strophe.getText(body));
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
@@ -364,7 +385,11 @@ function onMessage(msg) {
           } else {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
           }
-          tempNode.querySelector("span.chatMessage").innerHTML = format_msg(msg);
+
+          var msg = format_msg(msg)
+          msg = process_stickers(msg);
+
+          tempNode.querySelector("span.chatMessage").innerHTML = msg;
           tempNode.style.display = "block";
           chatDiv = document.getElementById("chat");
           var needsScroll = checkChatScroll()
@@ -737,3 +762,31 @@ function getPos(el) {
          lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
     return {x: lx,y: ly};
 }
+
+// Sticker Selector Popup Handler
+$(document).on("click","#openEmojiButton",function(e){
+   e.stopPropagation();
+    $('.chatsticker-composer-emoji-popover').toggleClass("active");
+});
+
+$(document).click(function (e) {
+    if ($(e.target).attr('class') !== '.chatsticker-composer-emoji-popover' && $(e.target).parents(".chatsticker-composer-emoji-popover").length === 0) {
+        $(".chatsticker-composer-emoji-popover").removeClass("active");
+    }
+});
+
+$(document).on("click",".chatsticker-emoji-picker-emoji",function(e){
+  var chatInputBox = document.getElementById('chatinput');
+  var selectedEmoji = ' :' + $(this).attr('title') + ': ';
+  chatInputBox.value = chatInputBox.value + selectedEmoji;
+});
+
+function searchSticker() {
+    var query = $('.chatsticker-composer-popover-input')[0].value;
+    if(query !== ""){
+      $(".chatsticker-emoji-picker-emoji:not([title*="+ query +"])").hide();
+    }
+    else{
+      $(".chatsticker-emoji-picker-emoji").show();
+    }
+};

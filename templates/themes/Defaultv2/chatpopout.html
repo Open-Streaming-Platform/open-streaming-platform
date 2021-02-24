@@ -78,9 +78,40 @@
           <div class="chatFooterTop"></div>
           <div class="chatFooterInput">
               <div class="input-group">
-                  <input id="chatinput" type="text" class="form-control" autocomplete="off">
+                  <input id="chatinput" type="text" class="form-control" maxlength="750" autocomplete="off">
                   <div class="input-group-append">
-                    <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
+                      <button type="button" class=" btn btn-success form-control" id="openEmojiButton"><i class="far fa-smile"></i></button>
+                      <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
+                  </div>
+                  <div class="chatsticker-composer-popover chatsticker-composer-emoji-popover shadow">
+                     <div class="chatsticker-emoji-picker w-100">
+                        <div class="chatsticker-composer-popover-header"><input class="chatsticker-composer-popover-input" placeholder="Search..." aria-label="Search" value="" oninput="searchSticker();" style="background-color:#ffffff;"></div>
+                        <div class="chatsticker-composer-popover-body-container">
+                           <div class="chatsticker-composer-popover-body">
+                              <div class="chatsticker-emoji-picker-groups">
+                                 <div class="chatsticker-emoji-picker-group">
+                                     <div class="chatsticker-emoji-picker-group-title">Default</div>
+                                     {% for sticker in stickerSelectorList['builtin'] %}
+                                    <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                                     {% endfor %}
+                                 </div>
+                                 <div class="chatsticker-emoji-picker-group">
+                                    <div class="chatsticker-emoji-picker-group-title">Global</div>
+                                     {% for sticker in stickerSelectorList['global'] %}
+                                    <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                                     {% endfor %}
+                                 </div>
+                                 <div class="chatsticker-emoji-picker-group">
+                                     <div class="chatsticker-emoji-picker-group-title">Channel</div>
+                                     {% for sticker in stickerSelectorList['channel'] %}
+                                    <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                                     {% endfor %}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="chatsticker-composer-popover-caret"></div>
                   </div>
               </div>
           </div>
@@ -203,6 +234,8 @@
         var ChatContentWindow = document.getElementById("chatContentWindow");
         var ChatInputBar = document.getElementById('chatinput');
         ChatInputBar.placeholder = "Send Message As " + username + "...";
+
+        var stickerList = {{ stickerList | safe }}
 
         $('#chatinput').on('keyup', function(e) {
             if (e.keyCode === 13) {

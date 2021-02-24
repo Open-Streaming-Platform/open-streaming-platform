@@ -86,6 +86,7 @@ app.config['SECURITY_TWO_FACTOR_LOGIN_VALIDITY']='1 week'
 app.config['SECURITY_TOTP_SECRETS'] = {"1": config.secretKey}
 app.config['SECURITY_FLASH_MESSAGES'] = True
 app.config['UPLOADED_PHOTOS_DEST'] = app.config['WEB_ROOT'] + 'images'
+app.config['UPLOADED_STICKERS_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['UPLOADED_DEFAULT_DEST'] = app.config['WEB_ROOT'] + 'images'
 app.config['SECURITY_POST_LOGIN_VIEW'] = '/'
 app.config['SECURITY_POST_LOGOUT_VIEW'] = '/'
@@ -129,6 +130,7 @@ from classes import webhook
 from classes import logs
 from classes import subscriptions
 from classes import notifications
+from classes import stickers
 
 #----------------------------------------------------------------------------#
 # Function Imports
@@ -201,7 +203,8 @@ security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm,
 
 # Initialize Flask-Uploads
 photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
+stickerUploads = UploadSet('stickers', IMAGES)
+configure_uploads(app, (photos, stickerUploads))
 patch_request_class(app)
 
 # Initialize Flask-Markdown
@@ -311,6 +314,9 @@ topicQuery = topics.topics.query.all()
 for topic in topicQuery:
     globalvars.topicCache[topic.id] = topic.name
 
+# Initialize First Theme Overrides
+system.initializeThemes()
+
 print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
@@ -328,6 +334,7 @@ from functions.socketio import syst
 from functions.socketio import xmpp
 from functions.socketio import restream
 from functions.socketio import rtmp
+from functions.socketio import pictures
 
 print({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
@@ -452,32 +459,40 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 
 @app.before_request
 def do_before_request():
-    try:
-        # Check all IP Requests for banned IP Addresses
-        if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-            requestIP = request.environ['REMOTE_ADDR']
-        else:
-            requestIP = request.environ['HTTP_X_FORWARDED_FOR']
+    # Check all IP Requests for banned IP Addresses
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        requestIP = request.environ['REMOTE_ADDR']
+    else:
+        requestIP = request.environ['HTTP_X_FORWARDED_FOR']
 
-        banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
-        if banQuery != None:
-            return str({'error': 'banned', 'reason':banQuery.reason})
+    if requestIP != "127.0.0.1":
+        try:
+            banQuery = banList.ipList.query.filter_by(ipAddress=requestIP).first()
+            if banQuery != None:
+                return str({'error': 'banned', 'reason': banQuery.reason})
 
-        # Apply Guest UUID in Session and Handle Object
-        if current_user.is_authenticated is False:
-            if 'guestUUID' not in session:
-                session['guestUUID'] = str(uuid.uuid4())
-            GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
-            if GuestQuery is not None:
-                GuestQuery.last_active_at = datetime.datetime.utcnow()
-                GuestQuery.last_active_ip = requestIP
-                db.session.commit()
-            else:
-                NewGuest = Sec.Guest(session['guestUUID'], requestIP)
-                db.session.add(NewGuest)
-                db.session.commit()
-    except:
-        pass
+            # Apply Guest UUID in Session and Handle Object
+            if current_user.is_authenticated is False:
+                if 'guestUUID' not in session:
+                    session['guestUUID'] = str(uuid.uuid4())
+                GuestQuery = Sec.Guest.query.filter_by(UUID=session['guestUUID']).first()
+                if GuestQuery is not None:
+                    GuestQuery.last_active_at = datetime.datetime.utcnow()
+                    GuestQuery.last_active_ip = requestIP
+                    db.session.commit()
+                else:
+                    # Check if a previous access from an IP Address was Used
+                    GuestQuery = Sec.Guest.query.filter_by(last_active_ip=requestIP).first()
+                    if GuestQuery is not None:
+                        GuestQuery.last_active_at = datetime.datetime.utcnow()
+                        GuestQuery.UUID = session['guestUUID']
+                        db.session.commit()
+                    else:
+                        NewGuest = Sec.Guest(session['guestUUID'], requestIP)
+                        db.session.add(NewGuest)
+                        db.session.commit()
+        except:
+            pass
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
