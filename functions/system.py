@@ -8,6 +8,7 @@ from flask import flash
 from html.parser import HTMLParser
 import ipaddress
 import json
+import secrets
 
 from globals import globalvars
 
@@ -15,6 +16,7 @@ from classes.shared import db
 from classes import settings
 from classes import logs
 from classes import RecordedVideo
+from classes import Sec
 
 def asynch(func):
 
@@ -141,12 +143,25 @@ def systemFixes(app):
         clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-avoid_negative_ts', '1', fullvideoLocation])
         db.session.commmit()
 
+    # Create the Stickers directory if it does not exist
+    if not os.path.isdir(app.config['WEB_ROOT'] + "/images/stickers"):
+        try:
+            os.mkdir(app.config['WEB_ROOT'] + "/images/stickers")
+        except OSError:
+            flash("Unable to create <web-root>/images/stickers", "error")
+
     # Create the stream-thumb directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
         try:
             os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
         except OSError:
             flash("Unable to create <web-root>/stream-thumb", "error")
+
+    # Check fs_uniquifier
+    userQuery = Sec.User.query.filter_by(fs_uniquifier=None).all()
+    for user in userQuery:
+        user.fs_uniquifier = str(secrets.token_hex(nbytes=16))
+        db.session.commit()
 
     return True
 

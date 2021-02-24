@@ -15,10 +15,12 @@ def playback_auth_handler():
         username = request.form['username']
     if 'hash' in request.form:
         secureHash = request.form['hash']
-
-    r = requests.post(apiLocation + '/apiv1/rtmp/playbackauth', data={'name': stream, 'addr': clientIP, 'username': username, 'hash': secureHash})
-    results = r.json()
-    if results['results'] is True:
+    if clientIP == "127.0.0.1":
         return 'OK'
     else:
-        return abort(400)
+        r = requests.post(apiLocation + '/apiv1/rtmp/playbackauth', data={'name': stream, 'addr': clientIP, 'username': username, 'hash': secureHash})
+        results = r.json()
+        if results['results'] is True:
+            return 'OK'
+        else:
+            return abort(400)

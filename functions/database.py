@@ -197,6 +197,12 @@ def dbFixes():
         channel.xmppToken = str(os.urandom(32).hex())
         db.session.commit()
 
+    # Clear Any Localhost Guest UUIDs from the DB due to coding pre 0.8.6
+    guestQuery = Sec.Guest.query.filter_by(last_active_ip="127.0.0.1").all()
+    for guest in guestQuery:
+        db.session.delete(guest)
+    db.session.commit()
+
     return True
 
 def init(app, user_datastore):
