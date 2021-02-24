@@ -413,6 +413,10 @@ body {
     display:none;
 }
 
+#channelPlayerMenuSection {
+    width: 35%;
+}
+
 #chatside {
     border-left: 1px solid #eeeeee;
     width:35%;
@@ -940,6 +944,10 @@ body {
     .displayCard-other .card-data .displayCard-footer {
         font-size:1em;
         top: initial;
+    }
+
+    #channelPlayerMenuSection {
+    width: 100%;
     }
 
     #chatside {
