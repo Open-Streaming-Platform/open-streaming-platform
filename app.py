@@ -315,7 +315,10 @@ for topic in topicQuery:
     globalvars.topicCache[topic.id] = topic.name
 
 # Initialize First Theme Overrides
-system.initializeThemes()
+try:
+    system.initializeThemes()
+except:
+    print({"level": "error", "message": "Unable to Set Override Themes"})
 
 print({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#

@@ -1,3 +1,8 @@
+0.8.7
+==============================================
+OSP-Core: Fixed an Issue where OSP would not load properly on first run due to checking for theme overrides that had not been set yet - Issue #366
+OSP-Core: Fixed and Issue where all Channel Stickers were showing up in all Channels
+
 0.8.6
 ==============================================
 OSP-Core: Added Chat Stickers.  Stickers can be added at the Global Level or Channel Level.  Also includes a small set of OpenEmoji Built-In Stickers
