@@ -442,6 +442,7 @@ upgrade_osp() {
   if cd /opt/osp
   then
     sudo git pull >> $OSPLOG 2>&1
+    sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
   else
