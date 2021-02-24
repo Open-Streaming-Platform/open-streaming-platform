@@ -36,6 +36,9 @@
                     <a class="nav-link {% if page == 'webhooks' %} active {% endif %}" role="tab" id="admin-nav-webhooks" href="#webhooksSettings" data-toggle="pill" aria-controls="webhooks-nav-settings" aria-selected="false">Webhooks</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if page == 'stickers' %} active {% endif %}" role="tab" id="admin-nav-stickers" href="#stickersSettings" data-toggle="pill" aria-controls="stickers-nav-settings" aria-selected="false">Chat Stickers</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if page == 'users' %} active {% endif %}" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
                 </li>
                 <li class="nav-item">
@@ -758,6 +761,106 @@
                           <div class="modal-footer">
                               <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                               <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitWebhook();">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'stickers' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-stickers" id="stickersSettings">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Global Chat Stickers
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newStickerModal"><i class="fas fa-plus"></i></button></span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap justify-content-start">
+                                        {% for sticker in globalStickers %}
+                                        <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
+                                            <div class="mx-auto my-2" style="width:128px;">
+                                                <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+                                            </div>
+                                            <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
+                                            <div class="mx-auto my-2" style="width:96px;">
+                                                <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }})"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }})"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newStickerModal" tabindex="-1" role="dialog" aria-labelledby="newStickerModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" enctype=multipart/form-data method="post">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="newStickerModalTitle">Create New Chat Sticker</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="stickerName">Sticker Shortcode</label>
+                                            <input type="text" name="stickerName" id="stickerNameInput" class="form-control" pattern="[A-Za-z0-9_]+" required autocomplete="new-password">
+                                            <small id="stickerNameHelp" class="form-text text-muted">Format: A-Z, a-z, 0-9, _ </small>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                          <div class="col-12">
+                                              <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name=stickerUpload id="stickerUpload" required>
+                                                <label id="stickerUploadFilename" class="custom-file-label" for="stickerUpload">Upload Sticker</label>
+                                              </div>
+                                          </div>
+                                          <script>
+                                            $('#stickerUpload').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('#stickerUploadFilename').html(fileName);
+                                            })
+                                          </script>
+
+                                    </div>
+                                  </div>
+                                  <input type="hidden" value="newSticker" id="settingType" name="settingType">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <input type="submit" class="btn btn-success" value="Create">
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="deleteStickerModal" tabindex="-1" role="dialog" aria-labelledby="deleteStickerModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteStickerModalTitle">Delete Chat Sticker</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <p>Are you sure you want to delete this Chat Sticker?</p>
+                                </div>
+                              </div>
+                              <input type="hidden" value="" id="deleteStickerID">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteSticker();">Delete</button>
                           </div>
                         </div>
                       </div>

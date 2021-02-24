@@ -113,6 +113,7 @@ upgrade_osp() {
    echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
    sudo systemctl stop nginx-osp >> $OSPLOG 2>&1
    echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
+   sudo pip3 uninstall flask-security >> $OSPLOG 2>&1
    sudo pip3 install -r /opt/osp/setup/requirements.txt >> $OSPLOG 2>&1
    echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
    sudo cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $OSPLOG 2>&1

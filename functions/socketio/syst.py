@@ -76,6 +76,11 @@ def deleteChannelAdmin(message):
                 db.session.delete(sub)
             for hook in channelQuery.webhooks:
                 db.session.delete(hook)
+            for sticker in channelQuery.chatStickers:
+                db.session.delete(sticker)
+
+            stickerFolder = '/var/www/images/stickers/' + channelQuery.channelLoc + '/'
+            shutil.rmtree(stickerFolder, ignore_errors=True)
 
             filePath = globalvars.videoRoot + channelQuery.channelLoc
 
