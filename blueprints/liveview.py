@@ -92,18 +92,24 @@ def view_page(loc):
             stickerList.append(newSticker)
             stickerSelectorList['builtin'].append(newSticker)
 
-        # Build Global and Channel Stickers
-        stickerQuery = stickers.stickers.query.all()
+        # Build Global Stickers
+        stickerQuery = stickers.stickers.query.filter_by(channelID=None).all()
         for sticker in stickerQuery:
-            category = 'Unsorted'
-            if sticker.channelID is None:
-                category = 'global'
-                stickerFolder = "/images/stickers/"
-            else:
-                category = 'channel'
-                stickerFolder = "/images/stickers/" + requestedChannel.channelLoc + "/"
-            if category not in stickerSelectorList:
-                stickerSelectorList[category] = []
+
+            category = 'global'
+            stickerFolder = "/images/stickers/"
+
+            newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
+            stickerList.append(newSticker)
+            stickerSelectorList[category].append(newSticker)
+
+        # Build Channel Stickers
+        stickerQuery = stickers.stickers.query.filter_by(channelID=requestedChannel.id).all()
+        for sticker in stickerQuery:
+
+            category = 'channel'
+            stickerFolder = "/images/stickers/" + requestedChannel.channelLoc + "/"
+
             newSticker = {'name': sticker.name, 'file': stickerFolder + sticker.filename, 'category': category}
             stickerList.append(newSticker)
             stickerSelectorList[category].append(newSticker)
