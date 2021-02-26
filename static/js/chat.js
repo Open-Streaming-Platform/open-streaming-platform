@@ -67,6 +67,7 @@ function log(msg) {
 }
 
 function connectChat() {
+    document.getElementById('chat').innerHTML = "";
     var url = BOSH_SERVICE;
     connection = new Strophe.Connection(url);
     connection.rawInput = rawInput;
