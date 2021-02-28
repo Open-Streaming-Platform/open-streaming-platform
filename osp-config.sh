@@ -409,6 +409,7 @@ install_osp() {
   sudo mkdir -p "$web_root/live" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/videos" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/images" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/images/stickers" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
@@ -442,6 +443,7 @@ upgrade_osp() {
   if cd /opt/osp
   then
     sudo git pull >> $OSPLOG 2>&1
+    sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
   else
@@ -488,6 +490,7 @@ upgrade_edge() {
         coreString+="allow $i;\n"
   done
 
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
 
