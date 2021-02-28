@@ -2,6 +2,7 @@
 ==============================================
 OSP-Config: Added Creation of the /var/www/images/stickers directory during install so permissions are set properly to www-data
 OSP-Core: Set Chat Window to be cleared on Reconnection to prevent duplicate chat messages
+OSP-RTMP: Fixed Remaining RTMP Restream/Adaptive transcoding issues regarding wrong or unstable pull locations
 
 0.8.7
 ==============================================
