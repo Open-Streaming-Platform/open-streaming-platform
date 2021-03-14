@@ -113,10 +113,11 @@ class edgeStreamer(db.Model):
         }
 
 class rtmpServer(db.Model):
+    __tablename__ = "rtmpServer"
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(1024))
     active = db.Column(db.Boolean)
-    streams = db.relationship('Stream', backref='rtmpServer', cascade="all, delete-orphan", lazy="joined")
+    streams = db.relationship('Stream', backref='server', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, address):
         self.address = address
