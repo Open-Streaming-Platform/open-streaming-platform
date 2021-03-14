@@ -15,6 +15,7 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
+    rtmpServer = linkedChannel = db.Column(db.Integer,db.ForeignKey('rtmpServer.id'))
     upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):

@@ -74,7 +74,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
         db.session.close()
         return returnMessage
 
-def rtmp_stage2_user_auth_check(channelLoc, ipaddress):
+def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
     sysSettings = settings.settings.query.first()
 
     currentTime = datetime.datetime.utcnow()
@@ -85,6 +85,8 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress):
         authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
 
         if authedStream is not None:
+            if authorizedRTMP is not None:
+                authedStream.rtmpServer = authorizedRTMP
 
             authedStream.currentViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
             authedStream.totalViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
