@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect
+import redis
 
 import requests
 import os
@@ -10,7 +11,7 @@ from conf import config
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-
+rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 # Routes
 #----------------------------------------------------------------------------#
@@ -19,13 +20,13 @@ location = {}
 
 @app.route('/<endpoint>/<channelLocation>/<file>')
 def home(endpoint,channelLocation,file):
-    if channelLocation not in location:
+    if rdis.exists(channelLocation) is False:
         header = {'X-Channel-ID': channelLocation}
         r = requests.get(config.ospCoreAPI + '/rtmpCheck', headers=header)
-        location[channelLocation] = r.headers['X_UpstreamHost']
+        rdis.set(channelLocation, r.headers['X_UpstreamHost'], 30)
         return redirect('/' + r.headers['X_UpstreamHost'] + '/' + endpoint + '/' + channelLocation + '/' + file)
     else:
-        return redirect('/' + location[channelLocation] + '/' + endpoint + '/' + channelLocation + '/' + file)
+        return redirect('/' + rdis.get(channelLocation) + '/' + endpoint + '/' + channelLocation + '/' + file)
 
 #----------------------------------------------------------------------------#
 # Launch.
