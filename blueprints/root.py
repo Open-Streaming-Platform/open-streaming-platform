@@ -269,9 +269,9 @@ def rtmp_check():
                     resp = Response("OK")
                     resp.headers['X_UpstreamHost'] = rtmpServer.address
                     return resp
-                return "No Server"
-            return "No Stream"
-        return "No Channel"
-    return "No Channel-ID"
+                return abort(404)
+            return abort(404)
+        return abort(404)
+    return abort(404)
 
 
