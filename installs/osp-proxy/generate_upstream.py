@@ -7,6 +7,12 @@ from conf import config
 r = requests.get(config.ospCoreAPI + '/apiv1/server/rtmp')
 apiReturn = r.json()
 rtmpServerList = apiReturn['results']
+for entry in rtmpServerList:
+    if entry['address'] == '127.0.0.1' or entry['address'] == 'localhost':
+        r = requests.get(config.ospCoreAPI + '/apiv1/server/')
+        apiReturn = r.json()
+        serverSettings = apiReturn['results']
+        entry['address'] = serverSettings['siteAddress']
 
 env = Environment(loader=FileSystemLoader('templates'))
 
@@ -23,4 +29,3 @@ output = template.render(rtmpServerList=rtmpServerList)
 
 with open("/opt/osp-proxy/conf/rtmp-upstream.conf", "w") as fh:
     fh.write(output)
-
