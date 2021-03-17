@@ -20,13 +20,13 @@ location = {}
 
 @app.route('/<endpoint>/<channelLocation>/<file>')
 def home(endpoint,channelLocation,file):
-    if rdis.exists(channelLocation) is False:
+    if rdis.exists(channelLocation) == False:
         header = {'X-Channel-ID': channelLocation}
         r = requests.get(config.ospCoreAPI + '/rtmpCheck', headers=header)
         rdis.set(channelLocation, r.headers['X_UpstreamHost'], 30)
         return redirect('/' + r.headers['X_UpstreamHost'] + '/' + endpoint + '/' + channelLocation + '/' + file)
     else:
-        return redirect('/' + rdis.get(channelLocation) + '/' + endpoint + '/' + channelLocation + '/' + file)
+        return redirect('/' + str(rdis.get(channelLocation).decode("utf-8")) + '/' + endpoint + '/' + channelLocation + '/' + file)
 
 #----------------------------------------------------------------------------#
 # Launch.
