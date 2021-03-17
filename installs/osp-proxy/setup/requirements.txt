@@ -1,0 +1,5 @@
+Flask==1.1.1
+gunicorn==20.0.4
+gevent==20.9.0
+gevent-websocket==0.10.1
+requests==2.20.0
