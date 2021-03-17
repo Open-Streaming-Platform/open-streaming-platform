@@ -1,5 +1,7 @@
 0.8.8
 ==============================================
+OSP-Proxy: Added New OSP-Proxy Service.  Acts as an Edge Nginx HLS Proxy.  Instead of receiving a full copy of all streams like OSP-Edge, it pulls video as needed from the RTMP servers and caches as needed.
+OSP-Core: Added Endpoints required to handle OSP-Proxy.
 OSP-Config: Added Creation of the /var/www/images/stickers directory during install so permissions are set properly to www-data
 OSP-Core: Set Chat Window to be cleared on Reconnection to prevent duplicate chat messages
 OSP-RTMP: Fixed Remaining RTMP Restream/Adaptive transcoding issues regarding wrong or unstable pull locations
