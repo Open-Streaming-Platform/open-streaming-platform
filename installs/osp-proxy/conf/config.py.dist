@@ -4,4 +4,5 @@ secretKey="CHANGEME"
 # Enables Debug Mode
 debugMode = False
 
-ospCoreAPI = "http://example.com:5010"
+# OSP Core API Site ex:http://osp.example.com
+ospCoreAPI = "#CHANGEMETOOSPCORE"
