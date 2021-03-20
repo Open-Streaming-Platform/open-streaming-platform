@@ -15,6 +15,23 @@ rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 # Routes
 #----------------------------------------------------------------------------#
+@app.route('/<endpoint>/<channelLocation>.m3u8')
+def adaptive(endpoint,channelLocation):
+    # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
+    if hasattr(config, 'forceDestination'):
+        if config.forceDestinationType == "edge":
+            endpoint = endpoint.replace('live','edge')
+        return redirect('/' + forceDestination + '/' + endpoint + '-adapt/' + channelLocation + '.m3u8')
+    else:
+        # Check if Cached Redis RTMP Location Exists, If Not, Query API and Store the Result in Redis for a 30s Cache
+        if rdis.exists(channelLocation) == False:
+            header = {'X-Channel-ID': channelLocation}
+            r = requests.get(config.ospCoreAPI + '/rtmpCheck', headers=header)
+            rdis.set(channelLocation, r.headers['X_UpstreamHost'], 30)
+            return redirect('/' + r.headers['X_UpstreamHost'] + '/' + endpoint + '/' + channelLocation + '/' + file)
+        else:
+            return redirect('/' + str(rdis.get(channelLocation).decode("utf-8")) + '/' + endpoint + '-adapt/' + channelLocation + '.m3u8')
+
 @app.route('/<endpoint>/<channelLocation>/<file>')
 def home(endpoint,channelLocation,file):
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
