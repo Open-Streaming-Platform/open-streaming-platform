@@ -182,6 +182,10 @@
                                     <label for="maintenanceMode">Maintenance Mode</label><br>
                                     <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="maintenanceMode" name="maintenanceMode" autocomplete="new-password" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
                                   </div>
+                                  <div class="form-group mx-2">
+                                    OSP-Proxy Hostname: <input type="text" name="ospProxyFQDN" class="form-control" value="{{sysSettings.proxyFQDN}}" size="64" placeholder="proxy.example.com">
+                                    <small>Leave Blank if no OSP-Proxy Server Used</small>
+                                  </div>
                                   <hr>
                                   System Logo:
                                   <img src="{{sysSettings.systemLogo}}" width="32" height="32"><br>

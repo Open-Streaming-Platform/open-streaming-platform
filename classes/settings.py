@@ -27,6 +27,7 @@ class settings(db.Model):
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(8192))
     maxClipLength = db.Column(db.Integer)
+    proxyFQDN = db.Column(db.String(2048))
     maintenanceMode = db.Column(db.Boolean)
     buildEdgeOnRestart = db.Column(db.Boolean)
     allowRegistration = db.Column(db.Boolean) # Moved to config.py

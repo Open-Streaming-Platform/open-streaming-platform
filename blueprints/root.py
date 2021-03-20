@@ -274,4 +274,10 @@ def rtmp_check():
         return abort(404)
     return abort(404)
 
-
+# Redirect Streams
+@root_bp.route('/proxy/<channelLoc>/<file>')
+def proxy_redirect(channelLoc, file):
+    sysSettings = settings.settings.query.first()
+    proxyAddress = sysSettings.proxyFQDN
+    protocol = sysSettings.siteProtocol
+    return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file)
