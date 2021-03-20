@@ -483,7 +483,7 @@ def admin_page():
                     ospProxyFQDN = None
                 else:
                     ospProxyFQDN = ospProxyFQDNForm
-                sysSettings.ospProxyFQDN = ospProxyFQDN
+                sysSettings.proxyFQDN = ospProxyFQDN
 
             if 'buildEdgeOnRestartSelect' in request.form:
                 buildEdgeOnRestart = True
