@@ -34,7 +34,7 @@ def adaptive(endpoint,channelLocation):
 
 @app.route('/<endpoint>/<channelLocation>/<file>')
 def home(endpoint,channelLocation,file):
-    channelParsed = channelLocation.split('_','')[0]
+    channelParsed = channelLocation.split('_')[0]
 
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
     if hasattr(config, 'forceDestination'):
