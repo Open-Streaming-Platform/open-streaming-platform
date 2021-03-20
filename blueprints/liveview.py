@@ -57,7 +57,7 @@ def view_page(loc):
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/proxy-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
-                streamURL = '/proxy/' + requestedChannel.channelLoc + '.m3u8'
+                streamURL = '/proxy/' + requestedChannel.channelLoc + '/index.m3u8'
         elif edgeQuery != []:
             # Handle Selecting the Node using Round Robin Logic
             if sysSettings.adaptiveStreaming is True:
