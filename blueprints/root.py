@@ -283,7 +283,7 @@ def proxy_redirect(channelLoc, file):
     return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file)
 
 @root_bp.route('/proxy-adapt/<channelLoc>.m3u8')
-def proxy_redirect(channelLoc):
+def proxy_adaptive_redirect(channelLoc):
     sysSettings = settings.settings.query.first()
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
