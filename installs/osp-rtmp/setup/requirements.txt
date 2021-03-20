@@ -15,7 +15,7 @@ gitdb2==2.0.5
 GitPython==2.1.11
 greenlet==0.4.17
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 Mako==1.0.13
 passlib==1.7.1
 psutil==5.7.0
