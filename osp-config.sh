@@ -313,7 +313,7 @@ install_osp_proxy() {
   # Enable OSP Upstream Updater
   echo 90 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Upstream Updater" 10 70 0
   cronjob="*/5 * * * * /opt/osp-proxy/updateUpstream.sh"
-  (sudo crontab -u root -l; echo "$cronjob" ) | sudo crontab -u root - >> $OSPLOG 2>&1
+  (sudo crontab -u root -l;sudo echo "$cronjob" ) | sudo crontab -u root - >> $OSPLOG 2>&1
   sudo systemctl restart cron >> $OSPLOG 2>&1
 
 }
