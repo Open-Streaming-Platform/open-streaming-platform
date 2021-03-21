@@ -8,5 +8,5 @@ debugMode = False
 ospCoreAPI = "#CHANGEMETOOSPCORE"
 
 # Force Destination - Use to point to Specified Edge Server or Tiered Proxy.  Uncomment to override API's RTMP List and use the destination you list
-#forceDestination = "http://example.com"
+#forceDestination = "example.com"
 #forceDestinationType = "edge" # Choices are "edge", "proxy"

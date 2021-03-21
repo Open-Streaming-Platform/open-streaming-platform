@@ -14,6 +14,10 @@ for entry in rtmpServerList:
         serverSettings = apiReturn['results']
         entry['address'] = serverSettings['siteAddress']
 
+if hasattr(config, 'forceDestination'):
+    forcedDestination = {'address': config.forceDestination}
+    rtmpServerList.append(forcedDestination)
+
 env = Environment(loader=FileSystemLoader('templates'))
 
 # Render rtmp-location.conf
