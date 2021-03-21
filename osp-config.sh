@@ -640,6 +640,8 @@ install_menu() {
       5 )
         echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 45 | dialog --title "Installing OSP" --gauge "Installing Redis" 10 70 0
+        install_redis
         echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP-Proxy" 10 70 0
         install_osp_proxy
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
