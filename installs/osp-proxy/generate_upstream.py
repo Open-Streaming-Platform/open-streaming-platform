@@ -18,7 +18,7 @@ for entry in rtmpServerList:
         entry['port'] = 5999
 
 if hasattr(config, 'forceDestination'):
-    if not any(rtmpServerList['address'] == config.forceDestination):
+    if not any(d['address'] == config.forceDestination for d in rtmpServerList):
         if hasattr(config, 'forceDestinationType'):
             if config.forceDestinationType == 'edge':
                 port = 0
