@@ -13,11 +13,7 @@ apiReturn = r.json()
 serverSettings = apiReturn['results']
 
 for entry in rtmpServerList:
-    if entry['address'] == '127.0.0.1' or entry['address'] == 'localhost':
-        entry['address'] = serverSettings['siteAddress']
-        entry['port'] = 0
-    else:
-        entry['port'] = 5999
+    entry['port'] = 5999
 
 if hasattr(config, 'forceDestination'):
     if not any(d['address'] == config.forceDestination for d in rtmpServerList):
