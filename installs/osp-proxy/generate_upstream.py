@@ -4,18 +4,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from conf import config
 
-# Check for a forced Destination
-if hasattr(config, 'forceDestination'):
-    if not any(d['address'] == config.forceDestination for d in rtmpServerList):
-        if hasattr(config, 'forceDestinationType'):
-            if config.forceDestinationType == 'edge':
-                port = 0
-            else:
-                port = 5999
-        else:
-            port = 5999
-        forcedDestination = {'address': config.forceDestination, 'port': port}
-        rtmpServerList.append(forcedDestination)
+
 
 # Pull Server Info for Protocol Data and Local RTMP Servers
 r = requests.get(config.ospCoreAPI + '/apiv1/server/')
@@ -30,6 +19,19 @@ rtmpServerList = apiReturn['results']
 # Sets the RTMP External Port for Files
 for entry in rtmpServerList:
     entry['port'] = 5999
+
+# Check for a forced Destination
+if hasattr(config, 'forceDestination'):
+    if not any(d['address'] == config.forceDestination for d in rtmpServerList):
+        if hasattr(config, 'forceDestinationType'):
+            if config.forceDestinationType == 'edge':
+                port = 0
+            else:
+                port = 5999
+        else:
+            port = 5999
+        forcedDestination = {'address': config.forceDestination, 'port': port}
+        rtmpServerList.append(forcedDestination)
 
 # Verify there are no duplicate entries
 templateList = []
