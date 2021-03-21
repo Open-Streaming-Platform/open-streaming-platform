@@ -312,7 +312,8 @@ install_osp_proxy() {
 
   # Enable OSP Upstream Updater
   echo 90 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Upstream Updater" 10 70 0
-  sudo cp $DIR/installs/osp-proxy/setup/cron/osp-proxy-upstream /etc/cron.d/osp-proxy-upstream >> $OSPLOG 2>&1
+  cronjob="*/5 * * * * /opt/osp-proxy/updateUpstream.sh"
+  (sudo crontab -u root -l; echo "$cronjob" ) | sudo crontab -u root - >> $OSPLOG 2>&1
   sudo systemctl restart cron >> $OSPLOG 2>&1
 
 }
@@ -602,7 +603,7 @@ install_menu() {
         upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
-        result=$(echo "OSP Install Completed! \n\nVisit http:\\FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
+        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
         display_result "Install OSP"
         ;;
       2 )
