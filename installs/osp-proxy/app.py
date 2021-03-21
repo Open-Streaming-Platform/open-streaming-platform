@@ -21,7 +21,7 @@ def adaptive(endpoint,channelLocation):
     if hasattr(config, 'forceDestination'):
         if config.forceDestinationType == "edge":
             endpoint = endpoint.replace('live','edge')
-        return redirect('/' + forceDestination + '/' + endpoint + '/' + channelLocation + '.m3u8')
+        return redirect('/' + config.forceDestination + '/' + endpoint + '/' + channelLocation + '.m3u8')
     else:
         # Check if Cached Redis RTMP Location Exists, If Not, Query API and Store the Result in Redis for a 30s Cache
         if rdis.exists(channelLocation) == False:
@@ -40,7 +40,7 @@ def home(endpoint,channelLocation,file):
     if hasattr(config, 'forceDestination'):
         if config.forceDestinationType == "edge":
             endpoint = endpoint.replace('live','edge')
-        return redirect('/' + forceDestination + '/' + endpoint + '/' + channelLocation + '/' + file)
+        return redirect('/' + config.forceDestination + '/' + endpoint + '/' + channelLocation + '/' + file)
     else:
         # Check if Cached Redis RTMP Location Exists, If Not, Query API and Store the Result in Redis for a 30s Cache
         if rdis.exists(channelParsed) == False:
