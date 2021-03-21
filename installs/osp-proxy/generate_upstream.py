@@ -29,6 +29,12 @@ if hasattr(config, 'forceDestination'):
         forcedDestination = {'address': config.forceDestination, 'port': port}
         rtmpServerList.append(forcedDestination)
 
+templateList = []
+for i in range(len(rtmpServerList)):
+    if rtmpServerList[i] not in rtmpServerList[i + 1:]:
+        templateList.append(rtmpServerList[i])
+rtmpServerList = templateList
+
 env = Environment(loader=FileSystemLoader('templates'))
 
 # Render rtmp-location.conf
