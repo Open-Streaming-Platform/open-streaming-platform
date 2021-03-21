@@ -25,13 +25,21 @@ def adaptive(endpoint,channelLocation):
     else:
         # Check if Cached Redis RTMP Location Exists, If Not, Query API and Store the Result in Redis for a 30s Cache
         if rdis.exists(channelLocation) == False:
+            upstream = None
             header = {'X-Channel-ID': channelLocation}
             r = requests.get(config.ospCoreAPI + '/rtmpCheck', headers=header)
             if 'X_UpstreamHost' not in r.headers:
                 abort(404)
             else:
-                rdis.set(channelLocation, r.headers['X_UpstreamHost'], 30)
-            return redirect('/' + r.headers['X_UpstreamHost'] + '/' + endpoint + '/' + channelLocation + '/' + file)
+                upstream = r.headers['X_UpstreamHost']
+                if upstream == "127.0.0.1" or upstream == "localhost":
+                    # Check API for server address
+                    r = requests.get(config.ospCoreAPI + '/apiv1/server/')
+                    apiReturn = r.json()
+                    serverSettings = apiReturn['results']
+                    upstream = serverSettings['siteAddress']
+                rdis.set(channelLocation, upstream, 30)
+            return redirect('/' + upstream + '/' + endpoint + '/' + channelLocation + '/' + file)
         else:
             return redirect('/' + str(rdis.get(channelLocation).decode("utf-8")) + '/' + endpoint + '/' + channelLocation + '.m3u8')
 
@@ -47,13 +55,21 @@ def home(endpoint,channelLocation,file):
     else:
         # Check if Cached Redis RTMP Location Exists, If Not, Query API and Store the Result in Redis for a 30s Cache
         if rdis.exists(channelParsed) == False:
+            upstream = None
             header = {'X-Channel-ID': channelParsed}
             r = requests.get(config.ospCoreAPI + '/rtmpCheck', headers=header)
             if 'X_UpstreamHost' not in r.headers:
                 abort(404)
             else:
-                rdis.set(channelParsed, r.headers['X_UpstreamHost'], 30)
-            return redirect('/' + r.headers['X_UpstreamHost'] + '/' + endpoint + '/' + channelLocation + '/' + file)
+                upstream = r.headers['X_UpstreamHost']
+                if upstream == "127.0.0.1" or upstream == "localhost":
+                    # Check API for server address
+                    r = requests.get(config.ospCoreAPI + '/apiv1/server/')
+                    apiReturn = r.json()
+                    serverSettings = apiReturn['results']
+                    upstream = serverSettings['siteAddress']
+            rdis.set(channelParsed, upstream, 30)
+            return redirect('/' + upstream + '/' + endpoint + '/' + channelLocation + '/' + file)
         else:
             return redirect('/' + str(rdis.get(channelParsed).decode("utf-8")) + '/' + endpoint + '/' + channelLocation + '/' + file)
 
