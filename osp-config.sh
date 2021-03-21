@@ -493,6 +493,12 @@ upgrade_osp() {
   fi
 }
 
+upgrade_proxy() {
+  sudo git pull >> $OSPLOG 2>&1
+  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+}
+
 upgrade_rtmp() {
   sudo git pull >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
@@ -663,8 +669,9 @@ upgrade_menu() {
       "2" "Upgrade OSP-Core" \
       "3" "Upgrade OSP-RTMP" \
       "4" "Upgrade OSP-Edge" \
-      "5" "Upgrade eJabberd" \
-      "6" "Upgrade DB" \
+      "5" "Upgrade OSP-Proxy" \
+      "6" "Upgrade eJabberd" \
+      "7" "Upgrade DB" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -735,6 +742,14 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       5 )
+        echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-Proxy" 10 70 0
+        upgrade_proxy
+        echo 70 | dialog --title "Upgrade OSP" --gauge "Restarting OSP-Proxy" 10 70 0
+        sudo systemctl restart osp-proxy >> $OSPLOG 2>&1
+        result=$(echo "OSP-Edge Upgrade Completed!")
+        display_result "Upgrade OSP"
+        ;;
+      6 )
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
         upgrade_ejabberd
         echo 50 | dialog --title "Upgrade OSP" --gauge "Restarting ejabberd" 10 70 0
@@ -744,7 +759,7 @@ upgrade_menu() {
         result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
-      6)
+      7)
         upgrade_db
         result=$(echo "Database Upgrade Complete")
         display_result "Upgrade OSP"
