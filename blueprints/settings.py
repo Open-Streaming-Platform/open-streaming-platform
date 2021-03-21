@@ -473,6 +473,18 @@ def admin_page():
             protectionEnabled = False
             maintenanceMode = False
 
+            # OSP Proxy Settings
+            if 'ospProxyFQDN' in request.form:
+                ospProxyFQDNForm = request.form['ospProxyFQDN']
+                ospProxyFQDNForm = ospProxyFQDNForm.lower()
+                ospProxyFQDNForm = ospProxyFQDNForm.replace('http://', '')
+                ospProxyFQDNForm = ospProxyFQDNForm.replace('https://', '')
+                if ospProxyFQDNForm.strip() == '':
+                    ospProxyFQDN = None
+                else:
+                    ospProxyFQDN = ospProxyFQDNForm
+                sysSettings.proxyFQDN = ospProxyFQDN
+
             if 'buildEdgeOnRestartSelect' in request.form:
                 buildEdgeOnRestart = True
 

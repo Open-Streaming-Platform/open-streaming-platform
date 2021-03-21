@@ -28,3 +28,15 @@ class api_1_Edges(Resource):
         edgeList = settings.edgeStreamer.query.all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in edgeList]}
+
+@api.route('/rtmp')
+class api_1_Rtmp(Resource):
+    # Server - Get RTMP Serves
+    def get(self):
+        """
+            Displays a Listing of RTMP Servers
+        """
+
+        rtmpList = settings.rtmpServer.query.all()
+        db.session.commit()
+        return {'results': [ob.serialize() for ob in rtmpList]}
