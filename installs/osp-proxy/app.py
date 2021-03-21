@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, abort
 import redis
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 import requests
 import os
 
@@ -11,6 +13,8 @@ from conf import config
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
 rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 # Routes
