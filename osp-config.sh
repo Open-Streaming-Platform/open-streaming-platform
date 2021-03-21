@@ -301,7 +301,7 @@ install_osp_proxy() {
 
   # Setup Configuration with IP
   echo 75 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/#CHANGEMETOOSPCORE/$user_input/g" /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
+  sed -i "s|#CHANGEMETOOSPCORE|$user_input|g" /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
 
   # Setup Install OSP-Proxy Service
   echo 85 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
