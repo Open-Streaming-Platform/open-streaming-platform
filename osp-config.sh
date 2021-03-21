@@ -298,6 +298,7 @@ install_osp_proxy() {
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
   sudo cp /opt/osp-proxy/conf/config.py.dist /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
   sudo chmod +x /opt/osp-proxy/updateUpstream.sh >> $OSPLOG 2>&1
+  sudo mkdir -p /var/cache/nginx/osp_cache_temp >> $OSPLOG 2>&1
 
   # Setup Configuration with IP
   echo 75 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
