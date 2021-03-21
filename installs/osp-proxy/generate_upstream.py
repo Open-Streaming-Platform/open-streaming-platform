@@ -13,9 +13,19 @@ for entry in rtmpServerList:
         apiReturn = r.json()
         serverSettings = apiReturn['results']
         entry['address'] = serverSettings['siteAddress']
+        entry['port'] = 0
+    else:
+        entry['port'] = 5999
 
 if hasattr(config, 'forceDestination'):
-    forcedDestination = {'address': config.forceDestination}
+    if hasattr(config, 'forceDestinationType'):
+        if config.forceDestinationType == 'edge':
+            port = 0
+        else:
+            port = 5999
+    else:
+        port = 5999
+    forcedDestination = {'address': config.forceDestination, 'port': port}
     rtmpServerList.append(forcedDestination)
 
 env = Environment(loader=FileSystemLoader('templates'))
