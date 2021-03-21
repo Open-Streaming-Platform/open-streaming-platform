@@ -284,7 +284,7 @@ install_osp_proxy() {
   # Grab Configuration
   echo 10 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/osp-proxy-locations.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/osp-proxysetup/nginx/servers/osp-proxy-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/osp-proxy-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/cors.conf /usr/local/nginx/conf/cors.conf >> $OSPLOG 2>&1
 
