@@ -746,7 +746,7 @@ upgrade_menu() {
         upgrade_proxy
         echo 70 | dialog --title "Upgrade OSP" --gauge "Restarting OSP-Proxy" 10 70 0
         sudo systemctl restart osp-proxy >> $OSPLOG 2>&1
-        result=$(echo "OSP-Edge Upgrade Completed!")
+        result=$(echo "OSP-Proxy Upgrade Completed!")
         display_result "Upgrade OSP"
         ;;
       6 )
