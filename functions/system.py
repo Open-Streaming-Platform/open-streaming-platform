@@ -81,20 +81,13 @@ def table2Dict(table):
     return dataList
 
 def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
-    sslContext = None
-    if smtpSSL is True:
-        import ssl
-        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-
-    server = smtplib.SMTP(smtpServer, int(smtpPort))
     try:
-        if smtpTLS or smtpSSL:
-            server.ehlo()
-            if smtpSSL:
-                server.starttls(context=sslContext)
-            else:
-                server.starttls()
-            server.ehlo()
+        server = smtplib.SMTP(smtpServer, int(smtpPort))
+        if smtpSSL is True:
+            server = smtplib.SMTP_SSL(smtpServer, int(smtpPort))
+        if smtpTLS is True:
+            server.starttls()
+        server.ehlo()
         if smtpUsername and smtpPassword:
             server.login(smtpUsername, smtpPassword)
         msg = "Test Email - Your Instance of OSP has been successfully configured!"
