@@ -15,6 +15,7 @@ class Stream(db.Model):
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
+    rtmpServer = db.Column(db.Integer,db.ForeignKey('rtmpServer.id'))
     upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, streamKey, streamName, linkedChannel, topic):
@@ -62,6 +63,7 @@ class Stream(db.Model):
             'thumbnail': '/stream-thumb/' + self.channel.channelLoc + '.png',
             'gifLocation': '/stream-thumb/' + self.channel.channelLoc + '.gif',
             'topic': self.topic,
+            'rtmpServer': self.server.address,
             'currentViewers': self.currentViewers,
             'totalViewers': self.currentViewers,
             'upvotes': self.get_upvotes()
