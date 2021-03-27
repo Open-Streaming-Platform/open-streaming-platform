@@ -5,6 +5,7 @@ OSP-Config: Added Creation of the /var/www/images/stickers directory during inst
 OSP-Core: Added Endpoints required to handle OSP-Proxy.
 OSP-Core: Set Chat Window to be cleared on Reconnection to prevent duplicate chat messages
 OSP-Core: Updated Pillow to 8.1.2 to fix CVE-2021-27923
+OSP-Core: Reduced the size of the SocketIO call for getViewerTotal in live channels to reduce live channel CPU usage
 OSP-RTMP: Fixed Remaining RTMP Restream/Adaptive transcoding issues regarding wrong or unstable pull locations
 
 0.8.7
