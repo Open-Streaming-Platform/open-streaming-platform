@@ -8,6 +8,7 @@ OSP-Core: Updated Pillow to 8.1.2 to fix CVE-2021-27923
 OSP-Core: Reduced the size of the SocketIO call for getViewerTotal in live channels to reduce live channel CPU usage
 OSP-Core: Reduced the size of the XMPP Sanity Check Queries to reduce live channel CPU usage
 OSP-Core: Removed Duplicate Channel Query from liveview.py during Channel View
+OSP-Core: Added return of Channel Owner's Username to apiv1/channel/
 OSP-RTMP: Fixed Remaining RTMP Restream/Adaptive transcoding issues regarding wrong or unstable pull locations
 
 0.8.7
