@@ -144,7 +144,7 @@ def view_page(loc):
 
         isEmbedded = request.args.get("embedded")
 
-        requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
         if isEmbedded is None or isEmbedded == "False" or isEmbedded == "false":
 
