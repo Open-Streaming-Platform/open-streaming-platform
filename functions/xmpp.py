@@ -34,7 +34,7 @@ def verifyExistingRooms():
     sysSettings = settings.query.first()
     print({"level": "info", "message": "Verifying existing ejabberd Rooms"})
     channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id) \
-        .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, User.uuid.label('userUUID'))
+        .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, Channel.Channel.protected, User.uuid.label('userUUID'))
     for channel in channelQuery:
         xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
 
