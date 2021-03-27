@@ -3,6 +3,7 @@ from flask_security import current_user
 
 from classes.shared import db, socketio
 from classes import Channel
+from classes import Stream
 from classes import settings
 
 
@@ -19,10 +20,11 @@ def handle_viewer_total_request(streamData, room=None):
 
     viewers = xmpp.getChannelCounts(channelLoc)
 
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.currentViewers).first()
     if channelQuery is not None:
         channelQuery.currentViewers = viewers
-        for stream in channelQuery.stream:
+        streamQuery = Stream.Stream.query.filter_by(linkedChannel=channelLoc).with_entities(Stream.Stream.currentViewers).all()
+        for stream in streamQuery:
             stream.currentViewers = viewers
         db.session.commit()
 

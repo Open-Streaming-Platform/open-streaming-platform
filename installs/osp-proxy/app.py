@@ -43,7 +43,7 @@ def adaptive(endpoint,channelLocation):
                     serverSettings = apiReturn['results']
                     upstream = serverSettings['siteAddress']
                 rdis.set(channelLocation, upstream, 30)
-            return redirect('/' + upstream + '/' + endpoint + '/' + channelLocation + '/' + file)
+            return redirect('/' + upstream + '/' + endpoint + '/' + channelLocation + 'm3u8')
         else:
             return redirect('/' + str(rdis.get(channelLocation).decode("utf-8")) + '/' + endpoint + '/' + channelLocation + '.m3u8')
 
