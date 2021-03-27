@@ -14,7 +14,9 @@ def sanityCheck():
 
 def buildMissingRooms():
     sysSettings = settings.query.first()
-    channelQuery = Channel.Channel.query.all()
+    #channelQuery = Channel.Channel.query.all()
+    channelQuery = Channel.Channel.query.join(Sec.User, Channel.Channel.owningUser == Sec.User.id)\
+        .with_entities(Channel.Channel.channelLoc, Sec.User.uuid.label('userUUID'))
     for channel in channelQuery:
         try:
             xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
@@ -25,7 +27,7 @@ def buildMissingRooms():
             for key, value in room_config.items():
                 ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
-            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.uuid + '@' + sysSettings.siteAddress, 'owner')
+            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.userUUID + '@' + sysSettings.siteAddress, 'owner')
 
     return True
 

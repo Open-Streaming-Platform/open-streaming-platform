@@ -26,13 +26,6 @@ def handle_viewer_total_request(streamData, room=None):
 
     StreamUpdateStatement = (update(Stream.Stream).where(Stream.Stream.linkedChannel == channelQuery.id).values(currentViewers=viewers))
 
-    #if channelQuery is not None:
-    #    channelQuery.currentViewers = viewers
-    #    streamQuery = Stream.Stream.query.filter_by(linkedChannel=channelLoc).with_entities(Stream.Stream.currentViewers).all()
-    #    for stream in streamQuery:
-    #        stream.currentViewers = viewers
-    #    db.session.commit()
-
     db.session.commit()
     db.session.close()
     if room is None:
