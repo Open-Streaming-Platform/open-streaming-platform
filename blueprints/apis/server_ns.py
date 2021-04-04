@@ -12,7 +12,7 @@ class api_1_Server(Resource):
         """
             Displays a Listing of Server Settings
         """
-        serverSettings = settings.settings.query.all()[0]
+        serverSettings = settings.settings.query.first()
         db.session.commit()
         return {'results': serverSettings.serialize() }
 
