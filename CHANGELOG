@@ -1,8 +1,16 @@
 0.8.8
 ==============================================
+OSP-Proxy: Added New OSP-Proxy Service.  Acts as an Edge Nginx HLS Proxy.  Instead of receiving a full copy of all streams like OSP-Edge, it pulls video as needed from the RTMP servers and caches as needed.
 OSP-Config: Added Creation of the /var/www/images/stickers directory during install so permissions are set properly to www-data
+OSP-Core: Added Endpoints required to handle OSP-Proxy.
 OSP-Core: Set Chat Window to be cleared on Reconnection to prevent duplicate chat messages
+OSP-Core: Updated Pillow to 8.1.2 to fix CVE-2021-27923
+OSP-Core: Reduced the size of the SocketIO call for getViewerTotal in live channels to reduce live channel CPU usage
+OSP-Core: Reduced the size of the XMPP Sanity Check Queries to reduce live channel CPU usage
+OSP-Core: Removed Duplicate Channel Query from liveview.py during Channel View
+OSP-Core: Added return of Channel Owner's Username to apiv1/channel/
 OSP-RTMP: Fixed Remaining RTMP Restream/Adaptive transcoding issues regarding wrong or unstable pull locations
+OSP-RTMP: Added Endpoints for OSP-RTMP HTTP(s) Reverse Proxy Pull
 
 0.8.7
 ==============================================

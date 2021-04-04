@@ -507,7 +507,7 @@ print({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 try:
     system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-    print({"level": "info", "message": "OSP Core Node Started Successfully" + str(globalvars.version)})
+    print({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
 if __name__ == '__main__':
