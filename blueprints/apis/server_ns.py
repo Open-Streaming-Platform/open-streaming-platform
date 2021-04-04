@@ -14,7 +14,7 @@ class api_1_Server(Resource):
         """
         serverSettings = settings.settings.query.first()
         db.session.commit()
-        return {'results': serverSettings.serialize() }
+        return {'results': serverSettings.serialize()}
 
 
 @api.route('/edges')

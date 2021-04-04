@@ -1385,7 +1385,7 @@ def initialSetup():
             externalIP = socket.gethostbyname(validAddress)
         except socket.gaierror:
             flash("Invalid Server Address/IP", "error")
-            return redirect(url_for("initialSetup"))
+            return redirect(url_for("settings.initialSetup"))
 
         if password1 == password2:
 
