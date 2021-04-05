@@ -290,7 +290,7 @@ install_osp_proxy() {
 
   # Setup OSP Proxy Directory
   echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
-  sudo pip3 install -r $DIR/install/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
 
   # Install OSP Proxy
   echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
