@@ -51,7 +51,7 @@ from globals import globalvars
 # App Configuration Setup
 #----------------------------------------------------------------------------#
 # Generate a Random UUID for Interprocess Handling
-processUUID = uuid.uuid4()
+processUUID = str(uuid.uuid4())
 globalvars.processUUID = processUUID
 
 coreNginxRTMPAddress = "127.0.0.1"
