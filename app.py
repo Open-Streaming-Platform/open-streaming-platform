@@ -229,8 +229,10 @@ except Exception as e:
     print("ejabberdctl failed to load: " + str(e))
 
 # Loop Check if OSP DB Init is Currently Being Handled by and Process
-while r.get('OSP_DB_INIT_HANDLER') != globalvars.processUUID:
-    if r.get('OSP_DB_INIT_HANDLER') == None:
+OSP_DB_INIT_HANDLER = None
+while OSP_DB_INIT_HANDLER != globalvars.processUUID:
+    OSP_DB_INIT_HANDLER = r.get('OSP_DB_INIT_HANDLER')
+    if OSP_DB_INIT_HANDLER == None:
         r.set('OSP_DB_INIT_HANDLER', globalvars.processUUID)
         time.sleep(random.random())
 
