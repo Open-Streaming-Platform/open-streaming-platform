@@ -13,6 +13,8 @@ import logging
 import datetime
 import json
 import uuid
+import time
+import random
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash, current_app, session
@@ -230,6 +232,7 @@ except Exception as e:
 while r.get('OSP_DB_INIT_HANDLER') != globalvars.processUUID:
     if r.get('OSP_DB_INIT_HANDLER') == None:
         r.set('OSP_DB_INIT_HANDLER', globalvars.processUUID)
+        time.sleep(random.random())
 
 # Once Attempt Database Load and Validation
 try:
