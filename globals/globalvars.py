@@ -1,5 +1,6 @@
 version = "0.8.8"
 appDBVersion = 0.75
+processUUID = None
 
 videoRoot = "/var/www/"
 
