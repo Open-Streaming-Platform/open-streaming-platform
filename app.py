@@ -232,7 +232,7 @@ except Exception as e:
 OSP_DB_INIT_HANDLER = None
 while OSP_DB_INIT_HANDLER != globalvars.processUUID:
     OSP_DB_INIT_HANDLER = r.get('OSP_DB_INIT_HANDLER')
-    print('OSP_DB_INIT_HANDLER:'+ str(OSP_DB_INIT_HANDLER))
+    print('OSP_DB_INIT_HANDLER:'+ str(OSP_DB_INIT_HANDLER) + ":" + globalvars.processUUID)
     if OSP_DB_INIT_HANDLER == None:
         r.set('OSP_DB_INIT_HANDLER', globalvars.processUUID)
         time.sleep(random.random())
