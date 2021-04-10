@@ -217,6 +217,7 @@ install_nginx_core() {
   sudo mkdir /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   sudo cp $DIR/installs/nginx-core/osp-custom-servers.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/nginx-core/osp-custom-serversredirect.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
   # Enable SystemD
   echo 75 | dialog --title "Installing Nginx-Core" --gauge "Setting up Nginx SystemD" 10 70 0
