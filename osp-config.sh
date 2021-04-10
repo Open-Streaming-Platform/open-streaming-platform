@@ -217,6 +217,7 @@ install_nginx_core() {
   sudo mkdir /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   sudo cp $DIR/installs/nginx-core/osp-custom-servers.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/nginx-core/osp-custom-serversredirect.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
   # Enable SystemD
   echo 75 | dialog --title "Installing Nginx-Core" --gauge "Setting up Nginx SystemD" 10 70 0
@@ -529,6 +530,10 @@ upgrade_edge() {
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
 }
 
+upgrade_nginxcore() {
+  sudo cp -rf $DIR/installs/nginx-core/nginx.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
+}
+
 ##########################################################
 # Menu Options
 ##########################################################
@@ -680,6 +685,8 @@ upgrade_menu() {
       1 )
         echo 10 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP Core" 10 70 0
         upgrade_osp
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 20 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-RTMP" 10 70 0
         upgrade_rtmp
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
@@ -700,6 +707,8 @@ upgrade_menu() {
       2 )
         echo 10 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP Core" 10 70 0
         upgrade_osp
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
         upgrade_db
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -710,6 +719,8 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       3 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 20 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-RTMP" 10 70 0
         upgrade_rtmp
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -720,6 +731,8 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       4 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 50 | dialog --title "Upgrade OSP" --gauge "Upgrading Edge" 10 70 0
         upgrade_edge
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
@@ -735,6 +748,8 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       6 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
         upgrade_ejabberd
         echo 50 | dialog --title "Upgrade OSP" --gauge "Restarting ejabberd" 10 70 0
