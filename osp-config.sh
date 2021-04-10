@@ -214,6 +214,9 @@ install_nginx_core() {
   sudo mkdir /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
   sudo mkdir /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo mkdir /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo mkdir /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
+
+  sudo cp $DIR/installs/nginx-core/osp-custom-servers.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
   # Enable SystemD
   echo 75 | dialog --title "Installing Nginx-Core" --gauge "Setting up Nginx SystemD" 10 70 0
@@ -253,6 +256,7 @@ install_osp_rtmp() {
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/nginx/custom/osp-rtmp-* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Install OSP-RTMP Application" 10 70 0
   sudo mkdir /opt/osp-rtmp >> $OSPLOG 2>&1
@@ -287,6 +291,7 @@ install_osp_proxy() {
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/osp-proxy-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/cors.conf /usr/local/nginx/conf/cors.conf >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/custom/osp-proxy-custom* /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
   # Setup OSP Proxy Directory
   echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
@@ -350,11 +355,12 @@ install_osp_edge () {
   sudo cp $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-edge/setup/nginx/custom/osp-edge-custom* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/custom/osp-edge-custom-allowedpub.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/custom/osp-edge-custom-nginxstat.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
@@ -497,6 +503,9 @@ upgrade_osp() {
 upgrade_proxy() {
   sudo git pull >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
 }
 
@@ -515,36 +524,9 @@ upgrade_ejabberd() {
 }
 
 upgrade_edge() {
-  user_input=$(\
-  dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
-
-  IFS="," read -a rtmpArray <<< $user_input
-  rtmpString=""
-  for i in "${rtmpArray[@]}"
-  do
-        rtmpString+="allow publish $i;\n"
-  done
-
-  core_input=$(\
-  dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
-
-  IFS="," read -a coreArray <<< $core_input
-  coreString=""
-  for i in "${coreArray[@]}"
-  do
-        coreString+="allow $i;\n"
-  done
-
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
-
-  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
 }
 
 ##########################################################

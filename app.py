@@ -238,7 +238,6 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
         r.set('OSP_DB_INIT_HANDLER', globalvars.processUUID)
         time.sleep(random.random())
 
-
 # Once Attempt Database Load and Validation
 try:
     database.init(app, user_datastore)
@@ -253,7 +252,7 @@ try:
 except:
     print({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
-if r.get('OSP_XMPP_INIT_HANDLER') == None:
+if r.get('OSP_XMPP_INIT_HANDLER') is None:
     # Perform XMPP Sanity Check
     r.set('OSP_XMPP_INIT_HANDLER', globalvars.processUUID, ex=60)
     print({"level": "info", "message": "Performing XMPP Sanity Checks"})
