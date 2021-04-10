@@ -48,9 +48,8 @@ def main():
     loader = jinja2.FileSystemLoader(".")
     j2_env = jinja2.Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
     template = j2_env.get_template(args.template)
-    print(CONTEXTS)
 
     with open(args.output, "wt") as f:
         f.write(template.render(**CONTEXTS))
-
-main()
+if __name__ == "__main__":
+    main()
