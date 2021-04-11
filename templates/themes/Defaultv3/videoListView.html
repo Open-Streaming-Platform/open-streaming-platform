@@ -1,0 +1,372 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% block head %}
+<title>{{sysSettings.siteName}} - {{title}}</title>
+{% endblock %}
+
+{% block body %}
+
+{% if channelData is defined %}
+<div class="container-fluid justify-content-center" style="width:100%">
+    <div class="jumbotron shadow mt-2 p-3">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
+                <div>
+                    <img class="shadow" src="/images/{{channelData.imageLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+                </div>
+            </div>
+            <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12">
+                <div class="viewerText">
+                    <h2 class="display-5"><b>{{channelData.channelName}}</b></h2>
+                    <a href="/streamer/{{channelData.owningUser}}/">
+                        <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
+                    </a>
+                    {% if channelData.stream|length > 0 %}
+                    <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
+                    {% else %}
+                    <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
+                    {% endif %}
+                    {% if channelData.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}<br>
+                    <span>
+                        <p>{{channelData.description|markdown}}</p>
+                    </span><br>
+                    <span class="m-1">
+                        <a href="/view/{{channelData.channelLoc}}" class="btn btn-primary">View Live Channel</a>
+                    </span>
+                    <span class="m-1">
+                        {% if current_user.is_authenticated %}
+                        <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+                        {% else %}
+                        <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if streamerData is defined %}
+<div class="container-fluid justify-content-center" style="width:100%">
+    <div class="jumbotron shadow p-3">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 no-stream-jumbo">
+                <div>
+                    <img class="shadow" src="/images/{{streamerData.pictureLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+                </div>
+            </div>
+            <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12">
+                <div class="h-100 viewerText">
+                    <h2 class="display-5"><i class="fas fa-user mr-2"></i> {{streamerData.username}}</h2>
+                    {% if streamerData.biography != None %}
+                    <span>
+                        <p>{{streamerData.biography|markdown}}</p>
+                    </span>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if openStreams %}
+<div class="container-fluid p-2" id="index-streams-container">
+    <div class="row">
+        <div id="streamList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row mx-2">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-video-title"><b>Live Now</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="liveviews">Sort by Live Viewers</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for stream in openStreams %}
+                <li class="displayCard mx-4 my-3">
+                  <a href="/view/{{stream.channel.channelLoc}}/">
+                    <div class="displayCard-thumbnail zoom">
+                      <div class="video-badges">
+                        <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
+                        {% if stream.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                      </div>
+                      <img class="shadow gif lazy" {% if stream.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                      <div class="displayCard-counts">
+                        <span class="displayCard-left align-left" style="color:white;">
+                          <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{stream.id|get_Stream_Upvotes}}</b></span>
+                        </span>
+                        <span class="displayCard-right" style="float:right;color:white;">
+                          <span class="px-2 flex-fill liveviews"><i class="fas fa-eye"></i> <b>{{stream.currentViewers}}</b></span>
+                          <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{stream.totalViewers}}</b></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="card-data">
+                      <img class="rounded" src="/images/{{stream.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <div class="metadata">
+                        <div class="card-cut-text name ml-2"><b>{{stream.streamName|limit_title}}</b></div>
+                        <div class="card-cut-text topic ml-2">{{stream.topic|get_topicName}}</div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if userChannels %}
+<div class="container-fluid p-2" id="index-live-container">
+    <div class="row">
+        <div id="channelList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row mx-2">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Channels by {{title}}</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="subs">Sort by Subscriptions</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for channel in userChannels %}
+                <li class="displayCard mx-4 my-3">
+                  <a href="/channel/{{channel.id}}/">
+                    <div class="displayCard-thumbnail zoom">
+                      <div class="video-badges">
+                        {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
+                        {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                      </div>
+                      <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                      <div class="displayCard-counts">
+                        <span class="displayCard-left align-left" style="color:white;">
+                        </span>
+                        <span class="displayCard-right" style="float:right;color:white;">
+                          <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> <b>{{channel.subscriptions|length}}</b></span>
+                          <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{channel.views}}</b></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="card-data">
+                      <img class="rounded" src="/images/{{channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <div class="metadata">
+                        <div class="card-cut-text name ml-2"><b>{{channel.channelName}}</b></div>
+                        <div class="card-cut-text topic ml-2">{{channel.topic|get_topicName}}</div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if recordedVids %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row">
+        <div id="recordedVideoList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row mx-2">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-video-title"><b>Videos</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="length">Sort by Length</span>
+                            <span class="sort dropdown-item" data-sort="date">Sort by Date</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for video in recordedVids %}
+                <li class="displayCard mx-4 my-3">
+                  <a href="/play/{{video.id}}">
+                    <div class="displayCard-thumbnail zoom">
+                      <div class="video-badges">
+                        {% if video.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                      </div>
+                      <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                      <div class="displayCard-counts">
+                        <span class="displayCard-left align-left" style="color:white;">
+                          <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{video.id|get_Video_Upvotes}}</b></span>
+                        </span>
+                        <span class="displayCard-right" style="float:right;color:white;">
+                          <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{video.views}}</b></span>
+                          <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{video.length|hms_format}}</b></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="card-data">
+                      <img class="rounded" src="/images/{{video.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <div class="metadata">
+                        <div class="card-cut-text name ml-2"><b>{{video.channelName|limit_title}}</b></div>
+                        <div class="card-cut-text topic ml-2">{{video.topic|get_topicName}}</div>
+                        <span class="date" style="display:none;">{{video.videoDate|normalize_date}}</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if clipsList %}
+<div class="container-fluid p-2" id="index-clips-container">
+    <div class="row">
+        <div id="clipList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row mx-2">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-video-title"><b>Clips</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="upvotes">Sort by Upvotes</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="length">Sort by Length</span>
+                            <span class="sort dropdown-item" data-sort="date">Sort by Date</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for clip in clipsList %}
+                <li class="displayCard mx-4 my-3">
+                  <a href="/clip/{{clip.id}}">
+                    <div class="displayCard-thumbnail zoom">
+                      <div class="video-badges">
+                        {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                      </div>
+                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
+                      <div class="displayCard-counts">
+                        <span class="displayCard-left align-left" style="color:white;">
+                          <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{clip.id|get_Clip_Upvotes}}</b></span>
+                        </span>
+                        <span class="displayCard-right" style="float:right;color:white;">
+                          <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{clip.views}}</b></span>
+                          <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{clip.length|hms_format}}</b></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="card-data">
+                      <img class="rounded" src="/images/{{clip.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <div class="metadata">
+                        <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
+                        <div class="card-cut-text topic ml-2">{{clip.recordedVideo.topic|get_topicName}}</div>
+                        <span class="date" style="display:none;">{{clip.recordedVideo.videoDate|normalize_date}}</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if not recordedVids and not userChannels and not openStreams and not channelData and not clipsList %}
+<div class="container-fluid p-2" id="index-empty-container">
+    <div class="row m-2">
+        <div class="col">
+            <p>Nothing to see here.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  var conn_options = {
+    'sync disconnect on unload': true
+  };
+
+  var socket = io();
+</script>
+
+<script>
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+
+<script>
+    streamListOptions = {
+        valueNames: ['name', 'upvotes', 'views', 'liveviews', 'topic']
+    };
+
+    videoListOptions = {
+        valueNames: ['name', 'upvotes', "views", "length", "date"]
+    };
+
+    clipListOptions = {
+        valueNames: ['name', 'upvotes', "views", "length", "date"]
+    };
+
+    channelListOptions = {
+        valueNames: ['name', 'subs', "views", "topic"]
+    };
+
+    var recordedVideosList = new List('recordedVideoList', videoListOptions);
+    var clipList = new List('clipList', clipListOptions);
+    var channelList = new List('channelList', channelListOptions);
+    var streamList = new List('streamList', streamListOptions);
+</script>
+
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i> Unsubscribe";
+        subButton.className = "btn btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i> Subscribe";
+        subButton.className = "btn btn-outline-success";
+    }
+  });
+</script>
+{% endblock %}

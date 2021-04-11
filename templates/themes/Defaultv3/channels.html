@@ -1,0 +1,79 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="index-videos-container">
+    <div class="row m-2">
+
+    </div>
+    <div class="row">
+        <div id="channelList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row mx-2">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Channels</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="username">Sort by Streamer</span>
+                            <span class="sort dropdown-item" data-sort="subs">Sort by Subscriptions</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-start">
+                {% for channel in channelList %}
+                    <li class="displayCard mx-4 my-3">
+                      <a href="/channel/{{channel.id}}/">
+                        <div class="displayCard-thumbnail zoom">
+                          <div class="video-badges">
+                            {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
+                            {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                          </div>
+                          <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                          <div class="displayCard-counts">
+                            <span class="displayCard-left align-left" style="color:white;">
+                            </span>
+                            <span class="displayCard-right" style="float:right;color:white;">
+                              <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> <b>{{channel.subscriptions|length}}</b></span>
+                              <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{channel.views}}</b></span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="card-data">
+                          <img class="rounded" src="/images/{{channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                          <div class="metadata">
+                            <div class="card-cut-text name ml-2"><b>{{channel.channelName}}</b></div>
+                            <div class="card-cut-text topic ml-2">{{channel.topic|get_topicName}}</div>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    channelListOptions = {
+        valueNames: ['name', 'username', 'subs', "views", "topic"]
+    };
+
+    var channelList = new List('channelList', channelListOptions);
+</script>
+{% endblock %}
+
+

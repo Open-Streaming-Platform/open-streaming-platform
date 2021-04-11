@@ -1,0 +1,438 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - {{clip.clipName}}</title>
+<meta name="twitter:card" content="player" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{clip.clipName}}" />
+<meta property="og:type" content="video.other" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/videos/{{clip.thumbnailLocation}}" />
+<meta property="og:description" content="{{clip.description}}" />
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-8 col-xs-12 col-sm-12">
+      <div class="row m-2">
+        <div class="index-video-title"><b>{{clip.clipName}}</b>
+          <span class="float-right mx-1">
+            {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.recordedVideo.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+            {% else %}
+            <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
+            {% endif %}
+          </span>
+          <span class="float-right">
+            <span class="badge badge-primary">
+              <i class="fas fa-cut"></i><span class="d-none d-sm-none d-md-inline"> Clip</span>
+            </span>
+            {% if clip.published == False %}
+            <span class="badge badge-warning">
+              <i class="fas fa-video-slash"></i> Unpublished
+            </span>
+            {% endif %}
+            {% if video.channel.protected and sysSettings.protectionEnabled %}
+              <span class="badge badge-warning">
+                <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
+              </span>
+            {% endif %}
+          </span>
+        </div>
+      </div>
+      <div class="player ml-2">
+        <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{clip.thumbnailLocation}}" controls playsinline preload="auto" data-setup='{"fluid": true}'>
+          <source src="{{streamURL}}" type="video/mp4">
+          <p class="vjs-no-js">
+            To view this video please enable JavaScript, and consider upgrading to a web browser that
+            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+          </p>
+        </video>
+      </div>
+      <div class="row m-2">
+        <div class="video-buttons-row">
+          <span class="float-md-left">
+            <a href="{{streamURL}}" class="btn btn-primary shadow" data-toggle="tooltip" data-placement="top" title="Download Video" download >
+              <i class="fas fa-download"></i>
+            </a>
+            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#shareModal">
+              <i class="fas fa-share-alt"></i>
+            </button>
+            {% if video.owningUser == current_user.id %}
+            <button type="button" class="btn btn-primary shadow" onclick="newScreenShot();">
+              <i class="fas fa-camera"></i>
+            </button>
+            <button type="button" class="btn btn-primary shadow" data-toggle="modal" data-target="#editModal">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="btn btn-danger shadow" data-toggle="modal" data-target="#deleteModal">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            {% endif %}
+          </span>
+          <span class="d-none d-md-inline float-right">
+            <i class="fas fa-users mr-2"></i> {{clip.views}}
+            <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+              <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+            </button>
+          </span>
+        </div>
+        <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
+          <i class="fas fa-users mr-2"></i> {{clip.views}}
+          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+            <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
+          </button>
+        </div>
+      </div>
+      <div class="row m-2">
+        <div class="col-12 nopadding">
+          <div><b><i class="fas fa-video"></i> <a href="/play/{{video.id}}">{{video.channelName}}</a></b></div>
+          <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+          <div><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+          <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+        </div>
+      </div>
+
+      <div class="row m-2">
+        <div class="videodescription">{% if clip.description != None %}<p>{{clip.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-sm-12 col-xs-12">
+      <div class="row m-2">
+        <div class="index-video-title mb-2 mx-2"><b>Other Clips</b></div>
+          <ul class="itemList list d-flex flex-wrap justify-content-start">
+              {% for clipEntry in randomClips[:4] %}
+              <li class="displayCard mx-4 my-3">
+                <a href="/clip/{{clipEntry.id}}">
+                  <div class="displayCard-thumbnail zoom">
+                    <div class="video-badges">
+                      {% if clipEntry.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                    </div>
+                    <img class="shadow {% if clipEntry.gifLocation != None %}gif{% endif %} lazy" {% if clipEntry.recordedVideo.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                              onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clipEntry.thumbnailLocation}}">
+                    <div class="displayCard-counts">
+                      <span class="displayCard-left align-left" style="color:white;">
+                        <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{clipEntry.id|get_Clip_Upvotes}}</b></span>
+                      </span>
+                      <span class="displayCard-right" style="float:right;color:white;">
+                        <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{clipEntry.views}}</b></span>
+                        <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{clipEntry.length|hms_format}}</b></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="card-data">
+                    <img class="rounded" src="/images/{{clipEntry.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                    <div class="metadata">
+                      <div class="card-cut-text name ml-2"><b>{{clipEntry.clipName|limit_title}}</b></div>
+                      <div class="card-cut-text topic ml-2">{{clipEntry.recordedVideo.topic|get_topicName}}</div>
+                      <span class="date" style="display:none;">{{clipEntry.recordedVideo.videoDate|normalize_date}}</span>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              {% endfor %}
+          </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if video.owningUser == current_user.id %}
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalTitle">Edit Clip Info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/clip/{{clip.id}}/change" method="post">
+        <div class="modal-body">
+
+          <h5>Name of the Clip:</h5>
+          <input type="text" class="form-control" value="{{clip.clipName}}" name="newVidName" required>
+          <br>
+          <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{clip.description}}</textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary" value="Save Changes" onclick="showSpinner();">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalTitle">Confirm Clip Deletion</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this clip?</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <a href="/clip/{{clip.id}}/delete" class="btn btn-danger" onclick="showSpinner();">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="newSSModal" tabindex="-1" role="dialog" aria-labelledby="newSSModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newSSModalTitle">Confirm New Clip Thumbnail</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <h5>Use this picture?</h5>
+        <img id="newScreenShotImg" src="">
+        <input type="hidden" id="thumbnailTimestamp">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" onclick="setScreenShot()" class="btn btn-success" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalTitle">Share a Video/Stream</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div style="margin: 0 auto;width: 99%; text-align: center;">
+          <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
+            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
+          <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
+            onclick="window.open('https://twitter.com/share?url={{request.url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+        </div>
+        <br>
+        <div class="form-group row">
+          <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="linkShareInput" type="text" value="{{request.url}}" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/vendor/videojs/js/video.js"></script>
+
+<script>
+    var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: false,
+            liveTracker:true,
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                }
+        });
+
+</script>
+
+<script type="text/javascript" charset="utf-8">
+  var conn_options = {
+    'sync disconnect on unload': true
+  };
+
+  var socket = io();
+</script>
+
+<script>
+    var easymde2 = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
+</script>
+
+<script>
+  socket.on('connect', function () {
+    socket.emit('getUpvoteTotal', { loc: '{{clip.id}}', vidType: 'clip' });
+  });
+</script>
+
+<script>
+  setInterval(function () {
+    socket.emit('getUpvoteTotal', { loc: '{{clip.id}}', vidType: 'clip' });
+  }, 30000);
+</script>
+
+<script type="text/javascript" charset="utf-8">
+  socket.on('upvoteTotalResponse', function (msg) {
+
+    if (msg['type'] === 'clip') {
+      upvoteDivID = 'totalUpvotes';
+      upvoteIconID = 'upVoteIcon';
+      upvoteButtonID = 'upvoteButton';
+    }
+
+    document.getElementById(upvoteDivID).innerHTML = msg['totalUpvotes'];
+    document.getElementById(upvoteDivID + 'Mobile').innerHTML = msg['totalUpvotes'];
+
+    if (msg['myUpvote'] === 'True') {
+      if (document.getElementById(upvoteIconID).classList.contains('far')) {
+        document.getElementById(upvoteIconID).classList.remove('far');
+        document.getElementById(upvoteIconID).classList.add('fas');
+      }
+      if (document.getElementById(upvoteButtonID).classList.contains('btn-outline-success')) {
+        document.getElementById(upvoteButtonID).classList.remove('btn-outline-success');
+        document.getElementById(upvoteButtonID).classList.add('btn-success');
+      }
+      if (msg['type'] === 'video') {
+        if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('far')) {
+          document.getElementById(upvoteIconID + 'Mobile').classList.remove('far');
+          document.getElementById(upvoteIconID + 'Mobile').classList.add('fas');
+        }
+        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-outline-success')) {
+          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-outline-success');
+          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-success');
+        }
+      }
+    }
+    else if (msg['myUpvote'] === 'False') {
+      if (document.getElementById(upvoteIconID).classList.contains('fas')) {
+        document.getElementById(upvoteIconID).classList.remove('fas');
+        document.getElementById(upvoteIconID).classList.add('far');
+      }
+      if (document.getElementById(upvoteButtonID).classList.contains('btn-success')) {
+        document.getElementById(upvoteButtonID).classList.remove('btn-success');
+        document.getElementById(upvoteButtonID).classList.add('btn-outline-success');
+      }
+      if (msg['type'] === 'video') {
+        if (document.getElementById(upvoteIconID + 'Mobile').classList.contains('fas')) {
+          document.getElementById(upvoteIconID + 'Mobile').classList.remove('fas');
+          document.getElementById(upvoteIconID + 'Mobile').classList.add('far');
+        }
+        if (document.getElementById(upvoteButtonID + 'Mobile').classList.contains('btn-success')) {
+          document.getElementById(upvoteButtonID + 'Mobile').classList.remove('btn-success');
+          document.getElementById(upvoteButtonID + 'Mobile').classList.add('btn-outline-success');
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  function changeUpvote(type, id) {
+    socket.emit('changeUpvote', { loc: id, vidType: type });
+    socket.emit('getUpvoteTotal', { loc: id, vidType: type });
+  }
+</script>
+
+<script>
+  function newScreenShot() {
+    player.pause();
+    window.whereYouAt = player.currentTime();
+    document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
+    socket.emit('newScreenShot', { loc: '{{video.id}}', timeStamp: window.whereYouAt, clipID: '{{clip.id}}' });
+  }
+</script>
+
+<script>
+  socket.on('checkScreenShot', function (msg) {
+    document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
+    $("#newSSModal").modal()
+  });
+</script>
+
+
+<script>
+  function setScreenShot() {
+    var timestamp = document.getElementById("thumbnailTimestamp").value;
+    socket.emit('setScreenShot', {timeStamp: timestamp, clipID: '{{clip.id}}' });
+  }
+</script>
+
+{% if startTime != None %}
+<script>
+  player.currentTime({{startTime}});
+  player.play();
+</script>
+{% endif %}
+
+<script>
+    function CopyDiv(divVal) {
+      var copyText = document.getElementById(divVal);
+      copyText.select();
+      document.execCommand("copy");
+    }
+</script>
+
+<script>
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+</script>
+<script>
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
+        subButton.className = "btn btn-sm btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
+        subButton.className = "btn btn-sm btn-outline-success";
+    }
+  });
+</script>
+
+{% endblock %}

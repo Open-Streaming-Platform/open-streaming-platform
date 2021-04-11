@@ -1,0 +1,1403 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Administration Page</title>
+
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+<script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="/static/vendor/bootstrap-tagsinput/tagsinput.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/vendor/datatables/css/datatables.css"/>
+<link rel="stylesheet" type="text/css" href="/static/vendor/datatables/css/datatables.boostrap4.css"/>
+<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap-tagsinput/tagsinput.css"/>
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12" style="margin-top:15px;">
+            <ul class="nav nav-pills mb-3" id="admin-nav" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link {% if page == None or page == 'dash' %} active {% endif %}"  role="tab" id="admin-nav-dashboard" href="#dashboard" data-toggle="pill" aria-controls="admin-nav-dashboard" aria-selected="true">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'settings' %} active {% endif %}" role="tab" id="admin-nav-settings" href="#adminSettings" data-toggle="pill" aria-controls="admin-nav-settings" aria-selected="false">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'oauth' %} active {% endif %}" role="tab" id="admin-nav-oauth" href="#adminOauth" data-toggle="pill" aria-controls="admin-nav-oauth" aria-selected="false">OAuth Providers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'osprtmp' %} active {% endif %}" role="tab" id="admin-nav-rtmp" href="#rtmpSettings" data-toggle="pill" aria-controls="admin-nav-rtmp" aria-selected="false">RTMP Servers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'ospedge' %} active {% endif %}" role="tab" id="admin-nav-edge" href="#edgeSettings" data-toggle="pill" aria-controls="admin-nav-edge" aria-selected="false">Edge Streamers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'webhooks' %} active {% endif %}" role="tab" id="admin-nav-webhooks" href="#webhooksSettings" data-toggle="pill" aria-controls="webhooks-nav-settings" aria-selected="false">Webhooks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'stickers' %} active {% endif %}" role="tab" id="admin-nav-stickers" href="#stickersSettings" data-toggle="pill" aria-controls="stickers-nav-settings" aria-selected="false">Chat Stickers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'users' %} active {% endif %}" role="tab" id="admin-nav-users" href="#userList" data-toggle="pill" aria-controls="admin-nav-users" aria-selected="false">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'topics' %} active {% endif %}" role="tab" id="admin-nav-topics" href="#topicsList" data-toggle="pill" aria-controls="admin-nav-topics" aria-selected="false">Topics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'channels' %} active {% endif %}" role="tab" id="admin-nav-channels" href="#channelsList" data-toggle="pill" aria-controls="admin-nav-channels" aria-selected="false">Channels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'streams' %} active {% endif %}" role="tab" id="admin-nav-streams" href="#streamsList" data-toggle="pill" aria-controls="admin-nav-streams" aria-selected="false">Streams</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if page == 'logs' %} active {% endif %}" role="tab" id="admin-nav-logs" href="#logs" data-toggle="pill" aria-controls="admin-nav-logs" aria-selected="false">Logs</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="admin-content">
+                <div class="tab-pane fade {% if page == None or page == 'dash' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-dashboard" id="dashboard">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <div>
+                                    <h2><i class="fas fa-server"></i> Server Info</h2><br>
+                                    <b><img src="/static/img/logo.png" width="64px" height="64px"> Open Streaming Platform</b><br>
+                                    <div style="margin-left:70px;">
+                                        <b><a href="https://gitlab.com/Deamos/flask-nginx-rtmp-manager">https://gitlab.com/Deamos/flask-nginx-rtmp-manager</a></b><br>
+                                        <b>Server Version:</b> {{sysSettings.version}} <br>
+                                        <b>Git Branch:</b> {{repoBranch}} <br>
+                                        <b>Git Commit Hash:</b> {{repoSHA}}  {% if repoSHA != remoteSHA %} <span class="badge badge-success">Update Available!</span> {% else %} <span class="badge badge-secondary">No Update Available</span>{% endif %}<br>
+                                        <b>Database Version:</b> {{appDBVer}} <br><br>
+                                        <b>NGINX Version:</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['nginx_version']}}{% else %} No Local NGINX-RTMP{% endif %}<br>
+                                        <b>NGINX-RTMP Version</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['nginx_rtmp_version']}}{% else %} No Local NGINX-RTMP{% endif %}<br>
+                                        <b>EJabberD Status:</b> {% if ejabberd == None %} <span style="color:red;">Not Connected</span> {% else %} <span style="color:green">Online</span>{% endif %}<br>
+                                        <b>Uptime:</b>{% if nginxStatData != None %} {{nginxStatData['rtmp']['uptime']|hms_format}}{% else %} No Local NGINX-RTMP{% endif %}
+                                    </div>
+                                </div><br>
+                                {% if nginxStatData != None %}
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-video"></i> <a href="/settings/admin/rtmpstat/localhost">RTMP Stats</a></div>
+                                    <div class="card-body">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Endpoint</th>
+                                                <th scope="col">Key</th>
+                                                <th scope="col">In Kbps</th>
+                                                <th scope="col">Out Kbps</th>
+                                                <th scope="col">Clients</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for data in nginxStatData['rtmp']['server']['application'] %}
+                                                {% if 'stream' in data['live'] %}
+                                                    {% if data['live']['stream'] | testList %}
+                                                        {% for entry in data['live']['stream'] %}
+                                                            <tr>
+                                                                <td>{{data['name']}}</td>
+                                                                <td>{{entry['name']}}</td>
+                                                                <td>{{entry['bw_in']|format_kbps}}</td>
+                                                                <td>{{entry['bw_out']|format_kbps}}</td>
+                                                                <td>{{entry['client']|processClientCount}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                    <tr>
+                                                        <td>{{data['name']}}</td>
+                                                        <td>{{data['live']['stream']['name']}}</td>
+                                                        <td>{{data['live']['stream']['bw_in']|format_kbps}}</td>
+                                                        <td>{{data['live']['stream']['bw_out']|format_kbps}}</td>
+                                                        <td>{{data['live']['stream']['client']|processClientCount}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-chart-bar"></i> Resource Usage</div>
+                                    <div class="card-body">
+                                        CPU: <span id="cpuStats"></span><br>
+                                        <div class="progress">
+                                          <div id="cpuUsage" class="progress-bar bg-info" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div><br>
+                                        Memory: <span id="memoryStats"></span><br>
+                                        <div class="progress">
+                                          <div id="memoryUsage" class="progress-bar bg-danger" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div><br>
+                                        Disk: <span id="diskStats"></span><br>
+                                        <div class="progress">
+                                          <div id="diskUsage" class="progress-bar" role="progressbar" style="width: 0%;color:black;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card">
+                                    <div class="card-header"><i class="fas fa-chart-bar"></i> Viewer Stats</div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-xl-6 col-md-12">
+                                                <div class="callout callout-success"><h4>Current Stream Viewers</h4><br><h2>{{currentViewers}}</h2></div>
+                                            </div>
+                                            <div class="col-xl-6 col-md-12">
+                                                <div class="callout callout-primary"><h4>Total Viewers (30 days)</h4><br><h2>{{viewersTotal}}</h2></div>
+                                            </div>
+                                        </div>
+                                        <div id="statChart">
+                                            <canvas id="viewershipChart" width="400" height="400"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'settings' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-settings" id="adminSettings">
+                    <h5>Configuration Options</h5>
+                      <form action="/settings/admin" enctype=multipart/form-data method="post">
+                          <div class="row">
+                              <div class="col-sm-12 col-md-6">
+                                  <h4><i class="fas fa-server"></i> Server Settings</h4>
+                                  Server Name: <input type="text" name="serverName" class="form-control" value="{{sysSettings.siteName}}" required autocomplete="new-password">
+                                  <br>
+                                  <div class="form-row">
+                                      <div class="form-group mx-2">
+                                        Server Protocol:
+                                          <select name="siteProtocol" class="form-control">
+                                              <option value="http://" {% if sysSettings.siteProtocol == 'http://' %} selected {% endif %}>http://</option>
+                                              <option value="https://" {% if sysSettings.siteProtocol == 'https://' %} selected {% endif %}>https://</option>
+                                          </select>
+                                      </div>
+                                      <div class="form-group mx-2">
+                                        Server Hostname/IP Address: <input type="text" name="serverAddress" class="form-control" value="{{sysSettings.siteAddress}}" size="48" required>
+                                      </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="maintenanceMode">Maintenance Mode</label><br>
+                                    <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="maintenanceMode" name="maintenanceMode" autocomplete="new-password" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
+                                  </div>
+                                  <div class="form-group">
+                                    OSP-Proxy Hostname: <input type="text" name="ospProxyFQDN" class="form-control" value="{% if sysSettings.proxyFQDN != None %}{{sysSettings.proxyFQDN}}{% endif %}" size="64" placeholder="proxy.example.com">
+                                    <small>Leave Blank if no OSP-Proxy Server Used</small>
+                                  </div>
+                                  <hr>
+                                  System Logo:
+                                  <img src="{{sysSettings.systemLogo}}" width="32" height="32"><br>
+                                  <input type="file" name="photo" class="form-control-file" value="Upload a Logo" style="margin-top:10px;+"><br>
+                                  Theme:
+                                  <select class="form-control" name="theme">
+                                      {% for theme in themeList %}
+                                      <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
+                                      {% endfor %}
+                                  </select>
+                                  <div class="form-group">
+                                      <label for="mainPageSort" class="col-form-label">Main Page Sorting</label>
+                                      <select class="form-control" id="mainPageSort" name="mainPageSort">
+                                          <option value="0" {% if sysSettings.sortMainBy == 0 %} selected {% endif %}>Most Views</option>
+                                          <option value="1" {% if sysSettings.sortMainBy == 1 %} selected {% endif %}>Most Recent</option>
+                                          <option value="2" {% if sysSettings.sortMainBy == 2 %} selected {% endif %}>Random</option>
+                                      </select>
+                                  </div>
+                                  <hr>
+                                  <div class="form-group">
+                                    <label for="restreamMaxBitrate" class="col-form-label">Maximum Bitrate for RTMP Restreams (Kb/s)</label><br>
+                                    <input type="number" id="restreamMaxBitrate" name="restreamMaxBitrate" class="form-control" value="{{sysSettings.restreamMaxBitrate}}">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="rangeSlider">Maximum Clip Length</label><br>
+                                    <div class="input-group">
+                                      <input id="maxClipLength" name="maxClipLength" class="rangeSliderInput form-control" type="range" value="{{sysSettings.maxClipLength}}" style="border:0;" min="0" max="301">
+                                      <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-large badge-secondary" style="width:100px;">{{sysSettings.maxClipLength|format_clipLength}}</span></h3>
+                                      </div>
+                                  </div>
+                                  <hr>
+                                  Build OSP-Edge Redirect File on Restart & Changes:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="buildEdgeOnRestartSelect" name="buildEdgeOnRestart" autocomplete="new-password" {% if sysSettings.buildEdgeOnRestart == True %} checked {% endif %}>
+                                  <br>
+                                  Allow Users to Record:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="recordSelect" name="recordSelect" autocomplete="new-password" {% if sysSettings.allowRecording == True %} checked {% endif %}>
+                                  <br>
+                                  Allow Users to Upload Video:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="uploadSelect" name="uploadSelect" autocomplete="new-password" {% if sysSettings.allowUploads == True %} checked {% endif %}>
+                                  <br>
+                                  Enable Adaptive Streaming (Can Cause Significant CPU Usage Per Stream)<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="adaptiveStreaming" name="adaptiveStreaming" autocomplete="new-password" {% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
+                                  <br>
+                                  Display Empty Channels, Streamers, and Topics<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="showEmptyTables" name="showEmptyTables" autocomplete="new-password" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
+                                  <br>
+                                  Globally Allow Comments (Can be Disabled on a Per Video Basis)<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="allowComments" name="allowComments" autocomplete="new-password" {% if sysSettings.allowComments == True %} checked {% endif %}>
+                                  <br>
+                                  Enable Channel Protection System (Can cause some slowdown with loading images and video)<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="enableProtection" name="enableProtection" autocomplete="new-password" {% if sysSettings.protectionEnabled == True %} checked {% endif %}>
+                              </div>
+                              <div class="col-sm-12 col-md-6">
+                                  <h4><i class="fas fa-envelope"></i> Email Settings</h4>
+                                  <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button>
+                                  <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:springgreen;"></i> Email Test was Successful!</div>
+                                  <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
+                                  <br>
+                                  SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required autocomplete="new-password">
+                                  SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required autocomplete="new-password">
+                                  SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required autocomplete="new-password">
+                                  SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}" autocomplete="new-password">
+                                  SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" autocomplete="new-password">
+                                  SMTP SSL:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" autocomplete="new-password" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
+                                  <br>
+                                  SMTP TLS:<br>
+                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" autocomplete="new-password" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
+                                  <hr>
+                                  <h4><i class="fas fa-stream"></i> Other</h4>
+                                  <div class="form-group">
+                                    <label for="serverMessageTitle" class="col-form-label">Server Message Title</label><br>
+                                    <input type="text" id="serverMessageTitle" name="serverMessageTitle" class="form-control" value="{{sysSettings.serverMessageTitle}}" size="256">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="serverMessage" class="col-form-label"><b>Server Message (Displayed on Main Page)</b></label>
+                                    <textarea class="form-control" name="serverMessage" id="serverMessage" value="" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="bannedChatWords" class="col-form-label"><b>Banned Chat Words</b></label>
+                                      <input type="text" id="bannedChatWords" name="bannedChatWords" data-role="tagsinput" class="form-control" value="{{bannedWords}}">
+                                  </div>
+                              </div>
+                              <hr>
+                          </div><br>
+                          <div class="row">
+                              <div class="col-12">
+                                  <input type="hidden" value="system" id="settingType" name="settingType">
+                                  <div class="form-row text-center">
+                                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </form>
+                </div>
+                <div class="tab-pane fade {% if page == 'oauth' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-oauth" id="adminOauth">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    OAuth Provider Listing
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newOauthModal"><i class="fas fa-plus"></i></button></span>
+                                </div>
+                                <div class="card-body">
+                                    <table id="oAuthTable" class="table table-borderless" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Provider Name</th>
+                                                <th>Authentication Type</th>
+                                                <th>Client ID</th>
+                                                <th>Authorize URL</th>
+                                                <th>Options</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for provider in oAuthProvidersList %}
+                                            <tr>
+                                                <td>{{provider.name}}</td>
+                                                <td>{{provider.preset_auth_type}}</td>
+                                                <td>{{provider.client_id}}</td>
+                                                <td>{{provider.authorize_url}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-warning shadow edit-oAuth-Button" data-id="{{provider.id}}" data-name="{{provider.name}}" data-friendlyname="{{provider.friendlyName}}"
+                                                            data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
+                                                            data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
+                                                            data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
+                                                            data-emailvalue="{{provider.email_value}}" data-idvalue="{{provider.id_value}}" data-authtype="{{provider.preset_auth_type}}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newOauthModal" tabindex="-1" role="dialog" aria-labelledby="newOAuthModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" id="OAuthForm" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newOauthModalTitle">Add/Edit an OAuth Provider</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <label for="oAuthPreset">Authentication Type</label>
+                                        <select class="form-control required" id="oAuthPreset" name="oAuthPreset" required>
+                                            <option value="Custom">Custom OAuth2</option>
+                                            <option value="Discord">Discord</option>
+                                            <option value="Reddit">Reddit</option>
+                                            <option value="Facebook">Facebook</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div id="oAuthNameDiv" class="form-group col-md-12">
+                                            <label for="oAuthName">OAuth Provider ID</label>
+                                            <input type="text" class="form-control required" id="oAuthName" name="oAuthName" maxlength="40" pattern="^\S+$" required>
+                                            <small id="oAuthHelp" class="form-text text-muted">Used for Internal Identification.  No Spaces</small>
+                                        </div>
+                                        <div id="oAuthFriendlyNameDiv" class="form-group col-md-12">
+                                            <label for="oAuthFriendlyName">OAuth Provider Friendly Name</label>
+                                            <input type="text" class="form-control required" id="oAuthFriendlyName" name="oAuthFriendlyName" maxlength="64" required>
+                                        </div>
+                                        <div id="oAuthColorDiv" class="form-group col-md-12">
+                                            <label for="oAuthName">Login Button Color</label>
+                                            <input type="color" class="form-control required" id="oAuthColor" name="oAuthColor" required>
+                                        </div>
+                                        <hr>
+                                        <div id="oAuthClient_idDiv" class="form-group col-md-12">
+                                            <label for="oAuthClient_id">Client ID</label>
+                                            <input type="text" class="form-control required" id="oAuthClient_id" name="oAuthClient_id" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthClient_secretDiv"  class="form-group col-md-12">
+                                            <label for="oAuthClient_secret">Client Secret</label>
+                                            <input type="password" class="form-control required" id="oAuthClient_secret" name="oAuthClient_secret" required>
+                                        </div>
+                                        <div id="oAuthAccess_token_urlDiv" class="form-group col-md-12">
+                                            <hr>
+                                            <label for="oAuthAccess_token_url">Access Token URL</label>
+                                            <input type="text" class="form-control required" id="oAuthAccess_token_url" name="oAuthAccess_token_url" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthAccess_token_paramsDiv" class="form-group col-md-12">
+                                            <label for="oAuthAccess_token_params">Access Token Params</label>
+                                            <textarea id="oAuthAccess_token_params" class="form-control" name="oAuthAccess_token_params"></textarea>
+                                        </div>
+                                        <div id="oAuthAuthorize_urlDiv" class="form-group col-md-12">
+                                            <label for="oAuthAuthorize_url">Authorize URL</label>
+                                            <input type="text" class="form-control required" id="oAuthAuthorize_url" name="oAuthAuthorize_url" pattern="^\S+$" required>
+                                        </div>
+                                        <div id="oAuthAuthorize_paramsDiv" class="form-group col-md-12">
+                                            <label for="oAuthAuthorize_params">Authorize Params</label>
+                                            <textarea class="form-control" id="oAuthAuthorize_params" name="oAuthAuthorize_params"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div id="oAuthApi_base_urlDiv" class="form-group col-md-12">
+                                            <label for="oAuthApi_base_url">API Base URL</label>
+                                            <input type="text" class="form-control required" id="oAuthApi_base_url" name="oAuthApi_base_url" pattern="^\S+$" required>
+                                            <small id="oAuthApi_base_urlHelp" class="form-text text-muted">Full URI for API Requests (including trailing /)</small>
+                                        </div>
+                                        <div id="oAuthClient_kwargsDiv" class="form-group col-md-12">
+                                            <label for="oAuthClient_kwargs">Client Kwargs</label>
+                                            <textarea class="form-control" id="oAuthClient_kwargs" name="oAuthClient_kwargs"></textarea>
+                                            <small id="oAuthClient_kwargsHelp" class="form-text text-muted">JSON Payload Request - Typically Includes oAuth Client Scope</small>
+                                        </div>
+
+                                        <div id="oAuthProfile_endpointDiv" class="form-group col-md-12">
+                                            <hr>
+                                            <label for="oAuthProfile_endpoint">Profile Endpoint</label>
+                                            <input type="text" class="form-control required" id="oAuthProfile_endpoint" name="oAuthProfile_endpoint" required>
+                                            <small id="oAuthProfile_endpointHelp" class="form-text text-muted">Relative Path of API Base URL to Retrieve Login User's Profile (no leading /)</small>
+                                        </div>
+                                        <div id="oAuthIDValueDiv" class="form-group col-md-12">
+                                            <label for="oAuthUsername">ID Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthIDValue" name="oAuthIDValue" required>
+                                            <small id="oAuthIDValueHelp" class="form-text text-muted">Unique ID Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                        <div id="oAuthUsernameDiv" class="form-group col-md-12">
+                                            <label for="oAuthUsername">Username Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthUsername" name="oAuthUsername" required>
+                                            <small id="oAuthUsernameHelp" class="form-text text-muted">Username Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                        <div id="oAuthEmailDiv" class="form-group col-md-12">
+                                            <label for="oAuthEmail">Email Profile Value</label>
+                                            <input type="text" class="form-control required" id="oAuthEmail" name="oAuthEmail" required>
+                                            <small id="oAuthEmailHelp" class="form-text text-muted">Email Address Attribute Retrieved from Profile Endpoint</small>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="oAuthID" name="oAuthID">
+                                    <input type="hidden" value="oAuthProvider" id="settingType" name="settingType">
+                                </div>
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="resetOAuthForm();">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add/Edit">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="deleteOauthModal" tabindex="-1" role="dialog" aria-labelledby="deleteOAuthModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteOauthModalTitle">Delete a OAuth Provider</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group col-md-12">
+                                            <p>Any Users that registered under the OAuth Provider will be reassigned to local authentication and passwords set to a random value.  Users will need to perform a password reset to regain access.</p>
+                                            <p>Are you sure you want to delete the OAuth Provider?</p>
+                                            <input type="hidden" id="DeleteOAuthProviderID" name="DeleteOAuthProviderID">
+                                            <input type="hidden" value="DeleteOAuthProvider" id="settingType" name="settingType">
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'osprtmp' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-rtmp" id="rtmpSettings">
+                    <h5>
+                        Authorized OSP-RTMP Servers
+                    </h5>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    List of Authorized OSP-RTMP Servers
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newRTMPModal"><i class="fas fa-plus"></i></button></span><br>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="rtmpTable" class="table table-borderless" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>RTMP Server Address</th>
+                                                    <th>Active?</th>
+                                                    <th>Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for server in rtmpServers %}
+                                                <tr id="rtmpTableRow-{{ server.id }}">
+                                                    <td>{{ server.address }}</td>
+                                                    <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeRTMPNode" name="activeRTMPSelect" autocomplete="new-password"
+                                                           {% if server.active == True %} checked {% endif %} onchange="toggleActiveRTMP('{{server.id}}');"></td>
+                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteRTMP('{{server.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                </tr>
+                                            {%  endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newRTMPModal" tabindex="-1" role="dialog" aria-labelledby="newRTMPModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newRTMPModalTitle">Add a New RTMP Server</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="rtmpAddress">Full Qualified Domain Name or IP Address:</label>
+                                        <input type="text" name="address" id="rtmpAddress" class="form-control"
+                                               pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^(?:(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){6})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:::(?:(?:(?:[0-9a-fA-F]{1,4})):){5})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){4})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,1}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){3})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,2}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){2})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,3}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:[0-9a-fA-F]{1,4})):)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,4}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,5}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,6}(?:(?:[0-9a-fA-F]{1,4})))?::))))$"
+                                               required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                              </div>
+                              <input type="hidden" value="rtmpServer" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-edge" id="edgeSettings">
+                    <h5>
+                        OSP Edge Streamer Nodes
+                    </h5>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    List of OSP Edge Streamer Nodes
+                                    <span class="float-right">
+                                        <button class="btn btn-sm btn-info shadow" type="button" data-toggle="modal" onclick="rebuildEdgeConf();">Rebuild Config</button>
+                                        <button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newEdgeModal"><i class="fas fa-plus"></i></button>
+                                    </span>
+                                    <br>
+                                    <note style="color:red;">*** A Reload of NGINX is required after any changes for OSP Streaming to work ***</note><br>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="edgeTable" class="table table-borderless" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Edge Streamer Address</th>
+                                                    <th>HTTP Port</th>
+                                                    <th>Load %</th>
+                                                    <th>Active?</th>
+                                                    <th>Status</th>
+                                                    <th>Options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for node in edgeNodes %}
+                                            <tr id="edgeTableRow-{{node.id}}">
+                                                <td><a href="/settings/admin/rtmpstat/{% if node.address == sysSettings.siteAddress %}localhost{% else %}{{node.address}}{% endif %}">{{node.address}}</a></td>
+                                                <td>{{node.port}}</td>
+                                                <td>{{node.loadPct}}</td>
+                                                <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeNode" name="activeSelect" autocomplete="new-password"
+                                                           {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');"></td>
+                                                <td id="nodeStatus-{{node.id}}"><span class="badge {% if node.status == 1 or node.address == sysSettings.siteAddress %}badge-success{% elif node.status == 0 %}badge-danger{% endif %}">
+                                                    {% if node.status == 1 or node.address == sysSettings.siteAddress %} Online
+                                                    {% elif node.status == 0 %} Offline
+                                                    {% endif %}
+                                                </span>
+
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newEdgeModal" tabindex="-1" role="dialog" aria-labelledby="newEdgeModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newEdgeModalTitle">Add a New Edge Streamer Node</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="edgeAddress">Full Qualified Domain Name or IP Address:</label>
+                                        <input type="text" name="address" id="edgeAddress" class="form-control"
+                                               pattern="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^(?:(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){6})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:::(?:(?:(?:[0-9a-fA-F]{1,4})):){5})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){4})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,1}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){3})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,2}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:(?:[0-9a-fA-F]{1,4})):){2})(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,3}(?:(?:[0-9a-fA-F]{1,4})))?::(?:(?:[0-9a-fA-F]{1,4})):)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,4}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}(?:(?:25[0-5]|(?:[1-9]|1[0-9]|2[0-4])?[0-9])))))))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,5}(?:(?:[0-9a-fA-F]{1,4})))?::)(?:(?:[0-9a-fA-F]{1,4})))|(?:(?:(?:(?:(?:(?:[0-9a-fA-F]{1,4})):){0,6}(?:(?:[0-9a-fA-F]{1,4})))?::))))$"
+                                               required autocomplete="new-password">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="edgeAddress">HTTP Port</label>
+                                        <input type="number" name="edgePort" id="edgePort" class="form-control" required autocomplete="new-password" value="80">
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <label for="edgeAddress">Load %</label>
+                                        <div class="input-group mb-3">
+                                            <input type="number" name="edgeLoad" id="edgeLoad" class="form-control" required autocomplete="new-password" min="1" max="100">
+                                            <div class="input-group-append">
+                                              <span class="input-group-text" id="basic-addon2">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                              </div>
+                              <input type="hidden" value="edgeNode" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Add">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-webhooks" id="webhooksSettings">
+                <h5>Global Webhooks</h5>
+                     <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal();"><i class="fas fa-plus"></i> Add Webhook</button><br>
+                            <div id="webhookList">
+                                <div class="table-responsive">
+                                    <table id="webhookTable" class="table table-borderless" width="100%">
+                                        <thead class="shadow">
+                                            <tr>
+                                                <th>Webhook Name</th>
+                                                <th style="display:none;"></th>
+                                                <th>Trigger</th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
+                                                <th style="display:none;"></th>
+                                                <th>Options</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for webhook in globalHooks %}
+                                            <tr id="webhookTableRow-{{webhook.id}}">
+                                                <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="modal fade" id="confirmDeleteWebhookModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteWebhookModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteWebhookModalTitle">Delete Webhook</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              Are you sure you want to delete the webhook?
+                              <input id="deleteWebhookID" type="hidden">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteWebhook();">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newWebhookModalTitle">Create/Edit Webhook</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                             <div class="row">
+                                 <div class="col-12">
+                                     <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="webhookName">Name</label>
+                                            <input id="webhookName" class="form-control" autocomplete="new-password">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="webhookEndpoint">Endpoint URL</label>
+                                            <input id="webhookEndpoint" class="form-control" autocomplete="new-password">
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="form-group col-md-12">
+                                            <label for="webhookHeader">Request Header</label>
+                                            <textarea id="webhookHeader" class="form-control" maxlength="4096"></textarea>
+                                        </div>
+                                        <div class="form-group col-md-12">
+                                            <label for="webhookPayload">Payload</label>
+                                            <textarea id="webhookPayload" class="form-control" cols=50 rows=25 maxlength="4096"></textarea>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="webhookReqType">Type</label>
+                                            <select id="webhookReqType" class="form-control">
+                                                 <option value=0 selected>POST</option>
+                                                 <option value=1>GET</option>
+                                                 <option value=2>PUT</option>
+                                                 <option value=3>DELETE</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                            <label for="webhookTrigger">Trigger Event</label>
+                                            <select id="webhookTrigger" class="form-control">
+                                                 <option value=0 selected>Stream Start</option>
+                                                 <option value=1>Stream End</option>
+                                                 <option value=2>Stream Viewer Join</option>
+                                                 <option value=4>Stream Name Change</option>
+                                                 <option value=5>Chat Message</option>
+                                                 <option value=6>New Video</option>
+                                                 <option value=7>Video Comment</option>
+                                                 <option value=9>Video Name Change</option>
+                                                 <option value=10>Channel Subscription</option>
+                                                 <option value=20>New User</option>
+                                            </select>
+                                        </div>
+                                        <input id="webhookInputAction" type="hidden">
+                                        <input id="webhookID" type="hidden">
+                                     </div>
+                                 </div>
+                             </div>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitWebhook();">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'stickers' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-stickers" id="stickersSettings">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    Global Chat Stickers
+                                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" data-toggle="modal" data-target="#newStickerModal"><i class="fas fa-plus"></i></button></span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap justify-content-start">
+                                        {% for sticker in globalStickers %}
+                                        <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
+                                            <div class="mx-auto my-2" style="width:128px;">
+                                                <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+                                            </div>
+                                            <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
+                                            <div class="mx-auto my-2" style="width:96px;">
+                                                <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }})"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }})"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="newStickerModal" tabindex="-1" role="dialog" aria-labelledby="newStickerModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" enctype=multipart/form-data method="post">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="newStickerModalTitle">Create New Chat Sticker</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label for="stickerName">Sticker Shortcode</label>
+                                            <input type="text" name="stickerName" id="stickerNameInput" class="form-control" pattern="[A-Za-z0-9_]+" required autocomplete="new-password">
+                                            <small id="stickerNameHelp" class="form-text text-muted">Format: A-Z, a-z, 0-9, _ </small>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                          <div class="col-12">
+                                              <div class="custom-file">
+                                                <input type="file" class="custom-file-input" name=stickerUpload id="stickerUpload" required>
+                                                <label id="stickerUploadFilename" class="custom-file-label" for="stickerUpload">Upload Sticker</label>
+                                              </div>
+                                          </div>
+                                          <script>
+                                            $('#stickerUpload').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('#stickerUploadFilename').html(fileName);
+                                            })
+                                          </script>
+
+                                    </div>
+                                  </div>
+                                  <input type="hidden" value="newSticker" id="settingType" name="settingType">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                <input type="submit" class="btn btn-success" value="Create">
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="deleteStickerModal" tabindex="-1" role="dialog" aria-labelledby="deleteStickerModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteStickerModalTitle">Delete Chat Sticker</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <p>Are you sure you want to delete this Chat Sticker?</p>
+                                </div>
+                              </div>
+                              <input type="hidden" value="" id="deleteStickerID">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteSticker();">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'users' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-users" id="userList">
+                    <h5>User List</h5>
+                    <div class="mb-2">
+                        <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#newUserModal"><i class="fas fa-plus-square"></i> New User</button>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#defaultRolesModal"><i class="fas fa-shield-alt"></i> Default Roles</button>
+                    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bulk Add Role</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="bulkAddRole('Admin');" href="javascript:void(0);">Admin</a>
+                            <a class="dropdown-item" onclick="bulkAddRole('Streamer');" href="javascript:void(0);">Streamer</a>
+                            <a class="dropdown-item" onclick="bulkAddRole('Recorder');" href="javascript:void(0);">Recorder</a>
+                            <a class="dropdown-item" onclick="bulkAddRole('Uploader');" href="javascript:void(0);">Uploader</a>
+                            <a class="dropdown-item" onclick="bulkAddRole('User');" href="javascript:void(0);">User</a>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="table-responsive">
+                            <table id="users" class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-user"></i> Username</th>
+                                  <th><i class="fas fa-at"></i> Email</th>
+                                  <th><i class="fas fa-passport"></i> Auth Type</th>
+                                  <th><i class="fas fa-file-contract"></i> Provider</th>
+                                  <th><i class="fas fa-user-clock"></i> Active</th>
+                                  <th><i class="fas fa-user-shield"></i> Roles</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                               {% for user in userList %}
+                               <tr id="user-row-{{user.id}}">
+                                  <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
+                                  <td><img class="rounded" src="/images/{{user.pictureLocation}}" style="width:48px;height:48px;" onerror="this.src='/static/img/user2.png';"></td>
+                                  <td><a href="/profile/{{user.username}}" >{{user.username}}</a></td>
+                                  <td>{{user.email}}</td>
+                                  <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
+                                  <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
+                                   <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
+                                  <td>
+                                    {% for role in user.roles %}
+                                        <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a></span><br>
+                                    {% endfor %}
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                                          {% if user.has_role('Streamer') %}
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                                          {% endif %}
+                                        <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                                    </div>
+                                    <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});" {% if user.tf_primary_method == None %}disabled{% endif %}><i class="fas fa-user-lock"></i></button>
+                                    <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="fas fa-user"></i></a>
+                                    <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Delete User" ><i class="far fa-trash-alt"></i></a>
+                                  </td>
+                               </tr>
+                               {% endfor %}
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="disable2faModal" tabindex="-1" role="dialog" aria-labelledby="disable2faModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="disable2faModalTitle">Disable 2FA for User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                Are you sure you want to disable Two-Factor Authentication for this user?
+                              </div>
+                              <input type="hidden" value="" id="disable2FAUser" name="disable2FAUser">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="disable2FA();" value="Disable" data-dismiss="modal">Disable</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post" onsubmit="return passwordCheck()">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newUserModalTitle">Create New User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="username">Username</label>
+                                        <input type="text" name="username" id="username" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="emailaddress">Email Address</label>
+                                        <input type="text" name="emailaddress" id="emailaddress" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="password1">Password</label>
+                                        <input type="password" name="password1" id="password1" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                    <br>
+                                    <div class="col-12">
+                                        <label for="password2">Confirm Password</label>
+                                        <input type="password" name="password2" id="password2" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+
+                              </div>
+                              <input type="hidden" value="newuser" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Create">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="defaultRolesModal" tabindex="-1" role="dialog" aria-labelledby="defaultRolesModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="defaultRolesModalTitle">Set Default Roles</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                              <h4>Set the default roles for new users:</h4><br>
+                              <!--User-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input id="drole-user" name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="User" value="User">
+                              </div>
+                              <!--Streamer-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" {% if defaultRoleDict["Streamer"] %} checked {% endif %} aria-label="Checkbox for Streamer">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
+                              </div>
+                              <!--Recorder-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input id="drole-recorder" name="role-recorder" type="checkbox" {% if defaultRoleDict["Recorder"] %} checked {% endif %} aria-label="Checkbox for Recorder">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
+                              </div>
+                              <!--Uploader-->
+                              <div class="input-group mb-3">
+                                  <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                      <input id="drole-uploader" name="role-uploader" type="checkbox" {% if defaultRoleDict["Uploader"] %} checked {% endif %} aria-label="Checkbox for Uploader">
+                                    </div>
+                                  </div>
+                                  <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-success" data-dismiss="modal" onclick="updateDefaultRoles();">Save</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-topics" id="topicsList">
+                    <h5>Topics List <div class="float-right"></div><button class="btn btn-primary" data-toggle="modal" data-target="#newTopicModal"><i class="fas fa-plus-square"></i> New Topic</button></h5></h5>
+                    <div class="container-fluid">
+                        {% for topic in topicsList %}
+                        <div class="row">
+                            <div class="col-12">
+                                <form action="/settings/admin" enctype=multipart/form-data method="post">
+                                <div class="card shadow">
+                                  <div class="card-header">
+                                    <div class="row">
+                                      <div class="col-4">
+                                        <input type="text" name="name" id="name" class="form-control" value="{{topic.name}}" required autocomplete="new-password">
+                                      </div>
+                                      <div class="col-8">
+                                          <div class="float-right">
+                                            <button type="submit" class="btn btn-success shadow"><i class="fas fa-edit"></i></button>
+                                            <a href="/settings/admin?action=delete&setting=topics&topicID={{topic.id}}" class="btn btn-danger shadow"><i class="far fa-trash-alt"></i></a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  <div class="card-body">
+                                    <img width="284px" height="155px" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                                    <br><br>
+                                    <div class="custom-file">
+                                      <input type="file" class="custom-file-input" name=photo id="photo" autocomplete="new-password">
+                                      <label class="custom-file-label" for="photo">Upload a Photo</label>
+                                    </div>
+                                    <input type="hidden" value="{{topic.id}}" id="topicID" name="topicID">
+                                    <input type="hidden" value="topics" id="settingType" name="settingType">
+                                  </div>
+                                </div>
+                                </form>
+                                <br>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="modal fade" id="newTopicModal" tabindex="-1" role="dialog" aria-labelledby="newTopicModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" enctype=multipart/form-data method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newTopicModalTitle">Create New Topic</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" name="name" id="name" class="form-control" required autocomplete="new-password">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                      <div class="col-12">
+                                        <img width="284" height="155" src="/static/img/video-placeholder.jpg">
+                                      </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                      <div class="col-12">
+                                          <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name=photo id="photo">
+                                            <label class="custom-file-label" for="photo">Upload a Photo</label>
+                                          </div>
+                                      </div>
+                                </div>
+                              </div>
+                              <input type="hidden" value="topics" id="settingType" name="settingType">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-success" value="Create">
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'channels' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-channels" id="channelsList">
+                    <h5>Channels List</h5>
+                    <br>
+                    <div class="container-fluid">
+                        <div class="table-responsive">
+                            <table id="channelsTable" class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-tv"></i> Channel Name</th>
+                                  <th><i class="fas fa-user"></i> Owner</th>
+                                  <th><i class="fas fa-hashtag"></i> Topic</th>
+                                  <th><i class="fas fa-terminal"></i> Location</th>
+                                  <th><i class="fas fa-eye"></i> Views</th>
+                                  <th><i class="fas fa-hdd"></i> Storage Usage</th>
+                                  <th><i class="fas fa-comment"></i> Chat</th>
+                                  <th><i class="fas fa-save"></i> Recording</th>
+                                  <th><i class="fas fa-comments"></i> Comments</th>
+                                  <th><i class="fas fa-lock"></i> Protected</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for channel in channelList %}
+                                <tr id="channelCardRow-{{channel.id}}">
+                                  <td><input type="checkbox" value="{{channel.id}}"></td>
+                                  <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;object-fit:cover;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                                  <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
+                                  <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                                  <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
+                                  <td>{{channel.channelLoc}}</td>
+                                  <td>{{channel.views}}</td>
+                                  <td>{{channel.channelLoc|get_diskUsage|formatSpace}}</td>
+                                  <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                                  <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
+                                  <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
+                                  <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
+                                  <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                {% endfor %}
+                              <tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="confirmDeleteChannelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteChannelModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteChannelModalTitle">Delete Channel</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              Deleting a channel will remove all associated videos and clip.  Are you sure you want to delete the channel?<br>
+                              <input type="hidden" id="deleteChannelID" name="channelID">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="deleteChannel();" data-dismiss="modal">Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'streams' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-streams" id="streamsList">
+                    <h5>Stream List</h5>
+                    <br>
+                    <div class="container-fluid">
+                        <div class="table-responsive">
+                            <table id="streamsTable" class="table table-hover">
+                              <thead class="shadow">
+                                <tr>
+                                  <th></th>
+                                  <th><i class="fas fa-portrait"></i> Image</th>
+                                  <th><i class="fas fa-video"></i> Stream Name</th>
+                                  <th><i class="fas fa-tv"></i> Channel Name</th>
+                                  <th><i class="fas fa-user"></i> Owner</th>
+                                  <th><i class="fas fa-hashtag"></i> Topic</th>
+                                  <th><i class="fas fa-terminal"></i> Current Views</th>
+                                  <th><i class="fas fa-eye"></i> Total Views</th>
+                                  <th><i class="fas fa-cog"></i> Options</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for stream in streamList %}
+                                <tr id="streamCard-{{stream.id}}">
+                                  <td><input type="checkbox" value="{{stream.id}}"></td>
+                                  <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
+                                  <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
+                                  <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
+                                  <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
+                                  <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
+                                  <td>{{stream.currentViewers}}</td>
+                                  <td>{{stream.totalViewers}}</td>
+                                  <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                                {% endfor %}
+                              <tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="deleteStreamModal" tabindex="-1" role="dialog" aria-labelledby="deleteStreamModalTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                          <form action="/settings/admin" method="post">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteStreamModalTitle">Delete Active Stream</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              Deleting a stream will remove the entry from showing on any video listing.  Are you sure you want to delete the stream?<br>
+                              <input type="hidden" id="deleteStreamID" name="streamID">
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="deleteStream()" data-dismiss="modal">Delete</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade {% if page == 'logs' %}show active{% endif %}" role="tabpanel" aria-labelledby="admin-content-logs" id="logs">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-10 col-md-12">
+                                <h5>Logs</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-hover" id="logTable">
+                                    <thead class="shadow">
+                                    <tr>
+                                        <th>
+                                            <b>Timestamp</b>
+                                        </th>
+                                        <th>
+                                            <b>Type</b>
+                                        </th>
+                                        <th>
+                                            <b>Message</b>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for log in logsList %}
+                                        <tr>
+                                            <td>
+                                                {{log.timestamp|normalize_date}}
+                                            </td>
+                                            <td>
+                                                {{log.type|get_logType}}
+                                            </td>
+                                            <td>
+                                                {{log.message}}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/vendor/datatables/js/jquery.datatables.js"></script>
+<script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
+<script>
+    var viewerChartWidth = 1024;
+    var viewerChartHeight = 380;
+    var viewerChartDataLive = [
+        {% for entry in statsViewsDay['live'] %}
+            {x:'{{entry['t']}}',y:{{entry['y']}}},
+        {% endfor %}
+    ];
+    var viewerChartDataVideo = [
+        {% for entry in statsViewsDay['recorded'] %}
+            {x:'{{entry['t']}}', y:{{entry['y']}}},
+        {% endfor %}
+    ];
+
+    $(document).ready(function() {
+        $('#webhookTable').DataTable(
+        {
+          'order': [[ 0, "asc" ]],
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [3,4,5,6] },
+          { 'orderable': false, 'targets': [3,4,5,6] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#users').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,8] },
+          { 'orderable': false, 'targets': [0,1,8] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#channelsTable').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,7,12] },
+          { 'orderable': false, 'targets': [0,1,12] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#streamsTable').DataTable(
+        {
+          'order': [[ 2, "asc" ]],
+          'columnDefs': [
+          { 'searchable': false, 'targets': [0,1,6,7,8] },
+          { 'orderable': false, 'targets': [0,1,8] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#logTable').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+    } );
+</script>
+
+<script type="text/javascript" src="/static/js/admin.js"></script>
+{% endblock %}
+
