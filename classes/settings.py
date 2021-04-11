@@ -27,6 +27,7 @@ class settings(db.Model):
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(8192))
     maxClipLength = db.Column(db.Integer)
+    proxyFQDN = db.Column(db.String(2048))
     maintenanceMode = db.Column(db.Boolean)
     buildEdgeOnRestart = db.Column(db.Boolean)
     allowRegistration = db.Column(db.Boolean) # Moved to config.py
@@ -113,9 +114,11 @@ class edgeStreamer(db.Model):
         }
 
 class rtmpServer(db.Model):
+    __tablename__ = "rtmpServer"
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(1024))
     active = db.Column(db.Boolean)
+    streams = db.relationship('Stream', backref='server', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, address):
         self.address = address

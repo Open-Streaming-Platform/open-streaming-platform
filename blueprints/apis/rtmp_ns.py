@@ -15,6 +15,7 @@ from functions import securityFunc
 
 def checkRTMPAuthIP(requestData):
     authorized = False
+    rtmpServerID = None
     requestIP = "0.0.0.0"
     if requestData.environ.get('HTTP_X_FORWARDED_FOR') is None:
         requestIP = requestData.environ['REMOTE_ADDR']
@@ -36,12 +37,13 @@ def checkRTMPAuthIP(requestData):
                         if parsedip == resolved[4][0]:
                             authorized = True
                             confirmedIP = resolved[4][0]
+                            rtmpServerID = server.id
 
     if authorized is False:
         confirmedIP = receivedIP
         system.newLog(1, "Unauthorized RTMP Server - " + confirmedIP)
 
-    return (authorized, confirmedIP)
+    return (authorized, confirmedIP, rtmpServerID)
 
 api = Namespace('rtmp', description='RTMP Related Queries and Functions')
 
@@ -118,7 +120,8 @@ class api_1_rtmp_stage2(Resource):
         if 'name' in args and 'addr' in args:
             name = args['name']
             addr = args['addr']
-            results = rtmpFunc.rtmp_stage2_user_auth_check(name, addr)
+            rtmpServer = authorized[2]
+            results = rtmpFunc.rtmp_stage2_user_auth_check(name, addr, rtmpServer)
             if results['success'] is True:
                 return {'results': results}, 200
             else:
