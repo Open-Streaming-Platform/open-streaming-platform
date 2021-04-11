@@ -1,0 +1,12 @@
+# Flask Secret Key
+secretKey="CHANGEME"
+
+# Enables Debug Mode
+debugMode = False
+
+# OSP Core API Site ex:http://osp.example.com
+ospCoreAPI = "#CHANGEMETOOSPCORE"
+
+# Force Destination - Use to point to Specified Edge Server or Tiered Proxy.  Uncomment to override API's RTMP List and use the destination you list
+#forceDestination = "example.com"
+#forceDestinationType = "edge" # Choices are "edge", "proxy"

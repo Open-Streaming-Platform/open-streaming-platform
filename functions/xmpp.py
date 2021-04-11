@@ -14,7 +14,8 @@ def sanityCheck():
 
 def buildMissingRooms():
     sysSettings = settings.query.first()
-    channelQuery = Channel.Channel.query.all()
+    channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id)\
+        .with_entities(Channel.Channel.channelLoc, User.uuid.label('userUUID'))
     for channel in channelQuery:
         try:
             xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
@@ -25,14 +26,16 @@ def buildMissingRooms():
             for key, value in room_config.items():
                 ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, key, value)
 
-            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.owner.uuid + '@' + sysSettings.siteAddress, 'owner')
+            ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress, channel.userUUID + '@' + sysSettings.siteAddress, 'owner')
 
     return True
 
 def verifyExistingRooms():
     sysSettings = settings.query.first()
     print({"level": "info", "message": "Verifying existing ejabberd Rooms"})
-    for channel in Channel.Channel.query.all():
+    channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id) \
+        .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, Channel.Channel.protected, User.uuid.label('userUUID'))
+    for channel in channelQuery:
         xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
 
         affiliationList = []
@@ -50,10 +53,10 @@ def verifyExistingRooms():
                     ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
                                                   userQuery.uuid + '@' + sysSettings.siteAddress, user['affiliation'])
 
-        if not all((d['username'] == channel.owner.uuid and d['domain'] == sysSettings.siteAddress) for d in
+        if not all((d['username'] == channel.userUUID and d['domain'] == sysSettings.siteAddress) for d in
                    affiliationList):
             ejabberd.set_room_affiliation(channel.channelLoc, 'conference.' + sysSettings.siteAddress,
-                                          channel.owner.uuid + '@' + sysSettings.siteAddress, 'owner')
+                                          channel.userUUID + '@' + sysSettings.siteAddress, 'owner')
 
         if channel.protected:
             ejabberd.change_room_option(channel.channelLoc, 'conference.' + sysSettings.siteAddress, 'password_protected', 'true')

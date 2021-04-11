@@ -1,8 +1,10 @@
 from flask_socketio import emit
 from flask_security import current_user
+from sqlalchemy import update
 
 from classes.shared import db, socketio
 from classes import Channel
+from classes import Stream
 from classes import settings
 
 
@@ -19,12 +21,10 @@ def handle_viewer_total_request(streamData, room=None):
 
     viewers = xmpp.getChannelCounts(channelLoc)
 
-    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    if channelQuery is not None:
-        channelQuery.currentViewers = viewers
-        for stream in channelQuery.stream:
-            stream.currentViewers = viewers
-        db.session.commit()
+    ChannelUpdateStatement = (update(Channel.Channel).where(Channel.Channel.channelLoc == channelLoc).values(channelViewers=viewers))
+    channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.id).first()
+
+    StreamUpdateStatement = (update(Stream.Stream).where(Stream.Stream.linkedChannel == channelQuery.id).values(currentViewers=viewers))
 
     db.session.commit()
     db.session.close()

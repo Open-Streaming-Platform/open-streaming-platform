@@ -13,6 +13,8 @@ import logging
 import datetime
 import json
 import uuid
+import time
+import random
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash, current_app, session
@@ -48,6 +50,10 @@ from globals import globalvars
 #----------------------------------------------------------------------------#
 # App Configuration Setup
 #----------------------------------------------------------------------------#
+# Generate a Random UUID for Interprocess Handling
+processUUID = str(uuid.uuid4())
+globalvars.processUUID = processUUID
+
 coreNginxRTMPAddress = "127.0.0.1"
 
 app = Flask(__name__)
@@ -210,33 +216,6 @@ patch_request_class(app)
 # Initialize Flask-Markdown
 md = Markdown(app, extensions=['tables'])
 
-##############################################
-# Initialize Scheduler and Jobs
-##############################################
-
-# Updates Room Live Counts on Interval
-def checkRoomCounts():
-    sysSettings = settings.settings.query.first()
-    channelQuery = Channel.Channel.query.all()
-    for chan in channelQuery:
-
-        roomOccupantsJSON = ejabberd.get_room_occupants_number(chan.channelLoc, "conference." + sysSettings.siteAddress)
-        currentViewers = roomOccupantsJSON['occupants']
-
-        count = currentViewers
-        if chan.currentViewers != count:
-            chan.currentViewers = count
-            db.session.commit()
-        for liveStream in chan.stream:
-            if liveStream.currentViewers != count:
-                liveStream.currentViewers = count
-                db.session.commit()
-    db.session.commit()
-
-scheduler = BackgroundScheduler()
-#scheduler.add_job(func=checkRoomCounts, trigger="interval", seconds=120)
-scheduler.start()
-
 # Initialize ejabberdctl
 ejabberd = None
 
@@ -249,17 +228,42 @@ try:
 except Exception as e:
     print("ejabberdctl failed to load: " + str(e))
 
-# Attempt Database Load and Validation
+# Loop Check if OSP DB Init is Currently Being Handled by and Process
+OSP_DB_INIT_HANDLER = None
+while OSP_DB_INIT_HANDLER != globalvars.processUUID:
+    OSP_DB_INIT_HANDLER = r.get('OSP_DB_INIT_HANDLER')
+    if OSP_DB_INIT_HANDLER != None:
+        OSP_DB_INIT_HANDLER = OSP_DB_INIT_HANDLER.decode('utf-8')
+    else:
+        r.set('OSP_DB_INIT_HANDLER', globalvars.processUUID)
+        time.sleep(random.random())
+
+# Once Attempt Database Load and Validation
 try:
     database.init(app, user_datastore)
 except:
     print("DB Load Fail due to Upgrade or Issues")
+# Clear Process from OSP DB Init
+r.delete('OSP_DB_INIT_HANDLER')
 
 # Perform System Fixes
 try:
     system.systemFixes(app)
 except:
     print({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
+
+if r.get('OSP_XMPP_INIT_HANDLER') is None:
+    # Perform XMPP Sanity Check
+    r.set('OSP_XMPP_INIT_HANDLER', globalvars.processUUID, ex=60)
+    print({"level": "info", "message": "Performing XMPP Sanity Checks"})
+    from functions import xmpp
+    try:
+        results = xmpp.sanityCheck()
+    except Exception as e:
+        print({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
+        r.delete('OSP_XMPP_INIT_HANDLER')
+else:
+    print({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
 
 # Checking OSP-Edge Redirection Conf File
 try:
@@ -299,14 +303,6 @@ from classes.shared import email
 
 email.init_app(app)
 email.app = app
-
-print({"level": "info", "message": "Performing XMPP Sanity Checks"})
-# Perform XMPP Sanity Check
-from functions import xmpp
-try:
-    results = xmpp.sanityCheck()
-except Exception as e:
-    print("XMPP Sanity Check Failed - " + str(e))
 
 print({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
@@ -507,7 +503,7 @@ print({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 try:
     system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-    print({"level": "info", "message": "OSP Core Node Started Successfully" + str(globalvars.version)})
+    print({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
 if __name__ == '__main__':
