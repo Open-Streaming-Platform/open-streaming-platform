@@ -1,0 +1,137 @@
+:root {
+    --navbar-width: 300px;
+    --navbar-icon-fontsize: 18px;
+}
+
+body {
+    color: white;
+    font-family: Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif;
+    background-color: black;
+}
+
+.osp-navbar {
+    width: var(--navbar-width);
+    height: 100%;
+    background-color: black;
+    position:fixed;
+    top: 0;
+
+    left: 0;
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
+    white-space: nowrap;
+    z-index: 99;
+    transition: width 0.25s ease 0s;
+}
+
+.osp-navbar a {
+    text-decoration: none;
+    color: #cccccc;
+    cursor: pointer;
+
+}
+
+.osp-navbar a:hover {
+    color: #ffffff;
+}
+
+.osp-navbar hr {
+
+    margin: 15px 15px 15px 15px;
+    border-top: rgba(141,141,141,.25);
+}
+.osp-navbar .navbar-logo {
+    margin-left: 6px;
+    margin-bottom: 5px;
+}
+
+.osp-navbar .navbar-logo .logo-description {
+    margin-left: 10px;
+    text-transform: uppercase;
+    font-weight: normal;
+    position: relative;
+    top: 14px;
+}
+
+
+.osp-navbar .navbar-logo img {
+    width: 52px;
+
+}
+
+.osp-navbar .navbar-top {
+}
+
+.osp-navbar .navbar-bottom {
+    margin-top: auto;
+    margin-bottom: 10px;
+    color: #cccccc;
+}
+
+.osp-navbar .navbar-bottom .nav-user-loggedin {
+
+}
+
+.osp-navbar .userinfo img {
+    border-radius: 50%;
+    width: 40px;
+
+    margin-left: 13px;
+    display: block;
+    float: left;
+}
+
+.osp-navbar .user-description-box {
+    margin-left: 16px;
+}
+
+.osp-navbar .user-description-box .user-description {
+    font-size: var(--navbar-icon-fontsize);
+    text-transform: uppercase;
+    font-weight: normal;
+    position: relative;
+    top: -12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.username {
+    margin-left: 16px;
+}
+
+.logout-button {
+    margin-right: 12px;
+}
+
+.osp-content {
+    margin-left: var(--navbar-width);
+    width:100%;
+    height: 100%;
+    background-color: #474747;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.box-shadow-r {
+    box-shadow: 0 5px 6px black;
+}
+
+.navbar-button {
+    margin: 8px 0 8px 15px;
+    font-size: var(--navbar-icon-fontsize);
+}
+
+.navbar-button i {
+    text-align: center;
+    width: 35px;
+}
+
+.navbar-description {
+    margin-left: 20px;
+    text-transform: uppercase;
+    font-weight: lighter;
+}
+
