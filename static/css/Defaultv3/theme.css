@@ -52,6 +52,8 @@ body {
     font-weight: normal;
     position: relative;
     top: 14px;
+    display: flex;
+    justify-content: space-between;
 }
 
 

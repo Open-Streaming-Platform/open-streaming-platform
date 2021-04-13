@@ -41,7 +41,10 @@
         <div class="nav-general">
             <div class="navbar-logo">
                 <img src="{{sysSettings.systemLogo}}" align="left">
-                <span class="logo-description">{{sysSettings.siteName}}</span>
+                <span class="logo-description">
+                    <span class="logo-name">{{sysSettings.siteName}}</span>
+                    <span class="navbar_pin"><i id="navbar_pin_button" class="fas fa-dot-circle"></i></span>
+                </span>
             </div><br>
             <a href="/channel"><div class="navbar-button"><i class="fas fa-tv"></i><span class="navbar-description">Channels</span></div></a>
             <a href="/topic"><div class="navbar-button"><i class="fas fa-hashtag"></i><span class="navbar-description">Topics</span></div></a>
@@ -118,16 +121,28 @@
 </div>
 
 <script>
+    var navbar_pin = true;
+
     let root = document.documentElement;
     let navbar_width = root.style.getPropertyValue('--navbar-width');
     let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
+
+    function toggle_navbar_pin() {
+        if (navbar_pin === true) {
+            navbar_pin = false;
+        } else {
+            navbar_pin = true;
+        }
+    }
 
     function showNav(){
         root.style.setProperty('--navbar-width', navbar_width);
         root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
     }
     function hideNav(){
-        root.style.setProperty('--navbar-width', "66px");
+        if (navbar_pin === false) {
+            root.style.setProperty('--navbar-width', "66px");
+        }
     }
 </script>
 
