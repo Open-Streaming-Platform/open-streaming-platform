@@ -43,7 +43,7 @@
                 <img src="{{sysSettings.systemLogo}}" align="left">
                 <span class="logo-description">
                     <span class="logo-name">{{sysSettings.siteName}}</span>
-                    <span class="navbar_pin"><i id="navbar_pin_button" class="fas fa-dot-circle"></i></span>
+                    <span class="navbar_pin"><i id="navbar_pin_button" class="fas fa-dot-circle" onclick="toggle_navbar_pin();"></i></span>
                 </span>
             </div><br>
             <a href="/channel"><div class="navbar-button"><i class="fas fa-tv"></i><span class="navbar-description">Channels</span></div></a>
@@ -128,10 +128,13 @@
     let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
 
     function toggle_navbar_pin() {
+        var elem = document.getElementById('navbar_pin_button');
         if (navbar_pin === true) {
             navbar_pin = false;
+            elem.className = "far fa-dot-circle"
         } else {
             navbar_pin = true;
+            elem.className = "fas fa-dot-circle"
         }
     }
 

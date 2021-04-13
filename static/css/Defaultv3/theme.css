@@ -56,6 +56,12 @@ body {
     justify-content: space-between;
 }
 
+.osp-navbar .navbar-logo .logo-description .logo-name {
+    margin-left:11px;
+}
+.osp-navbar .navbar-logo .logo-description .navbar_pin {
+    margin-right:10px;
+}
 
 .osp-navbar .navbar-logo img {
     width: 52px;
