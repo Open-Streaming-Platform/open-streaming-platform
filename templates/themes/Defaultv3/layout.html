@@ -123,7 +123,7 @@
 
 <!-- Upload Video Modal -->
 {% if current_user.has_role("Uploader") %}
-  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="color:black;">
+  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">

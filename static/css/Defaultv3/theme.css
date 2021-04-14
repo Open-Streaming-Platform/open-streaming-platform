@@ -9,6 +9,10 @@ body {
     background-color: black;
 }
 
+.modal-content {
+    background-color: #343a40;
+}
+
 .osp-navbar {
     width: var(--navbar-width);
     height: 100%;
