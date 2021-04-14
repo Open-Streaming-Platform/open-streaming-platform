@@ -56,7 +56,7 @@
             <a href="/settings/channels"><div class="navbar-button"><i class="fas fa-video"></i><span class="navbar-description">My Channels</span></div></a>
             {% if sysSettings.allowUploads == True %}
                 {% if current_user.has_role('Uploader') %}
-                    <a href="#"><div class="navbar-button"><i class="fas fa-upload"></i><span class="navbar-description">Upload</span></div></a>
+                    <a href="#" data-toggle="modal" data-target="#uploadModal"><div class="navbar-button"><i class="fas fa-upload"></i><span class="navbar-description">Upload</span></div></a>
                 {% endif %}
             {% endif %}
             <br>
@@ -207,7 +207,9 @@
 </div>
 
 <script src="/static/js/ui.js"></script>
+{% if current_user.has_role("Uploader") %}
 <script src="/static/js/uploadvideo.js"></script>
+{%  endif %}
 
 </body>
 </html>
