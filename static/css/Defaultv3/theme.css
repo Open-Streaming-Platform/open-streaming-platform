@@ -9,6 +9,10 @@ body {
     background-color: black;
 }
 
+.dropzone {
+    display: none;
+}
+
 .modal-content {
     background-color: #343a40;
 }
