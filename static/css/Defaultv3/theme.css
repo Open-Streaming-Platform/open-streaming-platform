@@ -13,6 +13,14 @@ body {
     display: none;
 }
 
+.CodeMirror {
+    background-color: lightgray;
+}
+
+.editor-toolbar button {
+    color: white;
+}
+
 .modal-content {
     background-color: #343a40;
 }
