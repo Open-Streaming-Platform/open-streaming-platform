@@ -116,38 +116,98 @@
       <div class="spinner"></div>
     </div>
 
+    <!-- Upload Video Modal -->
+    {% if current_user.has_role("Uploader") %}
+      <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
+              <div class="modal-header">
+                <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="canceluploads()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="videoTitle">Title</label>
+                  <input class="form-control" id="videoTitle" name="videoTitle">
+                </div>
+                <div class="form-group">
+                  <label for="uploadToChannelID">Channel</label>
+                  <select name="uploadToChannelID" class="form-control" required>
+                    {% if ownedChannels != None %}
+                        {% for chan in ownedChannels %}
+                            <option value="{{chan.id}}">{{chan.channelName}}</option>
+                        {% endfor %}
+                    {% endif %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="uploadTopic">Topic</label>
+                  <select name="uploadTopic" class="form-control" required>
+                    {% for topic in uploadTopics %}
+                    <option value="{{topic.id}}">{{topic.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
+                <!-- hidden dropzone -->
+                <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
+                <div class="form-group row">
+                  <div class="col-2 my-auto">
+                    <button id="thumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+                  </div>
+                  <div class="col-10">
+                    <input class="form-control pl-2 form-control" id="thumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+                    <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+                  </div>
+                </div>
+
+                <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+                </div>
+
+                <span>Video file <span id="videouploadstatus"></span></span>
+                <!-- hidden dropzone -->
+                <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
+                <div class="form-group row">
+                  <div class="col-2 my-auto">
+                    <button id="videouploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+                  </div>
+                  <div class="col-10">
+                    <input class="form-control pl-2 form-control" id="videoFilenameDisplay" name="videoFilename" placeholder="Filename" disabled />
+                    <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
+                  </div>
+                </div>
+
+                <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="videouploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="videoDescription">Video description</label>
+                  <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
+                <button id="uploadbutton" type="submit" class="btn btn-success" disabled>Upload</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
 {% block body %}
 {% endblock %}
 </div>
 
-<script>
-    var navbar_pin = true;
-
-    let root = document.documentElement;
-    let navbar_width = root.style.getPropertyValue('--navbar-width');
-    let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
-
-    function toggle_navbar_pin() {
-        var elem = document.getElementById('navbar_pin_button');
-        if (navbar_pin === true) {
-            navbar_pin = false;
-            elem.className = "far fa-dot-circle"
-        } else {
-            navbar_pin = true;
-            elem.className = "fas fa-dot-circle"
-        }
-    }
-
-    function showNav(){
-        root.style.setProperty('--navbar-width', navbar_width);
-        root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
-    }
-    function hideNav(){
-        if (navbar_pin === false) {
-            root.style.setProperty('--navbar-width', "66px");
-        }
-    }
-</script>
+<script src="/static/js/ui.js"></script>
+<script src="/static/js/uploadvideo.js"></script>
 
 </body>
 </html>
