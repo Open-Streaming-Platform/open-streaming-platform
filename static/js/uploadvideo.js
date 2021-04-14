@@ -36,6 +36,8 @@ function s4() {
     .substring(1);
 }
 
+videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+
 // Function to Build Upload Socket for Video Uploads
 function videouploadsocket() {
       var conn_options = {
