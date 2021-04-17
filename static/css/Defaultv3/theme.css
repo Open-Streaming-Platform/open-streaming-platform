@@ -159,3 +159,82 @@ body {
     font-weight: lighter;
 }
 
+.server-announcement {
+  width: 90%;
+  background-color: #383838;
+  margin: 20px auto 10px;
+  border-radius: 5px;
+  min-height: 200px;
+}
+
+.server-announcement-header {
+  padding: 10px;
+  width:100%;
+  background-color: #606060;
+  color:white;
+  font-size: 22px;
+  text-shadow: 2px 1px 5px #000000;
+  border-radius: 5px 5px 0 0;
+}
+
+.server-announcement-data {
+  padding: 10px;
+  color:white;
+  font-size: 18px;
+}
+
+.box-shadow-light {
+    box-shadow: 1px 2px 6px black;
+}
+/* Video List and Card */
+.index-video-title {
+    font-size:1.35em;
+    width: 100%;
+}
+
+.itemList {
+    padding-left: 0;
+}
+
+.displayCard {
+    width: 310px;
+    margin-bottom:15px;
+    list-style-type:none;
+}
+
+.displayCard a {
+    color: black;
+}
+
+.displayCard .displayCard-thumbnail img {
+    width: 310px;
+    height: 175px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+}
+
+.displayCard .video-badges {
+  position: relative;
+  top:30px;
+  height: 30px;
+  margin-top: -30px;
+}
+
+.displayCard .displayCard-counts {
+  position: relative;
+  background-color: rgba(40, 40, 40, 0.65);
+  top:-25px;
+  height:25px;
+  margin-bottom:-25px;
+}
+
+.displayCard .displayCard-counts i {
+  color:#1D60DB;
+}
+
+.displayCard .card-data {
+    width:100%;
+    margin-top:10px;
+    font-size:1.15em;
+}

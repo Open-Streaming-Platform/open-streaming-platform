@@ -1,22 +1,35 @@
-{%  block head %}
-    <title>{{sysSettings.siteName}}</title>
-    <!-- Open Graph Metadata -->
-    <meta name="twitter:card" content="app" />
-    <meta property="og:site_name" content="{{sysSettings.siteName}}" />
-    <meta property="og:title" content="{{sysSettings.siteName}}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{request.url|normalize_url}}" />
-    <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
-{%  endblock %}
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}}</title>
+<meta name="twitter:card" content="app" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{sysSettings.siteName}}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+{% endblock %}
 
 {% block body %}
-{% if sysSettings.serverMessage != "" and sysSettings.serverMessage != None %}
-<div class="server-announcement box-shadow-light">
-    <div class="server-announcement-header">{{sysSettings.serverMessageTitle}}</div>
-    <div class="server-announcement-data">{{sysSettings.serverMessage|markdown}}</div>
-</div>
-{% endif %}
 
+
+<div class="container-fluid p-2" id="index-live-container">
+    {% if sysSettings.serverMessage != "" and sysSettings.serverMessage != None %}
+    <div class="jumbotron shadow mt-2 p-3">
+        <div class="row p-2">
+            <div>
+                <h2 class="display-5"><b>{{sysSettings.serverMessageTitle}}</b></h2>
+            </div>
+        </div>
+        <div class="row p-2">
+            <div>
+                {{sysSettings.serverMessage|markdown}}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
 <div class="container-fluid p-2" id="index-streams-container">
     <div class="row mx-4">
         <div class="index-video-title"><b>Live Now</b></div>
@@ -138,6 +151,9 @@
     </div>
 </div>
 
+{% endblock %}
 
+{% block scripts %}
 
 {% endblock %}
+
