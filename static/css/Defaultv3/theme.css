@@ -206,6 +206,10 @@ body {
     color: white;
 }
 
+.displayCard a:hover {
+    text-decoration: none;
+}
+
 .displayCard .displayCard-thumbnail img {
     width: 310px;
     height: 175px;
@@ -246,6 +250,10 @@ body {
 
 .displayCard-other a {
     color: white;
+}
+
+.displayCard-other a:hover {
+    text-decoration: none;
 }
 
 .displayCard-other img {
