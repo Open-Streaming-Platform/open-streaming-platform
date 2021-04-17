@@ -238,3 +238,48 @@ body {
     margin-top:10px;
     font-size:1.15em;
 }
+
+.displayCard-other {
+    width: 600px;
+    margin-bottom:15px;
+}
+
+.displayCard-other a {
+    color: black;
+}
+
+.displayCard-other img {
+    width: 275px;
+    height: 155px;
+    object-fit: contain;
+    overflow: hidden;
+    background-color: black;
+    float: left;
+}
+
+.displayCard-other .card-data {
+    margin-left:18px;
+    float: left;
+    font-size:1em;
+}
+
+.displayCard-other .card-data .displayCard-footer {
+    font-size:1em;
+    position:relative;
+    left: -10px;
+    top: 40px;
+}
+
+.card-data img {
+  width:48px;
+  height:48px;
+  float:left;
+}
+
+.card-data .metadata {
+  float:left;
+  position:relative;
+  top:-18px;
+  height:18px;
+  margin-bottom:-18px;
+}
