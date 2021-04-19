@@ -45,7 +45,7 @@
           </span>
           {% endif %}
       </div>
-      <div class="player ml-2">
+      <div class="player mx-2">
         <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay playsinline controls preload="auto" data-setup='{"fluid": true}'>
           <source src="{{streamURL}}" type="video/mp4">
           <p class="vjs-no-js">
@@ -101,8 +101,8 @@
       <div class="row m-2">
         <div class="metadata-panel col-12 shadow">
             <div class="index-video-title"><b>{{video.channelName}}</b></div>
-            <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
-            <div><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+            <div class="index-video-date"><b>{{video.videoDate|normalize_date}}</b></div>
+            <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
         </div>
         <div class="metadata-panel col-12 shadow">
             <div><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
