@@ -25,8 +25,6 @@
   <div class="row">
     <div class="col-lg-8 col-xs-12 col-sm-12">
       <div class="row m-2">
-
-
           <span class="float-right mx-1">
             {% if current_user.is_authenticated %}
             <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
@@ -46,7 +44,6 @@
             </span>
           </span>
           {% endif %}
-        </div>
       </div>
       <div class="player ml-2">
         <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay playsinline controls preload="auto" data-setup='{"fluid": true}'>
