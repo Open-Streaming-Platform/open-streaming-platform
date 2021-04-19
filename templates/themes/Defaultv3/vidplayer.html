@@ -21,11 +21,11 @@
 
 {% block body %}
 
-<div class="container-fluid">
+<div class="container-fluid video-page-content">
   <div class="row">
     <div class="col-lg-8 col-xs-12 col-sm-12">
       <div class="row m-2">
-        <div class="index-video-title"><b>{{video.channelName}}</b>
+
 
           <span class="float-right mx-1">
             {% if current_user.is_authenticated %}
@@ -88,7 +88,7 @@
             {% endif %}
           </span>
           <span class="d-none d-md-inline float-right">
-            <i class="fas fa-users mr-2"></i> {{video.views}}
+            <i class="fas fa-eye mr-2"></i> {{video.views}}
             <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
               <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
             </button>
@@ -102,10 +102,14 @@
         </div>
       </div>
       <div class="row m-2">
-        <div class="col-12 nopadding">
-          <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-          <div><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
-          <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+        <div class="metadata-panel col-12 shadow">
+            <div class="index-video-title"><b>{{video.channelName}}</b>
+            <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
+            <div><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
+        </div>
+        <div class="metadata-panel col-12 shadow">
+            <div><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+            <div><b>{{ video.channel.owner.username }}</b></div>
         </div>
       </div>
 

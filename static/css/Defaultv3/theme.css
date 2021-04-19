@@ -291,3 +291,14 @@ body {
   height:18px;
   margin-bottom:-18px;
 }
+
+.video-page-content {
+    padding-left: 40px;
+}
+
+.metadata-panel {
+    background-color: #676363;
+    border: 0 black solid;
+    border-radius: 5px;
+    width: 100%;
+}
