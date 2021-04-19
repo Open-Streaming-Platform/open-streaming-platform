@@ -153,6 +153,10 @@ body {
     width: 35px;
 }
 
+.navbar-button .badge {
+    margin-left: 9px;
+}
+
 .navbar-description {
     margin-left: 20px;
     text-transform: uppercase;
