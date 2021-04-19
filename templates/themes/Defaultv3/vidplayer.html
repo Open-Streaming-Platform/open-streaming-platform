@@ -86,9 +86,6 @@
           </span>
           <span class="d-none d-md-inline float-right">
             <i class="fas fa-eye mr-2"></i> {{video.views}}
-            <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-              <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
-            </button>
           </span>
         </div>
         <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
@@ -100,6 +97,11 @@
       </div>
       <div class="row m-2">
         <div class="metadata-panel col-12 shadow">
+            <span>
+                <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+                <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
+                </button>
+            </span>
             <div class="index-video-title"><b>{{video.channelName}}</b></div>
             <div class="index-video-date"><b>{{video.videoDate|normalize_date}}</b></div>
             <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
