@@ -308,3 +308,12 @@ body {
 .metadata-panel .index-video-title, .index-video-date, .index-video-topic {
     text-shadow: 0 1px 4px black;
 }
+.metadata-panel .upvoteVideoContainer {
+    float: right;
+    position: relative;
+    top: 25%;
+}
+
+.metadata-panel .upvoteVideoContainer button {
+    width: 125px;
+}

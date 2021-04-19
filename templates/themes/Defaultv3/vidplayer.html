@@ -97,7 +97,7 @@
       </div>
       <div class="row m-2">
         <div class="metadata-panel col-12 shadow">
-            <span>
+            <span class="upvoteVideoContainer">
                 <button id="upvoteButton" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
                 <i id="upVoteIcon" class="far fa-thumbs-up"> <span id="totalUpvotes"></span></i>
                 </button>
