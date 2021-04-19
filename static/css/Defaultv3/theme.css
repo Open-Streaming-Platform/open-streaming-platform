@@ -296,9 +296,16 @@ body {
     padding-left: 40px;
 }
 
+.recordedStream {
+    width:99%;
+    display:block;
+}
+
 .metadata-panel {
     background-color: #676363;
     border: 0 black solid;
     border-radius: 5px;
     width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
 }
