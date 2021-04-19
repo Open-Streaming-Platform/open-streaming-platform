@@ -129,14 +129,13 @@ body {
 }
 
 .osp-content {
-    margin-left: var(--navbar-width);
-    margin-right: var(--navbar-width);
+    padding-right: 66px;
     width:100%;
     height: 100%;
     background-color: #474747;
     position: fixed;
     top: 0;
-    left: 0;
+    left: var(--navbar-width);
     z-index: 1;
 }
 
