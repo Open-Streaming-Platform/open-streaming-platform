@@ -316,7 +316,11 @@ body {
     top: 25%;
 }
 
-.metadata-panel .upvoteVideoContainer, .subscriptionContainer  button {
+.metadata-panel .upvoteVideoContainer button {
+    width: 125px;
+}
+
+.metadata-panel .subscriptionContainer button {
     width: 125px;
 }
 
