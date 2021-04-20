@@ -193,10 +193,6 @@ body {
     width: 100%;
 }
 
-.index-channel-name, .index-channel-user {
-    font-size:1.35em;
-}
-
 .itemList {
     padding-left: 0;
 }
