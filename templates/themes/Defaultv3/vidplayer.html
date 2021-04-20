@@ -106,7 +106,7 @@
             <div class="index-video-date"><b>{{video.videoDate|normalize_date}}</b></div>
             <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
         </div>
-        <div class="metadata-panel col-12 shadow">
+        <div class="metadata-panel col-12 shadow channel-metadata-container">
             <div class="channel-metadata float-left">
                 <img class="userPhoto" src="/images/{{video.channel.owner.pictureLocation}}" alt="UserPicture" onerror="this.src='/static/img/user2.png';">
             </div>

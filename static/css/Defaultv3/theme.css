@@ -320,12 +320,18 @@ body {
     width: 125px;
 }
 
-.channel-metadata .userPhoto {
-    margin-top: auto;
-    margin-bottom: auto;
+.metadata-panel .channel-metadata-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-.channel-metadata .userPhoto img {
+.channel-metadata .userPhoto {
+    margin-left: -10px;
+    margin-right: 10px;
+}
+
+.channel-metadata .userPhoto {
     border: 0 solid black;
-    border-radius: 100px 100px;
+    border-radius: 100px;
+    width: 56px;
 }
