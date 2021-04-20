@@ -187,6 +187,9 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block modals %}
 {% if video.owningUser == current_user.id %}
 <!-- Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
@@ -364,8 +367,6 @@
     </div>
   </div>
 </div>
-
-
 {% endif %}
 
 <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
@@ -454,7 +455,6 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
