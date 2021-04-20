@@ -319,3 +319,13 @@ body {
 .metadata-panel .upvoteVideoContainer button {
     width: 125px;
 }
+
+.channel-metadata .userPhoto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.channel-metadata .userPhoto img {
+    border: 0 solid black;
+    border-radius: 100px 100px;
+}
