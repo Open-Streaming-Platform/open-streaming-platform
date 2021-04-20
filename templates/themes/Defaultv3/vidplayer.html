@@ -107,8 +107,13 @@
             <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
         </div>
         <div class="metadata-panel col-12 shadow">
-            <div><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
-            <div><b>{{ video.channel.owner.username }}</b></div>
+            <div class="channel-metadata">
+                <img class="round" src="/images/{{video.channel.owner.pictureLocation}}" alt="UserPicture" onerror="this.src='/static/img/user2.png';">
+            </div>
+            <span>
+                <div><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+                <div><b>{{ video.channel.owner.username }}</b></div>
+            </span>
         </div>
       </div>
 
