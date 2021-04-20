@@ -310,13 +310,13 @@ body {
 .metadata-panel .index-video-title, .index-video-date, .index-video-topic {
     text-shadow: 0 1px 4px black;
 }
-.metadata-panel .upvoteVideoContainer {
+.metadata-panel .upvoteVideoContainer, .subscriptionContainer {
     float: right;
     position: relative;
     top: 25%;
 }
 
-.metadata-panel .upvoteVideoContainer button {
+.metadata-panel .upvoteVideoContainer, .subscriptionContainer  button {
     width: 125px;
 }
 
@@ -328,9 +328,6 @@ body {
 .channel-metadata .userPhoto {
     margin-left: -10px;
     margin-right: 10px;
-}
-
-.channel-metadata .userPhoto {
     border: 0 solid black;
     border-radius: 100px;
     width: 56px;
