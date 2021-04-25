@@ -98,7 +98,7 @@
             <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
         </div>
         {% if video.description != None %}
-        <div class="metadata-subpanel">
+        <div class="metadata-subpanel shadow">
             <div class="videodescription"><p>{{video.description|markdown}}</p></div>
         </div>
         {% endif %}
@@ -118,6 +118,9 @@
                 <div class="index-channel-name"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
                 <div class="index-channel-user"><b>{{ video.channel.owner.username }}</b></div>
             </span>
+        </div>
+        <div class="metadata-subpanel shadow">
+            <div class="channeldescription"><p>{{video.channel.description|markdown}}</p></div>
         </div>
       </div>
     </div>
