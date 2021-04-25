@@ -324,6 +324,11 @@ body {
     width: 125px;
 }
 
+.metadata-panel .index-channel-name {
+    font-size: 1.25em;
+    text-shadow: 0 1px 4px black;
+}
+
 .channel-metadata-container {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -335,4 +340,13 @@ body {
     border: 0 solid black;
     border-radius: 100px;
     width: 56px;
+}
+
+.video-buttons-row {
+    width: 100%;
+}
+
+.video-buttons-row .index-video-views {
+    margin-top: auto;
+    margin-bottom: auto;
 }
