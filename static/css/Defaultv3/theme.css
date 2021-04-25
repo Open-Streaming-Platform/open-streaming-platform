@@ -130,6 +130,7 @@ body {
 
 .osp-content {
     margin-right: var(--navbar-width);
+    margin-top: 20px;
     height: 100%;
     position: relative;
     left: var(--navbar-width);
