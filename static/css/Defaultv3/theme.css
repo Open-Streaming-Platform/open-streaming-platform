@@ -25,6 +25,10 @@ body {
     background-color: #343a40;
 }
 
+.card {
+    background-color: #212529;
+}
+
 .osp-navbar {
     width: var(--navbar-width);
     height: 100%;
