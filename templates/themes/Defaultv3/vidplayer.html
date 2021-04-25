@@ -24,21 +24,6 @@
 <div class="container-fluid video-page-content">
   <div class="row">
     <div class="col-lg-8 col-xs-12 col-sm-12">
-      <div class="row m-2">
-
-          {% if video.channel.protected and sysSettings.protectionEnabled %}
-          <span class="float-right">
-            <span class="badge badge-warning">
-              <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
-            </span>
-          {% if video.published == False %}
-            <span class="badge badge-warning">
-              <i class="fas fa-video-slash"></i> Unpublished
-            </span>
-          {% endif %}
-          </span>
-          {% endif %}
-      </div>
       <div class="player mx-2">
         <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" autoplay playsinline controls preload="auto" data-setup='{"fluid": true}'>
           <source src="{{streamURL}}" type="video/mp4">
@@ -79,7 +64,21 @@
             {% endif %}
           </span>
           <span class="d-none d-md-inline float-right index-video-views">
-            <i class="fas fa-eye mr-2"></i> {{video.views}}
+            {% if video.channel.protected and sysSettings.protectionEnabled %}
+            <h5>
+                <span class="badge badge-warning">
+                    <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
+                </span>
+            </h5>
+            {% endif %}
+            {% if video.published == False %}
+            <h5>
+                <span class="badge badge-warning">
+                  <i class="fas fa-video-slash"></i> Unpublished
+                </span>
+            </h5>
+            {% endif %}
+            <span><i class="fas fa-eye mr-2"></i> {{video.views}}</span>
           </span>
         </div>
         <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
