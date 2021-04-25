@@ -121,9 +121,15 @@
       <div class="row m-2">
         <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
       </div>
-      {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
+
+    </div>
+    <div class="col-lg-4 col-sm-12 col-xs-12">
       <div class="row m-2">
         <div class="index-video-title mb-2"><b>Comments</b></div>
+        {% if video.allowComments == False %}
+            Comments have been disabled.
+        {% endif %}
+        {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
         {% for comment in video.comments %}
         <div class="comment shadow mb-2">
           <div class="row">
@@ -137,9 +143,9 @@
             </div>
             <div class="col-lg-2 col-md-2">
               <div class="float-md-right float-left">
-                {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
                     class="fas fa-thumbs-up"></i>
-                  {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                  {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
                       class="far fa-thumbs-up"></i>
                     {% endif %}
                     <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
@@ -151,43 +157,7 @@
           </div>
         </div>
         {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-    <div class="col-lg-4 col-sm-12 col-xs-12">
-      <div class="row m-2">
-        <div class="index-video-title mb-2 mx-2"><b>Other Videos</b></div>
-          <ul class="itemList list d-flex flex-wrap justify-content-start">
-            {% for vid in randomRecorded[:4] %}
-            <li class="displayCard mx-4 my-3">
-                <a href="/play/{{vid.id}}">
-                  <div class="displayCard-thumbnail zoom">
-                    <div class="video-badges">
-                      {% if vid.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
-                    </div>
-                    <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{vid.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
-                    <div class="displayCard-counts">
-                      <span class="displayCard-left align-left" style="color:white;">
-                        <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{vid.id|get_Video_Upvotes}}</b></span>
-                      </span>
-                      <span class="displayCard-right" style="float:right;color:white;">
-                        <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{vid.views}}</b></span>
-                        <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{vid.length|hms_format}}</b></span>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="card-data">
-                    <img class="rounded" src="/images/{{vid.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-                    <div class="metadata">
-                      <div class="card-cut-text name ml-2"><b>{{vid.channelName|limit_title}}</b></div>
-                      <div class="card-cut-text topic ml-2">{{vid.topic|get_topicName}}</div>
-                      <span class="date" style="display:none;">{{vid.videoDate|normalize_date}}</span>
-                    </div>
-                  </div>
-                </a>
-            </li>
-            {% endfor %}
-          </ul>
+        {% endif %}
       </div>
     </div>
   </div>
