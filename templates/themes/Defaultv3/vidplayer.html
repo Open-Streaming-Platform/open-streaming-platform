@@ -140,7 +140,7 @@
                     <small>{{comment.timestamp|normalize_date}}</small><br>
                     <p>{{comment.comment|markdown}}</p>
                 </div>
-                <div class="col-lg-2 col-md-2">
+                <div class="col-3">
                   <div class="float-md-right float-left">
                     {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
                         class="fas fa-thumbs-up"></i>
