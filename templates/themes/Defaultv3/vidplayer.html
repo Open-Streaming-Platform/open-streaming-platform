@@ -97,6 +97,12 @@
             <div class="index-video-date"><b>{{video.videoDate|normalize_date}}</b></div>
             <div class="index-video-topic"><b><a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
         </div>
+        {% if video.description != None %}
+        <div class="metadata-subpanel">
+            <div class="videodescription"><p>{{video.description|markdown}}</p></div>
+        </div>
+        {% endif %}
+
         <div class="metadata-panel col-12 shadow channel-metadata-container">
             <span class="subscriptionContainer">
                 {% if current_user.is_authenticated %}
@@ -113,10 +119,6 @@
                 <div class="index-channel-user"><b>{{ video.channel.owner.username }}</b></div>
             </span>
         </div>
-      </div>
-
-      <div class="row m-2">
-        <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
       </div>
     </div>
     <div class="col-lg-4 col-sm-12 col-xs-12">

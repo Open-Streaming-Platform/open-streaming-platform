@@ -329,6 +329,14 @@ body {
     text-shadow: 0 1px 4px black;
 }
 
+.metadata-subpanel {
+    background-color: #404040;
+    border: 0 black solid;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
 .channel-metadata-container {
     padding-top: 10px;
     padding-bottom: 10px;
