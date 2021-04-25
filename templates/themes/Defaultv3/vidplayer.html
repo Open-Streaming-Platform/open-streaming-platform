@@ -122,43 +122,43 @@
         <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
       </div>
     </div>
-    <!--<div class="col-lg-4 col-sm-12 col-xs-12">
+    <div class="col-lg-4 col-sm-12 col-xs-12">
       <div class="row m-2">
         <div class="index-video-title mb-2"><b>Comments</b></div>
         {% if video.allowComments == False %}
             Comments have been disabled.
         {% endif %}
         {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
-        {% for comment in video.comments %}
-        <div class="comment shadow mb-2">
-          <div class="row">
-            <div class="col-auto mr-auto">
-              <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b><br>
-              <img src="{{comment.userID|get_pictureLocation}}" class="comment-user-img shadow" onerror="this.src='/static/img/user2.png';"></a>
-            </div>
-            <div class="col">
-              <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
-              <p>{{comment.comment|markdown}}</p>
-            </div>
-            <div class="col-lg-2 col-md-2">
-              <div class="float-md-right float-left">
-                {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
-                    class="fas fa-thumbs-up"></i>
-                  {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
-                      class="far fa-thumbs-up"></i>
-                    {% endif %}
-                    <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
-                  {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
-                  <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
-                  {% endif %}
+            {% for comment in video.comments %}
+            <div class="comment shadow mb-2">
+              <div class="row">
+                <div class="col-auto mr-auto">
+                  <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b><br>
+                  <img src="{{comment.userID|get_pictureLocation}}" class="comment-user-img shadow" onerror="this.src='/static/img/user2.png';"></a>
+                </div>
+                <div class="col">
+                  <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
+                  <p>{{comment.comment|markdown}}</p>
+                </div>
+                <div class="col-lg-2 col-md-2">
+                  <div class="float-md-right float-left">
+                    {% if check_isCommentUpvoted(comment.id) %}<button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                        class="fas fa-thumbs-up"></i>
+                      {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success shadow" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                          class="far fa-thumbs-up"></i>
+                        {% endif %}
+                        <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
+                      {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
+                      <a href="/play/{{video.id}}/comment?action=delete&commentID={{comment.id}}" class="btn btn-danger shadow"><i class="fas fa-trash-alt"></i></a>
+                      {% endif %}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
         {% endif %}
       </div>
-    </div>-->
+    </div>
   </div>
 </div>
 
