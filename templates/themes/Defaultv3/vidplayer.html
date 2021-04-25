@@ -84,9 +84,6 @@
         </div>
         <div class="video-buttons-mobile d-block d-sm-block d-md-none mt-2">
           <i class="fas fa-users mr-2"></i> {{video.views}}
-          <button id="upvoteButtonMobile" type="button" class="btn btn-outline-success shadow ml-3" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-            <i id="upVoteIconMobile" class="far fa-thumbs-up"> <span id="totalUpvotesMobile"></span></i>
-          </button>
         </div>
       </div>
       <div class="row m-2">
