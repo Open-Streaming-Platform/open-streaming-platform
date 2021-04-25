@@ -332,13 +332,13 @@ body {
 .metadata-subpanel {
     position: relative;
     top: -5px;
-    background-color: #404040;
+    background-color: #2e3132;
     border: 0 black solid;
     border-radius: 0 0 5px 5px;
     width: 100%;
     margin-bottom: 5px;
     z-index: 1;
-    padding: 5px;
+    padding: 5px 10px 5px 10px;
 }
 
 .channel-metadata-container {
