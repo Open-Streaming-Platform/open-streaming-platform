@@ -304,7 +304,7 @@ body {
     border-radius: 5px;
     width: 100%;
     margin-top: 10px;
-    margin-bottom: 5px;
+    z-index: 50;
 }
 
 .metadata-panel .index-video-title, .index-video-date, .index-video-topic {
@@ -330,11 +330,15 @@ body {
 }
 
 .metadata-subpanel {
+    position: relative;
+    top: -5px;
     background-color: #404040;
     border: 0 black solid;
-    border-radius: 5px;
+    border-radius: 0 0 5px 5px;
     width: 100%;
     margin-bottom: 5px;
+    z-index: 1;
+    padding: 5px;
 }
 
 .channel-metadata-container {
