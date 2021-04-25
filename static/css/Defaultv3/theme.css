@@ -129,7 +129,7 @@ body {
 }
 
 .osp-content {
-    padding-right: 66px;
+    margin-right: var(--navbar-width);
     height: 100%;
     position: relative;
     left: var(--navbar-width);
