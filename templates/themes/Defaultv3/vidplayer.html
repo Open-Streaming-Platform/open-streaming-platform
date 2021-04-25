@@ -128,6 +128,9 @@
         {% if video.allowComments == False %}
             Comments have been disabled.
         {% endif %}
+        {% if video.comments == [] %}
+            There are no comments for this video.
+        {% endif %}
         {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
             {% for comment in video.comments %}
             <div class="comment shadow mb-2">
