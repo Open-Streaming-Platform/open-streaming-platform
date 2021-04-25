@@ -358,3 +358,11 @@ body {
     width: 100%;
     padding: 5px;
 }
+
+.comment-user-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 200px;
+    margin-left: auto;
+    margin-right: auto
+}

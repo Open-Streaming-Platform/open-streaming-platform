@@ -109,7 +109,7 @@
                 {% endif %}
             </span>
             <div class="channel-metadata float-left">
-                <img class="userPhoto" src="/images/{{video.channel.owner.pictureLocation}}" alt="UserPicture" onerror="this.src='/static/img/user2.png';">
+                <img class="userPhoto shadow" src="/images/{{video.channel.owner.pictureLocation}}" alt="UserPicture" onerror="this.src='/static/img/user2.png';">
             </div>
             <span>
                 <div class="index-channel-name"><b><a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
@@ -129,7 +129,7 @@
           <div class="row">
             <div class="col-auto mr-auto">
               <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b><br>
-              <img src="{{comment.userID|get_pictureLocation}}" class="round" width="64px" height="64px" onerror="this.src='/static/img/user2.png';"></a>
+              <img src="{{comment.userID|get_pictureLocation}}" class="comment-user-img shadow" onerror="this.src='/static/img/user2.png';"></a>
             </div>
             <div class="col">
               <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
