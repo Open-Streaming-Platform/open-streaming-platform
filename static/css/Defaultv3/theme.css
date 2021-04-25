@@ -343,10 +343,18 @@ body {
 }
 
 .video-buttons-row {
+    margin-top: 4px;
     width: 100%;
 }
 
 .video-buttons-row .index-video-views {
-    margin-top: auto;
-    margin-bottom: auto;
+    margin-top: 8px;
+}
+
+.comment {
+    background-color: #676363;
+    border: 0 black solid;
+    border-radius: 5px;
+    width: 100%;
+    margin: 5px;
 }
