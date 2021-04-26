@@ -134,7 +134,6 @@ body {
 
 .osp-content {
     margin-right: var(--navbar-width);
-    margin-top: 20px;
     height: 100%;
     position: relative;
     left: var(--navbar-width);
@@ -367,12 +366,25 @@ body {
     margin-top: 8px;
 }
 
+.comments_column {
+    background-color: #141212;
+    padding: 5px;
+}
+
+.comments_column .index-comments-title {
+    text-shadow: 0 2px 5px black;
+    margin-left: 20px;
+    font-size: 1.25em;
+    width: 100%;
+}
+
 .comment {
     background-color: #676363;
     border: 0 black solid;
     border-radius: 5px;
     width: 100%;
     padding: 5px;
+    margin-left: 20px;
 }
 
 .comment-user-img {
