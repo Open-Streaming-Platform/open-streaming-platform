@@ -301,6 +301,10 @@ body {
     padding-left: 40px;
 }
 
+.content_column {
+    margin-top: 20px;
+}
+
 .metadata-panel {
     background-color: #676363;
     border: 0 black solid;
@@ -368,14 +372,15 @@ body {
 
 .comments_column {
     background-color: #141212;
-    padding: 5px;
 }
 
 .comments_column .index-comments-title {
     text-shadow: 0 2px 5px black;
-    margin-left: 20px;
     font-size: 1.25em;
     width: 100%;
+    background-color: #847979;
+    text-align: center;
+
 }
 
 .comment {
@@ -385,6 +390,7 @@ body {
     width: 100%;
     padding: 5px;
     margin-left: 20px;
+    margin-right: 20px;
 }
 
 .comment-user-img {
