@@ -384,18 +384,17 @@ body {
 }
 
 .comment {
-    background-color: #676363;
+    background-color: #454B53;
     border: 0 black solid;
-    border-radius: 5px;
     width: 100%;
-    padding: 5px;
-    margin-left: 20px;
-    margin-right: 20px;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .comment-user-img {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     border-radius: 200px;
     margin-left: auto;
     margin-right: auto
