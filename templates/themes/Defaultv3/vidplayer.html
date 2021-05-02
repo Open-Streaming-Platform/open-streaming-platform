@@ -133,10 +133,10 @@
             <div class="comment shadow mb-2">
               <div class="row">
                 <div class="col-auto mr-auto">
-                  <img src="{{comment.userID|get_pictureLocation}}" class="comment-user-img shadow" onerror="this.src='/static/img/user2.png';"></a>
+                  <img src="{{comment.userID|get_pictureLocation}}" class="comment-user-img shadow" onerror="this.src='/static/img/user2.png';">
                 </div>
                 <div class="col">
-                    <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b><br>
+                    <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b></a><br>
                     <small>{{comment.timestamp|normalize_date}}</small><br>
                     <p>{{comment.comment|markdown}}</p>
                 </div>
