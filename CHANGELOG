@@ -1,3 +1,7 @@
+0.9.0
+==============================================
+OSP-Core: Fixed a type confusion with Admin API Keys that would error out due to a variable being used twice - Issue #388
+
 0.8.8
 ==============================================
 ** NOTE ** This version will require a manual change with Nginx configurations on upgrade - See (https://wiki.openstreamingplatform.com/Install/Upgrading#versions-088-to-versions-088) prior to updating from any version before 0.8.8
