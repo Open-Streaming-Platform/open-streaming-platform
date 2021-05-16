@@ -202,7 +202,6 @@ body {
 
 .user-info-bar {
   background-color: #383838;
-  margin: 20px var(--navbar-width) 10px 30px;
   border-radius: 5px;
   min-height: 200px;
 }
