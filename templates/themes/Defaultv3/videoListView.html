@@ -6,33 +6,35 @@
 {% block body %}
 
 {% if channelData is defined %}
-<div class="user-info-bar box-shadow-light m-5">
-  <div class="user-info-bar-header">
-    <img class="user-img rounded-circle" src="/images/{{channelData.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-    <span class="user-title">
-      <span class="user-title-buttons float-right">
-        {% if channelData.stream|length > 0 %}
-            <span class="shadow no-hover btn btn-danger"><i class="fas fa-video"></i> Live</span>
-        {% else %}
-            <span class="shadow no-hover btn btn-secondary"><i class="fas fa-video-slash"></i> Offline</span>
-        {% endif %}
-        {% if channelData.protected and sysSettings.protectionEnabled %}
-            <span class="shadow no-hover btn btn-warning"><i class="fas fa-user-lock"></i> Protected</span>
-        {% endif %}
-            <a href="/view/{{channelData.channelLoc}}"><span class="shadow btn btn-success"><i class="fas fa-tv"></i> Live Channel</span></a>
-        {% if current_user.is_authenticated %}
-            <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
-        {% else %}
-            <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
-        {% endif %}
-      </span>
-      <h5>{{channelData.channelName}}</h5>
-      <h6><a href="/streamer/{{channelData.owningUser}}/">{{channelData.owningUser|get_userName}}</a></h6>
-    </span>
-  </div>
-  <div class="user-info-bar-data">
-    {{channelData.description|markdown}}
-  </div>
+<div class="container-fluid p-2">
+    <div class="user-info-bar box-shadow-light">
+      <div class="user-info-bar-header">
+        <img class="user-img rounded-circle" src="/images/{{channelData.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+        <span class="user-title">
+          <span class="user-title-buttons float-right">
+            {% if channelData.stream|length > 0 %}
+                <span class="shadow no-hover btn btn-danger"><i class="fas fa-video"></i> Live</span>
+            {% else %}
+                <span class="shadow no-hover btn btn-secondary"><i class="fas fa-video-slash"></i> Offline</span>
+            {% endif %}
+            {% if channelData.protected and sysSettings.protectionEnabled %}
+                <span class="shadow no-hover btn btn-warning"><i class="fas fa-user-lock"></i> Protected</span>
+            {% endif %}
+                <a href="/view/{{channelData.channelLoc}}"><span class="shadow btn btn-primary"><i class="fas fa-tv"></i> Live Channel</span></a>
+            {% if current_user.is_authenticated %}
+                <button id="chanSubStateButton" class="btn {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i> Unsubscribe{% else %}<i class="far fa-star"></i> Subscribe{% endif %}</button>
+            {% else %}
+                <button class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i> Subscribe</button>
+            {% endif %}
+          </span>
+          <h5>{{channelData.channelName}}</h5>
+          <h6><a href="/streamer/{{channelData.owningUser}}/">{{channelData.owningUser|get_userName}}</a></h6>
+        </span>
+      </div>
+      <div class="user-info-bar-data">
+        {{channelData.description|markdown}}
+      </div>
+    </div>
 </div>
 {% endif %}
 
