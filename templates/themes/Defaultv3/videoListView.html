@@ -9,7 +9,7 @@
 <div class="container-fluid justify-content-center" style="width:100%">
     <div class="user-info-bar box-shadow-light m-5">
       <div class="user-info-bar-header">
-        <img class="user-img rounded-circle" src="/images/{{channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+        <img class="user-img rounded-circle" src="/images/{{channelData.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
         <span class="user-title">
           <span class="user-title-buttons float-right">
             {% if channelData.stream|length > 0 %}
