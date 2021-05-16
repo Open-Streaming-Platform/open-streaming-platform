@@ -200,6 +200,51 @@ body {
   text-shadow: 2px 1px 5px #000000;
 }
 
+.user-info-bar {
+  background-color: #383838;
+  margin: 20px var(--navbar-width) 10px 30px;
+  border-radius: 5px;
+  min-height: 200px;
+}
+
+.user-info-bar-header {
+  padding: 10px;
+  width:100%;
+  background-color: #606060;
+  color:white;
+  font-size: 22px;
+  text-shadow: 2px 1px 5px #000000;
+  border-radius: 5px 5px 0 0;
+}
+
+.user-info-bar-header .user-img {
+  width: 52px;
+  height: 52px;
+  float: left;
+}
+
+.user-info-bar-header .user-title {
+  font-size: 18px;
+  vertical-align:top;
+  line-height:24px;
+  font-size: 22px;
+  display: block;
+  padding-left:65px;
+}
+
+.user-info-bar-header .user-title .user-title-buttons {
+  margin: 10px auto 10px;
+}
+
+.user-info-bar-data {
+  padding: 10px;
+  color:white;
+}
+
+.no-hover {
+  pointer-events: none;
+}
+
 .box-shadow-light {
     box-shadow: 1px 2px 6px black;
 }
