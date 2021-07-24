@@ -1132,7 +1132,7 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
-                flash("Channel Edited")
+                flash("Channel Saved")
                 db.session.commit()
             else:
                 flash("Invalid Change Attempt", "Error")
