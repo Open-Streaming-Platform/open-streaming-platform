@@ -35,6 +35,9 @@ def view_page(loc):
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
+            # Reload due to detached session during Valid User Check:
+            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+
 
         # Pull ejabberd Chat Options for Room
         #from app import ejabberd

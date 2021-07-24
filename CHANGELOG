@@ -1,6 +1,6 @@
 0.8.8
 ==============================================
-** NOTE ** This version will require a manual change with Nginx configurations on upgrade - See (URLGOESHERE) prior to updating from any version before 0.8.8
+** NOTE ** This version will require a manual change with Nginx configurations on upgrade - See (https://wiki.openstreamingplatform.com/Install/Upgrading#versions-088-to-versions-088) prior to updating from any version before 0.8.8
 All: Reworked how Nginx Handles Custom Parameters.  All Custom Inputs for Nginx have now been moved to /usr/local/nginx/conf/custom/osp-<modulename>-custom-purpose.conf.
 OSP-Proxy: Added New OSP-Proxy Service.  Acts as an Edge Nginx HLS Proxy.  Instead of receiving a full copy of all streams like OSP-Edge, it pulls video as needed from the RTMP servers and caches as needed.
 OSP-Config: Added Creation of the /var/www/images/stickers directory during install so permissions are set properly to www-data
