@@ -1,4 +1,4 @@
-version = "0.8.8"
+version = "0.8.9"
 appDBVersion = 0.75
 processUUID = None
 
