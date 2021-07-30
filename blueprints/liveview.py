@@ -35,6 +35,9 @@ def view_page(loc):
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
+            # Reload due to detached session during Valid User Check:
+            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+
 
         # Pull ejabberd Chat Options for Room
         #from app import ejabberd
@@ -49,19 +52,26 @@ def view_page(loc):
             bannedWordArray.append(bannedWord.word)
 
         streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+
+        # Stream URL Generation
         streamURL = ''
         edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-        if edgeQuery == []:
+        if sysSettings.proxyFQDN != None:
             if sysSettings.adaptiveStreaming is True:
-                streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+                streamURL = '/proxy-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
-                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
-        else:
+                streamURL = '/proxy/' + requestedChannel.channelLoc + '/index.m3u8'
+        elif edgeQuery != []:
             # Handle Selecting the Node using Round Robin Logic
             if sysSettings.adaptiveStreaming is True:
                 streamURL = '/edge-adapt/' + requestedChannel.channelLoc + '.m3u8'
             else:
                 streamURL = '/edge/' + requestedChannel.channelLoc + '/index.m3u8'
+        else:
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/live-adapt/' + requestedChannel.channelLoc + '.m3u8'
+            else:
+                streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
 
         topicList = topics.topics.query.all()
         chatOnly = request.args.get("chatOnly")
@@ -137,7 +147,7 @@ def view_page(loc):
 
         isEmbedded = request.args.get("embedded")
 
-        requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
         if isEmbedded is None or isEmbedded == "False" or isEmbedded == "false":
 

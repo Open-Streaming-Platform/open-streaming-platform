@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort, flash
+from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort, flash, Response
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
 
@@ -253,3 +253,45 @@ def auth_check():
     db.session.close()
     abort(400)
 
+@root_bp.route('/rtmpCheck', methods=["POST","GET"])
+def rtmp_check():
+    channelID = ""
+    if 'X-Channel-ID' in request.headers:
+        channelID = request.headers['X-Channel-ID']
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelID).first()
+        if channelQuery is not None:
+            streamList = channelQuery.stream
+            if streamList != []:
+                streamEntry = streamList[0]
+                if streamEntry.rtmpServer is not None:
+                    rtmpServerID = streamEntry.rtmpServer
+                    rtmpServer = settings.rtmpServer.query.filter_by(id=rtmpServerID).first()
+                    resp = Response("OK")
+                    resp.headers['X_UpstreamHost'] = rtmpServer.address
+                    return resp
+                return abort(404)
+            return abort(404)
+        return abort(404)
+    return abort(404)
+
+# Redirect Streams
+@root_bp.route('/proxy/<channelLoc>/<file>')
+def proxy_redirect(channelLoc, file):
+    sysSettings = settings.settings.query.first()
+    proxyAddress = sysSettings.proxyFQDN
+    protocol = sysSettings.siteProtocol
+    return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file)
+
+@root_bp.route('/proxy-adapt/<channelLoc>.m3u8')
+def proxy_adaptive_redirect(channelLoc):
+    sysSettings = settings.settings.query.first()
+    proxyAddress = sysSettings.proxyFQDN
+    protocol = sysSettings.siteProtocol
+    return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '.m3u8')
+
+@root_bp.route('/proxy-adapt/<channelLoc>/<file>')
+def proxy_adaptive_subfolder_redirect(channelLoc, file):
+    sysSettings = settings.settings.query.first()
+    proxyAddress = sysSettings.proxyFQDN
+    protocol = sysSettings.siteProtocol
+    return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '/' + file)

@@ -77,6 +77,7 @@ class Channel(db.Model):
             'id': self.id,
             'channelEndpointID': self.channelLoc,
             'owningUser': self.owningUser,
+            'owningUsername': self.owner.username,
             'channelName': self.channelName,
             'description': self.description,
             'channelImage': "/images/" + str(self.imageLocation),

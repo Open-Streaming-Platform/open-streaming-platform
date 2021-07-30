@@ -193,7 +193,7 @@ install_nginx_core() {
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-1.17.3
           then
-                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11 --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
+                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11 --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
                   echo 50 | dialog --title "Installing Nginx-Core" --gauge "Installing Nginx" 10 70 0
                   sudo make install >> $OSPLOG 2>&1
           else
@@ -214,6 +214,10 @@ install_nginx_core() {
   sudo mkdir /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
   sudo mkdir /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo mkdir /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo mkdir /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
+
+  sudo cp $DIR/installs/nginx-core/osp-custom-servers.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/nginx-core/osp-custom-serversredirect.conf /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
   # Enable SystemD
   echo 75 | dialog --title "Installing Nginx-Core" --gauge "Setting up Nginx SystemD" 10 70 0
@@ -253,6 +257,7 @@ install_osp_rtmp() {
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/nginx/custom/osp-rtmp-* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Install OSP-RTMP Application" 10 70 0
   sudo mkdir /opt/osp-rtmp >> $OSPLOG 2>&1
@@ -274,6 +279,50 @@ install_redis() {
   sudo apt-get install redis -y >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing Redis" --gauge "Configuring Redis" 10 70 0
   sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf >> $OSPLOG 2>&1
+}
+
+install_osp_proxy() {
+  user_input=$(\
+  dialog --nocancel --title "Setting up OSP-Proxy" \
+         --inputbox "Enter your OSP-Core Protocol and FQDN (ex:https://osp.example.com):" 8 80 \
+  3>&1 1>&2 2>&3 3>&-)
+  # Grab Configuration
+  echo 10 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/osp-proxy-locations.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/osp-proxy-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/cors.conf /usr/local/nginx/conf/cors.conf >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/custom/osp-proxy-custom* /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
+
+  # Setup OSP Proxy Directory
+  echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+
+  # Install OSP Proxy
+  echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  sudo mkdir /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp /opt/osp-proxy/conf/config.py.dist /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
+  sudo chmod +x /opt/osp-proxy/updateUpstream.sh >> $OSPLOG 2>&1
+  sudo mkdir -p /var/cache/nginx/osp_cache_temp >> $OSPLOG 2>&1
+
+  # Setup Configuration with IP
+  echo 75 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
+  sed -i "s|#CHANGEMETOOSPCORE|$user_input|g" /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
+
+  # Setup Install OSP-Proxy Service
+  echo 85 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
+  sudo cp $DIR/installs/osp-proxy/setup/gunicorn/osp-proxy.service /etc/systemd/system/osp-proxy.service >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-proxy.service >> $OSPLOG 2>&1
+  sudo systemctl start osp-proxy.service >> $OSPLOG 2>&1
+
+  # Enable OSP Upstream Updater
+  echo 90 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Upstream Updater" 10 70 0
+  cronjob="*/5 * * * * /opt/osp-proxy/updateUpstream.sh"
+  (sudo crontab -u root -l;sudo echo "$cronjob" ) | sudo crontab -u root -
+  sudo systemctl restart cron >> $OSPLOG 2>&1
+
 }
 
 install_osp_edge () {
@@ -307,11 +356,12 @@ install_osp_edge () {
   sudo cp $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-edge/setup/nginx/custom/osp-edge-custom* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
   # Setup Configuration with IP
   echo 40 | dialog --title "Installing OSP-Edge" --gauge "Installing Configuration Files" 10 70 0
-  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/custom/osp-edge-custom-allowedpub.conf >> $OSPLOG 2>&1
+  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/custom/osp-edge-custom-nginxstat.conf >> $OSPLOG 2>&1
 
   # Make OSP-Edge Directory for RTMP sockets
   echo 60 | dialog --title "Installing OSP-Edge" --gauge "Creating OSP-Edge Directories" 10 70 0
@@ -409,6 +459,7 @@ install_osp() {
   sudo mkdir -p "$web_root/live" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/videos" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/images" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/images/stickers" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
 
@@ -442,11 +493,21 @@ upgrade_osp() {
   if cd /opt/osp
   then
     sudo git pull >> $OSPLOG 2>&1
+    sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
     sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
   else
     echo "Error: /opt/osp Does not Exist" >> $OSPLOG 2>&1
   fi
+}
+
+upgrade_proxy() {
+  sudo git pull >> $OSPLOG 2>&1
+  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
+  sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
 }
 
 upgrade_rtmp() {
@@ -464,35 +525,13 @@ upgrade_ejabberd() {
 }
 
 upgrade_edge() {
-  user_input=$(\
-  dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-RTMP IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
-
-  IFS="," read -a rtmpArray <<< $user_input
-  rtmpString=""
-  for i in "${rtmpArray[@]}"
-  do
-        rtmpString+="allow publish $i;\n"
-  done
-
-  core_input=$(\
-  dialog --nocancel --title "Setting up OSP-Edge" \
-         --inputbox "Enter your OSP-Core IP Address. Use Commas to Separate Multiple Values (ex: 192.168.0.4,192.168.8.5):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
-
-  IFS="," read -a coreArray <<< $core_input
-  coreString=""
-  for i in "${coreArray[@]}"
-  do
-        coreString+="allow $i;\n"
-  done
-
+  sudo cp -rf $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
+}
 
-  sed -i "s/#ALLOWRTMP/$rtmpString/g" /usr/local/nginx/conf/services/osp-edge-rtmp.conf >> $OSPLOG 2>&1
-  sed -i "s/#ALLOWCORE/$coreString/g" /usr/local/nginx/conf/servers/osp-edge-servers.conf >> $OSPLOG 2>&1
+upgrade_nginxcore() {
+  sudo cp -rf $DIR/installs/nginx-core/nginx.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
 }
 
 ##########################################################
@@ -511,7 +550,8 @@ install_menu() {
       "2" "Install OSP-Core" \
       "3" "Install OSP-RTMP" \
       "4" "Install OSP-Edge" \
-      "5" "Install eJabberd" \
+      "5" "Install OSP-Proxy" \
+      "6" "Install eJabberd" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -557,7 +597,7 @@ install_menu() {
         upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
-        result=$(echo "OSP Install Completed! \n\nVisit http:\\FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
+        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
         display_result "Install OSP"
         ;;
       2 )
@@ -587,6 +627,16 @@ install_menu() {
       5 )
         echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
+        echo 45 | dialog --title "Installing OSP" --gauge "Installing Redis" 10 70 0
+        install_redis
+        echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP-Proxy" 10 70 0
+        install_osp_proxy
+        echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
+        sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
+        ;;
+      6 )
+        echo 30 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
+        install_nginx_core
         echo 60 | dialog --title "Installing OSP" --gauge "Installing ejabberd" 10 70 0
         install_ejabberd
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -609,8 +659,9 @@ upgrade_menu() {
       "2" "Upgrade OSP-Core" \
       "3" "Upgrade OSP-RTMP" \
       "4" "Upgrade OSP-Edge" \
-      "5" "Upgrade eJabberd" \
-      "6" "Upgrade DB" \
+      "5" "Upgrade OSP-Proxy" \
+      "6" "Upgrade eJabberd" \
+      "7" "Upgrade DB" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -634,6 +685,8 @@ upgrade_menu() {
       1 )
         echo 10 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP Core" 10 70 0
         upgrade_osp
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 20 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-RTMP" 10 70 0
         upgrade_rtmp
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
@@ -654,6 +707,8 @@ upgrade_menu() {
       2 )
         echo 10 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP Core" 10 70 0
         upgrade_osp
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
         upgrade_db
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -664,6 +719,8 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       3 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 20 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-RTMP" 10 70 0
         upgrade_rtmp
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -674,6 +731,8 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       4 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 50 | dialog --title "Upgrade OSP" --gauge "Upgrading Edge" 10 70 0
         upgrade_edge
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
@@ -681,6 +740,16 @@ upgrade_menu() {
         display_result "Upgrade OSP"
         ;;
       5 )
+        echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading OSP-Proxy" 10 70 0
+        upgrade_proxy
+        echo 70 | dialog --title "Upgrade OSP" --gauge "Restarting OSP-Proxy" 10 70 0
+        sudo systemctl restart osp-proxy >> $OSPLOG 2>&1
+        result=$(echo "OSP-Proxy Upgrade Completed!")
+        display_result "Upgrade OSP"
+        ;;
+      6 )
+        echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
+        upgrade_nginxcore
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
         upgrade_ejabberd
         echo 50 | dialog --title "Upgrade OSP" --gauge "Restarting ejabberd" 10 70 0
@@ -690,7 +759,7 @@ upgrade_menu() {
         result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
-      6)
+      7)
         upgrade_db
         result=$(echo "Database Upgrade Complete")
         display_result "Upgrade OSP"
@@ -760,7 +829,7 @@ if [ $# -eq 0 ]
         echo "Available Commands:"
         echo ""
         echo "help: Displays this help"
-        echo "install: Installs/Reinstalls OSP Components - Options: osp, osp-core, nginx, rtmp, edge, ejabberd"
+        echo "install: Installs/Reinstalls OSP Components - Options: osp, osp-core, nginx, rtmp, edge, proxy, ejabberd"
         echo "restart: Restarts OSP Components - Options: osp, osp-core, nginx, rtmp, ejabberd"
         echo "upgrade: Upgrades OSP Components - Options: osp, osp-core, rtmp, ejabberd, db"
         echo "reset: Resets OSP Compoents to Defaults - Options: nginx, ejabberd"
@@ -787,6 +856,10 @@ if [ $# -eq 0 ]
           rtmp )
             install_nginx_core >> $OSPLOG 2>&1
             install_osp_rtmp >> $OSPLOG 2>&1
+            ;;
+          proxy )
+            install_nginx_core >> $OSPLOG 2>&1
+            install_osp_proxy >> $OSPLOG 2>&1
             ;;
           edge )
             install_nginx_core >> $OSPLOG 2>&1
