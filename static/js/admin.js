@@ -447,6 +447,10 @@ function toggleActiveEdge(edgeID) {
     socket.emit('toggleOSPEdge', {edgeID: edgeID});
 }
 
+function toggleHiddenRTMP(rtmpID) {
+    socket.emit('toggleHideOSPRTMP', {rtmpID: rtmpID});
+}
+
 function deleteRTMP(rtmpID) {
     socket.emit('deleteOSPRTMP', {rtmpID: rtmpID});
     var rtmpTableRow = document.getElementById('rtmpTableRow-' + rtmpID);
