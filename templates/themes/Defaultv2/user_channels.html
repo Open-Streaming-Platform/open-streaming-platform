@@ -23,7 +23,7 @@
         <div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelDash-{{channel.id}}')">
             <div class="row">
                 <div class="ml-2 col-auto align-middle my-auto">
-                    <b><h2><i class="fas fa-bars"></i></h2></b>
+                    <b><h2><i class="fas fa-chevron-circle-down"></i></h2></b>
                 </div>
                 <div class="col">
                     <h5>{{channel.channelName}}</h5>
@@ -44,7 +44,7 @@
         <div class="row" id="channelDash-{{channel.id}}" style="z-index:-1;display:none;">
           <div class="ml-4 col-auto shadow">
             <div class="h-100">
-              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');" data-toggle="tooltip" data-placement="right" title="Dashboard"><h2><i class="fas fa-th-large"></i></h2></a></div>
+              <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','statWindow');" data-toggle="tooltip" data-placement="right" title="Dashboard"><h2><i class="fas fa-chart-bar"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','videoWindow');" data-toggle="tooltip" data-placement="right" title="Videos"><h2><i class="fas fa-video"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','clipWindow');" data-toggle="tooltip" data-placement="right" title="Clips"><h2><i class="fas fa-cut"></i></h2></a></div>
               <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channel.id}}','settingsWindow');" data-toggle="tooltip" data-placement="right" title="Settings"><h2><i class="fas fa-cog"></i></h2></a></div>
@@ -504,7 +504,7 @@
                         <div>
                             <div class="row">
                                 <div class="col-12">
-                                    <input type="submit" class="btn btn-success" value="&#128393; Save">
+                                    <button type="submit" class="btn btn-success"><span class="fa fa-save"> Save</span></button>
                                     <button class="btn btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"> Delete</i></button>
                                 </div>
                             </div>
@@ -936,8 +936,8 @@
         <input type="hidden" id="type" name="type" value="new">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        <input type="submit" class="btn btn-success" value="Save">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success"><span class="fa fa-save"> Save</span></button>
       </div>
       </form>
     </div>
