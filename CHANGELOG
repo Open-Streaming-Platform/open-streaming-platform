@@ -1,3 +1,11 @@
+0.8.9
+==============================================
+OSP-Core: Corrects SMTP ssl.SSLError [WRONG_VERSION_NUMBER] issues using the "Test Email" Feature in First Run and Settings - MR !272
+OSP-Core: Corrected an issue where Protected Channel Live Views were causing a 500 error due to Session detachment - 7d4c3dfb621ba5e7c8746bf16c0a814e40b3f859
+OSP-Core: Fixed APIKey type confusion bug - 6b7a2304760cc747dd7548d3bb48f38c37b6ffee
+OSP-Core: Changed Label for Channel change commit button from "Edit" to "Save" - Issue #395 - 015aad00ba4c97051890536c69e8452154f6c10a
+OSP-Core: Minor UI and HTML refactor Tweaks - MR !277
+
 0.8.8
 ==============================================
 ** NOTE ** This version will require a manual change with Nginx configurations on upgrade - See (https://wiki.openstreamingplatform.com/Install/Upgrading#versions-088-to-versions-088) prior to updating from any version before 0.8.8
