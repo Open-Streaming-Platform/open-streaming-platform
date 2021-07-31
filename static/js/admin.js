@@ -347,6 +347,7 @@ function rebuildEdgeConf(){
 }
 
 function testEmail(){
+    var smtpReceiver = prompt("E-mail address to send test email to?");
     smtpAddress = document.getElementById("smtpAddress").value;
     smtpPort = document.getElementById("smtpPort").value;
     smtpTLS = document.getElementById("smtpTLS").checked;
@@ -358,7 +359,7 @@ function testEmail(){
     document.getElementById("emailsuccess").style.display = "None";
     document.getElementById("emailfailure").style.display = "None";
 
-    socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver:smtpSender});
+    socket.emit('testEmail', {smtpServer:smtpAddress, smtpPort:smtpPort, smtpTLS: smtpTLS, smtpSSL:smtpSSL, smtpUsername:smtpUser, smtpPassword:smtpPassword, smtpSender:smtpSender, smtpReceiver: smtpReceiver});
 }
 
 function deleteOAuthProvider(providerID) {
@@ -444,6 +445,10 @@ function deleteEdge(edgeID) {
 
 function toggleActiveEdge(edgeID) {
     socket.emit('toggleOSPEdge', {edgeID: edgeID});
+}
+
+function toggleHiddenRTMP(rtmpID) {
+    socket.emit('toggleHideOSPRTMP', {rtmpID: rtmpID});
 }
 
 function deleteRTMP(rtmpID) {
