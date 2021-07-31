@@ -120,21 +120,27 @@ table {
     border-left: 4px solid green;
     padding-bottom: 16px;
 }
+
 label.btn, .btn{
-  background-color:#272B30 !important;
-  border-radius: 0.1rem !important;
+    background-color: #484e55;
+    border-radius: 0.1rem !important;
 }
+
+.toggle-handle {
+    background-color: #1b6acd !important;
+}
+
 .chatbox>input{
-background-color:#272B30 !important;
-color: #aaa !important;
-border: 1px solid #3488db !important;
-border-radius: 0.1rem !important;
+    background-color:#272B30 !important;
+    color: #aaa !important;
+    border: 1px solid #3488db !important;
+    border-radius: 0.1rem !important;
 }
 input, textarea, select{
-background-color:#272B30 !important;
-color: #aaa !important;
-border: 1px solid #000 !important;
-border-radius: 0.1rem !important;
+    background-color:#272B30 !important;
+    color: #aaa !important;
+    border: 1px solid #000 !important;
+    border-radius: 0.1rem !important;
 }
 .btn-outline-success{
     color: #3488db !important;

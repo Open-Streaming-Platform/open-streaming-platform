@@ -1132,7 +1132,7 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
-                flash("Channel Edited")
+                flash("Channel Saved")
                 db.session.commit()
             else:
                 flash("Invalid Change Attempt", "Error")
@@ -1141,7 +1141,7 @@ def settings_channels_page():
     topicList = topics.topics.query.all()
     user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
 
-    activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True).all()
+    activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
     for server in activeRTMPQuery:
         address = server.address
