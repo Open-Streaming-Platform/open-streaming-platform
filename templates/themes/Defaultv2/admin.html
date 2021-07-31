@@ -486,6 +486,7 @@
                                                 <tr>
                                                     <th>RTMP Server Address</th>
                                                     <th>Active?</th>
+                                                    <th>Hide</th>
                                                     <th>Options</th>
                                                 </tr>
                                             </thead>
@@ -495,6 +496,8 @@
                                                     <td>{{ server.address }}</td>
                                                     <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="activeRTMPNode" name="activeRTMPSelect" autocomplete="new-password"
                                                            {% if server.active == True %} checked {% endif %} onchange="toggleActiveRTMP('{{server.id}}');"></td>
+                                                    <td><input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="hiddenRTMPNode" name="hideRTMPSelect" autocomplete="new-password"
+                                                           {% if server.hide == True %} checked {% endif %} onchange="toggleHiddenRTMP('{{server.id}}');"></td>
                                                     <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteRTMP('{{server.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                 </tr>
                                             {%  endfor %}

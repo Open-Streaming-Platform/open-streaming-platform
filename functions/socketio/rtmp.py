@@ -23,6 +23,25 @@ def toggleRTMPServer(message):
         db.session.close()
         return abort(401)
 
+@socketio.on('toggleHideOSPRTMP')
+def toggleRTMPServer(message):
+    if current_user.has_role('Admin'):
+        rtmpID = int(message['rtmpID'])
+        rtmpQuery = settings.rtmpServer.query.filter_by(id=rtmpID).first()
+        if rtmpQuery is not None:
+            rtmpQuery.hide = not rtmpQuery.hide
+            db.session.commit()
+            db.session.close()
+            return 'OK'
+        else:
+            db.session.commit()
+            db.session.close()
+            return abort(500)
+    else:
+        db.session.commit()
+        db.session.close()
+        return abort(401)
+
 @socketio.on('deleteOSPRTMP')
 def deleteRTMPServer(message):
     if current_user.has_role('Admin'):
