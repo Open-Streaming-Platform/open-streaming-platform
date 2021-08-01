@@ -1,3 +1,7 @@
+0.8.10
+==============================================
+OSP-Core: Added /apiv1/server/ping endpoint for up/down checks
+
 0.8.9
 ==============================================
 OSP-Core: Added the ability to hide an RTMP server from displaying as a stream endpoint on the "My Channels" page - ed468058e097f044f8a68ad541fa31065ed1d0f9, 830898296b06525641ad6555f24a9ca5a1c790ff

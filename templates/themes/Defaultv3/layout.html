@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="shortcut icon" href="/static/favicon.ico">
+  <!--<link rel="manifest" href="/static/site.webmanifest">-->
+
+  <link rel=stylesheet type=text/css href="/static/css/shared.css">
+  <link rel=stylesheet type=text/css href="/static/css/slider.css">
+  <link rel=stylesheet type=text/css href="/static/css/range.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
+  <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
+  <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+  <link rel="stylesheet" href="/static/vendor/easymde/css/easymde.min.css">
+  <link rel=stylesheet type=text/css href="/static/css/Defaultv2/theme.css">
+  <script src="/static/vendor/socketio/js/socket.io.js"></script>
+  <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
+  <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+  <script src="/static/vendor/easymde/js/easymde.min.js"></script>
+
+  {% block head %}
+
+  {% endblock %}
+
+</head>
+
+<body>
+
+  <div style="position: absolute; top: 65px; right: 70px;z-index:9999999;" id="toastDiv">
+    {%- with messages = get_flashed_messages(with_categories=true) -%}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">
+      <div class="toast-header">
+        <strong class="mr-auto">
+          <span class="toast-box {% if category == 'message' %}gray {% elif category == 'error'%}red {% elif category == 'success' %}green {% endif %}"> </span>
+          <span style="margin-left:5px;">{{category|upper}}</span>
+        </strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="toast-body">
+        {{message}}
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {%- endwith %}
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="moveModalTitle">About OSP</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <img src="/static/img/logo.png">
+            <p class="pt-4">
+              Open Streaming Platform Version <b>{{sysSettings.version}}</b>
+            </p>
+          </div>
+          <div>
+            <table>
+              <tbody>
+                <tr>
+                  <td><i class="pr-2 fas fa-globe-europe"></i> Website</td>
+                  <td><a href="https://openstreamingplatform.com">openstreamingplatform.com</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-gitlab"></i> Code repository</td>
+                  <td><a href="https://gitlab.com/Deamos/flask-nginx-rtmp-manager/">Deamos/flask-nginx-rtmp-manager/</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-reddit"></i> Reddit</td>
+                  <td><a href="https://reddit.com/r/openstreamingplatform">/r/openstreamingplatform</a></td>
+                </tr>
+                <tr>
+                  <td><i class="pr-2 fab fa-discord"></i> Discord</td>
+                  <td><a href="https://discord.gg/Jp5rzbD">Open Streaming Platform</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center">
+            <p class="pt-4">
+              <i class="fab fa-osi"></i><br>
+              MIT License
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if current_user.has_role("Uploader") %}
+  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="canceluploads()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="videoTitle">Title</label>
+              <input class="form-control" id="videoTitle" name="videoTitle">
+            </div>
+            <div class="form-group">
+              <label for="uploadToChannelID">Channel</label>
+              <select name="uploadToChannelID" class="form-control" required>
+                {% if ownedChannels != None %}
+                {% for chan in ownedChannels %}
+                <option value="{{chan.id}}">{{chan.channelName}}</option>
+                {% endfor %}
+                {% endif %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="uploadTopic">Topic</label>
+              <select name="uploadTopic" class="form-control" required>
+                {% for topic in uploadTopics %}
+                <option value="{{topic.id}}">{{topic.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="thumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="thumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+              </div>
+            </div>
+
+            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <span>Video file <span id="videouploadstatus"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="videouploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="videoFilenameDisplay" name="videoFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
+              </div>
+            </div>
+
+            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="videouploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <div class="form-group">
+              <label for="videoDescription">Video description</label>
+              <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
+            <button id="uploadbutton" type="submit" class="btn btn-success" disabled>Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if sysSettings.maintenanceMode == True %}
+  <div class="alert alert-secondary m-2" role="alert">
+    Server is in Maintenance Mode!
+  </div>
+  {% endif %}
+
+  <div id="loading-spinner" class="spinner-overlay">
+      <div class="spinner"></div>
+  </div>
+
+  {% block body %}
+
+  {% endblock %}
+
+  <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+  <script src="/static/vendor/listjs/js/list.min.js"></script>
+  <script type="text/javascript">
+    Dropzone.autoDiscover = false;
+  </script>
+  {% block scripts %}
+
+  {% endblock %}
+<!--
+  <script>
+
+  function showSpinner() {
+    disableScrolling();
+    loader = document.getElementById('loading-spinner');
+    loader.style.display = 'flex';
+    loader.hide();
+    loader.fadeIn();
+  }
+
+  function hideSpinner() {
+    enableScrolling();
+    loader = document.getElementById('loading-spinner');
+    loader.fadeOut();
+  }
+
+  function disableScrolling(){
+    var x=window.scrollX;
+    var y=window.scrollY;
+    window.onscroll=function(){window.scrollTo(x, y);};
+  }
+
+  function enableScrolling(){
+      window.onscroll=function(){};
+  }
+
+  function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/; SameSite=Lax";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  }
+  function eraseCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999;';
+  }
+
+  </script>
+
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+
+  <script>
+    var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
+  </script>
+
+  <script type="application/javascript">
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+
+    videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+
+    function videouploadsocket() {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
+      socket.on('disconnect', function () {
+        socket.emit('cancelUpload', { data: videofilename });
+      });
+      window.addEventListener("beforeunload", function (e) {
+        socket.emit('cancelUpload', { data: videofilename });
+        return null;
+      });
+    }
+
+
+    var thumbnaildropper = new Dropzone(
+      '#thumbnaildropper', {
+      acceptedFiles: 'image/png',
+      previewTemplate: '<div></div>',
+      clickable: '#thumbnailuploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/video-files',
+      maxFilesize: 5, // megabytes
+      chunkSize: 1000000 // bytes
+    }
+    );
+    thumbnaildropper.on('sending', function (file, xhr, formData) {
+      formData.append('ospfilename', videofilename + '.png');
+    });
+    thumbnaildropper.on("uploadprogress", function (file, progress, bytesSent) {
+      progress = Math.floor(bytesSent / file.size * 100);
+      $('#thumbnailuploadprogress').width(progress + "%");
+      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = '<b>' + progress + '%</b>';
+    });
+    thumbnaildropper.on("addedfile", function (file) {
+      document.getElementById('thumbnailFilename').value = videofilename + '.png';
+      document.getElementById('thumbnailFilenameDisplay').value = file.name;
+      videouploadsocket();
+
+    });
+    thumbnaildropper.on("success", function (file) {
+      document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
+      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = 'Upload complete';
+
+    });
+    thumbnaildropper.on('error', function (file, response) {
+      document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
+      document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response;
+    });
+
+    var videodropper = new Dropzone(
+      '#videodropper', {
+      acceptedFiles: 'video/mp4',
+      createImageThumbnails: false,
+      previewTemplate: '<div></div>',
+      clickable: '#videouploadbutton',
+      addRemoveLinks: true,
+      paramName: 'file',
+      chunking: true,
+      forceChunking: true,
+      url: '/upload/video-files',
+      maxFilesize: 4096, // megabytes
+      chunkSize: 1000000 // bytes
+    }
+    );
+    videodropper.on('sending', function (file, xhr, formData) {
+      formData.append('ospfilename', videofilename + '.mp4');
+    });
+    videodropper.on("uploadprogress", function (file, progress, bytesSent) {
+      progress = Math.floor(bytesSent / file.size * 100);
+      $('#videouploadprogress').width(progress + "%");
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = '<b>' + progress + '%</b>';
+    });
+    videodropper.on("addedfile", function (file) {
+      document.getElementById('videoFilename').value = videofilename + '.mp4';
+      document.getElementById('videoFilenameDisplay').value = file.name;
+      videouploadsocket();
+
+    });
+    videodropper.on("success", function (file) {
+      $('#uploadbutton').removeAttr('disabled');
+      document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-check">';
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('videouploadprogress').innerHTML = 'Upload complete';
+    });
+    videodropper.on('error', function (file, response) {
+      document.getElementById('videouploadstatus').innerHTML = document.getElementById('videouploadstatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+      document.getElementById('videoFilenameDisplay').value = 'Error: ' + response;
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.toast').toast('show');
+      document.getElementById("uploadform").reset();
+
+    });
+  </script>
+
+  <script>
+    var lazyLoadInstance = new LazyLoad({
+      elements_selector: ".lazy"
+    });
+  </script>
+
+  <script>
+    $(document).ready(function()
+      {
+          $(".gif").hover(
+              function()
+              {
+                var src = $(this).attr("src");
+                $(this).attr("src", src.replace(/\.png$/i, ".gif"));
+              },
+              function()
+              {
+                var src = $(this).attr("src");
+                $(this).attr("src", src.replace(/\.gif$/i, ".png"));
+              });
+      });
+  </script>
+
+
+  <script>
+    function canceluploads() {
+      videodropper.removeAllFiles(true);
+      thumbnaildropper.removeAllFiles(true);
+      document.getElementById("uploadform").reset();
+      document.getElementById('videouploadstatus').innerHTML = "";
+      document.getElementById('videouploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+      document.getElementById('thumbnailuploadstatus').innerHTML = "";
+      document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = "";
+      $('#uploadbutton').attr('disabled');
+      $('#thumbnailuploadprogress').width("0%");
+      $('#videouploadprogress').width("0%");
+    }
+  </script>
+
+  <script>
+    $('.notificationDropdownMenu').click(function(e) {
+      e.stopPropagation();
+    });
+
+    var notificationCountMobile = document.getElementById("notificationCountMobile");
+    var notificationCountNav = document.getElementById("notificationCountNav");
+    var notificationCountMenu = document.getElementById("notificationCountMenu");
+    var notificationCount = {{notifications|count}};
+
+    function clearNotification(notificationID) {
+      var conn_options = {
+        'sync disconnect on unload': true
+      };
+      var socket = io();
+
+      var notification = document.getElementById('notification-' + notificationID);
+      notification.parentNode.removeChild(notification);
+
+      var newCount = notificationCount - 1;
+      if (newCount <= 0) {
+        var emptyNotificationBar = document.getElementById("notification-empty");
+
+        notificationCountMobile.style.display = "none";
+        notificationCountNav.style.display = "none";
+        emptyNotificationBar.style.display = "block";
+        newCount = 0;
+      }
+
+      notificationCountMobile.innerText = newCount;
+      notificationCountNav.innerText = newCount;
+      notificationCountMenu.innerText = newCount;
+      notificationCount = notificationCount - 1;
+
+      socket.emit('markNotificationAsRead', { data: notificationID });
+    }
+
+    function clearAllNotifications() {
+      var ids = $('.notificationBody .notification-box').map(function(){
+        return $(this).attr('id');
+        }).get();
+      ids.forEach(function (item, index) {
+        if (item != 'notification-empty') {
+          item = item.replace('notification-','');
+          clearNotification(item);
+        }
+      });
+    }
+
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function hideDiv(divID) {
+      $('#' + divID).removeClass("show");
+      $('#' + divID).addClass("hide");
+    }
+
+    function createNewBSAlert(message,category) {
+      var randomID = getRandomInt(1,9000);
+      $('#toastDiv').append('<div class="toast fade show" id="toast-' + randomID + '" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">' +
+              '<div class="toast-header"><strong class="mr-auto"><span class="toast-box"> </span><span style="margin-left:5px;">' + category + '</span> </strong>' +
+              '<button type="button" class="ml-2 mb-1 close" onclick="hideDiv(\'toast-' + randomID + '\')" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="toast-body">' + message + '</div></div>')
+    }
+
+  </script>
+-->
+
+</body>
+</html>
