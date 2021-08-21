@@ -133,7 +133,7 @@ $(document).ready(function()
 
 // Save Navbar State
 $(document).ready(function() {
-    var cookieNavbarState = getCookie('ospnavbar');
+    var cookieNavbarState = getCookie('cookieNavbarState');
     if (!(cookieNavbarState == null)) {
         if (cookieNavbarState === 'closed') {
             navbar_pin = false;
