@@ -1,4 +1,5 @@
 :root {
+    --navbar-expanded-width: 320px;
     --navbar-width: 66px;
     --navbar-icon-fontsize: 18px;
 }

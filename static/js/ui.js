@@ -1,5 +1,6 @@
 // UI Variables
 let root = document.documentElement;
+let navbar_max_width = root.style.getPropertyValue('--navbar-expanded-width');
 let navbar_width = root.style.getPropertyValue('--navbar-width');
 let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
 
@@ -23,12 +24,12 @@ function toggle_navbar_pin() {
 }
 
 function showNav(){
-    root.style.setProperty('--navbar-width', navbar_width);
+    root.style.setProperty('--navbar-width', navbar_max_width);
     root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
 }
 
 function hideNav(){
-    root.style.setProperty('--navbar-width', "66px");
+    root.style.setProperty('--navbar-width', navbar_width);
 }
 
 function showSpinner() {
