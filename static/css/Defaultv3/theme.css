@@ -134,6 +134,7 @@ body {
 
 .osp-content {
     /*margin-right: var(--navbar-width);*/
+    margin-left: 50px;
     height: 100%;
     position: relative;
     /*left: var(--navbar-width);*/

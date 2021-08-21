@@ -3,8 +3,6 @@ let root = document.documentElement;
 let navbar_width = root.style.getPropertyValue('--navbar-width');
 let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
 
-var navbar_pin = true;
-
 // UI Class Setup
 var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
 var lazyLoadInstance = new LazyLoad({
@@ -30,9 +28,7 @@ function showNav(){
 }
 
 function hideNav(){
-    if (navbar_pin === false) {
-        root.style.setProperty('--navbar-width', "66px");
-    }
+    root.style.setProperty('--navbar-width', "66px");
 }
 
 function showSpinner() {
