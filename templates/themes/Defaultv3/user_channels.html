@@ -642,88 +642,11 @@
         {% endfor %}
         </div>
     </div>
-    <div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-          <form action="/settings/channels" enctype=multipart/form-data method="post">
-          <div class="modal-header">
-            <h5 class="modal-title" id="newChannelModalTitle">Create New Channel</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-12">
-                    <h4>Channel Image</h4>
-                    <img src="/static/img/video-placeholder.jpg" width="100%">
-                    <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-                </div>
-                <div class="col-xl-6 col-lg-6 col-md-12">
-                    <div class="form-group">
-                        <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
-                        <input type="text" class="form-control" name="channelName" id="channelName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="channeltopic" class="col-form-label"><b>Topic</b></label>
-                        <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
-                            {% for topic in topics %}
-                            <option value={{topic.id}}>{{topic.name}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    {% if sysSettings.allowRecording == True %}
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
-                        </div>
-                        <div class="col-6">
-                            <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect">
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
-                        </div>
-                        <div class="col-6">
-                            <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" >
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-6">
-                            <label for="chatSelect" class="col-form-label"><b>Allow Comments on Recorded Videos</b></label>
-                        </div>
-                        <div class="col-6">
-                            <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" >
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        <label for="description" class="col-form-label"><b>Description</b></label>
-                        <textarea class="form-control" name="description" id="description" value="" maxlength="2048"></textarea>
-                    </div>
-                </div>
-            </div>
-            <input type="hidden" id="type" name="type" value="new">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-            <input type="submit" class="btn btn-success" value="Save">
-          </div>
-          </form>
-        </div>
-      </div>
-    </div>
 </div>
 
+{% endblock %}
+
+{% block modals %}
 <div class="modal fade" id="newStickerModal" tabindex="-1" role="dialog" aria-labelledby="newStickerModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -943,7 +866,86 @@
   </div>
 </div>
 
+<div class="modal fade" id="newChannelModal" tabindex="-1" role="dialog" aria-labelledby="newChannelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <form action="/settings/channels" enctype=multipart/form-data method="post">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newChannelModalTitle">Create New Channel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <h4>Channel Image</h4>
+                <img src="/static/img/video-placeholder.jpg" width="100%">
+                <input type=file name=photo class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12">
+                <div class="form-group">
+                    <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
+                    <input type="text" class="form-control" name="channelName" id="channelName" required>
+                </div>
+                <div class="form-group">
+                    <label for="channeltopic" class="col-form-label"><b>Topic</b></label>
+                    <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                        {% for topic in topics %}
+                        <option value={{topic.id}}>{{topic.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
+                {% if sysSettings.allowRecording == True %}
+                <div class="form-group row">
+                    <div class="col-6">
+                        <label for="recordSelect" class="col-form-label"><b>Record Video </b></label>
+                    </div>
+                    <div class="col-6">
+                        <input type="checkbox" data-toggle="toggle" id="recordSelect" name="recordSelect">
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-group row">
+                    <div class="col-6">
+                        <label for="chatSelect" class="col-form-label"><b>Enable Chat </b></label>
+                    </div>
+                    <div class="col-6">
+                        <input type="checkbox" data-toggle="toggle" id="chatSelect" name="chatSelect" >
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-6">
+                        <label for="chatSelect" class="col-form-label"><b>Allow Comments on Recorded Videos</b></label>
+                    </div>
+                    <div class="col-6">
+                        <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" >
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="description" class="col-form-label"><b>Description</b></label>
+                    <textarea class="form-control" name="description" id="description" value="" maxlength="2048"></textarea>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="type" name="type" value="new">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <input type="submit" class="btn btn-success" value="Save">
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="videoMoveModal" tabindex="-1" role="dialog" aria-labelledby="videoMoveModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -1303,7 +1305,9 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
     var siteProtocol = "{{sysSettings.siteProtocol}}";
     var siteAddress = "{{sysSettings.siteAddress}}";
