@@ -136,7 +136,7 @@ body {
 
 .osp-content {
     /*margin-right: var(--navbar-width);*/
-    margin-left: 50px;
+    margin-left: var(--navbar-min-width);
     height: 100%;
     position: relative;
     /*left: var(--navbar-width);*/
