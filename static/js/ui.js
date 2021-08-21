@@ -1,9 +1,9 @@
 // UI Variables
 let root = document.documentElement;
-let navbar_max_width = root.style.getPropertyValue('--navbar-max-width');
-let navbar_min_width = root.style.getPropertyValue('--navbar-min-width');
-let navbar_width = root.style.getPropertyValue('--navbar-width');
-let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
+let navbar_max_width = getComputedStyle(document.documentElement).getPropertyValue('--navbar-max-width');
+let navbar_min_width = getComputedStyle(document.documentElement).getPropertyValue('--navbar-min-width');
+let navbar_width = getComputedStyle(document.documentElement).getPropertyValue('--navbar-width');
+let navbar_fontsize = getComputedStyle(document.documentElement).getPropertyValue('--navbar-icon-fontsize');
 
 // UI Class Setup
 var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
@@ -25,12 +25,12 @@ function toggle_navbar_pin() {
 }
 
 function showNav(){
-    root.style.setProperty('--navbar-width', root.style.getPropertyValue('--navbar-max-width'));
+    root.style.setProperty('--navbar-width', navbar_max_width);
     root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
 }
 
 function hideNav(){
-    root.style.setProperty('--navbar-width', root.style.getPropertyValue('--navbar-min-width'));
+    root.style.setProperty('--navbar-width', navbar_min_width);
 }
 
 function showSpinner() {
