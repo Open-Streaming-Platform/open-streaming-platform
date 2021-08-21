@@ -32,7 +32,11 @@
         </span>
       </div>
       <div class="user-info-bar-data">
-        {{channelData.description|markdown}}
+        {% if channelData.description != None and channelData.description != "" %}
+            {{channelData.description|markdown}}
+        {% else %}
+            No Description Provided
+        {% endif %}
       </div>
     </div>
 </div>
