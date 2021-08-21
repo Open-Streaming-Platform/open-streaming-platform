@@ -94,7 +94,15 @@
         </div>
         {% if video.description != None %}
         <div class="metadata-subpanel shadow">
-            <div class="videodescription"><p>{{video.description|markdown}}</p></div>
+            <div class="videodescription">
+                <p>
+                    {% ig video.description != None and video.description != "" %}
+                        {{video.description|markdown}}
+                    {% else %}
+                        No Description Provided
+                    {% endif %}
+                </p>
+            </div>
         </div>
         {% endif %}
 
@@ -115,7 +123,15 @@
             </span>
         </div>
         <div class="metadata-subpanel shadow">
-            <div class="channeldescription"><p>{{video.channel.description|markdown}}</p></div>
+            <div class="channeldescription">
+                <p>
+                {% if video.channel.description != None and video.channel.description != "" %}
+                    {{video.channel.description|markdown}}
+                {% else %}
+                    No Description Provided
+                {% endif %}
+                </p>
+            </div>
         </div>
       </div>
     </div>
