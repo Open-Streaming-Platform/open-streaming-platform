@@ -1,7 +1,7 @@
 // UI Variables
 let root = document.documentElement;
 let navbar_max_width = root.style.getPropertyValue('--navbar-expanded-width');
-let navbar_width = root.style.getPropertyValue('--navbar-width');
+let navbar_min_width = root.style.getPropertyValue('--navbar-min-width');
 let navbar_fontsize = root.style.getPropertyValue('--navbar-icon-fontsize');
 
 // UI Class Setup
@@ -29,7 +29,7 @@ function showNav(){
 }
 
 function hideNav(){
-    root.style.setProperty('--navbar-width', navbar_width);
+    root.style.setProperty('--navbar-width', navbar_min_width);
 }
 
 function showSpinner() {
