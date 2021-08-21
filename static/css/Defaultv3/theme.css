@@ -3,6 +3,7 @@
     --navbar-min-width: 66px;
     --navbar-width: 66px;
     --navbar-icon-fontsize: 18px;
+    --displaycard-border-radius: 10px;
 }
 
 body {
@@ -280,6 +281,7 @@ body {
     object-fit: contain;
     overflow: hidden;
     background-color: black;
+    border-radius: var(--displaycard-border-radius);
 }
 
 .displayCard .video-badges {
@@ -294,6 +296,7 @@ body {
   background-color: rgba(40, 40, 40, 0.65);
   top:-25px;
   height:25px;
+  border-radius: 0 0 var(--displaycard-border-radius) var(--displaycard-border-radius);
 }
 
 .displayCard .displayCard-counts i {
