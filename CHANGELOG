@@ -1,6 +1,14 @@
-0.9.0
+0.8.9
 ==============================================
-OSP-Core: Fixed a type confusion with Admin API Keys that would error out due to a variable being used twice - Issue #388
+OSP-Core: Added the ability to hide an RTMP server from displaying as a stream endpoint on the "My Channels" page - ed468058e097f044f8a68ad541fa31065ed1d0f9, 830898296b06525641ad6555f24a9ca5a1c790ff
+OSP-Core: Corrects SMTP ssl.SSLError [WRONG_VERSION_NUMBER] issues using the "Test Email" Feature in First Run and Settings - MR !272
+OSP-Core: Corrected an issue where Protected Channel Live Views were causing a 500 error due to Session detachment - 7d4c3dfb621ba5e7c8746bf16c0a814e40b3f859
+OSP-Core: Fixed APIKey type confusion bug - 6b7a2304760cc747dd7548d3bb48f38c37b6ffee
+OSP-Core: Changed Label for Channel change commit button from "Edit" to "Save" - Issue #395 - 015aad00ba4c97051890536c69e8452154f6c10a
+OSP-Core: Minor UI and HTML refactor Tweaks - MR !277
+OSP-Core: Upgraded Pillow to 8.2.0 for CVE-2021-28675, CVE-2021-28676, CVE-2021-28677, CVE-2021-25287, CVE-2021-25288, & CVE-2021-28678 - 73591a4f39e56f00672cf8bd177da1307c2050e5
+OSP-Core: Upgrade Flask-Cors to 3.0.9 for CVE-2020-25032 - f3bbe83ea81dc561cd8cd40df0983004b0198fcb
+OSP-RTMP: Upgrade Flask-Cors to 3.0.9 for CVE-2020-25032 - f3bbe83ea81dc561cd8cd40df0983004b0198fcb
 
 0.8.8
 ==============================================

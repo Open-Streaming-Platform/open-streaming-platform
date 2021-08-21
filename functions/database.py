@@ -203,6 +203,11 @@ def dbFixes():
         db.session.delete(guest)
     db.session.commit()
 
+    # Check Existing RTMP Servers missing Hide Flag
+    rtmpQuery = settings.rtmpServer.query.filter_by(hide=None).update(dict(hide=False))
+    db.session.commit()
+
+
     return True
 
 def init(app, user_datastore):
