@@ -53,17 +53,17 @@
                 </span>
             </div><br>
             <!-- Visitor Navigation Block -->
-            <a href="/channel"><div class="navbar-button"><i class="fas fa-tv"></i><span class="navbar-description">Channels</span></div></a>
-            <a href="/topic"><div class="navbar-button"><i class="fas fa-hashtag"></i><span class="navbar-description">Topics</span></div></a>
-            <a href="/streamer"><div class="navbar-button"><i class="fas fa-users"></i><span class="navbar-description">Streamers</span></div></a>
+            <a href="/channel"><div class="navbar-button"><i class="fas fa-tv"></i><span class="navbar-description"> Channels</span></div></a>
+            <a href="/topic"><div class="navbar-button"><i class="fas fa-hashtag"></i><span class="navbar-description"> Topics</span></div></a>
+            <a href="/streamer"><div class="navbar-button"><i class="fas fa-users"></i><span class="navbar-description"> Streamers</span></div></a>
         </div>
         <br>
         {% if current_user.has_role('Streamer') %}
         <div class="nav-streamer">
-            <a href="/settings/channels"><div class="navbar-button"><i class="fas fa-video"></i><span class="navbar-description">My Channels</span></div></a>
+            <a href="/settings/channels"><div class="navbar-button"><i class="fas fa-video"></i><span class="navbar-description"> My Channels</span></div></a>
             {% if sysSettings.allowUploads == True %}
                 {% if current_user.has_role('Uploader') %}
-                    <a href="#" data-toggle="modal" data-target="#uploadModal"><div class="navbar-button"><i class="fas fa-upload"></i><span class="navbar-description">Upload</span></div></a>
+                    <a href="#" data-toggle="modal" data-target="#uploadModal"><div class="navbar-button"><i class="fas fa-upload"></i><span class="navbar-description"> Upload</span></div></a>
                 {% endif %}
             {% endif %}
             <br>
@@ -71,7 +71,7 @@
         {%  endif %}
         {% if current_user.has_role('Admin') %}
         <div class="nav-admin">
-            <a href="/settings/admin"><div class="navbar-button"><i class="fas fa-server"></i><span class="navbar-description">Admin</span></div></a>
+            <a href="/settings/admin"><div class="navbar-button"><i class="fas fa-server"></i><span class="navbar-description"> Admin</span></div></a>
         </div>
         {%  endif %}
     </div>
@@ -88,7 +88,7 @@
                         <span class="badge badge-danger" id="notificationCountNav">{{notifications|count}}</span>
                     {% endif %}
                     <span class="navbar-description">Notifications</span></div></a>
-            <a href="/settings/user"><div class="navbar-button"><i class="fas fa-cog"></i><span class="navbar-description">Settings</span></div></a>
+            <a href="/settings/user"><div class="navbar-button"><i class="fas fa-cog"></i><span class="navbar-description"> Settings</span></div></a>
             <hr>
             <!-- User Pic and Username -->
             <div class="userinfo">
