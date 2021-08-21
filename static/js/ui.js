@@ -15,22 +15,22 @@ function toggle_navbar_pin() {
     var elem = document.getElementById('navbar_pin_button');
     if (navbar_pin === true) {
         navbar_pin = false;
+        setCookie('cookieNavbarState','closed', 365);
         elem.className = "far fa-dot-circle"
     } else {
         navbar_pin = true;
+        setCookie('cookieNavbarState','open', 365);
         elem.className = "fas fa-dot-circle"
     }
 }
 
 function showNav(){
-    setCookie('cookieNavbarState','open', 365);
     root.style.setProperty('--navbar-width', navbar_width);
     root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
 }
 
 function hideNav(){
     if (navbar_pin === false) {
-        setCookie('cookieNavbarState','closed', 365);
         root.style.setProperty('--navbar-width', "66px");
     }
 }
@@ -135,13 +135,10 @@ $(document).ready(function()
 $(document).ready(function() {
     var cookieNavbarState = getCookie('ospnavbar');
     if (!(cookieNavbarState == null)) {
-        if (cookieNavbarState === 'open') {
-            showNav();
-        } else {
+        if (cookieNavbarState === 'closed') {
+            navbar_pin = false;
             hideNav();
         }
-    } else {
-        showNav();
     }
 });
 
