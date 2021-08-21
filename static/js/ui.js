@@ -25,14 +25,12 @@ function toggle_navbar_pin() {
 }
 
 function showNav(){
-    console.log('shownav');
-    root.style.setProperty('--navbar-width', navbar_max_width);
+    root.style.setProperty('--navbar-width', root.style.getPropertyValue('--navbar-max-width'));
     root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
 }
 
 function hideNav(){
-    console.log('hidenav');
-    root.style.setProperty('--navbar-width', navbar_min_width);
+    root.style.setProperty('--navbar-width', root.style.getPropertyValue('--navbar-min-width'));
 }
 
 function showSpinner() {
