@@ -96,7 +96,7 @@
         <div class="metadata-subpanel shadow">
             <div class="videodescription">
                 <p>
-                    {% ig video.description != None and video.description != "" %}
+                    {% if video.description != None and video.description != "" %}
                         {{video.description|markdown}}
                     {% else %}
                         No Description Provided
