@@ -1,5 +1,5 @@
 :root {
-    --navbar-width: 300px;
+    --navbar-width: 66px;
     --navbar-icon-fontsize: 18px;
 }
 
@@ -133,10 +133,10 @@ body {
 }
 
 .osp-content {
-    margin-right: var(--navbar-width);
+    /*margin-right: var(--navbar-width);*/
     height: 100%;
     position: relative;
-    left: var(--navbar-width);
+    /*left: var(--navbar-width);*/
     z-index: 1;
 }
 

@@ -132,16 +132,16 @@ $(document).ready(function()
   });
 
 // Save Navbar State
-$(document).ready(function() {
-    var cookieNavbarState = getCookie('cookieNavbarState');
-    if (!(cookieNavbarState == null)) {
-        if (cookieNavbarState === 'closed') {
-            navbar_pin = false;
-            var elem = document.getElementById('navbar_pin_button');
-            elem.className = "far fa-dot-circle"
-            hideNav();
-        }
-    }
-});
+//$(document).ready(function() {
+//    var cookieNavbarState = getCookie('cookieNavbarState');
+//    if (!(cookieNavbarState == null)) {
+//        if (cookieNavbarState === 'closed') {
+//            navbar_pin = false;
+//            var elem = document.getElementById('navbar_pin_button');
+//            elem.className = "far fa-dot-circle"
+//            hideNav();
+//        }
+//    }
+//});
 
 
