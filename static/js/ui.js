@@ -137,6 +137,8 @@ $(document).ready(function() {
     if (!(cookieNavbarState == null)) {
         if (cookieNavbarState === 'closed') {
             navbar_pin = false;
+            var elem = document.getElementById('navbar_pin_button');
+            elem.className = "far fa-dot-circle"
             hideNav();
         }
     }
