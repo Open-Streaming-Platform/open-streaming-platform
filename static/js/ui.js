@@ -23,12 +23,14 @@ function toggle_navbar_pin() {
 }
 
 function showNav(){
+    setCookie('cookieNavbarState','open', 365);
     root.style.setProperty('--navbar-width', navbar_width);
     root.style.setProperty('--navbar-icon-fontsize', navbar_fontsize);
 }
 
 function hideNav(){
     if (navbar_pin === false) {
+        setCookie('cookieNavbarState','closed', 365);
         root.style.setProperty('--navbar-width', "66px");
     }
 }
@@ -128,3 +130,19 @@ $(document).ready(function()
             $(this).attr("src", src.replace(/\.gif$/i, ".png"));
           });
   });
+
+// Save Navbar State
+$(document).ready(function() {
+    var cookieNavbarState = getCookie('ospnavbar');
+    if (!(cookieNavbarState == null)) {
+        if (cookieNavbarState === 'open') {
+            showNav();
+        } else {
+            hideNav();
+        }
+    } else {
+        showNav();
+    }
+});
+
+
