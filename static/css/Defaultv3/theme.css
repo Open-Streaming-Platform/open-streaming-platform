@@ -434,25 +434,21 @@ body {
 }
 
 .comments_column {
-    background-color: #141212;
 }
 
 .comments_column .index-comments-title {
     text-shadow: 0 2px 5px black;
     font-size: 1.25em;
     width: 100%;
-    background-color: #847979;
     text-align: center;
 
 }
 
 .comment {
-    background-color: #454B53;
+    background-color: #2e3132;
     border: 0 black solid;
     width: 100%;
     padding: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
 }
 
 .comment-user-img {
