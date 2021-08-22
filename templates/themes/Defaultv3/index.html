@@ -66,7 +66,7 @@
         <div class="index-video-title"><b>Videos</b></div>
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
-        <div>
+        <div class="w-100">
             <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
                 {% for video in videoList %}
                     <li class="displayCard mx-4 my-3">
@@ -99,8 +99,8 @@
                 {% endfor %}
             </ul>
         </div>
-        <div class="align-content-center">
-            <ul class="pagination"></ul>
+        <div class="w-100">
+            <ul class="pagination justify-content-center"></ul>
         </div>
     </div>
 </div>
@@ -150,10 +150,10 @@
 {% block scripts %}
     <script>
           var options = {
-            page: 3,
+            page: 6,
             pagination: true
           };
 
-          var listObj = new List('recordedVideoListContainer', options);
+          var recordedVideoListObj = new List('recordedVideoListContainer', options);
     </script>
 {% endblock %}
