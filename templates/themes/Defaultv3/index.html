@@ -67,6 +67,8 @@
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
+            <span class="float-left w-10"><i class="fas fa-chevron-left"></i></span>
+            <span class="float-right w-10"><i class="fas fa-chevron-right"></i></span>
             <ul id="recordedVideosList" class="glider itemList d-flex flex-wrap justify-content-center list">
                 {% for video in videoList %}
                     <li class="displayCard m-3">
@@ -98,9 +100,6 @@
                     </li>
                 {% endfor %}
             </ul>
-            <button aria-label="Previous" class="glider-prev">«</button>
-            <button aria-label="Next" class="glider-next">»</button>
-            <div role="tablist" class="dots"></div>
         </div>
         <div class="w-100">
             <ul class="pagination justify-content-center"></ul>
@@ -152,25 +151,11 @@
 
 {% block scripts %}
     <script>
-    new Glider(document.querySelector('.glider'), {
-      slidesToShow: 5,
-      slidesToScroll: 5,
-      exactWidth: true,
-      itemWidth: 310,
-      draggable: true,
-      dots: '.dots',
-      arrows: {
-        prev: '.glider-prev',
-        next: '.glider-next'
-      }
-    });
-    </script>
-    <script>
           var options = {
             page: 6,
             pagination: true
           };
 
-          //var recordedVideoListObj = new List('recordedVideoListContainer', options);
+          var recordedVideoListObj = new List('recordedVideoListContainer', options);
     </script>
 {% endblock %}
