@@ -161,8 +161,15 @@
             pagination: true
           };
 
+          // Build List Pagination
+          {%  if streamList != [] %}
           var streamListObj = new List('streamListContainer', options);
+          {% endif %}
+          {% if videoList != [] %}
           var recordedVideoListObj = new List('recordedVideoListContainer', options);
+          {% endif %}
+          {% if clipList != [] %}
           var clipListObj = new List('clipListContainer', options);
+          {% endif %}
     </script>
 {% endblock %}
