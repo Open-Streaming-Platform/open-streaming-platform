@@ -100,6 +100,9 @@
                     </li>
                 {% endfor %}
             </ul>
+            <button aria-label="Previous" class="glider-prev">«</button>
+            <button aria-label="Next" class="glider-next">»</button>
+            <div role="tablist" class="dots"></div>
         </div>
         <div class="w-100">
             <ul class="pagination justify-content-center"></ul>
@@ -154,8 +157,6 @@
     new Glider(document.querySelector('.glider'), {
       slidesToShow: 5,
       slidesToScroll: 5,
-      exactWidth: true,
-      itemWidth: 310,
       draggable: true,
       dots: '.dots',
       arrows: {
