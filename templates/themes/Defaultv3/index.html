@@ -155,8 +155,10 @@
 {% block scripts %}
     <script>
     new Glider(document.querySelector('.glider'), {
-      slidesToShow: 5,
-      slidesToScroll: 5,
+      slidesToShow: auto,
+      slidesToScroll: auto,
+      exactWidth: true,
+      itemWidth: 310,
       draggable: true,
       dots: '.dots',
       arrows: {
