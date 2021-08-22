@@ -67,6 +67,7 @@
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
+            <span class="w-10"><i class="fas fa-chevron-left"></i></span>
             <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
                 {% for video in videoList %}
                     <li class="displayCard mx-4 my-3">
@@ -98,6 +99,7 @@
                     </li>
                 {% endfor %}
             </ul>
+            <span class="w-10"><i class="fas fa-chevron-right"></i></span>
         </div>
         <div class="w-100">
             <ul class="pagination justify-content-center"></ul>
