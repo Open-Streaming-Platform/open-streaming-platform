@@ -255,6 +255,11 @@ body {
 .pagination a {
     color: white;
     margin: 5px;
+    font-size: 1.75em;
+}
+
+.pagination .active a {
+    color:red;
 }
 
 /* Video List and Card */
