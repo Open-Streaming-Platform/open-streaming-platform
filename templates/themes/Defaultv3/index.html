@@ -68,6 +68,7 @@
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
             <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
+                <i class="fas fa-chevron-circle-left"></i>
                 {% for video in videoList %}
                     <li class="displayCard mx-4 my-3">
                       <a href="/play/{{video.id}}">
@@ -97,6 +98,7 @@
                       </a>
                     </li>
                 {% endfor %}
+                <i class="fas fa-chevron-circle-right"></i>
             </ul>
         </div>
         <div class="w-100">
