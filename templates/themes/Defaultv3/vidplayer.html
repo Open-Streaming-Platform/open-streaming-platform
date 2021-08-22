@@ -140,10 +140,10 @@
         <div class="index-comments-title mb-2"><b>Comments</b></div>
         <div class="comment_list">
             {% if video.allowComments == False %}
-                Comments have been disabled.
+                <div class="justify-content-center m-2"><b>Comments have been disabled</b></div>
             {% endif %}
             {% if video.comments == [] %}
-                There are no comments for this video.
+                <div class="justify-content-center m-2"><b>There are no comments for this video</b></div>
             {% endif %}
             {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
                 {% for comment in video.comments %}
