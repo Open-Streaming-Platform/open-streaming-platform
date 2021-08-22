@@ -67,9 +67,7 @@
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
-            <span class="float-left w-10"><i class="fas fa-chevron-left"></i></span>
-            <span class="float-right w-10"><i class="fas fa-chevron-right"></i></span>
-            <ul id="recordedVideosList" class="glider itemList d-flex flex-wrap justify-content-center list">
+            <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-center list">
                 {% for video in videoList %}
                     <li class="displayCard m-3">
                       <a href="/play/{{video.id}}">
@@ -111,7 +109,7 @@
     <div class="row mx-4">
         <div class="index-video-title"><b>Clips</b></div>
     </div>
-    <div class="row mx-1">
+    <div id="clipListContainer" class="row mx-1">
         <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
             {% for clip in clipList %}
             <li class="displayCard mx-4 my-3">
@@ -157,5 +155,6 @@
           };
 
           var recordedVideoListObj = new List('recordedVideoListContainer', options);
+          var clipListObj = new List('clipListContainer', options);
     </script>
 {% endblock %}

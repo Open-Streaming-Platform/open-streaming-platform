@@ -259,7 +259,7 @@ body {
 }
 
 .pagination .active a {
-    color:red;
+    color: #007bff;
 }
 
 /* Video List and Card */
