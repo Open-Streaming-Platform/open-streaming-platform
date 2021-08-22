@@ -67,7 +67,7 @@
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
-            <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-center list">
+            <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
                 {% for video in videoList %}
                     <li class="displayCard m-3">
                       <a href="/play/{{video.id}}">
@@ -110,38 +110,40 @@
         <div class="index-video-title"><b>Clips</b></div>
     </div>
     <div id="clipListContainer" class="row mx-1">
-        <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
-            {% for clip in clipList %}
-            <li class="displayCard mx-4 my-3">
-              <a href="/clip/{{clip.id}}">
-                <div class="displayCard-thumbnail zoom">
-                  <div class="video-badges">
-                    {% if clip.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
-                  </div>
-                  <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-                            onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
-                  <div class="displayCard-counts">
-                    <span class="displayCard-left align-left" style="color:white;">
-                      <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{clip.id|get_Clip_Upvotes}}</b></span>
-                    </span>
-                    <span class="displayCard-right" style="float:right;color:white;">
-                      <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{clip.views}}</b></span>
-                      <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{clip.length|hms_format}}</b></span>
-                    </span>
-                  </div>
-                </div>
-                <div class="card-data">
-                  <img class="rounded-circle" src="/images/{{clip.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
-                  <div class="metadata">
-                    <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
-                    <div class="card-cut-text topic ml-2">{{clip.topic|get_topicName}}</div>
-                    <span class="date" style="display:none;">{{clip.videoDate|normalize_date}}</span>
-                  </div>
-                </div>
-              </a>
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="w-100">
+            <ul id="clipsList" class="itemList d-flex flex-wrap justify-content-start">
+                {% for clip in clipList %}
+                <li class="displayCard mx-4 my-3">
+                  <a href="/clip/{{clip.id}}">
+                    <div class="displayCard-thumbnail zoom">
+                      <div class="video-badges">
+                        {% if clip.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                      </div>
+                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                                onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
+                      <div class="displayCard-counts">
+                        <span class="displayCard-left align-left" style="color:white;">
+                          <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{clip.id|get_Clip_Upvotes}}</b></span>
+                        </span>
+                        <span class="displayCard-right" style="float:right;color:white;">
+                          <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{clip.views}}</b></span>
+                          <span class="px-2 flex-fill length"><i class="fas fa-clock"></i> <b>{{clip.length|hms_format}}</b></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="card-data">
+                      <img class="rounded-circle" src="/images/{{clip.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <div class="metadata">
+                        <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
+                        <div class="card-cut-text topic ml-2">{{clip.topic|get_topicName}}</div>
+                        <span class="date" style="display:none;">{{clip.videoDate|normalize_date}}</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 
