@@ -251,6 +251,12 @@ body {
 .box-shadow-light {
     box-shadow: 1px 2px 6px black;
 }
+
+.pagination a {
+    color: white;
+    margin: 5px;
+}
+
 /* Video List and Card */
 .index-video-title {
     font-size:1.35em;
