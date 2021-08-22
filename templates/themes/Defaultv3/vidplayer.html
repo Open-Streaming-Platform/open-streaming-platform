@@ -94,7 +94,7 @@
         </div>
         {% if video.description != None %}
         <div class="metadata-subpanel shadow">
-            <div class="videodescription">
+            <div class="videodescription my-3">
                 <p>
                     {% if video.description != None and video.description != "" %}
                         {{video.description|markdown}}
@@ -123,7 +123,7 @@
             </span>
         </div>
         <div class="metadata-subpanel shadow">
-            <div class="channeldescription">
+            <div class="channeldescription my-3">
                 <p>
                 {% if video.channel.description != None and video.channel.description != "" %}
                     {{video.channel.description|markdown}}
@@ -135,8 +135,8 @@
         </div>
       </div>
     </div>
-    <div id="right_column" class="comments_column col-xl-3 col-lg-5 col-sm-12 col-xs-12">
-      <div class="row">
+    <div id="right_column" class="col-xl-3 col-lg-5 col-sm-12 col-xs-12">
+      <div class="row sticky-top m-2 comments_column">
         <div class="index-comments-title mb-2"><b>Comments</b></div>
         {% if video.allowComments == False %}
             Comments have been disabled.
