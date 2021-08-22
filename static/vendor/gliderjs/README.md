@@ -9,7 +9,6 @@ Demos and full documentation available on Github Pages: https://nickpiscitelli.g
 Include glider.min.css:
 
 ```html
-
 <link rel="stylesheet" href="glider.min.css">
 or
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glider-js@1/glider.min.css">
@@ -199,7 +198,7 @@ function hideFFScrollBars(e){
 
 #### Packages using Glider.js :rocket:
 
-- [react-glider](https://www.npmjs.com/package/react-glider) - A react wrapper for Glider.js written in typescript.
+- [react-glider](https://www.npmjs.com/package/react-glider) - A react wrapper for Glider.js written in typescript. 
 
 #### Dependencies
 
