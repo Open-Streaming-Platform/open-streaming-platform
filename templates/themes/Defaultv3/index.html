@@ -66,8 +66,8 @@
         <div class="index-video-title"><b>Videos</b></div>
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
-        <div class="glider w-100">
-            <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
+        <div class="w-100">
+            <ul id="recordedVideosList" class="glider itemList d-flex flex-wrap justify-content-start list">
                 {% for video in videoList %}
                     <li class="displayCard mx-4 my-3">
                       <a href="/play/{{video.id}}">
