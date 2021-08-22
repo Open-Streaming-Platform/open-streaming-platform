@@ -448,6 +448,7 @@ body {
     background-color: #2e3132;
     border: 0 black solid;
     width: 100%;
+    border-radius: 5px;
     padding: 10px;
 }
 
