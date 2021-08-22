@@ -67,7 +67,7 @@
     </div>
     <div id="recordedVideoListContainer" class="row mx-1">
         <div class="w-100">
-            <ul id="recordedVideosList" class="glider itemList d-flex flex-wrap justify-content-start list">
+            <ul id="recordedVideosList" class="itemList d-flex flex-wrap justify-content-start list">
                 {% for video in videoList %}
                     <li class="displayCard mx-4 my-3">
                       <a href="/play/{{video.id}}">
@@ -149,23 +149,11 @@
 
 {% block scripts %}
     <script>
-        new Glider(document.querySelector('.glider'), {
-          slidesToShow: 5,
-          slidesToScroll: 5,
-          draggable: true,
-          dots: '.dots',
-          arrows: {
-            prev: '.glider-prev',
-            next: '.glider-next'
-          }
-        });
-    </script>
-    <script>
           var options = {
             page: 6,
             pagination: true
           };
 
-          //var recordedVideoListObj = new List('recordedVideoListContainer', options);
+          var recordedVideoListObj = new List('recordedVideoListContainer', options);
     </script>
 {% endblock %}
