@@ -400,10 +400,15 @@ install_ejabberd() {
   sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
-  user_input=$(\
-  dialog --nocancel --title "Setting up eJabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
+  # If we don't have the site address, prompt the user
+  if [ -z "$OSP_EJABBERD_SITE_ADDRESS" ]; then
+    user_input=$(\
+    dialog --nocancel --title "Setting up eJabberd" \
+           --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+    3>&1 1>&2 2>&3 3>&-)
+  else
+    user_input="$OSP_EJABBERD_SITE_ADDRESS"
+  fi
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
