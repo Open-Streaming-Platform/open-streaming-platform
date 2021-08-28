@@ -1,6 +1,7 @@
 0.8.10
 ==============================================
 OSP-Core: Added /apiv1/server/ping endpoint for up/down checks
+OSP-Core: Added ejabberdServerHttpBindFQDN config.py variable to handle issues with Docker
 
 0.8.9
 ==============================================
