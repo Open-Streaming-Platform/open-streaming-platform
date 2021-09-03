@@ -95,7 +95,7 @@ class api_1_AdminUser(Resource):
                         return {'results': {'message': "Email Address already Exists"}}, 400
 
                     password = hash_password(args['password'])
-                    user_datastore.creatuser_datastore.create_user(email=email, username=username, password=password, active=True, confirmed_at=datetime.datetime.utcnow(), authType=0)
+                    user_datastore.create_user(email=email, username=username, password=password, active=True, confirmed_at=datetime.datetime.utcnow(), authType=0)
                     defaultRoleQuery = Sec.Role.query.filter_by(default=True).all()
                     newUserQuery = Sec.User.query.filter_by(email=email, username=username).first()
                     for role in defaultRoleQuery:
