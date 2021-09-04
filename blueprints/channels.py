@@ -1,5 +1,6 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user
+from sqlalchemy.sql import func
 
 from classes import settings
 from classes import Channel
@@ -17,7 +18,8 @@ def channels_page():
     sysSettings = settings.settings.query.first()
     channelList = Channel.Channel.query \
         .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
-        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, Channel.Channel.stream,
+        .join(Stream.Stream, Channel.Channel.id == Stream.Stream.linkedChannel) \
+        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Stream.Stream.id).label('stream'),
                        Channel.Channel.protected,
                        Channel.Channel.subscriptions, Channel.Channel.views, Sec.User.pictureLocation,
                        Channel.Channel.channelName,
