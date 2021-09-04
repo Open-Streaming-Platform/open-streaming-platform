@@ -36,7 +36,7 @@
                       <a href="/channel/{{channel.id}}/">
                         <div class="displayCard-thumbnail zoom">
                           <div class="video-badges">
-                            {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
+                            {% if channel.stream > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
                             {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                           </div>
                           <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
