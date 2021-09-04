@@ -6,10 +6,7 @@ from classes import RecordedVideo
 from classes import apikey
 from classes import topics
 from classes import views
-from classes import upvotes
 from classes.shared import db
-
-from globals import globalvars
 
 api = Namespace('video', description='Video Related Queries and Functions')
 
