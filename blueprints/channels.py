@@ -19,7 +19,7 @@ def channels_page():
 
     if sysSettings.showEmptyTables is False:
         channelListArray = []
-        for channel in Channel.Channel.query.all():
+        for channel in channelList:
             if len(channel.recordedVideo) > 0:
                 channelListArray.append(channel)
         channelList = channelListArray
