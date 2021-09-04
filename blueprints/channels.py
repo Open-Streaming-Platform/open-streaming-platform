@@ -6,6 +6,7 @@ from classes import Channel
 from classes import RecordedVideo
 from classes import Stream
 from classes import subscriptions
+from classes import Sec
 
 from functions import themes
 
@@ -14,13 +15,19 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 @channels_bp.route('/')
 def channels_page():
     sysSettings = settings.settings.query.first()
-    if sysSettings.showEmptyTables:
-        channelList = Channel.Channel.query.all()
-    else:
-        channelList = []
-        for channel in Channel.Channel.query.all():
+    channelList = Channel.Channel.query \
+        .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
+        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, Channel.Channel.stream,
+                       Channel.Channel.protected,
+                       Channel.Channel.subscriptions, Channel.Channel.views, Sec.User.pictureLocation,
+                       Channel.Channel.channelName,
+                       Channel.Channel.topic)
+    if sysSettings.showEmptyTables is False:
+        channelListArray = []
+        for channel in channelList:
             if len(channel.recordedVideo) > 0:
-                channelList.append(channel)
+                channelListArray.append(channel)
+        channelList = channelListArray
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)
 
 @channels_bp.route('/<int:chanID>/')
