@@ -14,13 +14,15 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 @channels_bp.route('/')
 def channels_page():
     sysSettings = settings.settings.query.first()
-    if sysSettings.showEmptyTables:
-        channelList = Channel.Channel.query.all()
-    else:
-        channelList = []
+
+    channelList = Channel.Channel.query.all()
+
+    if sysSettings.showEmptyTables is False:
+        channelListArray = []
         for channel in Channel.Channel.query.all():
             if len(channel.recordedVideo) > 0:
-                channelList.append(channel)
+                channelListArray.append(channel)
+        channelList = channelListArray
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)
 
 @channels_bp.route('/<int:chanID>/')
