@@ -131,22 +131,15 @@ class api_1_AdminUser(Resource):
                             db.session.delete(channel)
                         videoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userQuery.id).all()
                         for video in videoQuery:
-                            videos_root = globalvars.videoRoot + 'videos/'
-
-                            filePath = videos_root + video.videoLocation
-                            thumbnailPath = videos_root + video.videoLocation[:-4] + ".png"
-
-                            if filePath != videos_root:
-                                if os.path.exists(filePath) and (
-                                        videoQuery.videoLocation is not None or videoQuery.videoLocation != ""):
-                                    os.remove(filePath)
-                                    if os.path.exists(thumbnailPath):
-                                        os.remove(thumbnailPath)
-                            upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=video.id).all()
-                            for vote in upvoteQuery:
-                                db.session.delete(vote)
-                            vidComments = video.comments
-                            for comment in vidComments:
+                            video.remove()
+                            for clip in video.clips:
+                                for upvotes in clip:
+                                    db.session.delete(upvotes)
+                                clip.remove()
+                                db.session.delete(clip)
+                            for upvote in video.upvotes:
+                                db.session.delete(upvote)
+                            for comment in video.comments:
                                 db.session.delete(comment)
                             vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
                             for view in vidViews:
