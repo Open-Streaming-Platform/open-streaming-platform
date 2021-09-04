@@ -18,11 +18,9 @@ def channels_page():
     sysSettings = settings.settings.query.first()
     channelList = Channel.Channel.query \
         .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
-        .outerjoin(Stream.Stream, Channel.Channel.id == Stream.Stream.linkedChannel) \
-        .outerjoin(subscriptions.channelSubs, Channel.Channel.id == subscriptions.channelSubs.channelID) \
-        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Stream.Stream.id).label('stream'),
+        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Channel.Channel.stream).label('stream'),
                        Channel.Channel.protected,
-                       func.count(subscriptions.channelSubs.id).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
+                       func.count(Channel.Channel.subscriptions).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
                        Channel.Channel.channelName,
                        Channel.Channel.topic)
     if sysSettings.showEmptyTables is False:
