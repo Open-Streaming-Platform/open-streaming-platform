@@ -1,13 +1,11 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user
-from sqlalchemy.sql import func
 
 from classes import settings
 from classes import Channel
 from classes import RecordedVideo
 from classes import Stream
 from classes import subscriptions
-from classes import Sec
 
 from functions import themes
 
@@ -16,19 +14,13 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 @channels_bp.route('/')
 def channels_page():
     sysSettings = settings.settings.query.first()
-    channelList = Channel.Channel.query \
-        .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
-        .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Channel.Channel.stream).label('stream'),
-                       Channel.Channel.protected,
-                       func.count(Channel.Channel.subscriptions).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
-                       Channel.Channel.channelName,
-                       Channel.Channel.topic)
-    if sysSettings.showEmptyTables is False:
-        channelListArray = []
-        for channel in channelList:
+    if sysSettings.showEmptyTables:
+        channelList = Channel.Channel.query.all()
+    else:
+        channelList = []
+        for channel in Channel.Channel.query.all():
             if len(channel.recordedVideo) > 0:
-                channelListArray.append(channel)
-        channelList = channelListArray
+                channelList.append(channel)
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)
 
 @channels_bp.route('/<int:chanID>/')
