@@ -24,7 +24,7 @@ def channels_page():
                        Channel.Channel.protected,
                        func.count(Channel.Channel.subscriptions).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
                        Channel.Channel.channelName,
-                       Channel.Channel.topic).all()
+                       Channel.Channel.topic)
     if sysSettings.showEmptyTables is False:
         channelListArray = []
         for channel in channelList:
