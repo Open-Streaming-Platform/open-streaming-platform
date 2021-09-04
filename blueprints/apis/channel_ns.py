@@ -181,20 +181,25 @@ class api_1_ListChannel(Resource):
                         if filePath != videos_root:
                             shutil.rmtree(filePath, ignore_errors=True)
 
-                        channelVid = channelQuery.recordedVideo
+                        videoQuery = channelQuery.recordedVideo
                         channelUpvotes = channelQuery.upvotes
                         channelStreams = channelQuery.stream
 
-                        for entry in channelVid:
-                            for upvote in entry.upvotes:
+                        for video in videoQuery:
+                            video.remove()
+                            for clip in video.clips:
+                                for upvotes in clip:
+                                    db.session.delete(upvotes)
+                                clip.remove()
+                                db.session.delete(clip)
+                            for upvote in video.upvotes:
                                 db.session.delete(upvote)
-                            vidComments = entry.comments
-                            for comment in vidComments:
+                            for comment in video.comments:
                                 db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=entry.id)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
                             for view in vidViews:
                                 db.session.delete(view)
-                            db.session.delete(entry)
+                            db.session.delete(video)
                         for entry in channelUpvotes:
                             db.session.delete(entry)
                         for entry in channelStreams:
