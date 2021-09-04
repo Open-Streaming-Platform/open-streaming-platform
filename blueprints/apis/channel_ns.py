@@ -176,11 +176,6 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery is not None:
-                        videos_root = globalvars.videoRoot + 'videos/'
-                        filePath = videos_root + channelQuery.channelLoc
-                        if filePath != videos_root:
-                            shutil.rmtree(filePath, ignore_errors=True)
-
                         videoQuery = channelQuery.recordedVideo
                         channelUpvotes = channelQuery.upvotes
                         channelStreams = channelQuery.stream
@@ -206,6 +201,12 @@ class api_1_ListChannel(Resource):
                             db.session.delete(entry)
                         db.session.delete(channelQuery)
                         db.session.commit()
+
+                        videos_root = globalvars.videoRoot + 'videos/'
+                        filePath = videos_root + channelQuery.channelLoc
+                        if filePath != videos_root:
+                            shutil.rmtree(filePath, ignore_errors=True)
+
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
