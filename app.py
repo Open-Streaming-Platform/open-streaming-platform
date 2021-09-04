@@ -221,6 +221,8 @@ ejabberd = None
 
 if hasattr(config,'ejabberdServer'):
     globalvars.ejabberdServer = config.ejabberdServer
+if hasattr(config,'ejabberdServerHttpBindFQDN'):
+    globalvars.ejabberdServerHttpBindFQDN = config.ejabberdServerHttpBindFQDN
 
 try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)

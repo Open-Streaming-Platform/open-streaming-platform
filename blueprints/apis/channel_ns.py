@@ -95,7 +95,7 @@ class api_1_ListChannels(Resource):
                     from app import ejabberd
                     sysSettings = settings.settings.query.all()[0]
                     ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
-                    ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, int(requestAPIKey.userID) + "@" + sysSettings.siteAddress, "owner")
+                    ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, str(userQuery.uuid) + "@" + sysSettings.siteAddress, "owner")
 
                     # Default values
                     for key, value in globalvars.room_config.items():
@@ -176,31 +176,37 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery is not None:
-                        videos_root = globalvars.videoRoot + 'videos/'
-                        filePath = videos_root + channelQuery.channelLoc
-                        if filePath != videos_root:
-                            shutil.rmtree(filePath, ignore_errors=True)
-
-                        channelVid = channelQuery.recordedVideo
+                        videoQuery = channelQuery.recordedVideo
                         channelUpvotes = channelQuery.upvotes
                         channelStreams = channelQuery.stream
 
-                        for entry in channelVid:
-                            for upvote in entry.upvotes:
+                        for video in videoQuery:
+                            video.remove()
+                            for clip in video.clips:
+                                for upvotes in clip:
+                                    db.session.delete(upvotes)
+                                clip.remove()
+                                db.session.delete(clip)
+                            for upvote in video.upvotes:
                                 db.session.delete(upvote)
-                            vidComments = entry.comments
-                            for comment in vidComments:
+                            for comment in video.comments:
                                 db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=entry.id)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
                             for view in vidViews:
                                 db.session.delete(view)
-                            db.session.delete(entry)
+                            db.session.delete(video)
                         for entry in channelUpvotes:
                             db.session.delete(entry)
                         for entry in channelStreams:
                             db.session.delete(entry)
                         db.session.delete(channelQuery)
                         db.session.commit()
+
+                        videos_root = globalvars.videoRoot + 'videos/'
+                        filePath = videos_root + channelQuery.channelLoc
+                        if filePath != videos_root:
+                            shutil.rmtree(filePath, ignore_errors=True)
+
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 

@@ -1,4 +1,4 @@
-version = "0.8.9"
+version = "0.8.10"
 appDBVersion = 0.75
 processUUID = None
 
@@ -35,6 +35,7 @@ edgeRestreamSubprocesses = {}
 
 # ejabberd Server Configuration
 ejabberdServer = "127.0.0.1"
+ejabberdServerHttpBindFQDN = None
 
 recaptchaEnabled = False
 RECAPTCHA_PUBLIC_KEY = ''
