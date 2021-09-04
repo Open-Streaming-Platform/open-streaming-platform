@@ -83,24 +83,17 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            videos_root = globalvars.videoRoot + 'videos/'
-
-                            filePath = videos_root + videoQuery.videoLocation
-                            thumbnailPath = videos_root + videoQuery.videoLocation[:-4] + ".png"
-
-                            if filePath != videos_root:
-                                if path.exists(filePath) and (
-                                        videoQuery.videoLocation is not None or videoQuery.videoLocation != ""):
-                                    remove(filePath)
-                                    if path.exists(thumbnailPath):
-                                        remove(thumbnailPath)
-                            upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=videoQuery.id).all()
-                            for vote in upvoteQuery:
-                                db.session.delete(vote)
-                            vidComments = videoQuery.comments
-                            for comment in vidComments:
+                            videoQuery.remove()
+                            for clip in videoQuery.clips:
+                                for upvotes in clip:
+                                    db.session.delete(upvotes)
+                                clip.remove()
+                                db.session.delete(clip)
+                            for upvote in videoQuery.upvotes:
+                                db.session.delete(upvote)
+                            for comment in videoQuery.comments:
                                 db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id).all()
                             for view in vidViews:
                                 db.session.delete(view)
                             db.session.delete(videoQuery)
