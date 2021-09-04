@@ -19,9 +19,10 @@ def channels_page():
     channelList = Channel.Channel.query \
         .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
         .join(Stream.Stream, Channel.Channel.id == Stream.Stream.linkedChannel) \
+        .join(subscriptions.channelSubs, Channel.Channel.id == subscriptions.channelSubs.channelID) \
         .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Stream.Stream.id).label('stream'),
                        Channel.Channel.protected,
-                       Channel.Channel.subscriptions, Channel.Channel.views, Sec.User.pictureLocation,
+                       func.count(subscriptions.channelSubs.id).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
                        Channel.Channel.channelName,
                        Channel.Channel.topic)
     if sysSettings.showEmptyTables is False:
