@@ -6,7 +6,9 @@ import uuid
 import os
 import re
 
-from classes import Sec
+from globals import globalvars
+
+from classes import Sec, Channel, RecordedVideo, views, upvotes
 from classes.shared import db
 
 from app import user_datastore
@@ -124,6 +126,33 @@ class api_1_AdminUser(Resource):
                     username = args['username']
                     userQuery = Sec.User.query.filter_by(username=username).first()
                     if userQuery != None:
+                        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
+                        for channel in channelQuery:
+                            db.session.delete(channel)
+                        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userQuery.id).all()
+                        for video in videoQuery:
+                            videos_root = globalvars.videoRoot + 'videos/'
+
+                            filePath = videos_root + video.videoLocation
+                            thumbnailPath = videos_root + video.videoLocation[:-4] + ".png"
+
+                            if filePath != videos_root:
+                                if os.path.exists(filePath) and (
+                                        videoQuery.videoLocation is not None or videoQuery.videoLocation != ""):
+                                    os.remove(filePath)
+                                    if os.path.exists(thumbnailPath):
+                                        os.remove(thumbnailPath)
+                            upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=video.id).all()
+                            for vote in upvoteQuery:
+                                db.session.delete(vote)
+                            vidComments = video.comments
+                            for comment in vidComments:
+                                db.session.delete(comment)
+                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
+                            for view in vidViews:
+                                db.session.delete(view)
+                            db.session.delete(video)
+                            db.session.commit()
                         db.session.delete(userQuery)
                         db.session.commit()
                         return {'results': {'message': 'User ' + username +' deleted'}}
