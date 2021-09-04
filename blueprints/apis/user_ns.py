@@ -128,24 +128,23 @@ class api_1_AdminUser(Resource):
                     if userQuery != None:
                         channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
                         for channel in channelQuery:
+                            videoQuery = channel.recordedVideo
+                            for video in videoQuery:
+                                video.remove()
+                                for clip in video.clips:
+                                    for upvotes in clip:
+                                        db.session.delete(upvotes)
+                                    clip.remove()
+                                    db.session.delete(clip)
+                                for upvote in video.upvotes:
+                                    db.session.delete(upvote)
+                                for comment in video.comments:
+                                    db.session.delete(comment)
+                                vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
+                                for view in vidViews:
+                                    db.session.delete(view)
+                                db.session.delete(video)
                             db.session.delete(channel)
-                        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userQuery.id).all()
-                        for video in videoQuery:
-                            video.remove()
-                            for clip in video.clips:
-                                for upvotes in clip:
-                                    db.session.delete(upvotes)
-                                clip.remove()
-                                db.session.delete(clip)
-                            for upvote in video.upvotes:
-                                db.session.delete(upvote)
-                            for comment in video.comments:
-                                db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
-                            for view in vidViews:
-                                db.session.delete(view)
-                            db.session.delete(video)
-                            db.session.commit()
                         db.session.delete(userQuery)
                         db.session.commit()
                         return {'results': {'message': 'User ' + username +' deleted'}}
