@@ -18,7 +18,6 @@ def channels_page():
     sysSettings = settings.settings.query.first()
     channelList = Channel.Channel.query \
         .join(Sec.User, Channel.Channel.owningUser == Sec.User.id) \
-        .join(Stream.Stream, Channel.Channel.id == Stream.Stream.linkedChannel) \
         .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Channel.Channel.stream).label('stream'),
                        Channel.Channel.protected,
                        func.count(Channel.Channel.subscriptions).label('subscriptions'), Channel.Channel.views, Sec.User.pictureLocation,
