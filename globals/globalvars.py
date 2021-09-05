@@ -2,6 +2,8 @@ version = "0.8.10"
 appDBVersion = 0.75
 processUUID = None
 
+RedisURL = None
+
 videoRoot = "/var/www/"
 
 # Default XMPP Create Rules Settings
