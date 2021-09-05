@@ -6,6 +6,7 @@ from classes import RecordedVideo
 from classes import Stream
 from classes import subscriptions
 from classes import Sec
+from classes import topics
 
 from classes.shared import cache
 
@@ -45,6 +46,24 @@ def isChannelLive(channelID):
         return True
     else:
         return False
+
+### Recorded Video Related DB Calls
+@cache.memoize(timeout=60)
+def getVideo(videoID):
+    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID). \
+        with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.videoDate,
+                      RecordedVideo.RecordedVideo.owningUser, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.channelID,
+                      RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                      RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                      RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                      RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).first()
+    return recordedVid
+
+### Topic Related DB Calls
+@cache.memoize(timeout=120)
+def getAllTopics():
+    topicQuery = topics.topics.query.all()
+    return topicQuery
 
 ### User Related DB Calls
 @cache.memoize(timeout=300)
