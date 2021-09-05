@@ -33,7 +33,7 @@
   <div class="row">
     <div class="col-lg col-xs-12 col-sm-12">
       <div class="index-video-title ml-2 my-2">
-        <span class="float-left" id="channelName">{{video.channelName}}</span>{% if video.channel.protected and sysSettings.protectionEnabled %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
+        <span class="float-left" id="channelName">{{video.channelName}}</span>{% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}<h6 style="display: inline; margin: 0px;"><span class="liveindicator badge badge-info float-left m-2"><i class="fas fa-user-lock"></i>
             <span class="d-none d-sm-none d-md-inline">Protected</span></span></h6>{% endif %}
       </div>
     </div>
@@ -58,13 +58,13 @@
         <div class="row m-2">
           <div class="video-buttons-row">
             <span class="float-left">
-              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a><br />
+              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channelID}}/">{{video.channelID | get_channelName}}</a><br />
               <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a>
             </span>
             <span class="float-right ml-2">
               <b><i class="fas fa-calendar-alt mr-2"></i></b> {{video.videoDate|normalize_date}} <br />
               <i class="fas fa-users"></i> {{video.views}}
-              <i class="fas fa-star mx-2"></i> {{video.channel.subscriptions|length}}
+              <i class="fas fa-star mx-2"></i> {{video.channelID | get_channelSubCount}}
             </span>
             <span class="float-right mx-1">
               <span class="float-right mx-1">
@@ -79,7 +79,7 @@
                   </div>
                   <span class="float-right mx-1">
                     {% if current_user.is_authenticated %}
-                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}</button>
+                    <button id="chanSubStateButton" class="btn {% if subState == True %} btn-outline-success {% else %} btn-outline-secondary {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}</button>
                     {% else %}
                     <button id="chanSubStateButton" class="btn btn-outline-secondary disabled" disabled><i class="far fa-star"></i></button>
                     {% endif %}
@@ -115,10 +115,10 @@
           <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p>
             {% else %}No Description Available {% endif %}</div>
         </div>
-        {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
+        {% if video.id | get_videoComments != [] and sysSettings.allowComments == True and video.allowComments == True %}
         <div class="row m-2">
           <div class="index-video-title mb-2"><b>{{video.id|get_Video_Comments}} Comments</b></div>
-          {% for comment in video.comments %}
+          {% for comment in video.id | get_videoComments %}
           <div class="comment mb-2">
             <div class="row">
               <div class="col-auto mr-auto">
@@ -159,16 +159,16 @@
             <div class="video-card bg-dark mb-3" style="max-width: 20rem;">
               <div class="video-card-header">
                 <a href="/play/{{video.id}}">
-                  <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy card-img-top" width="100%" {% if video.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
+                  <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy card-img-top" width="100%" {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{video.thumbnailLocation}}">
 
                 </a>
               </div>
               <div class="video-card-body">
                 <i class="fas fa-tv mr-2"></i><span class="video-title"><a href="/play/{{video.id}}"><b>
                       {{video.channelName|limit_title}}</b></a></span><br />
-                {% if video.channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/">
-                  {{video.channel.channelName}}</a>
+                {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
+                <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channelID}}/">
+                  {{video.channelID | get_channelName}}</a>
                 <span class="float-right"><i class="fas fa-calendar-alt mr-2"></i>
                   {{video.videoDate|normalize_date}}</span><br />
                 <i class="fas fa-user mr-2"></i><a href="/streamer/{{video.owningUser}}">
