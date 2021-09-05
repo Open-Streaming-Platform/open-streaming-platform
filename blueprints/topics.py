@@ -7,14 +7,15 @@ from classes import Stream
 from classes import RecordedVideo
 
 from functions import themes
+from functions import cachedDbCalls
 
 topics_bp = Blueprint('topic', __name__, url_prefix='/topic')
 
 @topics_bp.route('/')
 def topic_page():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     if sysSettings.showEmptyTables:
-        topicsList = topics.topics.query.all()
+        topicsList = cachedDbCalls.getAllTopics()
     else:
         topicIDList = []
         for streamInstance in db.session.query(Stream.Stream.topic).distinct():

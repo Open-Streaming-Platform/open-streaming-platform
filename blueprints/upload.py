@@ -18,6 +18,7 @@ from functions import system
 from functions import webhookFunc
 from functions import templateFilters
 from functions import subsFunc
+from functions import cachedDbCalls
 
 from globals import globalvars
 
@@ -29,7 +30,7 @@ upload_bp = Blueprint('upload', __name__, url_prefix='/upload')
 def upload():
     videos_root = globalvars.videoRoot + 'videos/'
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     if not sysSettings.allowUploads:
         db.session.close()
         return "Video Uploads Disabled", 501
@@ -81,7 +82,7 @@ def upload():
 @login_required
 @roles_required('Uploader')
 def upload_vid():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     if not sysSettings.allowUploads:
         db.session.close()
         flash("Video Upload Disabled", "error")

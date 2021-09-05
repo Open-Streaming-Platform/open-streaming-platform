@@ -19,12 +19,13 @@ from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
 from functions import themes
 from functions import securityFunc
+from functions import cachedDbCalls
 
 liveview_bp = Blueprint('liveview', __name__, url_prefix='/view')
 
 @liveview_bp.route('/<loc>/')
 def view_page(loc):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     xmppserver = sysSettings.siteAddress
 
