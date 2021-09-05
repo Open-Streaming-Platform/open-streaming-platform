@@ -73,7 +73,7 @@ def view_vid_page(videoID):
         #recordedVid.channel.views = recordedVid.channel.views + 1
 
         #topicList = topics.topics.query.all()
-        topicList = cachedDbCalls.getAllTopics
+        topicList = cachedDbCalls.getAllTopics()
 
         streamURL = '/videos/' + recordedVid.videoLocation
 
