@@ -14,7 +14,7 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 
 @channels_bp.route('/')
 def channels_page():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     #channelList = Channel.Channel.query.all()
     channelList = cachedDbCalls.getAllChannels()

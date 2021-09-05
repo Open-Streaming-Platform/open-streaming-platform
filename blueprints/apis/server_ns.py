@@ -5,6 +5,8 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import settings
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 api = Namespace('server', description='Server Related Queries and Functions')
 
 @api.route('/')
@@ -14,7 +16,7 @@ class api_1_Server(Resource):
         """
             Displays a Listing of Server Settings
         """
-        serverSettings = settings.settings.query.first()
+        serverSettings = cachedDbCalls.getSystemSettings()
         db.session.commit()
         return {'results': serverSettings.serialize()}
 

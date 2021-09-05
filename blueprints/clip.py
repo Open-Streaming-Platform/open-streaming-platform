@@ -18,7 +18,7 @@ clip_bp = Blueprint('clip', __name__, url_prefix='/clip')
 
 @clip_bp.route('/<clipID>')
 def view_clip_page(clipID):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     videos_root = globalvars.videoRoot + 'videos/'
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()

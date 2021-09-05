@@ -14,6 +14,7 @@ from classes import views
 from classes.shared import db
 
 from functions import system
+from functions import cachedDbCalls
 
 from globals import globalvars
 
@@ -93,7 +94,7 @@ class api_1_ListChannels(Resource):
 
                     # Establish XMPP Channel
                     from app import ejabberd
-                    sysSettings = settings.settings.query.all()[0]
+                    sysSettings = cachedDbCalls.getSystemSettings()
                     ejabberd.create_room(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
                     ejabberd.set_room_affiliation(newChannel.channelLoc, 'conference.' + sysSettings.siteAddress, str(userQuery.uuid) + "@" + sysSettings.siteAddress, "owner")
 
