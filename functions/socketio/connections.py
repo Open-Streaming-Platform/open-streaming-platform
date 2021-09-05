@@ -11,6 +11,7 @@ from classes import views
 from functions import webhookFunc
 from functions import templateFilters
 from functions import xmpp
+from functions import cachedDbCalls
 
 from functions.socketio.stream import handle_viewer_total_request
 
@@ -25,7 +26,7 @@ def disconnect():
 def handle_new_viewer(streamData):
     channelLoc = str(streamData['data'])
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
@@ -87,7 +88,7 @@ def handle_new_viewer(streamData):
 def handle_add_usercount(streamData):
     channelLoc = str(streamData['data'])
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
@@ -109,7 +110,7 @@ def handle_add_usercount(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData['data'])
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
