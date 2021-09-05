@@ -26,7 +26,10 @@ def view_clip_page(clipID):
 
     if clipQuery is not None:
 
-        recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=clipQuery.recordedVideo.id).first()
+        recordedVid = cachedDbCalls.getVideo(clipQuery.recordedVideo.id)
+        #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=clipQuery.recordedVideo.id).first()
+
+        associatedChannel = cachedDbCalls.getChannel(recordedVid.channelID)
 
         if clipQuery.published is False:
             if current_user.is_authenticated:
@@ -37,13 +40,13 @@ def view_clip_page(clipID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
 
-        if recordedVid.channel.protected and sysSettings.protectionEnabled:
-            if not securityFunc.check_isValidChannelViewer(clipQuery.recordedVideo.channel.id):
+        if associatedChannel.protected and sysSettings.protectionEnabled:
+            if not securityFunc.check_isValidChannelViewer(associatedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
         if recordedVid is not None:
             clipQuery.views = clipQuery.views + 1
-            clipQuery.recordedVideo.channel.views = clipQuery.recordedVideo.channel.views + 1
+            clipQuery.recordedVideo.channel.views = associatedChannel.views + 1
 
             if recordedVid.length is None:
                 fullVidPath = videos_root + recordedVid.videoLocation
@@ -51,7 +54,7 @@ def view_clip_page(clipID):
                 recordedVid.length = duration
             db.session.commit()
 
-            topicList = topics.topics.query.all()
+            topicList = cachedDbCalls.getAllTopics()
 
             streamURL = '/videos/' + clipQuery.videoLocation
 
