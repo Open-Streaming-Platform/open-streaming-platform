@@ -147,6 +147,7 @@ from functions import securityFunc
 from functions import votes
 from functions import webhookFunc
 from functions.ejabberdctl import ejabberdctl
+from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
@@ -204,7 +205,7 @@ toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
 try:
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
 except:
     app.config['SECURITY_TOTP_ISSUER'] = "OSP"
@@ -423,7 +424,7 @@ def inject_oAuthProviders():
 @app.context_processor
 def inject_sysSettings():
 
-    sysSettings = db.session.query(settings.settings).first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     allowRegistration = config.allowRegistration
     return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 

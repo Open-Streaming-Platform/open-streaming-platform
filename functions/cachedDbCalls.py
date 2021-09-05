@@ -10,6 +10,11 @@ from classes import topics
 
 from classes.shared import cache
 
+### System Settings Related DB Calls
+@cache.memoize(timeout=600)
+def getSystemSettings():
+    sysSettings = settings.settings.query.first()
+    return sysSettings
 
 ### Channel Related DB Calls
 @cache.memoize(timeout=60)
