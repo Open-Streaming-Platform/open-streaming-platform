@@ -29,7 +29,7 @@
 
           <span class="float-right mx-1">
             {% if current_user.is_authenticated %}
-            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+            <button id="chanSubStateButton" class="btn btn-sm {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
             {% else %}
             <button class="btn btn-sm btn-outline-secondary disabled" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
             {% endif %}
@@ -103,7 +103,7 @@
       </div>
       <div class="row m-2">
         <div class="col-12 nopadding">
-          <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channel.id}}/">{{video.channel.channelName}}</a></b></div>
+          <div><b><i class="fas fa-tv"></i> <a href="/channel/{{video.channelID}}/">{{video.channelID | get_channelName}}</a></b></div>
           <div><b><i class="fas fa-hashtag"></i> <a href="/topic/{{video.topic}}/">{{video.topic|get_topicName}}</a></b></div>
           <div><b><i class="fas fa-calendar-alt"></i> {{video.videoDate|normalize_date}}</b></div>
         </div>
@@ -112,10 +112,10 @@
       <div class="row m-2">
         <div class="videodescription">{% if video.description != None %}<p>{{video.description|markdown}}</p> {% else %}No Description Available {% endif %}</div>
       </div>
-      {% if video.comments != [] and sysSettings.allowComments == True and video.allowComments == True %}
+      {% if video.id | get_videoComments != [] and sysSettings.allowComments == True and video.allowComments == True %}
       <div class="row m-2">
         <div class="index-video-title mb-2"><b>Comments</b></div>
-        {% for comment in video.comments %}
+        {% for comment in video.id | get_videoComments %}
         <div class="comment mb-2">
           <div class="row">
             <div class="col-auto mr-auto">

@@ -7,6 +7,7 @@ from globals import globalvars
 
 from classes import Sec
 from classes import topics
+from classes import comments
 
 from functions import votes
 from functions import commentsFunc
@@ -38,6 +39,8 @@ def init(context):
     context.jinja_env.filters['uuid_to_username'] = uuid_to_username
     context.jinja_env.filters['format_keyType'] = format_keyType
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
+    context.jinja_env.filters['get_channelName'] = get_channelName
+    context.jinja_env.filters['get_videoComments'] = get_videoComments
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -246,3 +249,11 @@ def get_channelSubCount(channelID):
 def get_channelLiveStatus(channelID):
     isChannelLive = cachedDbCalls.isChannelLive(channelID)
     return isChannelLive
+
+def get_channelName(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    return channelQuery.channelName
+
+def get_videoComments(videoID):
+    commentsQuery = comments.videoComments.query.filter_by(id=videoID).all()
+    return commentsQuery

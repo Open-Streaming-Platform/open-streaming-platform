@@ -1,6 +1,7 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
+from sqlalchemy import update
 from os import path
 
 from classes.shared import db
@@ -12,6 +13,7 @@ from classes import views
 from classes import comments
 from classes import notifications
 from classes import upvotes
+from classes import Channel
 
 from functions import themes
 from functions import system
@@ -19,6 +21,7 @@ from functions import videoFunc
 from functions import securityFunc
 from functions import webhookFunc
 from functions import templateFilters
+from functions import cachedDbCalls
 
 from globals import globalvars
 
@@ -29,9 +32,11 @@ def view_vid_page(videoID):
     sysSettings = settings.settings.query.first()
     videos_root = globalvars.videoRoot + 'videos/'
 
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    recordedVid = cachedDbCalls.getVideo(videoID)
 
     if recordedVid is not None:
+        channelData = cachedDbCalls.getChannel(recordedVid.channelID)
 
         if recordedVid.published is False:
             if current_user.is_authenticated:
@@ -42,8 +47,8 @@ def view_vid_page(videoID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
 
-        if recordedVid.channel.protected and sysSettings.protectionEnabled:
-            if not securityFunc.check_isValidChannelViewer(recordedVid.channel.id):
+        if channelData.protected and sysSettings.protectionEnabled:
+            if not securityFunc.check_isValidChannelViewer(channelData.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
         # Check if the file exists in location yet and redirect if not ready
@@ -58,13 +63,17 @@ def view_vid_page(videoID):
                 duration = videoFunc.getVidLength(fullVidPath)
             except:
                 return render_template(themes.checkOverride('notready.html'), video=recordedVid)
-            recordedVid.length = duration
+            RecordedVideo.RecordedVideo.query.filter_by(id=recordedVid.id).update(dict(length=duration))
         db.session.commit()
 
-        recordedVid.views = recordedVid.views + 1
-        recordedVid.channel.views = recordedVid.channel.views + 1
+        RecordedVideo.RecordedVideo.query.filter_by(id=recordedVid.id).update(dict(views=recordedVid.views + 1))
+        #recordedVid.views = recordedVid.views + 1
 
-        topicList = topics.topics.query.all()
+        Channel.Channel.query.filter_by(id=recordedVid.channelID).update(dict(views=channelData.views + 1))
+        #recordedVid.channel.views = recordedVid.channel.views + 1
+
+        #topicList = topics.topics.query.all()
+        topicList = cachedDbCalls.getAllTopics
 
         streamURL = '/videos/' + recordedVid.videoLocation
 
@@ -89,7 +98,7 @@ def view_vid_page(videoID):
 
             subState = False
             if current_user.is_authenticated:
-                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channel.id, userID=current_user.id).first()
+                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=channelData.id, userID=current_user.id).first()
                 if chanSubQuery is not None:
                     subState = True
 
