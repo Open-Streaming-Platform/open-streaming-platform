@@ -10,6 +10,7 @@ from classes import topics
 
 from functions import votes
 from functions import commentsFunc
+from functions import cachedDbCalls
 
 def init(context):
     context.jinja_env.filters['normalize_uuid'] = normalize_uuid
@@ -21,6 +22,7 @@ def init(context):
     context.jinja_env.filters['hms_format'] = hms_format
     context.jinja_env.filters['get_topicName'] = get_topicName
     context.jinja_env.filters['get_userName'] = get_userName
+    context.jinja_env.filters['get_channelSubCount'] = get_channelSubCount
     context.jinja_env.filters['get_Video_Upvotes'] = get_Video_Upvotes_Filter
     context.jinja_env.filters['get_Stream_Upvotes'] = get_Stream_Upvotes_Filter
     context.jinja_env.filters['get_Clip_Upvotes'] = get_Clip_Upvotes_Filter
@@ -35,6 +37,7 @@ def init(context):
     context.jinja_env.filters['formatSpace'] = formatSpace
     context.jinja_env.filters['uuid_to_username'] = uuid_to_username
     context.jinja_env.filters['format_keyType'] = format_keyType
+    context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -141,12 +144,13 @@ def get_Video_Comments_Filter(videoID):
     return result
 
 def get_pictureLocation(userID):
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    pictureLocation = None
-    if userQuery.pictureLocation is None:
-        pictureLocation = '/static/img/user2.png'
-    else:
-        pictureLocation = '/images/' + userQuery.pictureLocation
+    #userQuery = Sec.User.query.filter_by(id=int(userID)).first()
+    #pictureLocation = None
+    #if userQuery.pictureLocation is None:
+    #    pictureLocation = '/static/img/user2.png'
+    #else:
+    #    pictureLocation = '/images/' + userQuery.pictureLocation
+    pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
 
     return pictureLocation
 
@@ -234,3 +238,11 @@ def format_keyType(keyType):
         '2': 'Admin'
     }
     return keyTypeNames[keyType]
+
+def get_channelSubCount(channelID):
+    subCount = cachedDbCalls.getChannelSubCount(channelID)
+    return subCount
+
+def get_channelLiveStatus(channelID):
+    isChannelLive = cachedDbCalls.isChannelLive(channelID)
+    return isChannelLive
