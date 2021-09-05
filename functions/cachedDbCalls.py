@@ -33,12 +33,12 @@ def getChannel(channelID):
                       Channel.Channel.autoPublish, Channel.Channel.vanityURL).filter_by(id=channelID).first()
     return channelQuery
 
-@cache.memozie(timeout=60)
+@cache.memoize(timeout=60)
 def getChannelSubCount(channelID):
     SubscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).count()
     return SubscriptionQuery
 
-@cache.memozie(timeout=5)
+@cache.memoize(timeout=5)
 def isChannelLive(channelID):
     StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelID).first()
     if StreamQuery is not None:
