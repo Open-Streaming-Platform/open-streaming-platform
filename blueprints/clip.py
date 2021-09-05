@@ -11,6 +11,7 @@ from classes import topics
 from functions import themes
 from functions import videoFunc
 from functions import securityFunc
+from functions import cachedDbCalls
 
 from globals import globalvars
 
