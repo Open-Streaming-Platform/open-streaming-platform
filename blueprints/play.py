@@ -32,7 +32,6 @@ def view_vid_page(videoID):
     sysSettings = cachedDbCalls.getSystemSettings()
     videos_root = globalvars.videoRoot + 'videos/'
 
-    #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
     recordedVid = cachedDbCalls.getVideo(videoID)
 
     if recordedVid is not None:
@@ -67,12 +66,9 @@ def view_vid_page(videoID):
         db.session.commit()
 
         RecordedVideo.RecordedVideo.query.filter_by(id=recordedVid.id).update(dict(views=recordedVid.views + 1))
-        #recordedVid.views = recordedVid.views + 1
 
         Channel.Channel.query.filter_by(id=recordedVid.channelID).update(dict(views=channelData.views + 1))
-        #recordedVid.channel.views = recordedVid.channel.views + 1
 
-        #topicList = topics.topics.query.all()
         topicList = cachedDbCalls.getAllTopics()
 
         streamURL = '/videos/' + recordedVid.videoLocation
