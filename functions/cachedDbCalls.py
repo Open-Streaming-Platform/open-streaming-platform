@@ -16,6 +16,11 @@ def getSystemSettings():
     sysSettings = settings.settings.query.first()
     return sysSettings
 
+@cache.memoize(timeout=1200)
+def getOAuthProviders():
+    SystemOAuthProviders = settings.oAuthProvider.query.all()
+    return SystemOAuthProviders
+
 ### Channel Related DB Calls
 @cache.memoize(timeout=60)
 def getAllChannels():
