@@ -7,7 +7,7 @@ OSP-Core: Fixes an issue in User Creation API which would return an error #418 -
 OSP-Core: Fixes User Deletion to Remove all Channels, Videos, owned by deleted user
 OSP-Core: Adds /migrations to Git Ignore - 71e80a0bd7ed70e957d9ed59324717c15fdb46ac
 OSP-Core: Optimized a handful of database queries for reducing latency
-OSP-Core: Added Flask-Caching to use Redis to Cache Database Queries - Idea taken from @mark via MR !283
+OSP-Core: Added Flask-Caching to use Redis to Cache Database Queries - Idea provided by @markboggs via MR !283
 OSP-Core: Changed channels.html and vidplayer.html to work with optimized queries **Note:** Custom Themes will need to be changed to use template filters as in these files as some DB Object subqueries will no longer work and will cause errors
 
 
