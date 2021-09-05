@@ -41,6 +41,7 @@ def init(context):
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
     context.jinja_env.filters['get_channelName'] = get_channelName
     context.jinja_env.filters['get_videoComments'] = get_videoComments
+    context.jinja_env.filters['get_channelProtected'] = get_channelProtected
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -253,6 +254,10 @@ def get_channelLiveStatus(channelID):
 def get_channelName(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
     return channelQuery.channelName
+
+def get_channelProtected(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    return channelQuery.protected
 
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(id=videoID).all()

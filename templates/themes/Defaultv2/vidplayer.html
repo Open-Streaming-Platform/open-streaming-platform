@@ -39,7 +39,7 @@
             </span>
             {% endif %}
           </span>
-          {% if video.channel.protected and sysSettings.protectionEnabled %}
+          {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}
           <span class="float-right">
             <span class="badge badge-warning">
               <i class="fas fa-user-lock"></i><span class="d-none d-sm-none d-md-inline"> Protected</span>
