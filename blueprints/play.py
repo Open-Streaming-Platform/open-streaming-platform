@@ -1,7 +1,6 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
-from sqlalchemy import update
 from os import path
 
 from classes.shared import db
@@ -14,6 +13,7 @@ from classes import comments
 from classes import notifications
 from classes import upvotes
 from classes import Channel
+from classes.shared import cache
 
 from functions import themes
 from functions import system
@@ -143,6 +143,7 @@ def vid_move_page(videoID):
 
     result = videoFunc.moveVideo(videoID, newChannel)
     if result is True:
+        cache.delete_memoized('getVideo', videoID)
         flash("Video Moved to Another Channel", "success")
         return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
@@ -162,6 +163,7 @@ def vid_change_page(videoID):
         allowComments = True
 
     result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
+    cache.delete_memoized('getVideo', videoID)
 
     if result is True:
         flash("Changed Video Metadata", "success")
@@ -177,6 +179,7 @@ def delete_vid_page(videoID):
     result = videoFunc.deleteVideo(videoID)
 
     if result is True:
+        cache.delete_memoized('getVideo', videoID)
         flash("Video deleted")
         return redirect(url_for('root.main_page'))
     else:
@@ -188,7 +191,8 @@ def delete_vid_page(videoID):
 def comments_vid_page(videoID):
     sysSettings = settings.settings.query.first()
 
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    recordedVid = cachedDbCalls.getVideo(videoID)
 
     if recordedVid is not None:
 
@@ -201,10 +205,11 @@ def comments_vid_page(videoID):
             db.session.add(newComment)
             db.session.commit()
 
-            if recordedVid.channel.imageLocation is None:
+            channelQuery = cachedDbCalls.getChannel(recordedVid.channelID)
+            if channelQuery.imageLocation is None:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVid.channel.imageLocation)
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
             pictureLocation = ""
             if current_user.pictureLocation is None:
@@ -217,11 +222,11 @@ def comments_vid_page(videoID):
             db.session.add(newNotification)
             db.session.commit()
 
-            webhookFunc.runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
+            webhookFunc.runWebhook(channelQuery.id, 7, channelname=channelQuery.channelName,
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                        channeltopic=templateFilters.get_topicName(recordedVid.channel.topic),
-                       channelimage=channelImage, streamer=templateFilters.get_userName(recordedVid.channel.owningUser),
-                       channeldescription=str(recordedVid.channel.description), videoname=recordedVid.channelName,
+                       channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
+                       channeldescription=str(channelQuery.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
                        videotopic=templateFilters.get_topicName(recordedVid.topic),
                        videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),
