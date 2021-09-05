@@ -4,7 +4,7 @@ from flask_socketio import SocketIO
 from flask_mail import Mail
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_cache import Cache
+from flask_caching import Cache
 
 db = SQLAlchemy()
 oauth = OAuth()
