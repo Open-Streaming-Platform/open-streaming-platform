@@ -418,7 +418,7 @@ def inject_recaptchaEnabled():
 @app.context_processor
 def inject_oAuthProviders():
 
-    SystemOAuthProviders = db.session.query(settings.oAuthProvider).all()
+    SystemOAuthProviders = cachedDbCalls.getOAuthProviders()
     return dict(SystemOAuthProviders=SystemOAuthProviders)
 
 @app.context_processor
