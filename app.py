@@ -155,11 +155,15 @@ logger = logging.getLogger('gunicorn.error').handlers
 # Initialize Flask-BabelEx
 babel = Babel(app)
 
-# Initialize Flask-Limiter
+# Initialize RedisURL
+RedisURL = None
 if config.redisPassword == '' or config.redisPassword is None:
-    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
-    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+
+#Initialize Flask-Limiter
+app.config["RATELIMIT_STORAGE_URL"] = RedisURL
 from classes.shared import limiter
 limiter.init_app(app)
 
@@ -190,6 +194,10 @@ Session(app)
 
 # Initialize Flask-CORS Config
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
+
+#Initialize Flask-Cache
+from classes.shared import cache
+cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': RedisURL})
 
 # Initialize Debug Toolbar
 toolbar = DebugToolbarExtension(app)

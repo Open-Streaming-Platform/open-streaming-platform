@@ -8,6 +8,7 @@ from classes import Stream
 from classes import subscriptions
 
 from functions import themes
+from functions import cachedDbCalls
 
 channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 
@@ -15,7 +16,8 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 def channels_page():
     sysSettings = settings.settings.query.first()
 
-    channelList = Channel.Channel.query.all()
+    #channelList = Channel.Channel.query.all()
+    channelList = cachedDbCalls.getAllChannels()
 
     if sysSettings.showEmptyTables is False:
         channelListArray = []
