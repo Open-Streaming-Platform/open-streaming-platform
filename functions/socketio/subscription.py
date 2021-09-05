@@ -9,12 +9,13 @@ from classes import subscriptions
 
 from functions import webhookFunc
 from functions import templateFilters
+from functions import cachedDbCalls
 
 @socketio.on('toggleChannelSubscription')
 @limiter.limit("10/minute")
 def toggle_chanSub(payload):
     if current_user.is_authenticated:
-        sysSettings = settings.settings.query.first()
+        sysSettings = cachedDbCalls.getSystemSettings()
         if 'channelID' in payload:
             channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
             if channelQuery is not None:
