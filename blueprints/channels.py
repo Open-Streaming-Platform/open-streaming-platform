@@ -23,7 +23,7 @@ def channels_page():
         .with_entities(Channel.Channel.id, Channel.Channel.imageLocation, func.count(Stream.Stream.id).label('stream'),
                        Channel.Channel.protected, func.count(subscriptions.channelSubs.id).label('subscriptions'),
                        Channel.Channel.views, Sec.User.pictureLocation, Channel.Channel.channelName, Channel.Channel.topic)
-    return(str(channelList))
+    print(channelList)
     if sysSettings.showEmptyTables is False:
         channelListArray = []
         for channel in channelList:
