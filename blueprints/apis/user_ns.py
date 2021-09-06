@@ -6,7 +6,9 @@ import uuid
 import os
 import re
 
-from classes import Sec
+from globals import globalvars
+
+from classes import Sec, Channel, RecordedVideo, views, upvotes
 from classes.shared import db
 
 from app import user_datastore
@@ -95,7 +97,7 @@ class api_1_AdminUser(Resource):
                         return {'results': {'message': "Email Address already Exists"}}, 400
 
                     password = hash_password(args['password'])
-                    user_datastore.creatuser_datastore.create_user(email=email, username=username, password=password, active=True, confirmed_at=datetime.datetime.utcnow(), authType=0)
+                    user_datastore.create_user(email=email, username=username, password=password, active=True, confirmed_at=datetime.datetime.utcnow(), authType=0)
                     defaultRoleQuery = Sec.Role.query.filter_by(default=True).all()
                     newUserQuery = Sec.User.query.filter_by(email=email, username=username).first()
                     for role in defaultRoleQuery:
@@ -124,6 +126,25 @@ class api_1_AdminUser(Resource):
                     username = args['username']
                     userQuery = Sec.User.query.filter_by(username=username).first()
                     if userQuery != None:
+                        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
+                        for channel in channelQuery:
+                            videoQuery = channel.recordedVideo
+                            for video in videoQuery:
+                                video.remove()
+                                for clip in video.clips:
+                                    for upvotes in clip:
+                                        db.session.delete(upvotes)
+                                    clip.remove()
+                                    db.session.delete(clip)
+                                for upvote in video.upvotes:
+                                    db.session.delete(upvote)
+                                for comment in video.comments:
+                                    db.session.delete(comment)
+                                vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
+                                for view in vidViews:
+                                    db.session.delete(view)
+                                db.session.delete(video)
+                            db.session.delete(channel)
                         db.session.delete(userQuery)
                         db.session.commit()
                         return {'results': {'message': 'User ' + username +' deleted'}}

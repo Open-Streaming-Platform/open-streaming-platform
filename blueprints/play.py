@@ -12,6 +12,8 @@ from classes import views
 from classes import comments
 from classes import notifications
 from classes import upvotes
+from classes import Channel
+from classes.shared import cache
 
 from functions import themes
 from functions import system
@@ -19,6 +21,7 @@ from functions import videoFunc
 from functions import securityFunc
 from functions import webhookFunc
 from functions import templateFilters
+from functions import cachedDbCalls
 
 from globals import globalvars
 
@@ -26,12 +29,13 @@ play_bp = Blueprint('play', __name__, url_prefix='/play')
 
 @play_bp.route('/<videoID>')
 def view_vid_page(videoID):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     videos_root = globalvars.videoRoot + 'videos/'
 
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    recordedVid = cachedDbCalls.getVideo(videoID)
 
     if recordedVid is not None:
+        channelData = cachedDbCalls.getChannel(recordedVid.channelID)
 
         if recordedVid.published is False:
             if current_user.is_authenticated:
@@ -42,8 +46,8 @@ def view_vid_page(videoID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
 
-        if recordedVid.channel.protected and sysSettings.protectionEnabled:
-            if not securityFunc.check_isValidChannelViewer(recordedVid.channel.id):
+        if channelData.protected and sysSettings.protectionEnabled:
+            if not securityFunc.check_isValidChannelViewer(channelData.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
         # Check if the file exists in location yet and redirect if not ready
@@ -58,13 +62,14 @@ def view_vid_page(videoID):
                 duration = videoFunc.getVidLength(fullVidPath)
             except:
                 return render_template(themes.checkOverride('notready.html'), video=recordedVid)
-            recordedVid.length = duration
+            RecordedVideo.RecordedVideo.query.filter_by(id=recordedVid.id).update(dict(length=duration))
         db.session.commit()
 
-        recordedVid.views = recordedVid.views + 1
-        recordedVid.channel.views = recordedVid.channel.views + 1
+        RecordedVideo.RecordedVideo.query.filter_by(id=recordedVid.id).update(dict(views=recordedVid.views + 1))
 
-        topicList = topics.topics.query.all()
+        Channel.Channel.query.filter_by(id=recordedVid.channelID).update(dict(views=channelData.views + 1))
+
+        topicList = cachedDbCalls.getAllTopics()
 
         streamURL = '/videos/' + recordedVid.videoLocation
 
@@ -89,7 +94,7 @@ def view_vid_page(videoID):
 
             subState = False
             if current_user.is_authenticated:
-                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channel.id, userID=current_user.id).first()
+                chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=channelData.id, userID=current_user.id).first()
                 if chanSubQuery is not None:
                     subState = True
 
@@ -134,6 +139,7 @@ def vid_move_page(videoID):
 
     result = videoFunc.moveVideo(videoID, newChannel)
     if result is True:
+        cache.delete_memoized(cachedDbCalls.getVideo, videoID)
         flash("Video Moved to Another Channel", "success")
         return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
@@ -153,6 +159,7 @@ def vid_change_page(videoID):
         allowComments = True
 
     result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
+    cache.delete_memoized(cachedDbCalls.getVideo, videoID)
 
     if result is True:
         flash("Changed Video Metadata", "success")
@@ -168,6 +175,7 @@ def delete_vid_page(videoID):
     result = videoFunc.deleteVideo(videoID)
 
     if result is True:
+        cache.delete_memoized(cachedDbCalls.getVideo, videoID)
         flash("Video deleted")
         return redirect(url_for('root.main_page'))
     else:
@@ -177,9 +185,10 @@ def delete_vid_page(videoID):
 @play_bp.route('/<videoID>/comment', methods=['GET','POST'])
 @login_required
 def comments_vid_page(videoID):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
-    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    recordedVid = cachedDbCalls.getVideo(videoID)
 
     if recordedVid is not None:
 
@@ -192,10 +201,11 @@ def comments_vid_page(videoID):
             db.session.add(newComment)
             db.session.commit()
 
-            if recordedVid.channel.imageLocation is None:
+            channelQuery = cachedDbCalls.getChannel(recordedVid.channelID)
+            if channelQuery.imageLocation is None:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
             else:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVid.channel.imageLocation)
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelQuery.imageLocation)
 
             pictureLocation = ""
             if current_user.pictureLocation is None:
@@ -208,11 +218,11 @@ def comments_vid_page(videoID):
             db.session.add(newNotification)
             db.session.commit()
 
-            webhookFunc.runWebhook(recordedVid.channel.id, 7, channelname=recordedVid.channel.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVid.channel.id)),
+            webhookFunc.runWebhook(channelQuery.id, 7, channelname=channelQuery.channelName,
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                        channeltopic=templateFilters.get_topicName(recordedVid.channel.topic),
-                       channelimage=channelImage, streamer=templateFilters.get_userName(recordedVid.channel.owningUser),
-                       channeldescription=str(recordedVid.channel.description), videoname=recordedVid.channelName,
+                       channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
+                       channeldescription=str(channelQuery.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
                        videotopic=templateFilters.get_topicName(recordedVid.topic),
                        videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVid.videoLocation),

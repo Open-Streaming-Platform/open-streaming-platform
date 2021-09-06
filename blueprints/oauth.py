@@ -20,12 +20,13 @@ from functions.oauth import fetch_token, discord_processLogin, reddit_processLog
 from functions.system import newLog
 from functions.webhookFunc import runWebhook
 from functions.themes import checkOverride
+from functions import cachedDbCalls
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
 @oauth_bp.route('/login/<provider>')
 def oAuthLogin(provider):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     if sysSettings is not None:
 
         oAuthClient = oauth.create_client(provider)
