@@ -36,9 +36,11 @@ from classes import webhook
 from classes import logs
 from classes import subscriptions
 from classes import stickers
+from classes.shared import cache
 
 from functions import system
 from functions import themes
+from functions import cachedDbCalls
 
 from globals import globalvars
 
@@ -184,7 +186,7 @@ def user_addInviteCode():
 @roles_required('Admin')
 def admin_page():
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     if request.method == 'GET':
         if request.args.get("action") is not None:
             action = request.args.get("action")
@@ -209,9 +211,10 @@ def admin_page():
                     system.newLog(1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name))
                     db.session.delete(topicQuery)
                     db.session.commit()
+                    cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                     # Initialize the Topic Cache
-                    topicQuery = topics.topics.query.all()
+                    topicQuery = cachedDbCalls.getAllTopics()
                     for topic in topicQuery:
                         globalvars.topicCache[topic.id] = topic.name
 
@@ -447,6 +450,8 @@ def admin_page():
 
         if settingType == "system":
 
+            cache.delete_memoized(cachedDbCalls.getSystemSettings)
+
             serverName = request.form['serverName']
             serverProtocol = request.form['siteProtocol']
             serverAddress = request.form['serverAddress']
@@ -574,7 +579,7 @@ def admin_page():
 
             db.session.commit()
 
-            sysSettings = settings.settings.query.first()
+            sysSettings = cachedDbCalls.getSystemSettings()
 
             current_app.config.update(
                 SERVER_NAME=None,
@@ -647,6 +652,7 @@ def admin_page():
                 topicQuery = topics.topics.query.filter_by(id=topicID).first()
 
                 if topicQuery is not None:
+                    cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                     topicQuery.name = topicName
 
@@ -668,6 +674,7 @@ def admin_page():
                                     pass
             else:
                 topicName = request.form['name']
+                cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                 topicImage = None
                 if 'photo' in request.files:
@@ -680,7 +687,7 @@ def admin_page():
                 db.session.add(newTopic)
 
             # Initialize the Topic Cache
-            topicQuery = topics.topics.query.all()
+            topicQuery = cachedDbCalls.getAllTopics()
             for topic in topicQuery:
                 globalvars.topicCache[topic.id] = topic.name
 
@@ -956,7 +963,7 @@ def rtmpStat_page(node):
 @login_required
 @roles_required('Streamer')
 def settings_channels_page():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
@@ -1256,7 +1263,7 @@ def settings_channels_page():
 @login_required
 @roles_required('Streamer')
 def settings_channels_chat_page():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     if request.method == 'POST':
         from app import ejabberd
@@ -1418,7 +1425,7 @@ def initialSetup():
             db.session.add(serverSettings)
             db.session.commit()
 
-            sysSettings = settings.settings.query.first()
+            sysSettings = cachedDbCalls.getSystemSettings()
 
             if settings is not None:
                 current_app.config.update(
