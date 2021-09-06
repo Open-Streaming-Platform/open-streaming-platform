@@ -12,12 +12,13 @@ from classes import Stream
 from classes import Sec
 
 from functions import themes
+from functions import cachedDbCalls
 
 streamers_bp = Blueprint('streamers', __name__, url_prefix='/streamer')
 
 @streamers_bp.route('/')
 def streamers_page():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     streamerIDs = []
 
     if sysSettings.showEmptyTables:

@@ -12,6 +12,7 @@ from functions import system
 from functions import webhookFunc
 from functions import templateFilters
 from functions import xmpp
+from functions import cachedDbCalls
 
 from app import r
 
@@ -38,7 +39,7 @@ def handle_viewer_total_request(streamData, room=None):
 def updateStreamData(message):
     channelLoc = message['channel']
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc, owningUser=current_user.id).first()
 
     if channelQuery is not None:

@@ -20,6 +20,7 @@ from classes import notifications
 from functions import system
 from functions import webhookFunc
 from functions import templateFilters
+from functions import cachedDbCalls
 
 # Checks Length of a Video at path and returns the length
 def getVidLength(input_video):
@@ -81,7 +82,7 @@ def deleteVideo(videoID):
 def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments):
 
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     if recordedVidQuery is not None:
 
@@ -163,7 +164,7 @@ def moveVideo(videoID, newChannel):
     return False
 
 def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
-    settingsQuery = settings.settings.query.first()
+    settingsQuery = cachedDbCalls.getSystemSettings()
 
     # TODO Add Webhook for Clip Creation
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()

@@ -8,19 +8,23 @@ from classes import Stream
 from classes import subscriptions
 
 from functions import themes
+from functions import cachedDbCalls
 
 channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 
 @channels_bp.route('/')
 def channels_page():
-    sysSettings = settings.settings.query.first()
-    if sysSettings.showEmptyTables:
-        channelList = Channel.Channel.query.all()
-    else:
-        channelList = []
-        for channel in Channel.Channel.query.all():
+    sysSettings = cachedDbCalls.getSystemSettings()
+
+    #channelList = Channel.Channel.query.all()
+    channelList = cachedDbCalls.getAllChannels()
+
+    if sysSettings.showEmptyTables is False:
+        channelListArray = []
+        for channel in channelList:
             if len(channel.recordedVideo) > 0:
-                channelList.append(channel)
+                channelListArray.append(channel)
+        channelList = channelListArray
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)
 
 @channels_bp.route('/<int:chanID>/')

@@ -3,6 +3,8 @@ from flask_restplus import Api, Resource, reqparse, Namespace
 from classes import topics
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 api = Namespace('topic', description='Topic Related Queries and Functions')
 
 @api.route('/')
@@ -11,7 +13,7 @@ class api_1_ListTopics(Resource):
         """
              Returns a List of All Topics
         """
-        topicList = topics.topics.query.all()
+        topicList = cachedDbCalls.getAllTopics()
         db.session.commit()
         return {'results': [ob.serialize() for ob in topicList]}
 

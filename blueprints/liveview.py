@@ -15,19 +15,23 @@ from classes import Sec
 from classes import banList
 from classes import stickers
 
-from globals.globalvars import ejabberdServer
+from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
 from functions import themes
 from functions import securityFunc
+from functions import cachedDbCalls
 
 liveview_bp = Blueprint('liveview', __name__, url_prefix='/view')
 
 @liveview_bp.route('/<loc>/')
 def view_page(loc):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     xmppserver = sysSettings.siteAddress
-    if ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
+
+    if ejabberdServerHttpBindFQDN != None:
+        xmppserver = ejabberdServerHttpBindFQDN
+    elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
         xmppserver = ejabberdServer
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
