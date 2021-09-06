@@ -4,6 +4,8 @@ from classes import settings
 from classes import Sec
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 api = Namespace('xmpp', description='XMPP Chat Related Queries and Functions')
 
 xmppAuthParserPost = reqparse.RequestParser()
@@ -27,7 +29,7 @@ class api_1_xmppAuth(Resource):
             jid = args['jid']
             if 'token' in args:
                 token = args['token']
-                sysSettings = settings.settings.query.first()
+                sysSettings = cachedDbCalls.getSystemSettings()
                 if sysSettings is not None:
                     username = jid.replace("@" + sysSettings.siteAddress,"")
                     userQuery = Sec.User.query.filter_by(uuid=username, active=True).first()
@@ -49,7 +51,7 @@ class api_1_xmppisuser(Resource):
         args = xmppIsUserParserPost.parse_args()
         if 'jid' in args:
             jid = args['jid']
-            sysSettings = settings.settings.query.first()
+            sysSettings = cachedDbCalls.getSystemSettings()
             if sysSettings is not None:
                 username = jid.replace("@" + sysSettings.siteAddress,"")
                 userQuery = Sec.User.query.filter_by(uuid=username).first()

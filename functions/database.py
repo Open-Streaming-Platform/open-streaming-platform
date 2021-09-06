@@ -17,6 +17,7 @@ from classes import RecordedVideo
 from classes import Sec
 
 from functions import system
+from functions import cachedDbCalls
 
 from conf import config
 
@@ -39,7 +40,7 @@ def checkDefaults(user_datastore):
     return True
 
 def dbFixes():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     print({"level": "info", "message": "Performing DB Sanity Check"})
     # Set/Update the system version attribute
@@ -238,7 +239,7 @@ def init(app, user_datastore):
 
     print({"level": "info", "message": "Querying Default System Settings"})
     # Note: for a freshly installed system, sysSettings is None!
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     if sysSettings is not None:
 

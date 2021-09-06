@@ -23,9 +23,10 @@ from functions import templateFilters
 from functions import subsFunc
 from functions import videoFunc
 from functions import xmpp
+from functions import cachedDbCalls
 
 def rtmp_stage1_streamkey_check(key, ipaddress):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
 
@@ -75,7 +76,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
         return returnMessage
 
 def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
 
@@ -133,7 +134,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
 
 def rtmp_record_auth_check(channelLoc):
 
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelRequest = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     currentTime = datetime.datetime.utcnow()
 
@@ -167,7 +168,7 @@ def rtmp_record_auth_check(channelLoc):
     return returnMessage
 
 def rtmp_user_deauth_check(key, ipaddress):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
 
@@ -236,7 +237,7 @@ def rtmp_user_deauth_check(key, ipaddress):
         return returnMessage
 
 def rtmp_rec_Complete_handler(channelLoc, path):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
 

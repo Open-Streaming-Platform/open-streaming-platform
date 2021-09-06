@@ -1,6 +1,9 @@
 from .shared import db
 from uuid import uuid4
 
+import os
+from globals import globalvars
+
 class RecordedVideo(db.Model):
     __tablename__ = "RecordedVideo"
     id = db.Column(db.Integer,primary_key=True)
@@ -62,6 +65,22 @@ class RecordedVideo(db.Model):
             'ClipIDs': [obj.id for obj in self.clips],
         }
 
+    def remove(self):
+        videos_root = globalvars.videoRoot + 'videos/'
+
+        filePath = videos_root + self.videoLocation
+        thumbnailPath = videos_root + self.videoLocation[:-4] + ".png"
+        gifLocation = videos_root + self.videoLocation[:-4] + ".gif"
+
+        if filePath != videos_root:
+            if os.path.exists(filePath) and (
+                    self.videoLocation is not None or self.videoLocation != ""):
+                os.remove(filePath)
+                if os.path.exists(thumbnailPath):
+                    os.remove(thumbnailPath)
+                if os.path.exists(gifLocation):
+                    os.remove(gifLocation)
+
 class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
@@ -109,3 +128,19 @@ class Clips(db.Model):
             'thumbnailLocation': '/videos/' + self.thumbnailLocation,
             'gifLocation': '/videos/' + self.gifLocation
         }
+
+    def remove(self):
+        videos_root = globalvars.videoRoot + 'videos/'
+
+        filePath = videos_root + self.videoLocation
+        thumbnailPath = videos_root + self.videoLocation[:-4] + ".png"
+        gifLocation = videos_root + self.videoLocation[:-4] + ".gif"
+
+        if filePath != videos_root:
+            if os.path.exists(filePath) and (
+                    self.videoLocation is not None or self.videoLocation != ""):
+                os.remove(filePath)
+                if os.path.exists(thumbnailPath):
+                    os.remove(thumbnailPath)
+                if os.path.exists(gifLocation):
+                    os.remove(gifLocation)
