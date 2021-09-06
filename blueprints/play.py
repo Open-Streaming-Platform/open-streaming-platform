@@ -139,7 +139,7 @@ def vid_move_page(videoID):
 
     result = videoFunc.moveVideo(videoID, newChannel)
     if result is True:
-        cache.delete_memoized('getVideo', videoID)
+        cache.delete_memoized('cachedDbCalls.getVideo', videoID)
         flash("Video Moved to Another Channel", "success")
         return redirect(url_for('.view_vid_page', videoID=videoID))
     else:
