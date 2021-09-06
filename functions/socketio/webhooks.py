@@ -11,6 +11,7 @@ from classes import RecordedVideo
 
 from functions import webhookFunc
 from functions import templateFilters
+from functions import cachedDbCalls
 
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
@@ -117,7 +118,7 @@ def testWebhook(message):
         if 'channelID' in message:
             channelID = int(message['channelID'])
 
-        sysSettings = settings.settings.query.first()
+        sysSettings = cachedDbCalls.getSystemSettings()
         webhookQuery = None
 
         # Acquire a Channel to Test With

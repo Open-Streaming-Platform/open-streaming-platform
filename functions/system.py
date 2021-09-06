@@ -18,6 +18,8 @@ from classes import logs
 from classes import RecordedVideo
 from classes import Sec
 
+from functions import cachedDbCalls
+
 def asynch(func):
 
     @wraps(func)
@@ -159,7 +161,7 @@ def systemFixes(app):
     return True
 
 def initializeThemes():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     print({"level": "info", "message": "Importing Theme Data into Global Cache"})
     # Import Theme Data into Theme Dictionary
@@ -168,7 +170,7 @@ def initializeThemes():
     return True
 
 def checkOSPEdgeConf():
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
 
     print({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
     # Initialize the OSP Edge Configuration - Mostly for Docker

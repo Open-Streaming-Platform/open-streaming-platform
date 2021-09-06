@@ -147,6 +147,7 @@ from functions import securityFunc
 from functions import votes
 from functions import webhookFunc
 from functions.ejabberdctl import ejabberdctl
+from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
@@ -155,11 +156,15 @@ logger = logging.getLogger('gunicorn.error').handlers
 # Initialize Flask-BabelEx
 babel = Babel(app)
 
-# Initialize Flask-Limiter
+# Initialize RedisURL
+RedisURL = None
 if config.redisPassword == '' or config.redisPassword is None:
-    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
-    app.config["RATELIMIT_STORAGE_URL"] = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+
+#Initialize Flask-Limiter
+app.config["RATELIMIT_STORAGE_URL"] = RedisURL
 from classes.shared import limiter
 limiter.init_app(app)
 
@@ -191,12 +196,16 @@ Session(app)
 # Initialize Flask-CORS Config
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
+#Initialize Flask-Cache
+from classes.shared import cache
+cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': RedisURL})
+
 # Initialize Debug Toolbar
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
 try:
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
 except:
     app.config['SECURITY_TOTP_ISSUER'] = "OSP"
@@ -221,6 +230,8 @@ ejabberd = None
 
 if hasattr(config,'ejabberdServer'):
     globalvars.ejabberdServer = config.ejabberdServer
+if hasattr(config,'ejabberdServerHttpBindFQDN'):
+    globalvars.ejabberdServerHttpBindFQDN = config.ejabberdServerHttpBindFQDN
 
 try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
@@ -407,13 +418,13 @@ def inject_recaptchaEnabled():
 @app.context_processor
 def inject_oAuthProviders():
 
-    SystemOAuthProviders = db.session.query(settings.oAuthProvider).all()
+    SystemOAuthProviders = cachedDbCalls.getOAuthProviders()
     return dict(SystemOAuthProviders=SystemOAuthProviders)
 
 @app.context_processor
 def inject_sysSettings():
 
-    sysSettings = db.session.query(settings.settings).first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     allowRegistration = config.allowRegistration
     return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
 

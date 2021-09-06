@@ -1,7 +1,11 @@
+import datetime
+
 from flask_restplus import Api, Resource, reqparse, Namespace
 
 from classes import settings
 from classes.shared import db
+
+from functions import cachedDbCalls
 
 api = Namespace('server', description='Server Related Queries and Functions')
 
@@ -12,7 +16,7 @@ class api_1_Server(Resource):
         """
             Displays a Listing of Server Settings
         """
-        serverSettings = settings.settings.query.first()
+        serverSettings = cachedDbCalls.getSystemSettings()
         db.session.commit()
         return {'results': serverSettings.serialize()}
 
@@ -40,3 +44,12 @@ class api_1_Rtmp(Resource):
         rtmpList = settings.rtmpServer.query.all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in rtmpList]}
+
+@api.route('/ping')
+class api_1_Ping(Resource):
+    # Server - Returns Pong Check
+    def get(self):
+        """
+            Returns a Server Pong
+        """
+        return {'results': {'message': 'Pong', 'timestamp': str(datetime.datetime.now())}}
