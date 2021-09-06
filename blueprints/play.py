@@ -159,7 +159,7 @@ def vid_change_page(videoID):
         allowComments = True
 
     result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
-    cache.delete_memoized('getVideo', videoID)
+    cache.delete_memoized(cachedDbCalls.getVideo, videoID)
 
     if result is True:
         flash("Changed Video Metadata", "success")
@@ -175,7 +175,7 @@ def delete_vid_page(videoID):
     result = videoFunc.deleteVideo(videoID)
 
     if result is True:
-        cache.delete_memoized('getVideo', videoID)
+        cache.delete_memoized(cachedDbCalls.getVideo, videoID)
         flash("Video deleted")
         return redirect(url_for('root.main_page'))
     else:

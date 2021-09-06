@@ -211,7 +211,7 @@ def admin_page():
                     system.newLog(1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name))
                     db.session.delete(topicQuery)
                     db.session.commit()
-                    cache.delete_memoized('getAllTopics')
+                    cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                     # Initialize the Topic Cache
                     topicQuery = cachedDbCalls.getAllTopics()
@@ -450,7 +450,7 @@ def admin_page():
 
         if settingType == "system":
 
-            cache.delete_memoized('getSystemSettings')
+            cache.delete_memoized(cachedDbCalls.getSystemSettings)
 
             serverName = request.form['serverName']
             serverProtocol = request.form['siteProtocol']
@@ -652,7 +652,7 @@ def admin_page():
                 topicQuery = topics.topics.query.filter_by(id=topicID).first()
 
                 if topicQuery is not None:
-                    cache.delete_memoized('getAllTopics')
+                    cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                     topicQuery.name = topicName
 
@@ -674,7 +674,7 @@ def admin_page():
                                     pass
             else:
                 topicName = request.form['name']
-                cache.delete_memoized('getAllTopics')
+                cache.delete_memoized(cachedDbCalls.getAllTopics)
 
                 topicImage = None
                 if 'photo' in request.files:
