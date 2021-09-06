@@ -17,6 +17,7 @@ from classes import settings
 from functions import themes
 from functions import system
 from functions import securityFunc
+from functions import cachedDbCalls
 
 root_bp = Blueprint('root', __name__)
 
@@ -30,7 +31,7 @@ def main_page():
         return render_template('/firstrun.html')
 
     else:
-        sysSettings = settings.settings.query.first()
+        sysSettings = cachedDbCalls.getSystemSettings()
         activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
 
         recordedQuery = None
@@ -277,21 +278,21 @@ def rtmp_check():
 # Redirect Streams
 @root_bp.route('/proxy/<channelLoc>/<file>')
 def proxy_redirect(channelLoc, file):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file)
 
 @root_bp.route('/proxy-adapt/<channelLoc>.m3u8')
 def proxy_adaptive_redirect(channelLoc):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '.m3u8')
 
 @root_bp.route('/proxy-adapt/<channelLoc>/<file>')
 def proxy_adaptive_subfolder_redirect(channelLoc, file):
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '/' + file)

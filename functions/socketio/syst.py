@@ -16,6 +16,7 @@ from classes import Stream
 from classes import views
 
 from functions import system
+from functions import cachedDbCalls
 
 from app import user_datastore
 
@@ -88,7 +89,7 @@ def deleteChannelAdmin(message):
                 shutil.rmtree(filePath, ignore_errors=True)
 
             from app import ejabberd
-            sysSettings = settings.settings.query.first()
+            sysSettings = cachedDbCalls.getSystemSettings()
             ejabberd.destroy_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
 
             system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
