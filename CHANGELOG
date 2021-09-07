@@ -1,3 +1,7 @@
+0.8.11
+==============================================
+OSP-Core: Fixed Topic URL link link to point to /topic/ not /topics on DarkCow Live Page #421 - 348f96cd94e1044dd1ded262b5aab5649c09b503
+
 0.8.10
 ==============================================
 OSP-Core: Added /apiv1/server/ping endpoint for up/down checks - 1678bc6d4b35d087e3f1a06d046afc706d62b449
