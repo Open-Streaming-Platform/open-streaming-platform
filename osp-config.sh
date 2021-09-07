@@ -101,37 +101,6 @@ upgrade_db() {
   cd $DIR
 }
 
-upgrade_osp() {
-   UPGRADELOG="/opt/osp/logs/upgrade.log"
-   echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
-   sudo git stash >> $OSPLOG 2>&1
-   sudo git pull >> $OSPLOG 2>&1
-   echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
-   sudo chown -R $http_user:$http_user /opt/osp >> $OSPLOG 2>&1
-   echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
-   sudo systemctl stop osp.target >> $OSPLOG 2>&1
-   echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
-   sudo systemctl stop nginx-osp >> $OSPLOG 2>&1
-   echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
-   sudo pip3 uninstall flask-security >> $OSPLOG 2>&1
-   sudo pip3 install -r /opt/osp/setup/requirements.txt >> $OSPLOG 2>&1
-   echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
-   sudo cp /opt/osp/setup/nginx/osp-rtmp.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
-   sudo cp /opt/osp/setup/nginx/osp-redirects.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
-   sudo cp /opt/osp/setup/nginx/osp-socketio.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
-   echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-   python3 manage.py db init >> $OSPLOG 2>&1
-   echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-   python3 manage.py db migrate >> $OSPLOG 2>&1
-   echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-   python3 manage.py db upgrade >> $OSPLOG 2>&1
-   echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
-   sudo systemctl start osp.target >> $OSPLOG 2>&1
-   echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
-   sudo systemctl start nginx-osp >> $OSPLOG 2>&1
-   echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
-}
-
 install_prereq() {
     echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
     # Get Deb Dependencies
@@ -490,15 +459,37 @@ install_osp() {
 }
 
 upgrade_osp() {
-  if cd /opt/osp
-  then
-    sudo git pull >> $OSPLOG 2>&1
-    sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
-    sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
-    sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
-  else
+   UPGRADELOG="/opt/osp/logs/upgrade.log"
+   if cd /opt/osp
+   then
+     echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
+     sudo git stash >> $UPGRADELOG 2>&1
+     sudo git pull >> $UPGRADELOG 2>&1
+     echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
+     sudo chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
+     echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
+     sudo systemctl stop osp.target >> $UPGRADELOG 2>&1
+     echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
+     sudo systemctl stop nginx-osp >> $UPGRADELOG 2>&1
+     echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
+     sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
+     echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
+     sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
+     sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+     python3 manage.py db init >> $UPGRADELOG 2>&1
+     echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+     python3 manage.py db migrate >> $UPGRADELOG 2>&1
+     echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
+     python3 manage.py db upgrade >> $UPGRADELOG 2>&1
+     echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
+     sudo systemctl start osp.target >> $UPGRADELOG 2>&1
+     echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
+     sudo systemctl start nginx-osp >> $UPGRADELOG 2>&1
+     echo 100 | dialog --title "Upgrading OSP" --gauge "Complete" 10 70 0
+   else
     echo "Error: /opt/osp Does not Exist" >> $OSPLOG 2>&1
-  fi
+   fi
 }
 
 upgrade_proxy() {
