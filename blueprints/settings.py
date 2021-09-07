@@ -450,7 +450,7 @@ def admin_page():
 
         if settingType == "system":
 
-            cache.delete_memoized(cachedDbCalls.getSystemSettings)
+            sysSettings = settings.settings.query.first()
 
             serverName = request.form['serverName']
             serverProtocol = request.form['siteProtocol']
@@ -579,6 +579,7 @@ def admin_page():
 
             db.session.commit()
 
+            cache.delete_memoized(cachedDbCalls.getSystemSettings)
             sysSettings = cachedDbCalls.getSystemSettings()
 
             current_app.config.update(
@@ -1338,7 +1339,7 @@ def initialSetup():
     firstRunCheck = system.check_existing_settings()
 
     if firstRunCheck is False:
-
+        cache.delete_memoized(cachedDbCalls.getSystemSettings)
         sysSettings = settings.settings.query.all()
 
         for setting in sysSettings:
