@@ -1,6 +1,8 @@
 0.8.11
 ==============================================
 OSP-Core: Fixed Topic URL link link to point to /topic/ not /topics on DarkCow Live Page #421 - 348f96cd94e1044dd1ded262b5aab5649c09b503
+OSP-Core: Fixed an issue where System Settings Cached DB Calls were not invalidating properly #422 -2417a7485391879dd6d20273eab43b64b631be11
+OSP-Installer: Fixed an issue where osp-config.sh was not performing the correct update procedure due to duplicate entries #419 - 7ed83d77547f83cab2baf2e3b79a891828bfcd68
 
 0.8.10
 ==============================================
