@@ -101,9 +101,9 @@
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
-                        {% if stream.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow gif lazy" {% if stream.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                      <img class="shadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
                           <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{stream.id|get_Stream_Upvotes}}</b></span>
@@ -216,7 +216,7 @@
                   <a href="/play/{{video.id}}">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
-                        {% if video.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
                       <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                       <div class="displayCard-counts">
