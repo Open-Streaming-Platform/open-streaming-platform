@@ -7,6 +7,7 @@ from classes import Stream
 from classes import subscriptions
 from classes import Sec
 from classes import topics
+from classes import comments
 
 from classes.shared import cache
 
@@ -85,6 +86,12 @@ def getVideo(videoID):
                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).first()
     return recordedVid
 
+@cache.memoize(timeout=60)
+def getVideoCommentCount(videoID):
+    videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
+    result = videoCommentsQuery
+    return result
+
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():
@@ -101,4 +108,9 @@ def getUserPhotoLocation(userID):
         return UserQuery.pictureLocation
     else:
         return "/static/img/user2.png"
+
+@cache.memoize(timeout=30)
+def getUser(userID):
+    UserQuery = Sec.User.query.filter_by(id=userID).first()
+    return UserQuery
 
