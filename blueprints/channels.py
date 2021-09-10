@@ -16,13 +16,13 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 def channels_page():
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    #channelList = Channel.Channel.query.all()
     channelList = cachedDbCalls.getAllChannels()
 
     if sysSettings.showEmptyTables is False:
         channelListArray = []
         for channel in channelList:
-            if len(channel.recordedVideo) > 0:
+            chanVidQuery = cachedDbCalls.getChannelVideos(channel.id)
+            if len(chanVidQuery) > 0:
                 channelListArray.append(channel)
         channelList = channelListArray
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)

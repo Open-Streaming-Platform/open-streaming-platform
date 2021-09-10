@@ -68,6 +68,11 @@ def isChannelLive(channelID):
     else:
         return False
 
+@cache.memoize(timeout=10)
+def getChannelVideos(channelID):
+    VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID).all()
+    return VideoQuery
+
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getVideo(videoID):
