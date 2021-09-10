@@ -1,5 +1,7 @@
 0.8.12
 ==============================================
+OSP-Core: Fixes an issue where /Channels page gives a 500 error if Show Empty Tables is set to False
+OSP-Core: Fixes an issue where the dbFixes() function does not update the System Settings due to caching
 
 0.8.11
 ==============================================
