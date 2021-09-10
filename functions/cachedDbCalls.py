@@ -74,6 +74,14 @@ def getChannelVideos(channelID):
     VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID).all()
     return VideoQuery
 
+@cache.memoize(timeout=1200)
+def getChannelLocationFromID(channelID):
+    ChannelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.id, Channel.Channel.channelLoc).first()
+    if ChannelQuery is not None:
+        return ChannelQuery.channelLoc
+    else:
+        return None
+
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getVideo(videoID):
