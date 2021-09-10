@@ -102,9 +102,9 @@
                 <li class="video-card bg-dark mx-4" style="max-width: 45rem;">
                     <div class="row no-gutters">
                         <div class="video-card-header">
-                            <a href="/view/{{stream.channel.channelLoc}}/">
+                            <a href="/view/{{stream.linkedChannel | get_channelLocationFromID}}/">
                                 <img class="shadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
-                                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.channel.channelLoc}}.png"></a>
+                                    onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} width="100%" data-src="/stream-thumb/{{stream.linkedChannel | get_channelLocationFromID}}.png"></a>
                         </div>
                         <div class="video-card-body ml-3">
                             <b><i class="px-2 fas fa-tv"></i></b><a href="/view/{{stream.channel.channelLoc}}/"><span class="video-title name"><b>{{stream.streamName|limit_title}}</b></span></a><br />

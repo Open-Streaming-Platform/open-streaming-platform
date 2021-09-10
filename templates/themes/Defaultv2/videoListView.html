@@ -97,13 +97,13 @@
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for stream in openStreams %}
                 <li class="displayCard mx-4 my-3">
-                  <a href="/view/{{stream.channel.channelLoc}}/">
+                  <a href="/view/{{stream.linkedChannel | get_channelLocationFromID}}/">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
                         {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                      <img class="shadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.linkedChannel | get_channelLocationFromID}}.png">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
                           <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{stream.id|get_Stream_Upvotes}}</b></span>
