@@ -125,7 +125,7 @@ def get_topicName(topicID):
     return "None"
 
 def get_userName(userID):
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
+    userQuery = cachedDbCalls.getUser(userID)
     if userQuery is None:
         return "Unknown User"
     else:
@@ -144,18 +144,11 @@ def get_Clip_Upvotes_Filter(videoID):
     return result
 
 def get_Video_Comments_Filter(videoID):
-    result = commentsFunc.get_Video_Comments(videoID)
+    result = cachedDbCalls.getVideoCommentCount(videoID)
     return result
 
 def get_pictureLocation(userID):
-    #userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    #pictureLocation = None
-    #if userQuery.pictureLocation is None:
-    #    pictureLocation = '/static/img/user2.png'
-    #else:
-    #    pictureLocation = '/images/' + userQuery.pictureLocation
     pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
-
     return pictureLocation
 
 def get_diskUsage(channelLocation):
