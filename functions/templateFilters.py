@@ -153,7 +153,8 @@ def get_pictureLocation(userID):
     pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
     return pictureLocation
 
-def channeltoOwnerID(channelObj):
+def channeltoOwnerID(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
     return channelObj.owningUser
 
 def get_diskUsage(channelLocation):
