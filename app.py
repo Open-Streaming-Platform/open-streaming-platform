@@ -58,7 +58,8 @@ globalvars.processUUID = processUUID
 if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
     if config.sentryIO_Enabled:
         import sentry_sdk
-        from sentry_sdk.integrations.flask import FlaskIntegration, SqlalchemyIntegration
+        from sentry_sdk.integrations.flask import FlaskIntegration
+        from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
         sentryEnv = "Not Specified"
         if hasattr(config, 'sentryIO_Environment'):
