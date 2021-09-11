@@ -264,7 +264,7 @@
                     </div>
                     <div class="video-card-body">
                         <i class="fas fa-tv mr-2"></i><a href="/clip/{{clip.id}}"><span class="video-title name"><b> {{clip.clipName|limit_title}}</b></span></a><br />
-                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.parentVideo | cliptoChannelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i
+                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.parentVideo | videotoChannelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i
                                     class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
                         <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.parentVideo | videotoChannelID}}/"> {{clip.parentVideo | videotoChannelID | get_channelName}}</a>
                         <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i> {{clip.parentVideo | get_videoDate |normalize_date}}</span><br />
