@@ -204,9 +204,9 @@ r.flushdb()
 # Initialize Flask-SocketIO
 from classes.shared import socketio
 if config.redisPassword == '' or config.redisPassword is None:
-    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 else:
-    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 
 # Begin Database Initialization
 from classes.shared import db
@@ -221,7 +221,7 @@ Session(app)
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 # Initialize Flask-Caching
-logging.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
+logging.info({"level": "info", "message": "Performing Flask Caching Initialization"})
 
 from classes.shared import cache
 redisCacheOptions = {
