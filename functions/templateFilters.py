@@ -42,6 +42,12 @@ def init(context):
     context.jinja_env.filters['get_channelName'] = get_channelName
     context.jinja_env.filters['get_videoComments'] = get_videoComments
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
+    context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
+    context.jinja_env.filters['channeltoOwnerID'] = channeltoOwnerID
+    context.jinja_env.filters['videotoChannelID'] = videotoChannelID
+    context.jinja_env.filters['get_channelTopic'] = get_channelTopic
+    context.jinja_env.filters['get_videoTopic'] = get_videoTopic
+    context.jinja_env.filters['get_videoDate'] = get_videoDate
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -125,7 +131,7 @@ def get_topicName(topicID):
     return "None"
 
 def get_userName(userID):
-    userQuery = Sec.User.query.filter_by(id=int(userID)).first()
+    userQuery = cachedDbCalls.getUser(userID)
     if userQuery is None:
         return "Unknown User"
     else:
@@ -144,19 +150,28 @@ def get_Clip_Upvotes_Filter(videoID):
     return result
 
 def get_Video_Comments_Filter(videoID):
-    result = commentsFunc.get_Video_Comments(videoID)
+    result = cachedDbCalls.getVideoCommentCount(videoID)
     return result
 
 def get_pictureLocation(userID):
-    #userQuery = Sec.User.query.filter_by(id=int(userID)).first()
-    #pictureLocation = None
-    #if userQuery.pictureLocation is None:
-    #    pictureLocation = '/static/img/user2.png'
-    #else:
-    #    pictureLocation = '/images/' + userQuery.pictureLocation
     pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
-
     return pictureLocation
+
+def channeltoOwnerID(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
+    return channelObj.owningUser
+
+def get_channelTopic(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
+    return channelObj.topic
+
+def videotoChannelID(videoID):
+    videoObj = cachedDbCalls.getVideo(videoID)
+    return videoObj.channelID
+
+def get_videoTopic(videoID):
+    videoObj = cachedDbCalls.getVideo(videoID)
+    return videoObj.topic
 
 def get_diskUsage(channelLocation):
         videos_root = globalvars.videoRoot + 'videos/'
@@ -258,6 +273,14 @@ def get_channelName(channelID):
 def get_channelProtected(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
     return channelQuery.protected
+
+def get_channelLocationFromID(channelID):
+    channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
+    return channelQuery
+
+def get_videoDate(videoID):
+    videoQuery = cachedDbCalls.getVideo(videoID)
+    return videoQuery.videoDate
 
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(id=videoID).all()

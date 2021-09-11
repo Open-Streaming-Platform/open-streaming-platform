@@ -20,7 +20,7 @@
                     <a href="/streamer/{{channelData.owningUser}}/">
                         <h2 class="display-5">{{channelData.owningUser|get_userName}}</h2>
                     </a>
-                    {% if channelData.stream|length > 0 %}
+                    {% if channelData.id | get_channelLiveStatus %}
                     <span class="badge badge-danger"><i class="fas fa-video"></i> Live</span>
                     {% else %}
                     <span class="badge badge-secondary"><i class="fas fa-video-slash"></i> Offline</span>
@@ -97,13 +97,13 @@
             <ul class="itemList list d-flex flex-wrap justify-content-start">
                 {% for stream in openStreams %}
                 <li class="displayCard mx-4 my-3">
-                  <a href="/view/{{stream.channel.channelLoc}}/">
+                  <a href="/view/{{stream.linkedChannel | get_channelLocationFromID}}/">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
                         <span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span>
-                        {% if stream.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow gif lazy" {% if stream.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.channel.channelLoc}}.png">
+                      <img class="shadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{stream.linkedChannel | get_channelLocationFromID}}.png">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
                           <span class="px-2 flex-fill upvotes"><i class="fas fa-thumbs-up"></i> <b>{{stream.id|get_Stream_Upvotes}}</b></span>
@@ -115,7 +115,7 @@
                       </div>
                     </div>
                     <div class="card-data">
-                      <img class="rounded" src="/images/{{stream.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <img class="rounded" src="/images/{{stream.linkedChannel | channeltoOwnerID | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{stream.streamName|limit_title}}</b></div>
                         <div class="card-cut-text topic ml-2">{{stream.topic|get_topicName}}</div>
@@ -158,7 +158,7 @@
                   <a href="/channel/{{channel.id}}/">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
-                        {% if channel.stream|length > 0 %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
+                        {% if channel.id | get_channelLiveStatus %}<span class="badge badge-danger mx-1"><i class="fas fa-video"></i> Live</span> {% endif %}
                         {% if channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-1"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
                       <img class="shadow lazy" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
@@ -166,13 +166,13 @@
                         <span class="displayCard-left align-left" style="color:white;">
                         </span>
                         <span class="displayCard-right" style="float:right;color:white;">
-                          <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> <b>{{channel.subscriptions|length}}</b></span>
+                          <span class="px-2 flex-fill subs"><i class="fas fa-star"></i> <b>{{channel.id | get_channelSubCount}}</b></span>
                           <span class="px-2 flex-fill views"><i class="fas fa-users"></i> <b>{{channel.views}}</b></span>
                         </span>
                       </div>
                     </div>
                     <div class="card-data">
-                      <img class="rounded" src="/images/{{channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <img class="rounded" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{channel.channelName}}</b></div>
                         <div class="card-cut-text topic ml-2">{{channel.topic|get_topicName}}</div>
@@ -216,7 +216,7 @@
                   <a href="/play/{{video.id}}">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
-                        {% if video.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
                       <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                       <div class="displayCard-counts">
@@ -230,7 +230,7 @@
                       </div>
                     </div>
                     <div class="card-data">
-                      <img class="rounded" src="/images/{{video.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <img class="rounded" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{video.channelName|limit_title}}</b></div>
                         <div class="card-cut-text topic ml-2">{{video.topic|get_topicName}}</div>
@@ -275,9 +275,9 @@
                   <a href="/clip/{{clip.id}}">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
-                        {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if clip.parentVideo | videotoChannelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.parentVideo | videotoChannelID | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
@@ -290,11 +290,11 @@
                       </div>
                     </div>
                     <div class="card-data">
-                      <img class="rounded" src="/images/{{clip.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <img class="rounded" src="/images/{{clip.parentVideo | videotoChannelID | channeltoOwnerID | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
-                        <div class="card-cut-text topic ml-2">{{clip.recordedVideo.topic|get_topicName}}</div>
-                        <span class="date" style="display:none;">{{clip.recordedVideo.videoDate|normalize_date}}</span>
+                        <div class="card-cut-text topic ml-2">{{clip.parentVideo | videotoChannelID | get_videoTopic |get_topicName}}</div>
+                        <span class="date" style="display:none;">{{clip.parentVideo | get_videoDate |normalize_date}}</span>
                       </div>
                     </div>
                   </a>

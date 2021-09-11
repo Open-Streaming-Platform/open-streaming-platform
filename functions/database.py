@@ -40,7 +40,7 @@ def checkDefaults(user_datastore):
     return True
 
 def dbFixes():
-    sysSettings = cachedDbCalls.getSystemSettings()
+    sysSettings = settings.settings.query.first()
 
     print({"level": "info", "message": "Performing DB Sanity Check"})
     # Set/Update the system version attribute
