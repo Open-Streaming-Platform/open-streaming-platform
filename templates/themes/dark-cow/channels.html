@@ -36,7 +36,7 @@
                     <div class="channel-card-body">
                         <i class="fas fa-podcast mr-2"></i><a href="/channel/{{channel.id}}/"><span class="video-title name"><b> {{channel.channelName}}</b></span></a>
                         <span class="float-right">
-                            {% if channel.stream|length > 0 %}
+                            {% if channel.id | get_channelLiveStatus %}
                             <span class="badge badge-danger">Live</span>
                             {% else %}
                             <span class="badge badge-secondary">Offline</span>
