@@ -4,6 +4,7 @@ OSP-Core: Fixes an issue where /Channels page gives a 500 error if Show Empty Ta
 OSP-Core: Fixes an issue where the dbFixes() function does not update the System Settings due to caching
 OSP-Core: Added Caching for Get_VideoCommentCount Template Filter
 OSP-Core: Added Caching for Get_Username Template Filter
+OSP-Core: Changed videoViewList.html to work with optimized queries **Note:** Custom Themes will need to be changed to use template filters as in these files as some DB Object subqueries will no longer work and will cause errors
 
 0.8.11
 ==============================================
