@@ -578,6 +578,7 @@ def admin_page():
                 sysSettings.systemLogo = systemLogo
 
             db.session.commit()
+
             cache.delete_memoized(cachedDbCalls.getSystemSettings)
             sysSettings = cachedDbCalls.getSystemSettings()
 
