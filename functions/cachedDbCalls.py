@@ -101,6 +101,18 @@ def getVideoCommentCount(videoID):
     result = videoCommentsQuery
     return result
 
+### Clip Related DB Calls
+@cache.memoize(timeout=30)
+def getClipChannelID(clipID):
+    ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+    if ClipQuery is not None:
+        RecordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=ClipQuery.parentVideo).first()
+        if RecordedVideo is not None:
+            ChannelQuery = Channel.Channel.query.filter_by(id=RecordedVideoQuery.channelID).first()
+            if ChannelQuery is not None:
+                return ChannelQuery.id
+    return None
+
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():

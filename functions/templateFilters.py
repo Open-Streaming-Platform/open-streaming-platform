@@ -44,6 +44,10 @@ def init(context):
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
     context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
     context.jinja_env.filters['channeltoOwnerID'] = channeltoOwnerID
+    context.jinja_env.filters['videotoChannelID'] = videotoChannelID
+    context.jinja_env.filters['get_channelTopic'] = get_channelTopic
+    context.jinja_env.filters['get_videoTopic'] = get_videoTopic
+    context.jinja_env.filters['get_videoDate'] = get_videoDate
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -157,6 +161,18 @@ def channeltoOwnerID(channelID):
     channelObj = cachedDbCalls.getChannel(channelID)
     return channelObj.owningUser
 
+def get_channelTopic(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
+    return channelObj.topic
+
+def videotoChannelID(videoID):
+    videoObj = cachedDbCalls.getVideo(videoID)
+    return videoObj.channelID
+
+def get_videoTopic(videoID):
+    videoObj = cachedDbCalls.getVideo(videoID)
+    return videoObj.topic
+
 def get_diskUsage(channelLocation):
         videos_root = globalvars.videoRoot + 'videos/'
         channelLocation = videos_root + channelLocation
@@ -261,6 +277,10 @@ def get_channelProtected(channelID):
 def get_channelLocationFromID(channelID):
     channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
     return channelQuery
+
+def get_videoDate(videoID):
+    videoQuery = cachedDbCalls.getVideo(videoID)
+    return videoQuery.videoDate
 
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(id=videoID).all()
