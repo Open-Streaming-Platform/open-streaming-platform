@@ -54,6 +54,29 @@ from globals import globalvars
 processUUID = str(uuid.uuid4())
 globalvars.processUUID = processUUID
 
+####### Sentry.IO Metrics and Error Logging (Disabled by Default) #######
+if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
+    if config.sentryIO_Enabled:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration, SqlalchemyIntegration
+
+        sentryEnv = "Not Specified"
+        if hasattr(config, 'sentryIO_Environment'):
+            sentryEnv = config.sentryIO_Environment
+
+        sentry_sdk.init(
+            dsn=config.sentryIO_DSN,
+            integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0,
+            release=globalvars.version,
+            environment=sentryEnv,
+            server_name=globalvars.processUUID
+        )
+
 coreNginxRTMPAddress = "127.0.0.1"
 
 app = Flask(__name__)
