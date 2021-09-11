@@ -43,6 +43,7 @@ def init(context):
     context.jinja_env.filters['get_videoComments'] = get_videoComments
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
     context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
+    context.jinja_env.filters['channeltoOwnerID'] = channeltoOwnerID
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -151,6 +152,9 @@ def get_Video_Comments_Filter(videoID):
 def get_pictureLocation(userID):
     pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
     return pictureLocation
+
+def channeltoOwnerID(channelObj):
+    return channelObj.owningUser
 
 def get_diskUsage(channelLocation):
         videos_root = globalvars.videoRoot + 'videos/'
