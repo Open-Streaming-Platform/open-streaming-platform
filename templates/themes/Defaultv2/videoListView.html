@@ -275,9 +275,9 @@
                   <a href="/clip/{{clip.id}}">
                     <div class="displayCard-thumbnail zoom">
                       <div class="video-badges">
-                        {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
+                        {% if clip.id | cliptoChannelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="badge badge-warning mx-2"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}
                       </div>
-                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
+                      <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" {% if clip.id | cliptoChannelID | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg"
                                 onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/videos/{{clip.thumbnailLocation}}">
                       <div class="displayCard-counts">
                         <span class="displayCard-left align-left" style="color:white;">
@@ -290,11 +290,11 @@
                       </div>
                     </div>
                     <div class="card-data">
-                      <img class="rounded" src="/images/{{clip.recordedVideo.channel.owner.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                      <img class="rounded" src="/images/{{clip.id | cliptoChannelID | channeltoOwnerID | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
-                        <div class="card-cut-text topic ml-2">{{clip.recordedVideo.topic|get_topicName}}</div>
-                        <span class="date" style="display:none;">{{clip.recordedVideo.videoDate|normalize_date}}</span>
+                        <div class="card-cut-text topic ml-2">{{clip.parentVideo | videotoChannelID | get_videoTopic |get_topicName}}</div>
+                        <span class="date" style="display:none;">{{clip.parentVideo | get_videoDate |normalize_date}}</span>
                       </div>
                     </div>
                   </a>

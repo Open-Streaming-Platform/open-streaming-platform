@@ -214,7 +214,7 @@
                     <div class="video-card-body">
                         <i class="fas fa-tv mr-2"></i><a href="/play/{{video.id}}"><span class="video-title name"><b> {{video.channelName|limit_title}}</b></span></a><br />
                         {% if video.channelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channel.id}}/"> {{video.channel.channelName}}</a>
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{video.channelID}}/"> {{video.channelID | get_channelName}}</a>
                         <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</span><br />
                         <i class="fas fa-user mr-2"></i><a href="/streamer/{{video.owningUser}}"> {{video.owningUser|get_userName}}</a>
                         <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{video.topic}}/"> <span class="topic"> {{video.topic|get_topicName}}</span></a></span><br />
@@ -264,12 +264,12 @@
                     </div>
                     <div class="video-card-body">
                         <i class="fas fa-tv mr-2"></i><a href="/clip/{{clip.id}}"><span class="video-title name"><b> {{clip.clipName|limit_title}}</b></span></a><br />
-                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.recordedVideo.channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i
+                        <span class="float-right"><span class="badge badge-secondary ml-2"><i class="fas fa-user-lock"></i> Clip</span></span>{% if clip.parentVideo | cliptoChannelID | get_channelProtected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i
                                     class="fas fa-user-lock"></i> Protected</span></span>{% endif %}<br />
-                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.recordedVideo.channel.id}}/"> {{clip.recordedVideo.channel.channelName}}</a>
-                        <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i> {{clip.recordedVideo.videoDate|normalize_date}}</span><br />
-                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{clip.recordedVideo.owningUser}}"> {{clip.recordedVideo.owningUser|get_userName}}</a>
-                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.recordedVideo.topic}}/"> {{clip.recordedVideo.channel.topic|get_topicName}}</a></span><br />
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{clip.parentVideo | videotoChannelID}}/"> {{clip.parentVideo | videotoChannelID | get_channelName}}</a>
+                        <span class="float-right date"><i class="fas fa-calendar-alt mr-2"></i> {{clip.parentVideo | get_videoDate |normalize_date}}</span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{clip.parentVideo | videotoChannelID | channeltoOwnerID}}"> {{clip.parentVideo | videotoChannelID | channeltoOwnerID |get_userName}}</a>
+                        <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{clip.parentVideo | videotoChannelID | get_videoTopic}}/"> {{clip.parentVideo | videotoChannelID | get_videoTopic |get_topicName}}</a></span><br />
                         <i class="fas fa-thumbs-up mr-2"></i><span class="upvotes"> {{clip.id|get_Clip_Upvotes}}</span>
                         <i class="fas fa-eye mx-2"></i><span class="views"> {{clip.views}}</span>
                         <span class="float-right length"><i class="fas fa-clock mr-2"></i> {{clip.length|hms_format}}</span>
