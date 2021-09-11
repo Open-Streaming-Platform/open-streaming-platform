@@ -2,6 +2,7 @@ import os
 import json
 import subprocess
 import uuid
+import logging
 
 from flask import flash
 import flask_migrate
@@ -29,7 +30,7 @@ def checkDefaults(user_datastore):
     user_datastore.find_or_create_role(name='Recorder', description='Recorder', default=False)
     user_datastore.find_or_create_role(name='Uploader', description='Uploader', default=False)
 
-    print({"level": "info", "message": "Setting Default Topics"})
+    logging.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]
     for topic in topicList:
         existingTopic = topics.topics.query.filter_by(name=topic[0]).first()
@@ -42,7 +43,7 @@ def checkDefaults(user_datastore):
 def dbFixes():
     sysSettings = settings.settings.query.first()
 
-    print({"level": "info", "message": "Performing DB Sanity Check"})
+    logging.info({"level": "info", "message": "Performing DB Sanity Check"})
     # Set/Update the system version attribute
     if sysSettings.version is None or sysSettings.version != globalvars.version:
         sysSettings.version = globalvars.version
@@ -104,7 +105,7 @@ def dbFixes():
         chan.defaultStreamName = ""
         db.session.commit()
 
-    print({"level": "info", "message": "Checking for Null Default Roles"})
+    logging.info({"level": "info", "message": "Checking for Null Default Roles"})
     # Query Null Default Roles and Set
     roleQuery = Sec.Role.query.filter_by(default=None).all()
     for role in roleQuery:
@@ -121,7 +122,7 @@ def dbFixes():
         db.session.add(localRTMP)
         db.session.commit()
 
-    print({"level": "info", "message": "Performing Additional DB Sanity Checks"})
+    logging.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
     # Fix for Videos and Channels that were created before Publishing Option
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
     for vid in videoQuery:
@@ -214,7 +215,7 @@ def dbFixes():
 def init(app, user_datastore):
     db.create_all()
 
-    print({"level": "info", "message": "Checking Flask-Migrate DB Version"})
+    logging.info({"level": "info", "message": "Checking Flask-Migrate DB Version"})
     # Logic to Check the DB Version
     dbVersionQuery = dbVersion.dbVersion.query.first()
 
@@ -233,21 +234,21 @@ def init(app, user_datastore):
         db.session.commit()
         pass
 
-    print({"level": "info", "message": "Setting up Default Roles"})
+    logging.info({"level": "info", "message": "Setting up Default Roles"})
     # Performs Checks of Default Values for OSP
     checkDefaults(user_datastore)
 
-    print({"level": "info", "message": "Querying Default System Settings"})
+    logging.info({"level": "info", "message": "Querying Default System Settings"})
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = cachedDbCalls.getSystemSettings()
 
     if sysSettings is not None:
 
-        print({"level": "info", "message": "Performing DB Checks and Fixes"})
+        logging.info({"level": "info", "message": "Performing DB Checks and Fixes"})
         # Analyzes Known DB Issues and Corrects Them (Typically After a Migration)
         dbFixes()
 
-        print({"level": "info", "message": "Reloading System Settings"})
+        logging.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
@@ -269,6 +270,6 @@ def init(app, user_datastore):
         app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
 
-        print({"level": "info", "message": "Database Initialization Completed"})
+        logging.info({"level": "info", "message": "Database Initialization Completed"})
 
         return True

@@ -9,6 +9,7 @@ from html.parser import HTMLParser
 import ipaddress
 import json
 import secrets
+import logging
 
 from globals import globalvars
 
@@ -95,7 +96,7 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
         msg = "Test Email - Your Instance of OSP has been successfully configured!"
         server.sendmail(smtpSender, smtpReceiver, msg)
     except Exception as e:
-        print(e)
+        logging.error(e)
         newLog(1, "Test Email Failed for " + str(smtpServer) + "Reason:" + str(e))
         return False
     server.quit()
