@@ -16,13 +16,13 @@ channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 def channels_page():
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    #channelList = Channel.Channel.query.all()
     channelList = cachedDbCalls.getAllChannels()
 
     if sysSettings.showEmptyTables is False:
         channelListArray = []
         for channel in channelList:
-            if len(channel.recordedVideo) > 0:
+            chanVidQuery = cachedDbCalls.getChannelVideos(channel.id)
+            if len(chanVidQuery) > 0:
                 channelListArray.append(channel)
         channelList = channelListArray
     return render_template(themes.checkOverride('channels.html'), channelList=channelList)
@@ -30,22 +30,20 @@ def channels_page():
 @channels_bp.route('/<int:chanID>/')
 def channel_view_page(chanID):
     chanID = int(chanID)
-    channelData = Channel.Channel.query.filter_by(id=chanID).first()
+
+    #channelData = Channel.Channel.query.filter_by(id=chanID).first()
+    channelData = cachedDbCalls.getChannel(chanID)
 
     if channelData is not None:
 
         openStreams = Stream.Stream.query.filter_by(linkedChannel=chanID).all()
-        recordedVids = RecordedVideo.RecordedVideo.query.filter_by(channelID=chanID, pending=False, published=True).all()
+
+        recordedVids = cachedDbCalls.getAllVideo_View(chanID)
 
         # Sort Video to Show Newest First
         recordedVids.sort(key=lambda x: x.videoDate, reverse=True)
 
-        clipsList = []
-        for vid in recordedVids:
-            for clip in vid.clips:
-                if clip.published is True:
-                    clipsList.append(clip)
-
+        clipsList = cachedDbCalls.getAllClipsForChannel_View(channelData.id)
         clipsList.sort(key=lambda x: x.views, reverse=True)
 
         subState = False
