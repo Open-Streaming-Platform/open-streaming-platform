@@ -85,6 +85,17 @@ def getChannelLocationFromID(channelID):
 
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
+def getAllVideo_View(channelID):
+    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID, pending=False, published=True). \
+        with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.videoDate,
+                      RecordedVideo.RecordedVideo.owningUser, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.channelID,
+                      RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                      RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                      RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                      RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+    return recordedVid
+
+@cache.memoize(timeout=60)
 def getVideo(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID). \
         with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.videoDate,
@@ -112,6 +123,15 @@ def getClipChannelID(clipID):
             if ChannelQuery is not None:
                 return ChannelQuery.id
     return None
+
+@cache.memoize(timeout=60)
+def getAllClipsForChannel_View(channelID):
+    VideoQuery = getChannelVideos(channelID)
+    clipList = []
+    for vid in VideoQuery:
+        clipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=vid.id).all()
+        clipList = clipList + clipQuery
+    return clipList
 
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
