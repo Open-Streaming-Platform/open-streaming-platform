@@ -129,7 +129,7 @@ def getAllClipsForChannel_View(channelID):
     VideoQuery = getChannelVideos(channelID)
     clipList = []
     for vid in VideoQuery:
-        clipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=vid.id).all()
+        clipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=vid.id, published=True).all()
         clipList = clipList + clipQuery
     return clipList
 
