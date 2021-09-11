@@ -224,7 +224,12 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 logging.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
 
 from classes.shared import cache
-redisCacheOptions = {'CACHE_TYPE': 'RedisCache', 'CACHE_KEY_PREFIX': 'OSP_FC', 'CACHE_REDIS_URL': "redis://" + config.redisHost, 'CACHE_REDIS_PORT': config.redisPort, 'CACHE_REDIS_URL': RedisURL}
+redisCacheOptions = {
+    'CACHE_TYPE': 'RedisCache',
+    'CACHE_KEY_PREFIX': 'OSP_FC',
+    'CACHE_REDIS_HOST': config.redisHost,
+    'CACHE_REDIS_PORT': config.redisPort,
+}
 if config.redisPassword != '' and config.redisPassword is not None:
     redisCacheOptions['CACHE_REDIS_PASSWORD'] = config.redisPassword
 cache.init_app(app, config=redisCacheOptions)
