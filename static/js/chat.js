@@ -83,12 +83,14 @@ function onConnect(status) {
     document.getElementById('unavailable').style.display = "none";
     document.getElementById('loader').style.display = "block";
     document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "none"
   } else if (status == Strophe.Status.CONNFAIL) {
     console.log('Connection to XMPP Server Failed...');
     document.getElementById('modDisplay').style.display = 'none';
     document.getElementById('unavailable').style.display = "block";
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "none"
     $('#connect').get(0).value = 'connect';
   } else if (status == Strophe.Status.DISCONNECTING) {
     console.log('Disconnecting from XMPP Server...');
@@ -98,6 +100,7 @@ function onConnect(status) {
     document.getElementById('chatPanel').style.display = "none";
     document.getElementById('loader').style.display = "none";
     document.getElementById('unavailable').style.display = "block";
+    document.getElementById('guestUserName').style.display = "none"
 
     document.getElementById('reasonCode').textContent = "999";
     document.getElementById('reasonText').textContent = "Disconnected.";
@@ -126,6 +129,14 @@ function onConnect(status) {
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
+}
+
+function showLoginWindow() {
+    document.getElementById('modDisplay').style.display = 'none';
+    document.getElementById('unavailable').style.display = "none";
+    document.getElementById('loader').style.display = "none";
+    document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "block"
 }
 
 function onPing(ping) {
