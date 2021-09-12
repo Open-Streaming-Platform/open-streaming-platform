@@ -1,5 +1,6 @@
 0.8.14
 ==============================================
+OSP-Core: Added the ability for unauthenticated visors to provide a nickname in chat per issue #241
 
 0.8.13
 ==============================================
