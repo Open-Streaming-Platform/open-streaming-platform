@@ -7,10 +7,10 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Pull Request Process
 
-1) Please fill the Merge/Pull Request form out to the best of your ability.
-2) Follow the principle of ["One Merge Request, One Concern"](https://fagnerbrack.com/one-pull-request-one-concern-e84a27dfe9f1)
-3) Merge/Pull Requests must be complete in total.
-4) Contributed Code must be universal in scope, ie: Able to be used for all installs / install environments.
+ 1) Please fill the Merge/Pull Request form out to the best of your ability.
+ 2) Follow the principle of ["One Merge Request, One Concern"](https://fagnerbrack.com/one-pull-request-one-concern-e84a27dfe9f1)
+ 3) Merge/Pull Requests must be complete in total.
+ 4) Contributed Code must be universal in scope, ie: Able to be used for all installs / install environments.
 
 ## Code of Conduct
 
@@ -28,21 +28,23 @@ orientation.
 Examples of behavior that contributes to creating a positive environment
 include:
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+  * Using welcoming and inclusive language
+  * Being respectful of differing viewpoints and experiences
+  * Gracefully accepting constructive criticism
+  * Focusing on what is best for the community
+  * Showing empathy towards other community members
 
 Examples of unacceptable behavior by participants include:
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
-advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
+  * The use of sexualized language or imagery and unwelcome sexual attention or
+  advances
+
+  * Trolling, insulting/derogatory comments, and personal or political attacks
+  * Public or private harassment
+  * Publishing others' private information, such as a physical or electronic
   address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
+
+  * Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
 ### Our Responsibilities
