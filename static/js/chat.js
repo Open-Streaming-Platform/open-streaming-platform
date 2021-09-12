@@ -144,6 +144,11 @@ function setGuestNickLogin() {
     requestedUsername = format_nick(requestedUsername);
     username = requestedUsername;
     connectChat();
+    try {
+        ChatInputBar.placeholder = "Send Message As " + username + "...";
+    } catch {
+        console.log("Chatbar Placeholder Username Not Set...")
+    }
 }
 
 function onPing(ping) {
