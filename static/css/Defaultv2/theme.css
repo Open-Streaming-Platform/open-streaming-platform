@@ -12,6 +12,10 @@ body {
     background-color: white;
 }
 
+.row {
+    margin-right: 0;
+}
+
 .main-navbar {
     font-size: 1.25em;
 }
