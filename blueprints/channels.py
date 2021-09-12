@@ -1,9 +1,7 @@
 from flask import Blueprint, request, url_for, render_template, redirect, flash
 from flask_security import current_user
 
-from classes import settings
 from classes import Channel
-from classes import RecordedVideo
 from classes import Stream
 from classes import subscriptions
 
