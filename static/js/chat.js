@@ -141,8 +141,8 @@ function showLoginWindow() {
 
 function setGuestNickLogin() {
     var requestedUsername = document.getElementById('setNickName').value;
-    requestedUsername = format_nick(requestedUsername);
     if ((requestedUsername.trim() !== '') && (requestedUsername !== null)) {
+        requestedUsername = format_nick(requestedUsername);
         username = requestedUsername;
     }
     connectChat();
