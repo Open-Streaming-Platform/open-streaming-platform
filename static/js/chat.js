@@ -429,8 +429,8 @@ function onMessage(msg) {
 
 // format message
 function format_msg(msg){
-    msg = msg.replace(/<\/?[^>]+(>|$)/g, '');
-    msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    msg = msg.replace(/<\/?[^>]+(>|$)/ig, '');
+    msg = msg.replace(/(?:\r\n|\r|\n)/ig, '<br>');
 
     for (var i = 0; i < bannedWords.length; i++) {
         var searchMask = bannedWords[i];
@@ -444,8 +444,8 @@ function format_msg(msg){
 }
 
 function format_nick(nick) {
-    nick = nick.replace(/<\/?[^>]+(>|$)/g, '');
-    nick = nick.replace(/(?:\r\n|\r|\n)/g, '');
+    nick = nick.replace(/<\/?[^>]+(>|$)/ig, '');
+    nick = nick.replace(/(?:\r\n|\r|\n)/ig, '');
     for (var i = 0; i < bannedWords.length; i++) {
         var searchMask = bannedWords[i];
         if (searchMask !== '') {
