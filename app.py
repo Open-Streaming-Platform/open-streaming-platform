@@ -54,6 +54,30 @@ from globals import globalvars
 processUUID = str(uuid.uuid4())
 globalvars.processUUID = processUUID
 
+####### Sentry.IO Metrics and Error Logging (Disabled by Default) #######
+if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
+    if config.sentryIO_Enabled:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+        from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
+        sentryEnv = "Not Specified"
+        if hasattr(config, 'sentryIO_Environment'):
+            sentryEnv = config.sentryIO_Environment
+
+        sentry_sdk.init(
+            dsn=config.sentryIO_DSN,
+            integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0,
+            release=globalvars.version,
+            environment=sentryEnv,
+            server_name=globalvars.processUUID
+        )
+
 coreNginxRTMPAddress = "127.0.0.1"
 
 app = Flask(__name__)
@@ -112,7 +136,7 @@ if hasattr(config, 'RECAPTCHA_ENABLED'):
             app.config['RECAPTCHA_PUBLIC_KEY'] = config.RECAPTCHA_SITE_KEY
             app.config['RECAPTCHA_PRIVATE_KEY'] = config.RECAPTCHA_SECRET_KEY
         except:
-            print("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
+            logging.warning("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
             globalvars.recaptchaEnabled = False
 
 #----------------------------------------------------------------------------#
@@ -182,7 +206,7 @@ from classes.shared import socketio
 if config.redisPassword == '' or config.redisPassword is None:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 else:
-    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
+    socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 
 # Begin Database Initialization
 from classes.shared import db
@@ -196,9 +220,19 @@ Session(app)
 # Initialize Flask-CORS Config
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
-#Initialize Flask-Cache
+# Initialize Flask-Caching
+logging.info({"level": "info", "message": "Performing Flask Caching Initialization"})
+
 from classes.shared import cache
-cache.init_app(app, config={'CACHE_TYPE': 'redis', 'CACHE_REDIS_URL': RedisURL})
+redisCacheOptions = {
+    'CACHE_TYPE': 'RedisCache',
+    'CACHE_KEY_PREFIX': 'OSP_FC',
+    'CACHE_REDIS_HOST': config.redisHost,
+    'CACHE_REDIS_PORT': config.redisPort,
+}
+if config.redisPassword != '' and config.redisPassword is not None:
+    redisCacheOptions['CACHE_REDIS_PASSWORD'] = config.redisPassword
+cache.init_app(app, config=redisCacheOptions)
 
 # Initialize Debug Toolbar
 toolbar = DebugToolbarExtension(app)
@@ -235,9 +269,9 @@ if hasattr(config,'ejabberdServerHttpBindFQDN'):
 
 try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
-    print(ejabberd.status())
+    logging.info(ejabberd.status())
 except Exception as e:
-    print("ejabberdctl failed to load: " + str(e))
+    logging.error("ejabberdctl failed to load: " + str(e))
 
 # Loop Check if OSP DB Init is Currently Being Handled by and Process
 OSP_DB_INIT_HANDLER = None
@@ -253,7 +287,7 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
 try:
     database.init(app, user_datastore)
 except:
-    print("DB Load Fail due to Upgrade or Issues")
+    logging.warning("DB Load Fail due to Upgrade or Issues")
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
@@ -261,27 +295,27 @@ r.delete('OSP_DB_INIT_HANDLER')
 try:
     system.systemFixes(app)
 except:
-    print({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
+    logging.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
 if r.get('OSP_XMPP_INIT_HANDLER') is None:
     # Perform XMPP Sanity Check
     r.set('OSP_XMPP_INIT_HANDLER', globalvars.processUUID, ex=60)
-    print({"level": "info", "message": "Performing XMPP Sanity Checks"})
+    logging.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
     from functions import xmpp
     try:
         results = xmpp.sanityCheck()
     except Exception as e:
-        print({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
+        logging.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
         r.delete('OSP_XMPP_INIT_HANDLER')
 else:
-    print({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
+    logging.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
 
 # Checking OSP-Edge Redirection Conf File
 try:
     system.checkOSPEdgeConf()
 except:
-    print({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
-print({"level": "info", "message": "Initializing OAuth Info"})
+    logging.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
+logging.info({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
 from functions.oauth import fetch_token
@@ -304,18 +338,18 @@ try:
             )
 
         except Exception as e:
-            print("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+            logging.error("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
 except:
-    print("Failed Loading oAuth Providers")
+    logging.error("Failed Loading oAuth Providers")
 
-print({"level": "info", "message": "Initializing Flask-Mail"})
+logging.info({"level": "info", "message": "Initializing Flask-Mail"})
 # Initialize Flask-Mail
 from classes.shared import email
 
 email.init_app(app)
 email.app = app
 
-print({"level": "info", "message": "Importing Topic Data into Global Cache"})
+logging.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
 topicQuery = topics.topics.query.all()
 for topic in topicQuery:
@@ -325,9 +359,9 @@ for topic in topicQuery:
 try:
     system.initializeThemes()
 except:
-    print({"level": "error", "message": "Unable to Set Override Themes"})
+    logging.warning({"level": "error", "message": "Unable to Set Override Themes"})
 
-print({"level": "info", "message": "Initializing SocketIO Handlers"})
+logging.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
@@ -346,7 +380,7 @@ from functions.socketio import restream
 from functions.socketio import rtmp
 from functions.socketio import pictures
 
-print({"level": "info", "message": "Initializing Flask Blueprints"})
+logging.info({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 #----------------------------------------------------------------------------#
@@ -379,7 +413,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
 app.register_blueprint(oauth_bp)
 
-print({"level": "info", "message": "Initializing Template Filters"})
+logging.info({"level": "info", "message": "Initializing Template Filters"})
 #----------------------------------------------------------------------------#
 # Template Filter Imports
 #----------------------------------------------------------------------------#
@@ -388,14 +422,14 @@ from functions import templateFilters
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
 
-print({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
+logging.info({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
 #----------------------------------------------------------------------------#
 # Jinja 2 Gloabl Environment Functions
 #----------------------------------------------------------------------------#
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 
-print({"level": "info", "message": "Setting Flask Context Processors"})
+logging.info({"level": "info", "message": "Setting Flask Context Processors"})
 #----------------------------------------------------------------------------#
 # Context Processors
 #----------------------------------------------------------------------------#
@@ -445,7 +479,7 @@ def inject_topics():
     topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
     return dict(uploadTopics=topicQuery)
 
-print({"level": "info", "message": "Initializing Flask Signal Handlers"})
+logging.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
@@ -508,13 +542,13 @@ def do_before_request():
 def shutdown_session(exception=None):
     db.session.remove()
 
-print({"level": "info", "message": "Finalizing App Initialization"})
+logging.info({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 # Finalize App Init
 #----------------------------------------------------------------------------#
 try:
     system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-    print({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
+    logging.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
 if __name__ == '__main__':

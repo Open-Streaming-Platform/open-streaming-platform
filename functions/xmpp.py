@@ -1,3 +1,5 @@
+import logging
+
 from classes.settings import settings
 from classes import Channel
 from classes.Sec import User
@@ -20,7 +22,7 @@ def buildMissingRooms():
         try:
             xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
         except:
-            print({"level": "info", "message": "Rebuilding missing ejabberd room - " + str(channel.channelLoc)})
+            logging.info({"level": "info", "message": "Rebuilding missing ejabberd room - " + str(channel.channelLoc)})
             ejabberd.create_room(channel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
 
             for key, value in room_config.items():
@@ -32,7 +34,7 @@ def buildMissingRooms():
 
 def verifyExistingRooms():
     sysSettings = settings.query.first()
-    print({"level": "info", "message": "Verifying existing ejabberd Rooms"})
+    logging.info({"level": "info", "message": "Verifying existing ejabberd Rooms"})
     channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id) \
         .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, Channel.Channel.protected, User.uuid.label('userUUID'))
     for channel in channelQuery:
@@ -79,7 +81,7 @@ def cleanInvalidRooms():
             if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
-    print({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
+    logging.info({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
 
 def getChannelCounts(channelLoc):
     sysSettings = settings.query.first()
@@ -98,6 +100,5 @@ def getChannelAffiliations(channelLoc):
         for user in entry['affiliation']:
             for key, value in user.items():
                 data[key] = value
-        print(data)
         userList[data['username']] = data['affiliation']
     return userList
