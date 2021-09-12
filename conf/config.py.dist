@@ -32,3 +32,8 @@ ejabberdHost = "localhost"
 # RECAPTCHA_ENABLED = False
 # RECAPTCHA_SITE_KEY = "SomeKey"
 # RECAPTCHA_SECRET_KEY = "SomeOtherKey"
+
+# Sentry.io Debug Logging and Tracing
+# sentryIO_Enabled = False
+# sentryIO_DSN = "https://subdomain.ingest.sentry.io/0"
+# sentryIO_Environment = "Dev"

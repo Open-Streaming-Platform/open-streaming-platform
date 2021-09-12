@@ -1,3 +1,9 @@
+0.8.13
+==============================================
+OSP-Core: Added option for Metrics & Logging via Sentry.IO (Disabled by Default)
+OSP-Core: Moved some logging from print(logitem) to logging.<level>(logitem)
+OSP-Core: Fixed Redis authentication issues with Passwords
+
 0.8.12
 ==============================================
 OSP-Core: Fixes an issue where /Channels page gives a 500 error if Show Empty Tables is set to False

@@ -1,16 +1,13 @@
 from urllib.parse import urlparse
 import time
 import os
-import json
 
 from globals import globalvars
 
 from classes import Sec
-from classes import topics
 from classes import comments
 
 from functions import votes
-from functions import commentsFunc
 from functions import cachedDbCalls
 
 def init(context):
