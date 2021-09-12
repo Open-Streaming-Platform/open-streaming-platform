@@ -139,6 +139,13 @@ function showLoginWindow() {
     document.getElementById('guestUserName').style.display = "block"
 }
 
+function setGuestNickLogin() {
+    var requestedUsername = document.getElementById('setNickName').value;
+    requestedUsername = format_nick(requestedUsername);
+    username = requestedUsername;
+    connectChat();
+}
+
 function onPing(ping) {
     connection.ping.pong(ping);
     return true;
@@ -429,6 +436,21 @@ function format_msg(msg){
         }
     }
     return msg
+}
+
+function format_nick(nick) {
+    nick = nick.replace(/<\/?[^>]+(>|$)/g, '');
+    nick = nick.replace(/(?:\r\n|\r|\n)/g, '');
+    for (var i = 0; i < bannedWords.length; i++) {
+        var searchMask = bannedWords[i];
+        if (searchMask !== '') {
+            var regEx = new RegExp(searchMask, "ig");
+            var replaceMask = "****";
+            nick = nick.replace(regEx, replaceMask);
+        }
+    }
+    nick = nick.slice(0,24);
+    return nick
 }
 
 // Handle Stick Chat Window Scroll
