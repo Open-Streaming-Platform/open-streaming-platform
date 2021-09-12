@@ -147,7 +147,7 @@ function setGuestNickLogin() {
     try {
         ChatInputBar.placeholder = "Send Message As " + username + "...";
     } catch {
-        console.log("Chatbar Placeholder Username Not Set...")
+        console.log("Chatbar Placeholder Username Not Set...");
     }
 }
 
