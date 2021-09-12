@@ -1,3 +1,6 @@
+0.8.14
+==============================================
+
 0.8.13
 ==============================================
 OSP-Core: Added option for Metrics & Logging via Sentry.IO (Disabled by Default)
