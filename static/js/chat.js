@@ -142,7 +142,9 @@ function showLoginWindow() {
 function setGuestNickLogin() {
     var requestedUsername = document.getElementById('setNickName').value;
     requestedUsername = format_nick(requestedUsername);
-    username = requestedUsername;
+    if ((requestedUsername.trim() !== '') && (requestedUsername !== null)) {
+        username = requestedUsername;
+    }
     connectChat();
     try {
         ChatInputBar.placeholder = "Send Message As " + username + "...";
