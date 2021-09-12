@@ -455,6 +455,7 @@ function format_nick(nick) {
         }
     }
     nick = nick.slice(0,24);
+    nick = nick + ' (g)'
     return nick
 }
 
