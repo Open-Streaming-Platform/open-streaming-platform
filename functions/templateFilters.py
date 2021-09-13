@@ -280,5 +280,5 @@ def get_videoDate(videoID):
     return videoQuery.videoDate
 
 def get_videoComments(videoID):
-    commentsQuery = comments.videoComments.query.filter_by(id=videoID).all()
+    commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
     return commentsQuery
