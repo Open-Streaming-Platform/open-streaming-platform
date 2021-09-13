@@ -115,7 +115,7 @@
       {% if video.id | get_videoComments != [] and sysSettings.allowComments == True and video.allowComments == True %}
       <div class="row m-2">
         <div class="index-video-title mb-2"><b>Comments</b></div>
-        {% for comment in video.id | get_videoComments %}
+        {% for comment in (video.id | get_videoComments) %}
         <div class="comment mb-2">
           <div class="row">
             <div class="col-auto mr-auto">
