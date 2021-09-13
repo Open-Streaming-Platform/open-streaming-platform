@@ -1,3 +1,10 @@
+0.8.14
+==============================================
+OSP-Core: Added the ability for unauthenticated visors to provide a nickname in chat per issue #241
+OSP-Core: Upgraded VideoJS to 7.14.3
+OSP-Core: Fixed an issue where posting a comment generated a 500 Error
+OSP-Core: Fixed an issue where Video Comments were not showing
+
 0.8.13
 ==============================================
 OSP-Core: Added option for Metrics & Logging via Sentry.IO (Disabled by Default)
