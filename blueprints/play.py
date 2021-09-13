@@ -220,7 +220,7 @@ def comments_vid_page(videoID):
 
             webhookFunc.runWebhook(channelQuery.id, 7, channelname=channelQuery.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
-                       channeltopic=templateFilters.get_topicName(recordedVid.channel.topic),
+                       channeltopic=templateFilters.get_topicName(channelQuery.topic),
                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                        channeldescription=str(channelQuery.description), videoname=recordedVid.channelName,
                        videodate=recordedVid.videoDate, videodescription=recordedVid.description,
