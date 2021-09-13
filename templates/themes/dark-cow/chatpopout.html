@@ -37,6 +37,25 @@
                     </div>
                 </div>
             </div>
+            <div id="guestUserName" class="chatloader">
+                  <div class="chatloader-view">
+                        <div class="vertical-center">
+                              <div class="d-flex justify-content-center my-3">
+                                  <h2>Set your Nickname</h2><br>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                  <b>Enter name you wish to be identified by:</b>
+                              </div>
+                              <div class="d-flex justify-content-center px-3">
+                                  <input class="form-control shadow" id="setNickName" name="setNickName">
+                              </div>
+                              <div class="d-flex justify-content-center my-4">
+                                  <button type="button" class="btn btn-primary w-25 shadow m-1" onclick="setGuestNickLogin();">Connect</button>
+                                  <a href="/login" class="btn btn-success w-25 shadow m-1">Log in</a>
+                              </div>
+                        </div>
+                  </div>
+            </div>
             <div id="unavailable" class="chatloader">
                 <div class="chatloader-view">
                     <h2>You have been disconnected from the chat.</h2><br>
@@ -238,11 +257,15 @@
 
         // Start Connection on Load
         $(window).bind('load', function() {
+            {% if guestUser == None and current_user.is_authenticated == False %}
+            showLoginWindow();
+            {% else %}
             var url = BOSH_SERVICE;
             connection = new Strophe.Connection(url);
             connection.rawInput = rawInput;
             connection.rawOutput = rawOutput;
             connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
+            {% endif %}
         });
 
         // Disconnect XMPP on Page Unload

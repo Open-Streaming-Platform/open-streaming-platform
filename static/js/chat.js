@@ -83,12 +83,14 @@ function onConnect(status) {
     document.getElementById('unavailable').style.display = "none";
     document.getElementById('loader').style.display = "block";
     document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "none"
   } else if (status == Strophe.Status.CONNFAIL) {
     console.log('Connection to XMPP Server Failed...');
     document.getElementById('modDisplay').style.display = 'none';
     document.getElementById('unavailable').style.display = "block";
     document.getElementById('loader').style.display = "none";
     document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "none"
     $('#connect').get(0).value = 'connect';
   } else if (status == Strophe.Status.DISCONNECTING) {
     console.log('Disconnecting from XMPP Server...');
@@ -98,6 +100,7 @@ function onConnect(status) {
     document.getElementById('chatPanel').style.display = "none";
     document.getElementById('loader').style.display = "none";
     document.getElementById('unavailable').style.display = "block";
+    document.getElementById('guestUserName').style.display = "none"
 
     document.getElementById('reasonCode').textContent = "999";
     document.getElementById('reasonText').textContent = "Disconnected.";
@@ -126,6 +129,28 @@ function onConnect(status) {
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
+}
+
+function showLoginWindow() {
+    document.getElementById('modDisplay').style.display = 'none';
+    document.getElementById('unavailable').style.display = "none";
+    document.getElementById('loader').style.display = "none";
+    document.getElementById('chatPanel').style.display = "none";
+    document.getElementById('guestUserName').style.display = "block"
+}
+
+function setGuestNickLogin() {
+    var requestedUsername = document.getElementById('setNickName').value;
+    if ((requestedUsername.trim() !== '') && (requestedUsername !== null)) {
+        requestedUsername = format_nick(requestedUsername);
+        username = requestedUsername;
+    }
+    connectChat();
+    try {
+        ChatInputBar.placeholder = "Send Message As " + username + "...";
+    } catch {
+        console.log("Chatbar Placeholder Username Not Set...");
+    }
 }
 
 function onPing(ping) {
@@ -406,8 +431,8 @@ function onMessage(msg) {
 
 // format message
 function format_msg(msg){
-    msg = msg.replace(/<\/?[^>]+(>|$)/g, '');
-    msg = msg.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    msg = msg.replace(/<\/?[^>]+(>|$)/ig, '');
+    msg = msg.replace(/(?:\r\n|\r|\n)/ig, '<br>');
 
     for (var i = 0; i < bannedWords.length; i++) {
         var searchMask = bannedWords[i];
@@ -418,6 +443,22 @@ function format_msg(msg){
         }
     }
     return msg
+}
+
+function format_nick(nick) {
+    nick = nick.replace(/<\/?[^>]+(>|$)/ig, '');
+    nick = nick.replace(/(?:\r\n|\r|\n)/ig, '');
+    for (var i = 0; i < bannedWords.length; i++) {
+        var searchMask = bannedWords[i];
+        if (searchMask !== '') {
+            var regEx = new RegExp(searchMask, "ig");
+            var replaceMask = "****";
+            nick = nick.replace(regEx, replaceMask);
+        }
+    }
+    nick = nick.slice(0,24);
+    nick = nick + ' (g)'
+    return nick
 }
 
 // Handle Stick Chat Window Scroll

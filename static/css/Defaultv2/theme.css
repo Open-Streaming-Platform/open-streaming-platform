@@ -12,6 +12,10 @@ body {
     background-color: white;
 }
 
+.row {
+    margin-right: 0;
+}
+
 .main-navbar {
     font-size: 1.25em;
 }
@@ -322,7 +326,7 @@ body {
 
 .chatloader .chatloader-view {
     margin: 0 auto;
-    width: 400px;
+    max-width: 400px;
     text-align:center;
 }
 
