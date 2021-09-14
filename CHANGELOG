@@ -2,6 +2,7 @@
 ==============================================
 OSP-Core: Added per channel option to allow unauthenticated users to provide nickname or use generated nickname
 OSP-Core: Fixed a security issue where any authenticated user could alter any channel's chat settings (Room name, Description, Moderation Status)
+OSP-Core: Fixed a security issue where an unauthorized user with streamer roles could add stickers to any channel
 
 0.8.14
 ==============================================
