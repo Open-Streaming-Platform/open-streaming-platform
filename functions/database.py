@@ -209,6 +209,11 @@ def dbFixes():
     rtmpQuery = settings.rtmpServer.query.filter_by(hide=None).update(dict(hide=False))
     db.session.commit()
 
+    # Check Existing Channels without allowGuestNickChange
+    ChannelQuery = Channel.Channel.query.filter_by(allowGuestNickChange=None).all()
+    for channel in ChannelQuery:
+        channel.allowGuestNickChange = True
+        db.session.commit()
 
     return True
 

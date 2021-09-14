@@ -1269,25 +1269,32 @@ def settings_channels_chat_page():
     if request.method == 'POST':
         from app import ejabberd
         channelLoc = system.strip_html(request.form['channelLoc'])
-        roomTitle = request.form['roomTitle']
-        roomDescr = system.strip_html(request.form['roomDescr'])
-        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
-        ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+        if channelQuery is not None and current_user == channelQuery.owningUser:
+            roomTitle = request.form['roomTitle']
+            roomDescr = system.strip_html(request.form['roomDescr'])
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
+            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
 
-        if 'moderatedSelect' in request.form:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
-        else:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "false")
+            if 'moderatedSelect' in request.form:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
+            else:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "false")
 
-        if 'allowGuests' in request.form:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "false")
-        else:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "true")
+            if 'allowGuests' in request.form:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "false")
+            else:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_only", "true")
 
-        if 'allowGuestsChat' in request.form:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "true")
-        else:
-            ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "false")
+            if 'allowGuestsChat' in request.form:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "true")
+            else:
+                ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "members_by_default", "false")
+            if 'allowGuestsNickChange' in request.form:
+                channelQuery.allowGuestNickChange = True
+            else:
+                channelQuery.allowGuestNickChange = False
+            db.session.commit()
 
     return redirect(url_for('settings.settings_channels_page'))
 
