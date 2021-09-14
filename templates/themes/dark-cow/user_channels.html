@@ -557,12 +557,18 @@
                             <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
                               {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                           </div>
-                          <div class="col-6">
-                            <input type="checkbox" data-toggle="toggle" id="allowGuestsNickChange" name="allowGuestsNickChange"
-                              {% if channel.allowGuestsNickChange == "true" %} checked {% endif %}>
-                          </div>
                         </div>
-                      </div>
+                        <div class="col-6">
+                            <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsNickChangeTooltip">
+                              <div class="col-6">
+                                <label for="allowGuestsNickChange" class="col-form-label"><b>Allow guests to set their Nickname</b></label>
+                              </div>
+                              <div class="col-6">
+                                <input type="checkbox" data-toggle="toggle" id="allowGuestsNickChange" name="allowGuestsNickChange"
+                                  {% if channel.allowGuestsNickChange == True %} checked {% endif %}>
+                              </div>
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
                     <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Save</button>
