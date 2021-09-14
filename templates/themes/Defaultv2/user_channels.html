@@ -557,6 +557,10 @@
                             <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
                               {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                           </div>
+                          <div class="col-6">
+                            <input type="checkbox" data-toggle="toggle" id="allowGuestsNickChange" name="allowGuestsNickChange"
+                              {% if channel.allowGuestsNickChange == "true" %} checked {% endif %}>
+                          </div>
                         </div>
                       </div>
                     </div>
