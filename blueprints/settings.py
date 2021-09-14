@@ -1269,7 +1269,7 @@ def settings_channels_chat_page():
     if request.method == 'POST':
         from app import ejabberd
         channelLoc = system.strip_html(request.form['channelLoc'])
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+        channelQuery = Channel.Channel.query.filter_by(channelLoc=request.form['channelLoc']).first()
         if channelQuery is not None and current_user == channelQuery.owningUser:
             roomTitle = request.form['roomTitle']
             roomDescr = system.strip_html(request.form['roomDescr'])
