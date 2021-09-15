@@ -974,7 +974,7 @@ def settings_channels_page():
         # Process New Stickers
         if requestType == "newSticker":
             if 'stickerChannelID' in request.form:
-                channelQuery = Channel.Channel.query.filter_by(id=int(request.form['stickerChannelID'])).first()
+                channelQuery = Channel.Channel.query.filter_by(id=int(request.form['stickerChannelID']), owningUser=current_user.id).first()
                 if channelQuery is not None:
                     if 'stickerName' in request.form:
                         stickerName = request.form['stickerName']
