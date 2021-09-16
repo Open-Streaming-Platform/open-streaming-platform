@@ -117,13 +117,13 @@
         </div>
         {% if video.id | get_videoComments != [] and sysSettings.allowComments == True and video.allowComments == True %}
         <div class="row m-2">
-          <div class="index-video-title mb-2"><b>{{video.id|get_Video_Comments}} Comments</b></div>
+          <div class="index-video-title mb-2"><b>{{video.id|get_videoComments|length}} Comments</b></div>
           {% for comment in video.id | get_videoComments %}
           <div class="comment mb-2">
             <div class="row">
               <div class="col-auto mr-auto">
                 <a href="/profile/{{comment.userID|get_userName}}"><b>{{comment.userID|get_userName}}</b><br>
-                  <img src="{{comment.userID|get_pictureLocation}}" class="rounded" width="64px" height="64px" onerror="this.src='/static/img/user2.png';"></a>
+                  <img src="/images/{{comment.userID|get_pictureLocation}}" class="rounded" width="64px" height="64px" onerror="this.src='/static/img/user2.png';"></a>
               </div>
               <div class="col">
                 <i class="fas fa-calendar-alt mr-2"></i> {{comment.timestamp|normalize_date}}<br>
@@ -173,7 +173,7 @@
                   {{video.videoDate|normalize_date}}</span><br />
                 <i class="fas fa-user mr-2"></i><a href="/streamer/{{video.owningUser}}">
                   {{video.owningUser|get_userName}}</a>
-                <span class="float-right"><i class="fas fa-hashtag mr-2"></i></><a href="/topic/{{video.topic}}/">
+                <span class="float-right"><i class="fas fa-hashtag mr-2"></i><a href="/topic/{{video.topic}}/">
                     {{video.topic|get_topicName}}</a></span><br />
                 <i class="fas fa-thumbs-up mr-2"></i> {{video.id|get_Video_Upvotes}}
                 <i class="fas fa-eye mx-2"></i> {{video.views}}
