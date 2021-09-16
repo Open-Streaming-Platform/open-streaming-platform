@@ -296,3 +296,9 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '/' + file)
+
+@root_bp.route('/test')
+def test_celery():
+    from functions import test
+    test.pullChannelsTest()
+    return {'status': 'Queued'}
