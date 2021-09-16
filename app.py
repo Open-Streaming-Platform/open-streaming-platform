@@ -185,7 +185,7 @@ RedisURL = None
 if config.redisPassword == '' or config.redisPassword is None:
     RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
-    RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 
 #Initialize Flask-Limiter
 app.config["RATELIMIT_STORAGE_URL"] = RedisURL
@@ -207,6 +207,19 @@ if config.redisPassword == '' or config.redisPassword is None:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 else:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
+
+# Initialize Flask-Celery
+from classes.shared import celery
+celery.conf.broker_url = RedisURL
+celery.conf.result_backend = RedisURL
+celery.conf.update(app.config)
+
+class ContextTask(celery.Task):
+    """Make celery tasks work with Flask app context"""
+    def __call__(self, *args, **kwargs):
+        with app.app_context():
+            return self.run(*args, **kwargs)
+celery.Task = ContextTask
 
 # Begin Database Initialization
 from classes.shared import db
