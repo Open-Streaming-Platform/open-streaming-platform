@@ -220,6 +220,7 @@ class ContextTask(celery.Task):
         with app.app_context():
             return self.run(*args, **kwargs)
 celery.Task = ContextTask
+celery.init_app(app)
 
 # Begin Database Initialization
 from classes.shared import db
