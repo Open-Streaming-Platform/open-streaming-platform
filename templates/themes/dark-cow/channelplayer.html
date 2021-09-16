@@ -704,7 +704,7 @@
         });
 
         // Start Connection on Load
-        {%  if current_user.is_authenticated %}
+        {%  if current_user.is_authenticated or channel.allowGuestNickChange == False %}
         $(window).bind('load', function() {
             var url = BOSH_SERVICE;
             connection = new Strophe.Connection(url);
