@@ -125,6 +125,19 @@ def getVideoCommentCount(videoID):
     result = videoCommentsQuery
     return result
 
+@cache.memoize(timeout=120)
+def searchVideos(term):
+    if term is not None:
+        VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+        VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+        resultsArray = VideoNameQuery + VideoDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Clip Related DB Calls
 @cache.memoize(timeout=30)
 def getClipChannelID(clipID):
