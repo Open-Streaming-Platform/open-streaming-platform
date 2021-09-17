@@ -23,6 +23,19 @@ def getOAuthProviders():
     SystemOAuthProviders = settings.oAuthProvider.query.all()
     return SystemOAuthProviders
 
+### Stream Related DB Calls
+@cache.memoize(timeout=60)
+def searchStreams(term):
+    if term is not None:
+        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.streamName.like("%" + term + "%"))\
+            .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)\
+            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc).all()
+        resultsArray = StreamNameQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Channel Related DB Calls
 @cache.memoize(timeout=60)
 def getAllChannels():
