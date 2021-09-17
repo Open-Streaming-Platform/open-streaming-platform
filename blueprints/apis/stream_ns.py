@@ -6,12 +6,16 @@ from classes import apikey
 from classes import topics
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 api = Namespace('stream', description='Stream Related Queries and Functions')
 
 streamParserPut = reqparse.RequestParser()
 streamParserPut.add_argument('streamName', type=str)
 streamParserPut.add_argument('topicID', type=int)
 
+streamSearchPost = reqparse.RequestParser()
+streamSearchPost.add_argument('term', type=str)
 
 @api.route('/')
 class api_1_ListStreams(Resource):
@@ -62,3 +66,20 @@ class api_1_ListStream(Resource):
                             db.session.commit()
                             return {'results': {'message': 'Stream Updated'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+@api.route('/search')
+class api_1_SearchStreams(Resource):
+    # Streams - Search Live Streams
+    @api.expect(streamSearchPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+            Searches Stream Names and Metadata and returns Name and Link
+        """
+        args = streamSearchPost.parse_args()
+        returnArray = []
+        if 'term' in args:
+            returnArray = cachedDbCalls.searchStreams(args['term'])
+            return {'results': returnArray}
+        else:
+            return {'results': {'message': 'Request Error'}}, 400
