@@ -159,6 +159,20 @@ def getAllClipsForChannel_View(channelID):
         clipList = clipList + clipQuery
     return clipList
 
+@cache.memoize(timeout=120)
+def searchClips(term):
+    if term is not None:
+        clipNameQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+        clipDescriptionQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+        resultsArray = clipNameQuery + clipDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
+
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():
