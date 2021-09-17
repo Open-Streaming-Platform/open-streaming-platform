@@ -181,3 +181,16 @@ def getUser(userID):
     UserQuery = Sec.User.query.filter_by(id=userID).first()
     return UserQuery
 
+@cache.memoize(timeout=120)
+def searchUsers(term):
+    if term is not None:
+        userNameQuery = Sec.User.query.filter(Sec.User.username.like("%" + term + "%"), Sec.User.active == True)\
+            .with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation).all()
+        userDescriptionQuery = Sec.User.query.filter(Sec.User.biography.like("%" + term + "%"), Sec.User.active == True)\
+            .with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation).all()
+        resultsArray = userNameQuery + userDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
