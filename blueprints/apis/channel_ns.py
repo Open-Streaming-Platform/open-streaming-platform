@@ -276,7 +276,7 @@ class api_1_SearchChannels(Resource):
         """
             Searches Channel Names and Metadata and returns Name and Link
         """
-        args = channelParserPut.parse_args()
+        args = channelSearchPost.parse_args()
         returnArray = []
         if 'term' in args:
             returnArray = cachedDbCalls.searchChannels(args['term'])
