@@ -83,6 +83,19 @@ def getChannelLocationFromID(channelID):
     else:
         return None
 
+@cache.memoize(timeout=120)
+def searchChannels(term):
+    if term is not None:
+        ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
+        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
+        resultsArray = ChannelNameQuery + ChannelDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getAllVideo_View(channelID):
