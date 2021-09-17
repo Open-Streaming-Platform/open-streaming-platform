@@ -172,12 +172,21 @@ def searchClips(term):
     else:
         return []
 
-
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():
     topicQuery = topics.topics.query.all()
     return topicQuery
+
+def searchTopics(term):
+    if term is not None:
+        topicNameQuery = topics.topics.query.filter(topics.topics.name.like("%" + term + "%"))\
+            .with_entities(topics.topics.id, topics.topics.name).all()
+        resultsArray = topicNameQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
 
 ### User Related DB Calls
 @cache.memoize(timeout=300)
