@@ -27,13 +27,12 @@ def view_clip_page(clipID):
     if clipQuery is not None:
 
         recordedVid = cachedDbCalls.getVideo(clipQuery.recordedVideo.id)
-        #recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=clipQuery.recordedVideo.id).first()
 
         associatedChannel = cachedDbCalls.getChannel(recordedVid.channelID)
 
         if clipQuery.published is False:
             if current_user.is_authenticated:
-                if current_user != clipQuery.recordedVideo.owningUser and current_user.has_role('Admin') is False:
+                if current_user != recordedVid.owningUser and current_user.has_role('Admin') is False:
                     flash("No Such Video at URL", "error")
                     return redirect(url_for("root.main_page"))
             else:
@@ -46,7 +45,7 @@ def view_clip_page(clipID):
 
         if recordedVid is not None:
             clipQuery.views = clipQuery.views + 1
-            clipQuery.recordedVideo.channel.views = associatedChannel.views + 1
+            associatedChannel.views = associatedChannel.views + 1
 
             if recordedVid.length is None:
                 fullVidPath = videos_root + recordedVid.videoLocation
@@ -66,7 +65,7 @@ def view_clip_page(clipID):
 
                 subState = False
                 if current_user.is_authenticated:
-                    chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channel.id, userID=current_user.id).first()
+                    chanSubQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVid.channelID, userID=current_user.id).first()
                     if chanSubQuery is not None:
                         subState = True
 
