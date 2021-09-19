@@ -7,6 +7,7 @@ from classes import settings
 from classes import RecordedVideo
 from classes import subscriptions
 from classes import topics
+from classes import Channel
 
 from functions import themes
 from functions import videoFunc
@@ -45,7 +46,7 @@ def view_clip_page(clipID):
 
         if recordedVid is not None:
             clipQuery.views = clipQuery.views + 1
-            associatedChannel.views = associatedChannel.views + 1
+            Channel.Channel.query.filter_by(id=associatedChannel.id).update(dict(views=associatedChannel.views + 1))
 
             if recordedVid.length is None:
                 fullVidPath = videos_root + recordedVid.videoLocation
