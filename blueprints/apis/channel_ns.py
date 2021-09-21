@@ -33,6 +33,9 @@ channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 channelParserPost.add_argument('commentsEnabled', type=bool, required=True)
 
+channelSearchPost = reqparse.RequestParser()
+channelSearchPost.add_argument('term', type=str, required=True)
+
 def checkRTMPAuthIP(requestData):
     authorized = False
     requestIP = "0.0.0.0"
@@ -263,3 +266,20 @@ class api_1_ListChannelAuthed(Resource):
                         db.session.commit()
                         return {'results': [ob.authed_serialize() for ob in channelQuery]}
         return {'results': {'message': 'Request Error'}}, 400
+
+@api.route('/search')
+class api_1_SearchChannels(Resource):
+    # Channel - Search Channels
+    @api.expect(channelSearchPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+            Searches Channel Names and Metadata and returns Name and Link
+        """
+        args = channelSearchPost.parse_args()
+        returnArray = []
+        if 'term' in args:
+            returnArray = cachedDbCalls.searchChannels(args['term'])
+            return {'results': returnArray}
+        else:
+            return {'results': {'message': 'Request Error'}}, 400

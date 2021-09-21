@@ -7,6 +7,8 @@ from classes import apikey
 from classes import upvotes
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 from globals import globalvars
 
 api = Namespace('clip', description='Clip Related Queries and Functions')
@@ -14,6 +16,9 @@ api = Namespace('clip', description='Clip Related Queries and Functions')
 clipParserPut = reqparse.RequestParser()
 clipParserPut.add_argument('clipName', type=str)
 clipParserPut.add_argument('description', type=str)
+
+clipSearchPost = reqparse.RequestParser()
+clipSearchPost.add_argument('term', type=str)
 
 @api.route('/')
 class api_1_ListClips(Resource):
@@ -89,3 +94,20 @@ class api_1_ListClip(Resource):
                             db.session.commit()
                             return {'results': {'message': 'Clip Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+@api.route('/search')
+class api_1_SearchClips(Resource):
+    # Clips - Search Clipped Video
+    @api.expect(clipSearchPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+            Searches Video Names and Metadata and returns Name and Link
+        """
+        args = clipSearchPost.parse_args()
+        returnArray = []
+        if 'term' in args:
+            returnArray = cachedDbCalls.searchClips(args['term'])
+            return {'results': returnArray}
+        else:
+            return {'results': {'message': 'Request Error'}}, 400
