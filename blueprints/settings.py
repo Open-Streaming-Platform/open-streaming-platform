@@ -1395,12 +1395,13 @@ def initialSetup():
         if 'smtpSSL' in request.form:
             smtpSSL = True
 
-        validAddress = system.formatSiteAddress(serverAddress)
-        try:
-            externalIP = socket.gethostbyname(validAddress)
-        except socket.gaierror:
-            flash("Invalid Server Address/IP", "error")
-            return redirect(url_for("settings.initialSetup"))
+        # Whereas this code had worked before, it is now causing errors on post
+        #validAddress = system.formatSiteAddress(serverAddress)
+        #try:
+        #    externalIP = socket.gethostbyname(validAddress)
+        #except socket.gaierror:
+        #    flash("Invalid Server Address/IP", "error")
+        #    return redirect(url_for("settings.initialSetup"))
 
         if password1 == password2:
 

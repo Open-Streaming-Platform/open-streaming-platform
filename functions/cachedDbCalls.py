@@ -23,6 +23,19 @@ def getOAuthProviders():
     SystemOAuthProviders = settings.oAuthProvider.query.all()
     return SystemOAuthProviders
 
+### Stream Related DB Calls
+@cache.memoize(timeout=60)
+def searchStreams(term):
+    if term is not None:
+        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.streamName.like("%" + term + "%"))\
+            .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)\
+            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc).all()
+        resultsArray = StreamNameQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Channel Related DB Calls
 @cache.memoize(timeout=60)
 def getAllChannels():
@@ -83,6 +96,19 @@ def getChannelLocationFromID(channelID):
     else:
         return None
 
+@cache.memoize(timeout=120)
+def searchChannels(term):
+    if term is not None:
+        ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
+        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
+        resultsArray = ChannelNameQuery + ChannelDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getAllVideo_View(channelID):
@@ -112,6 +138,19 @@ def getVideoCommentCount(videoID):
     result = videoCommentsQuery
     return result
 
+@cache.memoize(timeout=120)
+def searchVideos(term):
+    if term is not None:
+        VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+        VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+        resultsArray = VideoNameQuery + VideoDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Clip Related DB Calls
 @cache.memoize(timeout=30)
 def getClipChannelID(clipID):
@@ -133,11 +172,34 @@ def getAllClipsForChannel_View(channelID):
         clipList = clipList + clipQuery
     return clipList
 
+@cache.memoize(timeout=120)
+def searchClips(term):
+    if term is not None:
+        clipNameQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+        clipDescriptionQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+        resultsArray = clipNameQuery + clipDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
+
 ### Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():
     topicQuery = topics.topics.query.all()
     return topicQuery
+
+def searchTopics(term):
+    if term is not None:
+        topicNameQuery = topics.topics.query.filter(topics.topics.name.like("%" + term + "%"))\
+            .with_entities(topics.topics.id, topics.topics.name).all()
+        resultsArray = topicNameQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
 
 ### User Related DB Calls
 @cache.memoize(timeout=300)
@@ -154,4 +216,17 @@ def getUserPhotoLocation(userID):
 def getUser(userID):
     UserQuery = Sec.User.query.filter_by(id=userID).first()
     return UserQuery
+
+@cache.memoize(timeout=120)
+def searchUsers(term):
+    if term is not None:
+        userNameQuery = Sec.User.query.filter(Sec.User.username.like("%" + term + "%"), Sec.User.active == True)\
+            .with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation).all()
+        userDescriptionQuery = Sec.User.query.filter(Sec.User.biography.like("%" + term + "%"), Sec.User.active == True)\
+            .with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation).all()
+        resultsArray = userNameQuery + userDescriptionQuery
+        resultsArray = list(set(resultsArray))
+        return resultsArray
+    else:
+        return []
 
