@@ -214,6 +214,8 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
+
+time.sleep(random.random())
 dbUpgradeStatus = r.get('dbUpgradeInProgress')
 if dbUpgradeStatus == b'True':
     while dbUpgradeStatus == b'True':
