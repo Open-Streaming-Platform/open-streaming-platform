@@ -214,12 +214,21 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
-with app.app_context():
-    try:
-        upgrade(directory='migrations')
-    except Exception as e:
-        logging.error({"level": "error", "message": "Failed to perform database upgrade - " + str(e)})
-        exit(2)
+dbUpgradeStatus = (r.get('dbUpgradeInProgress')).decode()
+if dbUpgradeStatus == 'True':
+    while dbUpgradeStatus == 'True':
+        time.sleep(5)
+        logging.info({"level": "info", "message": "Database Upgrade in-progress on another worker.  Waiting..."})
+        dbUpgradeStatus = (r.get('dbUpgradeInProgress')).decode()
+else:
+    r.set('dbUpgradeInProgress', 'True')
+    with app.app_context():
+        try:
+            upgrade(directory='migrations')
+        except Exception as e:
+            logging.error({"level": "error", "message": "Failed to perform database upgrade - " + str(e)})
+            exit(2)
+    r.delete('dbUpgradeStatus')
 # Initialize Flask-Session
 Session(app)
 
