@@ -216,15 +216,10 @@ migrateObj = Migrate(app, db)
 
 with app.app_context():
     try:
-        results = init(directory='migrations')
-        logging.warning(results)
-    except:
-        pass
-    results = migrate(directory='migrations')
-    logging.warning(results)
-    results = upgrade(directory='migrations')
-    logging.warning(results)
-
+        upgrade(directory='migrations')
+    except Exception as e:
+        logging.error({"level": "error", "message": "Failed to perform database upgrade - " + str(e)})
+        exit(2)
 # Initialize Flask-Session
 Session(app)
 
