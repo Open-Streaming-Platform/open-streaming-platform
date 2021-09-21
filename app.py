@@ -215,15 +215,16 @@ db.app = app
 migrateObj = Migrate(app, db)
 
 
-time.sleep(random.random())
+time.sleep(random.random() * random.randint(1, 5))
 dbUpgradeStatus = r.get('dbUpgradeInProgress')
 if dbUpgradeStatus == b'True':
     while dbUpgradeStatus == b'True':
         time.sleep(5)
-        logging.info({"level": "info", "message": "Database Upgrade in-progress on another worker.  Waiting..."})
+        logging.info({"level": "info", "message": "Database Upgrade Check in-progress on another worker.  Waiting..."})
         dbUpgradeStatus = r.get('dbUpgradeInProgress')
 else:
     r.set('dbUpgradeInProgress', 'True')
+    logging.info({"level": "info", "message": "Worker Designated as to perform Database Upgrade Check..."})
     with app.app_context():
         try:
             upgrade(directory='migrations')
