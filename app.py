@@ -214,12 +214,12 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
-dbUpgradeStatus = (r.get('dbUpgradeInProgress')).decode()
-if dbUpgradeStatus == 'True':
-    while dbUpgradeStatus == 'True':
+dbUpgradeStatus = r.get('dbUpgradeInProgress')
+if dbUpgradeStatus == b'True':
+    while dbUpgradeStatus == b'True':
         time.sleep(5)
         logging.info({"level": "info", "message": "Database Upgrade in-progress on another worker.  Waiting..."})
-        dbUpgradeStatus = (r.get('dbUpgradeInProgress')).decode()
+        dbUpgradeStatus = r.get('dbUpgradeInProgress')
 else:
     r.set('dbUpgradeInProgress', 'True')
     with app.app_context():
