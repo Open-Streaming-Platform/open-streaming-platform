@@ -8,12 +8,17 @@ from classes import topics
 from classes import views
 from classes.shared import db
 
+from functions import cachedDbCalls
+
 api = Namespace('video', description='Video Related Queries and Functions')
 
 videoParserPut = reqparse.RequestParser()
 videoParserPut.add_argument('videoName', type=str)
 videoParserPut.add_argument('description', type=str)
 videoParserPut.add_argument('topicID', type=int)
+
+videoSearchPost = reqparse.RequestParser()
+videoSearchPost.add_argument('term', type=str, required=True)
 
 @api.route('/')
 class api_1_ListVideos(Resource):
@@ -97,3 +102,20 @@ class api_1_ListVideo(Resource):
                             db.session.commit()
                             return {'results': {'message': 'Video Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+@api.route('/search')
+class api_1_SearchVideos(Resource):
+    # Video - Search Recorded Video
+    @api.expect(videoSearchPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+            Searches Video Names and Metadata and returns Name and Link
+        """
+        args = videoSearchPost.parse_args()
+        returnArray = []
+        if 'term' in args:
+            returnArray = cachedDbCalls.searchVideos(args['term'])
+            return {'results': returnArray}
+        else:
+            return {'results': {'message': 'Request Error'}}, 400

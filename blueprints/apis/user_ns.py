@@ -13,7 +13,7 @@ from classes.shared import db
 
 from app import user_datastore
 
-from functions import apiFunc
+from functions import apiFunc, cachedDbCalls
 
 api = Namespace('user', description='User Related Queries and Functions')
 
@@ -31,6 +31,9 @@ deleteUser.add_argument('username', type=str, required=True)
 roleArgs = reqparse.RequestParser()
 roleArgs.add_argument('username', type=str, required=True)
 roleArgs.add_argument('role', type=str, required=True)
+
+userSearchPost = reqparse.RequestParser()
+userSearchPost.add_argument('term', type=str, required=True)
 
 @api.route('/')
 class api_1_AdminUser(Resource):
@@ -228,3 +231,20 @@ class api_1_RoleMgmt(Resource):
                         return {'results': {'message': "No Such Username"}}, 400
         db.session.commit()
         return {'results': {'message': "Request Error"}}, 400
+
+@api.route('/search')
+class api_1_SearchUsers(Resource):
+    # Users - Search Users
+    @api.expect(userSearchPost)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+            Searches User Names and Metadata and returns Name and Link
+        """
+        args = userSearchPost.parse_args()
+        returnArray = []
+        if 'term' in args:
+            returnArray = cachedDbCalls.searchUsers(args['term'])
+            return {'results': returnArray}
+        else:
+            return {'results': {'message': 'Request Error'}}, 400
