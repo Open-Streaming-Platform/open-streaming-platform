@@ -22,7 +22,7 @@ from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required, uia_email_mapper
 from flask_security.signals import user_registered
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade, init, migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
@@ -213,6 +213,17 @@ from classes.shared import db
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
+
+with app.app_context():
+    try:
+        results = init(directory='migrations')
+        logging.warning(results)
+    except:
+        pass
+    results = migrate(directory='migrations')
+    logging.warning(results)
+    results = upgrade(directory='migrations')
+    logging.warning(results)
 
 # Initialize Flask-Session
 Session(app)
