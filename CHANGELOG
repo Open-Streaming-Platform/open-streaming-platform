@@ -1,6 +1,8 @@
 0.8.16
 ==============================================
 OSP-Core: Added /Search API Calls for Videos, Clips, Users, Streams, Channels and Topics - Returns ID value, Name, UUID (if available), and any other information for future search bar
+OSP-Core: Fixed an issue displaying Clips on Channels with Subscriptions due to DB Caching
+OSP-Core: Fixed and issue where validation of domain names was causing 405 error on FirstRun Setup
 
 0.8.15
 ==============================================
