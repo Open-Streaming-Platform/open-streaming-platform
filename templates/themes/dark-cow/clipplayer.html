@@ -47,7 +47,7 @@
           <div class="video-buttons-row">
             <span class="float-left">
               <b><i class="fas fa-video mr-1"></i></b> <a href="/play/{{video.id}}"> {{video.channelName}}</a><br />
-              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channelID}}/"> {{video.channel.channelName}}</a><br />
+              <b><i class="fas fa-podcast mr-2"></i></b> <a href="/channel/{{video.channelID}}/"> {{video.channelID | get_channelName}}</a><br />
               <b><i class="fas fa-hashtag mr-2"></i></b> <a href="/topic/{{video.topic}}/"> {{video.topic|get_topicName}}</a>
             </span>
             <span class="float-right ml-2">
