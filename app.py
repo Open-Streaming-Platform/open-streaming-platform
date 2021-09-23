@@ -194,9 +194,6 @@ from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
-#logger = logging.getLogger('gunicorn.error').handlers
-
-
 
 # Initialize Flask-BabelEx
 babel = Babel(app)
