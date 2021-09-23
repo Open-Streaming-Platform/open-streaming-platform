@@ -145,7 +145,6 @@ if __name__ != '__main__':
             loglevel = logOptions[config.log_level]
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
-    logging.default_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
     app.logger.setLevel(loglevel)
 
 # Initialize Recaptcha

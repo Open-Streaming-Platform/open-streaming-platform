@@ -4,7 +4,7 @@ import subprocess
 import uuid
 import logging
 
-from flask import flash, current_app
+from flask import flash
 import flask_migrate
 
 from globals import globalvars
@@ -22,6 +22,8 @@ from functions import cachedDbCalls
 
 from conf import config
 
+log = logging.getLogger('app.functions.database')
+
 def checkDefaults(user_datastore):
     # Setup Default User Roles
     user_datastore.find_or_create_role(name='Admin', description='Administrator', default=False)
@@ -30,7 +32,7 @@ def checkDefaults(user_datastore):
     user_datastore.find_or_create_role(name='Recorder', description='Recorder', default=False)
     user_datastore.find_or_create_role(name='Uploader', description='Uploader', default=False)
 
-    current_app.logger.info({"level": "info", "message": "Setting Default Topics"})
+    log.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]
     for topic in topicList:
         existingTopic = topics.topics.query.filter_by(name=topic[0]).first()
@@ -43,7 +45,7 @@ def checkDefaults(user_datastore):
 def dbFixes():
     sysSettings = settings.settings.query.first()
 
-    current_app.logger.info({"level": "info", "message": "Performing DB Sanity Check"})
+    log.info({"level": "info", "message": "Performing DB Sanity Check"})
     # Set/Update the system version attribute
     if sysSettings.version is None or sysSettings.version != globalvars.version:
         sysSettings.version = globalvars.version
@@ -105,7 +107,7 @@ def dbFixes():
         chan.defaultStreamName = ""
         db.session.commit()
 
-    current_app.logger.info({"level": "info", "message": "Checking for Null Default Roles"})
+    log.info({"level": "info", "message": "Checking for Null Default Roles"})
     # Query Null Default Roles and Set
     roleQuery = Sec.Role.query.filter_by(default=None).all()
     for role in roleQuery:
@@ -122,7 +124,7 @@ def dbFixes():
         db.session.add(localRTMP)
         db.session.commit()
 
-    current_app.logger.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
+    log.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
     # Fix for Videos and Channels that were created before Publishing Option
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
     for vid in videoQuery:
@@ -220,7 +222,7 @@ def dbFixes():
 def init(app, user_datastore):
     db.create_all()
 
-    current_app.logger.info({"level": "info", "message": "Checking Flask-Migrate DB Version"})
+    log.info({"level": "info", "message": "Checking Flask-Migrate DB Version"})
     # Logic to Check the DB Version
     dbVersionQuery = dbVersion.dbVersion.query.first()
 
@@ -239,21 +241,21 @@ def init(app, user_datastore):
         db.session.commit()
         pass
 
-    current_app.logger.info({"level": "info", "message": "Setting up Default Roles"})
+    log.info({"level": "info", "message": "Setting up Default Roles"})
     # Performs Checks of Default Values for OSP
     checkDefaults(user_datastore)
 
-    current_app.logger.info({"level": "info", "message": "Querying Default System Settings"})
+    log.info({"level": "info", "message": "Querying Default System Settings"})
     # Note: for a freshly installed system, sysSettings is None!
     sysSettings = cachedDbCalls.getSystemSettings()
 
     if sysSettings is not None:
 
-        current_app.logger.info({"level": "info", "message": "Performing DB Checks and Fixes"})
+        log.info({"level": "info", "message": "Performing DB Checks and Fixes"})
         # Analyzes Known DB Issues and Corrects Them (Typically After a Migration)
         dbFixes()
 
-        current_app.logger.info({"level": "info", "message": "Reloading System Settings"})
+        log.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
 
         app.config['SERVER_NAME'] = None
@@ -275,6 +277,6 @@ def init(app, user_datastore):
         app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
         app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
 
-        current_app.logger.info({"level": "info", "message": "Database Initialization Completed"})
+        log.info({"level": "info", "message": "Database Initialization Completed"})
 
         return True
