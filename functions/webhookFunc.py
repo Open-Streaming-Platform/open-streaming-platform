@@ -1,10 +1,13 @@
 import json
 import requests
+import logging
 
 from classes.shared import db
 from classes import webhook
 
 from functions import system
+
+log = logging.getLogger('app.functions.database')
 
 @system.asynch
 def runWebhook(channelID, triggerType, **kwargs):

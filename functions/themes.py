@@ -1,4 +1,5 @@
 import os
+import logging
 from PIL import Image
 from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
 from flask_security import current_user
@@ -7,6 +8,8 @@ from globals import globalvars
 
 from classes.shared import db
 from classes import settings
+
+log = logging.getLogger('app.functions.database')
 
 # Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
