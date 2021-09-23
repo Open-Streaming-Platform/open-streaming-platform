@@ -214,24 +214,6 @@ db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
-
-time.sleep(random.random() * random.randint(1, 5))
-dbUpgradeStatus = r.get('dbUpgradeInProgress')
-if dbUpgradeStatus == b'True':
-    while dbUpgradeStatus == b'True':
-        time.sleep(5)
-        logging.info({"level": "info", "message": "Database Upgrade Check in-progress on another worker.  Waiting..."})
-        dbUpgradeStatus = r.get('dbUpgradeInProgress')
-else:
-    r.set('dbUpgradeInProgress', 'True')
-    logging.info({"level": "info", "message": "Worker Designated as to perform Database Upgrade Check..."})
-    with app.app_context():
-        try:
-            upgrade(directory='migrations')
-        except Exception as e:
-            logging.error({"level": "error", "message": "Failed to perform database upgrade - " + str(e)})
-            exit(2)
-    r.delete('dbUpgradeStatus')
 # Initialize Flask-Session
 Session(app)
 

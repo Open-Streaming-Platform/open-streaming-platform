@@ -1,3 +1,7 @@
+0.8.17
+==============================================
+OSP-Core: Fixes clipplayer.html caching issues
+
 0.8.16
 ==============================================
 OSP-Core: Added /Search API Calls for Videos, Clips, Users, Streams, Channels and Topics - Returns ID value, Name, UUID (if available), and any other information for future search bar
