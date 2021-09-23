@@ -128,6 +128,25 @@ app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
+#----------------------------------------------------------------------------#
+# Set Logging Configuration
+#----------------------------------------------------------------------------#
+if __name__ != '__main__':
+    loglevel = logging.WARNING
+    if hasattr(config, 'log_level'):
+        logOptions = {
+            'debug': logging.DEBUG,
+            'info': logging.INFO,
+            'warning': logging.WARNING,
+            'error': logging.ERROR,
+            'critical': logging.CRITICAL
+        }
+        if config.log_level in logOptions:
+            loglevel = logOptions[config.log_level]
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(loglevel)
+
 # Initialize Recaptcha
 if hasattr(config, 'RECAPTCHA_ENABLED'):
     if config.RECAPTCHA_ENABLED is True:
@@ -136,7 +155,7 @@ if hasattr(config, 'RECAPTCHA_ENABLED'):
             app.config['RECAPTCHA_PUBLIC_KEY'] = config.RECAPTCHA_SITE_KEY
             app.config['RECAPTCHA_PRIVATE_KEY'] = config.RECAPTCHA_SECRET_KEY
         except:
-            logging.warning("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
+            app.logger.warning("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
             globalvars.recaptchaEnabled = False
 
 #----------------------------------------------------------------------------#
@@ -175,7 +194,9 @@ from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
-logger = logging.getLogger('gunicorn.error').handlers
+#logger = logging.getLogger('gunicorn.error').handlers
+
+
 
 # Initialize Flask-BabelEx
 babel = Babel(app)
@@ -221,7 +242,7 @@ Session(app)
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 # Initialize Flask-Caching
-logging.info({"level": "info", "message": "Performing Flask Caching Initialization"})
+app.logger.info({"level": "info", "message": "Performing Flask Caching Initialization"})
 
 from classes.shared import cache
 redisCacheOptions = {
@@ -269,9 +290,9 @@ if hasattr(config,'ejabberdServerHttpBindFQDN'):
 
 try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
-    logging.info(ejabberd.status())
+    app.logger.info(ejabberd.status())
 except Exception as e:
-    logging.error("ejabberdctl failed to load: " + str(e))
+    app.logger.error("ejabberdctl failed to load: " + str(e))
 
 # Loop Check if OSP DB Init is Currently Being Handled by and Process
 OSP_DB_INIT_HANDLER = None
@@ -287,7 +308,7 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
 try:
     database.init(app, user_datastore)
 except:
-    logging.warning("DB Load Fail due to Upgrade or Issues")
+    app.logger.warning("DB Load Fail due to Upgrade or Issues")
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
@@ -295,27 +316,27 @@ r.delete('OSP_DB_INIT_HANDLER')
 try:
     system.systemFixes(app)
 except:
-    logging.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
+    app.logger.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
 if r.get('OSP_XMPP_INIT_HANDLER') is None:
     # Perform XMPP Sanity Check
     r.set('OSP_XMPP_INIT_HANDLER', globalvars.processUUID, ex=60)
-    logging.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
+    app.logger.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
     from functions import xmpp
     try:
         results = xmpp.sanityCheck()
     except Exception as e:
-        logging.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
+        app.logger.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
         r.delete('OSP_XMPP_INIT_HANDLER')
 else:
-    logging.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
+    app.logger.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
 
 # Checking OSP-Edge Redirection Conf File
 try:
     system.checkOSPEdgeConf()
 except:
-    logging.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
-logging.info({"level": "info", "message": "Initializing OAuth Info"})
+    app.logger.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
+app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
 from functions.oauth import fetch_token
@@ -338,18 +359,18 @@ try:
             )
 
         except Exception as e:
-            logging.error("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+            app.logger.error("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
 except:
-    logging.error("Failed Loading oAuth Providers")
+    app.logger.error("Failed Loading oAuth Providers")
 
-logging.info({"level": "info", "message": "Initializing Flask-Mail"})
+app.logger.info({"level": "info", "message": "Initializing Flask-Mail"})
 # Initialize Flask-Mail
 from classes.shared import email
 
 email.init_app(app)
 email.app = app
 
-logging.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
+app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
 topicQuery = topics.topics.query.all()
 for topic in topicQuery:
@@ -359,9 +380,9 @@ for topic in topicQuery:
 try:
     system.initializeThemes()
 except:
-    logging.warning({"level": "error", "message": "Unable to Set Override Themes"})
+    app.logger.warning({"level": "error", "message": "Unable to Set Override Themes"})
 
-logging.info({"level": "info", "message": "Initializing SocketIO Handlers"})
+app.logger.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
@@ -380,7 +401,7 @@ from functions.socketio import restream
 from functions.socketio import rtmp
 from functions.socketio import pictures
 
-logging.info({"level": "info", "message": "Initializing Flask Blueprints"})
+app.logger.info({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 #----------------------------------------------------------------------------#
@@ -413,7 +434,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
 app.register_blueprint(oauth_bp)
 
-logging.info({"level": "info", "message": "Initializing Template Filters"})
+app.logger.info({"level": "info", "message": "Initializing Template Filters"})
 #----------------------------------------------------------------------------#
 # Template Filter Imports
 #----------------------------------------------------------------------------#
@@ -422,14 +443,14 @@ from functions import templateFilters
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
 
-logging.info({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
+app.logger.info({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
 #----------------------------------------------------------------------------#
 # Jinja 2 Gloabl Environment Functions
 #----------------------------------------------------------------------------#
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 
-logging.info({"level": "info", "message": "Setting Flask Context Processors"})
+app.logger.info({"level": "info", "message": "Setting Flask Context Processors"})
 #----------------------------------------------------------------------------#
 # Context Processors
 #----------------------------------------------------------------------------#
@@ -479,7 +500,7 @@ def inject_topics():
     topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
     return dict(uploadTopics=topicQuery)
 
-logging.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
+app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
@@ -542,13 +563,13 @@ def do_before_request():
 def shutdown_session(exception=None):
     db.session.remove()
 
-logging.info({"level": "info", "message": "Finalizing App Initialization"})
+app.logger.info({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 # Finalize App Init
 #----------------------------------------------------------------------------#
 try:
     system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-    logging.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
+    app.logger.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
 if __name__ == '__main__':
