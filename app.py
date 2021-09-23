@@ -532,6 +532,7 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
     user.xmppToken = str(os.urandom(32).hex())
     user.uuid = str(uuid.uuid4())
     webhookFunc.runWebhook("ZZZ", 20, user=user.username)
+    app.logger.info({"level": "info", "message": "New User Registered - " + str(user.username) + " - " + str(user.current_login_ip)})
     system.newLog(1, "A New User has Registered - Username:" + str(user.username))
     if config.requireEmailRegistration:
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
