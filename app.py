@@ -150,19 +150,19 @@ if __name__ != '__main__':
 # Initialize Recaptcha
 if hasattr(config, 'RECAPTCHA_ENABLED'):
     if config.RECAPTCHA_ENABLED is True:
-        app.logger.info("REPATCHA_ENABLED set to True. Initializing Recaptcha")
+        app.logger.info({"level": "info", "message": "REPATCHA_ENABLED set to True. Initializing Recaptcha"})
         globalvars.recaptchaEnabled = True
         try:
             app.config['RECAPTCHA_PUBLIC_KEY'] = config.RECAPTCHA_SITE_KEY
             app.config['RECAPTCHA_PRIVATE_KEY'] = config.RECAPTCHA_SECRET_KEY
         except:
-            app.logger.warning("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
+            app.logger.warning({"level": "warning", "message": "Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha"})
             globalvars.recaptchaEnabled = False
 
 #----------------------------------------------------------------------------#
 # Modal Imports
 #----------------------------------------------------------------------------#
-app.logger.info("Importing Database Classes")
+app.logger.info({"level": "info", "message": "Importing Database Classes"})
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -185,7 +185,7 @@ from classes import stickers
 #----------------------------------------------------------------------------#
 # Function Imports
 #----------------------------------------------------------------------------#
-app.logger.info("Importing Function")
+app.logger.info({"level": "info", "message": "Importing Function"})
 from functions import database
 from functions import system
 from functions import securityFunc
@@ -198,7 +198,7 @@ from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 
 # Initialize Flask-BabelEx
-app.logger.info("Initializing Flask-BabelEx")
+app.logger.info({"level": "info", "message": "Initializing Flask-BabelEx"})
 babel = Babel(app)
 
 # Initialize RedisURL
@@ -209,13 +209,13 @@ else:
     RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 
 #Initialize Flask-Limiter
-app.logger.info("Importing Flask-Limiter")
+app.logger.info({"level": "info", "message": "Importing Flask-Limiter"})
 app.config["RATELIMIT_STORAGE_URL"] = RedisURL
 from classes.shared import limiter
 limiter.init_app(app)
 
 # Initialize Redis
-app.logger.info("Initializing Redis")
+app.logger.info({"level": "info", "message": "Initializing Redis"})
 if config.redisPassword == '' or config.redisPassword is None:
     r = redis.Redis(host=config.redisHost, port=config.redisPort)
     app.config["SESSION_REDIS"] = r
@@ -225,7 +225,7 @@ else:
 r.flushdb()
 
 # Initialize Flask-SocketIO
-app.logger.info("Initializing Flask-SocketIO")
+app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
 from classes.shared import socketio
 if config.redisPassword == '' or config.redisPassword is None:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
@@ -233,18 +233,18 @@ else:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 
 # Begin Database Initialization
-app.logger.info("Loading Database Object")
+app.logger.info({"level": "info", "message": "Loading Database Object"})
 from classes.shared import db
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
 # Initialize Flask-Session
-app.logger.info("Initializing Flask-Session")
+app.logger.info({"level": "info", "message": "Initializing Flask-Session"})
 Session(app)
 
 # Initialize Flask-CORS Config
-app.logger.info("Initializing Flask-CORS")
+app.logger.info({"level": "info", "message": "Initializing Flask-CORS"})
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 # Initialize Flask-Caching
@@ -262,11 +262,11 @@ if config.redisPassword != '' and config.redisPassword is not None:
 cache.init_app(app, config=redisCacheOptions)
 
 # Initialize Debug Toolbar
-app.logger.info("Initializing Flask-Debug")
+app.logger.info({"level": "info", "message": "Initializing Flask-Debug"})
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
-app.logger.info("Initializing Flask-Security")
+app.logger.info({"level": "info", "message": "Initializing Flask-Security"})
 try:
     sysSettings = cachedDbCalls.getSystemSettings()
     app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
@@ -280,18 +280,18 @@ user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
 # Initialize Flask-Uploads
-app.logger.info("Initializing Flask-Uploads")
+app.logger.info({"level": "info", "message": "Initializing Flask-Uploads"})
 photos = UploadSet('photos', IMAGES)
 stickerUploads = UploadSet('stickers', IMAGES)
 configure_uploads(app, (photos, stickerUploads))
 patch_request_class(app)
 
 # Initialize Flask-Markdown
-app.logger.info("Initializing Flask-Markdown")
+app.logger.info({"level": "info", "message": "Initializing Flask-Markdown"})
 md = Markdown(app, extensions=['tables'])
 
 # Initialize ejabberdctl
-app.logger.info("Initializing ejabberd XML-RPC connection")
+app.logger.info({"level": "info", "message": "Initializing ejabberd XML-RPC connection"})
 ejabberd = None
 
 if hasattr(config,'ejabberdServer'):
@@ -303,7 +303,7 @@ try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
     app.logger.info(ejabberd.status())
 except Exception as e:
-    app.logger.error("ejabberdctl failed to load: " + str(e))
+    app.logger.error({"level": "error", "message": "ejabberdctl failed to load: " + str(e)})
 
 # Loop Check if OSP DB Init is Currently Being Handled by and Process
 OSP_DB_INIT_HANDLER = None
@@ -316,16 +316,16 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
         time.sleep(random.random())
 
 # Once Attempt Database Load and Validation
-app.logger.info("Performing Initial Database Initialization")
+app.logger.info({"level": "info", "message": "Performing Initial Database Initialization"})
 try:
     database.init(app, user_datastore)
 except:
-    app.logger.warning("DB Load Fail due to Upgrade or Issues")
+    app.logger.warning({"level": "warning", "message": "DB Load Fail due to Upgrade or Issues"})
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
 # Perform System Fixes
-app.logger.info("Performing OSP System Fixes")
+app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
 try:
     system.systemFixes(app)
 except:
@@ -345,7 +345,7 @@ else:
     app.logger.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
 
 # Checking OSP-Edge Redirection Conf File
-app.logger.info("Initializing OSP-Edge Redirection File")
+app.logger.info({"level": "info", "message": "Initializing OSP-Edge Redirection File"})
 try:
     system.checkOSPEdgeConf()
 except:
@@ -375,9 +375,9 @@ try:
             )
 
         except Exception as e:
-            app.logger.error("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+            app.logger.error({"level": "error", "message": "Failed Loading oAuth Provider-" + provider.name + ":" + str(e) })
 except:
-    app.logger.error("Failed Loading oAuth Providers")
+    app.logger.error({"level": "error", "message": "Failed Loading oAuth Providers"})
 
 app.logger.info({"level": "info", "message": "Initializing Flask-Mail"})
 
@@ -578,7 +578,7 @@ def do_before_request():
         except:
             pass
 
-app.logger.info("Initializing DB Teardown App Context")
+app.logger.info({"level": "info", "message": "Initializing DB Teardown App Context"})
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
