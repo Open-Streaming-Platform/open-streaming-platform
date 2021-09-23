@@ -382,7 +382,8 @@ for topic in topicQuery:
 
 # Initialize First Theme Overrides
 try:
-    system.initializeThemes()
+    with app.app_context():
+        system.initializeThemes()
 except:
     app.logger.warning({"level": "error", "message": "Unable to Set Override Themes"})
 
