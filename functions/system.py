@@ -21,7 +21,7 @@ from classes import Sec
 
 from functions import cachedDbCalls
 
-log = logging.get_logger(__name__)
+log = logging.getLogger(__name__)
 
 def asynch(func):
 
