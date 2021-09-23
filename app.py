@@ -318,7 +318,7 @@ try:
     with app.app_context():
         system.systemFixes(app)
 except:
-    app.logger.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
+    app.logger.warning({"level": "warning", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
 if r.get('OSP_XMPP_INIT_HANDLER') is None:
     # Perform XMPP Sanity Check
@@ -339,7 +339,7 @@ try:
     with app.app_context():
         system.checkOSPEdgeConf()
 except:
-    app.logger.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
+    app.logger.warning({"level": "warning", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
 app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
 # Initialize oAuth
 from classes.shared import oauth
@@ -385,7 +385,7 @@ try:
     with app.app_context():
         system.initializeThemes()
 except:
-    app.logger.warning({"level": "error", "message": "Unable to Set Override Themes"})
+    app.logger.error({"level": "error", "message": "Unable to Set Override Themes"})
 
 app.logger.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
