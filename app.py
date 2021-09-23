@@ -145,7 +145,6 @@ if __name__ != '__main__':
             loglevel = logOptions[config.log_level]
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
-    logging.default_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
     app.logger.setLevel(loglevel)
 
 # Initialize Recaptcha
@@ -307,8 +306,8 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
 
 # Once Attempt Database Load and Validation
 try:
-    with app.app_context():
-        database.init(app, user_datastore)
+
+    database.init(app, user_datastore)
 except:
     app.logger.warning("DB Load Fail due to Upgrade or Issues")
 # Clear Process from OSP DB Init
@@ -316,8 +315,7 @@ r.delete('OSP_DB_INIT_HANDLER')
 
 # Perform System Fixes
 try:
-    with app.app_context():
-        system.systemFixes(app)
+    system.systemFixes(app)
 except:
     app.logger.warning({"level": "warning", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
@@ -327,8 +325,7 @@ if r.get('OSP_XMPP_INIT_HANDLER') is None:
     app.logger.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
     from functions import xmpp
     try:
-        with app.app_context():
-            results = xmpp.sanityCheck()
+        results = xmpp.sanityCheck()
     except Exception as e:
         app.logger.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
         r.delete('OSP_XMPP_INIT_HANDLER')
@@ -337,8 +334,7 @@ else:
 
 # Checking OSP-Edge Redirection Conf File
 try:
-    with app.app_context():
-        system.checkOSPEdgeConf()
+    system.checkOSPEdgeConf()
 except:
     app.logger.warning({"level": "warning", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
 app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
@@ -383,8 +379,7 @@ for topic in topicQuery:
 
 # Initialize First Theme Overrides
 try:
-    with app.app_context():
-        system.initializeThemes()
+    system.initializeThemes()
 except:
     app.logger.error({"level": "error", "message": "Unable to Set Override Themes"})
 
