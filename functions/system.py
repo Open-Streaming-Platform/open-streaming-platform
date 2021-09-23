@@ -21,7 +21,7 @@ from classes import Sec
 
 from functions import cachedDbCalls
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('app.functions.system')
 
 def asynch(func):
 
@@ -149,7 +149,7 @@ def systemFixes(app):
         except OSError:
             flash("Unable to create <web-root>/images/stickers", "error")
 
-    log.info({"level": "info", "message": "Checking stream-thumn directory"})
+    log.info({"level": "info", "message": "Checking stream-thumb directory"})
     # Create the stream-thumb directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
         try:
