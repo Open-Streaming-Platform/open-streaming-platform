@@ -324,7 +324,8 @@ if r.get('OSP_XMPP_INIT_HANDLER') is None:
     app.logger.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
     from functions import xmpp
     try:
-        results = xmpp.sanityCheck()
+        with app.app_context():
+            results = xmpp.sanityCheck()
     except Exception as e:
         app.logger.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
         r.delete('OSP_XMPP_INIT_HANDLER')
