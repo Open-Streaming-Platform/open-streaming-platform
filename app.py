@@ -336,7 +336,8 @@ else:
 
 # Checking OSP-Edge Redirection Conf File
 try:
-    system.checkOSPEdgeConf()
+    with app.app_context():
+        system.checkOSPEdgeConf()
 except:
     app.logger.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
 app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
