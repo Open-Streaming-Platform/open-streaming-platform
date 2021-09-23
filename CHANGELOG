@@ -1,6 +1,7 @@
 0.8.17
 ==============================================
 OSP-Core: Fixes clipplayer.html caching issues
+OSP-Core: Fixes Incorrect Live Viewer Counter on Stream Cards per Issue #433
 
 0.8.16
 ==============================================
