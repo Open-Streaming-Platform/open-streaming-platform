@@ -1,6 +1,7 @@
 import subprocess
 import os
 import shutil
+import logging
 
 from flask import flash
 from flask_security import current_user
@@ -21,6 +22,8 @@ from functions import system
 from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
+
+log = logging.getLogger('app.functions.database')
 
 # Checks Length of a Video at path and returns the length
 def getVidLength(input_video):
