@@ -350,10 +350,10 @@ try:
     system.checkOSPEdgeConf()
 except:
     app.logger.warning({"level": "warning", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
-app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
+
 
 # Initialize oAuth
-app.logger.info("Initializing OAuth")
+app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
 from classes.shared import oauth
 from functions.oauth import fetch_token
 oauth.init_app(app, fetch_token=fetch_token)
@@ -380,9 +380,7 @@ except:
     app.logger.error({"level": "error", "message": "Failed Loading oAuth Providers"})
 
 app.logger.info({"level": "info", "message": "Initializing Flask-Mail"})
-
 # Initialize Flask-Mail
-app.logger.info("Initializing Flask-Mail")
 from classes.shared import email
 
 email.init_app(app)
@@ -395,7 +393,7 @@ for topic in topicQuery:
     globalvars.topicCache[topic.id] = topic.name
 
 # Initialize First Theme Overrides
-app.logger.info("Initializing OSP Themes")
+app.logger.info({"level": "info", "message": "Initializing OSP Themes"})
 try:
     system.initializeThemes()
 except:
@@ -541,7 +539,7 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 #----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
-app.logger.info("Initializing First Request Check")
+app.logger.info({"level": "info", "message": "Initializing First Request Check"})
 @app.before_request
 def do_before_request():
     # Check all IP Requests for banned IP Addresses
