@@ -139,6 +139,7 @@ def systemFixes(app):
         clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-avoid_negative_ts', '1', fullvideoLocation])
         db.session.commmit()
 
+    current_app.logger.info({"level": "info", "message": "Checking Stickers Directory"})
     # Create the Stickers directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "/images/stickers"):
         try:
@@ -146,6 +147,7 @@ def systemFixes(app):
         except OSError:
             flash("Unable to create <web-root>/images/stickers", "error")
 
+    current_app.logger.info({"level": "info", "message": "Checking stream-thumn directory"})
     # Create the stream-thumb directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
         try:
@@ -153,6 +155,7 @@ def systemFixes(app):
         except OSError:
             flash("Unable to create <web-root>/stream-thumb", "error")
 
+    current_app.logger.info({"level": "info", "message": "Checking for fs_uniquifier for Flask-Security-Too"})
     # Check fs_uniquifier
     userQuery = Sec.User.query.filter_by(fs_uniquifier=None).all()
     for user in userQuery:
