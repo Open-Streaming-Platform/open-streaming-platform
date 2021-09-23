@@ -306,7 +306,8 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
 
 # Once Attempt Database Load and Validation
 try:
-    database.init(app, user_datastore)
+    with app.app_context():
+        database.init(app, user_datastore)
 except:
     app.logger.warning("DB Load Fail due to Upgrade or Issues")
 # Clear Process from OSP DB Init
@@ -314,7 +315,8 @@ r.delete('OSP_DB_INIT_HANDLER')
 
 # Perform System Fixes
 try:
-    system.systemFixes(app)
+    with app.app_context():
+        system.systemFixes(app)
 except:
     app.logger.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
