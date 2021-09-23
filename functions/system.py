@@ -4,7 +4,7 @@ import subprocess
 import os
 import datetime
 import smtplib
-from flask import flash, current_app
+from flask import flash
 from html.parser import HTMLParser
 import ipaddress
 import json
@@ -20,6 +20,8 @@ from classes import RecordedVideo
 from classes import Sec
 
 from functions import cachedDbCalls
+
+log = logging.get_logger(__name__)
 
 def asynch(func):
 
@@ -127,7 +129,7 @@ def rebuildOSPEdgeConf():
 
 def systemFixes(app):
 
-    current_app.logger.info({"level": "info", "message": "Checking for 0.7.x Clips"})
+    log.info({"level": "info", "message": "Checking for 0.7.x Clips"})
     # Fix for Beta 6 Switch from Fake Clips to real clips
     clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
     videos_root = globalvars.videoRoot + 'videos/'
@@ -139,7 +141,7 @@ def systemFixes(app):
         clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-avoid_negative_ts', '1', fullvideoLocation])
         db.session.commmit()
 
-    current_app.logger.info({"level": "info", "message": "Checking Stickers Directory"})
+    log.info({"level": "info", "message": "Checking Stickers Directory"})
     # Create the Stickers directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "/images/stickers"):
         try:
@@ -147,7 +149,7 @@ def systemFixes(app):
         except OSError:
             flash("Unable to create <web-root>/images/stickers", "error")
 
-    current_app.logger.info({"level": "info", "message": "Checking stream-thumn directory"})
+    log.info({"level": "info", "message": "Checking stream-thumn directory"})
     # Create the stream-thumb directory if it does not exist
     if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
         try:
@@ -155,7 +157,7 @@ def systemFixes(app):
         except OSError:
             flash("Unable to create <web-root>/stream-thumb", "error")
 
-    current_app.logger.info({"level": "info", "message": "Checking for fs_uniquifier for Flask-Security-Too"})
+    log.info({"level": "info", "message": "Checking for fs_uniquifier for Flask-Security-Too"})
     # Check fs_uniquifier
     userQuery = Sec.User.query.filter_by(fs_uniquifier=None).all()
     for user in userQuery:
@@ -167,7 +169,7 @@ def systemFixes(app):
 def initializeThemes():
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    current_app.logger.info({"level": "info", "message": "Importing Theme Data into Global Cache"})
+    log.info({"level": "info", "message": "Importing Theme Data into Global Cache"})
     # Import Theme Data into Theme Dictionary
     with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
         globalvars.themeData = json.load(f)
@@ -176,14 +178,14 @@ def initializeThemes():
 def checkOSPEdgeConf():
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    current_app.logger.info({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
+    log.info({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
     # Initialize the OSP Edge Configuration - Mostly for Docker
     if sysSettings.buildEdgeOnRestart is True:
         try:
             rebuildOSPEdgeConf()
         except:
-            current_app.logger.error("Error Rebuilding Edge Config")
+            log.error("Error Rebuilding Edge Config")
             return False
     else:
-        current_app.logger.info({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
+        log.info({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
     return True
