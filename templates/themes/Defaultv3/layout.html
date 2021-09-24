@@ -26,6 +26,9 @@
                     <i class="bi bi-search"></i>
                     <input class="insetBoxShadow" type="text" placeholder="Search...">
                 </span>
+                <!--Begin Authenticated User Navbar Options-->
+                {%  if current_user.is_authenticated %}
+                <!--Authenticated User Dropdown Menu-->
                 <span class="userImageBlock" id="userImageBlock">
                     <span class="boxShadow navbar-dropdown-content textShadow fade-in" id="userMenuDropdown">
                         <a href="/settings/channels"><span class="bi bi-tv-fill"></span> <b>My Channels</b></a>
@@ -38,11 +41,13 @@
                     <a href="#" id="userDropDownButton" onclick="showUserNav();">
                     <img class="userImage boxShadow" src="https://i.pravatar.cc/62?u=theuser2pravatar.com" alt="Username Picture">
                     <i class="bi bi-caret-down-fill"></i></a>
-
                 </span>
                 <a href="#"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
                 <a href="#"><i class="textShadow bi bi-envelope-fill"></i></a>
                 <a href="#"><i class="textShadow bi bi-bell-fill"></i></a>
+                {% else %}
+                <a class="btn btn-dark shadow" href="/login">Log In</a>
+                {% endif %}
                 <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill"></i></a>
             </div>
         </div>
@@ -61,7 +66,8 @@
       {% block body %}
       {% endblock %}
     </div>
-    <!-- Modal -->
+
+    <!-- Global UI Modal Location Start-->
     <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content shadow">
@@ -118,18 +124,105 @@
         </div>
     </div>
 
+    <!--Upload Video Modal-->
+    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
+              <div class="modal-header">
+                <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="canceluploads()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="videoTitle">Title</label>
+                  <input class="form-control" id="videoTitle" name="videoTitle">
+                </div>
+                <div class="form-group">
+                  <label for="uploadToChannelID">Channel</label>
+                  <select name="uploadToChannelID" class="form-control" required>
+                    {% for chan in ownedChannels %}
+                    <option value="{{chan.id}}">{{chan.channelName}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="uploadTopic">Topic</label>
+                  <select name="uploadTopic" class="form-control" required>
+                    {% for topic in uploadTopics %}
+                    <option value="{{topic.id}}">{{topic.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
+                <!-- hidden dropzone -->
+                <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
+                <div class="form-group row">
+                  <div class="col-2 my-auto">
+                    <button id="thumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+                  </div>
+                  <div class="col-10">
+                    <input class="form-control pl-2 form-control" id="thumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+                    <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+                  </div>
+                </div>
+
+                <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+                </div>
+
+                <span>Video file <span id="videouploadstatus"></span></span>
+                <!-- hidden dropzone -->
+                <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
+                <div class="form-group row">
+                  <div class="col-2 my-auto">
+                    <button id="videouploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+                  </div>
+                  <div class="col-10">
+                    <input class="form-control pl-2 form-control" id="videoFilenameDisplay" name="videoFilename" placeholder="Filename" disabled />
+                    <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
+                  </div>
+                </div>
+
+                <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div id="videouploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="videoDescription">Video description</label>
+                  <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
+                <button id="uploadbutton" type="submit" class="btn btn-success" disabled>Upload</button>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
 
     <script>
+        // Opens the User Navigation Bar
         function showUserNav() {
-          document.getElementById("userMenuDropdown").classList.toggle('show');
+            try {
+                document.getElementById("userMenuDropdown").classList.toggle('show');
+            } catch {
+                console.log("Error: Unable to Detect User Menu");
+            }
         }
 
+        // Watches the Mouse Target Location Opens User Navigation Bar
         $(document).click(function(event) {
             var target = event.target.parentNode;
             if (target.id != 'userMenuDropdown' && target.id != 'userDropDownButton' && document.getElementById("userMenuDropdown").classList.contains('show')) {
                 document.getElementById("userMenuDropdown").classList.toggle('show');
             }
-            console.log(event.target.parentNode);
         });
     </script>
     </body>
