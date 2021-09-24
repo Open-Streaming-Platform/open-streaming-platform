@@ -1,0 +1,353 @@
+:root {
+    --navbar-background: #2F2C2C;
+    --page-background: #3E3D3D;
+    --box1-background: #4F4F4F;
+    --box2-background: #1F1F1F;
+    --accent-color: #3488DB;
+    --font-color: #cccccc;
+    --link-hover-color: #3488DB;
+    --font: Roboto;
+    --corner-radius: 4px;
+    --box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    --text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+body {
+    font-family: var(--font);
+    color: var(--font-color);
+}
+
+a, a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: var(--link-hover-color);
+}
+
+.textShadow {
+    text-shadow: var(--text-shadow);
+}
+
+.boxShadow {
+    box-shadow: var(--box-shadow);
+}
+
+.insetBoxShadow {
+    box-shadow: inset var(--box-shadow);
+}
+
+.modal-content {
+    background-color: var(--page-background);
+    font-size: 16px;
+}
+
+.modal-header {
+    background-color: var(--page-background);
+    border: 0 solid black;
+    border-radius: 4px 4px 0 0;
+}
+.modal-body {
+    background-color: var(--navbar-background);
+    border-radius: 0 0 4px 4px;
+}
+
+.modal-footer {
+    background-color: var(--page-background);
+    border: 0 solid black;
+}
+
+.show {
+    display: inline-block !important;
+}
+
+.uiBar {
+    background-color: var(--navbar-background);
+    box-shadow: var(--box-shadow);
+    z-index: 900;
+}
+
+.topNavbar {
+    position: fixed;
+    left: 80px;
+    top: 0px;
+    height: 80px;
+    width: calc(100vw - 80px);
+    line-height: 80px;
+    z-index: 901;
+}
+
+.topNavbar .siteTitle {
+    position: relative;
+    font-size: 24px;
+    margin-left: 34px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+.topNavbar .rightTopNavbar {
+    float: right;
+    padding-right: 30px;
+}
+
+.topNavbar .rightTopNavbar .searchBox {
+    position: relative;
+    top: -8px;
+    padding-right: 40px;
+}
+
+.topNavbar .rightTopNavbar .searchBox i {
+    font-size: medium;
+    position: relative;
+    left: 50px;
+    color: var(--font-color);
+}
+
+.topNavbar .rightTopNavbar .searchBox input {
+    height: 45px;
+    width: 350px;
+    border-radius: 8px;
+    border: 0 black solid;
+    background-color: #3E3D3D;
+    color: var(--font-color);
+}
+
+.topNavbar .rightTopNavbar .searchBox input[type=text] {
+    background-image: url('searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 40px;
+    box-sizing: border-box;
+    font-size: large;
+}
+
+.topNavbar .rightTopNavbar .searchBox input[type=text]:focus {
+    outline: none;
+}
+
+.topNavbar .rightTopNavbar .userImageBlock {
+    height: 100%;
+    width: 62px;
+    position: relative;
+    top: -8px;
+}
+
+.topNavbar .rightTopNavbar .userImageBlock i {
+    position: relative;
+    top: 5px;
+    left: -10px;
+    font-size: 24px;
+}
+
+.topNavbar .rightTopNavbar .userImageBlock .userImage {
+    object-fit: cover;
+    border-radius:50%;
+    width: 62px;
+    height: 62px;
+}
+
+.navbar-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 35px;
+    background-color: #1d1b1b;
+    min-width: 195px;
+    z-index: 1;
+    border-radius: 4px;
+    font-size: 18px;
+    padding: 7px;
+    border: 1px solid black;
+}
+
+.navbar-dropdown-content hr {
+    background-color: var(--font-color);
+    height: 0px;
+    border: 0;
+    margin: 8px;
+}
+
+.navbar-dropdown-content a {
+    float: none;
+    display: block;
+    padding: 6px 15px;
+    text-align: left;
+    line-height: normal;
+}
+
+.navbar-dropdown-content span {
+    padding-right: 10px;
+}
+
+.navbar-dropdown-content a, .navbar-dropdown-content a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+.navbar-dropdown-content a:hover, .navbar-dropdown-content a:active {
+    color: var(--link-hover-color);
+}
+
+
+.topNavbar .rightTopNavbar i {
+    font-size: 40px;
+    padding: 15px;
+}
+
+.sideNavbar {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100vh;
+    width: 80px;
+    text-align: center;
+    z-index: 901;
+}
+
+.sideNavbar .logo {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    top: 14px;
+    left: 0;
+}
+
+.sideNavbar .sideIcons {
+    position: relative;
+    top: 0px;
+}
+
+.sideNavbar .sideIcons .sideIcon {
+    margin-top: 35px;
+}
+
+.sideNavbar .sideIcons i {
+    width: 100%;
+    font-size: 40px;
+}
+
+.content {
+    position: fixed;
+    left: 80px;
+    top: 80px;
+    width: calc(100vw - 80px);
+    height: calc(100vh - 80px);
+    background-color: var(--page-background);
+    overflow : auto;
+}
+
+.aboutLogo {
+    width: 300px;
+    height: 300px;
+}
+
+.announcement-container {
+    width:100%;
+    padding: 20px 20px;
+    background-color: var(--box1-background);
+}
+
+.featured-stream-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--box2-background);
+}
+
+.top-live-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--page-background);
+}
+
+.current-live-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--page-background);
+}
+
+.trending-topics-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--box2-background);
+}
+
+.popular-videos-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--page-background);
+}
+
+.itemList {
+    padding: 0;
+}
+
+.item {
+    list-style-type:none;
+    margin: 0 10px;
+}
+
+.item .topicName {
+    text-align: center;
+    font-size: 1.25em;
+    text-transform: uppercase;
+}
+
+.topicImg img {
+    width: 175px;
+    height: 175px;
+    object-fit: cover;
+    box-shadow: var(--box-shadow);
+}
+
+.card {
+    background-color: inherit;
+    border: 0 solid black;
+}
+
+.card .card-body .card-text {
+    font-size: 1.25em;
+    line-height: 1.15em;
+}
+
+.stream-metadata-description {
+    font-size: 1.15em;
+}
+
+.live-badge {
+    padding: 2px 8px;
+    background-color: #FF2020;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.live-viewers-badge {
+    padding: 2px 8px;
+    background-color: #206CFF;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.streamCard:first-child {
+    height: 275px;
+    width: 315px;
+    margin: 5px 15px 5px 0px;
+}
+
+.streamCard:not(:first-child) {
+    height: 275px;
+    width: 315px;
+    margin: 5px 15px;
+}
+
+.streamCard .streamCard-thumb {
+    width: 315px;
+    height: 178px;
+    object-fit: cover;
+}
+
+.streamCard .streamCard-badges {
+    position: relative;
+    top: 28px;
+    left: 5px;
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="manifest" href="/static/site.webmanifest">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/Defaultv3/theme.css">
+    <link rel="stylesheet" href="/static/css/Defaultv3/animations.css">
+</head>
+<body>
+    <!--Navbar-->
+    <div class="nav">
+        <div class="uiBar topNavbar">
+            <span class="siteTitle textShadow">{{sysSettings.siteName}}</span>
+            <div class="rightTopNavbar">
+                <span class="searchBox">
+                    <i class="bi bi-search"></i>
+                    <input class="insetBoxShadow" type="text" placeholder="Search...">
+                </span>
+                <span class="userImageBlock" id="userImageBlock">
+                    <span class="boxShadow navbar-dropdown-content textShadow fade-in" id="userMenuDropdown">
+                        <a href="/settings/channels"><span class="bi bi-tv-fill"></span> <b>My Channels</b></a>
+                        <a href="/settings/api"><span class="bi bi-key-fill"></span> <b>API Keys</b></a>
+                        <a href="/settings/user/subscriptions"><span class="bi bi-star-fill"></span> <b>Subscriptions</b></a>
+                        <a href="/settings/user"><span class="bi bi-gear-fill"></span> <b>Settings</b></a>
+                        <a href="/settings/admin"><span class="bi bi-server"></span> <b>Admin</b></a>
+                        <a href="/logout"><span class="bi bi-box-arrow-right"></span> <b>Logout</b></a>
+                    </span>
+                    <a href="#" id="userDropDownButton" onclick="showUserNav();">
+                    <img class="userImage boxShadow" src="https://i.pravatar.cc/62?u=theuser2pravatar.com" alt="Username Picture">
+                    <i class="bi bi-caret-down-fill"></i></a>
+
+                </span>
+                <a href="#"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
+                <a href="#"><i class="textShadow bi bi-envelope-fill"></i></a>
+                <a href="#"><i class="textShadow bi bi-bell-fill"></i></a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill"></i></a>
+            </div>
+        </div>
+        <div class="uiBar sideNavbar">
+            <img src="{{sysSettings.systemLogo}}" class="logo">
+            <div class="sideIcons">
+                <div class="sideIcon"><a href="/channel"><i class="textShadow bi bi-tv-fill"></i></a></div>
+                <div class="sideIcon"><a href="/topic"><i class="textShadow bi bi-hash"></i></a></div>
+                <div class="sideIcon"><a href="/streamer"><i class="textShadow bi bi-people-fill"></i></a></div>
+                <div class="sideIcon"><a href="/video"><i class="textShadow bi bi-camera-video-fill"></i></a></div>
+                <div class="sideIcon"><a href="/clip"><i class="textShadow bi bi-scissors"></i></a></div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content shadow">
+            <div class="modal-body">
+                <div class="float-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="text-center w-100">
+                  <div class="mx-auto">
+                    <img class="aboutLogo" src="/static/img/logo.png">
+                  </div>
+                <p class="pt-4 textShadow">
+                  Open Streaming Platform Version <b>{{sysSettings.version}}</b>
+                </p>
+              </div>
+              <div>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td><i class="ps-5 bi bi-globe"></i> Website</td>
+                      <td><a class="ps-3" href="https://openstreamingplatform.com">openstreamingplatform.com</a></td>
+                    </tr>
+                    <tr>
+                      <td><i class="ps-5 bi bi-code-slash"></i> Code repository</td>
+                      <td><a class="ps-3" href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/">osp-group/flask-nginx-rtmp-manager</a></td>
+                    </tr>
+                    <tr>
+                        <td><i class="ps-5 bi bi-chat-left-quote-fill"></i> Forums</td>
+                        <td><a class="ps-3" href="https://forums.openstreamingplatform.com">forums.openstreamingplatform.com</a></td>
+                    </tr>
+                    <tr>
+                        <td><i class="ps-5 bi bi-file-richtext"></i> Wiki</td>
+                        <td><a class="ps-3" href="https://wiki.openstreamingplatform.com">wiki.openstreamingplatform.com</a></td>
+                    </tr>
+                    <tr>
+                      <td><i class="ps-5 bi bi-reddit"></i> Reddit</td>
+                      <td><a class="ps-3" href="https://reddit.com/r/openstreamingplatform">/r/openstreamingplatform</a></td>
+                    </tr>
+                    <tr>
+                      <td><i class="ps-5 bi bi-discord"></i> Discord</td>
+                      <td><a class="ps-3" href="https://discord.gg/Jp5rzbD">Open Streaming Platform</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-center">
+                <p class="pt-4">
+                  <i class="bi bi-card-text"></i><br>
+                  MIT License
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showUserNav() {
+          document.getElementById("userMenuDropdown").classList.toggle('show');
+        }
+
+        $(document).click(function(event) {
+            var target = event.target.parentNode;
+            if (target.id != 'userMenuDropdown' && target.id != 'userDropDownButton' && document.getElementById("userMenuDropdown").classList.contains('show')) {
+                document.getElementById("userMenuDropdown").classList.toggle('show');
+            }
+            console.log(event.target.parentNode);
+        });
+    </script>
+    </body>
+</html>
