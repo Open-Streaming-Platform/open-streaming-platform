@@ -39,8 +39,9 @@
                         <a href="/logout"><span class="bi bi-box-arrow-right"></span> <b>Logout</b></a>
                     </span>
                     <a href="#" id="userDropDownButton" onclick="showUserNav();">
-                    <img class="userImage boxShadow" src="https://i.pravatar.cc/62?u=theuser2pravatar.com" alt="Username Picture">
-                    <i class="bi bi-caret-down-fill"></i></a>
+                        <img class="userImage boxShadow" src="/images/{{current_user.pictureLocation}}" alt="Username Picture" onerror="this.src='/static/img/user2.png';">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </a>
                 </span>
                 <a href="#"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
                 <a href="#"><i class="textShadow bi bi-envelope-fill"></i></a>
