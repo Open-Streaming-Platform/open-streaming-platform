@@ -11,6 +11,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/Defaultv3/theme.css">
@@ -224,6 +226,12 @@
             if (target.id != 'userMenuDropdown' && target.id != 'userDropDownButton' && document.getElementById("userMenuDropdown").classList.contains('show')) {
                 document.getElementById("userMenuDropdown").classList.toggle('show');
             }
+        });
+    </script>
+
+    <script>
+        var lazyLoadInstance = new LazyLoad({
+          elements_selector: ".lazy"
         });
     </script>
     </body>

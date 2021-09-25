@@ -32,7 +32,7 @@
         <div class="streamCard-badges">
             <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{video.views}}</b></span>
         </div>
-        <img class="streamCard-thumb boxShadow lazy {% if video.gifLocation != None %}gif{% endif %} " src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+        <img class="streamCard-thumb boxShadow lazy {% if video.gifLocation != None %}gif{% endif %}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
         <div class="card mb-3" style="max-width: 540px;">
             <div class="row g-0">
               <div class="col-2">
