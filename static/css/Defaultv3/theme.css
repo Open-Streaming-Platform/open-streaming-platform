@@ -329,16 +329,10 @@ a:hover, a:active {
     text-align: center;
 }
 
-.streamCard:first-child {
+.streamCard {
     height: 275px;
     width: 315px;
-    margin: 5px 15px 5px 0px;
-}
-
-.streamCard:not(:first-child) {
-    height: 275px;
-    width: 315px;
-    margin: 5px 15px;
+    margin: 0 15px 0 0;
 }
 
 .streamCard .streamCard-thumb {
