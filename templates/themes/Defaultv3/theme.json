@@ -3,5 +3,5 @@
   "Maintainer": "Deamos",
   "Version": "3.0",
   "Description": "The Default OSP Theme",
-  "Override": []
+  "Override": ["index.html"]
 }

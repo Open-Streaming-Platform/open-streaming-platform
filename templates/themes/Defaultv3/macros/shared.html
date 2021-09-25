@@ -1,0 +1,54 @@
+{% macro live_stream_card(stream) %}
+<li class="streamCard">
+    <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
+        <div class="streamCard-badges">
+            <span class="live-badge boxShadow textShadow"><b>Live</b></span>
+            <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.currentViewers }}</b></span>
+        </div>
+        <img class="streamCard-thumb boxShadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{ stream.linkedChannel | get_channelLocationFromID }}.png">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+              <div class="col-2">
+                <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ stream.linkedChannel | channeltoOwnerID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+              </div>
+              <div class="col-10">
+                <div class="card-body">
+                  <p class="card-text textShadow">
+                    <b>{{ stream.streamName | limit_title }}</b><br>
+                    {{ stream.linkedChannel | channeltoOwnerID | get_userName }}<br>
+                    {{ stream.topic | get_topicName }}
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
+    </a>
+</li>
+{% endmacro %}
+
+{% macro video_card(video) %}
+<li class="streamCard">
+  <a href="/play/{{video.id}}">
+        <div class="streamCard-badges">
+            <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{video.views}}</b></span>
+        </div>
+        <img class="streamCard-thumb boxShadow lazy {% if video.gifLocation != None %}gif{% endif %} " src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+              <div class="col-2">
+                <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              </div>
+              <div class="col-10">
+                <div class="card-body">
+                  <p class="card-text textShadow">
+                    <b>{{ video.channelName | limit_title }}</b><br>
+                       {{ video.owningUser | get_userName }}<br>
+                       {{ video.topic | get_topicName }}
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
+    </a>
+</li>
+{% endmacro %}
