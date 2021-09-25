@@ -359,3 +359,8 @@ a:hover, a:active {
 .admin-nav .active {
     color: var(--accent-color);
 }
+
+.admin-nav .btn-focus,.btn:active {
+    outline: none !important;
+    box-shadow: none;
+}
