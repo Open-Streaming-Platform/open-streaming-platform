@@ -1,0 +1,42 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import live_stream_card, video_card, topic_card, nav_item_entry with context %}
+
+{% block head %}
+<title>{{sysSettings.siteName}}</title>
+<meta name="twitter:card" content="app" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{sysSettings.siteName}}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+{% endblock %}
+
+{% block body %}
+    <div class="admin-nav">
+        <ul class="nav" id="admin-nav-list" role="tablist">
+            {{ nav_item_entry("Dashboard", True) }}
+            {{ nav_item_entry("OAuth", False) }}
+            {{ nav_item_entry("RTMP", False) }}
+            {{ nav_item_entry("Edge", False) }}
+            {{ nav_item_entry("Webhooks", False) }}
+            {{ nav_item_entry("Stickers", False) }}
+            {{ nav_item_entry("Users", False) }}
+            {{ nav_item_entry("Topics", False) }}
+            {{ nav_item_entry("Channels", False) }}
+            {{ nav_item_entry("Streams", False) }}
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">...</div>
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+    </div>
+{% endblock %}
+
+{% block modals %}
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

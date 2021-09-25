@@ -1,3 +1,9 @@
+{% macro nav_item_entry(item, active) %}
+<li class="nav-item" role="presentation">
+    <button class="nav-link {% if active is True %}active{% endif %}" id="{{ item | lower }}-tab" data-bs-toggle="tab" data-bs-target="#{{ item | lower }}" type="button" role="tab" aria-controls="{{ item | lower }}" aria-selected="true">{{ item }}</button>
+</li>
+{% endmacro %}
+
 {% macro live_stream_card(stream) %}
 <li class="streamCard item">
     <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
