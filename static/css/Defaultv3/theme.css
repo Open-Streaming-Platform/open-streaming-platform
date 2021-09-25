@@ -336,6 +336,7 @@ a:hover, a:active {
 }
 
 .streamCard a:hover, a:active {
+    color: inherit;
     text-decoration: none;
 }
 
