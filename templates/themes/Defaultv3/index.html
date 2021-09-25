@@ -84,7 +84,7 @@
         <div class="trending-topics-container insetBoxShadow">
           <h1 class="textShadow"><b>Trending Topics</b></h1>
           <ul id="topicList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
-          {% for topic in topicsList %}
+          {% for topic in uploadTopics %}
             {{ topic_card(topic) }}
           {% endfor %}
           </ul>
