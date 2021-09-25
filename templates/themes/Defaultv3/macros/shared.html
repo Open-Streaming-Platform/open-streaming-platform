@@ -58,7 +58,7 @@
 {% macro topic_card(topic) %}
     <a href="/topic/{{topic.id}}/">
         <li class="topicCard item">
-          <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">></div>
+          <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ topic.name }}"></div>
           <div class="topicName"><b>{{ topic.name }}</b></div>
         </li>
     </a>
