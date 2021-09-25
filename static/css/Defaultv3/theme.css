@@ -284,8 +284,7 @@ a:hover, a:active {
 }
 
 .item {
-    list-style-type:none;
-    margin: 0 10px;
+    margin: 0 15px 0 0;
 }
 
 .item .topicName {

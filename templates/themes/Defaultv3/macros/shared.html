@@ -1,5 +1,5 @@
 {% macro live_stream_card(stream) %}
-<li class="streamCard">
+<li class="streamCard item">
     <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
         <div class="streamCard-badges">
             <span class="live-badge boxShadow textShadow"><b>Live</b></span>
@@ -27,7 +27,7 @@
 {% endmacro %}
 
 {% macro video_card(video) %}
-<li class="streamCard">
+<li class="streamCard item">
   <a href="/play/{{video.id}}">
     <div class="streamCard-thumbnail-container zoom">
         <div class="streamCard-badges">
@@ -53,4 +53,13 @@
     </div>
   </a>
 </li>
+{% endmacro %}
+
+{% macro topic_card(topic) %}
+    <a href="/topic/{{topic.id}}/">
+        <li class="topicCard item">
+          <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">></div>
+          <div class="topicName"><b>{{ topic.name }}</b></div>
+        </li>
+    </a>
 {% endmacro %}
