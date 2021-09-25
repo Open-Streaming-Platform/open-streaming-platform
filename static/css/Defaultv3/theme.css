@@ -335,6 +335,10 @@ a:hover, a:active {
     margin: 0 15px 0 0;
 }
 
+.streamCard a:hover, a:active {
+    text-decoration: none;
+}
+
 .streamCard .streamCard-thumb {
     width: 315px;
     height: 178px;
