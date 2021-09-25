@@ -1,8 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
-{% from "macros/shared.html" import live_stream_card, video_card with context %}
+{% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import live_stream_card, video_card with context %}
 
-{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
 {% block head %}
 <title>{{sysSettings.siteName}}</title>
