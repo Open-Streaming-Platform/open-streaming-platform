@@ -356,6 +356,6 @@ a:hover, a:active {
     color: var(--font-color);
 }
 
-.admin-nav active {
+.admin-nav .active {
     color: var(--accent-color);
 }
