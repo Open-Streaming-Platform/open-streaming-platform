@@ -350,3 +350,12 @@ a:hover, a:active {
     top: 28px;
     left: 5px;
 }
+
+.admin-nav .nav-link {
+    font-size: 1.10em;
+    color: var(--font-color);
+}
+
+.admin-nav active {
+    color: var(--accent-color);
+}
