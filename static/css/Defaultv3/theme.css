@@ -360,7 +360,7 @@ a:hover, a:active {
     color: var(--accent-color);
 }
 
-.admin-nav .btn-focus,.btn:active {
+.admin-nav .btn:focus,.btn:active {
     outline: none !important;
     box-shadow: none;
 }
