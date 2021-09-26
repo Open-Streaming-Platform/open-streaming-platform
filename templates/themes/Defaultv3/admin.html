@@ -1,6 +1,6 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
-{% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import live_stream_card, video_card, topic_card, nav_item_entry with context %}
+{% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import nav_item_entry with context %}
 
 {% block head %}
 <title>{{sysSettings.siteName}}</title>
@@ -165,7 +165,7 @@
             </div>
         </div>
         </div>
-        <div class="tab-pane fade show w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="tab-pane fade w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 <div class="info-panel-box system-settings-box">
