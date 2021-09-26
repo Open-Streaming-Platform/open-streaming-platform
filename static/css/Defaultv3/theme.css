@@ -31,6 +31,10 @@ a:hover, a:active {
     color: var(--link-hover-color);
 }
 
+table th{
+    color: var(--font-color);
+}
+
 .textShadow {
     text-shadow: var(--text-shadow);
 }
