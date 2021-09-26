@@ -173,8 +173,14 @@
                         <b>Settings</b>
                     </div>
                     <div class="info-panel-box-body boxShadow">
-                        <div class="row my-3"">
-                            <div class="col-4 >
+                        <div class="float-right">
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="maintmodetoggle">Maintenance Mode</label>
+                                <input class="form-check-input" type="checkbox" id="maintmodetoggle">
+                            </div>
+                        </div>
+                        <div class="row my-3">
+                            <div class="col-3 >
                                 <label for="settings-servername-input" class="form-label">Server Name</label>
                                 <input type="text" id="settings-servername-input" class="form-control">
                             </div>
@@ -182,18 +188,18 @@
                         <div class="row my-3">
                             <div class="col-1">
                                 <label for="settings-protocol-input" class="form-label">Protocol</label>
-                                <select id="settings-protocol-input" class="form-control">
+                                <select id="settings-protocol-input" class="form-select">
                                     <option value="https">https://</option>
                                     <option value="http">http://</option>
                                 </select>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="settings-hostname-input" class="form-label">Hostname / IP Address</label>
                                 <input type="text" id="settings-hostname-input" class="form-control">
                             </div>
                         </div>
                         <div class="row my-3">
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="settings-proxyhostname-input" class="form-label">OSP-Proxy Hostname</label>
                                 <input type="text" id="settings-proxyhostname-input" class="form-control">
                                 <div id="proxyhostnameHelp" class="form-text">Leave Blank if no OSP-Proxy Server is Used</div>
