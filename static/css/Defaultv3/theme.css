@@ -391,6 +391,14 @@ a:hover, a:active {
     border-radius: 4px;
 }
 
+.info-panel-box .info-panel-box-header {
+    font-size: 1.25em;
+    background-color: var(--box1-background);
+    border-radius: 4px 4px 0px 0px;
+    width:100%;
+    padding: 10px;
+}
+
 .info-panel-box .info-panel-box-header-nofill {
     font-size: 1.25em;
 }
@@ -399,6 +407,13 @@ a:hover, a:active {
     font-size: 2.25em;
     text-align: center;
     padding: 20px;
+}
+
+.info-panel-box-body {
+    background-color: var(--box2-background);
+    border-radius: 0 0 4px 4px;
+    width: 100%;
+    padding: 10px;
 }
 
 .osp-info-box {
