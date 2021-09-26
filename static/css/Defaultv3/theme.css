@@ -42,6 +42,8 @@ table tbody tr {
 .dataTables_paginate .pagination .paginate_button .page-link {
     background-color: var(--box1-background);
     color: var(--font-color);
+    border: 0 solid black;
+    box-shadow: 2px 2px 5px black;
 }
 
 .textShadow {

@@ -139,7 +139,7 @@
                                     {% for log in logsList %}
                                         <tr>
                                             <td>{{log.timestamp|normalize_date}}</td>
-                                            <td>{{log.type|get_logType}}</td>
+                                            <td><span class="badge bg-secondary">{{log.type|get_logType}}</span></td>
                                             <td>{{log.message}}</td>
                                         </tr>
                                     {% endfor %}
