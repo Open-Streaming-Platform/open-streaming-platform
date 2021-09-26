@@ -1,7 +1,7 @@
 // Admin Page Viewer Chart
 var ctx = document.getElementById('viewershipChart').getContext('2d');
-ctx.canvas.width = viewerChartWidth;
-ctx.canvas.height = viewerChartHeight;
+//ctx.canvas.width = viewerChartWidth;
+//ctx.canvas.height = viewerChartHeight;
 var chart = new Chart(ctx, {
     responsive:false,
     maintainAspectRatio: false,
