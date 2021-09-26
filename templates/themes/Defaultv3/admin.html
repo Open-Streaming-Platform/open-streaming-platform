@@ -177,19 +177,6 @@
     ];
 
     $(document).ready(function() {
-        $('#webhookTable').DataTable(
-        {
-          'order': [[ 0, "asc" ]],
-          'stateSave': true,
-          'columnDefs': [
-          { 'searchable': false, 'targets': [3,4,5,6] },
-          { 'orderable': false, 'targets': [3,4,5,6] }
-          ]
-        }
-      );
-    } );
-
-    $(document).ready(function() {
         $('#logTable').DataTable({
             "order": [[ 0, "desc" ]]
         });
