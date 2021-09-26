@@ -354,6 +354,10 @@ a:hover, a:active {
     left: 5px;
 }
 
+.admin-nav {
+    margin: 20px 10px 0 0;
+}
+
 .admin-nav .nav-link {
     font-size: 1.10em;
     color: var(--font-color);
