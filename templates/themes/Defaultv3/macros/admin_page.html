@@ -106,3 +106,18 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro chart_box(chartID, width, height) %}
+<div class="info-panel-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Viewer Statistics</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div id="admin-chart-container-{{ chartID }}" class="admin-chart">
+            <div id="statChart">
+                <canvas id="{{ chartID }}" style="width:{{ width }};height:{{ height }};"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
