@@ -87,7 +87,11 @@
                         <b>Viewer Statistics</b>
                     </div>
                     <div class="info-panel-box-body boxShadow">
-                        <div class="admin-viewerchart"></div>
+                        <div class="admin-viewerchart">
+                            <div id="statChart">
+                                <canvas id="viewershipChart" width="400" height="400"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,7 +115,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    {% for stream in streamList %}
+                                        <tr>
+                                            <td>{{ stream.linkedChannel | get_channelName }}</td>
+                                            <td>{{ stream.linkedChannel | channeltoOwnerID | get_userName }}</td>
+                                            <td>{{ stream.topic | get_topicName }}</td>
+                                            <td>{{ stream.currentViewers }}</td>
+                                            <td>{{ stream.startTimestamp }}</td> <!--TODO TimeDelta and Update-->
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
