@@ -65,7 +65,7 @@
         </div>
         <div class="row mt-4 mx-1">
             <div class="col-12 col-md-2">
-                <div class="info-panel-box">
+                <div class="info-panel-box system-status-box">
                     <div class="info-panel-box-header boxShadow textShadow">
                         <b>System Status</b>
                     </div>
@@ -139,7 +139,7 @@
                                     {% for log in logsList %}
                                         <tr>
                                             <td>{{log.timestamp|normalize_date}}</td>
-                                            <td><span class="badge bg-secondary">{{log.type|get_logType}}</span></td>
+                                            <td><span class="badge bg-secondary textShadow">{{log.type|get_logType}}</span></td>
                                             <td>{{log.message}}</td>
                                         </tr>
                                     {% endfor %}
