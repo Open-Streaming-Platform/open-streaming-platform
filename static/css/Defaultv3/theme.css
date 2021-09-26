@@ -35,6 +35,15 @@ table th{
     color: var(--font-color);
 }
 
+table tbody tr {
+    color: var(--font-color)
+}
+
+.datatables_paginate .pagination {
+    background-color: var(--box1-background);
+    color: var(--font-color);
+}
+
 .textShadow {
     text-shadow: var(--text-shadow);
 }
