@@ -173,35 +173,35 @@
                         <b>Settings</b>
                     </div>
                     <div class="info-panel-box-body boxShadow">
-                        <div class="justify-content-end">
-                            <div class="form-check form-switch">
-                                <label class="form-check-label" for="maintmodetoggle">Maintenance Mode</label>
-                                <input class="form-check-input" type="checkbox" id="maintmodetoggle">
-                            </div>
-                        </div>
                         <div class="row my-3">
                             <div class="col-3 >
                                 <label for="settings-servername-input" class="form-label">Server Name</label>
                                 <input type="text" id="settings-servername-input" class="form-control">
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label" for="maintmodetoggle">Maintenance Mode</label>
+                                    <input class="form-check-input" type="checkbox" id="maintmodetoggle" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
+                                </div>
                             </div>
                         </div>
                         <div class="row my-3">
                             <div class="col-1">
                                 <label for="settings-protocol-input" class="form-label">Protocol</label>
                                 <select id="settings-protocol-input" class="form-select">
-                                    <option value="https">https://</option>
-                                    <option value="http">http://</option>
+                                  <option value="http://" {% if sysSettings.siteProtocol == 'http://' %} selected {% endif %}>http://</option>
+                                  <option value="https://" {% if sysSettings.siteProtocol == 'https://' %} selected {% endif %}>https://</option>
                                 </select>
                             </div>
                             <div class="col-3">
                                 <label for="settings-hostname-input" class="form-label">Hostname / IP Address</label>
-                                <input type="text" id="settings-hostname-input" class="form-control">
+                                <input type="text" id="settings-hostname-input" value="{{ sysSettings.siteAddress }}" class="form-control" required>
                             </div>
                         </div>
                         <div class="row my-3">
                             <div class="col-3">
                                 <label for="settings-proxyhostname-input" class="form-label">OSP-Proxy Hostname</label>
-                                <input type="text" id="settings-proxyhostname-input" class="form-control">
+                                <input type="text" id="settings-proxyhostname-input" class="form-control" value="{% if sysSettings.proxyFQDN != None %}{{sysSettings.proxyFQDN}}{% endif %}">
                                 <div id="proxyhostnameHelp" class="form-text">Leave Blank if no OSP-Proxy Server is Used</div>
                             </div>
                         </div>
