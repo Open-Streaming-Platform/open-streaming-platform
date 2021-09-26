@@ -4,7 +4,7 @@ ctx.canvas.width = viewerChartWidth;
 ctx.canvas.height = viewerChartHeight;
 var chart = new Chart(ctx, {
     responsive:true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     // The type of chart we want to create
     type: 'bar',
 
