@@ -39,7 +39,7 @@ table tbody tr {
     color: var(--font-color)
 }
 
-.datatables_paginate .pagination {
+.datatables_paginate .pagination .paginate_button .page-link {
     background-color: var(--box1-background);
     color: var(--font-color);
 }
