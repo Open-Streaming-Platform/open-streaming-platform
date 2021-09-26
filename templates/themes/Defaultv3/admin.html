@@ -127,7 +127,7 @@
                     </div>
                     <div class="info-panel-box-body boxShadow">
                         <div class="admin-recentsystemlogs">
-                            <table class="table table-borderless">
+                            <table id="logTable" class="table table-borderless">
                                 <thead>
                                     <tr>
                                         <th>Timestamp</th>
@@ -136,7 +136,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    {% for log in logsList %}
+                                        <tr>
+                                            <td>{{log.timestamp|normalize_date}}</td>
+                                            <td>{{log.type|get_logType}}</td>
+                                            <td>{{log.message}}</td>
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -154,5 +160,38 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="/static/vendor/datatables/js/jquery.datatables.js"></script>
+<script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
+<script>
+    var viewerChartWidth = 1024;
+    var viewerChartHeight = 380;
+    var viewerChartDataLive = [
+        {% for entry in statsViewsDay['live'] %}
+            {x:'{{entry['t']}}',y:{{entry['y']}}},
+        {% endfor %}
+    ];
+    var viewerChartDataVideo = [
+        {% for entry in statsViewsDay['recorded'] %}
+            {x:'{{entry['t']}}', y:{{entry['y']}}},
+        {% endfor %}
+    ];
 
-{% endblock %}
+    $(document).ready(function() {
+        $('#webhookTable').DataTable(
+        {
+          'order': [[ 0, "asc" ]],
+          'stateSave': true,
+          'columnDefs': [
+          { 'searchable': false, 'targets': [3,4,5,6] },
+          { 'orderable': false, 'targets': [3,4,5,6] }
+          ]
+        }
+      );
+    } );
+
+    $(document).ready(function() {
+        $('#logTable').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+    } );
+</script>
