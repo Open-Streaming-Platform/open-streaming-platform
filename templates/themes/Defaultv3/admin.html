@@ -228,7 +228,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <label for="theme-input">Theme</label>
-                                        <select class="form-select" id="theme" name="theme">
+                                        <select class="form-select" id="theme-input" name="theme">
                                             {% for theme in themeList %}
                                             <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
                                             {% endfor %}
