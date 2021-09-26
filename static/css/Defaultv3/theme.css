@@ -355,7 +355,7 @@ a:hover, a:active {
 }
 
 .admin-nav {
-    margin: 20px 10px 0 0;
+    margin: 20px 0 0 20px;
 }
 
 .admin-nav .nav-link {
