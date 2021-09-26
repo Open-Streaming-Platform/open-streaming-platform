@@ -225,6 +225,16 @@
                                           <input class="form-control" type="file" id="formFile">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <label for="theme-input">Theme</label>
+                                        <select class="form-select" id="theme" name="theme">
+                                            {% for theme in themeList %}
+                                            <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
