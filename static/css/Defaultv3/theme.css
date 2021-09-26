@@ -3,9 +3,12 @@
     --page-background: #3E3D3D;
     --box1-background: #4F4F4F;
     --box2-background: #1F1F1F;
+    --green-background: #273F1C;
+    --blue-background: #151458;
     --accent-color: #3488DB;
     --font-color: #cccccc;
     --link-hover-color: #3488DB;
+
     --font: Roboto;
     --corner-radius: 4px;
     --box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -363,4 +366,50 @@ a:hover, a:active {
 .admin-nav .btn:focus,.btn:active {
     outline: none !important;
     box-shadow: none;
+}
+
+.box1-fill {
+    background-color: var(--box1-background);
+}
+
+.green-fill {
+    background-color: var(--green-background);
+}
+
+.blue-fill {
+    background-color: var(--blue-background);
+}
+
+.info-panel-box {
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.info-panel-box .info-panel-box-header-nofill {
+    font-size: 1.25em;
+}
+
+.info-panel-box .info-panel-box-metric {
+    font-size: 2.25em;
+    text-align: center;
+    padding: 20px;
+}
+
+.osp-info-box {
+    min-width: 472px;
+}
+
+.osplogo {
+    width: 64px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.osp-title {
+    font-size: 1.25em;
+}
+
+.osp-info {
+    margin: 10px 0;
+    font-size: 1.05em;
 }
