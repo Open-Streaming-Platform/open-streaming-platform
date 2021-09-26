@@ -1,0 +1,91 @@
+{% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import live_stream_card, video_card, topic_card with context %}
+
+{% macro announcement_panel(title, message) %}
+<div class="announcement-container boxShadow">
+    <div class="float-end">
+      <button type="button" class="btn-close" aria-label="Close"></button>
+    </div>
+    <h1 class="textShadow"><b>{{ title }}</b></h1>
+    <p>{{ message }}</p>
+</div>
+{% endmacro %}
+
+{% macro top_live_streams_panel(streamList) %}
+<div class="top-live-container boxShadow">
+  <h1 class="textShadow"><b>Top Live Streams</b></h1>
+  <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+      {% for stream in streamList %}
+        {{ live_stream_card(stream) }}
+      {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro current_live_streams_panel(streamList) %}
+<div class="current-live-container boxShadow">
+  <h1 class="textShadow"><b>Currently Live</b></h1>
+  <ul id="currentStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+      {% for stream in streamList %}
+        {{ live_stream_card(stream) }}
+      {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro trending_topics_panel(topicList) %}
+<div class="trending-topics-container insetBoxShadow">
+  <h1 class="textShadow"><b>Trending Topics</b></h1>
+  <ul id="topicList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  {% for topic in topicList %}
+    {{ topic_card(topic) }}
+  {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro popular_videos_panel(videoList) %}
+<div class="popular-videos-container boxShadow">
+  <h1 class="textShadow"><b>Popular Videos</b></h1>
+  <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+      {% for video in videoList %}
+          {{ video_card(video) }}
+      {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
+{% macro featured_streamer_panel(data) %}
+<div class="featured-stream-container insetBoxShadow">
+  <h1 class="textShadow"><b>Featured Stream</b></h1>
+  <div class="row">
+    <div class="col-sm-12 col-md-5">
+      <img class="w-100 boxShadow" src="/static/img/sample/fakelive.gif">
+    </div>
+    <div class="col-sm-12 col-md-7">
+      <div class="stream-metadata ms-4">
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-2">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="https://i.pravatar.cc/62?u=theuser2pravatar.com" alt="Username Picture">
+            </div>
+            <div class="col-10">
+              <div class="card-body">
+                <p class="card-text textShadow">
+                  <b>Stream Name</b><br>
+                  Streamer Username<br>
+                  Stream Topic
+                </p>
+                <span class="live-badge boxShadow textShadow"><b>Live</b></span>
+                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">40201</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stream-metadata-description">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam nostrum deserunt beatae possimus autem aspernatur, temporibus dolore labore laudantium quaerat, ducimus neque fuga, repellat dolorem et earum corporis odit! Blanditiis.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
