@@ -3,6 +3,8 @@ var ctx = document.getElementById('viewershipChart').getContext('2d');
 ctx.canvas.width = viewerChartWidth;
 ctx.canvas.height = viewerChartHeight;
 var chart = new Chart(ctx, {
+    responsive:true,
+    maintainAspectRatio: false,
     // The type of chart we want to create
     type: 'bar',
 
