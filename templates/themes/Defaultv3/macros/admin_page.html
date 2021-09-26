@@ -24,3 +24,85 @@
         <div id="{{ id }}-metric" class="info-panel-box-metric textShadow"><b>{{ metric }}</b></div>
     </div>
 {% endmacro %}
+
+{% macro system_status_box() %}
+<div class="info-panel-box system-status-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>System Status</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div id="system-status-ospcore" class="system-status-item"><b>OSP-Core</b></div>
+        <div id="system-status-osprtmp" class="system-status-item"><b>OSP-RTMP</b></div>
+        <div id="system-status-ospproxy" class="system-status-item"><b>OSP-Proxy</b></div>
+        <div id="system-status-ospedge" class="system-status-item"><b>OSP-Edge</b></div>
+        <div id="system-status-ejabberdchat" class="system-status-item"><b>Ejabberd-Chat</b></div>
+        <div id="system-status-ejabberdxmlrpc" class="system-status-item"><b>Ejabberd-XMLRPC</b></div>
+        <div id="system-status-database" class="system-status-item"><b>Database</b></div>
+        <div id="system-status-redis" class="system-status-item"><b>Redis</b></div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro channels_currently_live_box(streamList) %}
+<div class="info-panel-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Channels Currently Live</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-channelscurrentlylive">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>Channel Name</th>
+                        <th>Owner</th>
+                        <th>Topic</th>
+                        <th>Live Viewers</th>
+                        <th>Time Live</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stream in streamList %}
+                        <tr>
+                            <td>{{ stream.linkedChannel | get_channelName }}</td>
+                            <td>{{ stream.linkedChannel | channeltoOwnerID | get_userName }}</td>
+                            <td>{{ stream.topic | get_topicName }}</td>
+                            <td>{{ stream.currentViewers }}</td>
+                            <td>{{ stream.startTimestamp }}</td> <!--TODO TimeDelta and Update-->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro system_log_box(logsList) %}
+<div class="info-panel-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Recent System Logs</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-recentsystemlogs">
+            <table id="logTable" class="table table-borderless table-sm">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Type</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logsList %}
+                        <tr>
+                            <td>{{log.timestamp|normalize_date}}</td>
+                            <td><span class="badge bg-secondary textShadow">{{log.type|get_logType}}</span></td>
+                            <td>{{log.message}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
