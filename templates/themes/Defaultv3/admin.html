@@ -31,7 +31,7 @@
         </ul>
     </div>
     <div class="tab-content" id="myTabContent">
-      <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
           <div class="row mt-4 mx-4">
             <div class="col-12 col-md-auto">
                 <div id="osp-version" class="info-panel-box boxShadow osp-info-box box1-fill">
@@ -164,9 +164,33 @@
                 </div>
             </div>
         </div>
-      </div>
-      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+      </div></div>
+        <div class="tab-pane fade show w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <div class="row mt-4 mx-4">
+            <div class="col-12">
+                <div class="info-panel-box system-settings-box">
+                    <div class="info-panel-box-header boxShadow textShadow">
+                        <b>Settings</b>
+                    </div>
+                    <div class="info-panel-box-body boxShadow">
+                        <div class="form-group">
+                            <label for="settings-servername-input">Server Name</label>
+                            <input type="text" id="settings-servername-input" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-protocol-input">Protocol</label>
+                            <select id="settings-protocol-input" class="form-control">
+                                <option value="https">https://</option>
+                                <option value="http">http://</option>
+                            </select>
+                            <label for="settings-hostname-input">Hostname / IP Address</label>
+                            <input type="text" id="settings-hostname-input" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
     </div>
 {% endblock %}
 
