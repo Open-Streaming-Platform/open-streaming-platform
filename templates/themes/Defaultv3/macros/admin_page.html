@@ -1,0 +1,26 @@
+{% macro osp_info_box(version) %}
+<div id="osp-version" class="info-panel-box boxShadow osp-info-box box1-fill">
+    <div class="row">
+        <div class="col-2">
+            <img class="osplogo" src="/static/img/logo.png" alt="OSP Logo">
+        </div>
+        <div class="col-auto">
+            <span class="osp-title-box">
+                <span class="osp-title textShadow"><b>Open Streaming Platform</b></span><br>
+                <span class="osp-version"><b>Version: </b>{{version}}</span>
+            </span>
+        </div>
+    </div>
+    <div class="osp-info">
+        <a href="https://openstreamingplatform.com"><i class="bi bi-globe2"></i> https://openstreamingplatform.com</a><br>
+        <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager"><i class="bi bi-file-code"></i> https://gitlab.com/osp-group/flask-nginx-rtmp-manager</a>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro metric_box(id, heading, metric, background_color_class) %}
+    <div id="{{ id }}" class="info-panel-box boxShadow metricBox {{ background_color_class }}">
+        <div class="info-panel-box-header-nofill textShadow"><b>{{ heading }}</b></div>
+        <div id="{{ id }}-metric" class="info-panel-box-metric textShadow"><b>{{ metric }}</b></div>
+    </div>
+{% endmacro %}

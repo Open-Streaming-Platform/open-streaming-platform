@@ -1,6 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
 {% from "themes/" + sysSettings.systemTheme + "/macros/shared.html" import nav_item_entry with context %}
+{% from "themes/" + sysSettings.systemTheme + "/macros/admin_page.html" import osp_info_box, metric_box with context %}
 
 {% block head %}
 <title>{{sysSettings.siteName}}</title>
@@ -32,31 +33,12 @@
     </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-          <div class="row mt-4 mx-2">
+          <div class="row mt-4 mx-4">
             <div class="col-12 col-md-auto">
-                <div id="osp-version" class="info-panel-box boxShadow osp-info-box box1-fill">
-                    <div class="row">
-                        <div class="col-2">
-                            <img class="osplogo" src="/static/img/logo.png" alt="OSP Logo">
-                        </div>
-                        <div class="col-auto">
-                            <span class="osp-title-box">
-                                <span class="osp-title textShadow"><b>Open Streaming Platform</b></span><br>
-                                <span class="osp-version"><b>Version: </b>{{sysSettings.version}}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="osp-info">
-                        <a href="https://openstreamingplatform.com"><i class="bi bi-globe2"></i> https://openstreamingplatform.com</a><br>
-                        <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager"><i class="bi bi-file-code"></i> https://gitlab.com/osp-group/flask-nginx-rtmp-manager</a>
-                    </div>
-                </div>
+                {{ osp_info_box(sysSettings.version) }}
             </div>
             <div class="col-12 col-md-3">
-                <div id="osp-live-streams" class="info-panel-box boxShadow osp-live-streams-info-box green-fill">
-                    <div class="info-panel-box-header-nofill"><b>Current Live Streams</b></div>
-                    <div class="info-panel-box-metric"><b>5</b></div>
-                </div>
+                {{ metric_box("osp-live-streams", "Current Live Streams", 5, "green-fill") }}
             </div>
             <div class="col-12 col-md-3">
                 <div id="osp-live-viewers" class="info-panel-box boxShadow osp-live-viewers-info-box blue-fill">
