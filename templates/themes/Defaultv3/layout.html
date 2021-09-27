@@ -1,3 +1,4 @@
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as coreui with context %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,11 +62,11 @@
         <div class="uiBar sideNavbar">
             <a href="/"><img src="{{sysSettings.systemLogo}}" class="logo"></a>
             <div class="sideIcons">
-                <div class="sideIcon"><a href="/channel"><i class="textShadow bi bi-tv-fill"></i></a></div>
-                <div class="sideIcon"><a href="/topic"><i class="textShadow bi bi-hash"></i></a></div>
-                <div class="sideIcon"><a href="/streamer"><i class="textShadow bi bi-people-fill"></i></a></div>
-                <div class="sideIcon"><a href="/video"><i class="textShadow bi bi-camera-video-fill"></i></a></div>
-                <div class="sideIcon"><a href="/clip"><i class="textShadow bi bi-scissors"></i></a></div>
+                {{ coreui.ui_sidebar_item("Channels", "/channel", "bi bi-tv-fill") }}
+                {{ coreui.ui_sidebar_item("Topics", "/topic", "bi bi-hash") }}
+                {{ coreui.ui_sidebar_item("Streamers", "/streamer", "bi-people-fill") }}
+                {{ coreui.ui_sidebar_item("Videos", "/video", "bi bi-camera-video-fill") }}
+                {{ coreui.ui_sidebar_item("Clips", "/clip", "bi bi-scissors") }}
             </div>
         </div>
     </div>
