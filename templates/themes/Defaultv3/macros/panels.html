@@ -5,14 +5,14 @@
     <div class="float-end">
       <button type="button" class="btn-close" aria-label="Close"></button>
     </div>
-    <h1 class="textShadow"><b>{{ title }}</b></h1>
+    <h3 class="textShadow"><b>{{ title }}</b></h3>
     <p>{{ message }}</p>
 </div>
 {% endmacro %}
 
 {% macro top_live_streams_panel(streamList) %}
 <div class="top-live-container boxShadow">
-  <h1 class="textShadow"><b>Top Live Streams</b></h1>
+  <h3 class="textShadow"><b>Top Live Streams</b></h3>
   <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for stream in streamList %}
         {{ live_stream_card(stream) }}
@@ -23,7 +23,7 @@
 
 {% macro current_live_streams_panel(streamList) %}
 <div class="current-live-container boxShadow">
-  <h1 class="textShadow"><b>Currently Live</b></h1>
+  <h3 class="textShadow"><b>Currently Live</b></h3>
   <ul id="currentStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for stream in streamList %}
         {{ live_stream_card(stream) }}
@@ -34,7 +34,7 @@
 
 {% macro trending_topics_panel(topicList) %}
 <div class="trending-topics-container insetBoxShadow">
-  <h1 class="textShadow"><b>Trending Topics</b></h1>
+  <h3 class="textShadow"><b>Trending Topics</b></h3>
   <ul id="topicList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
   {% for topic in topicList %}
     {{ topic_card(topic) }}
@@ -45,7 +45,7 @@
 
 {% macro popular_videos_panel(videoList) %}
 <div class="popular-videos-container boxShadow">
-  <h1 class="textShadow"><b>Popular Videos</b></h1>
+  <h3 class="textShadow"><b>Popular Videos</b></h3>
   <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for video in videoList %}
           {{ video_card(video) }}
