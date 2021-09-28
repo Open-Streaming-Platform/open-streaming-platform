@@ -112,19 +112,7 @@
     </script>
 
     <script>
-        var lightModeActive = getCookie('ospLightMode');
-        if (lightModeActive === null) {
-            setCookie('ospLightMode', false);
-            lightModeActive = 'false';
-        }
 
-        lightModeActive = (lightModeActive === 'true');
-
-        if (lightModeActive === true) {
-            setLightMode();
-        } else if (lightModeActive === false) {
-            setDarkMode()
-        }
 
         // Toggles Theme Dark Mode On & Off
         function toggleDarkMode() {
@@ -197,6 +185,20 @@
       // Wait for document to load
       document.addEventListener("DOMContentLoaded", function(event) {
           document.documentElement.setAttribute("data-theme", "dark");
+
+          var lightModeActive = getCookie('ospLightMode');
+          if (lightModeActive === null) {
+            setCookie('ospLightMode', false);
+            lightModeActive = 'false';
+          }
+
+          lightModeActive = (lightModeActive === 'true');
+
+          if (lightModeActive === true) {
+            setLightMode();
+          } else if (lightModeActive === false) {
+            setDarkMode()
+          }
       });
     </script>
 
