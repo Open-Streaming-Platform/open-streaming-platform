@@ -16,6 +16,11 @@
     --text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 
     --top-navbar-height: 60px;
+    --left-sidebar-width: 60px;
+    --site-logo-width: 42px;
+    --site-logo-height: 42px;
+    --nav-userphoto-width: 42px;
+    --nav-userphoto-height: 42px;
   }
 
 body {
@@ -92,10 +97,10 @@ table tbody tr {
 
 .topNavbar {
     position: fixed;
-    left: 80px;
+    left: var(--left-sidebar-width);
     top: 0px;
     height: var(--top-navbar-height);
-    width: calc(100vw - 80px);
+    width: calc(100vw - var(--left-sidebar-width));
     line-height: var(--top-navbar-height);
     z-index: 901;
 }
@@ -165,8 +170,8 @@ table tbody tr {
 .topNavbar .rightTopNavbar .userImageBlock .userImage {
     object-fit: cover;
     border-radius:50%;
-    width: 42px;
-    height: 42px;
+    width: var(--nav-userphoto-width);
+    height: var(--nav-userphoto-height);
 }
 
 .navbar-dropdown-content {
@@ -218,25 +223,25 @@ table tbody tr {
 
 .sideNavbar {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     height: 100vh;
-    width: 80px;
+    width: var(--left-sidebar-width);
     text-align: center;
     z-index: 901;
 }
 
 .sideNavbar .logo {
     position: relative;
-    width: 62px;
-    height: 62px;
+    width: var(--site-logo-width);
+    height: var(--site-logo-height);
     top: 14px;
     left: 0;
 }
 
 .sideNavbar .sideIcons {
     position: relative;
-    top: 0px;
+    top: 0;
 }
 
 .sideNavbar .sideIcons .sideIcon {
@@ -245,14 +250,14 @@ table tbody tr {
 
 .sideNavbar .sideIcons i {
     width: 100%;
-    font-size: 40px;
+    font-size: 30px;
 }
 
 .content {
     position: fixed;
-    left: 80px;
+    left: var(--left-sidebar-width);
     top: var(--top-navbar-height);
-    width: calc(100vw - 80px);
+    width: calc(100vw - var(--left-sidebar-width));
     height: calc(100vh - var(--top-navbar-height));
     background-color: var(--page-background);
     overflow : auto;
