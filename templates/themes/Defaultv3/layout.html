@@ -56,7 +56,7 @@
                 {% else %}
                 <a class="btn btn-dark shadow" href="/login">Log In</a>
                 {% endif %}
-                <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="bi bi-brightness-alt-low-fill"></i></a>
+                <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low-fill"></i></a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill"></i></a>
             </div>
         </div>
@@ -94,9 +94,9 @@
             darkModeIcon = document.getElementById('darkModeIcon');
             darkModeActive = !darkModeActive;
             if (darkModeActive ===  true) {
-                darkModeIcon.className = 'bi bi-brightness-alt-low-fill';
+                darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
             } else {
-                darkModeIcon.className = 'bi bi-brightness-alt-high';
+                darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
             }
         }
 
