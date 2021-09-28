@@ -14,6 +14,8 @@
     --corner-radius: 4px;
     --box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     --text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    --top-navbar-height: 60px;
   }
 
 body {
@@ -92,9 +94,9 @@ table tbody tr {
     position: fixed;
     left: 80px;
     top: 0px;
-    height: 80px;
+    height: var(--top-navbar-height);
     width: calc(100vw - 80px);
-    line-height: 80px;
+    line-height: var(--top-navbar-height);
     z-index: 901;
 }
 
@@ -119,7 +121,7 @@ table tbody tr {
 }
 
 .topNavbar .rightTopNavbar .searchBox i {
-    font-size: small;
+    font-size: medium;
     position: relative;
     left: 50px;
     color: var(--font-color);
@@ -158,14 +160,14 @@ table tbody tr {
     position: relative;
     top: 5px;
     left: -10px;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .topNavbar .rightTopNavbar .userImageBlock .userImage {
     object-fit: cover;
     border-radius:50%;
-    width: 62px;
-    height: 62px;
+    width: 42px;
+    height: 42px;
 }
 
 .navbar-dropdown-content {
@@ -176,7 +178,7 @@ table tbody tr {
     min-width: 195px;
     z-index: 1;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 16px;
     padding: 7px;
     border: 1px solid black;
 }
@@ -211,7 +213,7 @@ table tbody tr {
 
 
 .topNavbar .rightTopNavbar i {
-    font-size: 40px;
+    font-size: 25px;
     padding: 15px;
 }
 
@@ -250,9 +252,9 @@ table tbody tr {
 .content {
     position: fixed;
     left: 80px;
-    top: 80px;
+    top: var(--top-navbar-height);
     width: calc(100vw - 80px);
-    height: calc(100vh - 80px);
+    height: calc(100vh - var(--top-navbar-height));
     background-color: var(--page-background);
     overflow : auto;
 }
