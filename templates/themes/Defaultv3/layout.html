@@ -114,9 +114,9 @@
     <script>
         var lightModeActive = getCookie('ospLightMode');
 
-        if (lightModeActive === true) {
+        if (lightModeActive === 'true' || lightModeActive === true) {
             setLightMode();
-        } else if (lightModeActive === false || lightModeActive === null) {
+        } else if (lightModeActive === false || lightModeActive === 'false' || lightModeActive === null) {
             setCookie('ospLightMode', false);
         }
 
