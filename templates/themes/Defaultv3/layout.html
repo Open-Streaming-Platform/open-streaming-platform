@@ -86,21 +86,61 @@
     {% block modals %}
     {% endblock %}
 
+    <script>
+        function setCookie(name,value,days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+        function eraseCookie(name) {
+            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+    </script>
 
     <script>
-        darkModeActive = true;
+        var darkModeActive = getCookie('ospDarkMode')
+
+        if (darkModeActive === null) {
+            setCookie('ospDarkMode', true);
+        } else if (darkModeActive === false) {
+            setLightMode();
+        }
 
         // Toggles Theme Dark Mode On & Off
         function toggleDarkMode() {
             darkModeIcon = document.getElementById('darkModeIcon');
             darkModeActive = !darkModeActive;
             if (darkModeActive ===  true) {
-                darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
-                document.documentElement.setAttribute("data-theme", 'dark');
+                setDarkMode();
             } else {
-                darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
-                document.documentElement.setAttribute("data-theme", 'light');
+                setLightMode();
             }
+        }
+
+        function setLightMode() {
+            darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
+            document.documentElement.setAttribute("data-theme", 'light');
+            setCookie('ospDarkMode', false);
+        }
+
+        function setDarkMode() {
+            darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
+            document.documentElement.setAttribute("data-theme", 'dark');
+            setCookie('ospDarkMode', true);
         }
 
         // Opens the User Navigation Bar
