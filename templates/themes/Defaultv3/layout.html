@@ -116,6 +116,7 @@
 
         // Toggles Theme Dark Mode On & Off
         function toggleDarkMode() {
+            var lightModeActive = getCookie('ospLightMode');
             lightModeActive = !lightModeActive;
             if (lightModeActive ===  true) {
                 setLightMode();
