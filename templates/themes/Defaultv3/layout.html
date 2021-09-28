@@ -57,7 +57,7 @@
                 <a class="btn loginButton shadow textShadow" href="/login">Log In</a>
                 <a class="btn loginButton shadow textShadow" href="/register">Register</a>
                 {% endif %}
-                <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low-fill"></i></a>
+                <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low"></i></a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill"></i></a>
             </div>
         </div>
@@ -132,14 +132,14 @@
 
         function setLightMode() {
             darkModeIcon = document.getElementById('darkModeIcon');
-            darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
+            darkModeIcon.className = 'textShadow bi bi-brightness-alt-high-fill';
             document.documentElement.setAttribute("data-theme", 'light');
             setCookie('ospLightMode', true);
         }
 
         function setDarkMode() {
             darkModeIcon = document.getElementById('darkModeIcon');
-            darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
+            darkModeIcon.className = 'textShadow bi bi-brightness-alt-low';
             document.documentElement.setAttribute("data-theme", 'dark');
             setCookie('ospLightMode', false);
         }
