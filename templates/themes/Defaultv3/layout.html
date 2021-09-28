@@ -113,11 +113,17 @@
 
     <script>
         var lightModeActive = getCookie('ospLightMode');
-
-        if (lightModeActive === 'true' || lightModeActive === true) {
-            setLightMode();
-        } else if (lightModeActive === false || lightModeActive === 'false' || lightModeActive === null) {
+        if (lightModeActive === null) {
             setCookie('ospLightMode', false);
+            lightModeActive = 'false';
+        }
+
+        lightModeActive = (lightModeActive === 'true');
+
+        if (lightModeActive === true) {
+            setLightMode();
+        } else if (lightModeActive === false) {
+            setDarkMode()
         }
 
         // Toggles Theme Dark Mode On & Off
