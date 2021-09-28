@@ -1,3 +1,9 @@
+{% macro nav_item_entry(item, active) %}
+<li class="nav-item" role="presentation">
+    <button class="nav-link btn btn-link textShadow {% if active == True %}active{% endif %}" id="{{ item | lower }}-tab" data-bs-toggle="tab" data-bs-target="#{{ item | lower }}" type="button" role="tab" aria-controls="{{ item | lower }}" aria-selected="true"><b>{{ item }}</b></button>
+</li>
+{% endmacro %}
+
 {% macro osp_info_box(version) %}
 <div id="osp-version" class="info-panel-box boxShadow osp-info-box box1-fill">
     <div class="row">
@@ -116,6 +122,143 @@
         <div id="admin-chart-container-{{ chartID }}" class="admin-chart">
             <div id="statChart">
                 <canvas id="{{ chartID }}" style="width:{{ width }};height:{{ height }};"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro settings_panel(sysSettings) %}
+<div class="info-panel-box system-settings-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Settings</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row my-3">
+            <div class="col-3">
+                <label for="settings-servername-input" class="form-label">Server Name</label>
+                <input type="text" id="settings-servername-input" class="form-control" value="{{sysSettings.siteName}}">
+            </div>
+            <div class="col">
+                <div class="form-check form-switch">
+                    <label class="form-check-label" for="maintmodetoggle">Maintenance Mode</label>
+                    <input class="form-check-input" type="checkbox" id="maintmodetoggle" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-1">
+                <label for="settings-protocol-input" class="form-label">Protocol</label>
+                <select id="settings-protocol-input" class="form-select">
+                  <option value="http://" {% if sysSettings.siteProtocol == 'http://' %} selected {% endif %}>http://</option>
+                  <option value="https://" {% if sysSettings.siteProtocol == 'https://' %} selected {% endif %}>https://</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <label for="settings-hostname-input" class="form-label">Hostname / IP Address</label>
+                <input type="text" id="settings-hostname-input" value="{{ sysSettings.siteAddress }}" class="form-control" required>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-3">
+                <label for="settings-proxyhostname-input" class="form-label">OSP-Proxy Hostname</label>
+                <input type="text" id="settings-proxyhostname-input" class="form-control" value="{% if sysSettings.proxyFQDN != None %}{{sysSettings.proxyFQDN}}{% endif %}">
+                <div id="proxyhostnameHelp" class="form-text">Leave Blank if no OSP-Proxy Server is Used</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro appearance_panel(sysSettings) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Appearance</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="row my-3">
+                    <div class="col-3">
+                          <label for="systemLogo" class="form-label">Logo</label><br>
+                          <img id="systemLogo" src="{{sysSettings.systemLogo}}" width="64" height="64">
+                          <input class="form-control" type="file" id="formFile">
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-3">
+                        <label for="theme-input">Theme</label>
+                        <select class="form-select" id="theme-input" name="theme">
+                            {% for theme in themeList %}
+                            <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="row my-3">
+                    <div class="col-4">
+                        <label for="settings-announcementtitle-input" class="form-label">Server Announcement Header Title</label>
+                        <input type="text" id="settings-announcementtitle-input" value="{{ sysSettings.serverMessageTitle }}" class="form-control">
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col-5">
+                        <label for="settings-announcementcontent-input" class="form-label">Announcement Message</label>
+                        <textarea class="form-control" name="serverMessage" id="settings-announcementcontent-input" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro email_panel(sysSettings) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Appearance</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row">
+            <div class="col-12">
+               <div class="row my-3">
+                    <div class="col-3">
+                        <label for="settings-email-sendas-input" class="form-label">Send As</label>
+                        <input type="text" id="settings-email-sendas-input" class="form-control" value="{{sysSettings.smtpSendAs}}">
+                    </div>
+                </div>
+               <div class="row my-3">
+                    <div class="col-3">
+                        <label for="settings-email-smtpserver-input" class="form-label">SMTP Server Address</label>
+                        <input type="text" id="settings-email-smtpserver-input" class="form-control" value="{{sysSettings.smtpAdddress}}">
+                    </div>
+                    <div class="col-1">
+                        <label for="settings-email-smtpport-input" class="form-label">SMTP Server Address</label>
+                        <input type="text" id="settings-email-smtpport-input" class="form-control" value="{{sysSettings.smtpPort}}">
+                    </div>
+                    <div class="col-2">
+                        <label for="settings-email-smtpencryption-input" class="form-label">Protocol</label>
+                        <select id="settings-email-smtpencryption-input" class="form-select">
+                          <option value="none" {% if sysSettings.smtpSSL == False and sysSettings.smtpTLS == False %} selected {% endif %}>None</option>
+                          <option value="ssl" {% if sysSettings.smtpSSL == True %} selected {% endif %}>SSL</option>
+                          <option value="tls" {% if sysSettings.smtpTLS == True %} selected {% endif %}>TLS</option>
+                        </select>
+                    </div>
+               </div>
+               <div class="row my-3">
+                    <div class="col-3">
+                        <label for="settings-email-smtpuser-input" class="form-label">Username</label>
+                        <input type="text" id="settings-email-smtpuser-input" class="form-control" value="{{sysSettings.smtpUsername}}">
+                    </div>
+               </div>
+               <div class="row my-3">
+                    <div class="col-3">
+                        <label for="settings-email-smtppassword-input" class="form-label">Password</label>
+                        <input type="password" id="settings-email-smtppassword-input" class="form-control" value="{{sysSettings.smtpPassword}}">
+                    </div>
+               </div>
             </div>
         </div>
     </div>
