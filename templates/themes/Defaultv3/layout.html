@@ -96,8 +96,10 @@
             darkModeActive = !darkModeActive;
             if (darkModeActive ===  true) {
                 darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
+                document.documentElement.setAttribute("data-theme", 'dark');
             } else {
                 darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
+                document.documentElement.setAttribute("data-theme", 'light');
             }
         }
 
@@ -140,6 +142,13 @@
                     $(this).attr("src", src.replace(/\.gif$/i, ".png"));
                   });
         });
+    </script>
+
+    <script type="text/javascript">
+      // Wait for document to load
+      document.addEventListener("DOMContentLoaded", function(event) {
+          document.documentElement.setAttribute("data-theme", "light");
+      });
     </script>
 
     {% block scripts %}

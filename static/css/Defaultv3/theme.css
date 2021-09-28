@@ -24,6 +24,18 @@
 
   }
 
+[data-theme="light"] {
+    --navbar-background: #FFFFFF;
+    --page-background: #3E3D3D;
+    --box1-background: #4F4F4F;
+    --box2-background: #1F1F1F;
+    --green-background: #273F1C;
+    --blue-background: #151458;
+    --accent-color: #3488DB;
+    --font-color: #000000;
+    --link-hover-color: #3488DB;
+}
+
 body {
     font-family: var(--font);
     color: var(--font-color);
