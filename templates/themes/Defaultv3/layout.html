@@ -114,10 +114,10 @@
     <script>
         var lightModeActive = getCookie('ospLightMode');
 
-        if (lightModeActive === null) {
-            setCookie('ospLightMode', false);
-        } else if (lightModeActive === true) {
+        if (lightModeActive === true) {
             setLightMode();
+        } else if (lightModeActive === false || lightModeActive === null) {
+            setCookie('ospLightMode', false);
         }
 
         // Toggles Theme Dark Mode On & Off
