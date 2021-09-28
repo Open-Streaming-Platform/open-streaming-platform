@@ -112,35 +112,36 @@
     </script>
 
     <script>
-        var darkModeActive = getCookie('ospDarkMode');
+        var lightModeActiveCookie = getCookie('ospLightMode');
 
-        if (darkModeActive === null) {
-            setCookie('ospDarkMode', 'true');
-        } else if (darkModeActive === 'false') {
+        if (lightModeActive === null) {
+            setCookie('ospLightMode', false);
+        } else if (lightModeActive === true) {
             setLightMode();
         }
 
         // Toggles Theme Dark Mode On & Off
-        function toggleDarkMode() {
-            darkModeIcon = document.getElementById('darkModeIcon');
-            darkModeActive = !darkModeActive;
-            if (darkModeActive ===  'true') {
-                setDarkMode();
-            } else {
+        function darkLightMode() {
+            lightModeActive = !lightModeActive;
+            if (lightModeActive ===  true) {
                 setLightMode();
+            } else {
+                setDarkMode();
             }
         }
 
         function setLightMode() {
+            darkModeIcon = document.getElementById('darkModeIcon');
             darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
             document.documentElement.setAttribute("data-theme", 'light');
-            setCookie('ospDarkMode', 'false');
+            setCookie('ospLightMode', true);
         }
 
         function setDarkMode() {
+            darkModeIcon = document.getElementById('darkModeIcon');
             darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
             document.documentElement.setAttribute("data-theme", 'dark');
-            setCookie('ospDarkMode', 'true');
+            setCookie('ospLightMode', false);
         }
 
         // Opens the User Navigation Bar
