@@ -116,7 +116,6 @@ table tbody tr {
 
 .topNavbar .rightTopNavbar .searchBox {
     position: relative;
-    top: -8px;
     padding-right: 40px;
 }
 
@@ -128,7 +127,7 @@ table tbody tr {
 }
 
 .topNavbar .rightTopNavbar .searchBox input {
-    height: 45px;
+    height: 35px;
     width: 350px;
     border-radius: 8px;
     border: 0 black solid;
