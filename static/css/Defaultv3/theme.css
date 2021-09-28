@@ -10,7 +10,7 @@
     --link-hover-color: #3488DB;
 
     --font: Roboto;
-    --font-size: 18px;
+    --font-size: 13px;
     --corner-radius: 4px;
     --box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     --text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -21,12 +21,13 @@
     --site-logo-height: 42px;
     --nav-userphoto-width: 42px;
     --nav-userphoto-height: 42px;
+
   }
 
 body {
     font-family: var(--font);
     color: var(--font-color);
-    font-size: 16px;
+    font-size: var(--font-size);
 }
 
 a, a:visited {
