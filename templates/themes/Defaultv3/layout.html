@@ -115,8 +115,8 @@
         var darkModeActive = getCookie('ospDarkMode');
 
         if (darkModeActive === null) {
-            setCookie('ospDarkMode', true);
-        } else if (darkModeActive === false) {
+            setCookie('ospDarkMode', 'true');
+        } else if (darkModeActive === 'false') {
             setLightMode();
         }
 
@@ -124,7 +124,7 @@
         function toggleDarkMode() {
             darkModeIcon = document.getElementById('darkModeIcon');
             darkModeActive = !darkModeActive;
-            if (darkModeActive ===  true) {
+            if (darkModeActive ===  'true') {
                 setDarkMode();
             } else {
                 setLightMode();
@@ -134,13 +134,13 @@
         function setLightMode() {
             darkModeIcon.className = 'textShadow bi bi-brightness-alt-high';
             document.documentElement.setAttribute("data-theme", 'light');
-            setCookie('ospDarkMode', false);
+            setCookie('ospDarkMode', 'false');
         }
 
         function setDarkMode() {
             darkModeIcon.className = 'textShadow bi bi-brightness-alt-low-fill';
             document.documentElement.setAttribute("data-theme", 'dark');
-            setCookie('ospDarkMode', true);
+            setCookie('ospDarkMode', 'true');
         }
 
         // Opens the User Navigation Bar
@@ -155,8 +155,10 @@
         // Watches the Mouse Target Location Opens User Navigation Bar
         $(document).click(function(event) {
             var target = event.target.parentNode;
-            if (target.id != 'userMenuDropdown' && target.id != 'userDropDownButton' && document.getElementById("userMenuDropdown").classList.contains('show')) {
-                document.getElementById("userMenuDropdown").classList.toggle('show');
+            if (document.getElementById('userMenuDropdown') != null) {
+                if (target.id != 'userMenuDropdown' && target.id != 'userDropDownButton' && document.getElementById('userMenuDropdown').classList.contains('show')) {
+                    document.getElementById("userMenuDropdown").classList.toggle('show');
+                }
             }
         });
     </script>
