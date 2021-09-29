@@ -198,13 +198,12 @@ table tbody tr {
     display: none;
     position: absolute;
     top: 35px;
-    background-color: #1d1b1b;
+    background-color: var(--box2-background);
     min-width: 195px;
     z-index: 1;
     border-radius: 4px;
     font-size: 16px;
     padding: 7px;
-    border: 1px solid black;
 }
 
 .navbar-dropdown-content hr {
