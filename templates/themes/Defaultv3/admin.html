@@ -37,10 +37,10 @@
                 {{ admin.osp_info_box(sysSettings.version) }}
             </div>
             <div class="col-12 col-md-3">
-                {{ admin.metric_box("osp-live-streams", "Current Live Streams", 5, "green-fill") }}
+                {{ admin.metric_box("osp-live-streams", "Current Live Streams", streamList | count, "green-fill") }}
             </div>
             <div class="col-12 col-md-3">
-                {{ admin.metric_box("osp-live-viewers", "Current Viewers", 100, "blue-fill") }}
+                {{ admin.metric_box("osp-live-viewers", "Current Viewers", currentViewers, "blue-fill") }}
             </div>
           </div>
           <div class="row mt-4 mx-1">
