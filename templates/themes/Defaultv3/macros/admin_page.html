@@ -4,6 +4,7 @@
 </li>
 {% endmacro %}
 
+<!--Dashboard Panels-->
 {% macro osp_info_box(version) %}
 <div id="osp-version" class="info-panel-box boxShadow osp-info-box box1-fill">
     <div class="row">
@@ -128,6 +129,7 @@
 </div>
 {% endmacro %}
 
+<!--System Settings Panels-->
 {% macro settings_panel(sysSettings) %}
 <div class="info-panel-box system-settings-box">
     <div class="info-panel-box-header boxShadow textShadow">
@@ -147,7 +149,7 @@
             </div>
         </div>
         <div class="row my-3">
-            <div class="col-1">
+            <div class="col-2">
                 <label for="settings-protocol-input" class="form-label">Protocol</label>
                 <select id="settings-protocol-input" class="form-select">
                   <option value="http://" {% if sysSettings.siteProtocol == 'http://' %} selected {% endif %}>http://</option>
@@ -198,13 +200,13 @@
             </div>
             <div class="col-12 col-md-6">
                 <div class="row my-3">
-                    <div class="col-4">
+                    <div class="col-5">
                         <label for="settings-announcementtitle-input" class="form-label">Server Announcement Header Title</label>
                         <input type="text" id="settings-announcementtitle-input" value="{{ sysSettings.serverMessageTitle }}" class="form-control">
                     </div>
                 </div>
                 <div class="row my-3">
-                    <div class="col-5">
+                    <div class="col-7">
                         <label for="settings-announcementcontent-input" class="form-label">Announcement Message</label>
                         <textarea class="form-control" name="serverMessage" id="settings-announcementcontent-input" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
                     </div>
@@ -234,7 +236,7 @@
                         <label for="settings-email-smtpserver-input" class="form-label">SMTP Server Address</label>
                         <input type="text" id="settings-email-smtpserver-input" class="form-control" value="{{sysSettings.smtpAddress}}">
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label for="settings-email-smtpport-input" class="form-label">SMTP Server Address</label>
                         <input type="text" id="settings-email-smtpport-input" class="form-control" value="{{sysSettings.smtpPort}}">
                     </div>
@@ -329,7 +331,7 @@
                     </div>
                </div>
                <div class="row mt-2">
-                    <div class="col-3">
+                    <div class="col-8">
                         <label for="maxClipLength" class="form-label">Maximum Clip Length</label>
                         <input type="range" class="form-range" min="0" max="301" id="maxClipLength" value="{{ sysSettings.maxClipLength }}">
                         <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-secondary" style="width:100px;">{{sysSettings.maxClipLength|format_clipLength}}</span></h3>
