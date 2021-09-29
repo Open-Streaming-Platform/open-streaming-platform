@@ -45,7 +45,7 @@ var chart = new Chart(ctx, {
     }
 });
 
-$('.maxClipLength').on('input', function() {
+$('#maxClipLength').on('input', function() {
   var sliderValue = $(this).val();
   if (sliderValue != "") {
     var maxValue = $(this).attr("max");
