@@ -32,6 +32,7 @@
     </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+          <form id="system-settings" method="post">
           <div class="row mt-4 mx-4">
             <div class="col-12 col-md-auto">
                 {{ admin.osp_info_box(sysSettings.version) }}
@@ -61,6 +62,7 @@
                 {{ admin.system_log_box(logsList) }}
             </div>
           </div>
+          </form>
         </div>
         <div class="tab-pane fade w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
           <div class="row mt-2 mx-2">
@@ -110,6 +112,24 @@
             "order": [[ 0, "desc" ]]
         });
     } );
+</script>
+
+<script>
+    // Creates JQuery Function which allows for tracking if a form has changed
+    $.fn.extend({
+    trackChanges: function () {
+        $(document).on('change', $(this).find(':input'), function (e) {
+            var el = $(e.target);
+            $(el).closest('form').data("changed", true);
+        });
+     },
+     isChanged: function() {
+       return this.data("changed");
+     }
+    });
+    $("#system-settings").trackChanges();
+
+
 </script>
 
 <script type="text/javascript" src="/static/js/adminv2.js"></script>
