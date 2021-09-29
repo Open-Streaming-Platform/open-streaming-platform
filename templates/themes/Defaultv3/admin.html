@@ -84,8 +84,12 @@
                   {{ admin.channel_settings_panel(sysSettings) }}
               </div>
           </div>
+          <div id="settings-form-submit-group" style="display:none;position:fixed;right: 50px;bottom: 10px;" class="form-submit-buttons">
+                <button id="settingsReset" class="btn btn-secondary mx-1">Reset</button>
+                <button id="settingsSubmit" class="btn btn-success mx-1">Save</button>
+          </div>
           </form>
-            <button id="settingsSubmit" class="btn btn-danger" style="display:none;">Test Submit</button>
+
         </div>
     </div>
 {% endblock %}
@@ -120,7 +124,7 @@ var systemSettingsForm = document.getElementById("system-settings");
 
 systemSettingsForm.addEventListener("input", function () {
     console.log("Form has changed!");
-    $('#settingsSubmit').show();
+    $('#settings-form-submit-group').show();
 });
 
 </script>
