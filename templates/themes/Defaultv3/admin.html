@@ -116,23 +116,12 @@
 </script>
 
 <script>
-    // Creates JQuery Function which allows for tracking if a form has changed
-    $.fn.extend({
-    trackChanges: function (submitButtonId) {
-        $(document).on('change', $(this).find(':input'), function (e) {
-            var el = $(e.target);
-            $(el).closest('form').data("changed", true);
-            $(submitButtonId).show();
-        });
-     },
-     isChanged: function() {
-       return this.data("changed");
-     }
-    });
-    $("#system-settings").trackChanges('#settingsSubmit');
-    if ($("#myform").isChanged()) {
-       console.log("Form Changed");
-    }
+var systemSettingsForm = document.getElementById("system-settings");
+
+systemSettingsForm.addEventListener("input", function () {
+    console.log("Form has changed!");
+    $('#settingsSubmit').show();
+});
 
 </script>
 
