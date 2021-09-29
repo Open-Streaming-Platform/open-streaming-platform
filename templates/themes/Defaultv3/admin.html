@@ -128,7 +128,9 @@
      }
     });
     $("#system-settings").trackChanges();
-
+    if ($("#myform").isChanged()) {
+       console.log("Form Changed");
+    }
 
 </script>
 
