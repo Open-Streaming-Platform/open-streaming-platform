@@ -32,7 +32,6 @@
     </div>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-          <form id="system-settings" method="post">
           <div class="row mt-4 mx-4">
             <div class="col-12 col-md-auto">
                 {{ admin.osp_info_box(sysSettings.version) }}
@@ -62,9 +61,9 @@
                 {{ admin.system_log_box(logsList) }}
             </div>
           </div>
-          </form>
         </div>
         <div class="tab-pane fade w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <form id="system-settings" method="post">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.settings_panel(sysSettings) }}
@@ -85,6 +84,7 @@
                   {{ admin.channel_settings_panel(sysSettings) }}
               </div>
           </div>
+          </form>
         </div>
     </div>
 {% endblock %}
