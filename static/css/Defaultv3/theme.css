@@ -434,7 +434,7 @@ table tbody tr {
 }
 
 .info-panel-box input:not([type=range], [type=checkbox]), textarea, select{
-    background-color: var(--input-background);
+    background-color: var(--input-background) !important;
     border-radius: 4px;
 }
 
