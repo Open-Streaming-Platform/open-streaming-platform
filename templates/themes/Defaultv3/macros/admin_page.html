@@ -342,3 +342,45 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro rtmp_settings_panel(rtmpServers) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Authorized RTMP Servers</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-rtmp-servers">
+            <table id="rtmpTable" class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>Server Address</th>
+                        <th>Active</th>
+                        <th>Hide</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for server in rtmpServers %}
+                        <tr id="rtmpTableRow-{{ server.id }}">
+                            <td>{{ server.address }}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label" for="activeRTMPNode-{{ server.id }}">Enable RTMP Restreams</label>
+                                    <input class="form-check-input boxShadow" type="checkbox" name="activeRTMPNode" id="activeRTMPNode-{{ server.id }}" {% if server.active == True %} checked {% endif %} onchange="toggleActiveRTMP('{{server.id}}');">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label" for="hiddenRTMPNode-{{ server.id }}">Enable RTMP Restreams</label>
+                                    <input class="form-check-input boxShadow" type="checkbox" name="hiddenRTMPNode" id="hiddenRTMPNode-{{ server.id }}" {% if server.hide == True %} checked {% endif %} onchange="toggleHiddenRTMP('{{server.id}}');">
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
