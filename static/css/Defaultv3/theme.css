@@ -433,7 +433,7 @@ table tbody tr {
     border-radius: 4px;
 }
 
-.info-panel-box input:not[type=range]:not[type=checkbox], textarea, select{
+.info-panel-box input:not([type=range], [type=checkbox]), textarea, select{
     background-color: var(--input-background);
     border-radius: 4px;
 }
