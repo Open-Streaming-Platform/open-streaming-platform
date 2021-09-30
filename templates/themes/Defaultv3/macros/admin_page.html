@@ -365,17 +365,15 @@
                             <td>{{ server.address }}</td>
                             <td>
                                 <div class="form-check form-switch">
-                                    <label class="form-check-label" for="activeRTMPNode-{{ server.id }}">Enable RTMP Restreams</label>
                                     <input class="form-check-input boxShadow" type="checkbox" name="activeRTMPNode" id="activeRTMPNode-{{ server.id }}" {% if server.active == True %} checked {% endif %} onchange="toggleActiveRTMP('{{server.id}}');">
                                 </div>
                             </td>
                             <td>
                                 <div class="form-check form-switch">
-                                    <label class="form-check-label" for="hiddenRTMPNode-{{ server.id }}">Enable RTMP Restreams</label>
                                     <input class="form-check-input boxShadow" type="checkbox" name="hiddenRTMPNode" id="hiddenRTMPNode-{{ server.id }}" {% if server.hide == True %} checked {% endif %} onchange="toggleHiddenRTMP('{{server.id}}');">
                                 </div>
                             </td>
-                            <td></td>
+                            <td><button class="btn btn-danger boxShadow" type="button"><i class="bi bi-trash-fill"></i></button></td>
                         </tr>
                     {% endfor %}
                 </tbody>
