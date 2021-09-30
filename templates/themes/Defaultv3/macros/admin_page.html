@@ -139,32 +139,32 @@
         <div class="row my-3">
             <div class="col-3">
                 <label for="settings-servername-input" class="form-label">Server Name</label>
-                <input type="text" name="serverName" id="settings-servername-input" class="form-control" value="{{sysSettings.siteName}}">
+                <input type="text" name="serverName" id="settings-servername-input" class="form-control boxShadow" value="{{sysSettings.siteName}}">
             </div>
             <div class="col">
                 <div class="form-check form-switch">
                     <label class="form-check-label" for="maintmodetoggle">Maintenance Mode</label>
-                    <input class="form-check-input" type="checkbox" name="maintenanceMode" id="maintmodetoggle" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
+                    <input class="form-check-input boxShadow" type="checkbox" name="maintenanceMode" id="maintmodetoggle" {% if sysSettings.maintenanceMode == True %} checked {% endif %}>
                 </div>
             </div>
         </div>
         <div class="row my-3">
             <div class="col-2">
                 <label for="settings-protocol-input" class="form-label">Protocol</label>
-                <select name="siteProtocol" id="settings-protocol-input" class="form-select">
+                <select name="siteProtocol" id="settings-protocol-input" class="form-select boxShadow">
                   <option value="http://" {% if sysSettings.siteProtocol == 'http://' %} selected {% endif %}>http://</option>
                   <option value="https://" {% if sysSettings.siteProtocol == 'https://' %} selected {% endif %}>https://</option>
                 </select>
             </div>
             <div class="col-3">
                 <label for="settings-hostname-input" class="form-label">Hostname / IP Address</label>
-                <input type="text" name="serverAddress" id="settings-hostname-input" value="{{ sysSettings.siteAddress }}" class="form-control" required>
+                <input type="text" name="serverAddress" id="settings-hostname-input" value="{{ sysSettings.siteAddress }}" class="form-control boxShadow" required>
             </div>
         </div>
         <div class="row my-3">
             <div class="col-3">
                 <label for="settings-proxyhostname-input" class="form-label">OSP-Proxy Hostname</label>
-                <input type="text" name="ospProxyFQDN" id="settings-proxyhostname-input" class="form-control" value="{% if sysSettings.proxyFQDN != None %}{{sysSettings.proxyFQDN}}{% endif %}">
+                <input type="text" name="ospProxyFQDN" id="settings-proxyhostname-input" class="form-control boxShadow" value="{% if sysSettings.proxyFQDN != None %}{{sysSettings.proxyFQDN}}{% endif %}">
                 <div id="proxyhostnameHelp" class="form-text">Leave Blank if no OSP-Proxy Server is Used</div>
             </div>
         </div>
@@ -184,13 +184,13 @@
                     <div class="col-3">
                           <label for="systemLogo" class="form-label">Logo</label><br>
                           <img id="systemLogo" src="{{sysSettings.systemLogo}}" width="64" height="64">
-                          <input class="form-control" name="photo" type="file" id="formFile">
+                          <input class="form-control boxShadow" name="photo" type="file" id="formFile">
                     </div>
                 </div>
                 <div class="row my-3">
                     <div class="col-3">
                         <label for="theme-input">Theme</label>
-                        <select class="form-select" id="theme-input" name="theme">
+                        <select class="form-select boxShadow" id="theme-input" name="theme">
                             {% for theme in themeList %}
                             <option value="{{theme}}" {% if sysSettings.systemTheme == theme %} selected {% endif %}>{{theme}}</option>
                             {% endfor %}
@@ -202,13 +202,13 @@
                 <div class="row my-3">
                     <div class="col-5">
                         <label for="settings-announcementtitle-input" class="form-label">Server Announcement Header Title</label>
-                        <input type="text" name="serverMessageTitle" id="settings-announcementtitle-input" value="{{ sysSettings.serverMessageTitle }}" class="form-control">
+                        <input type="text" name="serverMessageTitle" id="settings-announcementtitle-input" value="{{ sysSettings.serverMessageTitle }}" class="form-control boxShadow">
                     </div>
                 </div>
                 <div class="row my-3">
                     <div class="col-7">
                         <label for="settings-announcementcontent-input" class="form-label">Announcement Message</label>
-                        <textarea class="form-control" name="serverMessage" id="settings-announcementcontent-input" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
+                        <textarea class="form-control boxShadow" name="serverMessage" id="settings-announcementcontent-input" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
                     </div>
                 </div>
             </div>
@@ -228,21 +228,21 @@
                <div class="row my-3">
                     <div class="col-3">
                         <label for="settings-email-sendas-input" class="form-label">Send As</label>
-                        <input type="text" name="smtpSendAs" id="settings-email-sendas-input" class="form-control" value="{{sysSettings.smtpSendAs}}">
+                        <input type="text" name="smtpSendAs" id="settings-email-sendas-input" class="form-control boxShadow" value="{{sysSettings.smtpSendAs}}">
                     </div>
                 </div>
                <div class="row my-3">
                     <div class="col-3">
                         <label for="settings-email-smtpserver-input" class="form-label">SMTP Server Address</label>
-                        <input type="text" name="smtpAddress" id="settings-email-smtpserver-input" class="form-control" value="{{sysSettings.smtpAddress}}">
+                        <input type="text" name="smtpAddress" id="settings-email-smtpserver-input" class="form-control boxShadow" value="{{sysSettings.smtpAddress}}">
                     </div>
                     <div class="col-2">
                         <label for="settings-email-smtpport-input" class="form-label">Port</label>
-                        <input type="text" name="smtpPort" id="settings-email-smtpport-input" class="form-control" value="{{sysSettings.smtpPort}}">
+                        <input type="text" name="smtpPort" id="settings-email-smtpport-input" class="form-control boxShadow" value="{{sysSettings.smtpPort}}">
                     </div>
                     <div class="col-2">
                         <label for="settings-email-smtpencryption-input" class="form-label">Protocol</label>
-                        <select name="smtpEncryption"  id="settings-email-smtpencryption-input" class="form-select">
+                        <select name="smtpEncryption"  id="settings-email-smtpencryption-input" class="form-select boxShadow">
                           <option value="none" {% if sysSettings.smtpSSL == False and sysSettings.smtpTLS == False %} selected {% endif %}>None</option>
                           <option value="ssl" {% if sysSettings.smtpSSL == True %} selected {% endif %}>SSL</option>
                           <option value="tls" {% if sysSettings.smtpTLS == True %} selected {% endif %}>TLS</option>
@@ -252,13 +252,13 @@
                <div class="row my-3">
                     <div class="col-3">
                         <label for="settings-email-smtpuser-input" class="form-label">Username</label>
-                        <input type="text" name="smtpUser" id="settings-email-smtpuser-input" class="form-control" value="{{sysSettings.smtpUsername}}">
+                        <input type="text" name="smtpUser" id="settings-email-smtpuser-input" class="form-control boxShadow" value="{{sysSettings.smtpUsername}}">
                     </div>
                </div>
                <div class="row my-3">
                     <div class="col-3">
                         <label for="settings-email-smtppassword-input" class="form-label">Password</label>
-                        <input type="password" name="smtpPassword" id="settings-email-smtppassword-input" class="form-control" value="{{sysSettings.smtpPassword}}">
+                        <input type="password" name="smtpPassword" id="settings-email-smtppassword-input" class="form-control boxShadow" value="{{sysSettings.smtpPassword}}">
                     </div>
                </div>
             </div>
@@ -279,7 +279,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableRecordingToggle">Enable Recordings</label>
-                            <input class="form-check-input" type="checkbox" name="recordSelect" id="enableRecordingToggle" {% if sysSettings.allowRecording == True %} checked {% endif %}>
+                            <input class="form-check-input boxShadow" type="checkbox" name="recordSelect" id="enableRecordingToggle" {% if sysSettings.allowRecording == True %} checked {% endif %}>
                         </div>
                     </div>
                 </div>
@@ -287,7 +287,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableUploadsToggle">Enable Uploads</label>
-                            <input class="form-check-input" type="checkbox" name="uploadSelect" id="enableUploadsToggle" {% if sysSettings.allowUploads == True %} checked {% endif %}>
+                            <input class="form-check-input boxShadow" type="checkbox" name="uploadSelect" id="enableUploadsToggle" {% if sysSettings.allowUploads == True %} checked {% endif %}>
                         </div>
                     </div>
                 </div>
@@ -295,7 +295,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableCommentsToggle">Enable Video/Clip Comments</label>
-                            <input class="form-check-input" type="checkbox" name="allowComments" name="enableProtection"  id="enableCommentsToggle" {% if sysSettings.allowComments == True %} checked {% endif %}>
+                            <input class="form-check-input boxShadow" type="checkbox" name="allowComments" name="enableProtection"  id="enableCommentsToggle" {% if sysSettings.allowComments == True %} checked {% endif %}>
                         </div>
                     </div>
                 </div>
@@ -303,7 +303,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableChannelProtection">Enable Channel Protection System</label>
-                            <input class="form-check-input" type="checkbox" id="enableChannelProtection" {% if sysSettings.protectionEnabled == True %} checked {% endif %}>
+                            <input class="form-check-input boxShadow" type="checkbox" id="enableChannelProtection" {% if sysSettings.protectionEnabled == True %} checked {% endif %}>
                         </div>
                     </div>
                 </div>
@@ -311,7 +311,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableRtmpRestreams">Enable RTMP Restreams</label>
-                            <input class="form-check-input" type="checkbox" name="enableRTMPRestream" id="enableRtmpRestreams"> <!--TODO Create DB Object-->
+                            <input class="form-check-input boxShadow" type="checkbox" name="enableRTMPRestream" id="enableRtmpRestreams"> <!--TODO Create DB Object-->
                         </div>
                     </div>
                 </div>
@@ -319,7 +319,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableAdaptiveToggle">Enable Adaptive Streams</label>
-                            <input class="form-check-input" type="checkbox" name="adaptiveStreaming" id="enableAdaptiveToggle"{% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
+                            <input class="form-check-input boxShadow" type="checkbox" name="adaptiveStreaming" id="enableAdaptiveToggle"{% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
                             <small> (Can Cause Heavy CPU Load)</small>
                         </div>
                     </div>
@@ -327,13 +327,13 @@
                 <div class="row">
                     <div class="col-3">
                         <label for="maximumBitrateRtmp" class="form-label">Maximum Bitrate for RTMP Restream (Kb/s)</label>
-                        <input type="number" name="restreamMaxBitrate"  id="maximumBitrateRtmp" class="form-control" value="{{sysSettings.restreamMaxBitrate}}">
+                        <input type="number" name="restreamMaxBitrate"  id="maximumBitrateRtmp" class="form-control boxShadow" value="{{sysSettings.restreamMaxBitrate}}">
                     </div>
                </div>
                <div class="row mt-2">
                     <div class="col-5">
                         <label for="maxClipLength" class="form-label">Maximum Clip Length</label>
-                        <input type="range" class="form-range" min="0" max="301" name="maxClipLength" id="maxClipLength" value="{{ sysSettings.maxClipLength }}">
+                        <input type="range" class="form-range boxShadow" min="0" max="301" name="maxClipLength" id="maxClipLength" value="{{ sysSettings.maxClipLength }}">
                         <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-secondary" style="width:100px;">{{sysSettings.maxClipLength|format_clipLength}}</span></h3>
                     </div>
                </div>
