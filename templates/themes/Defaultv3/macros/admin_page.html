@@ -220,7 +220,7 @@
 {% macro email_panel(sysSettings) %}
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
-        <b>Appearance</b>
+        <b>Email</b>
     </div>
     <div class="info-panel-box-body boxShadow">
         <div class="row">
@@ -336,6 +336,12 @@
                         <input type="range" class="form-range" min="0" max="301" name="maxClipLength" id="maxClipLength" value="{{ sysSettings.maxClipLength }}">
                         <h3><span id="maxClipLengthLabel" class="rangeSliderValue ml-1 badge badge-secondary" style="width:100px;">{{sysSettings.maxClipLength|format_clipLength}}</span></h3>
                     </div>
+               </div>
+               <div class="row mt-2">
+                   <div class="form-group">
+                      <label for="bannedChatWords" class="col-form-label"><b>Banned Chat Words</b></label>
+                      <input type="text" id="bannedChatWords" name="bannedChatWords" data-role="tagsinput" class="form-control boxShadow" value="{{bannedWords}}">
+                   </div>
                </div>
             </div>
         </div>
