@@ -59,3 +59,18 @@ $('#maxClipLength').on('input', function() {
     $(this).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
   }
 });
+
+function updateSlider(inputID) {
+    var sliderValue = $(inputID).val();
+      if (sliderValue != "") {
+        var maxValue = $(inputID).attr("max");
+        if (sliderValue != maxValue) {
+          var date = new Date(0);
+          date.setSeconds(sliderValue);
+          var timeString = date.toISOString().substr(11, 8);
+        } else {
+          timeString = "Infinite";
+        }
+        $(inputID).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
+      }
+}
