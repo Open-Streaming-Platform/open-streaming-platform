@@ -61,6 +61,17 @@ table tbody tr {
     color: var(--font-color)
 }
 
+.sr-only {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
 .dataTables_paginate .pagination .paginate_button .page-link {
     background-color: var(--box1-background);
     color: var(--font-color);
@@ -480,4 +491,14 @@ table tbody tr {
 .osp-info {
     margin: 10px 0;
     font-size: 1.05em;
+}
+
+.bootstrap-tagsinput {
+    background-color: var(--input-background);
+}
+
+.bootstrap-tagsinput .badge {
+    background-color: var(--box2-background);
+    color: var(--font-color);
+    font-size: 1em;
 }
