@@ -218,7 +218,7 @@
 {% endmacro %}
 
 {% macro email_panel(sysSettings) %}
-<div class="info-panel-box system-appearance-box">
+<div class="info-panel-box system-email-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Email</b>
     </div>
@@ -268,7 +268,7 @@
 {% endmacro %}
 
 {% macro channel_settings_panel(sysSettings) %}
-<div class="info-panel-box system-appearance-box">
+<div class="info-panel-box system-channelsettings-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Channels</b>
     </div>
@@ -350,7 +350,7 @@
 {% endmacro %}
 
 {% macro rtmp_settings_panel(rtmpServers) %}
-<div class="info-panel-box system-appearance-box">
+<div class="info-panel-box system-rtmp-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Authorized RTMP Servers</b>
         <span class="float-end me-3">
@@ -385,6 +385,58 @@
                             <td><button class="btn btn-danger btn-sm boxShadow" title="Delete" type="button"><i class="bi bi-trash-fill"></i></button></td>
                         </tr>
                     {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro edge_settings_panel(edgeNodes) %}
+<div class="info-panel-box system-edgesettings-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>OSP-Edge Nodes</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Edge Server" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-edge-servers">
+            <table id="edgeTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Port</th>
+                        <th>Load %</th>
+                        <th>Active</th>
+                        <th>Status</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for node in edgeNodes %}
+                    <tr id="edgeTableRow-{{node.id}}">
+                        <td><a href="/settings/admin/rtmpstat/{% if node.address == sysSettings.siteAddress %}localhost{% else %}{{node.address}}{% endif %}">{{node.address}}</a></td>
+                        <td>{{node.port}}</td>
+                        <td>{{node.loadPct}}%</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                    <input class="form-check-input boxShadow" type="checkbox" name="activeSelect" id="activeNode-{{ node.id }}" {% if node.active == True %} checked {% endif %} onchange="toggleActiveEdge('{{node.id}}');">
+                            </div>
+                        </td>
+                        <td id="nodeStatus-{{node.id}}">
+                            <span class="badge {% if node.status == 1 or node.address == sysSettings.siteAddress %}badge-success{% elif node.status == 0 %}badge-danger{% endif %}">
+                            {% if node.status == 1 or node.address == sysSettings.siteAddress %} Online
+                            {% elif node.status == 0 %} Offline
+                            {% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
