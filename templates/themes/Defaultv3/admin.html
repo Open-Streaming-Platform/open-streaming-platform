@@ -12,9 +12,9 @@
 <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
 
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
-<script type="text/javascript" src="/static/vendor/bootstrap-tagsinput/tagsinput.js"></script>
-
-<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap-tagsinput/tagsinput.css"/>
+<script src="https://unpkg.com/@yaireo/tagify"></script>
+<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 
 {% endblock %}
 
@@ -143,7 +143,13 @@ function resetSettings() {
     $('#settings-form-submit-group').hide();
     updateSlider('#maxClipLength');
 }
+</script>
+<script>
+// The DOM element you wish to replace with Tagify
+var input = document.querySelector('input[name=basic]');
 
+// initialize Tagify on the above input node reference
+new Tagify(input)
 </script>
 
 <script type="text/javascript" src="/static/js/adminv2.js"></script>
