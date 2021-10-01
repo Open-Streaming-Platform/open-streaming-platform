@@ -405,7 +405,7 @@
             <table id="edgeTable" class="table table-borderless align-middle">
                 <thead>
                     <tr>
-                        <th>Address</th>
+                        <th>Server Address</th>
                         <th>Port</th>
                         <th>Load %</th>
                         <th>Active</th>
@@ -434,6 +434,51 @@
                         <td>
                             <button type="button" class="btn btn-sm btn-primary {% if node.address == sysSettings.siteAddress %}disabled{% endif %}" onclick="checkEdge('{{node.id}}')" {% if node.address == sysSettings.siteAddress %}disabled{% endif %}><i class="fas fa-sync-alt"></i></button>
                             <button type="button" class="btn btn-sm btn-danger" onclick="deleteEdge('{{node.id}}')"><i class="far fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro webhooks_settings_panel(globalHooks) %}
+<div class="info-panel-box system-webhookssettings-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Global Webhooks</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Webhook" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-webhooks-servers">
+            <table id="webhooksTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th style="display:none;"></th>
+                        <th>Trigger></th>
+                        <th style="display:none;"></th>
+                        <th style="display:none;"></th>
+                        <th style="display:none;"></th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for webhook in globalHooks %}
+                    <tr id="webhookTableRow-{{webhook.id}}">
+                        <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                        <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                        <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                        <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                        <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                        <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}')"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}')"><i class="fas fa-vial"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 {% endfor %}
