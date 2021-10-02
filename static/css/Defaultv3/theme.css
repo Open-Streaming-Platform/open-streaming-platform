@@ -54,6 +54,13 @@ body {
 .badge-info {
     background-color: var(--accent-color);
 }
+.badge-primary {
+    background-color: #1dcaff;
+}
+
+.badge-success {
+    background-color: #00bb00;
+}
 
 
 a, a:visited {
