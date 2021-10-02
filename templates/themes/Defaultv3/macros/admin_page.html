@@ -594,6 +594,7 @@
                 <thead>
                     <tr>
                         <th></th>
+                        <th></th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>Auth Type</th>
@@ -607,7 +608,8 @@
                 {% for user in userList %}
                    <tr id="user-row-{{user.id}}">
                       <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
-                      <td><a href="/profile/{{user.username}}"><img class="rounded-circle" src="/images/{{user.pictureLocation}}" style="width:32px;height:32px;" onerror="this.src='/static/img/user2.png';"> {{user.username}}</a></td>
+                      <td><img class="rounded-circle" src="/images/{{user.pictureLocation}}" style="width:32px;height:32px;" onerror="this.src='/static/img/user2.png';"></td>
+                      <td><a href="/profile/{{user.username}}">{{user.username}}</a></td>
                       <td>{{user.email}}</td>
                       <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                       <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
