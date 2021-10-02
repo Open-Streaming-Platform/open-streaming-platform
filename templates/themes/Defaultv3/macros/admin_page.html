@@ -596,3 +596,38 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro topics_settings_panel(topicsList) %}
+<div class="info-panel-box system-topics-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Topics</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Topic" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-topics-servers">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% if topicsList == [] %}
+                    <div class="fs-5 text-center w-100 my-5">
+                        <b>No Topics Added</b>
+                        <span class="text-center textShadow"></span>
+                    </div>
+                {% endif %}
+                {% for topic in topicsList %}
+                    <div id="topic-{{ topic.id }}" class="m-2" style="width:250px;height:250px;">
+                        <div class="topicImg mx-auto my-2">
+                            <img src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                        </div>
+                        <input type="text" class="form-control w-100" name="topic-name-{{ sticker.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
+                        <div class="mx-auto my-2" style="width:96px;">
+                            <button class="btn btn-warning" onclick="editTopicModal({{ topic.id }});"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-danger" onclick="deleteTopicModal({{ topic.id }});"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
