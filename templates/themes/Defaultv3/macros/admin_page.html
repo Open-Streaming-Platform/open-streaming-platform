@@ -615,9 +615,9 @@
                     </div>
                 {% endif %}
                 {% for topic in topicsList %}
-                    <div id="topic-{{ topic.id }}" class="m-2" style="width:250px;height:250px;">
-                        <div class="topicImg mx-auto my-2">
-                            <img src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                    <div id="topic-{{ topic.id }}" class="m-2" style="width:250px;height:275px;">
+                        <div class="topicImg w-100 my-2">
+                            <img class="mx-auto d-block" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
                         <input type="text" class="form-control w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
                         <div class="mx-auto my-2" style="width:96px;">
