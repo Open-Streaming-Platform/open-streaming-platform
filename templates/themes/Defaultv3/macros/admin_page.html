@@ -349,6 +349,52 @@
 </div>
 {% endmacro %}
 
+{% macro oauth_panel(oAuthProvidersList) %}
+<div class="info-panel-box system-oauth-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>OAuth Providers</b>
+        <span class="float-end me-3">
+            <button class="btn btn-primary btn-sm boxShadow" title="Add OAuth Provider" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-oauth-servers">
+            <table id="oauthTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Client Id</th>
+                        <th>Authorize URL</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for provider in oAuthProvidersList %}
+                    <tr>
+                        <td>{{provider.name}}</td>
+                        <td>{{provider.preset_auth_type}}</td>
+                        <td>{{provider.client_id}}</td>
+                        <td>{{provider.authorize_url}}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning shadow edit-oAuth-Button" data-id="{{provider.id}}" data-name="{{provider.name}}" data-friendlyname="{{provider.friendlyName}}"
+                                    data-displaycolor="{{provider.displayColor}}" data-clientid="{{provider.client_id}}" data-clientsecret="{{provider.client_secret}}" data-accesstokenurl="{{provider.access_token_url}}"
+                                    data-accesstokenparams='{{provider.access_token_params|tojson}}' data-authorizeurl="{{provider.authorize_url}}" data-authorizeparams='{{provider.authorize_params|tojson}}'
+                                    data-apibaseurl="{{provider.api_base_url}}" data-clientkwargs='{{provider.client_kwargs|tojson}}' data-profileendpoint="{{provider.profile_endpoint}}" data-usernamevalue="{{provider.username_value}}"
+                                    data-emailvalue="{{provider.email_value}}" data-idvalue="{{provider.id_value}}" data-authtype="{{provider.preset_auth_type}}">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger shadow" onclick="deleteOAuthProvider('{{provider.id}}');"><i class="bi bi-trash-fill"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro rtmp_settings_panel(rtmpServers) %}
 <div class="info-panel-box system-rtmp-box">
     <div class="info-panel-box-header boxShadow textShadow">
