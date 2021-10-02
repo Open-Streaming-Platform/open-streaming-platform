@@ -524,3 +524,77 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro users_settings_panel(userList) %}
+<div class="info-panel-box system-users-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>User List</b>
+        <span class="float-end me-3">
+        <div class="mb-2">
+            <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#newUserModal"><i class="bi bi-person-plus-fill"></i> New User</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#defaultRolesModal"><i class="bi bi-shield-fill-check"></i> Default Roles</button>
+            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Bulk Add Role</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" onclick="bulkAddRole('Admin');" href="javascript:void(0);">Admin</a>
+                <a class="dropdown-item" onclick="bulkAddRole('Streamer');" href="javascript:void(0);">Streamer</a>
+                <a class="dropdown-item" onclick="bulkAddRole('Recorder');" href="javascript:void(0);">Recorder</a>
+                <a class="dropdown-item" onclick="bulkAddRole('Uploader');" href="javascript:void(0);">Uploader</a>
+                <a class="dropdown-item" onclick="bulkAddRole('User');" href="javascript:void(0);">User</a>
+            </div>
+        </div>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-users-servers">
+            <table id="webhooksTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Auth Type</th>
+                        <th>Provider</th>
+                        <th>Active</th>
+                        <th>Roles</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in userList %}
+                   <tr id="user-row-{{user.id}}">
+                      <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
+                      <td><img class="rounded-circle" src="/images/{{user.pictureLocation}}" style="width:32px;height:32px;" onerror="this.src='/static/img/user2.png';"></td>
+                      <td><a href="/profile/{{user.username}}" >{{user.username}}</a></td>
+                      <td>{{user.email}}</td>
+                      <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
+                      <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
+                       <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
+                      <td>
+                        {% for role in user.roles %}
+                            <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="far fa-trash-alt"></i></a></span><br>
+                        {% endfor %}
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add Role</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                              {% if user.has_role('Streamer') %}
+                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                              {% endif %}
+                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                        </div>
+                        <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});" {% if user.tf_primary_method == None %}disabled{% endif %}><i class="fas fa-user-lock"></i></button>
+                        <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="fas fa-user"></i></a>
+                        <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Delete User" ><i class="far fa-trash-alt"></i></a>
+                      </td>
+                   </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endmacro %}
