@@ -681,3 +681,40 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro streams_settings_panel(streamList) %}
+<div class="info-panel-box system-streams-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Streams</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-streams-servers">
+            <table id="streamsTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>Thumbnail</tr>
+                    <tr>Name</tr>
+                    <tr>Channel</tr>
+                    <tr>Owner</tr>
+                    <tr>Topic</tr>
+                    <tr>Live Viewers</tr>
+                    <tr>Total Views</tr>
+                    <tr>Options</tr>
+                </thead>
+                <tbody>
+                {% for stream in streamList %}
+                    <tr id="streamCard-{{stream.id}}">
+                      <td><img src="/stream-thumb/{{stream.channel.channelLoc}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
+                      <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
+                      <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
+                      <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
+                      <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
+                      <td>{{stream.currentViewers}}</td>
+                      <td>{{stream.totalViewers}}</td>
+                      <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="bi bi-trash-fill"></i></button></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
