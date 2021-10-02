@@ -502,8 +502,9 @@
         <div class="admin-stickers-servers">
             <div class="d-flex flex-wrap justify-content-start">
                 {% if globalStickers == [] %}
-                    <div class="justify-content-center my-5">
-                        <span class="text-center textShadow"><b>No Stickers Added.  Why not upload a few?</b></span>
+                    <div class="fs-5 text-center w-100 my-5">
+                        <b>No Stickers Added.  Why not upload a few?</b>
+                        <span class="text-center textShadow"></span>
                     </div>
                 {% endif %}
                 {% for sticker in globalStickers %}
