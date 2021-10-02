@@ -45,7 +45,7 @@ body {
 }
 
 .badge {
-    color: var(--font-color);
+    color: black;
 }
 
 .badge-info {
