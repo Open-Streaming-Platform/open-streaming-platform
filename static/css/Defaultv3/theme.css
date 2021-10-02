@@ -44,6 +44,18 @@ body {
     font-size: var(--font-size);
 }
 
+.badge {
+    color: var(--font-color);
+}
+
+.badge-info {
+    background-color: var(--box1-background);
+}
+.badge-info {
+    background-color: var(--accent-color);
+}
+
+
 a, a:visited {
     color: inherit;
     text-decoration: none;
