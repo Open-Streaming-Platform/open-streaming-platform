@@ -489,3 +489,32 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro webhooks_stickers_panel(globalStickers) %}
+<div class="info-panel-box system-stickers-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Global Chat Stickers</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Sticker" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-stickers-servers">
+            <div class="d-flex flex-wrap justify-content-start">
+                {% for sticker in globalStickers %}
+                    <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
+                        <div class="mx-auto my-2" style="width:128px;">
+                            <img src="/images/stickers/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+                        </div>
+                        <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
+                        <div class="mx-auto my-2" style="width:96px;">
+                            <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }})"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
