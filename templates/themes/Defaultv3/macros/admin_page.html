@@ -619,7 +619,7 @@
                         <div class="topicImg w-100 my-2">
                             <img class="mx-auto d-block" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
-                        <input type="text" class="form-control w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
+                        <input type="text" class="form-control boxShadow w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
                         <div class="mx-auto my-2" style="width:96px;">
                             <button class="btn btn-warning" onclick="editTopicModal({{ topic.id }});"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-danger" onclick="deleteTopicModal({{ topic.id }});"><i class="bi bi-trash-fill"></i></button>
@@ -627,6 +627,56 @@
                     </div>
                 {% endfor %}
             </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro channels_settings_panel(channelList) %}
+<div class="info-panel-box system-channels-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Channels</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-channels-servers">
+            <table id="channelsTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Topic</th>
+                        <th>Location ID</th>
+                        <th>Views</th>
+                        <th>Storage</th>
+                        <th>Chat</th>
+                        <th>Recording</th>
+                        <th>Comments</th>
+                        <th>Protected</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for channel in channelList %}
+                        <tr id="channelCardRow-{{channel.id}}">
+                          <td><input type="checkbox" value="{{channel.id}}"></td>
+                          <td><img src="/images/{{channel.imageLocation}}" style="width:128px;height:71px;object-fit:cover;" onerror="this.src='/static/img/video-placeholder.jpg';"></td>
+                          <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
+                          <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                          <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
+                          <td>{{channel.channelLoc}}</td>
+                          <td>{{channel.views}}</td>
+                          <td>{{channel.channelLoc|get_diskUsage|formatSpace}}</td>
+                          <td><span class="badge {% if channel.chatEnabled == True %} badge-success {% elif channel.chatEnabled == False %} badge-danger {% endif %}"> {{channel.chatEnabled}} </span></td>
+                          <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
+                          <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
+                          <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
+                          <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="bi bi-trash-fill"></i></button></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

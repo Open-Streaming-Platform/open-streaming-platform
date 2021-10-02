@@ -62,6 +62,10 @@ body {
     background-color: #00bb00;
 }
 
+.badge-danger {
+    background-color: #bd2b2b;
+}
+
 
 a, a:visited {
     color: inherit;
