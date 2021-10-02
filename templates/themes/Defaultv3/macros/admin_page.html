@@ -501,6 +501,11 @@
     <div class="info-panel-box-body boxShadow">
         <div class="admin-stickers-servers">
             <div class="d-flex flex-wrap justify-content-start">
+                {% if globalStickers == [] %}
+                    <div class="justify-content-center my-5">
+                        <span class="text-center textShadow"><b>No Stickers Added.  Why not upload a few?</b></span>
+                    </div>
+                {% endif %}
                 {% for sticker in globalStickers %}
                     <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
                         <div class="mx-auto my-2" style="width:128px;">
