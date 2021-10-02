@@ -619,7 +619,7 @@
                         <div class="topicImg mx-auto my-2">
                             <img src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
-                        <input type="text" class="form-control w-100" name="topic-name-{{ sticker.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
+                        <input type="text" class="form-control w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
                         <div class="mx-auto my-2" style="width:96px;">
                             <button class="btn btn-warning" onclick="editTopicModal({{ topic.id }});"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-danger" onclick="deleteTopicModal({{ topic.id }});"><i class="bi bi-trash-fill"></i></button>
