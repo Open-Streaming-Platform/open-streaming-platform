@@ -381,6 +381,13 @@ table tbody tr {
     box-shadow: var(--box-shadow);
 }
 
+.topicImg-sm, .channelImg-sm img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    box-shadow: var(--box-shadow);
+}
+
 .card {
     background-color: inherit;
     border: 0 solid black;
