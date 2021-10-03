@@ -335,25 +335,19 @@ table tbody tr {
     background-color: var(--box2-background);
 }
 
-.top-live-container {
+.live-container {
     width: 100%;
     padding: 20px 20px;
     background-color: var(--page-background);
 }
 
-.current-live-container {
-    width: 100%;
-    padding: 20px 20px;
-    background-color: var(--page-background);
-}
-
-.trending-topics-container {
+.topics-container {
     width: 100%;
     padding: 20px 20px;
     background-color: var(--box2-background);
 }
 
-.popular-videos-container {
+.videos-container {
     width: 100%;
     padding: 20px 20px;
     background-color: var(--page-background);
