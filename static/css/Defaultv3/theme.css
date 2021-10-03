@@ -374,14 +374,28 @@ table tbody tr {
     text-transform: uppercase;
 }
 
-.topicImg, .channelImg img {
+.topicImg img {
     width: 175px;
     height: 175px;
     object-fit: cover;
     box-shadow: var(--box-shadow);
 }
 
-.topicImg-sm, .channelImg-sm img {
+.topicImg-sm img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    box-shadow: var(--box-shadow);
+}
+
+.channelImg-sm img {
+    width: 175px;
+    height: 175px;
+    object-fit: cover;
+    box-shadow: var(--box-shadow);
+}
+
+.channelImg-sm img {
     width: 96px;
     height: 96px;
     object-fit: cover;
