@@ -1,4 +1,5 @@
-{% from "themes/" + sysSettings.systemTheme + "/macros/cards.html" import live_stream_card, video_card, topic_card with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 
 {% macro announcement_panel(title, message) %}
 <div class="announcement-container boxShadow">
@@ -15,7 +16,7 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for stream in streamList %}
-        {{ live_stream_card(stream) }}
+        {{ cards.live_stream_card(stream) }}
       {% endfor %}
   </ul>
 </div>
@@ -26,7 +27,7 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="topicList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
   {% for topic in topicList %}
-    {{ topic_card(topic) }}
+    {{ cards.topic_card(topic) }}
   {% endfor %}
   </ul>
 </div>
@@ -37,7 +38,7 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for video in videoList %}
-          {{ video_card(video) }}
+          {{ cards.video_card(video) }}
       {% endfor %}
   </ul>
 </div>
@@ -99,6 +100,39 @@
     {% if userData.biography != None and userData.biography != "" and userData.biography != "None" %}
     <p class="fs-5 mt-4 textShadow">{{userData.biography|markdown}}</p>
     {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro channel_metadata_panel(channelData) %}
+<div class="channel-info-container insetBoxShadow">
+  <div class="row">
+    <div class="col-auto">
+      <img class="channel-info-picture-img boxShadow" src="/images/{{channelData.imageLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
+    </div>
+    <div class="col">
+      <div class="channel-metadata align-top">
+        <div class="fs-4 textShadow"><b>{{ channelData.channelName }}</b></div>
+        <div class="textShadow"><a href="#"><b>{{ channelData.owningUser|get_userName }}</b></a></div>
+        <div class="channelBadges">
+          {% if channelData.id | get_channelLiveStatus %}
+            {{ core_ui.live_badge() }}
+          {% else %}
+            {{ offline_badge() }}
+          {% endif %}
+          {% if channelData.protected and sysSettings.protectionEnabled %}
+            {{ protected_badge() }}
+          {% endif %}
+        </div>
+        <div class="channelButtons">
+          <a href="/view/{{ channelData.channelLoc }}" class="btn btn-primary btn-sm boxShadow textShadow me-2"><b>View Live Channel</b></a>
+          {% if current_user.is_authenticated %}
+          <button type="button" class="btn btn-success btn-sm boxShadow textShadow"><b><i class="bi bi-star-fill"></i> Subscribe</b></button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <p class="fs-5 mt-4 textShadow">{{channelData.description|markdown}}</p>
   </div>
 </div>
 {% endmacro %}

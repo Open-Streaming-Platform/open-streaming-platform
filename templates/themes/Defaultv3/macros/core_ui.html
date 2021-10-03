@@ -2,6 +2,18 @@
 <div class="sideIcon"><a href="{{ url }}" title="{{ name }}"><i class="textShadow {{ icon }}"></i></a></div>
 {% endmacro %}
 
+{% macro live_badge() %}
+<span class="live-badge boxShadow textShadow"><b>Live</b></span>
+{% endmacro %}
+
+{% macro offline_badge() %}
+<span class="osp-badge offline-badge boxShadow textShadow"><b>Offline</b></span>
+{% endmacro %}
+
+{% macro protected_badge() %}
+<span class="osp-badge protected-badge boxShadow textShadow"><b>Protected</b></span>
+{% endmacro %}
+
 {% macro osp_systeminfo_modal(version) %}
  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">

@@ -1,11 +1,12 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
 
 
 {% block head %}
-<title>{{sysSettings.siteName}}</title>
+<title>{{sysSettings.siteName}} - {{ title }}</title>
 <meta name="twitter:card" content="app" />
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
 <meta property="og:title" content="{{sysSettings.siteName}}" />
@@ -19,7 +20,7 @@
         {{ panels.user_bio_panel(streamerData) }}
     {% endif %}
     {% if channelData is defined %}
-    <!-- TODO Add Channel Metadata Panel -->
+        {{ panels.channel_metadata_panel(channelData) }}
     {% endif %}
     {% if openStreams %}
         {{ panels.live_streams_panel(openStreams) }}

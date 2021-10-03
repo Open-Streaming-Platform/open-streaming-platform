@@ -447,6 +447,20 @@ table tbody tr {
     text-align: center;
 }
 
+.protected-badge {
+    padding: 2px 8px;
+    background-color: #b5c718;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.offline-badge {
+    padding: 2px 8px;
+    background-color: #545452;
+    border-radius: 4px;
+    text-align: center;
+}
+
 .live-viewers-badge {
     padding: 2px 8px;
     background-color: #206CFF;
@@ -540,6 +554,31 @@ table tbody tr {
     border-radius: 0 0 4px 4px;
     width: 100%;
     padding: 10px;
+}
+
+.channel-info-container {
+    color: white;
+    width: 100%;
+    padding: 30px 30px;
+    background-color: var(--box2-background);
+}
+
+.channel-info-picture-img {
+  width: 128px;
+  height: 128px;
+}
+
+.channelBadges {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.channelButtons {
+  margin-top: 12px;
+}
+
+.osp-badge {
+  margin-right: 5px;
 }
 
 .osp-info-box {
