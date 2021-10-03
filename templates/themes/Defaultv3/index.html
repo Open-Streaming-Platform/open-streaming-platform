@@ -1,7 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
-{% from "themes/" + sysSettings.systemTheme + "/macros/cards.html" import live_stream_card, video_card, topic_card with context %}
-{% from "themes/" + sysSettings.systemTheme + "/macros/panels.html" import announcement_panel, top_live_streams_panel, current_live_streams_panel, trending_topics_panel, popular_videos_panel, featured_streamer_panel with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
 
 
 {% block head %}
@@ -19,23 +19,23 @@
 
         <!--Announcement Macro-->
         {%  if sysSettings.serverMessage != "" and sysSettings.serverMessage != None %}
-            {{ announcement_panel(sysSettings.serverMessageTitle, sysSettings.serverMessage) }}
+            {{ panels.announcement_panel(sysSettings.serverMessageTitle, sysSettings.serverMessage) }}
         {%  endif %}
 
         <!--Featured Streamer Macro-->
         {# {{ featured_streamer_panel(data) }} #}
 
         <!--Top Live Streams Macro-->
-        {{ top_live_streams_panel(streamList) }}
+        {{ panels.live_streams_panel(streamList, title="Top Live Streams") }}
 
         <!--Currently Live Macro-->
-        {{ current_live_streams_panel(streamList) }}
+        {{ panels.live_streams_panel(streamList, title="Currently Live") }}
 
         <!--Trending Topics Macro-->
-        {{ trending_topics_panel(uploadTopics) }}
+        {{ panels.topics_panel(uploadTopics, title="Trending Topics") }}
 
         <!--Popular Videos Macro-->
-        {{ popular_videos_panel(videoList) }}
+        {{ panels.videos_panel(videoList, title="Popular Videos") }}
 
 {% endblock %}
 

@@ -16,6 +16,21 @@
 
 {% block body %}
     {% if streamerData is defined %}
-    {{ panels.user_bio_panel(streamerData) }}
+        {{ panels.user_bio_panel(streamerData) }}
+    {% endif %}
+    {% if channelData is defined %}
+    <!-- TODO Add Channel Metadata Panel -->
+    {% endif %}
+    {% if openStreams %}
+        {{ panels.live_streams_panel(openStreams) }}
+    {% endif %}
+    {% if userChannels %}
+    <!-- TODO Add User Channels Panel -->
+    {% endif %}
+    {% if recordedVids %}
+        {{ panels.videos_panel(recordedVids) }}
+    {% endif %}
+    {% if clipsList %}
+    <!-- TODO Add Clips Panel -->
     {% endif %}
 {% endblock %}
