@@ -107,8 +107,8 @@
         </span>
       </div>
     </div>
-    {% if streamerData.biography != None and streamerData.biography != "" %}
-    <p class="fs-5 mt-4 textShadow">{{streamerData.biography|markdown}}</p>
+    {% if userData.biography != None and userData.biography != "" and userData.biography != "None" %}
+    <p class="fs-5 mt-4 textShadow">{{userData.biography|markdown}}</p>
     {% endif %}
   </div>
 </div>
