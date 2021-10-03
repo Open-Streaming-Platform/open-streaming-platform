@@ -33,6 +33,17 @@
 </div>
 {% endmacro %}
 
+{% macro channels_panel(channelList, title="Channels" ) %}
+<div class="channels-container insetBoxShadow">
+  <h3 class="textShadow"><b>{{ title }}</b></h3>
+  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  {% for channel in channelList %}
+    {{ cards.channel_card(channel) }}
+  {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
 {% macro videos_panel(videoList, title="Videos") %}
 <div class="videos-container boxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>

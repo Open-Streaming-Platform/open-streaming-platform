@@ -63,3 +63,16 @@
         </li>
     </a>
 {% endmacro %}
+
+{% macro channel_card(channelData) %}
+<a href="/channel/{{channelData.id}}/">
+  <li class="channelCard item">
+    <div class="channelImg"><img class="lazy zoom" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
+    <div class="channelName"><b>{{ channelData.channelName }}</b></div>
+    <div class="channelOwner">
+      <img src="/images/{{ channelData.owningUser | get_pictureLocation }}" class="shadow avatar-small me-2" alt="{{ channelData.channelName }} Picture">
+      <b>{{ channelData.owningUser | get_userName }}</b>
+    </div>
+  </li>
+</a>
+{% endmacro %}

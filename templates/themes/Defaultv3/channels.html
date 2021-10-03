@@ -6,7 +6,7 @@
 
 
 {% block head %}
-<title>{{sysSettings.siteName}} - {{ title }}</title>
+<title>{{sysSettings.siteName}} - Channels</title>
 <meta name="twitter:card" content="app" />
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
 <meta property="og:title" content="{{sysSettings.siteName}}" />
@@ -16,22 +16,5 @@
 {% endblock %}
 
 {% block body %}
-    {% if streamerData is defined %}
-        {{ panels.user_bio_panel(streamerData) }}
-    {% endif %}
-    {% if channelData is defined %}
-        {{ panels.channel_metadata_panel(channelData) }}
-    {% endif %}
-    {% if openStreams %}
-        {{ panels.live_streams_panel(openStreams) }}
-    {% endif %}
-    {% if userChannels %}
-        {{ panels.channels_panel(channelList) }}
-    {% endif %}
-    {% if recordedVids %}
-        {{ panels.videos_panel(recordedVids) }}
-    {% endif %}
-    {% if clipsList %}
-    <!-- TODO Add Clips Panel -->
-    {% endif %}
+{{ panels.channels_panel(channelList) }}
 {% endblock %}
