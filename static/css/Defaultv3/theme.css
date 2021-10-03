@@ -374,7 +374,7 @@ table tbody tr {
     text-transform: uppercase;
 }
 
-.topicImg img {
+.topicImg, .channelImg img {
     width: 175px;
     height: 175px;
     object-fit: cover;
