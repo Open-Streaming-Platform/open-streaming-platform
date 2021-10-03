@@ -388,7 +388,7 @@ table tbody tr {
     box-shadow: var(--box-shadow);
 }
 
-.channelImg-sm img {
+.channelImg img {
     width: 175px;
     height: 175px;
     object-fit: cover;
