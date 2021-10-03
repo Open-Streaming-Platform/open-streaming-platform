@@ -132,7 +132,9 @@
         </div>
       </div>
     </div>
+    {% if channelData.description != None and channelData.description != "" and channelData.description != "None" %}
     <p class="fs-5 mt-4 textShadow">{{channelData.description|markdown}}</p>
+    {% endif %}
   </div>
 </div>
 {% endmacro %}
