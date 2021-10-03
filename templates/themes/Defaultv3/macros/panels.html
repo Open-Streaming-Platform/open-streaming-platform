@@ -118,10 +118,10 @@
           {% if channelData.id | get_channelLiveStatus %}
             {{ core_ui.live_badge() }}
           {% else %}
-            {{ offline_badge() }}
+            {{ core_offline_badge() }}
           {% endif %}
           {% if channelData.protected and sysSettings.protectionEnabled %}
-            {{ protected_badge() }}
+            {{ core_protected_badge() }}
           {% endif %}
         </div>
         <div class="channelButtons">
