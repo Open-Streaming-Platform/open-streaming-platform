@@ -551,7 +551,7 @@ table tbody tr {
 }
 
 .channel-info-container {
-    color: white;
+    color: var(--font-color);
     width: 100%;
     padding: 30px 30px;
     background-color: var(--box2-background);
