@@ -3,5 +3,5 @@
   "Maintainer": "Deamos",
   "Version": "3.0",
   "Description": "The Default OSP Theme",
-  "Override": ["index.html", "admin.html"]
+  "Override": ["index.html", "admin.html", "videoViewList.html"]
 }

@@ -359,6 +359,29 @@ table tbody tr {
     background-color: var(--page-background);
 }
 
+.streamer-info-container {
+    color: var(--font-color);
+    width: 100%;
+    padding: 30px 30px;
+    background-color: var(--box2-background);
+}
+
+.steamer-info-picture-img {
+  width: 96px;
+  height: 96px;
+}
+
+.socialIcons img {
+  width: 32px;
+  height: 32px;
+  margin-top:10px;
+}
+
+.socialIcons img:not(:first-child) {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .itemList {
     padding: 0;
     list-style-type: none;
