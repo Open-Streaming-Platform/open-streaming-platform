@@ -509,6 +509,12 @@ table tbody tr {
     left: 5px;
 }
 
+.channelCard .channelCard-badges {
+    position: relative;
+    top: 28px;
+    left: 5px;
+}
+
 .admin-nav {
     margin: 20px 0 0 20px;
 }

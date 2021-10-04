@@ -1,3 +1,5 @@
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+
 {% macro live_stream_card(stream) %}
 <li class="streamCard item">
     <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
@@ -31,7 +33,7 @@
   <a href="/play/{{video.id}}">
     <div class="streamCard-thumbnail-container zoom">
         <div class="streamCard-badges">
-            <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{video.views}}</b></span>
+            {{ core_ui.views_badge(video.views) }}
         </div>
         <img class="streamCard-thumb boxShadow lazy {% if video.gifLocation != None %}gif{% endif %}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
@@ -67,8 +69,17 @@
 {% macro channel_card(channelData) %}
 <a href="/channel/{{channelData.id}}/">
   <li class="channelCard item">
+    <div class="channelCard-badges">
+    {% if channelData.id | get_channelLiveStatus %}
+        {{ core_ui.live_badge() }}
+        {% if channelData.protected and sysSettings.protectionEnabled %}
+        {{ core_ui.protected_badge() }}
+        {% endif %}
+        {{ core_ui.views_badge(channelData.currentViewers) }}
+    {% endif %}
+    </div>
     <div class="channelImg"><img class="lazy zoom" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
-    <div class="mt-2">
+    <div class="channelMetadata mt-2">
         <div class="channelName"><b>{{ channelData.channelName }}</b></div>
         <div class="channelOwner">
           <img src="/images/{{ channelData.owningUser | get_pictureLocation }}" class="shadow avatar-small me-2" alt="{{ channelData.channelName }} Picture">
