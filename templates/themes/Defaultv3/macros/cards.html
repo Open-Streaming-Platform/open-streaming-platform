@@ -82,7 +82,7 @@
     <div class="channelMetadata mt-2">
         <div class="row">
             <div class="col">
-                <img src="/images/{{ channelData.owningUser | get_pictureLocation }}" class="shadow me-2" alt="{{ channelData.channelName }} Picture">
+                <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channelData.owningUser | get_pictureLocation }}" class="shadow me-2" alt="{{ channelData.channelName }} Picture">
             </div>
             <div class="col-10">
                 <div class="channelName"><b>{{ channelData.channelName }}</b></div>
