@@ -507,6 +507,10 @@ table tbody tr {
     left: 5px;
 }
 
+.channelCard {
+    width: 175px;
+}
+
 .channelCard .channelCard-badges {
     position: relative;
     top: 28px;
