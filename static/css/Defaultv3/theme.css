@@ -383,6 +383,12 @@ table tbody tr {
   margin-right: 5px;
 }
 
+.avatar-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
 .itemList {
     padding: 0;
     list-style-type: none;
