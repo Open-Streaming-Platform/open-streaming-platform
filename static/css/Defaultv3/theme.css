@@ -405,13 +405,11 @@ table tbody tr {
 }
 
 .item .channelName {
-    text-align: center;
     font-size: 1.25em;
     text-transform: uppercase;
 }
 
 .item .channelOwner {
-    text-align: center;
     font-size: 1.0em;
     text-transform: uppercase;
 }
