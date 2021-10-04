@@ -398,6 +398,18 @@ table tbody tr {
     text-transform: uppercase;
 }
 
+.item .channelName {
+    text-align: center;
+    font-size: 1.25em;
+    text-transform: uppercase;
+}
+
+.item .channelOwner {
+    text-align: center;
+    font-size: 1.0em;
+    text-transform: uppercase;
+}
+
 .topicImg img {
     width: 175px;
     height: 175px;
