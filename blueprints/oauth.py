@@ -2,6 +2,7 @@ import datetime
 import random
 import uuid
 import os
+import logging
 
 from flask import redirect, url_for, Blueprint, flash, render_template, request, abort
 from flask_security.utils import login_user
@@ -21,6 +22,8 @@ from functions.system import newLog
 from functions.webhookFunc import runWebhook
 from functions.themes import checkOverride
 from functions import cachedDbCalls
+
+log = logging.getLogger('app.blueprints.oauth')
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix='/oauth')
 
@@ -137,6 +140,8 @@ def oAuthAuthorize(provider):
                 db.session.add(newToken)
                 db.session.commit()
                 login_user(user)
+
+                log.info({"level": "info", "message": "New User Registered - " + str(user.username) + " - " + str(user.current_login_ip)})
 
                 runWebhook("ZZZ", 20, user=user.username)
                 newLog(1, "A New User has Registered - Username:" + str(user.username))

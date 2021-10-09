@@ -1,5 +1,5 @@
 import logging
-
+from flask import current_app
 from classes.settings import settings
 from classes import Channel
 from classes.Sec import User
@@ -7,6 +7,8 @@ from classes.Sec import User
 from app import ejabberd
 
 from globals.globalvars import room_config
+
+log = logging.getLogger('app.functions.xmpp')
 
 def sanityCheck():
     buildMissingRooms()
@@ -22,7 +24,7 @@ def buildMissingRooms():
         try:
             xmppQuery = ejabberd.get_room_affiliations(channel.channelLoc, 'conference.' + sysSettings.siteAddress)
         except:
-            logging.info({"level": "info", "message": "Rebuilding missing ejabberd room - " + str(channel.channelLoc)})
+            log.info({"level": "info", "message": "Rebuilding missing ejabberd room - " + str(channel.channelLoc)})
             ejabberd.create_room(channel.channelLoc, 'conference.' + sysSettings.siteAddress, sysSettings.siteAddress)
 
             for key, value in room_config.items():
@@ -34,7 +36,7 @@ def buildMissingRooms():
 
 def verifyExistingRooms():
     sysSettings = settings.query.first()
-    logging.info({"level": "info", "message": "Verifying existing ejabberd Rooms"})
+    log.info({"level": "info", "message": "Verifying existing ejabberd Rooms"})
     channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id) \
         .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, Channel.Channel.protected, User.uuid.label('userUUID'))
     for channel in channelQuery:
@@ -81,7 +83,7 @@ def cleanInvalidRooms():
             if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
-    logging.info({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
+    log.info({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
 
 def getChannelCounts(channelLoc):
     sysSettings = settings.query.first()
