@@ -13,8 +13,8 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{request.url|normalize_url}}" />
 <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 
-<script src="/static/vendor/videojs/js/video.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -23,6 +23,7 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src="/static/vendor/videojs/js/video.js"></script>
     <script>
         var player = videojs('video', {
                 autoplay: {{isAutoPlay|lower}},
