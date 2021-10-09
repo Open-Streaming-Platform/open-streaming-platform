@@ -58,7 +58,7 @@ def main_page():
                                Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
                                RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                                RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
-                               Sec.User.pictureLocation) \
+                               Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
                 .order_by(RecordedVideo.Clips.views.desc()).limit(16)
         # Sort by Most Recent
         elif sysSettings.sortMainBy == 1:
@@ -81,7 +81,7 @@ def main_page():
                                Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
                                RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                                RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
-                               Sec.User.pictureLocation) \
+                               Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
                 .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(16)
         # Sort by Random
         elif sysSettings.sortMainBy == 2:
@@ -95,7 +95,7 @@ def main_page():
                 .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id)\
                 .join(Channel.Channel, Channel.Channel.id==RecordedVideo.RecordedVideo.channelID)\
                 .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)\
-                .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation)\
+                .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo)\
                 .order_by(func.random()).limit(16)
         # Fall Through - Sort by Views
         else:
