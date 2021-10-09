@@ -23,7 +23,7 @@ requireEmailRegistration=True
 debugMode = False
 
 # Set Log Level (Default: warning, Options: debug, info, warning, error, critical)
-log_level = warning
+log_level = 'warning'
 
 # EJabberD Configuration
 ejabberdAdmin = "admin"
