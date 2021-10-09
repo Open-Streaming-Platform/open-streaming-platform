@@ -22,16 +22,16 @@
                 <tbody>
                   {% for apiKey in apiKeyList %}
                   <tr>
-                    <td>{{ apikey.description }}</td>
+                    <td>{{ apiKey.description }}</td>
                     <td>
                       <div class="input-group mb-3">
-                        <input type="text" class="form-control disabled shadow" value="{{ apikey.key }}">
-                        <button class="btn btn-primary shadow" type="button" id="apiKey_reset-{{ key.id }}"><i class="bi bi-arrow-repeat"></i></button>
+                        <input type="text" class="form-control disabled shadow" value="{{ apiKey.key }}">
+                        <button class="btn btn-primary shadow" type="button" id="apiKey_reset-{{ apiKey.id }}"><i class="bi bi-arrow-repeat"></i></button>
                       </div>
                     </td>
-                    <td>{{ key.type }}</td>
-                    <td>{{ key.createdOn | normalize_date }}</td>
-                    <td>{{ key.expiration | normalize_date }}</td>
+                    <td>{{ apiKey.type }}</td>
+                    <td>{{ apiKey.createdOn | normalize_date }}</td>
+                    <td>{{ apiKey.expiration | normalize_date }}</td>
                     <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
                   </tr>
                   {% endfor %}
