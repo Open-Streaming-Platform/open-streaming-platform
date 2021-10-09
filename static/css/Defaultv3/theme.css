@@ -353,6 +353,12 @@ table tbody tr {
     background-color: var(--box2-background);
 }
 
+.streamer-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--box2-background);
+}
+
 .videos-container {
     width: 100%;
     padding: 20px 20px;
