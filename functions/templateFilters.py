@@ -45,6 +45,7 @@ def init(context):
     context.jinja_env.filters['get_channelTopic'] = get_channelTopic
     context.jinja_env.filters['get_videoTopic'] = get_videoTopic
     context.jinja_env.filters['get_videoDate'] = get_videoDate
+    context.jinja_env.filters['get_channelPicture'] = get_channelPicture
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -282,3 +283,7 @@ def get_videoDate(videoID):
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
     return commentsQuery
+
+def get_channelPicture(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    return channelQuery.imageLocation
