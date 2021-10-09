@@ -66,6 +66,17 @@
 </div>
 {% endmacro %}
 
+{% macro clips_panel(clipsList, title="Clips") %}
+<div class="clip-container boxShadow">
+  <h3 class="textShadow"><b>{{ title }}</b></h3>
+  <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+      {% for clip in clipsList %}
+          {{ cards.clip_card(clip) }}
+      {% endfor %}
+  </ul>
+</div>
+{% endmacro %}
+
 {% macro featured_streamer_panel(data) %}
 <div class="featured-stream-container insetBoxShadow">
   <h1 class="textShadow"><b>Featured Stream</b></h1>

@@ -365,6 +365,12 @@ table tbody tr {
     background-color: var(--page-background);
 }
 
+.clips-container {
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--page-background);
+}
+
 .streamer-info-container {
     color: var(--font-color);
     width: 100%;
