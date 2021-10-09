@@ -496,6 +496,13 @@ table tbody tr {
     text-align: center;
 }
 
+.views-badge {
+    padding: 2px 8px;
+    background-color: #206CFF;
+    border-radius: 4px;
+    text-align: center;
+}
+
 .streamCard {
     height: 275px;
     width: 315px;

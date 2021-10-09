@@ -14,8 +14,12 @@
 <span class="osp-badge protected-badge boxShadow textShadow"><b>Protected</b></span>
 {% endmacro %}
 
-{% macro views_badge(viewAmount) %}
+{% macro live_views_badge(viewAmount) %}
 <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ viewAmount }}</b></span>
+{% endmacro %}
+
+{% macro views_badge(viewAmount) %}
+<span class="views-badge boxShadow textShadow ms-1"><i class="bi bi-people-fill"></i> <b class="justify-content-end">{{ viewAmount }}</b></span>
 {% endmacro %}
 
 {% macro osp_systeminfo_modal(version) %}

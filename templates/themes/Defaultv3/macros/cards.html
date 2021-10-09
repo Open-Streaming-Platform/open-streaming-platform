@@ -4,8 +4,8 @@
 <li class="streamCard item">
     <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
         <div class="streamCard-badges">
-            <span class="live-badge boxShadow textShadow"><b>Live</b></span>
-            <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.currentViewers }}</b></span>
+            {{ core_ui.live_badge() }}
+            {{ core_ui.live_views_badge(stream.currentViewers) }}
         </div>
         <img class="streamCard-thumb boxShadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{ stream.linkedChannel | get_channelLocationFromID }}.png">
         <div class="card mb-3" style="max-width: 540px;">
