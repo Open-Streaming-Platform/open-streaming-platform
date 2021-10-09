@@ -78,16 +78,18 @@
 {% macro channel_card(channelData) %}
 <a href="/channel/{{channelData.id}}/">
   <li class="channelCard item">
-    <div class="channelCard-badges">
-    {% if channelData.id | get_channelLiveStatus %}
-        {{ core_ui.live_badge() }}
-    {% endif %}
-    {% if channelData.protected and sysSettings.protectionEnabled %}
-        {{ core_ui.protected_badge() }}
-    {% endif %}
-    {{ core_ui.views_badge(channelData.currentViewers) }}
+    <div class="zoom">
+        <div class="channelCard-badges">
+        {% if channelData.id | get_channelLiveStatus %}
+            {{ core_ui.live_badge() }}
+        {% endif %}
+        {% if channelData.protected and sysSettings.protectionEnabled %}
+            {{ core_ui.protected_badge() }}
+        {% endif %}
+        {{ core_ui.views_badge(channelData.currentViewers) }}
+        </div>
+        <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
     </div>
-    <div class="channelImg"><img class="lazy zoom" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
     <div class="channelMetadata mt-2">
         <div class="row">
             <div class="col-3">
