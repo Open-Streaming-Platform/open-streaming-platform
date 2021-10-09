@@ -171,3 +171,23 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro video_metadata_panel(video) %}
+<div class="video-metadata">
+  <div class="row">
+    <div class="channelImg-sm col-auto">
+      <img src="/images/{{ video.channelID }}">
+    </div>
+    <div class="col-5">
+      <div class="video-name">{{ video.channelName }}</div>
+      <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
+      <div class="video-topic">{{ video.topic | get_topicName }}</div>
+    </div>
+    <div class="col">
+      <div class="float-end mx-1">
+        <i class="bi bi-people-fill"></i> {{ video.views }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
