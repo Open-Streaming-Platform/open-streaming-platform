@@ -668,3 +668,9 @@ table tbody tr {
   margin-top: 10px;
   text-align: center;
 }
+
+.video-metadata {
+  background-color: var(--box1-background);
+  padding: 10px;
+  box-shadow: var(--box-shadow);
+}
