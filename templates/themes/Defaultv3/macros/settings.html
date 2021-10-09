@@ -29,7 +29,7 @@
                         <button class="btn btn-primary shadow" type="button" id="apiKey_reset-{{ apiKey.id }}"><i class="bi bi-arrow-repeat"></i></button>
                       </div>
                     </td>
-                    <td>{{ apiKey.type }}</td>
+                    <td>{{ apiKey.type | format_keyType }}</td>
                     <td>{{ apiKey.createdOn | normalize_date }}</td>
                     <td>{{ apiKey.expiration | normalize_date }}</td>
                     <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
