@@ -22,7 +22,7 @@ from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required, uia_email_mapper
 from flask_security.signals import user_registered
 from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade, init, migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
@@ -128,21 +128,41 @@ app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 
+#----------------------------------------------------------------------------#
+# Set Logging Configuration
+#----------------------------------------------------------------------------#
+if __name__ != '__main__':
+    loglevel = logging.WARNING
+    if hasattr(config, 'log_level'):
+        logOptions = {
+            'debug': logging.DEBUG,
+            'info': logging.INFO,
+            'warning': logging.WARNING,
+            'error': logging.ERROR,
+            'critical': logging.CRITICAL
+        }
+        if config.log_level in logOptions:
+            loglevel = logOptions[config.log_level]
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(loglevel)
+
 # Initialize Recaptcha
 if hasattr(config, 'RECAPTCHA_ENABLED'):
     if config.RECAPTCHA_ENABLED is True:
+        app.logger.info({"level": "info", "message": "REPATCHA_ENABLED set to True. Initializing Recaptcha"})
         globalvars.recaptchaEnabled = True
         try:
             app.config['RECAPTCHA_PUBLIC_KEY'] = config.RECAPTCHA_SITE_KEY
             app.config['RECAPTCHA_PRIVATE_KEY'] = config.RECAPTCHA_SECRET_KEY
         except:
-            logging.warning("Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha")
+            app.logger.warning({"level": "warning", "message": "Recaptcha Enabled, but missing Site Key or Secret Key in config.py.  Disabling ReCaptcha"})
             globalvars.recaptchaEnabled = False
 
 #----------------------------------------------------------------------------#
 # Modal Imports
 #----------------------------------------------------------------------------#
-
+app.logger.info({"level": "info", "message": "Importing Database Classes"})
 from classes import Stream
 from classes import Channel
 from classes import dbVersion
@@ -165,6 +185,7 @@ from classes import stickers
 #----------------------------------------------------------------------------#
 # Function Imports
 #----------------------------------------------------------------------------#
+app.logger.info({"level": "info", "message": "Importing Function"})
 from functions import database
 from functions import system
 from functions import securityFunc
@@ -175,9 +196,9 @@ from functions import cachedDbCalls
 #----------------------------------------------------------------------------#
 # Begin App Initialization
 #----------------------------------------------------------------------------#
-logger = logging.getLogger('gunicorn.error').handlers
 
 # Initialize Flask-BabelEx
+app.logger.info({"level": "info", "message": "Initializing Flask-BabelEx"})
 babel = Babel(app)
 
 # Initialize RedisURL
@@ -188,11 +209,13 @@ else:
     RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 
 #Initialize Flask-Limiter
+app.logger.info({"level": "info", "message": "Importing Flask-Limiter"})
 app.config["RATELIMIT_STORAGE_URL"] = RedisURL
 from classes.shared import limiter
 limiter.init_app(app)
 
-# Initialize Redis for Flask-Session
+# Initialize Redis
+app.logger.info({"level": "info", "message": "Initializing Redis"})
 if config.redisPassword == '' or config.redisPassword is None:
     r = redis.Redis(host=config.redisHost, port=config.redisPort)
     app.config["SESSION_REDIS"] = r
@@ -202,6 +225,7 @@ else:
 r.flushdb()
 
 # Initialize Flask-SocketIO
+app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
 from classes.shared import socketio
 if config.redisPassword == '' or config.redisPassword is None:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
@@ -209,19 +233,22 @@ else:
     socketio.init_app(app, logger=False, engineio_logger=False, message_queue="redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort), ping_interval=20, ping_timeout=40, cookie=None, cors_allowed_origins=[])
 
 # Begin Database Initialization
+app.logger.info({"level": "info", "message": "Loading Database Object"})
 from classes.shared import db
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
 # Initialize Flask-Session
+app.logger.info({"level": "info", "message": "Initializing Flask-Session"})
 Session(app)
 
 # Initialize Flask-CORS Config
+app.logger.info({"level": "info", "message": "Initializing Flask-CORS"})
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 
 # Initialize Flask-Caching
-logging.info({"level": "info", "message": "Performing Flask Caching Initialization"})
+app.logger.info({"level": "info", "message": "Performing Flask Caching Initialization"})
 
 from classes.shared import cache
 redisCacheOptions = {
@@ -235,9 +262,11 @@ if config.redisPassword != '' and config.redisPassword is not None:
 cache.init_app(app, config=redisCacheOptions)
 
 # Initialize Debug Toolbar
+app.logger.info({"level": "info", "message": "Initializing Flask-Debug"})
 toolbar = DebugToolbarExtension(app)
 
 # Initialize Flask-Security
+app.logger.info({"level": "info", "message": "Initializing Flask-Security"})
 try:
     sysSettings = cachedDbCalls.getSystemSettings()
     app.config['SECURITY_TOTP_ISSUER'] = sysSettings.siteName
@@ -251,15 +280,18 @@ user_datastore = SQLAlchemyUserDatastore(db, Sec.User, Sec.Role)
 security = Security(app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
 
 # Initialize Flask-Uploads
+app.logger.info({"level": "info", "message": "Initializing Flask-Uploads"})
 photos = UploadSet('photos', IMAGES)
 stickerUploads = UploadSet('stickers', IMAGES)
 configure_uploads(app, (photos, stickerUploads))
 patch_request_class(app)
 
 # Initialize Flask-Markdown
+app.logger.info({"level": "info", "message": "Initializing Flask-Markdown"})
 md = Markdown(app, extensions=['tables'])
 
 # Initialize ejabberdctl
+app.logger.info({"level": "info", "message": "Initializing ejabberd XML-RPC connection"})
 ejabberd = None
 
 if hasattr(config,'ejabberdServer'):
@@ -269,9 +301,9 @@ if hasattr(config,'ejabberdServerHttpBindFQDN'):
 
 try:
     ejabberd = ejabberdctl(config.ejabberdHost, config.ejabberdAdmin, config.ejabberdPass, server=globalvars.ejabberdServer)
-    logging.info(ejabberd.status())
+    app.logger.info(ejabberd.status())
 except Exception as e:
-    logging.error("ejabberdctl failed to load: " + str(e))
+    app.logger.error({"level": "error", "message": "ejabberdctl failed to load: " + str(e)})
 
 # Loop Check if OSP DB Init is Currently Being Handled by and Process
 OSP_DB_INIT_HANDLER = None
@@ -284,39 +316,44 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
         time.sleep(random.random())
 
 # Once Attempt Database Load and Validation
+app.logger.info({"level": "info", "message": "Performing Initial Database Initialization"})
 try:
     database.init(app, user_datastore)
 except:
-    logging.warning("DB Load Fail due to Upgrade or Issues")
+    app.logger.warning({"level": "warning", "message": "DB Load Fail due to Upgrade or Issues"})
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
 # Perform System Fixes
+app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
 try:
     system.systemFixes(app)
 except:
-    logging.warning({"level": "error", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
+    app.logger.warning({"level": "warning", "message": "Unable to perform System Fixes.  May be first run or DB Issue."})
 
 if r.get('OSP_XMPP_INIT_HANDLER') is None:
     # Perform XMPP Sanity Check
     r.set('OSP_XMPP_INIT_HANDLER', globalvars.processUUID, ex=60)
-    logging.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
+    app.logger.info({"level": "info", "message": "Performing XMPP Sanity Checks"})
     from functions import xmpp
     try:
         results = xmpp.sanityCheck()
     except Exception as e:
-        logging.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
+        app.logger.error({"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)})
         r.delete('OSP_XMPP_INIT_HANDLER')
 else:
-    logging.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
+    app.logger.info({"level": "info", "message": "Process Skipping XMPP Sanity Check - Already in Progress or Recently Run"})
 
 # Checking OSP-Edge Redirection Conf File
+app.logger.info({"level": "info", "message": "Initializing OSP-Edge Redirection File"})
 try:
     system.checkOSPEdgeConf()
 except:
-    logging.warning({"level": "error", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
-logging.info({"level": "info", "message": "Initializing OAuth Info"})
+    app.logger.warning({"level": "warning", "message": "Unable to initialize OSP Edge Conf.  May be first run or DB Issue."})
+
+
 # Initialize oAuth
+app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
 from classes.shared import oauth
 from functions.oauth import fetch_token
 oauth.init_app(app, fetch_token=fetch_token)
@@ -338,30 +375,31 @@ try:
             )
 
         except Exception as e:
-            logging.error("Failed Loading oAuth Provider-" + provider.name + ":" + str(e))
+            app.logger.error({"level": "error", "message": "Failed Loading oAuth Provider-" + provider.name + ":" + str(e) })
 except:
-    logging.error("Failed Loading oAuth Providers")
+    app.logger.error({"level": "error", "message": "Failed Loading oAuth Providers"})
 
-logging.info({"level": "info", "message": "Initializing Flask-Mail"})
+app.logger.info({"level": "info", "message": "Initializing Flask-Mail"})
 # Initialize Flask-Mail
 from classes.shared import email
 
 email.init_app(app)
 email.app = app
 
-logging.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
+app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
 topicQuery = topics.topics.query.all()
 for topic in topicQuery:
     globalvars.topicCache[topic.id] = topic.name
 
 # Initialize First Theme Overrides
+app.logger.info({"level": "info", "message": "Initializing OSP Themes"})
 try:
     system.initializeThemes()
 except:
-    logging.warning({"level": "error", "message": "Unable to Set Override Themes"})
+    app.logger.error({"level": "error", "message": "Unable to Set Override Themes"})
 
-logging.info({"level": "info", "message": "Initializing SocketIO Handlers"})
+app.logger.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
 # SocketIO Handler Import
 #----------------------------------------------------------------------------#
@@ -380,7 +418,7 @@ from functions.socketio import restream
 from functions.socketio import rtmp
 from functions.socketio import pictures
 
-logging.info({"level": "info", "message": "Initializing Flask Blueprints"})
+app.logger.info({"level": "info", "message": "Initializing Flask Blueprints"})
 #----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 #----------------------------------------------------------------------------#
@@ -413,7 +451,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
 app.register_blueprint(oauth_bp)
 
-logging.info({"level": "info", "message": "Initializing Template Filters"})
+app.logger.info({"level": "info", "message": "Initializing Template Filters"})
 #----------------------------------------------------------------------------#
 # Template Filter Imports
 #----------------------------------------------------------------------------#
@@ -422,14 +460,14 @@ from functions import templateFilters
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
 
-logging.info({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
+app.logger.info({"level": "info", "message": "Setting Jinja2 Global Env Functions"})
 #----------------------------------------------------------------------------#
 # Jinja 2 Gloabl Environment Functions
 #----------------------------------------------------------------------------#
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 
-logging.info({"level": "info", "message": "Setting Flask Context Processors"})
+app.logger.info({"level": "info", "message": "Setting Flask Context Processors"})
 #----------------------------------------------------------------------------#
 # Context Processors
 #----------------------------------------------------------------------------#
@@ -479,7 +517,7 @@ def inject_topics():
     topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
     return dict(uploadTopics=topicQuery)
 
-logging.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
+app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 #----------------------------------------------------------------------------#
@@ -492,6 +530,7 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
     user.xmppToken = str(os.urandom(32).hex())
     user.uuid = str(uuid.uuid4())
     webhookFunc.runWebhook("ZZZ", 20, user=user.username)
+    app.logger.info({"level": "info", "message": "New User Registered - " + str(user.username) + " - " + str(user.current_login_ip)})
     system.newLog(1, "A New User has Registered - Username:" + str(user.username))
     if config.requireEmailRegistration:
         flash("An email has been sent to the email provided. Please check your email and verify your account to activate.")
@@ -500,7 +539,7 @@ def user_registered_sighandler(app, user, confirm_token, form_data=None):
 #----------------------------------------------------------------------------#
 # Additional Handlers.
 #----------------------------------------------------------------------------#
-
+app.logger.info({"level": "info", "message": "Initializing First Request Check"})
 @app.before_request
 def do_before_request():
     # Check all IP Requests for banned IP Addresses
@@ -538,17 +577,18 @@ def do_before_request():
         except:
             pass
 
+app.logger.info({"level": "info", "message": "Initializing DB Teardown App Context"})
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db.session.remove()
 
-logging.info({"level": "info", "message": "Finalizing App Initialization"})
+app.logger.info({"level": "info", "message": "Finalizing App Initialization"})
 #----------------------------------------------------------------------------#
 # Finalize App Init
 #----------------------------------------------------------------------------#
 try:
     system.newLog("0", "OSP Started Up Successfully - version: " + str(globalvars.version))
-    logging.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
+    app.logger.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
 if __name__ == '__main__':

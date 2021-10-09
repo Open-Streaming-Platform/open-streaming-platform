@@ -1,5 +1,6 @@
 from app import app
 from flask_mail import Message
+import logging
 
 from classes.shared import email
 from classes import settings
@@ -8,6 +9,8 @@ from classes import Sec
 
 from functions import system
 from functions import cachedDbCalls
+
+log = logging.getLogger('app.functions.subsFunc')
 
 @system.asynch
 def runSubscription(subject, destination, message):

@@ -1,3 +1,9 @@
+0.8.17
+==============================================
+OSP-Core: Fixes clipplayer.html caching issues
+OSP-Core: Fixes Incorrect Live Viewer Counter on Stream Cards per Issue #433
+OSP-Core: Enhanced Logging Structure within OSP-Core, adding a new config.py variable (log_level) to configure the Log Level returned to /opt/osp/logs/osp-error.log
+
 0.8.16
 ==============================================
 OSP-Core: Added /Search API Calls for Videos, Clips, Users, Streams, Channels and Topics - Returns ID value, Name, UUID (if available), and any other information for future search bar
