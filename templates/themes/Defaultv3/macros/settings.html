@@ -1,0 +1,43 @@
+{%  macro user_api_keys(apiKeyList) %}
+<div class="info-panel-box system-channels-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>API Keys</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add API Key" type="button"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="settings-api-user">
+            <table id="apiKeysTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>API Key</th>
+                        <th>Type</th>
+                        <th>Created</th>
+                        <th>Expires</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for apiKey in apiKeyList %}
+                  <tr>
+                    <td>{{ apikey.description }}</td>
+                    <td>
+                      <div class="input-group mb-3">
+                        <input type="text" class="form-control disabled shadow" value="{{ apikey.key }}">
+                        <button class="btn btn-primary shadow" type="button" id="apiKey_reset-{{ key.id }}"><i class="bi bi-arrow-repeat"></i></button>
+                      </div>
+                    </td>
+                    <td>{{ key.type }}</td>
+                    <td>{{ key.createdOn | normalize_date }}</td>
+                    <td>{{ key.expiration | normalize_date }}</td>
+                    <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+          </table>
+        </div>
+    </div>
+</div>
+{%  endmacro %}
