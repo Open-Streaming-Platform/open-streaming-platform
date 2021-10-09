@@ -58,7 +58,7 @@
 {% macro videos_panel(videoList, title="Videos") %}
 <div class="videos-container boxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for video in videoList %}
           {{ cards.video_card(video) }}
       {% endfor %}
@@ -67,9 +67,9 @@
 {% endmacro %}
 
 {% macro clips_panel(clipsList, title="Clips") %}
-<div class="clip-container boxShadow">
+<div class="clips-container boxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="VideoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for clip in clipsList %}
           {{ cards.clip_card(clip) }}
       {% endfor %}
