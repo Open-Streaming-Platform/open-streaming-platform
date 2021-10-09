@@ -66,6 +66,15 @@
     </a>
 {% endmacro %}
 
+{% macro streamer_card(streamerInfo) %}
+    <a href="/streamer/{{ streamerInfo.id }}">
+        <li class="streamer-avatar">
+          <img class="shadow" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">">
+          <div class="username"><b>{{ streamerInfo.username }}</b></div>
+        </li>
+    </a>
+{% endmacro %}
+
 {% macro channel_card(channelData) %}
 <a href="/channel/{{channelData.id}}/">
   <li class="channelCard item">

@@ -635,3 +635,18 @@ table tbody tr {
     color: var(--font-color);
     font-size: 1em;
 }
+
+.streamer-avatar {
+  width: 128px;
+}
+.streamer-avatar img {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.streamer-avatar .username {
+  margin-top: 10px;
+  text-align: center;
+}
