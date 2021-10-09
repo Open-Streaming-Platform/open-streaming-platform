@@ -69,7 +69,7 @@
 {% macro streamer_card(streamerInfo) %}
     <a href="/streamer/{{ streamerInfo.id }}">
         <li class="streamer-avatar">
-          <img class="shadow" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+          <img class="shadow zoom" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
           <div class="username"><b>{{ streamerInfo.username }}</b></div>
         </li>
     </a>

@@ -644,6 +644,7 @@ table tbody tr {
 
 .streamer-avatar {
   width: 128px;
+  margin: 5px;
 }
 .streamer-avatar img {
   width: 128px;
