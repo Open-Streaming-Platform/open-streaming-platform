@@ -1,0 +1,43 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+
+
+{% block head %}
+<title>{{sysSettings.siteName}} - {{ title }}</title>
+<meta name="twitter:card" content="app" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{sysSettings.siteName}}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+
+<script src="/static/vendor/videojs/js/video.js"></script>
+{% endblock %}
+
+{% block body %}
+    {{ panels.video_player(streamURL, isAutoPlay, video.thumbnailLocation) }}
+    {{ panels.video_metadata_panel(video) }}
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        var player = videojs('video', {
+                autoplay: {{isAutoPlay|lower}},
+                errorDisplay: false,
+                liveui: false,
+                liveTracker:true,
+                html5:
+                    {
+                        nativeAudioTracks: false,
+                        nativeVideoTracks:false,
+                        hls:
+                            {
+                                overrideNative: true
+                            }
+                    }
+            });
+    </script>
+{% endblock %}
