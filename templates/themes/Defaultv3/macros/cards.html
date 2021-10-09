@@ -76,8 +76,8 @@
 {% endmacro %}
 
 {% macro channel_card(channelData) %}
-<a href="/channel/{{channelData.id}}/">
-  <li class="channelCard item">
+<li class="channelCard item">
+    <a href="/channel/{{channelData.id}}/">
     <div class="zoom">
         <div class="channelCard-badges">
         {% if channelData.id | get_channelLiveStatus %}
@@ -103,6 +103,6 @@
             </div>
         </div>
     </div>
-  </li>
-</a>
+    </a>
+</li>
 {% endmacro %}

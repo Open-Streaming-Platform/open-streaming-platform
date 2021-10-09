@@ -517,6 +517,11 @@ table tbody tr {
     width: 175px;
 }
 
+.channelCard a:hover, a:active {
+    color: inherit;
+    text-decoration: none;
+}
+
 .channelCard .channelCard-badges {
     position: relative;
     top: 28px;
