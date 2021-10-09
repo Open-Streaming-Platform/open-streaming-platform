@@ -192,9 +192,9 @@
 </div>
 {% endmacro %}
 
-{% macro video_player(videoURL, isAutoPlay, videoThumbnail) %}
+{% macro video_player(videoURL, videoThumbnail, isAutoPlay=True) %}
 <div class="player">
-    <video id="video" class="shadow recordedStream video-js vjs-big-play-centered" poster="/videos/{{videoThumbnail}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline preload="auto" data-setup='{"fluid": true}'>
+    <video id="video" class="shadow video-js vjs-big-play-centered" poster="/videos/{{videoThumbnail}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline preload="auto" data-setup='{"fluid": true}'>
         <source src="{{videoURL}}" type="video/mp4">
         <p class="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to a web browser that

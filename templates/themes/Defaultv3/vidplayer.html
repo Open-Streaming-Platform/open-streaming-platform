@@ -18,15 +18,22 @@
 {% endblock %}
 
 {% block body %}
-    {{ panels.video_player(streamURL, isAutoPlay, video.thumbnailLocation) }}
-    {{ panels.video_metadata_panel(video) }}
+    <div class="row">
+        <div class="col-8">
+            <div class="video-panel">
+                {{ panels.video_player(streamURL, video.thumbnailLocation) }}
+                {{ panels.video_metadata_panel(video) }}
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script>
         var player = videojs('video', {
-                autoplay: {{isAutoPlay|lower}},
+                autoplay: true,
                 errorDisplay: false,
                 liveui: false,
                 liveTracker:true,
