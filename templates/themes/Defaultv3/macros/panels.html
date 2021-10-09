@@ -176,7 +176,7 @@
 <div class="video-metadata">
   <div class="row">
     <div class="channelImg-sm col-auto">
-      <img src="/images/{{ video.channelID }}">
+      <img src="/images/{{ video.channelID | get_channelPicture}}">
     </div>
     <div class="col-5">
       <div class="video-name">{{ video.channelName }}</div>
