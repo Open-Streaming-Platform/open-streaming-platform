@@ -121,7 +121,7 @@ def main_page():
                                    Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
                                    RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                                    RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
-                                   Sec.User.pictureLocation) \
+                                   Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
                     .order_by(RecordedVideo.Clips.views.desc()).limit(16)
 
         return render_template(themes.checkOverride('index.html'), streamList=activeStreams, videoList=recordedQuery, clipList=clipQuery)
