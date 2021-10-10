@@ -60,7 +60,7 @@
                     <h2 class="display-5"><i class="fas fa-user mr-2"></i> {{streamerData.username}}</h2>
                     {% if streamerData.biography != None %}
                     <span>
-                        {{streamerData.biography|markdown}}
+                        <p>{{streamerData.biography|markdown}}</p>
                     </span>
                     {% endif %}
                     <br>
