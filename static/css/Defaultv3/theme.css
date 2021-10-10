@@ -706,6 +706,11 @@ table tbody tr {
   min-height: 64px;
   background-color: var(--box2-background);
   border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.comment .comment-avatar {
+    min-width: 48px;
 }
 
 .avatar-md {

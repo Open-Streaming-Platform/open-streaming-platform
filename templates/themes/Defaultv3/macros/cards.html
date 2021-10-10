@@ -139,7 +139,7 @@
 {% macro comment_card(comment) %}
 <div class="comment">
   <div class="row gx-0">
-    <div class="col-1 mt-2">
+    <div class="comment-avatar col-1 mt-2">
         <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
     </div>
     <div class="col-11 mt-2">
