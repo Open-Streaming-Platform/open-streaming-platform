@@ -144,9 +144,9 @@
     </div>
     <div class="col-11 mt-2">
       <div class="comment-header">
-        <span><b>{{comment.userID}}</b></span>
+        <span><b>{{ comment.userID }}</b></span>
         <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span><br>
-        <p class=mt-1>{{ comment.comment }}</p>
+        <p class=mt-1>{{ comment.comment | markdown }}</p>
       </div>
     </div>
   </div>

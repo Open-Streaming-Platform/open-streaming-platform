@@ -1,23 +1,162 @@
+{% macro osp_systeminfo_modal(version) %}
+ <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content shadow">
+        <div class="modal-body">
+            <div class="float-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="text-center w-100">
+              <div class="mx-auto">
+                <img class="aboutLogo" src="/static/img/logo.png">
+              </div>
+            <p class="pt-4 textShadow">
+              Open Streaming Platform Version <b>{{version}}</b>
+            </p>
+          </div>
+          <div>
+            <table>
+              <tbody>
+                <tr>
+                  <td><i class="ps-5 bi bi-globe"></i> Website</td>
+                  <td><a class="ps-3" href="https://openstreamingplatform.com">openstreamingplatform.com</a></td>
+                </tr>
+                <tr>
+                  <td><i class="ps-5 bi bi-code-slash"></i> Code repository</td>
+                  <td><a class="ps-3" href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/">osp-group/flask-nginx-rtmp-manager</a></td>
+                </tr>
+                <tr>
+                    <td><i class="ps-5 bi bi-chat-left-quote-fill"></i> Forums</td>
+                    <td><a class="ps-3" href="https://forums.openstreamingplatform.com">forums.openstreamingplatform.com</a></td>
+                </tr>
+                <tr>
+                    <td><i class="ps-5 bi bi-file-richtext"></i> Wiki</td>
+                    <td><a class="ps-3" href="https://wiki.openstreamingplatform.com">wiki.openstreamingplatform.com</a></td>
+                </tr>
+                <tr>
+                  <td><i class="ps-5 bi bi-reddit"></i> Reddit</td>
+                  <td><a class="ps-3" href="https://reddit.com/r/openstreamingplatform">/r/openstreamingplatform</a></td>
+                </tr>
+                <tr>
+                  <td><i class="ps-5 bi bi-discord"></i> Discord</td>
+                  <td><a class="ps-3" href="https://discord.gg/Jp5rzbD">Open Streaming Platform</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center">
+            <p class="pt-4">
+              <i class="bi bi-card-text"></i><br>
+              MIT License
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro osp_videoupload_modal(topicList, channelList) %}
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="canceluploads()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="videoTitle">Title</label>
+              <input class="form-control" id="videoTitle" name="videoTitle">
+            </div>
+            <div class="form-group">
+              <label for="uploadToChannelID">Channel</label>
+              <select name="uploadToChannelID" class="form-control" required>
+                {% for chan in channelList %}
+                <option value="{{chan.id}}">{{chan.channelName}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="uploadTopic">Topic</label>
+              <select name="uploadTopic" class="form-control" required>
+                {% for topic in topicList %}
+                <option value="{{topic.id}}">{{topic.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="thumbnailuploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="thumbnailFilenameDisplay" name="thumbnailFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
+              </div>
+            </div>
+
+            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <span>Video file <span id="videouploadstatus"></span></span>
+            <!-- hidden dropzone -->
+            <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
+            <div class="form-group row">
+              <div class="col-2 my-auto">
+                <button id="videouploadbutton" type="button" class="btn btn-sm btn-primary">Browse</button>
+              </div>
+              <div class="col-10">
+                <input class="form-control pl-2 form-control" id="videoFilenameDisplay" name="videoFilename" placeholder="Filename" disabled />
+                <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
+              </div>
+            </div>
+
+            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div id="videouploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
+            </div>
+
+            <div class="form-group">
+              <label for="videoDescription">Video description</label>
+              <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
+            <button id="uploadbutton" type="submit" class="btn btn-success" disabled>Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro add_video_comment(videoID) %}
+<!--Add Video Comments Modal-->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="commentModalTitle">Add A Comment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
       {% if current_user.is_authenticated == True %}
       <form action="/play/{{videoID}}/comment" method="post">
         <div class="modal-body">
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
           <div class="form-group">
             <label for="commentText">Comment</label>
             <textarea class="form-control" id="commentText" name="commentText" rows="3" maxlength="2048"></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Close</button>
           <input type="submit" class="btn btn-primary" value="Submit">
         </div>
       </form>
@@ -33,4 +172,8 @@
     </div>
   </div>
 </div>
+
+<script>
+    var easymde_Comments = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("commentText") });
+</script>
 {% endmacro %}
