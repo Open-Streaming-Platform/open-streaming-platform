@@ -131,7 +131,7 @@
       </div>
     </div>
     {% if userData.biography != None and userData.biography != "" and userData.biography != "None" %}
-    <p class="fs-5 mt-4 textShadow">{{userData.biography|markdown}}</p>
+    <span class="fs-5 mt-4 textShadow">{{userData.biography|markdown}}</span>
     {% endif %}
   </div>
 </div>
@@ -166,7 +166,7 @@
       </div>
     </div>
     {% if channelData.description != None and channelData.description != "" and channelData.description != "None" %}
-    <p class="fs-5 mt-4 textShadow">{{channelData.description|markdown}}</p>
+    <span class="fs-5 mt-4 textShadow">{{channelData.description|markdown}}</span>
     {% endif %}
   </div>
 </div>
