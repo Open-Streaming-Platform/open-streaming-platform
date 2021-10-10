@@ -718,3 +718,7 @@ table tbody tr {
   height: 48px;
   border-radius: 50%;
 }
+
+.editor-toolbar button {
+    color: var(--font-color);
+}
