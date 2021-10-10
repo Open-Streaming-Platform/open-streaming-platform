@@ -39,7 +39,7 @@
 {% block scripts %}
     <script>
         function openModal(modalID) {
-            document.getElementById(modalID).show();
+            $('#' + modalID).modal('show')
         }
     </script>
 
