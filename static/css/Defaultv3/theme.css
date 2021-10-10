@@ -681,3 +681,16 @@ table tbody tr {
   padding: 10px;
   box-shadow: var(--box-shadow);
 }
+
+.comments-container {
+  background-color: var(--box1-background);
+  width: 100%;
+  height: 100vh;
+}
+
+.comments-container .comments-header-container {
+  background-color: var(--box2-background);
+  width: 100%;
+  text-align: center;
+  line-height: 30px;
+}
