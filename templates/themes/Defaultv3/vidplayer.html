@@ -3,6 +3,7 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
 
 
 {% block head %}
@@ -29,6 +30,10 @@
             {{ panels.comments_panel() }}
         </div>
     </div>
+{% endblock %}
+
+{% block modals %}
+    {{ modals.add_video_comment(video.id) }}
 {% endblock %}
 
 {% block scripts %}
