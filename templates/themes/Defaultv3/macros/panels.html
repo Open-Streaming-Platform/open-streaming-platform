@@ -209,9 +209,7 @@
   <div class="comments-header-container boxShadow">
     <span class="float-start ms-4 mt-1"><i class="text-center fs-4  bi-arrow-bar-right"></i></span>
     <span class="fs-3 textShadow"><b>Comments</b></span>
-    <button type="button" class="btn btn-link btn-sm float-end me-4" data-toggle="modal" data-target="#commentModal" data-toggle="tooltip" data-placement="top" title="Add a Comment"  {% if videoAllowComments == False or systemAllowComments == False %} disabled aria-disabled="true" {% endif %}>
-      <i class="text-center fs-4 bi bi-plus-square"></i>
-    </button>
+    <span class="float-end me-3" onclick="openModal('commentsModal');"><i class="text-center fs-4 bi bi-plus-square"></i></span>
   </div>
   <div class="comments-content-container">
     {% for comment in commentList %}

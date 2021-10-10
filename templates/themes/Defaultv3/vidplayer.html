@@ -37,6 +37,12 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        function openModal(modalID) {
+            document.getElementById(modalID).show();
+        }
+    </script>
+
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script>
         var player = videojs('video', {
