@@ -18,14 +18,14 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-xl-8 col-lg-9 col-md-10 col-12">
+    <div class="row gx-0">
+        <div class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, video.thumbnailLocation) }}
                 {{ panels.video_metadata_panel(video) }}
             </div>
         </div>
-        <div class="col-xl-4 col-lg-3 col-md-2 col-12">
+        <div class="col-xl-4 col-lg-3 col-md-12 col-sm-12 col-12">
             {{ panels.comments_panel() }}
         </div>
     </div>

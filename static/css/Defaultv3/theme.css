@@ -694,3 +694,22 @@ table tbody tr {
   text-align: center;
   line-height: 30px;
 }
+
+.comments-container .comments-content-container {
+  margin-top: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.comments-container .comment {
+  width: 100%;
+  min-height: 64px;
+  background-color: var(--box2-background);
+  border-radius: 4px;
+}
+
+.avatar-md {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}

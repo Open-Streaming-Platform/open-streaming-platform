@@ -122,7 +122,7 @@
     <div class="channelMetadata mt-2">
         <div class="row">
             <div class="col-3">
-                <img class="mt-2 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channelData.owningUser | get_pictureLocation }}" alt="{{ channelData.channelName }} Picture">
+                <img class="mt-2 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channelData.owningUser | get_pictureLocation }}" alt="{{ channelData.channelName }} Picture" onerror="this.src='/static/img/user2.png';">
             </div>
             <div class="col-9">
                 <div class="channelName"><b>{{ channelData.channelName }}</b></div>
@@ -134,4 +134,21 @@
     </div>
     </a>
 </li>
+{% endmacro %}
+
+{% macro comment_card(comment) %}
+<div class="comment">
+  <div class="row gx-0">
+    <div class="col-1 mt-2">
+        <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+    </div>
+    <div class="col-11 mt-2">
+      <div class="comment-header">
+        <span><b>{{comment.userID}}</b></span>
+        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span><br>
+        <p class=mt-1>{{ comment.comment }}</p>
+      </div>
+    </div>
+  </div>
+</div>
 {% endmacro %}
