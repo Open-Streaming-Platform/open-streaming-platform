@@ -71,6 +71,10 @@ def dbFixes():
     if sysSettings.allowUploads is None:
         sysSettings.allowUploads = False
         db.session.commit()
+    # Sets allowRestreams to True if None is Set - Caused by < 0.9.x Upgrade
+    if sysSettings.allowRestream is None:
+        sysSettings.allowRestream = True
+        db.session.commit()
     # Sets Blank Server Message to Prevent Crash if set to None
     if sysSettings.serverMessage is None:
         sysSettings.serverMessage = ""
