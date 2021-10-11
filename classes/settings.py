@@ -14,9 +14,9 @@ class settings(db.Model):
     smtpSendAs = db.Column(db.String(255))
     allowRecording = db.Column(db.Boolean)
     allowUploads = db.Column(db.Boolean)
+    allowRestream = db.Column(db.Boolean)
     protectionEnabled = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
-    background = db.Column(db.String(255))
     showEmptyTables = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
@@ -30,8 +30,7 @@ class settings(db.Model):
     proxyFQDN = db.Column(db.String(2048))
     maintenanceMode = db.Column(db.Boolean)
     buildEdgeOnRestart = db.Column(db.Boolean)
-    allowRegistration = db.Column(db.Boolean) # Moved to config.py
-    requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
+    hubUUID = db.Column(db.String(255))
 
     def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
@@ -46,14 +45,15 @@ class settings(db.Model):
         self.smtpSendAs = smtpSendAs
         self.allowRecording = allowRecording
         self.allowUploads = allowUploads
+        self.allowRestream = True
         self.adaptiveStreaming = adaptiveStreaming
         self.showEmptyTables = showEmptyTables
         self.allowComments = allowComments
         self.sortMainBy = 0
-        self.background = "Ash"
         self.systemTheme = "Defaultv2"
         self.version = version
         self.systemLogo = "/static/img/logo.png"
+        self.systemLogoLight = "/static/img/logo-light.png"
         self.serverMessageTitle = "Server Message"
         self.serverMessage = ""
         self.restreamMaxBitrate = 3500
@@ -61,6 +61,7 @@ class settings(db.Model):
         self.buildEdgeOnRestart = True
         self.protectionEnabled = False
         self.maintenanceMode = False
+        self.hubUUID = None
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -76,13 +77,15 @@ class settings(db.Model):
             'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,
+            'allowRestream' : self.allowRestream,
             'allowComments': self.allowComments,
             'version': self.version,
             'restreamMaxBitRate': self.restreamMaxBitrate,
             'maxClipLength': self.maxClipLength,
             'protectionEnabled': self.protectionEnabled,
             'adaptiveStreaming': self.adaptiveStreaming,
-            'maintenanceMode': self.maintenanceMode
+            'maintenanceMode': self.maintenanceMode,
+            'hubUUID': self.hubUUID
         }
 
 class edgeStreamer(db.Model):
