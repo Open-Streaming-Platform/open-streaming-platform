@@ -15,6 +15,8 @@ from globals import globalvars
 
 from functions import cache, system
 
+from app import user_datastore
+
 log = logging.getLogger('app.functions.securityFunctions')
 
 @limiter.limit("100/second")
@@ -113,6 +115,12 @@ def delete_user(userID):
                     db.session.delete(view)
                 db.session.delete(video)
             db.session.delete(channel)
+
+        # Clear All Role Entries for a User Prior to Deletion
+        roleQuery = Sec.Role.query.all()
+        for role in roleQuery:
+            user_datastore.remove_role_from_user(userQuery, role)
+
         db.session.delete(userQuery)
         db.session.commit()
         log.warning({"level": "warning", "message": "User Deleted - " + username})
