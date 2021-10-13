@@ -11,7 +11,7 @@ import psutil
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
-from flask_security import Security, SQLAlchemyUserDatastore, current_user, login_required, roles_required
+from flask_security import Security, SQLAlchemyUserDatastore, current_user, login_required, roles_required, logout_user
 from flask_security.utils import hash_password
 from flask_mail import Mail
 from sqlalchemy.sql.expression import func
@@ -131,6 +131,19 @@ def subscription_page():
     channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
 
     return render_template(themes.checkOverride('subscriptions.html'), channelSubList=channelSubList)
+
+
+@settings_bp.route('/user/deleteSelf')
+@login_required
+def user_delete_own_account():
+    """
+    Endpoint to allow user to delete own account and all associated data.
+    Not to be called directly without confirmation UI
+    """
+    securityFunc.delete_user(current_user.id)
+    flash('Account and Associated Data Deleted', 'error')
+    logout_user()
+    return redirect(url_for("main_page"))
 
 
 @settings_bp.route('/user/addInviteCode')
