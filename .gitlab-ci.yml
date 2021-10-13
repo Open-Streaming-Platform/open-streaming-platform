@@ -8,12 +8,9 @@ stages:
 - test
 - dev
 include:
-- template: SAST.gitlab-ci.yml
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Dependency-Scanning.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
-sast:
-  stage: test
 
 dev:
   image: alpine:latest
