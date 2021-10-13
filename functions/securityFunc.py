@@ -2,15 +2,19 @@ from flask import session
 from flask_security import current_user
 import datetime
 import bleach
+import logging
 
 from classes.shared import db, limiter
 from classes import Channel
 from classes import Sec
 from classes import invites
+from classes import views
 
 from globals import globalvars
 
 from functions import cache
+
+log = logging.getLogger('app.functions.securityFunctions')
 
 @limiter.limit("100/second")
 def check_isValidChannelViewer(channelID):
@@ -70,6 +74,33 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.commit()
                         db.session.close()
     return False
+
+def delete_user(userID):
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery != None:
+        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
+        username = userQuery.username
+        for channel in channelQuery:
+            videoQuery = channel.recordedVideo
+            for video in videoQuery:
+                video.remove()
+                for clip in video.clips:
+                    for upvotes in clip:
+                        db.session.delete(upvotes)
+                    clip.remove()
+                    db.session.delete(clip)
+                for upvote in video.upvotes:
+                    db.session.delete(upvote)
+                for comment in video.comments:
+                    db.session.delete(comment)
+                vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
+                for view in vidViews:
+                    db.session.delete(view)
+                db.session.delete(video)
+            db.session.delete(channel)
+        db.session.delete(userQuery)
+        db.session.commit()
+        log.warning({"level": "warning", "message": "User Deleted - " + username})
 
 def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.
