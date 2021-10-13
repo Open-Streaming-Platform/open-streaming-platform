@@ -71,15 +71,15 @@ def view_clip_page(clipID):
                         subState = True
 
                 return render_template(themes.checkOverride('clipplayer.html'), video=recordedVid, streamURL=streamURL, topics=topicList, randomClips=randomClips, subState=subState, clip=clipQuery)
-            #else:
-            #    isAutoPlay = request.args.get("autoplay")
-            #    if isAutoPlay == None:
-            #        isAutoPlay = False
-            #    elif isAutoPlay.lower() == 'true':
-            #        isAutoPlay = True
-            #    else:
-            #        isAutoPlay = False
-            #    return render_template(themes.checkOverride('vidplayer_embed.html'), video=recordedVid, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay, startTime=startTime)
+            else:
+                isAutoPlay = request.args.get("autoplay")
+                if isAutoPlay == None:
+                    isAutoPlay = False
+                elif isAutoPlay.lower() == 'true':
+                    isAutoPlay = True
+                else:
+                    isAutoPlay = False
+                return render_template(themes.checkOverride('vidplayer_embed.html'), video=clipQuery, streamURL=streamURL, topics=topicList, isAutoPlay=isAutoPlay)
     else:
         flash("No Such Clip at URL","error")
         return redirect(url_for("root.main_page"))
