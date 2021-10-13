@@ -166,8 +166,11 @@ def rtmp_record_auth_check(channelLoc):
 
             newRecording = RecordedVideo.RecordedVideo(userQuery.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
             newRecording.originalStreamID = streamID
-            existingStream.recordedVideoId = newRecording.id
             db.session.add(newRecording)
+            db.session.commit()
+
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", pending=True).first()
+            existingStream.recordedVideoId = pendingVideo.id
             db.session.commit()
 
             returnMessage = {'time': str(currentTime), 'request': 'RecordCheck', 'success': True, 'channelLoc': channelRequest.channelLoc, 'ipAddress': None, 'message': 'Success - Starting Recording'}
