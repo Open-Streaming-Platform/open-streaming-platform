@@ -19,7 +19,7 @@ class Stream(db.Model):
     active = db.Column(db.Boolean)
     pending = db.Column(db.Boolean)
     complete = db.Column(db.Boolean)
-    recordedVideoId = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
+    recordedVideoId = db.Column(db.Integer)
     rtmpServer = db.Column(db.Integer,db.ForeignKey('rtmpServer.id'))
     upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
