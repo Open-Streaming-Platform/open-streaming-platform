@@ -27,5 +27,3 @@ dev:
   environment:
     name: development
     url: http://osp.internal.divby0.net
-  only:
-    - nightly
