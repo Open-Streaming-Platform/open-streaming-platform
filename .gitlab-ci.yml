@@ -6,10 +6,22 @@
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
 - test
+- dev
 include:
 - template: SAST.gitlab-ci.yml
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Dependency-Scanning.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
-sast:
-  stage: test
+
+dev:
+  image: alpine:latest
+  stage: dev
+  tags:
+    - Dev_Build
+  script:
+    - chmod og= $ID_RSA
+    - apk update && apk add openssh-client
+    - ssh -i $DEV_SERVER_ID_RSA -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
+  environment:
+    name: development
+    url: http://osp.internal.divby0.net
