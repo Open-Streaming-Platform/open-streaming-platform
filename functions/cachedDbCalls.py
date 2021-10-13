@@ -27,7 +27,7 @@ def getOAuthProviders():
 @cache.memoize(timeout=60)
 def searchStreams(term):
     if term is not None:
-        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.streamName.like("%" + term + "%"))\
+        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.like("%" + term + "%"))\
             .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)\
             .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc).all()
         resultsArray = StreamNameQuery
@@ -77,7 +77,7 @@ def getChannelSubCount(channelID):
 
 @cache.memoize(timeout=5)
 def isChannelLive(channelID):
-    StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelID).first()
+    StreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=channelID).first()
     if StreamQuery is not None:
         return True
     else:

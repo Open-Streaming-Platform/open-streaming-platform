@@ -29,7 +29,7 @@ def handle_new_viewer(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    stream = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
@@ -91,7 +91,7 @@ def handle_add_usercount(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    streamData = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     requestedChannel.views = requestedChannel.views + 1
     if streamData is not None:
@@ -113,7 +113,7 @@ def handle_leaving_viewer(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    stream = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 

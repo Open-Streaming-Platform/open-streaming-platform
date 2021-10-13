@@ -32,7 +32,7 @@ def main_page():
 
     else:
         sysSettings = cachedDbCalls.getSystemSettings()
-        activeStreams = Stream.Stream.query.order_by(Stream.Stream.currentViewers).all()
+        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers).all()
 
         recordedQuery = None
         clipQuery = None
@@ -161,7 +161,7 @@ def search_page():
             if video not in videoList:
                 videoList.append(video)
 
-        streamList = Stream.Stream.query.filter(Stream.Stream.streamName.contains(search)).all()
+        streamList = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.contains(search)).all()
 
         clipList = []
         clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).filter(RecordedVideo.Clips.published == True).all()

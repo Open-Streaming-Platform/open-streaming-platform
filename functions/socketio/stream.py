@@ -23,7 +23,7 @@ def handle_viewer_total_request(streamData, room=None):
     viewers = xmpp.getChannelCounts(channelLoc)
     ChannelUpdateStatement = Channel.Channel.query.filter_by(channelLoc=channelLoc).update(dict(currentViewers=viewers))
     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.id).first()
-    StreamUpdateStatement = Stream.Stream.query.filter_by(linkedChannel=channelQuery.id).update(dict(currentViewers=viewers))
+    StreamUpdateStatement = Stream.Stream.query.filter_by(active=True, linkedChannel=channelQuery.id).update(dict(currentViewers=viewers))
 
     db.session.commit()
     db.session.close()

@@ -34,7 +34,7 @@ def channel_view_page(chanID):
 
     if channelData is not None:
 
-        openStreams = Stream.Stream.query.filter_by(linkedChannel=chanID).all()
+        openStreams = Stream.Stream.query.filter_by(active=True, linkedChannel=chanID).all()
 
         recordedVids = cachedDbCalls.getAllVideo_View(chanID)
 
@@ -69,7 +69,7 @@ def channel_view_link_page(channelLoc):
 def channel_stream_link_page(loc):
     requestedChannel = Channel.Channel.query.filter_by(id=int(loc)).first()
     if requestedChannel is not None:
-        openStreamQuery = Stream.Stream.query.filter_by(linkedChannel=requestedChannel.id).first()
+        openStreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=requestedChannel.id).first()
         if openStreamQuery is not None:
             return redirect(url_for("view_page", loc=requestedChannel.channelLoc))
         else:

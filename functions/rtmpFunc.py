@@ -41,7 +41,15 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
                     returnMessage = {'time': str(currentTime), 'request': 'Stage1', 'success': False, 'channelLoc': channelRequest.channelLoc, 'type': None, 'ipAddress': str(ipaddress), 'message': 'Unauthorized User - User has been disabled'}
                     return returnMessage
 
-                existingStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).all()
+                # Checks for is there are any existing live streams and terminates them
+                existingStreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=channelRequest.id).all()
+                if existingStreamQuery:
+                    for stream in existingStreamQuery:
+                        db.session.delete(stream)
+                    db.session.commit()
+
+                # Checks for is there are any pending live streams and terminates them
+                existingStreamQuery = Stream.Stream.query.filter_by(pending=True, linkedChannel=channelRequest.id).all()
                 if existingStreamQuery:
                     for stream in existingStreamQuery:
                         db.session.delete(stream)
@@ -83,7 +91,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
     if requestedChannel is not None:
-        authedStream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+        authedStream = Stream.Stream.query.filter_by(pending=True, streamKey=requestedChannel.streamKey).first()
 
         if authedStream is not None:
             if authorizedRTMP is not None:
@@ -91,6 +99,8 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
 
             authedStream.currentViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
             authedStream.totalViewers = int(xmpp.getChannelCounts(requestedChannel.channelLoc))
+            authedStream.active = True
+            authedStream.pending = False
             db.session.commit()
 
             if requestedChannel.imageLocation is None:
@@ -150,12 +160,13 @@ def rtmp_record_auth_check(channelLoc):
                     db.session.commit()
 
             streamID = None
-            existingStream = Stream.Stream.query.filter_by(linkedChannel=channelRequest.id).first()
+            existingStream = Stream.Stream.query.filter_by(complete=False, linkedChannel=channelRequest.id).first()
             if existingStream is not None:
                 streamID = existingStream.id
 
             newRecording = RecordedVideo.RecordedVideo(userQuery.id, channelRequest.id, channelRequest.channelName, channelRequest.topic, 0, "", currentTime, channelRequest.allowComments, False)
             newRecording.originalStreamID = streamID
+            existingStream.recordedVideoId = newRecording.id
             db.session.add(newRecording)
             db.session.commit()
 
@@ -172,7 +183,7 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     currentTime = datetime.datetime.utcnow()
 
-    authedStream = Stream.Stream.query.filter_by(streamKey=key).all()
+    authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).all()
 
     channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
 
@@ -209,9 +220,12 @@ def rtmp_user_deauth_check(key, ipaddress):
             db.session.add(newStreamHistory)
             db.session.commit()
 
-            for vid in streamUpvotes:
-                db.session.delete(vid)
-            db.session.delete(stream)
+            #for vid in streamUpvotes:
+            #    db.session.delete(vid)
+            stream.endTimeStamp = currentTime
+            stream.active = False
+            stream.pending = False
+            stream.complete = True
             db.session.commit()
 
             if channelRequest.imageLocation is None:

@@ -102,7 +102,7 @@ def deleteChannelAdmin(message):
 def deleteActiveStream(message):
     if current_user.has_role('Admin'):
         streamID = int(message['streamID'])
-        streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+        streamQuery = Stream.Stream.query.filter_by(active=True, id=streamID).first()
         if streamQuery is not None:
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(pending=True, channelID=streamQuery.linkedChannel).all()
             for pending in pendingVideo:

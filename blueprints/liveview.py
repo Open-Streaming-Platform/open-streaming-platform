@@ -55,7 +55,7 @@ def view_page(loc):
         for bannedWord in bannedWordQuery:
             bannedWordArray.append(bannedWord.word)
 
-        streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+        streamData = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
         # Stream URL Generation
         streamURL = ''

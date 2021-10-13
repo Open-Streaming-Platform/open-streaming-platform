@@ -26,7 +26,7 @@ def streamers_page():
             if channel.owningUser not in streamerIDs:
                 streamerIDs.append(channel.owningUser)
     else:
-        openStreams = Stream.Stream.query.all()
+        openStreams = Stream.Stream.query.filter_by(active=True).all()
         for stream in openStreams:
             if stream.channel.owningUser not in streamerIDs:
                 streamerIDs.append(stream.channel.owningUser)

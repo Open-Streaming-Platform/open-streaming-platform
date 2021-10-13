@@ -23,7 +23,7 @@ class api_1_ListStreams(Resource):
         """
              Returns a List of All Active Streams
         """
-        streamList = Stream.Stream.query.all()
+        streamList = Stream.Stream.query.filter_by(active=True).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
 
@@ -35,7 +35,7 @@ class api_1_ListStream(Resource):
         """
              Returns Info on a Single Active Streams
         """
-        streamList = Stream.Stream.query.filter_by(id=streamID).all()
+        streamList = Stream.Stream.query.filter_by(active=True, id=streamID).all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList]}
         # Channel - Change Channel Name or Topic ID
@@ -51,7 +51,7 @@ class api_1_ListStream(Resource):
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey is not None:
                 if requestAPIKey.isValid():
-                    streamQuery = Stream.Stream.query.filter_by(id=int(streamID)).first()
+                    streamQuery = Stream.Stream.query.filter_by(active=True, id=int(streamID)).first()
                     if streamQuery is not None:
                         if streamQuery.channel.owningUser == requestAPIKey.userID:
                             args = streamParserPut.parse_args()

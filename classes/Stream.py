@@ -9,12 +9,17 @@ class Stream(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(255))
     startTimestamp = db.Column(db.DateTime)
-    linkedChannel = db.Column(db.Integer,db.ForeignKey('Channel.id'))
+    endTimeStamp = db.Column(db.DateTime)
+    linkedChannel = db.Column(db.Integer, db.ForeignKey('Channel.id'))
     streamKey = db.Column(db.String(255))
     streamName = db.Column(db.String(255))
     topic = db.Column(db.Integer)
     currentViewers = db.Column(db.Integer)
     totalViewers = db.Column(db.Integer)
+    active = db.Column(db.Boolean)
+    pending = db.Column(db.Boolean)
+    complete = db.Column(db.Boolean)
+    recordedVideoId = db.Column(db.Integer, db.ForeignKey('RecordedVideo.id'))
     rtmpServer = db.Column(db.Integer,db.ForeignKey('rtmpServer.id'))
     upvotes = db.relationship('streamUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
 
@@ -27,6 +32,9 @@ class Stream(db.Model):
         self.currentViewers = 0
         self.totalViewers = 0
         self.topic = topic
+        self.active = False
+        self.pending = True
+        self.complete = False
         self.channelMuted = False
 
     def __repr__(self):
@@ -66,5 +74,6 @@ class Stream(db.Model):
             'rtmpServer': self.server.address,
             'currentViewers': self.currentViewers,
             'totalViewers': self.currentViewers,
+            'active': self.active,
             'upvotes': self.get_upvotes()
         }
