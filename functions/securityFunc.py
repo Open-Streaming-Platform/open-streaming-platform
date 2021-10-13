@@ -9,10 +9,11 @@ from classes import Channel
 from classes import Sec
 from classes import invites
 from classes import views
+from classes import comments
 
 from globals import globalvars
 
-from functions import cache
+from functions import cache, system
 
 log = logging.getLogger('app.functions.securityFunctions')
 
@@ -80,6 +81,20 @@ def delete_user(userID):
     if userQuery != None:
         channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
         username = userQuery.username
+
+        # Delete any existing Invites
+        inviteQuery = invites.invitedViewer.query.filter_by(userID=int(userID)).all()
+        for invite in inviteQuery:
+            db.session.delete(invite)
+        db.session.commit()
+
+        # Delete any existing User Comments
+        commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
+        for comment in commentQuery:
+            db.session.delete(comment)
+        db.session.commit()
+
+        # Delete Channels and all Channel Data
         for channel in channelQuery:
             videoQuery = channel.recordedVideo
             for video in videoQuery:
@@ -101,6 +116,10 @@ def delete_user(userID):
         db.session.delete(userQuery)
         db.session.commit()
         log.warning({"level": "warning", "message": "User Deleted - " + username})
+        system.newLog(1, "User " + current_user.username + " deleted User " + username)
+        return True
+    else:
+        return False
 
 def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.
