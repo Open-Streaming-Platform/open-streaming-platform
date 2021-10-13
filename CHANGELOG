@@ -3,6 +3,7 @@
 OSP-Core: Adds Setting to Enable/Disable Global RTMP Restreams
 OSP-Core: Removes Unused Database Columns
 OSP-Core: Adds allowRestreams and hubUUID to Server API Settings Return
+OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #440
 
 
 0.8.17
