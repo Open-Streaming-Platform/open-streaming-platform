@@ -89,7 +89,7 @@ class Channel(db.Model):
             'currentViews': self.currentViewers,
             'recordingEnabled': self.record,
             'chatEnabled': self.chatEnabled,
-            'stream': [obj.id for obj in self.stream],
+            'stream': [obj.id for obj in self.stream if obj.active == True],
             'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
             'upvotes': self.get_upvotes(),
             'protected': self.protected,
