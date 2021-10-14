@@ -18,7 +18,7 @@ dev:
   tags:
     - Dev_Build
   script:
-    - chmod og= $ID_RSA
+    - chmod og= $DEV_SERVER_ID_RSA
     - apk update && apk add openssh-client
     - ssh -i $DEV_SERVER_ID_RSA -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
   environment:
