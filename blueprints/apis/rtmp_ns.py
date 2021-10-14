@@ -207,7 +207,7 @@ class api_1_rtmp_recclose(Resource):
         if 'name' in args and 'path' in args:
             name = args['name']
             path = args['path']
-            results = rtmpFunc.rtmp_rec_Complete_handler(name, path)
+            results = rtmpFunc.rtmp_rec_Complete_handler.delay(name, path)
             if results['success'] is True:
                 return {'results': results}, 200
             else:
