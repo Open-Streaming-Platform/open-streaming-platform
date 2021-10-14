@@ -10,7 +10,7 @@ def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
 
 @celery.task(bind=True)
-def update_video_thumbnail(videoID, timeStamp):
+def update_video_thumbnail(self, videoID, timeStamp):
     """
     Task to update a video thumbnail
     """
@@ -19,7 +19,7 @@ def update_video_thumbnail(videoID, timeStamp):
     return True
 
 @celery.task(bind=True)
-def check_video_thumbnails():
+def check_video_thumbnails(self):
     """
     Validates that all Recorded Videos Contain Thumbnails
     """
