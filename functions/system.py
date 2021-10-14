@@ -21,6 +21,8 @@ from classes import Sec
 
 from functions import cachedDbCalls
 
+from classes.shared import celery
+
 log = logging.getLogger('app.functions.system')
 
 def asynch(func):
@@ -188,4 +190,11 @@ def checkOSPEdgeConf():
             return False
     else:
         log.info({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
+    return True
+
+@celery.task()
+def testCelery():
+    print("Celery Active")
+    log.info({"level": "info", "message": "Celery Working"})
+    newLog(1, "Celery Working")
     return True

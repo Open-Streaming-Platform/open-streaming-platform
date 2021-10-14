@@ -609,6 +609,9 @@ try:
     app.logger.info({"level": "info", "message": "OSP Core Node Started Successfully-" + str(globalvars.version)})
 except:
     pass
+
+system.testCelery()
+
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False
