@@ -447,6 +447,8 @@ install_osp() {
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
 
+  install_celery
+
   # Setup Logrotate
   echo 90 | dialog --title "Installing OSP" --gauge "Setting Up Log Rotation" 10 70 0
   if cd /etc/logrotate.d
@@ -461,6 +463,34 @@ install_osp() {
           echo "Unable to setup logrotate" >> $OSPLOG 2>&1
       fi
   fi
+}
+
+install_celery() {
+  # Setup Celery
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery" 10 70 0
+  sudo mkdir /var/log/celery >> $OSPLOG 2>&1
+  sudo chown -R www-data:www-data /var/log/celery >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/osp-celery.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/celery /etc/default/celery >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery >> $OSPLOG 2>&1
+}
+
+install_celery_beat() {
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery Beat" 10 70 0
+  sudo cp -rf $DIR/setup/celery/osp-celery-beat.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery-beat >> $OSPLOG 2>&1
+}
+
+upgrade_celery() {
+  install_celery
+  sudo systemctl restart osp-celery >> $OSPLOG 2>&1
+}
+
+upgrade_celery_beat() {
+  install_celery_beat
+  sudo systemctl restart osp-celery-beat >> $OSPLOG 2>&1
 }
 
 upgrade_osp() {
@@ -548,6 +578,7 @@ install_menu() {
       "4" "Install OSP-Edge" \
       "5" "Install OSP-Proxy" \
       "6" "Install eJabberd" \
+      "7" "Install Celery Beat" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -582,6 +613,9 @@ install_menu() {
         echo 65 | dialog --title "Installing OSP" --gauge "Setting Up Configuration Files" 10 70 0
         sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
         sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py >> $OSPLOG 2>&1
+        echo 70 | dialog --title "Installing OSP" --gauge "Setting up Celery" 10 70 0
+        install_celery
+        install_celery_beat
         echo 75 | dialog --title "Installing OSP" --gauge "Setting up ejabberd" 10 70 0
         generate_ejabberd_admin
         echo 80 | dialog --title "Installing OSP" --gauge "Installing MySQL" 10 70 0
@@ -593,6 +627,9 @@ install_menu() {
         upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
+        echo 95 | dialog --title "Installing OSP" --gauge "Starting Celery" 10 70 0
+        sudo systemctl start osp-celery >> $OSPLOG 2>&1
+        sudo systemctl start osp-celery-beat >> $OSPLOG 2>&1
         result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
         display_result "Install OSP"
         ;;
@@ -601,6 +638,8 @@ install_menu() {
         install_nginx_core
         echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP Core" 10 70 0
         install_osp
+        echo 70 | dialog --title "Installing OSP" --gauge "Setting Celery" 10 70 0
+        install_celery
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         ;;
@@ -638,6 +677,12 @@ install_menu() {
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         ;;
+      7 )
+        echo 50 | dialog --title "Installing OSP" --gauge "Setting up Celery Beat"
+        install_celery_beat
+        echo 75 | dialog --title "Installing OSP" --gauge "Starting Celery Beat" 10 70 0
+        sudo systemctl start osp-celery
+        sudo systemctl start osp-celery-beat
     esac
   done
 }
@@ -695,6 +740,9 @@ upgrade_menu() {
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 85 | dialog --title "Upgrade OSP" --gauge "Restarting OSP Core" 10 70 0
         sudo systemctl restart osp.target >> $OSPLOG 2>&1
+        echo 90 | dialog --title "Installing OSP" --gauge "Upgrading Celery" 10 70 0
+        upgrade_celery
+        upgrade_celery_beat
         echo 95 | dialog --title "Upgrade OSP" --gauge "Restarting OSP-RTMP" 10 70 0
         sudo systemctl restart osp-rtmp >> $OSPLOG 2>&1
         result=$(echo "OSP - Single Server Upgrade Completed!")
@@ -711,6 +759,8 @@ upgrade_menu() {
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 85 | dialog --title "Upgrade OSP" --gauge "Restarting OSP Core" 10 70 0
         sudo systemctl restart osp.target >> $OSPLOG 2>&1
+        echo 90 | dialog --title "Installing OSP" --gauge "Upgrading Celery" 10 70 0
+        upgrade_celery
         result=$(echo "OSP - Core Upgrade Completed!")
         display_result "Upgrade OSP"
         ;;
