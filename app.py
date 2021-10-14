@@ -610,8 +610,6 @@ try:
 except:
     pass
 
-system.testCelery()
-
 if __name__ == '__main__':
     app.jinja_env.auto_reload = False
     app.config['TEMPLATES_AUTO_RELOAD'] = False

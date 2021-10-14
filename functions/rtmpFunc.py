@@ -5,7 +5,7 @@ import datetime
 
 from flask import Blueprint, request, redirect, current_app, abort
 
-from classes.shared import db
+from classes.shared import db, celery
 from classes import Sec
 from classes import RecordedVideo
 from classes import subscriptions
@@ -253,6 +253,7 @@ def rtmp_user_deauth_check(key, ipaddress):
         db.session.close()
         return returnMessage
 
+@celery.task()
 def rtmp_rec_Complete_handler(channelLoc, path):
     sysSettings = cachedDbCalls.getSystemSettings()
 
