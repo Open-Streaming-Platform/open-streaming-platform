@@ -8,7 +8,7 @@ Requires=redis.service
 Type=forking
 User=www-user
 Group=www-user
-EnvironmentFile=/etc/conf.d/celery
+EnvironmentFile=/etc/celery/celery
 WorkingDirectory=/opt/osp
 ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP multi start $CELERYD_NODES \
     --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} \
