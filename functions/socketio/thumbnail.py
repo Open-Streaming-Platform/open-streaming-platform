@@ -18,6 +18,7 @@ from classes import Stream
 from globals import globalvars
 
 from functions import system
+from functions.scheduled_tasks import video_tasks
 
 @socketio.on('newScreenShot')
 def newScreenShot(message):
@@ -69,28 +70,8 @@ def setScreenShot(message):
         if video is not None:
             videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
             if videoQuery is not None and videoQuery.owningUser == current_user.id:
-                videoLocation = videos_root + videoQuery.videoLocation
-                newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
-                newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
-                videoQuery.thumbnailLocation = newThumbnailLocation
-                fullthumbnailLocation = videos_root + newThumbnailLocation
-                newGifFullThumbnailLocation = videos_root + newGifThumbnailLocation
-
-                videoQuery.thumbnailLocation = newThumbnailLocation
-                videoQuery.gifLocation = newGifThumbnailLocation
-
-                db.session.commit()
-                db.session.close()
-                try:
-                    os.remove(fullthumbnailLocation)
-                except OSError:
-                    pass
-                try:
-                    os.remove(newGifFullThumbnailLocation)
-                except OSError:
-                    pass
-                result = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-                gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', newGifFullThumbnailLocation])
+                # Offloads Video Thumbnail Creation to Task Queue
+                video_tasks.update_video_thumbnail.delay(videoQuery.id, timeStamp)
 
     elif 'clipID' in message:
         clipID = message['clipID']
