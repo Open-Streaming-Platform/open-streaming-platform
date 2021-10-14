@@ -9,13 +9,13 @@ log = logging.getLogger('app.functions.scheduler.video_tasks')
 def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
 
-@celery.task(bind=True)
+@celery.task()
 def update_video_thumbnail(videoID, timeStamp):
     """
     Task to update a video thumbnail
     """
     results = videoFunc.setVideoThumbnail(videoID, timeStamp)
-    log.info({"level": "info", "taskID": "self.request.id", "message": "Updated Video Thumbnail - Updated: " + str(videoID)})
+    #log.info({"level": "info", "taskID": "self.request.id", "message": "Updated Video Thumbnail - Updated: " + str(videoID)})
     return True
 
 @celery.task(bind=True)
