@@ -15,7 +15,7 @@ def page_not_found(e):
     return render_template(themes.checkOverride('404.html'), sysSetting=sysSettings, previous=request.referrer), 404
 
 @errorhandler_bp.app_errorhandler(500)
-def page_not_found(e):
+def system_error_handler(e):
     sysSettings = cachedDbCalls.getSystemSettings()
     system.newLog(0,"500 Error - " + str(request.url))
     return render_template(themes.checkOverride('500.html'), sysSetting=sysSettings, previous=request.referrer, error=e), 500
