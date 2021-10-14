@@ -915,8 +915,9 @@ def admin_page():
 @login_required
 @roles_required('Admin')
 def createtestask():
-    result = system.testCelery()
+    result = system.testCelery.apply_async(countdown=1)
     return str(result)
+
 @settings_bp.route('/admin/rtmpstat/<node>')
 @login_required
 @roles_required('Admin')
