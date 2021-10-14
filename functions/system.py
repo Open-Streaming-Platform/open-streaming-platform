@@ -195,8 +195,6 @@ def checkOSPEdgeConf():
 
 @celery.task()
 def testCelery():
-    print("Celery Active")
-    log.info({"level": "info", "message": "Celery Working"})
-    newLog(1, "Celery Working")
+    print("testing celery")
     time.sleep(60)
     return True

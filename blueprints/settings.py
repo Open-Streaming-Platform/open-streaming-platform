@@ -911,7 +911,7 @@ def admin_page():
 
         return redirect(url_for('.admin_page'))
 
-@settings_bp.route('/admin/create_task')
+@settings_bp.route('/admin/create_test_task')
 @login_required
 @roles_required('Admin')
 def createtestask():
