@@ -5,6 +5,7 @@ OSP-Core: Removes Unused Database Columns
 OSP-Core: Adds allowRestreams and hubUUID to Server API Settings Return
 OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #440
 OSP-Core: Fixed an Issue when OSP will attempt to keep adding the default Topic "Other", even after deletion - #407
+OSP-Core: Updates Pillow to 8.3.2 to fix CVE-2021-34552
 
 
 0.8.17
