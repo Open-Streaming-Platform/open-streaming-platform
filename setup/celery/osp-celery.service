@@ -6,8 +6,8 @@ Requires=redis.service
 
 [Service]
 Type=forking
-User=www-user
-Group=www-user
+User=www-data
+Group=www-data
 EnvironmentFile=/etc/celery/celery
 WorkingDirectory=/opt/osp
 ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP multi start $CELERYD_NODES \
