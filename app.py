@@ -80,6 +80,13 @@ if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
 
 coreNginxRTMPAddress = "127.0.0.1"
 
+# Initialize RedisURL Variable
+RedisURL = None
+if config.redisPassword == '' or config.redisPassword is None:
+    RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
+else:
+    RedisURL = "redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+
 app = Flask(__name__)
 
 # Flask App Environment Setup
@@ -127,6 +134,8 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
+app.config['CELERY_BROKER_URL'] = RedisURL
+app.config['CELERY_RESULT_BACKEND'] = RedisURL
 
 #----------------------------------------------------------------------------#
 # Set Logging Configuration
@@ -201,13 +210,6 @@ from functions import cachedDbCalls
 app.logger.info({"level": "info", "message": "Initializing Flask-BabelEx"})
 babel = Babel(app)
 
-# Initialize RedisURL
-RedisURL = None
-if config.redisPassword == '' or config.redisPassword is None:
-    RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
-else:
-    RedisURL = "redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
-
 #Initialize Flask-Limiter
 app.logger.info({"level": "info", "message": "Importing Flask-Limiter"})
 app.config["RATELIMIT_STORAGE_URL"] = RedisURL
@@ -227,8 +229,6 @@ r.flushdb()
 # Initialize Celery
 app.logger.info({"level": "info", "message": "Initializing Celery"})
 from classes.shared import celery
-app.config['CELERY_BROKER_URL'] = RedisURL
-app.config['CELERY_RESULT_BACKEND'] = RedisURL
 
 celery.conf.broker_url = app.config['CELERY_BROKER_URL']
 celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']

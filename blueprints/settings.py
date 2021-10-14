@@ -911,6 +911,12 @@ def admin_page():
 
         return redirect(url_for('.admin_page'))
 
+@settings_bp.route('/admin/create_task')
+@login_required
+@roles_required('Admin')
+def createtestask():
+    result = system.testCelery()
+    return str(result)
 @settings_bp.route('/admin/rtmpstat/<node>')
 @login_required
 @roles_required('Admin')

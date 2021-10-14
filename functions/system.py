@@ -10,6 +10,7 @@ import ipaddress
 import json
 import secrets
 import logging
+import time
 
 from globals import globalvars
 
@@ -197,4 +198,5 @@ def testCelery():
     print("Celery Active")
     log.info({"level": "info", "message": "Celery Working"})
     newLog(1, "Celery Working")
+    time.sleep(60)
     return True
