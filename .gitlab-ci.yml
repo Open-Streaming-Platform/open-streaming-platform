@@ -27,7 +27,7 @@ dev:
   tags:
     - Dev_Build
   script:
-    - ssh -i $DEV_SERVER_ID_RSA -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
+    - ssh -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
   environment:
     name: development
     url: http://osp.internal.divby0.net
