@@ -732,8 +732,6 @@ upgrade_menu() {
         upgrade_rtmp
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
         upgrade_ejabberd
-        echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
-        upgrade_db
         echo 50 | dialog --title "Upgrade OSP" --gauge "Restarting ejabberd" 10 70 0
         sudo systemctl restart ejabberd >> $OSPLOG 2>&1
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
@@ -753,8 +751,6 @@ upgrade_menu() {
         upgrade_osp
         echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
         upgrade_nginxcore
-        echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
-        upgrade_db
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 85 | dialog --title "Upgrade OSP" --gauge "Restarting OSP Core" 10 70 0
