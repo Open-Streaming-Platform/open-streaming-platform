@@ -242,6 +242,8 @@ class ContextTask(celery.Task):
 
 celery.Task = ContextTask
 
+from functions import scheduledTasks
+
 # Initialize Flask-SocketIO
 app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
 from classes.shared import socketio
