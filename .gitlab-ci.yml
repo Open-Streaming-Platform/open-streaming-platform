@@ -19,7 +19,9 @@ dev:
     - Dev_Build
   script:
     - chmod og= $DEV_SERVER_ID_RSA
+    - echo 'Downloading SSH Client'
     - apk update && apk add openssh-client
+    - echo 'Connecting to Dev Server and Updating OSP'
     - ssh -i $DEV_SERVER_ID_RSA -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
   environment:
     name: development
