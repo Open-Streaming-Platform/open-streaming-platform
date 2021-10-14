@@ -206,7 +206,7 @@ RedisURL = None
 if config.redisPassword == '' or config.redisPassword is None:
     RedisURL = "redis://" + config.redisHost + ":" + str(config.redisPort)
 else:
-    RedisURL = "redis://" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
+    RedisURL = "redis://:" + config.redisPassword + "@" + config.redisHost + ":" + str(config.redisPort)
 
 #Initialize Flask-Limiter
 app.logger.info({"level": "info", "message": "Importing Flask-Limiter"})
@@ -223,6 +223,24 @@ else:
     r = redis.Redis(host=config.redisHost, port=config.redisPort, password=config.redisPassword)
     app.config["SESSION_REDIS"] = r
 r.flushdb()
+
+# Initialize Celery
+app.logger.info({"level": "info", "message": "Initializing Celery"})
+from classes.shared import celery
+app.config['CELERY_BROKER_URL'] = RedisURL
+app.config['CELERY_RESULT_BACKEND'] = RedisURL
+
+celery.conf.broker_url = app.config['CELERY_BROKER_URL']
+celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
+celery.conf.update(app.config)
+
+class ContextTask(celery.Task):
+    """Make celery tasks work with Flask app context"""
+    def __call__(self, *args, **kwargs):
+        with app.app_context():
+            return self.run(*args, **kwargs)
+
+celery.Task = ContextTask
 
 # Initialize Flask-SocketIO
 app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
