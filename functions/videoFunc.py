@@ -170,7 +170,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
     settingsQuery = cachedDbCalls.getSystemSettings()
 
     # TODO Add Webhook for Clip Creation
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
 
     if recordedVidQuery is not None:
 

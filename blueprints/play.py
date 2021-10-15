@@ -122,9 +122,12 @@ def vid_clip_page(videoID):
     clipName = str(request.form['clipName'])
     clipDescription = str(request.form['clipDescription'])
 
-    result = video_tasks.create_video_clip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
-
-    flash("Clip Queued for Creation", "success")
+    videoQuery = cachedDbCalls.getVideo(videoID)
+    if videoQuery.owningUser == current_user.id:
+        result = video_tasks.create_video_clip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
+        flash("Clip Queued for Creation", "success")
+    else:
+        flash("Current Video Owner is not current owner","error")
     return redirect(url_for(".view_vid_page", videoID=videoID))
 
 @play_bp.route('/<videoID>/move', methods=['POST'])

@@ -67,19 +67,16 @@ def createclipSocketIO(message):
         clipDescription = message['clipDescription']
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
-        result = video_tasks.create_video_clip.delay(videoID, startTime, stopTime, clipName, clipDescription)
-        if result[0] is True:
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery.owningUser == current_user.id:
+            result = video_tasks.create_video_clip.delay(videoID, startTime, stopTime, clipName, clipDescription)
             db.session.commit()
             db.session.close()
             return 'OK'
         else:
             db.session.commit()
             db.session.close()
-            return abort(500)
-    else:
-        db.session.commit()
-        db.session.close()
-        return abort(401)
+            return abort(401)
 
 @socketio.on('moveVideo')
 def moveVideoSocketIO(message):
