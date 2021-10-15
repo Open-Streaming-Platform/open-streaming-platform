@@ -30,7 +30,6 @@ from flask_babelex import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import redis
-from apscheduler.schedulers.background import BackgroundScheduler
 
 # Import Paths
 cwp = sys.path[0]

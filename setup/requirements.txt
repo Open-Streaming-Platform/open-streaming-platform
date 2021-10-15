@@ -39,7 +39,6 @@ WTForms==2.3.3
 requests==2.20.0
 flask-markdown==0.3
 xmltodict==0.12.0
-apscheduler==3.6.1
 redis==3.3.11
 flask-limiter==1.1.0
 gunicorn==20.0.4
