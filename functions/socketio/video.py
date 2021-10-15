@@ -21,19 +21,15 @@ from app import r
 def deleteVideoSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        result = videoFunc.deleteVideo(videoID)
-        if result is True:
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery.owningUser == current_user.id:
+            result = video_tasks.delete_video.delay(videoID)
             db.session.commit()
             db.session.close()
             return 'OK'
-        else:
-            db.session.commit()
-            db.session.close()
-            return abort(500)
-    else:
-        db.session.commit()
-        db.session.close()
-        return abort(401)
+    db.session.commit()
+    db.session.close()
+    return abort(401)
 
 @socketio.on('editVideo')
 def editVideoSocketIO(message):

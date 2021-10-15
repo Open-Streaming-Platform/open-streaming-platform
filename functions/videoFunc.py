@@ -33,7 +33,7 @@ def getVidLength(input_video):
 def deleteVideo(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
-    if current_user.id == recordedVid.owningUser and recordedVid.videoLocation is not None:
+    if recordedVid.videoLocation is not None:
         videos_root = globalvars.videoRoot + 'videos/'
         filePath = videos_root + recordedVid.videoLocation
         thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"

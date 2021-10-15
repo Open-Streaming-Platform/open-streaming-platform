@@ -9,6 +9,7 @@ from classes import views
 from classes.shared import db
 
 from functions import cachedDbCalls
+from functions.scheduled_tasks import video_tasks
 
 api = Namespace('video', description='Video Related Queries and Functions')
 
@@ -85,22 +86,8 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            videoQuery.remove()
-                            for clip in videoQuery.clips:
-                                for upvotes in clip:
-                                    db.session.delete(upvotes)
-                                clip.remove()
-                                db.session.delete(clip)
-                            for upvote in videoQuery.upvotes:
-                                db.session.delete(upvote)
-                            for comment in videoQuery.comments:
-                                db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id).all()
-                            for view in vidViews:
-                                db.session.delete(view)
-                            db.session.delete(videoQuery)
-                            db.session.commit()
-                            return {'results': {'message': 'Video Deleted'}}, 200
+                            results = video_tasks.delete_video(videoQuery.id)
+                            return {'results': {'message': 'Video Queued for Deletion'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/search')

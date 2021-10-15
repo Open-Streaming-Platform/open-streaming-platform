@@ -32,6 +32,7 @@ class settings(db.Model):
     buildEdgeOnRestart = db.Column(db.Boolean)
     hubUUID = db.Column(db.String(255))
     hubURL = db.Column(db.String(255))
+    maxVideoRetention = db.Column(db.Integer)
 
     def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
@@ -64,6 +65,7 @@ class settings(db.Model):
         self.maintenanceMode = False
         self.hubUUID = None
         self.hubURL = "https://hub.openstreamingplatform.com"
+        self.maxVideoRetention = 0
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -88,7 +90,8 @@ class settings(db.Model):
             'adaptiveStreaming': self.adaptiveStreaming,
             'maintenanceMode': self.maintenanceMode,
             'hubUUID': self.hubUUID,
-            'hubURL': self.hubURL
+            'hubURL': self.hubURL,
+            'maxVideoRetention': self.maxVideoRetention
         }
 
 class edgeStreamer(db.Model):

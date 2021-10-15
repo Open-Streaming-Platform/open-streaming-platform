@@ -1,6 +1,7 @@
+import datetime
 import logging
 from classes.shared import celery
-from classes import RecordedVideo
+from classes import RecordedVideo, Channel, settings
 
 from functions import videoFunc
 
@@ -8,6 +9,15 @@ log = logging.getLogger('app.functions.scheduler.video_tasks')
 
 def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
+
+@celery.task(bind=True)
+def delete_video(self, videoID):
+    """
+    Task to delete a video
+    """
+    results = videoFunc.deleteVideo(videoID)
+    log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Deleted: " + str(videoID)})
+    return True
 
 @celery.task(bind=True)
 def create_video_clip(self, videoID, clipStart, clipStop, clipName, clipDescription):
@@ -51,4 +61,27 @@ def check_video_thumbnails(self):
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Validated Video Thumbnails - Updated: " + str(videosUpdated)})
     return True
 
-
+@celery.task(bind=True)
+def check_video_retention(self):
+    """
+    Checks if Server Retention or Channel Retention of Videos has been met and delete videos exceeding the lower of the two
+    """
+    currentTime = datetime.datetime.utcnow()
+    sysSettings = settings.settings.query.first()
+    videoCount = 0
+    if sysSettings != None:
+        channelQuery = Channel.Channel.query.all()
+        for channel in channelQuery:
+            if sysSettings.maxVideoRetention > 0 or channel.maxVideoRetention > 0:
+                setRetentionArray = []
+                if sysSettings.maxVideoRetention > 0:
+                    setRetentionArray.append(sysSettings.maxVideoRetention)
+                if channel.maxVideoRetention > 0:
+                    setRetentionArray.append(channel.maxVideoRetention)
+                setRetention = min(setRetentionArray)
+                for video in channel.recordedVideo:
+                    if currentTime - datetime.timedelta(days=setRetention) > video.videoDate:
+                        results = delete_video.bind(video.id)
+                        videoCount = videoCount + 1
+    log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Retention Check Performed.  Removed: " + str(videoCount)})
+    return "Removed Videos " + str(videoCount)

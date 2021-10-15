@@ -64,6 +64,14 @@ def dbFixes():
     if sysSettings.systemLogo is None:
         sysSettings.systemLogo = "/static/img/logo.png"
         db.session.commit()
+    # Sets maxVideoRetention if none to 0
+    if sysSettings.maxVideoRetention is None:
+        sysSettings.maxVideoRetention = 0
+        db.session.commit()
+    # If Hub Settings are not set, set to default
+    if sysSettings.hubURL is None:
+        sysSettings.hubURL = "https://hub.openstreamingplatform.com"
+        db.session.commit()
     # Sets allowComments to False if None is Set - Usual Cause is moving from Alpha to Beta
     if sysSettings.allowComments is None:
         sysSettings.allowComments = False
@@ -94,6 +102,10 @@ def dbFixes():
         chan.chatBG = "Standard"
         chan.chatTextColor = "#FFFFFF"
         chan.chatAnimation = "slide-in-left"
+        db.session.commit()
+    channelQuery = Channel.Channel.query.filter_by(maxVideoRetention=None).all()
+    for chan in channelQuery:
+        chan.maxVideoRetention = 0
         db.session.commit()
     channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
     for chan in channelQuery:

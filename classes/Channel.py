@@ -32,6 +32,7 @@ class Channel(db.Model):
     xmppToken = db.Column(db.String(64))
     vanityURL = db.Column(db.String(1024))
     allowGuestNickChange = db.Column(db.Boolean)
+    maxVideoRetention = db.Column(db.Integer)
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -67,6 +68,7 @@ class Channel(db.Model):
         self.xmppToken = str(os.urandom(32).hex())
         self.vanityURL = None
         self.allowGuestNickChange = True
+        self.maxVideoRetention = 0
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -94,7 +96,8 @@ class Channel(db.Model):
             'upvotes': self.get_upvotes(),
             'protected': self.protected,
             'allowGuestNickChange': self.allowGuestNickChange,
-            'vanityURL': self.vanityURL
+            'vanityURL': self.vanityURL,
+            'maxVideoRetention': self.maxVideoRetention
         }
 
     def authed_serialize(self):
@@ -118,7 +121,8 @@ class Channel(db.Model):
             'xmppToken': self.xmppToken,
             'streamKey': self.streamKey,
             'allowGuestNickChange': self.allowGuestNickChange,
-            'vanityURL': self.vanityURL
+            'vanityURL': self.vanityURL,
+            'maxVideoRetention': self.maxVideoRetention
         }
 
 class restreamDestinations(db.Model):

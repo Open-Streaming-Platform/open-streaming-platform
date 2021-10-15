@@ -171,12 +171,12 @@ def vid_change_page(videoID):
 @play_bp.route('/<videoID>/delete')
 @login_required
 def delete_vid_page(videoID):
+    videoQuery = cachedDbCalls.getVideo(videoID)
+    if videoQuery.owningUser == current_user.id:
+        result = video_tasks.delete_video.delay(videoID)
 
-    result = videoFunc.deleteVideo(videoID)
-
-    if result is True:
         cache.delete_memoized(cachedDbCalls.getVideo, videoID)
-        flash("Video deleted")
+        flash("Video Scheduled for Deletion", "success")
         return redirect(url_for('root.main_page'))
     else:
         flash("Error Deleting Video")
