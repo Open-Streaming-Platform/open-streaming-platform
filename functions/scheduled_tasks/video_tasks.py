@@ -1,3 +1,6 @@
+from celery.canvas import subtask
+from celery.result import AsyncResult
+
 import datetime
 import logging
 from classes.shared import celery
@@ -82,7 +85,7 @@ def check_video_retention(self):
                 setRetention = min(setRetentionArray)
                 for video in channel.recordedVideo:
                     if currentTime - datetime.timedelta(days=setRetention) > video.videoDate:
-                        results = delete_video.subtask(video.id)
+                        results = subtask('delete_video', args=(video.id, )).apply_async()
                         videoCount = videoCount + 1
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Retention Check Performed.  Removed: " + str(videoCount)})
     return "Removed Videos " + str(videoCount)
