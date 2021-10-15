@@ -1,5 +1,8 @@
 0.9.0
 ==============================================
+OSP-Core: Adds Celery Task Queue and Celery Beat Task Scheduler
+OSP-Core: Offloads Recording Completion, Video Delete, Clip Delete, Clip Creation Functions to Task Queue for Responsiveness
+OSP-Core: Adds Ability to Set Video Retention at a Global and Channel Level by number of days. Lowest value will be used.
 OSP-Core: Adds Setting to Enable/Disable Global RTMP Restreams
 OSP-Core: Removes Unused Database Columns
 OSP-Core: Adds allowRestreams and hubUUID to Server API Settings Return
