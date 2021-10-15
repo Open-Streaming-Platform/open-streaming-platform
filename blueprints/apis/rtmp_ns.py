@@ -208,10 +208,9 @@ class api_1_rtmp_recclose(Resource):
             name = args['name']
             path = args['path']
             results = rtmpFunc.rtmp_rec_Complete_handler.delay(name, path)
-            if results['success'] is True:
-                return {'results': results}, 200
-            else:
-                return {'results': results}, 400
+
+            return {'results': results}, 200
+
         else:
             return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
