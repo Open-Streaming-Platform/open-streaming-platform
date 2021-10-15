@@ -125,7 +125,7 @@ def vid_clip_page(videoID):
     result = video_tasks.create_video_clip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
 
     flash("Clip Queued for Creation", "success")
-    return redirect(url_for(".view_vid_page", clipID=videoID))
+    return redirect(url_for(".view_vid_page", videoID=videoID))
 
 @play_bp.route('/<videoID>/move', methods=['POST'])
 @login_required
