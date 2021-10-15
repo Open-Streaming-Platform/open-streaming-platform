@@ -13,6 +13,7 @@ from functions import templateFilters
 from functions import videoFunc
 from functions import subsFunc
 from functions import cachedDbCalls
+from functions.scheduled_tasks import video_tasks
 
 from app import r
 
@@ -206,17 +207,16 @@ def changeClipMetadataSocketIO(message):
 def deleteClipSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message['clipID'])
-
-        result = videoFunc.deleteClip(clipID)
-
-        if result is True:
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+        if clipQuery.recordedVideo.owningUser == current_user.id:
+            result = video_tasks.delete_video_clip.delay(clipID)
             db.session.commit()
             db.session.close()
             return 'OK'
         else:
             db.session.commit()
             db.session.close()
-            return abort(500)
+            return abort(401)
     else:
         db.session.commit()
         db.session.close()

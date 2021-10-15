@@ -252,7 +252,7 @@ def deleteClip(clipID):
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
     videos_root = globalvars.videoRoot + 'videos/'
 
-    if current_user.id == clipQuery.recordedVideo.owningUser and clipQuery is not None:
+    if clipQuery is not None:
         videoPath = videos_root + clipQuery.videoLocation
         thumbnailPath = videos_root + clipQuery.thumbnailLocation
         gifPath = videos_root + clipQuery.gifLocation
@@ -266,6 +266,10 @@ def deleteClip(clipID):
         if videoPath != videos_root:
             if os.path.exists(videoPath) and (clipQuery.videoLocation is not None or videoPath != ""):
                 os.remove(videoPath)
+
+        upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
+        for vote in upvoteQuery:
+            db.session.delete(vote)
 
         db.session.delete(clipQuery)
 

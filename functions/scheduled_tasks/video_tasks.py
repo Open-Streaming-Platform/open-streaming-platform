@@ -19,6 +19,15 @@ def create_video_clip(self, videoID, clipStart, clipStop, clipName, clipDescript
     return results[0]
 
 @celery.task(bind=True)
+def delete_video_clip(self, clipID):
+    """
+    Task to delete a video clip
+    """
+    results = videoFunc.deleteClip(clipID)
+    log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Clip deleted: " + str(clipID)})
+    return True
+
+@celery.task(bind=True)
 def update_video_thumbnail(self, videoID, timeStamp):
     """
     Task to update a video thumbnail
