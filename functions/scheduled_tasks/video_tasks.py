@@ -14,7 +14,7 @@ def create_video_clip(self, videoID, clipStart, clipStop, clipName, clipDescript
     """
     Task to create a video clip
     """
-    results = videoFunc(videoID, clipStart, clipStop, clipName, clipDescription)
+    results = videoFunc.createClip(videoID, clipStart, clipStop, clipName, clipDescription)
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Clip Created for: " + str(videoID)})
     return results[0]
 

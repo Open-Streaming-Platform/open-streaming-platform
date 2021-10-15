@@ -22,6 +22,7 @@ from functions import securityFunc
 from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
+from functions.scheduled_tasks import video_tasks
 
 from globals import globalvars
 
@@ -121,7 +122,7 @@ def vid_clip_page(videoID):
     clipName = str(request.form['clipName'])
     clipDescription = str(request.form['clipDescription'])
 
-    result = videoFunc.createClip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
+    result = video_tasks.create_video_clip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
 
     if result[0] is True:
         flash("Clip Queued for Creation", "success")
