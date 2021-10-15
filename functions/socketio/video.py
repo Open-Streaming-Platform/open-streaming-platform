@@ -67,7 +67,7 @@ def createclipSocketIO(message):
         clipDescription = message['clipDescription']
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
-        result = videoFunc.createClip(videoID, startTime, stopTime, clipName, clipDescription)
+        result = videoFunc.createClip.delay(videoID, startTime, stopTime, clipName, clipDescription)
         if result[0] is True:
             db.session.commit()
             db.session.close()

@@ -121,11 +121,11 @@ def vid_clip_page(videoID):
     clipName = str(request.form['clipName'])
     clipDescription = str(request.form['clipDescription'])
 
-    result = videoFunc.createClip(videoID, clipStart, clipStop, clipName, clipDescription)
+    result = videoFunc.createClip.delay(videoID, clipStart, clipStop, clipName, clipDescription)
 
     if result[0] is True:
-        flash("Clip Created", "success")
-        return redirect(url_for("clip.view_clip_page", clipID=result[1]))
+        flash("Clip Queued for Creation", "success")
+        return redirect(url_for(".view_vid_page", clipID=videoID))
     else:
         flash("Unable to create Clip", "error")
         return redirect(url_for(".view_vid_page", videoID=videoID))

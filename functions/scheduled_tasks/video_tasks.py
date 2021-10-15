@@ -10,6 +10,15 @@ def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
 
 @celery.task(bind=True)
+def create_video_clip(self, videoID, clipStart, clipStop, clipName, clipDescription):
+    """
+    Task to create a video clip
+    """
+    results = videoFunc(videoID, clipStart, clipStop, clipName, clipDescription)
+    log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Clip Created for: " + str(videoID)})
+    return results[0]
+
+@celery.task(bind=True)
 def update_video_thumbnail(self, videoID, timeStamp):
     """
     Task to update a video thumbnail

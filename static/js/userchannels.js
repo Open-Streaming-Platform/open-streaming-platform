@@ -617,7 +617,7 @@ function createVideoClipSubmit() {
     var clipStop = document.getElementById("clipStopTime").value;
 
     socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
-    createNewBSAlert("Clip Created", "Success");
+    createNewBSAlert("Clip Queued for Creation", "Success");
 }
 
 function editClipSubmit() {
