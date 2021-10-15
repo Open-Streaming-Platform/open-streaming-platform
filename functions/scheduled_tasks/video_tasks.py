@@ -12,7 +12,7 @@ log = logging.getLogger('app.functions.scheduler.video_tasks')
 
 def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
-    sender.add_periodic_task(360, check_video_retention.s(), name='Check Video Retention and Cleanup')
+    sender.add_periodic_task(3600, check_video_retention.s(), name='Check Video Retention and Cleanup')
 
 @celery.task(bind=True)
 def delete_video(self, videoID):
