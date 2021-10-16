@@ -54,23 +54,30 @@ def user_auth_check():
             else:
                 return abort(400)
 
-            # Request a list of the Restream Destinations for a Channel via APIv1
-            restreamDataRequest = requests.get(globalvars.apiLocation + "/apiv1/channel/" + channelLocation + "/restreams")
-            if restreamDataRequest.status_code == 200:
-                restreamDataResults = restreamDataRequest.json()
-                globalvars.restreamSubprocesses[channelLocation] = []
+            serverRestreamAllowed = False
+            if 'allowRestream' not in sysSettingsResults['results']:
+                serverRestreamAllowed = True
+            elif sysSettingsResults['results']['allowRestream'] is True:
+                serverRestreamAllowed = True
 
-                # Iterate Over Restream Destinations and Create ffmpeg Subprocess to Handle
-                for destination in restreamDataResults['results']:
-                    if destination['enabled'] is True:
-                        p = subprocess.Popen(
-                            ["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", destination['url'], "-c:v",
-                             "libx264", "-maxrate", str(sysSettingsResults['results']['restreamMaxBitRate']) + "k", "-bufsize",
-                             "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"], stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL)
-                        globalvars.restreamSubprocesses[channelLocation].append(p)
-            else:
-                return abort(400)
+            if serverRestreamAllowed is True:
+                # Request a list of the Restream Destinations for a Channel via APIv1
+                restreamDataRequest = requests.get(globalvars.apiLocation + "/apiv1/channel/" + channelLocation + "/restreams")
+                if restreamDataRequest.status_code == 200:
+                    restreamDataResults = restreamDataRequest.json()
+                    globalvars.restreamSubprocesses[channelLocation] = []
+
+                    # Iterate Over Restream Destinations and Create ffmpeg Subprocess to Handle
+                    for destination in restreamDataResults['results']:
+                        if destination['enabled'] is True:
+                            p = subprocess.Popen(
+                                ["ffmpeg", "-i", inputLocation, "-c", "copy", "-f", "flv", destination['url'], "-c:v",
+                                 "libx264", "-maxrate", str(sysSettingsResults['results']['restreamMaxBitRate']) + "k", "-bufsize",
+                                 "6000k", "-c:a", "aac", "-b:a", "160k", "-ac", "2"], stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
+                            globalvars.restreamSubprocesses[channelLocation].append(p)
+                else:
+                    return abort(400)
 
             # Request List of OSP Edge Servers to Send a Restream To
             edgeNodeDataRequest = requests.get(globalvars.apiLocation + "/apiv1/server/edges")
