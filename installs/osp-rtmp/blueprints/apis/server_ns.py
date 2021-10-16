@@ -11,4 +11,4 @@ class api_1_ping(Resource):
         """
             Displays basic ping/pong response
         """
-        return {'results': { "mesaage": "pong" } }
+        return {'results': { "message": "pong" } }
