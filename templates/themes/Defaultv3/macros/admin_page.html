@@ -311,7 +311,7 @@
                     <div class="col">
                         <div class="form-check form-switch">
                             <label class="form-check-label" for="enableRtmpRestreams">Enable RTMP Restreams</label>
-                            <input class="form-check-input boxShadow" type="checkbox" name="enableRTMPRestream" id="enableRtmpRestreams"> <!--TODO Create DB Object-->
+                            <input class="form-check-input boxShadow" type="checkbox" name="enableRTMPRestream" id="enableRtmpRestreams" {% if sysSettings.allowRestream == True %} checked {% endif %}>
                         </div>
                     </div>
                 </div>
@@ -322,6 +322,13 @@
                             <input class="form-check-input boxShadow" type="checkbox" name="adaptiveStreaming" id="enableAdaptiveToggle"{% if sysSettings.adaptiveStreaming == True %} checked {% endif %}>
                             <small> (Can Cause Heavy CPU Load)</small>
                         </div>
+                    </div>
+               </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
+                        <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
+                        <small>Set to 0 for Indefinite Retention</small>
                     </div>
                </div>
                 <div class="row">
