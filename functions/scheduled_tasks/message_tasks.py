@@ -83,3 +83,4 @@ def test_webhook(self, webhookType, webhookID, **kwargs):
         except Exception as e:
             print("Webhook Error-" + str(e) )
         system.newLog(8, "Completed Webhook Test for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
+    return True
