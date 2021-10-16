@@ -65,12 +65,17 @@ $('#maxClipLength').on('input', function() {
 });
 
 // SocketIO Handlers
+socket.on('connect', function() {
+    console.log('Connected to SocketIO')
+});
+
 socket.on('admin_osp_component_status_update', function (msg) {
     var componentStatusName = msg['component'];
     var status = msg['status'];
 
-    componentIDDiv = document.getElementById('component-status' + componentStatusName);
-    componentIDDiv.html = status
+    console.log('Received Component Update - ' + componentStatusName);
+    componentIDDiv = document.getElementById('component-status_' + componentStatusName);
+    componentIDDiv.innerHTML = status
 });
 
 
@@ -90,6 +95,7 @@ function updateSlider(inputID) {
 }
 
 function get_osp_rtmp_status() {
+    console.log('Requesting Component Status Update - osp_rtmp');
     socket.emit('admin_get_component_status', {component: 'osp_rtmp'});
 }
 
