@@ -228,8 +228,8 @@ def get_admin_component_status(msg):
             serverLength = len(rtmpServerListingQuery)
             workingServers = 0
             for rtmpServer in rtmpServerListingQuery:
-                r = requests.get(rtmpServer.address + ":5099" + "/api/ping")
-                if r.code == 200:
+                r = requests.get('http://' + rtmpServer.address + ":5099" + "/api/server/ping")
+                if r.status_code == 200:
                     response = r.json()
                     if 'results' in response:
                         if response['results']['message'] == "pong":
