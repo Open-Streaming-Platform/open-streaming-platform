@@ -1,6 +1,7 @@
 from flask_security import current_user
 from flask_socketio import emit
 from sqlalchemy.sql.expression import func
+import datetime
 
 from classes.shared import db, socketio
 from classes import Channel
@@ -158,7 +159,6 @@ def testWebhook(message):
                     if webhookQuery.channel.id != current_user.id:
                         webhookQuery = None
 
-            randomVideoQuery = RecordedVideo.RecordedVideo.query.order_by(func.random()).first()
             results = message_tasks.test_webhook.delay(webhookType, webhookQuery.id, channelname=channelQuery.channelName,
                                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)), channeltopic=templateFilters.get_topicName(channelQuery.topic),
                                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
@@ -166,9 +166,9 @@ def testWebhook(message):
                                        streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelQuery.channelLoc),
                                        streamtopic=templateFilters.get_topicName(topic.id), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg"),
                                        user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)),
-                                       videoname=randomVideoQuery.channelName, videodate=str(randomVideoQuery.videoDate), videodescription=randomVideoQuery.description,
-                                       videotopic=templateFilters.get_topicName(randomVideoQuery.topic), videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(randomVideoQuery.id)),
-                                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(randomVideoQuery.thumbnailLocation)), comment="This is just a test comment!",
+                                       videoname="Video Name", videodate=str(datetime.datetime.utcnow()), videodescription="Video Description",
+                                       videotopic="Video Topic", videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/1' ),
+                                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/static/img/video-placeholder.jpg'), comment="This is just a test comment!",
                                        message="This is just a test message!")
     db.session.commit()
     db.session.close()
