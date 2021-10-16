@@ -23,6 +23,8 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
 
+from functions.scheduled_tasks import message_tasks
+
 log = logging.getLogger('app.functions.database')
 
 # Checks Length of a Video at path and returns the length
@@ -99,7 +101,7 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
         else:
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
 
-        webhookFunc.runWebhook(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
+        message_tasks.send_webhook.delay(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                    channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
                    channelimage=channelImage, streamer=templateFilters.get_userName(recordedVidQuery.channel.owningUser),

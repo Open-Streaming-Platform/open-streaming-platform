@@ -12,6 +12,7 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import xmpp
 from functions import cachedDbCalls
+from functions.scheduled_tasks import message_tasks
 
 from functions.socketio.stream import handle_viewer_total_request
 
@@ -63,14 +64,14 @@ def handle_new_viewer(streamData):
         else:
             pictureLocation = '/images/' + pictureLocation
 
-        webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+        message_tasks.send_webhook.delay(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                    streamtopic=templateFilters.get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
     else:
-        webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+        message_tasks.send_webhook.delay(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName,

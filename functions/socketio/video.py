@@ -13,7 +13,7 @@ from functions import templateFilters
 from functions import videoFunc
 from functions import subsFunc
 from functions import cachedDbCalls
-from functions.scheduled_tasks import video_tasks
+from functions.scheduled_tasks import video_tasks, message_tasks
 
 from app import r
 
@@ -112,7 +112,7 @@ def togglePublishedSocketIO(message):
 
             if newState is True:
 
-                webhookFunc.runWebhook(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
+                message_tasks.send_webhook.delay(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
                            channeltopic=templateFilters.get_topicName(videoQuery.channel.topic),
                            channelimage=channelImage, streamer=templateFilters.get_userName(videoQuery.channel.owningUser),

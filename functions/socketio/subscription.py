@@ -11,6 +11,8 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
 
+from functions.scheduled_tasks import message_tasks
+
 @socketio.on('toggleChannelSubscription')
 @limiter.limit("10/minute")
 def toggle_chanSub(payload):
@@ -43,7 +45,7 @@ def toggle_chanSub(payload):
                     db.session.add(newNotification)
                     db.session.commit()
 
-                    webhookFunc.runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
+                    message_tasks.send_webhook.delay(channelQuery.id, 10, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                                channeltopic=templateFilters.get_topicName(channelQuery.topic),
                                channelimage=str(channelImage), streamer=templateFilters.get_userName(channelQuery.owningUser),

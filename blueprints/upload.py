@@ -19,6 +19,7 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import subsFunc
 from functions import cachedDbCalls
+from functions.scheduled_tasks import message_tasks
 
 from globals import globalvars
 
@@ -174,7 +175,7 @@ def upload_vid():
 
         if ChannelQuery.autoPublish is True:
 
-            webhookFunc.runWebhook(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
+            message_tasks.send_webhook.delay(ChannelQuery.id, 6, channelname=ChannelQuery.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
                        channeltopic=templateFilters.get_topicName(ChannelQuery.topic),
                        channelimage=channelImage, streamer=templateFilters.get_userName(ChannelQuery.owningUser),

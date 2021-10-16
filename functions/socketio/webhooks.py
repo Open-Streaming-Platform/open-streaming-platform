@@ -13,6 +13,8 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
 
+from functions.scheduled_tasks import message_tasks
+
 @socketio.on('submitWebhook')
 def addChangeWebhook(message):
 
@@ -158,7 +160,7 @@ def testWebhook(message):
 
             randomVideoQuery = RecordedVideo.RecordedVideo.query.order_by(func.random()).first()
 
-            webhookFunc.testWebhook(webhookType, webhookQuery.id, channelname=channelQuery.channelName,
+            message_tasks.test_webhook.delay(webhookType, webhookQuery.id, channelname=channelQuery.channelName,
                                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)), channeltopic=templateFilters.get_topicName(channelQuery.topic),
                                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
                                        channeldescription=str(channelQuery.description), streamname="Testing Stream",

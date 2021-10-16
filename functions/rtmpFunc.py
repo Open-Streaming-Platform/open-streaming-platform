@@ -24,6 +24,7 @@ from functions import subsFunc
 from functions import videoFunc
 from functions import xmpp
 from functions import cachedDbCalls
+from functions.scheduled_tasks import message_tasks
 
 def rtmp_stage1_streamkey_check(key, ipaddress):
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -108,7 +109,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
             else:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
-            webhookFunc.runWebhook(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
+            message_tasks.send_webhook.delay(requestedChannel.id, 0, channelname=requestedChannel.channelName, channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)), channeltopic=requestedChannel.topic,
                        channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser), channeldescription=str(requestedChannel.description),
                        streamname=authedStream.streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc), streamtopic=templateFilters.get_topicName(authedStream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"))
@@ -236,7 +237,7 @@ def rtmp_user_deauth_check(key, ipaddress):
             else:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
 
-            webhookFunc.runWebhook(channelRequest.id, 1, channelname=channelRequest.channelName,
+            message_tasks.send_webhook.delay(channelRequest.id, 1, channelname=channelRequest.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
                        channeltopic=channelRequest.topic,
                        channelimage=channelImage, streamer=templateFilters.get_userName(channelRequest.owningUser),
@@ -292,7 +293,7 @@ def rtmp_rec_Complete_handler(channelLoc, path):
             channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
         if requestedChannel.autoPublish is True:
-            webhookFunc.runWebhook(requestedChannel.id, 6, channelname=requestedChannel.channelName,
+            message_tasks.send_webhook.delay(requestedChannel.id, 6, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=templateFilters.get_topicName(requestedChannel.topic),
                    channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),

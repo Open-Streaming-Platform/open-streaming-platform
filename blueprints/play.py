@@ -22,7 +22,7 @@ from functions import securityFunc
 from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
-from functions.scheduled_tasks import video_tasks
+from functions.scheduled_tasks import video_tasks, message_tasks
 
 from globals import globalvars
 
@@ -218,7 +218,7 @@ def comments_vid_page(videoID):
             db.session.add(newNotification)
             db.session.commit()
 
-            webhookFunc.runWebhook(channelQuery.id, 7, channelname=channelQuery.channelName,
+            message_tasks.send_webhook.delay(channelQuery.id, 7, channelname=channelQuery.channelName,
                        channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                        channeltopic=templateFilters.get_topicName(channelQuery.topic),
                        channelimage=channelImage, streamer=templateFilters.get_userName(channelQuery.owningUser),
