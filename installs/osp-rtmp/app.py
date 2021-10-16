@@ -59,10 +59,12 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 #----------------------------------------------------------------------------#
 from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
+from blueprints.api import api_v1
 
 # Register all Blueprints
 app.register_blueprint(rtmp_bp)
 app.register_blueprint(root_bp)
+app.register_blueprint(api_v1)
 
 #----------------------------------------------------------------------------#
 # Finalize App Init
