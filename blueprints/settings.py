@@ -541,6 +541,13 @@ def admin_page():
             sysSettings.systemTheme = theme
             if 'mainPageSort' in request.form:
                 sysSettings.sortMainBy = int(request.form['mainPageSort'])
+            if 'maxVideoRetention' in request.form:
+                sysSettings.maxVideoRetention = int(request.form['maxVideoRetention'])
+            # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
+            if 'enableRTMPRestream' in request.form:
+                sysSettings.allowRestream = True
+            elif 'mainPageSort' not in request.form:
+                sysSettings.allowRestream = False
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
