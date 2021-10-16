@@ -2,6 +2,7 @@ import psutil
 import os
 import time
 import shutil
+import requests
 from flask import abort, current_app
 from flask_socketio import emit
 from flask_security import current_user
@@ -214,3 +215,27 @@ def disable_2fa(msg):
             system.newLog(1, "User " + current_user.username + " disabled 2FA for " + str(userQuery.username))
     db.session.close()
     return 'OK'
+
+@socketio.on('admin_get_component_status')
+def get_admin_component_status(msg):
+    if current_user.has_role('Admin'):
+        component = msg['component']
+
+        status = "Failed"
+
+        if component == "osp_rtmp":
+            rtmpServerListingQuery = settings.rtmpServer.query.filter_by(active=True).all()
+            serverLength = len(rtmpServerListingQuery)
+            workingServers = 0
+            for rtmpServer in rtmpServerListingQuery:
+                r = requests.get(rtmpServer.address + ":5099" + "/api/ping")
+                if r.code == 200:
+                    response = r.json()
+                    if 'results' in response:
+                        if response['results']['message'] == "pong":
+                            workingServers = workingServers + 1
+            if serverLength == workingServers:
+                status = "OK"
+
+        emit('admin_osp_component_status_update', {'component': component, 'status': status}, broadcast=False)
+

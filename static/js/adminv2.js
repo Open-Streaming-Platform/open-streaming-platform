@@ -1,3 +1,7 @@
+// Socket.IO Connection
+var conn_options = {'sync disconnect on unload':true};
+var socket = io();
+
 // Admin Page Viewer Chart
 var ctx = document.getElementById('viewershipChart').getContext('2d');
 //ctx.canvas.width = viewerChartWidth;
@@ -60,6 +64,16 @@ $('#maxClipLength').on('input', function() {
   }
 });
 
+// SocketIO Handlers
+socket.on('admin_osp_component_status_update', function (msg) {
+    var componentStatusName = msg['component'];
+    var status = msg['status'];
+
+    componentIDDiv = document.getElementById('component-status' + componentStatusName);
+    componentIDDiv.html = status
+});
+
+
 function updateSlider(inputID) {
     var sliderValue = $(inputID).val();
       if (sliderValue != "") {
@@ -73,4 +87,12 @@ function updateSlider(inputID) {
         }
         $(inputID).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
       }
+}
+
+function get_osp_rtmp_status() {
+    socket.emit('admin_get_component_status', {component: 'osp_rtmp'});
+}
+
+function get_osp_ejabberd_xmlrpc_status() {
+    socket.emit('admin_get_component_status', {component: 'osp_ejabberd_xmlrpc'});
 }
