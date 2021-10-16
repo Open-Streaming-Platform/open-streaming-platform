@@ -20,8 +20,11 @@ from functions import system
 from functions import cachedDbCalls
 
 from app import user_datastore
+from app import ejabberd
 
 from globals import globalvars
+
+from conf import config
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -236,6 +239,10 @@ def get_admin_component_status(msg):
                             workingServers = workingServers + 1
             if serverLength == workingServers:
                 status = "OK"
+        elif component == "osp_ejabberd_xmlrpc":
+            results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
+            print(results)
+
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status}, broadcast=False)
 
