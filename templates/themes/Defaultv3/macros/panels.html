@@ -219,7 +219,7 @@
 </div>
 {% endmacro %}
 
-{% macro user_settings_panel(userData, channelUsage) %}
+{% macro user_settings_panel(userData, channelUsage, sysSettings) %}
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>User Settings</b>
@@ -277,7 +277,7 @@
                             <b>Username: </b>
                         </div>
                         <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-                            {{userData.uuid}}@{{userData.siteAddress}}
+                            {{userData.uuid}}@{{sysSettings.siteAddress}}
                         </div>
                     </div>
                     <div class="row">
@@ -318,6 +318,10 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+                <hr>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
     </div>
