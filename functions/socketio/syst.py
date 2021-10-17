@@ -242,7 +242,7 @@ def get_admin_component_status(msg):
                 message = str(workingServers) + " RTMP Servers Online"
             elif workingServers > 0:
                 status = "Problem"
-                message str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
+                message = str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
         elif component == "osp_ejabberd_xmlrpc":
             results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
             if results['res'] == 0:
