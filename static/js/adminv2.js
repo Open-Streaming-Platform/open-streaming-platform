@@ -111,3 +111,7 @@ function get_osp_rtmp_status() {
 function get_osp_ejabberd_xmlrpc_status() {
     socket.emit('admin_get_component_status', {component: 'osp_ejabberd_xmlrpc'});
 }
+
+function get_osp_ejabberd_chat_status() {
+    socket.emit('admin_get_component_status', {component: 'osp_ejabberd_chat'});
+}
