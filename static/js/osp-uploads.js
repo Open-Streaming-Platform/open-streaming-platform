@@ -34,7 +34,7 @@ var thumbnaildropper = new Dropzone(
   chunking: true,
   forceChunking: true,
   url: '/upload/video-files',
-  maxFilesize: 5, // megabytes
+  maxFilesize: maxThumbnailUploadFileSize, // megabytes
   chunkSize: 1000000 // bytes
 }
 );
@@ -74,7 +74,7 @@ var videodropper = new Dropzone(
   chunking: true,
   forceChunking: true,
   url: '/upload/video-files',
-  maxFilesize: 4096, // megabytes
+  maxFilesize: maxVideoUploadFileSize, // megabytes
   chunkSize: 1000000 // bytes
 }
 );
