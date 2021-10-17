@@ -252,7 +252,7 @@ def get_admin_component_status(msg):
                 message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
         elif component == "osp_ejabberd_chat":
             sysSettings = cachedDbCalls.getSystemSettings()
-            from globals import ejabberdServer, ejabberdServerHttpBindFQDN
+            from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
             xmppserver = sysSettings.siteAddress
 
