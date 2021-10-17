@@ -66,7 +66,8 @@ $('#maxClipLength').on('input', function() {
 
 // SocketIO Handlers
 socket.on('connect', function() {
-    console.log('Connected to SocketIO')
+    console.log('Connected to SocketIO');
+    get_all_osp_component_status();
 });
 
 socket.on('admin_osp_component_status_update', function (msg) {
@@ -106,4 +107,14 @@ function updateSlider(inputID) {
 
 function get_osp_component_status(component) {
     socket.emit('admin_get_component_status', {component: component});
+}
+
+function get_all_osp_component_status() {
+    get_osp_component_status('osp_core');
+    get_osp_component_status('osp_rtmp');
+    get_osp_component_status('osp_celery');
+    get_osp_component_status('osp_ejabberd_chat');
+    get_osp_component_status('osp_ejabberd_xmlrpc');
+    get_osp_component_status('osp_database');
+    get_osp_component_status('osp_redis');
 }
