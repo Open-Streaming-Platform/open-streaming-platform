@@ -294,8 +294,8 @@ def get_admin_component_status(msg):
                 message = "Redis Ping Failed"
         elif component == "osp_celery":
             from classes.shared import celery
-                workerStatus = celery.control.ping()
-                message =str(workerStatus)
+            workerStatus = celery.control.ping()
+            message = str(workerStatus)
 
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
