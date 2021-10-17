@@ -239,10 +239,17 @@ def get_admin_component_status(msg):
                             workingServers = workingServers + 1
             if serverLength == workingServers:
                 status = "OK"
+                message = str(workingServers) + " RTMP Servers Online"
+            elif workingServers > 0:
+                status = "Problem"
+                message str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
         elif component == "osp_ejabberd_xmlrpc":
             results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
-            system.newLog(1, "password: " + results)
-
+            if results['res'] == 0:
+                status = "OK"
+                message = "Ejabberd-XMLRPC Communication Confirmed"
+            else:
+                message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status}, broadcast=False)
 
