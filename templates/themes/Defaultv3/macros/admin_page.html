@@ -221,6 +221,9 @@
                         <textarea class="form-control boxShadow" name="serverMessage" id="settings-announcementcontent-input" maxlength="2048">{{sysSettings.serverMessage}}</textarea>
                     </div>
                 </div>
+                <script>
+                    var easymde_Announcement = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("settings-announcementcontent-input") });
+                </script>
             </div>
         </div>
     </div>
