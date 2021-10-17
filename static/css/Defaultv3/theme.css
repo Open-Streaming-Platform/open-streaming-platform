@@ -151,6 +151,10 @@ table tbody tr {
     background-color: var(--box2-background);
 }
 
+.dropzone {
+    display: none;
+}
+
 .topNavbar {
     position: fixed;
     left: var(--left-sidebar-width);
