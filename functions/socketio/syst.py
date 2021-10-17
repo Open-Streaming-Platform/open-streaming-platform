@@ -310,7 +310,7 @@ def get_admin_component_status(msg):
                         message = "All OSP-Celery Instances Online"
                     else:
                         status = "Problem"
-                        message = str(verifiedWorker) + "/" + str(len(workerStatus)) + " OSP-Celery Workers Responded"
+                        message = str(verifiedWorker) + "/" + str(len(workerStatus)) + " OSP-Celery Workers Responded " + workerStatus
             #except:
             #    message = "OSP-Celery Ping Failed to Respond"
 
