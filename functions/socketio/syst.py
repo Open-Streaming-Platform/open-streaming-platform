@@ -302,8 +302,8 @@ def get_admin_component_status(msg):
                 if len(workerStatus) > 0:
                     verifiedWorker = 0
                     for worker in workerStatus:
-                        if 'ok' in workerStatus[worker]:
-                            if workerStatus[worker]['ok'] == 'pong':
+                        if 'ok' in worker:
+                            if worker['ok'] == 'pong':
                                 verifiedWorker = verifiedWorker + 1
                     if len(workerStatus) == verifiedWorker:
                         status = "OK"
