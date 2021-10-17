@@ -22,8 +22,6 @@ from functions import cachedDbCalls
 from app import user_datastore
 from app import ejabberd
 
-from globals import globalvars, ejabberdServer, ejabberdServerHttpBindFQDN
-
 from conf import config
 
 @socketio.on('checkUniqueUsername')
@@ -252,6 +250,7 @@ def get_admin_component_status(msg):
                 message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
         elif component == "osp_ejabberd_chat":
             sysSettings = cachedDbCalls.getSystemSettings()
+
             from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
             xmppserver = sysSettings.siteAddress
