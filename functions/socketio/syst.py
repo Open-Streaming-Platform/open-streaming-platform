@@ -251,5 +251,5 @@ def get_admin_component_status(msg):
             else:
                 message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
 
-        emit('admin_osp_component_status_update', {'component': component, 'status': status}, broadcast=False)
+        emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
 

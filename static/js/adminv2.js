@@ -75,7 +75,16 @@ socket.on('admin_osp_component_status_update', function (msg) {
 
     console.log('Received Component Update - ' + componentStatusName);
     componentIDDiv = document.getElementById('component-status_' + componentStatusName);
-    componentIDDiv.innerHTML = status
+
+    var html = ''
+    if (status === 'OK') {
+        html = '<i class="text-success fas fa-check" title="' + msg['message'] + '"></i>'
+    } else if (status === 'Problem') {
+        html = '<i class="text-warning fas fa-exclamation-triangle" title="' + msg['message'] + '"></i>'
+    } else {
+        html = '<i class="text-danger fas fa-times" title="' + msg['message'] + '"></i>'
+    }
+    componentIDDiv.innerHTML = html
 });
 
 
