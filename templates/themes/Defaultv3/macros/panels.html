@@ -218,3 +218,54 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro user_settings_panel(userData) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Appearance</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row">
+            <form action="/settings/user" enctype=multipart/form-data method="post">
+                <div class="col-12 col-md-6">
+                     <div class="row">
+                        <div class="col-auto">
+                            <img class="userPhoto rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
+                            <div class="file-upload mt-1">
+                              <input type="file" name="photo" class="file-upload-button boxShadow" id="userphotoupload">
+                            </div>
+                        </div>
+                        <div class="col-10 mt-2">
+                            <div class="form-group">
+                                <label for="userName"><b>User Name</b></label>
+                                <input type="text" name="userName" id="userName" class="form-control boxShadow" value="{{userData.username}}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailAddress"><b>Email Address</b></label>
+                            <input type="email" name="emailAddress" id="emailAddress" class="form-control boxShadow" value="{{userData.email}}" required>
+                        </div>
+                        <hr>
+                        {% if current_user.authType == 0 %}
+                        <div>
+                            <b>Two Factor Authentication Status:</b> {%  if userData.tf_primary_method == "authenticator" %} <span style="color:green">Enabled</span> {% else %} <span style="color:red">Disabled</span>{% endif %}<br>
+                            <a href="/tf-setup" class="btn btn-success boxShadow">Configure 2FA</a>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label for="password"><b>Change Password</b></label>
+                            <input type="password" id="password" class="form-control boxShadow" name="password1" placeholder="New Password">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="password2" class="form-control boxShadow" name="password2" placeholder="Confirm New Password">
+                        </div>
+                        {% endif %}
+                        <hr>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6"></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endmacro %}
