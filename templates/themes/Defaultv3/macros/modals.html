@@ -63,9 +63,9 @@
         <form id="uploadform" action="/upload/video-details" enctype=multipart/form-data method="post">
           <div class="modal-header">
             <h5 class="modal-title" id="moveModalTitle">Upload a video</h5>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="canceluploads()">
-              <span aria-hidden="true">&times;</span>
-            </button>
+              <div class="float-end">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="canceluploads();"></button>
+              </div>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -102,7 +102,7 @@
               </div>
             </div>
 
-            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress progress-striped active my-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
 
@@ -119,7 +119,7 @@
               </div>
             </div>
 
-            <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress progress-striped active my-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="videouploadprogress" class="progress-bar progress-bar-success bg-success" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
 
