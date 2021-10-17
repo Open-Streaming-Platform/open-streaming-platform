@@ -201,6 +201,14 @@
                 </div>
             </div>
             <div class="col-12 col-md-6">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="showEmptyTables">Show Empty Channels and Topics on Built-in Pages</label>
+                            <input class="form-check-input boxShadow" name="showEmptyTables" type="checkbox" id="showEmptyTables" {% if sysSettings.showEmptyTables == True %} checked {% endif %}>
+                        </div>
+                    </div>
+                </div>
                 <div class="row my-3">
                     <div class="col-5">
                         <label for="settings-announcementtitle-input" class="form-label">Server Announcement Header Title</label>
