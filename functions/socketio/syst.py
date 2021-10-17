@@ -22,7 +22,7 @@ from functions import cachedDbCalls
 from app import user_datastore
 from app import ejabberd
 
-from globals import globalvars
+from globals import globalvars, ejabberdServer, ejabberdServerHttpBindFQDN
 
 from conf import config
 
@@ -250,6 +250,23 @@ def get_admin_component_status(msg):
                 message = "Ejabberd-XMLRPC Communication Confirmed"
             else:
                 message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
+        elif component == "osp_ejabberd_chat":
+            sysSettings = cachedDbCalls.getSystemSettings()
+            from globals import ejabberdServer, ejabberdServerHttpBindFQDN
+
+            xmppserver = sysSettings.siteAddress
+
+            if ejabberdServerHttpBindFQDN != None:
+                xmppserver = ejabberdServerHttpBindFQDN
+            elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
+                xmppserver = ejabberdServer
+
+            r = requests.get(sysSettings.siteProtocol + xmppserver + '/http-bind')
+            if r.status_code == 200:
+                status = "OK"
+                message = "BOSH-HTTP Reachable"
+            else:
+                message = "BOSH-HTTP Unreachable"
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
 
