@@ -294,7 +294,6 @@ def get_admin_component_status(msg):
                 message = "Redis Ping Failed"
         elif component == "osp_celery":
             from classes.shared import celery
-            #try:
             workerStatus = celery.control.ping()
             if workerStatus == []:
                 message = "No OSP-Celery Instances Connected"
@@ -302,17 +301,16 @@ def get_admin_component_status(msg):
                 if len(workerStatus) > 0:
                     verifiedWorker = 0
                     for worker in workerStatus:
-                        if 'ok' in worker:
-                            if worker['ok'] == 'pong':
-                                verifiedWorker = verifiedWorker + 1
+                        for workerName in worker:
+                            if 'ok' in worker[workerName]:
+                                if worker[workerName]['ok'] == 'pong':
+                                    verifiedWorker = verifiedWorker + 1
                     if len(workerStatus) == verifiedWorker:
                         status = "OK"
                         message = "All OSP-Celery Instances Online"
                     else:
                         status = "Problem"
                         message = str(verifiedWorker) + "/" + str(len(workerStatus)) + " OSP-Celery Workers Responded " + str(workerStatus)
-            #except:
-            #    message = "OSP-Celery Ping Failed to Respond"
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
 
