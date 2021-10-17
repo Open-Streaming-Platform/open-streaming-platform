@@ -241,7 +241,7 @@ def get_admin_component_status(msg):
                 status = "OK"
         elif component == "osp_ejabberd_xmlrpc":
             results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
-            print(results)
+            system.newLog(1, "password: " + results)
 
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status}, broadcast=False)
