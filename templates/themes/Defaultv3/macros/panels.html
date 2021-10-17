@@ -234,7 +234,7 @@
                                 <img class="userPhoto rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                             </div>
                             <div class="file-upload mt-1">
-                              <input type="file" name="photo" class="file-upload-button boxShadow" id="userphotoupload">
+                              <input type="file" name="photo" class="form-control boxShadow" id="userphotoupload">
                             </div>
                         </div>
                         <div class="col-10 mt-2">
@@ -328,4 +328,7 @@
         </form>
     </div>
 </div>
+<script>
+    var easymde_UserBio = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("biography-{{userData.id}}") });
+</script>
 {% endmacro %}
