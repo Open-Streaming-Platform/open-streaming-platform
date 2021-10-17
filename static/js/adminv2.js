@@ -84,7 +84,8 @@ socket.on('admin_osp_component_status_update', function (msg) {
     } else {
         html = '<i class="text-danger fas fa-times" title="' + msg['message'] + '"></i>'
     }
-    componentIDDiv.innerHTML = html
+    componentIDDiv.innerHTML = html;
+    console.log(msg['message']);
 });
 
 

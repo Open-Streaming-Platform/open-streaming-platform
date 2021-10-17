@@ -224,7 +224,15 @@ def get_admin_component_status(msg):
 
         status = "Failed"
 
-        if component == "osp_rtmp":
+        if component == "osp_core":
+            r = requests.get("http://127.0.0.1/apiv1/server/ping")
+            if r.status_code == 200:
+                response = r.json()
+                if 'results' in response:
+                    if response['results']['message'] == "Pong":
+                        status = "OK"
+                        message = "OSP-Core API Connection Successful"
+        elif component == "osp_rtmp":
             rtmpServerListingQuery = settings.rtmpServer.query.filter_by(active=True).all()
             serverLength = len(rtmpServerListingQuery)
             workingServers = 0
@@ -254,7 +262,6 @@ def get_admin_component_status(msg):
             from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
             xmppserver = sysSettings.siteAddress
-
             if ejabberdServerHttpBindFQDN != None:
                 xmppserver = ejabberdServerHttpBindFQDN
             elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
@@ -268,9 +275,13 @@ def get_admin_component_status(msg):
                 message = "BOSH-HTTP Unreachable"
         elif component == "osp_database":
             try:
-                db.session.query("1").from_statement("SELECT 1").all()
-                status = "OK"
-                message = "DB Connection Successful"
+                sysSettings = settings.settings.query.first()
+                if sysSettings != None:
+                    status = "OK"
+                    message = "DB Connection Successful"
+                else:
+                    status = "Problem"
+                    message = "DB Connection Successful, but Settings Table Null"
             except:
                 message = "DB Connection Failure"
         elif component == "osp_redis":
@@ -281,6 +292,10 @@ def get_admin_component_status(msg):
                 message = "Redis Ping Successful"
             except:
                 message = "Redis Ping Failed"
+        elif component == "osp_celery":
+            from classes.shared import celery
+                workerStatus = celery.control.ping()
+                message =str(workerStatus)
 
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
