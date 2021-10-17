@@ -103,15 +103,6 @@ function updateSlider(inputID) {
       }
 }
 
-function get_osp_rtmp_status() {
-    console.log('Requesting Component Status Update - osp_rtmp');
-    socket.emit('admin_get_component_status', {component: 'osp_rtmp'});
-}
-
-function get_osp_ejabberd_xmlrpc_status() {
-    socket.emit('admin_get_component_status', {component: 'osp_ejabberd_xmlrpc'});
-}
-
-function get_osp_ejabberd_chat_status() {
-    socket.emit('admin_get_component_status', {component: 'osp_ejabberd_chat'});
+function get_osp_component_status(component) {
+    socket.emit('admin_get_component_status', {component: component});
 }

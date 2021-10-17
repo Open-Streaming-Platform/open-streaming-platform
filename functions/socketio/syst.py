@@ -266,6 +266,22 @@ def get_admin_component_status(msg):
                 message = "BOSH-HTTP Reachable"
             else:
                 message = "BOSH-HTTP Unreachable"
+        elif component == "osp_database":
+            try:
+                db.session.query("1").from_statement("SELECT 1").all()
+                status = "OK"
+                message = "DB Connection Successful"
+            except:
+                message = "DB Connection Failure"
+        elif component == "osp_redis":
+            from app import r
+            try:
+                r.ping()
+                status = "OK"
+                message = "Redis Ping Successful"
+            except:
+                message = "Redis Ping Failed"
+
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
 
