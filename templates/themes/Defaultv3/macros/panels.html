@@ -219,10 +219,10 @@
 </div>
 {% endmacro %}
 
-{% macro user_settings_panel(userData) %}
+{% macro user_settings_panel(userData, channelUsage) %}
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
-        <b>Appearance</b>
+        <b>User Settings</b>
     </div>
     <div class="info-panel-box-body boxShadow">
         <div class="row">
@@ -262,10 +262,62 @@
                             <input type="password" id="password2" class="form-control boxShadow" name="password2" placeholder="Confirm New Password">
                         </div>
                         {% endif %}
-                        <hr>
+                        <hr class="mt-2">
+                        <div class="form-group">
+                            <label for="biography" class="col-form-label"><b>Biography</b></label>
+                            <textarea class="form-control boxShadow" name="biography" id="biography-{{userData.id}}" value="" maxlength="2048">{{userData.biography}}</textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6"></div>
+                <div class="col-12 col-md-6">
+                    <b>XMPP Access</b>
+                    <p>To access the chat with an external Jabber Client, use this login information:</p>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <b>Username: </b>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            {{userData.uuid}}@{{userData.siteAddress}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <b>Password: </b>
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <div class="input-group">
+                                  <div class="input-group-prepend">
+                                      <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken')"><i class="fas fa-copy"></i></button>
+                                  </div>
+                                  <input type="text" name="xmppToken" id="xmppToken" class="form-control" readonly value="{{userData.xmppToken}}">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <b>Storage Usage</b>
+                    <div class="mt-2">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Channel Name</th>
+                                    <th>Usage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for chan in channelUsage %}
+                                <tr>
+                                    <td>{{ chan['name'] }}</td>
+                                    <td>{{ chan['usage'] | formatSpace }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ totalSpaceUsed | formatSpace }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
