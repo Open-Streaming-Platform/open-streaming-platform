@@ -362,7 +362,8 @@ function process_stickers(msg) {
   var result = msg.match(stickerRegex);
   if (result !== null) {
       for (var i = 0; i < result.length; i++) {
-          var stickerName = result[i].replaceAll(':', '');
+          //var stickerName = result[i].replaceAll(':', ''); - Changed due to incompatibility w/ OBS to below
+          var stickerName = result[i].replace(/:/g, '');
           var stickerData = stickerList.filter(d => d.name === stickerName);
           if (stickerData.length !== 0) {
               var stickerFilename = stickerData[0]['file'];
