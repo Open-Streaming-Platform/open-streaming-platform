@@ -1019,12 +1019,18 @@ def settings_channels_page():
         if 'channelProtection' in request.form:
             protection = True
 
+        showHome = False
+
+        if 'showHome' in request.form:
+            showHome = True
+
+
         if requestType == 'new':
 
             newUUID = str(uuid.uuid4())
 
             newChannel = Channel.Channel(current_user.id, newUUID, channelName, topic, record, chatEnabled,
-                                         allowComments, description)
+                                         allowComments, showHome, description)
 
             if 'photo' in request.files:
                 file = request.files['photo']
@@ -1067,6 +1073,7 @@ def settings_channels_page():
                 requestedChannel.record = record
                 requestedChannel.chatEnabled = chatEnabled
                 requestedChannel.allowComments = allowComments
+                requestedChannel.showHome = showHome
                 requestedChannel.description = description
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
