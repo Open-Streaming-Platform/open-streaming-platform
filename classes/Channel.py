@@ -32,6 +32,7 @@ class Channel(db.Model):
     xmppToken = db.Column(db.String(64))
     vanityURL = db.Column(db.String(1024))
     allowGuestNickChange = db.Column(db.Boolean)
+    showHome = db.Column(db.Boolean)
     maxVideoRetention = db.Column(db.Integer)
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
@@ -43,7 +44,7 @@ class Channel(db.Model):
     restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
     chatStickers = db.relationship('stickers', backref='channel', cascade="all, delete-orphan", lazy="joined")
 
-    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
+    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description):
         self.owningUser = owningUser
         self.streamKey = streamKey
         self.channelName = channelName
@@ -68,6 +69,7 @@ class Channel(db.Model):
         self.xmppToken = str(os.urandom(32).hex())
         self.vanityURL = None
         self.allowGuestNickChange = True
+        self.showHome = showHome 
         self.maxVideoRetention = 0
 
     def __repr__(self):
@@ -97,6 +99,7 @@ class Channel(db.Model):
             'protected': self.protected,
             'allowGuestNickChange': self.allowGuestNickChange,
             'vanityURL': self.vanityURL,
+            'showHome': self.showHome,
             'maxVideoRetention': self.maxVideoRetention
         }
 
@@ -122,6 +125,7 @@ class Channel(db.Model):
             'streamKey': self.streamKey,
             'allowGuestNickChange': self.allowGuestNickChange,
             'vanityURL': self.vanityURL,
+            'showHome': self.showHome,
             'maxVideoRetention': self.maxVideoRetention
         }
 
