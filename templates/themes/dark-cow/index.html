@@ -36,7 +36,7 @@
                 {% if streamList == [] %}
                 No Live Streams Online...
                 {% endif %}
-                {% for stream in streamList %}
+                 {% for stream in streamList if stream.channel.showHome == True %}
                 <div class="video-card bg-dark mb-3" style="max-width: 45rem;">
                     <div class="row no-gutters">
                         <div class="video-card-header">
