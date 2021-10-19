@@ -8,6 +8,7 @@ import xmltodict
 import git
 import re
 import psutil
+import pytz
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
@@ -417,7 +418,7 @@ def admin_page():
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
-                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page)
+                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -548,6 +549,10 @@ def admin_page():
                 sysSettings.allowRestream = True
             elif 'mainPageSort' not in request.form:
                 sysSettings.allowRestream = False
+            if 'serverTimeZone' in request.form:
+                sysSettings.serverTimeZone = request.form['serverTimeZone']
+            else:
+                sysSettings.serverTimeZone = "UTC"
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled

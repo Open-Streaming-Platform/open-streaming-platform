@@ -64,6 +64,10 @@ def dbFixes():
     if sysSettings.systemLogo is None:
         sysSettings.systemLogo = "/static/img/logo.png"
         db.session.commit()
+    # Sets Default Server Time Zone
+    if sysSettings.serverTimeZone is None:
+        sysSettings.serverTimeZone = "UTC"
+        db.session.commit()
     # Sets maxVideoRetention if none to 0
     if sysSettings.maxVideoRetention is None:
         sysSettings.maxVideoRetention = 0

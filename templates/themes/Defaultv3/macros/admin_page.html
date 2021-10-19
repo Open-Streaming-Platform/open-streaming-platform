@@ -170,6 +170,17 @@
                 <div id="proxyhostnameHelp" class="form-text">Leave Blank if no OSP-Proxy Server is Used</div>
             </div>
         </div>
+        <div class="row my-3">
+            <div class="col-3">
+                <label for="settings-serverTimeZone-input" class="form-label">Time Zome</label>
+                <input class="form-control boxShadow" list="timeZoneListOptions" id="settings-serverTimeZone-input" name="serverTimeZone" placeholder="Type to search...">
+                <datalist id="timeZoneListOptions">
+                    {% for timeZone in timeZoneOptions %}
+                        <option value="{{ timeZone }}" {% if sysSettings.serverTimeZone %} selected {% endif %}>{{ timeZone }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+        </div>
     </div>
 </div>
 {% endmacro %}

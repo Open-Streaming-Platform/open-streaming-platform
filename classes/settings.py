@@ -5,6 +5,7 @@ class settings(db.Model):
     siteName = db.Column(db.String(255))
     siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
+    serverTimeZone = db.column(db.String(255))
     smtpAddress = db.Column(db.String(255))
     smtpPort = db.Column(db.Integer)
     smtpTLS = db.Column(db.Boolean)
@@ -38,6 +39,7 @@ class settings(db.Model):
         self.siteName = siteName
         self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
+        self.serverTimeZone = "UTC"
         self.smtpAddress = smtpAddress
         self.smtpPort = smtpPort
         self.smtpTLS = smtpTLS
@@ -75,6 +77,7 @@ class settings(db.Model):
             'siteName': self.siteName,
             'siteProtocol': self.siteProtocol,
             'siteAddress': self.siteAddress,
+            'serverTimeZone': self.serverTimeZone,
             'siteURI': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
             'serverMessageTitle': self.serverMessageTitle,
