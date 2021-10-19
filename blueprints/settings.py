@@ -1024,7 +1024,6 @@ def settings_channels_page():
         if 'showHome' in request.form:
             showHome = True
 
-
         if requestType == 'new':
 
             newUUID = str(uuid.uuid4())
@@ -1078,8 +1077,6 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
-                #requestedChannel.rtmpRestream = rtmpRestream
-                #requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
 
                 vanityURL = None
                 if 'vanityURL' in request.form:
