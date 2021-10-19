@@ -176,7 +176,7 @@
                 <input class="form-control boxShadow" list="timeZoneListOptions" id="settings-serverTimeZone-input" name="serverTimeZone" placeholder="Type to search...">
                 <datalist id="timeZoneListOptions">
                     {% for timeZone in timeZoneOptions %}
-                        <option value="{{ timeZone }}" {% if sysSettings.serverTimeZone %} selected {% endif %}>{{ timeZone }}</option>
+                        <option value="{{ timeZone }}" {% if sysSettings.serverTimeZone == timeZone %} selected {% endif %}>{{ timeZone }}</option>
                     {% endfor %}
                 </datalist>
             </div>
