@@ -47,12 +47,6 @@ $(document).click(function(event) {
     }
 });
 
-// Initialize all select options with Select2
-$(document).ready(function() {
-    $('.select2').select2({
-        width: 'resolve'
-    });
-});
 
 // Event Handlers
 
