@@ -95,6 +95,11 @@ table tbody tr {
     width: 1px;
 }
 
+.select2 option {
+    background-color: var(--box1-background);
+    color: var(--font-color);
+}
+
 .dataTables_paginate .pagination .paginate_button .page-link {
     background-color: var(--box1-background);
     color: var(--font-color);

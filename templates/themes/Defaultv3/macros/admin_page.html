@@ -172,8 +172,8 @@
         </div>
         <div class="row my-3">
             <div class="col-3">
-                <label for="settings-serverTimeZone-input" class="form-label">Time Zome</label>
-                <select class="form-select select2 boxShadow" id="settings-serverTimeZone-input" name="serverTimeZone">
+                <label class="form-label">Time Zone</label><br>
+                <select class="form-select select2 boxShadow w-100" id="settings-serverTimeZone-input" name="serverTimeZone">
                     {% for timeZone in timeZoneOptions %}
                         <option value="{{ timeZone }}" {% if sysSettings.serverTimeZone == timeZone %} selected {% endif %}>{{ timeZone }}</option>
                     {% endfor %}
