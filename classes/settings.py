@@ -5,7 +5,7 @@ class settings(db.Model):
     siteName = db.Column(db.String(255))
     siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
-    serverTimeZone = db.column(db.String(255))
+    serverTimeZone = db.Column(db.String(255))
     smtpAddress = db.Column(db.String(255))
     smtpPort = db.Column(db.Integer)
     smtpTLS = db.Column(db.Boolean)
