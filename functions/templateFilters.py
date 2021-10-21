@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 import time
 import os
+import pytz
 
 from globals import globalvars
 
@@ -46,6 +47,7 @@ def init(context):
     context.jinja_env.filters['get_videoTopic'] = get_videoTopic
     context.jinja_env.filters['get_videoDate'] = get_videoDate
     context.jinja_env.filters['get_channelPicture'] = get_channelPicture
+    context.jinja_env.filters['localize_time'] = localize_time
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -287,3 +289,9 @@ def get_videoComments(videoID):
 def get_channelPicture(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
     return channelQuery.imageLocation
+
+def localize_time(timeObj):
+    sysSettings = cachedDbCalls.getSystemSettings
+    localtz = pytz.timezone(sysSettings.serverTimeZone)
+    localized_datetime = localtz.localize(timeObj)
+    return localized_datetime
