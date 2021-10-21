@@ -1,6 +1,6 @@
 alembic==1.0.11
 aniso8601==7.0.0
-Babel==2.7.0
+Babel==2.9.1
 Flask==1.1.1
 Flask-BabelEx==0.9.3
 Flask-Mail==0.9.1
