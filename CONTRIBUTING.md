@@ -11,6 +11,7 @@ Please note we have a code of conduct, please follow it in all your interactions
  2) Follow the principle of ["One Merge Request, One Concern"](https://fagnerbrack.com/one-pull-request-one-concern-e84a27dfe9f1)
  3) Merge/Pull Requests must be complete in total.
  4) Contributed Code must be universal in scope, ie: Able to be used for all installs / install environments.
+ 5) Ensure you have reviewed and signed all commits as per [Signing Your Work](#signing-your-work) with the [Developer Certificate Of Origin](DEVELOPER_CERTIFICATE_OF_ORIGIN) 
 
 ## Code of Conduct
 
@@ -44,6 +45,13 @@ Examples of unacceptable behavior by participants include:
   address, without explicit permission
   * Other conduct which could reasonably be considered inappropriate in a
   professional setting
+
+### Signing Your Work
+We use the Developer Certificate of Origin (DCO) as an additional safeguard for the Open Streaming Platform project. This is a well established and widely used mechanism to assure that contributors have confirmed their right to license their contribution under the project's license. Please read the [Developer Certificate Of Origin](DEVELOPER_CERTIFICATE_OF_ORIGIN) . If you can certify it, then just add a line to every git commit message:
+````
+  Signed-off-by: Random J Developer <random@developer.example.org>
+````
+Use your real name (sorry, no pseudonyms or anonymous contributions). The email id should match the email id provided in your GitHub profile. If you set your ```user.name``` and ```user.email``` in git config, you can sign your commit automatically with ```git commit -s```.
 
 ### Our Responsibilities
 
