@@ -430,7 +430,7 @@
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Authorized RTMP Servers</b>
         <span class="float-end me-3">
-            <button class="btn btn-success btn-sm boxShadow" title="Add RTMP Server" type="button"><i class="bi bi-plus"></i></button>
+            <button class="btn btn-success btn-sm boxShadow" title="Add RTMP Server" type="button" data-bs-toggle="modal" data-bs-target="#newRTMPModal"><i class="bi bi-plus"></i></button>
         </span>
     </div>
     <div class="info-panel-box-body boxShadow">
@@ -458,7 +458,7 @@
                                     <input class="form-check-input boxShadow" type="checkbox" name="hiddenRTMPNode" id="hiddenRTMPNode-{{ server.id }}" {% if server.hide == True %} checked {% endif %} onchange="toggleHiddenRTMP('{{server.id}}');">
                                 </div>
                             </td>
-                            <td><button class="btn btn-danger btn-sm boxShadow" title="Delete" type="button"><i class="bi bi-trash-fill"></i></button></td>
+                            <td><button class="btn btn-danger btn-sm boxShadow" title="Delete" type="button" onclick="deleteRTMP('{{ server.id }}')"><i class="bi bi-trash-fill"></i></button></td>
                         </tr>
                     {% endfor %}
                 </tbody>

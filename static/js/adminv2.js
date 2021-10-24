@@ -225,3 +225,17 @@ function resetOAuthForm() {
     $("#oAuthID").val('');
     updateOAuthModalWindowLayout();
 }
+
+function toggleHiddenRTMP(rtmpID) {
+    socket.emit('toggleHideOSPRTMP', {rtmpID: rtmpID});
+}
+
+function deleteRTMP(rtmpID) {
+    socket.emit('deleteOSPRTMP', {rtmpID: rtmpID});
+    var rtmpTableRow = document.getElementById('rtmpTableRow-' + rtmpID);
+    rtmpTableRow.parentNode.removeChild(rtmpTableRow);
+}
+
+function toggleActiveRTMP(rtmpID) {
+    socket.emit('toggleOSPRTMP', {rtmpID: rtmpID});
+}
