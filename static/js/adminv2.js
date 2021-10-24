@@ -239,3 +239,24 @@ function deleteRTMP(rtmpID) {
 function toggleActiveRTMP(rtmpID) {
     socket.emit('toggleOSPRTMP', {rtmpID: rtmpID});
 }
+
+function deleteEdge(edgeID) {
+    socket.emit('deleteOSPEdge', {edgeID: edgeID});
+    var edgeTableRow = document.getElementById('edgeTableRow-' + edgeID);
+    edgeTableRow.parentNode.removeChild(edgeTableRow);
+}
+
+function toggleActiveEdge(edgeID) {
+    socket.emit('toggleOSPEdge', {edgeID: edgeID});
+}
+
+function checkEdge(edgeID) {
+    var oldStatusDiv = document.getElementById('nodeStatus-' + edgeID);
+    oldStatusDiv.innerHTML = '<span id="nodeStatus-' + edgeID + '"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></span>';
+    socket.emit('checkEdge', {edgeID: edgeID});
+}
+
+function rebuildEdgeConf(){
+    socket.emit('rebuildEdgeConf', {message: 'true'});
+    createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect", "Success");
+}
