@@ -674,39 +674,31 @@
           <h4>Set the default roles for new users:</h4><br>
           <!--User-->
           <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <div class="input-group-text">
-                  <input class="form-check-input" id="drole-user" name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
-                </div>
-              </div>
-              <input type="text" class="form-control" readonly aria-label="User" value="User">
+            <div class="input-group-text">
+              <input class="form-check-input" id="drole-user" name="role-user" type="checkbox"  class="disabled" disabled checked aria-label="Checkbox for User">
+            </div>
+            <input type="text" class="form-control" readonly aria-label="User" value="User">
           </div>
           <!--Streamer-->
           <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <div class="input-group-text">
-                  <input class="form-check-input" id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" {% if defaultRoleDict["Streamer"] %} checked {% endif %} aria-label="Checkbox for Streamer">
-                </div>
-              </div>
-              <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
+            <div class="input-group-text">
+              <input class="form-check-input" id="drole-streamer" name="role-streamer" value="streamer" type="checkbox" {% if defaultRoleDict["Streamer"] %} checked {% endif %} aria-label="Checkbox for Streamer">
+            </div>
+            <input type="text" class="form-control" readonly aria-label="Streamer" value="Streamer">
           </div>
           <!--Recorder-->
           <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <div class="input-group-text">
-                  <input class="form-check-input" id="drole-recorder" name="role-recorder" type="checkbox" {% if defaultRoleDict["Recorder"] %} checked {% endif %} aria-label="Checkbox for Recorder">
-                </div>
-              </div>
-              <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
+            <div class="input-group-text">
+              <input class="form-check-input" id="drole-recorder" name="role-recorder" type="checkbox" {% if defaultRoleDict["Recorder"] %} checked {% endif %} aria-label="Checkbox for Recorder">
+            </div>
+            <input type="text" class="form-control" readonly aria-label="Recorder" value="Recorder">
           </div>
           <!--Uploader-->
           <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <div class="input-group-text">
-                  <input class="form-check-input" id="drole-uploader" name="role-uploader" type="checkbox" {% if defaultRoleDict["Uploader"] %} checked {% endif %} aria-label="Checkbox for Uploader">
-                </div>
-              </div>
-              <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">
+            <div class="input-group-text">
+              <input class="form-check-input" id="drole-uploader" name="role-uploader" type="checkbox" {% if defaultRoleDict["Uploader"] %} checked {% endif %} aria-label="Checkbox for Uploader">
+            </div>
+            <input type="text" class="form-control" readonly aria-label="Recorder" value="Uploader">
           </div>
       </div>
       <div class="modal-footer">
