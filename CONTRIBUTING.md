@@ -51,7 +51,7 @@ We use the Developer Certificate of Origin (DCO) as an additional safeguard for 
 ````
   Signed-off-by: Random J Developer <random@developer.example.org>
 ````
-Use your real name (sorry, no pseudonyms or anonymous contributions). The email id should match the email id provided in your GitHub profile. If you set your ```user.name``` and ```user.email``` in git config, you can sign your commit automatically with ```git commit -s```.
+The email id should match the email id provided in your GitHub/Gitlab profile. If you set your ```user.name``` and ```user.email``` in git config, you can sign your commit automatically with ```git commit -s```.
 
 ### Our Responsibilities
 
