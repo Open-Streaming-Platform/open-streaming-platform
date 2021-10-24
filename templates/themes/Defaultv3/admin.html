@@ -1,6 +1,7 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
 
 {% import "themes/" + sysSettings.systemTheme + "/macros/admin_page.html" as admin with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
 
 {% block head %}
 <title>{{sysSettings.siteName}}</title>
@@ -168,6 +169,8 @@
 {% endblock %}
 
 {% block modals %}
+    {{ modals.add_oauth_provider() }}
+    {{ modals.delete_oauth_provider() }}
 {% endblock %}
 
 {% block scripts %}
