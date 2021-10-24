@@ -8,29 +8,25 @@ image: ubuntu:latest
 
 stages:
 - test
-- dev
 include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Dependency-Scanning.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "web"'
 
-dev:
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    # Run ssh-agent (inside the build environment)
-    - eval $(ssh-agent -s)
-    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-    - ssh-add <(echo "$DEV_SERVER_ID_RSA" | base64 -d)
-    - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  stage: dev
-  tags:
-    - Dev_Build
-  script:
-    - ssh -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
-  environment:
-    name: development
-    url: http://osp.internal.divby0.net
+#dev:
+#  before_script:
+#    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#    # Run ssh-agent (inside the build environment)
+#    - eval $(ssh-agent -s)
+#    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+#    - ssh-add <(echo "$DEV_SERVER_ID_RSA" | base64 -d)
+#    - mkdir -p ~/.ssh
+#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#  stage: dev
+#  tags:
+#    - Dev_Build
+#  script:
+#    - ssh -o StrictHostKeyChecking=no $DEV_SERVER_USER@$DEV_SERVER_ADDRESS "cd /opt/osp/ && git stash && git pull origin && python3 manage.py db migrate && python3 manage.py db upgrade"
+#  environment:
+#    name: development
+#    url: http://osp.internal.divby0.net
