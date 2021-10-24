@@ -260,3 +260,129 @@ function rebuildEdgeConf(){
     socket.emit('rebuildEdgeConf', {message: 'true'});
     createNewBSAlert("Config File Rebuilt.  Please restart the nginx-osp service on each OSP-Core server to take effect", "Success");
 }
+
+function openNewWebhookModal() {
+    $('#newWebhookModal').modal('show');
+    var webhookName = document.getElementById('webhookName');
+    var webhookEndpoint = document.getElementById('webhookEndpoint');
+    var webhookHeader = document.getElementById('webhookHeader');
+    var webhookPayload = document.getElementById('webhookPayload');
+    var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+    var webhookTriggerElement = document.getElementById('webhookTrigger');
+    var webhookInputAction = document.getElementById('webhookInputAction');
+    var webhookInputID = document.getElementById('webhookID');
+
+    webhookInputID.value = 'New';
+    webhookName.value = "";
+    webhookEndpoint.value = "";
+    webhookHeader.value = "";
+    webhookPayload.value = "";
+    webhookReqTypeElement.value = 0;
+    webhookTriggerElement.value = 0;
+    webhookInputAction.value = 'new';
+}
+
+function deleteWebhookModal(webhookID) {
+    document.getElementById('deleteWebhookID').value = webhookID;
+    $('#confirmDeleteWebhookModal').modal('show');
+}
+
+function deleteWebhook() {
+    var webhookID = document.getElementById('deleteWebhookID').value;
+    socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
+    var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
+    webhookTableRow.parentNode.removeChild(webhookTableRow);
+}
+
+function submitWebhook() {
+    var webhookName = document.getElementById('webhookName').value;
+    var webhookEndpoint = document.getElementById('webhookEndpoint').value;
+    var webhookHeader = document.getElementById('webhookHeader').value;
+    var webhookPayload = document.getElementById('webhookPayload').value;
+    var webhookReqTypeElement = (document.getElementById('webhookReqType'));
+    var webhookTriggerElement = document.getElementById('webhookTrigger');
+    var webhookReqType = webhookReqTypeElement.options[webhookReqTypeElement.selectedIndex].value;
+    var webhookTrigger = webhookTriggerElement.options[webhookTriggerElement.selectedIndex].value;
+    var webhookInputAction = document.getElementById('webhookInputAction').value;
+    var webhookInputID = document.getElementById('webhookID').value;
+
+    if (webhookName == '') {
+        (document.getElementById('webhookName')).setCustomValidity('Name is Required');
+    }
+    if (webhookEndpoint == '') {
+        (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
+    }
+    socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID});
+}
+
+function editWebhook(webhookID) {
+    var webhookTrigger = document.getElementById('webhookTrigger');
+    var webhookName = document.getElementById('webhookName');
+    var webhookEndpoint = document.getElementById('webhookEndpoint');
+    var webhookHeader = document.getElementById('webhookHeader');
+    var webhookPayload = document.getElementById('webhookPayload');
+    var webhookReqTypeElement = document.getElementById('webhookReqType');
+    var webhookInputAction = document.getElementById('webhookInputAction');
+    var webhookInputID = document.getElementById('webhookID');
+
+    var triggerVal = document.getElementById('webhookRowTrigger-' + webhookID).innerText;
+
+    switch(triggerVal) {
+      case 'Stream Start':
+        triggerVal = 0;
+        break;
+      case 'Stream End':
+        triggerVal = 1;
+        break;
+      case 'Stream Viewer Join':
+        triggerVal = 2;
+        break;
+      case 'Stream Viewer Upvote':
+        triggerVal = 3;
+        break;
+      case 'Stream Name Change':
+        triggerVal = 4;
+        break;
+      case 'Chat Message':
+        triggerVal = 5;
+        break;
+      case 'New Video':
+        triggerVal = 6;
+        break;
+      case 'Video Comment':
+        triggerVal = 7;
+        break;
+      case 'Video Upvote':
+        triggerVal = 8;
+        break;
+      case 'Video Name Change':
+        triggerVal = 9;
+        break;
+      case 'Channel Subscription':
+        triggerVal = 10;
+        break;
+      case 'New User':
+        triggerVal = 20;
+        break;
+      default:
+        triggerVal = 0;
+    }
+
+    webhookName.value = document.getElementById('webhookRowName-' + webhookID).innerText;
+    webhookEndpoint.value = document.getElementById('webhookRowEndpoint-' + webhookID).innerText;
+    webhookHeader.value = document.getElementById('webhookRowHeader-' + webhookID).innerText;
+    webhookPayload.value = document.getElementById('webhookRowPayload-' + webhookID).innerText;
+    webhookReqTypeElement.value = document.getElementById('webhookRowType-' + webhookID).innerText;
+    webhookTrigger.value = triggerVal;
+    webhookInputAction.value = 'edit';
+    webhookInputID.value = webhookID;
+
+    $('#newWebhookModal').modal('show');
+    webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
+    webhookPayload.value = JSON.stringify(JSON.parse(webhookPayload.value), undefined, 2);
+}
+
+function testWebhook(webhookID) {
+    socket.emit('testWebhook', {webhookID: webhookID, webhookType: 'global'});
+    createNewBSAlert("Webhook Test Sent","success")
+}

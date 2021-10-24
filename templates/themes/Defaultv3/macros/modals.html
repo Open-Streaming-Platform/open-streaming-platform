@@ -411,3 +411,96 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro delete_webhook() %}
+<div class="modal fade" id="confirmDeleteWebhookModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteWebhookModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmDeleteWebhookModalTitle">Delete Webhook</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              Are you sure you want to delete the webhook?
+              <input id="deleteWebhookID" type="hidden">
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteWebhook();">Delete</button>
+          </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro new_webhook() %}
+<div class="modal fade" id="newWebhookModal" tabindex="-1" role="dialog" aria-labelledby="newWebhookModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newWebhookModalTitle">Create/Edit Webhook</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="row">
+             <div class="col-12">
+                 <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="webhookName">Name</label>
+                        <input id="webhookName" class="form-control" autocomplete="new-password">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="webhookEndpoint">Endpoint URL</label>
+                        <input id="webhookEndpoint" class="form-control" autocomplete="new-password">
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="form-group col-md-12">
+                        <label for="webhookHeader">Request Header</label>
+                        <textarea id="webhookHeader" class="form-control" maxlength="4096"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="webhookPayload">Payload</label>
+                        <textarea id="webhookPayload" class="form-control" cols=50 rows=25 maxlength="4096"></textarea>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="webhookReqType">Type</label>
+                        <select id="webhookReqType" class="form-control">
+                             <option value=0 selected>POST</option>
+                             <option value=1>GET</option>
+                             <option value=2>PUT</option>
+                             <option value=3>DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="webhookTrigger">Trigger Event</label>
+                        <select id="webhookTrigger" class="form-control">
+                             <option value=0 selected>Stream Start</option>
+                             <option value=1>Stream End</option>
+                             <option value=2>Stream Viewer Join</option>
+                             <option value=4>Stream Name Change</option>
+                             <option value=5>Chat Message</option>
+                             <option value=6>New Video</option>
+                             <option value=7>Video Comment</option>
+                             <option value=9>Video Name Change</option>
+                             <option value=10>Channel Subscription</option>
+                             <option value=20>New User</option>
+                        </select>
+                    </div>
+                    <input id="webhookInputAction" type="hidden">
+                    <input id="webhookID" type="hidden">
+                 </div>
+             </div>
+         </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" onclick="submitWebhook();">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
