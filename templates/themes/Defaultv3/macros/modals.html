@@ -188,9 +188,9 @@
       <form action="/settings/admin" id="OAuthForm" method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="newOauthModalTitle">Add/Edit an OAuth Provider</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
       </div>
       <div class="modal-body">
           <div class="container">
@@ -285,7 +285,7 @@
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="resetOAuthForm();">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="resetOAuthForm();">Cancel</button>
         <input type="submit" class="btn btn-success" value="Add/Edit">
       </div>
       </form>
@@ -301,9 +301,9 @@
       <form action="/settings/admin" method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteOauthModalTitle">Delete a OAuth Provider</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
       </div>
       <div class="modal-body">
           <div class="container">
@@ -320,7 +320,7 @@
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cancel</button>
         <input type="submit" class="btn btn-danger" value="Delete">
       </div>
       </form>
