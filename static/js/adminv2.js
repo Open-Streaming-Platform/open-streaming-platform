@@ -406,3 +406,34 @@ function editStickerModal(stickerID) {
     socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName});
     createNewBSAlert("Sticker Edited","success")
 }
+
+function disable2FAModal(userID) {
+    var userIDInputDiv = document.getElementById('disable2FAUser');
+    userIDInputDiv.value = userID;
+    $('#disable2faModal').modal('show');
+}
+
+function disable2FA() {
+    var userIDInputDiv = document.getElementById('disable2FAUser');
+    var userID = userIDInputDiv.value;
+    socket.emit('disable2FA', {userID: userID});
+    var buttonSelector = document.getElementById('2fa-active-button-' + userID);
+    buttonSelector.disabled = true;
+}
+
+function updateDefaultRoles() {
+    var streamerChecked = document.getElementById("drole-streamer").checked;
+    var recorderChecked = document.getElementById("drole-recorder").checked;
+    var uploaderChecked = document.getElementById("drole-uploader").checked;
+    socket.emit('updateDefaultRoles',{streamer: streamerChecked, recorder: recorderChecked, uploader: uploaderChecked});
+}
+
+function bulkAddRole(rolename) {
+    var userIDArray = [];
+    $("input:checkbox[name=selector-user]:checked").each(function(){
+        userIDArray.push($(this).val());
+    });
+
+    socket.emit('bulkAddRoles',{users: userIDArray, role: rolename});
+    window.location.replace("/settings/admin?page=users");
+}

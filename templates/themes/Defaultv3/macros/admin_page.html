@@ -608,7 +608,7 @@
         <span class="float-end me-3">
             <button class="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#newUserModal"><i class="bi bi-plus"></i></button>
             <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#defaultRolesModal"><i class="bi bi-shield-fill-check"></i> Default Roles</button>
-            <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Bulk Add Role</button>
+            <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Bulk Add Role</button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" onclick="bulkAddRole('Admin');" href="javascript:void(0);">Admin</a>
                 <a class="dropdown-item" onclick="bulkAddRole('Streamer');" href="javascript:void(0);">Streamer</a>
@@ -650,7 +650,7 @@
                         {% endfor %}
                       </td>
                       <td>
-                        <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Add Role</button>
+                        <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Add Role</button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>

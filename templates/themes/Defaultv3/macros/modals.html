@@ -581,3 +581,28 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro disable_2fa() %}
+<div class="modal fade" id="disable2faModal" tabindex="-1" role="dialog" aria-labelledby="disable2faModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="disable2faModalTitle">Disable 2FA for User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="container">
+            Are you sure you want to disable Two-Factor Authentication for this user?
+          </div>
+          <input type="hidden" value="" id="disable2FAUser" name="disable2FAUser">
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" onclick="disable2FA();" value="Disable" data-dismiss="modal">Disable</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
