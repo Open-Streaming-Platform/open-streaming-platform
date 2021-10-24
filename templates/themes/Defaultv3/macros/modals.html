@@ -717,15 +717,15 @@
       <form action="/settings/admin" enctype=multipart/form-data method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="newTopicModalTitle">Create New Topic</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
       </div>
       <div class="modal-body">
           <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <input type="text" name="name" id="name" class="form-control" required autocomplete="new-password">
+                    <input type="text" name="name" id="newEditTopicName" class="form-control" required autocomplete="new-password">
                 </div>
             </div>
             <br>
@@ -749,7 +749,7 @@
           <input type="hidden" value="topics" id="settingType" name="settingType">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
         <input type="submit" class="btn btn-success" value="Create">
       </div>
       </form>
