@@ -712,7 +712,7 @@
 
 {% macro new_topic() %}
 <div class="modal fade" id="newTopicModal" tabindex="-1" role="dialog" aria-labelledby="newTopicModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+  <div class="modal-dialog modal-dialog-centered modal" role="document">
     <div class="modal-content">
       <form action="/settings/admin" enctype=multipart/form-data method="post">
       <div class="modal-header">
@@ -725,6 +725,7 @@
           <div class="container">
             <div class="row">
                 <div class="col-12">
+                    <label class="form-label" for="newEditTopicName">Topic Name</label>
                     <input type="text" name="name" id="newEditTopicName" class="form-control" required autocomplete="new-password">
                 </div>
             </div>
@@ -740,8 +741,8 @@
             <div class="row">
                   <div class="col-12">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" name=photo id="photo">
-                        <label class="custom-file-label" for="photo">Upload a Photo</label>
+                        <label class="form-label" for="photo">Upload a Photo</label>
+                        <input type="file" class="form-control" name=photo id="photo">
                       </div>
                   </div>
             </div>
