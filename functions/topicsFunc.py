@@ -3,7 +3,7 @@ from classes.shared import cache
 
 from classes import topics, Channel, RecordedVideo
 
-from functions import cachedDbCalls
+from functions import cachedDbCalls, system
 
 def deleteTopic(topicID, toTopicID):
 
