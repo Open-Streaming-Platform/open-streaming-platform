@@ -18,6 +18,7 @@ from classes import views
 
 from functions import system
 from functions import cachedDbCalls
+from functions import topicsFunc
 
 from app import user_datastore
 from app import ejabberd
@@ -121,6 +122,14 @@ def deleteActiveStream(message):
         db.session.commit()
         db.session.close()
         return abort(401)
+
+@socketio.on('deleteTopic')
+def deleteTopic(message):
+    if current_user.has_role('Admin'):
+        topicID = int(message['topicID'])
+        newTopicID = int(message['toTopicID'])
+        topicsFunc.deleteTopic(topicID, newTopicID)
+    return 'OK'
 
 @socketio.on('getServerResources')
 def get_resource_usage(message):

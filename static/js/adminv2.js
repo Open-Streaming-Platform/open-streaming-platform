@@ -437,3 +437,25 @@ function bulkAddRole(rolename) {
     socket.emit('bulkAddRoles',{users: userIDArray, role: rolename});
     window.location.replace("/settings/admin?page=users");
 }
+
+function deleteTopicModal(topicID) {
+    document.getElementById('deleteTopicID').value = topicID;
+    $('#deleteTopicModal').modal('show');
+}
+
+function deleteTopic() {
+    topicID = document.getElementById('deleteTopicID').value;
+    newTopic = document.getElementById('deleteNewTopicId').value;
+    socket.emit('deleteTopic', {topicID: topicID, toTopicID: newTopic});
+    topicDiv = document.getElementById('topic-' + topicID);
+    topicDiv.parentNode.removeChild(topicDiv);
+    document.getElementById('deleteTopicID').value = "";
+    document.getElementById('deleteNewTopicId').value = "";
+    createNewBSAlert("Topic Deleted","success")
+}
+
+function editTopicModal(topicID) {
+    topicName = document.getElementById('topic-name-' + topicID).value;
+    socket.emit('editTopic', {topicID: topicID, topicName: topicName});
+    createNewBSAlert("Topic Edited","success")
+}
