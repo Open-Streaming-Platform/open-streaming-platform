@@ -535,7 +535,7 @@ def inject_ownedChannels():
 
 @app.context_processor
 def inject_topics():
-    topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name).all()
+    topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name, topics.topics.iconClass).all()
     return dict(uploadTopics=topicQuery)
 
 app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
