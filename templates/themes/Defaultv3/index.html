@@ -26,20 +26,22 @@
         {# {{ featured_streamer_panel(data) }} #}
 
         <!--Top Live Streams Macro-->
+        {% if streamList != [] %}
         {{ panels.live_streams_panel(streamList, title="Top Live Streams") }}
-
-        <!--Currently Live Macro-->
-        {{ panels.live_streams_panel(streamList, title="Currently Live") }}
+        {% endif %}
 
         <!--Trending Topics Macro-->
         {{ panels.topics_panel(uploadTopics, title="Trending Topics") }}
 
+        {% if videoList != [] %}
         <!--Popular Videos Macro-->
         {{ panels.videos_panel(videoList, title="Popular Videos") }}
+        {% endif %}
 
+        {% if clipList != [] %}
         <!--Popular Clips Macro-->
         {{ panels.clips_panel(clipList, title="Popular Clips") }}
-
+        {% endif %}
 {% endblock %}
 
 {% block scripts %}
