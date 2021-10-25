@@ -1,3 +1,5 @@
+from flask_security import current_user
+
 from classes.shared import db
 from classes.shared import cache
 
