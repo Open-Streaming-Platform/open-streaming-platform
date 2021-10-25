@@ -8,6 +8,7 @@ from functions import cachedDbCalls
 def deleteTopic(topicID, toTopicID):
 
     topicID = int(topicID)
+    toTopicID = int(toTopicID)
 
     topicQuery = topics.topics.query.filter_by(id=topicID).first()
 
@@ -30,3 +31,5 @@ def deleteTopic(topicID, toTopicID):
     topicQuery = cachedDbCalls.getAllTopics()
     for topic in topicQuery:
         globalvars.topicCache[topic.id] = topic.name
+
+    return True

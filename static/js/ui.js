@@ -37,6 +37,14 @@ function showUserNav() {
     }
 }
 
+// Creates a Bootstrap Alert
+function createNewBSAlert(message,category) {
+  var randomID = getRandomInt(1,9000);
+  $('#toastDiv').append('<div class="toast fade show" id="toast-' + randomID + '" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">' +
+          '<div class="toast-header"><strong class="mr-auto"><span class="toast-box"> </span><span style="margin-left:5px;">' + category + '</span> </strong>' +
+          '<button type="button" class="ml-2 mb-1 close" onclick="hideDiv(\'toast-' + randomID + '\')" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="toast-body">' + message + '</div></div>')
+}
+
 // Watches the Mouse Target Location Opens User Navigation Bar
 $(document).click(function(event) {
     var target = event.target.parentNode;
