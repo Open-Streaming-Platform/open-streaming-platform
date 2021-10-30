@@ -459,3 +459,15 @@ function editTopicModal(topicID) {
     socket.emit('editTopic', {topicID: topicID, topicName: topicName});
     createNewBSAlert("Topic Edited","success")
 }
+
+function deleteChannelModal(channelID) {
+    document.getElementById('deleteChannelID').value = channelID;
+    $('#confirmDeleteChannelModal').modal('show');
+}
+
+function deleteChannel() {
+    var channelID = document.getElementById('deleteChannelID').value;
+    socket.emit('deleteChannel', {channelID: channelID});
+    var channelTableRow = document.getElementById('channelCardRow-' + channelID);
+    channelTableRow.parentNode.removeChild(channelTableRow);
+}
