@@ -471,3 +471,16 @@ function deleteChannel() {
     var channelTableRow = document.getElementById('channelCardRow-' + channelID);
     channelTableRow.parentNode.removeChild(channelTableRow);
 }
+
+function openStreamDeleteModal(streamID) {
+    document.getElementById('deleteStreamID').value = streamID;
+    $('#deleteStreamModal').modal('show');
+}
+
+function deleteStream() {
+    var streamID = document.getElementById('deleteStreamID').value;
+    socket.emit('deleteStream', {streamID: streamID});
+    var streamCard = document.getElementById('streamCard-' + streamID);
+    streamCard.parentNode.removeChild(streamCard);
+    document.getElementById('deleteStreamID').value = "";
+}
