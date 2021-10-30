@@ -2,6 +2,7 @@ from flask import flash, current_app
 from flask_wtf import RecaptchaField
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm, validators
 from flask_security import UserMixin, RoleMixin
+from email_validator import validate_email, caching_resolver
 from .shared import db
 from classes import Sec
 from globals import globalvars
@@ -11,6 +12,9 @@ import datetime
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [validators.Regexp("['\w']+"), Required()])
     email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
+
+    resolver = caching_resolver(timeout=10)
+
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -24,11 +28,16 @@ class ExtendedRegisterForm(RegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
+        if validate_email(email, dns_resolver=resolver) is False:
+            success = False
         return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     username = StringField('username', [validators.Regexp("['\w']+"), Required()])
     email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
+
+    resolver = caching_resolver(timeout=10)
+
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -41,6 +50,8 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
             success = False
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
+            success = False
+        if validate_email(email, dns_resolver=resolver) is False:
             success = False
         return success
 

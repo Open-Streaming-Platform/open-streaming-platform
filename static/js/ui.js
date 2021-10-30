@@ -37,6 +37,12 @@ function showUserNav() {
     }
 }
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // Creates a Bootstrap Alert
 function createNewBSAlert(message,category) {
   var randomID = getRandomInt(1,9000);
