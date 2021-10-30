@@ -38,7 +38,7 @@
         {{ panels.videos_panel(videoList, title="Popular Videos") }}
         {% endif %}
 
-        {% if clipList | length > 0 %}
+        {% if clipList | count > 0 %}
         <!--Popular Clips Macro-->
         {{ panels.clips_panel(clipList, title="Popular Clips") }}
         {% endif %}
