@@ -707,6 +707,8 @@ table tbody tr {
   width: 100%;
   text-align: center;
   line-height: 30px;
+  top: 0;
+  position: sticky;
 }
 
 .comments-container .comments-content-container {
