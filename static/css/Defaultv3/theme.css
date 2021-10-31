@@ -698,7 +698,8 @@ table tbody tr {
 .comments-container {
   background-color: var(--box1-background);
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - var(--top-navbar-height));
+  overflow : auto;
 }
 
 .comments-container .comments-header-container {
