@@ -716,7 +716,7 @@
     <div class="modal-content">
       <form action="/settings/admin" enctype=multipart/form-data method="post">
       <div class="modal-header">
-        <h5 class="modal-title" id="newTopicModalTitle">Create New Topic</h5>
+        <h5 class="modal-title" id="newTopicModalTitle">Create/Edit Topic</h5>
           <div class="float-end">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -748,6 +748,7 @@
             </div>
           </div>
           <input type="hidden" value="topics" id="settingType" name="settingType">
+          <input type="hidden" value="" id="existingTopicId" name="existingTopicId">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>

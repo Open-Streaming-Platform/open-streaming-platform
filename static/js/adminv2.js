@@ -456,8 +456,11 @@ function deleteTopic() {
 
 function editTopicModal(topicID) {
     topicName = document.getElementById('topic-name-' + topicID).value;
-    socket.emit('editTopic', {topicID: topicID, topicName: topicName});
-    createNewBSAlert("Topic Edited","success")
+    topicPhoto = document.getElementById('topic-pic-' + topicID).src;
+    document.getElementById('newEditTopicName').value = topicName;
+    document.getElementById('newEditTopicImg').src = topicPhoto;
+    document.getElementById('existingTopicId').value = topicID;
+    $('#newTopicModal').modal('show');
 }
 
 function deleteChannelModal(channelID) {
