@@ -1,3 +1,6 @@
+// Socket.IO Connection
+var conn_options = {'sync disconnect on unload':true};
+var socket = io();
 
 socket.on('connect', function () {
     socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
@@ -6,8 +9,6 @@ socket.on('connect', function () {
 setInterval(function () {
     socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
 }, 30000);
-
-
 
 socket.on('upvoteTotalResponse', function (msg) {
 
