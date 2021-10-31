@@ -376,7 +376,7 @@ table tbody tr {
 .videos-container {
     width: 100%;
     padding: 20px 20px;
-    background-color: var(--box3-background);
+    background-color: var(--page-background);
     box-shadow: var(--box-shadow);
 }
 
@@ -499,7 +499,7 @@ table tbody tr {
 
 .offline-badge {
     padding: 2px 8px;
-    background-color: var(--box1-background);
+    background-color: var(--box3-background);
     border-radius: 4px;
     text-align: center;
 }
