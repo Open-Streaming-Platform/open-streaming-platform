@@ -497,7 +497,7 @@ table tbody tr {
 
 .offline-badge {
     padding: 2px 8px;
-    background-color: #545452;
+    background-color: var(--box1-background);
     border-radius: 4px;
     text-align: center;
 }
