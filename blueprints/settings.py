@@ -633,7 +633,7 @@ def admin_page():
 
         elif settingType == "topics":
 
-            if 'topicID' in request.form:
+            if 'topicID' in request.form and request.form['topicID'] != 'None':
                 topicID = int(request.form['topicID'])
                 topicName = request.form['name']
 
