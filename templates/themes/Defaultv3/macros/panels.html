@@ -214,9 +214,11 @@
         <button class="btn btn-primary boxShadow"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>
     </div>
-    <div class="video-control-viewer-buttons pt-2 ms-1 float-end">
+    <div class="video-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow"><i class="fas fa-share-alt"></i></button>
-        <button class="btn btn-outline-success boxShadow"><i class="far fa-thumbs-up"></i></button>
+        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+            <span id="totalUpvotes"></span> <i id="upVoteIcon" class="far fa-thumbs-up"></i>
+        </button>
         <button class="btn btn-outline-secondary boxShadow"><i class="far fa-star"></i> Subscribe</button>
     </div>
 </div>
