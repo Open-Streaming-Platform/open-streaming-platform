@@ -43,12 +43,17 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function hideDiv(divID) {
+  $('#' + divID).removeClass("show");
+  $('#' + divID).addClass("hide");
+}
+
 // Creates a Bootstrap Alert
 function createNewBSAlert(message,category) {
   var randomID = getRandomInt(1,9000);
   $('#toastDiv').append('<div class="toast fade show" id="toast-' + randomID + '" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">' +
           '<div class="toast-header"><strong class="mr-auto"><span class="toast-box"> </span><span style="margin-left:5px;">' + category + '</span> </strong>' +
-          '<button type="button" class="ml-2 mb-1 close" onclick="hideDiv(\'toast-' + randomID + '\')" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="toast-body">' + message + '</div></div>')
+          '<div class="float-end"><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" onclick="hideDiv(\'toast-' + randomID + '\')"></button></div></div><div class="toast-body">' + message + '</div></div>')
 }
 
 // Watches the Mouse Target Location Opens User Navigation Bar
