@@ -695,7 +695,7 @@
                         <div class="topicImg w-100 my-2">
                             <img class="mx-auto d-block" id="topic-pic-{{ topic.id }}"  src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
-                        <input type="text" class="form-control boxShadow w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}">
+                        <input type="text" class="form-control boxShadow w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}" readonly>
                         <div class="mx-auto my-2" style="width:96px;">
                             <button class="btn btn-warning" onclick="editTopicModal({{ topic.id }});"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-danger" onclick="deleteTopicModal({{ topic.id }});"><i class="bi bi-trash-fill"></i></button>
