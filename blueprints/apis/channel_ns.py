@@ -15,6 +15,7 @@ from classes.shared import db
 
 from functions import system
 from functions import cachedDbCalls
+from functions import channelFunc
 
 from globals import globalvars
 
@@ -180,36 +181,7 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery is not None:
-                        videoQuery = channelQuery.recordedVideo
-                        channelUpvotes = channelQuery.upvotes
-                        channelStreams = channelQuery.stream
-
-                        for video in videoQuery:
-                            video.remove()
-                            for clip in video.clips:
-                                for upvotes in clip:
-                                    db.session.delete(upvotes)
-                                clip.remove()
-                                db.session.delete(clip)
-                            for upvote in video.upvotes:
-                                db.session.delete(upvote)
-                            for comment in video.comments:
-                                db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
-                            for view in vidViews:
-                                db.session.delete(view)
-                            db.session.delete(video)
-                        for entry in channelUpvotes:
-                            db.session.delete(entry)
-                        for entry in channelStreams:
-                            db.session.delete(entry)
-                        db.session.delete(channelQuery)
-                        db.session.commit()
-
-                        videos_root = globalvars.videoRoot + 'videos/'
-                        filePath = videos_root + channelQuery.channelLoc
-                        if filePath != videos_root:
-                            shutil.rmtree(filePath, ignore_errors=True)
+                        results = channelFunc.delete_channel(channelQuery.id)
 
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400

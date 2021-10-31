@@ -19,6 +19,8 @@ from classes import views
 from functions import system
 from functions import cachedDbCalls
 from functions import topicsFunc
+from functions import videoFunc
+from functions import channelFunc
 
 from app import user_datastore
 from app import ejabberd
@@ -56,49 +58,7 @@ def deleteChannelAdmin(message):
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
     if channelQuery is not None:
         if current_user.has_role('Admin') or channelQuery.owningUser == current_user.id:
-            for vid in channelQuery.recordedVideo:
-                for upvote in vid.upvotes:
-                    db.session.delete(upvote)
-                vidComments = vid.comments
-                for comment in vidComments:
-                    db.session.delete(comment)
-                vidViews = views.views.query.filter_by(viewType=1, itemID=vid.id)
-                for view in vidViews:
-                    db.session.delete(view)
-                for clip in vid.clips:
-                    db.session.delete(clip)
-
-                db.session.delete(vid)
-
-            for upvote in channelQuery.upvotes:
-                db.session.delete(upvote)
-            for inviteCode in channelQuery.inviteCodes:
-                db.session.delete(inviteCode)
-            for viewer in channelQuery.invitedViewers:
-                db.session.delete(viewer)
-            for sub in channelQuery.subscriptions:
-                db.session.delete(sub)
-            for hook in channelQuery.webhooks:
-                db.session.delete(hook)
-            for sticker in channelQuery.chatStickers:
-                db.session.delete(sticker)
-
-            stickerFolder = '/var/www/images/stickers/' + channelQuery.channelLoc + '/'
-            shutil.rmtree(stickerFolder, ignore_errors=True)
-
-            filePath = globalvars.videoRoot + channelQuery.channelLoc
-
-            if filePath != globalvars.videoRoot:
-                shutil.rmtree(filePath, ignore_errors=True)
-
-            from app import ejabberd
-            sysSettings = cachedDbCalls.getSystemSettings()
-            ejabberd.destroy_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
-
-            system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
-            db.session.delete(channelQuery)
-            db.session.commit()
-    db.session.close()
+            result = channelFunc.delete_channel(channelID)
     return 'OK'
 
 @socketio.on('deleteStream')
