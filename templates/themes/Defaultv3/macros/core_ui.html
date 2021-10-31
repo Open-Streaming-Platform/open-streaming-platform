@@ -33,9 +33,9 @@
                       <span class="toast-box {% if category == 'message' %}gray {% elif category == 'error'%}red {% elif category == 'success' %}green {% endif %}"> </span>
                       <span style="margin-left:5px;">{{category|upper}}</span>
                     </strong>
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div class="float-end">
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                     </div>
                   </div>
                   <div class="toast-body">
                     {{message}}
