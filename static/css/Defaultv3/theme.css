@@ -3,6 +3,7 @@
     --page-background: #3E3D3D;
     --box1-background: #4F4F4F;
     --box2-background: #1F1F1F;
+    --box3-background: #CCCCCC;
     --green-background: #273F1C;
     --blue-background: #151458;
     --accent-color: #3488DB;
@@ -375,7 +376,8 @@ table tbody tr {
 .videos-container {
     width: 100%;
     padding: 20px 20px;
-    background-color: var(--page-background);
+    background-color: var(--box3-background);
+    box-shadow: var(--box-shadow);
 }
 
 .clips-container {
@@ -687,6 +689,12 @@ table tbody tr {
 .streamer-avatar .username {
   margin-top: 10px;
   text-align: center;
+}
+
+.video-control-panel {
+    height: 50px;
+    width: 100%px;
+    background-color: var(--page-background);
 }
 
 .video-metadata {
