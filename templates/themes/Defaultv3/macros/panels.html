@@ -206,13 +206,18 @@
 
 {% macro video_control_panel() %}
 <div class="video-control-panel boxShadow">
-    <div class="video-control-owner-buttons">
+    <div class="video-control-owner-buttons pt-2 ms-1">
         <button class="btn btn-primary boxShadow"><i class="fas fa-download"></i></button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-camera"></i></button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-arrow-circle-right"></i></button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-cut"></i></button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>
+    </div>
+    <div class="video-control-viewer-buttons pt-2 ms-1 float-end">
+        <button class="btn btn-primary boxShadow"><i class="fas fa-share-alt"></i></button>
+        <button class="btn btn-outline-success boxShadow"><i class="far fa-thumbs-up"></i></button>
+        <button class="btn btn-outline-secondary boxShadow"><i class="far fa-star"></i> Subscribe</button>
     </div>
 </div>
 {% endmacro %}
