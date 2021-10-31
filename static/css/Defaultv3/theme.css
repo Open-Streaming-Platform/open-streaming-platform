@@ -137,6 +137,16 @@ table tbody tr {
     display: inline-block !important;
 }
 
+.toast {
+    background-color: var(--box1-background);
+    color: var(--font-color);
+}
+
+.toast-header {
+    background-color: var(--box2-background);
+    color: var(--font-color);
+}
+
 .uiBar {
     background-color: var(--navbar-background);
     box-shadow: var(--box-shadow);
