@@ -48,5 +48,4 @@ socket.on('upvoteTotalResponse', function (msg) {
 
 function changeUpvote(type, id) {
     socket.emit('changeUpvote', {loc: id, vidType: type});
-    socket.emit('getUpvoteTotal', {loc: id, vidType: type});
 }
