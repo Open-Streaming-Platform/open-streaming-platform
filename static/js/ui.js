@@ -48,6 +48,10 @@ function hideDiv(divID) {
   $('#' + divID).addClass("hide");
 }
 
+function openModal(modalID) {
+    $('#' + modalID).modal('show')
+}
+
 // Creates a Bootstrap Alert
 function createNewBSAlert(message,category) {
   var randomID = getRandomInt(1,9000);
