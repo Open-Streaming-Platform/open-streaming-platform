@@ -34,6 +34,7 @@
 
 {% block modals %}
     {{ modals.add_video_comment(video.id) }}
+    {{ modals.video_share(video, request, startTime) }}
 {% endblock %}
 
 {% block scripts %}

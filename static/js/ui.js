@@ -43,6 +43,12 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function CopyDiv(divVal) {
+    var copyText = document.getElementById(divVal);
+    copyText.select();
+    document.execCommand("copy");
+}
+
 function hideDiv(divID) {
   $('#' + divID).removeClass("show");
   $('#' + divID).addClass("hide");

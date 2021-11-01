@@ -842,3 +842,53 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro video_share(video, request, startTime) %}
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div style="margin: 0 auto;width: 99%; text-align: center;">
+          <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
+            onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url|normalize_url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
+          <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
+            onclick="window.open('https://twitter.com/share?url={{request.url|normalize_url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+        </div>
+        <br>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="shareTimestamp" value="shareTimestamp" onclick="toggleShareTimestamp(request.url, startTime);">
+          <label class="form-check-label" for="shareTimestamp">Set URL to Start at Current Timestamp</label>
+        </div>
+        <div class="form-group row">
+          <label for="embedURLInput" class="col-sm-2 col-form-label"><b>Embed</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('embedURLInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="embedURLInput" type="text" value="<iframe src='{{request.url|normalize_url}}?embedded=True&autoplay=True' width=600 height=345></iframe>" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="linkShareInput" class="col-sm-2 col-form-label"><b>Link</b></label>
+          <div class="col-sm-10">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                  <button type="button" class="btn btn-primary" onclick="CopyDiv('linkShareInput')"><i class="fas fa-copy"></i></button>
+              </div>
+              <input class="form-control" id="linkShareInput" type="text" value="{{request.url|normalize_url}}" readonly onClick="this.select();">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('shareTimestamp').checked = false;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

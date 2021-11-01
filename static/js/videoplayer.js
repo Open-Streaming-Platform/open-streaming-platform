@@ -63,3 +63,14 @@ function changeUpvote(type, id) {
 function toggleChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });
 }
+
+function toggleShareTimestamp(requestURL, startTime) {
+    if (document.getElementById('shareTimestamp').checked)
+    {
+        document.getElementById('embedURLInput').value = '<iframe src="' + requestURL + '?embedded=True&autoplay=True&startTime='.replace('?startTime=' + startTime,'') + player.currentTime() + '" width=600 height=345></iframe>';
+        document.getElementById('linkShareInput').value = requestURL.replace('?startTime=' + startTime,'') + '?startTime=' + player.currentTime();
+    } else {
+        document.getElementById('embedURLInput').value = '<iframe src="' + requestURL + '?embedded=True&autoplay=True" width=600 height=345></iframe>'.replace('?startTime=' + startTime,'');
+        document.getElementById('linkShareInput').value = requestURL.replace('?startTime=' + startTime,'');
+    }
+}
