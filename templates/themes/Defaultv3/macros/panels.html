@@ -219,7 +219,7 @@
         <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
             <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
         </button>
-        <button class="btn btn-outline-secondary boxShadow"><i class="far fa-star"></i> Subscribe</button>
+        <button class="btn btn-outline-secondary boxShadow" id="chanSubStateButton"><i class="far fa-star"></i> Subscribe</button>
     </div>
 </div>
 {% endmacro %}
