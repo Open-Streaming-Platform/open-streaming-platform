@@ -4,15 +4,14 @@ var socket = io();
 
 socket.on('connect', function () {
     console.log('Connected to SocketIO');
-    socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+    socket.emit('getUpvoteTotal', {loc: videoID, vidType: 'video'});
 });
 
 setInterval(function () {
-    socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
+    socket.emit('getUpvoteTotal', {loc: videoID, vidType: 'video'});
 }, 30000);
 
 socket.on('upvoteTotalResponse', function (msg) {
-    console.log(msg);
     if (msg['type'] === 'video') {
         upvoteDivID = 'totalUpvotes';
         upvoteIconID = 'upVoteIcon';

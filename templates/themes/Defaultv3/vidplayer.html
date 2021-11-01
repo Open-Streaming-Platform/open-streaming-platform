@@ -38,9 +38,7 @@
 
 {% block scripts %}
     <script>
-        function openModal(modalID) {
-            $('#' + modalID).modal('show')
-        }
+    var videoID = {{ video.id }};
     </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
