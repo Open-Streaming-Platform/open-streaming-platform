@@ -12,7 +12,7 @@ setInterval(function () {
 }, 30000);
 
 socket.on('upvoteTotalResponse', function (msg) {
-
+    console.log(msg);
     if (msg['type'] === 'video') {
         upvoteDivID = 'totalUpvotes';
         upvoteIconID = 'upVoteIcon';
