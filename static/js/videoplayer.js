@@ -49,10 +49,10 @@ socket.on('sendChanSubResults', function (msg) {
     var subButton = document.getElementById('chanSubStateButton');
     if (msg['state'] === true) {
         subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
-        subButton.className = "btn btn-sm btn-success";
+        subButton.className = "btn boxshadow btn-success";
     } else {
         subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
-        subButton.className = "btn btn-sm btn-outline-success";
+        subButton.className = "btn boxshadow btn-outline-success";
     }
 });
 
