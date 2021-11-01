@@ -219,7 +219,11 @@
         <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
             <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
         </button>
-        <button class="btn btn-outline-secondary boxShadow" id="chanSubStateButton"><i class="far fa-star"></i> Subscribe</button>
+        {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+        {% else %}
+            <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
+        {% endif %}
     </div>
 </div>
 {% endmacro %}
