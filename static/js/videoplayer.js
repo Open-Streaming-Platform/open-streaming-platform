@@ -3,6 +3,7 @@ var conn_options = {'sync disconnect on unload':true};
 var socket = io();
 
 socket.on('connect', function () {
+    console.log('Connected to SocketIO');
     socket.emit('getUpvoteTotal', {loc: '{{video.id}}', vidType: 'video'});
 });
 

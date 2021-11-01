@@ -15,8 +15,6 @@
 <meta property="og:url" content="{{request.url|normalize_url}}" />
 <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
-<script type="text/javascript" src="/static/js/videoplayer.js"></script>
-
 {% endblock %}
 
 {% block body %}
@@ -46,6 +44,7 @@
     </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
+    <script type="text/javascript" src="/static/js/videoplayer.js"></script>
     <script>
         var player = videojs('video', {
                 autoplay: true,
