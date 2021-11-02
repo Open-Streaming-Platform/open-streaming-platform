@@ -22,7 +22,7 @@
         <div class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, video.thumbnailLocation) }}
-                {{ panels.video_control_panel() }}
+                {{ panels.video_control_panel(streamURL) }}
                 {{ panels.video_metadata_panel(video) }}
             </div>
         </div>
@@ -35,6 +35,7 @@
 {% block modals %}
     {{ modals.add_video_comment(video.id) }}
     {{ modals.video_share(video, request, startTime) }}
+    {{ modals.new_thumbnail_modal() }}
 {% endblock %}
 
 {% block scripts %}
