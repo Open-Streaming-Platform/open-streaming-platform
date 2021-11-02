@@ -66,7 +66,7 @@ function toggleChannelSub(chanID) {
 
 socket.on('checkScreenShot', function (msg) {
     document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-    $("#newSSModal").modal()
+    openModal('newSSModal')
 });
 
 function toggleShareTimestamp(requestURL, startTime) {
