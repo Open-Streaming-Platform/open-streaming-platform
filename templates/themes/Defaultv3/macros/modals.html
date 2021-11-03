@@ -944,3 +944,60 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro create_clip(video, streamURL) %}
+<div class="modal fade" id="clipModal" tabindex="-1" role="dialog" aria-labelledby="clipModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <form action="/play/{{video.id}}/clip" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clipModalTitle">Create a Video Clip</h5>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="player w-100">
+            <video id="videoClip" class="shadow video-js vjs-big-play-centered" poster="/videos/{{video.thumbnailLocation}}" controls playsinline preload="auto" data-setup='{"fluid": true}'>
+              <source src="{{streamURL}}" type="video/mp4">
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+          </div>
+          <br>
+          <div id="clipError" class="alert alert-warning" style="display:none;"></div>
+          <div id="clipTimeSelect">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
+                  </div>
+                  <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly required>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                  </div>
+                  <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly required>
+                </div>
+              </div>
+            </div>
+            <br>
+            <input id="clipName" name="clipName" class="form-control" placeholder="Clip Name" maxlength="255" required><br>
+            <textarea id="clipDescription" name="clipDescription" class="form-control" placeholder="Description of the Clip" maxlength="2048"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <button id="clipSubmitButton" type="submit" class="btn btn-success" onclick="showSpinner();">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}

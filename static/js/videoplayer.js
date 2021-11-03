@@ -92,3 +92,59 @@ function setNewThumbnail() {
     socket.emit('setScreenShot', { loc: videoID, timeStamp: timestamp });
     createNewBSAlert("New Thumbnail Set", "success")
 }
+
+
+function openClipModal() {
+    player.pause();
+
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = null;
+
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = null;
+
+    var clipDescriptionInput = document.getElementById('clipDescription');
+    clipDescriptionInput.value = null;
+
+    $("#clipModal").modal();
+}
+
+function setClipStart() {
+    var startInput = document.getElementById('clipStartTime');
+    startInput.value = clipplayer.currentTime()
+    checkClipConstraints();
+}
+
+function setClipStop() {
+    var stopInput = document.getElementById('clipStopTime');
+    stopInput.value = clipplayer.currentTime()
+    checkClipConstraints();
+}
+
+function checkClipConstraints() {
+    var startTime = document.getElementById('clipStartTime').value;
+    var stopTime = document.getElementById('clipStopTime').value;
+    var systemMaxClipLength = maxClipLength;
+    var clipErrorDiv = document.getElementById('clipError');
+    var clipSubmitButton = document.getElementById('clipSubmitButton');
+
+    if (systemMaxClipLength < 301) {
+          if ((startTime !== "") && (stopTime !== "")) {
+                var clipLength = stopTime - startTime;
+                if (clipLength > systemMaxClipLength) {
+                  clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
+                  clipErrorDiv.style.display = "block";
+                  clipSubmitButton.disabled = true;
+                } else if (startTime > stopTime) {
+                  clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
+                  clipErrorDiv.style.display = "block";
+                  clipSubmitButton.disabled = true;
+                } else {
+                  clipErrorDiv.innerHTML = "";
+                  clipErrorDiv.style.display = "none";
+                  clipSubmitButton.disabled = false;
+
+                }
+          }
+    }
+}

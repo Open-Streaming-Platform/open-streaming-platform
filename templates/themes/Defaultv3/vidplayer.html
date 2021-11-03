@@ -39,12 +39,14 @@
     {{ modals.video_share(video, request, startTime) }}
     {{ modals.new_thumbnail_modal() }}
     {{ modals.move_video(video, ownedChannels) }}
+    {{ modals.create_clip(video, streamURL) }}
 {% endblock %}
 
 <!--Start Script Block-->
 {% block scripts %}
     <script>
     var videoID = {{ video.id }};
+    var maxClipLength = {{ sysSettings.maxClipLength }}
     </script>
 
     <script src="/static/vendor/videojs/js/video.js"></script>
@@ -65,5 +67,8 @@
                             }
                     }
             });
+        {% if video.owningUser == current_user.id %}
+        var clipplayer = videojs('videoClip', { autoplay: false });
+        {% endif %}
     </script>
 {% endblock %}
