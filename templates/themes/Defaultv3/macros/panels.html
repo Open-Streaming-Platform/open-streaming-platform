@@ -209,7 +209,9 @@
     <div class="video-control-owner-buttons pt-2 ms-1 float-start">
         <a href="{{streamURL}}" class="btn btn-primary boxShadow" data-toggle="tooltip" data-placement="top" title="Download Video" download><i class="fas fa-download"></i></a>
         <button class="btn btn-primary boxShadow" onclick="newThumbnailRequest();"><i class="fas fa-camera"></i></button>
-        <button class="btn btn-primary boxShadow"><i class="fas fa-arrow-circle-right"></i></button>
+        <button type="button" class="btn btn-primary boxShadow" data-toggle="tooltip" data-placement="top" title="Move to Another Channel">
+          <span data-bs-toggle="modal" data-target="#moveModal"><i class="fas fa-arrow-circle-right"></i></span>
+        </button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-cut"></i></button>
         <button class="btn btn-primary boxShadow"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>

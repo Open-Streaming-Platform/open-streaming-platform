@@ -5,7 +5,7 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
 
-
+<!--Start Header Block-->
 {% block head %}
 <title>{{sysSettings.siteName}} - {{ title }}</title>
 <meta name="twitter:card" content="app" />
@@ -17,6 +17,7 @@
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 {% endblock %}
 
+<!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
         <div class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
@@ -32,12 +33,15 @@
     </div>
 {% endblock %}
 
+<!--Start Modal Block-->
 {% block modals %}
     {{ modals.add_video_comment(video.id) }}
     {{ modals.video_share(video, request, startTime) }}
     {{ modals.new_thumbnail_modal() }}
+    {{ modals.move_video(video, ownedChannels) }}
 {% endblock %}
 
+<!--Start Script Block-->
 {% block scripts %}
     <script>
     var videoID = {{ video.id }};

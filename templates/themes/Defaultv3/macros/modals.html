@@ -916,3 +916,31 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro move_video(video, ownedChannels) %}
+<div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="/play/{{video.id}}/move" method="post">
+        <div class="modal-body">
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <h5>Move this Video to Channel:</h5>
+          <select name="moveToChannelID" class="form-control">
+            {% for chan in ownedChannels %}
+            {% if chan.id != video.channelID %}
+            <option value="{{chan.id}}">{{chan.channelName}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-warning" onclick="showSpinner();">Move</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}
