@@ -927,7 +927,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <h5>Move this Video to Channel:</h5>
-          <select name="moveToChannelID" class="form-control">
+          <select name="moveToChannelID" class="form-control" required>
             {% for chan in ownedChannels %}
             {% if chan.id != video.channelID %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
