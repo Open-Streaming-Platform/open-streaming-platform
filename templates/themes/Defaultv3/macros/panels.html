@@ -204,8 +204,10 @@
 </div>
 {% endmacro %}
 
-{% macro video_control_panel(streamURL) %}
+{% macro video_control_panel(streamURL, video, current_user) %}
 <div class="video-control-panel boxShadow">
+    {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
+    <!--Start Video Owner Controls-->
     <div class="video-control-owner-buttons pt-2 ms-1 float-start">
         <a href="{{streamURL}}" class="btn btn-primary boxShadow" data-toggle="tooltip" data-placement="top" title="Download Video" download><i class="fas fa-download"></i></a>
         <button type="button" class="btn btn-primary boxShadow" onclick="newThumbnailRequest();"><i class="fas fa-camera"></i></button>
@@ -214,6 +216,8 @@
         <button class="btn btn-primary boxShadow"><i class="fas fa-edit"></i></button>
         <button class="btn btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>
     </div>
+    {% endif %}
+    <!--Start Video Viewer Controls-->
     <div class="video-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
         <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
