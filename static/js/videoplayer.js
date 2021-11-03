@@ -105,8 +105,7 @@ function openClipModal() {
 
     var clipDescriptionInput = document.getElementById('clipDescription');
     clipDescriptionInput.value = null;
-
-    $("#clipModal").modal();
+    $("#clipModal").modal('show');
 }
 
 function setClipStart() {
