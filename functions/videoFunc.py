@@ -217,8 +217,9 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             # FFMPEG Subprocess to Clip Video and generate Thumbnails
             clipVideo = ffmpeg.input(videoLocation, ss=clipStart).output(fullvideoLocation, t=newClipQuery.length).run(quiet=True)
             #clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
+            processResult = ffmpeg.input(videoLocation, ss=clipStart).output(fullthumbnailLocation, vframes=1, s='384x216').run(quiet=True)
             #processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-            #gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
+            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
 
             redirectID = newClipQuery.id
             newClipQuery.published = True
