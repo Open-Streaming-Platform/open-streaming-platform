@@ -42,14 +42,6 @@ def deleteVideo(videoID):
         thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
         gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
 
-        if filePath != videos_root:
-            if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
-                os.remove(filePath)
-                if os.path.exists(thumbnailPath):
-                    os.remove(thumbnailPath)
-                if os.path.exists(gifPath):
-                    os.remove(gifPath)
-
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
             thumbnailPath = videos_root + clip.thumbnailLocation
@@ -65,6 +57,7 @@ def deleteVideo(videoID):
                         clip.thumbnailLocation is not None or clip.thumbnailLocation != ""):
                     os.remove(thumbnailPath)
             db.session.delete(clip)
+            db.session.commit()
 
         # Delete Upvotes Attached to Video
         upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
@@ -83,6 +76,15 @@ def deleteVideo(videoID):
 
         for view in viewQuery:
             db.session.delete(view)
+
+        # Delete Video and Thumbnails
+        if filePath != videos_root:
+            if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
+                os.remove(filePath)
+                if os.path.exists(thumbnailPath):
+                    os.remove(thumbnailPath)
+                if os.path.exists(gifPath):
+                    os.remove(gifPath)
 
         db.session.delete(recordedVid)
 
