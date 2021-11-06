@@ -1002,3 +1002,48 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro edit_video_metadata(video, topics) %}
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalTitle">Edit Video Info</h5>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+      </div>
+      <form action="/play/{{video.id}}/change" method="post">
+        <div class="modal-body">
+          <h5>Name of the Video:</h5>
+          <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
+          <br>
+          <h5>Stream Topic:</h5>
+          <select class="form-control" name="newVidTopic" id="channeltopic" required>
+            {% for topic in topics %}
+            <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+            {% endfor %}
+          </select>
+          <br>
+          <div class="form-group">
+            <label for="description" class="col-form-label"><b>Description</b></label>
+            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
+          </div>
+          <div class="form-group row">
+            <div class="col-8">
+              <label for="allowComments" class="col-form-label"><b>Allow Comments on This Video</b></label>
+            </div>
+            <div class="col-4">
+              <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if video.allowComments == True %} checked {% endif %}>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary" onclick="showSpinner();" value="Save Changes">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}
