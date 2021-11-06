@@ -1031,10 +1031,10 @@
           </div>
           <div class="form-group row">
             <div class="col-8">
-              <label for="allowComments" class="col-form-label"><b>Allow Comments on This Video</b></label>
-            </div>
-            <div class="col-4">
-              <input type="checkbox" data-toggle="toggle" id="allowComments" name="allowComments" {% if video.allowComments == True %} checked {% endif %}>
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="allowComments"><b>Allow Comments on This Video</b></label>
+                <input class="form-check-input" type="checkbox" name="allowComments" id="allowComments" {% if video.allowComments == True %} checked {% endif %}>
+              </div>
             </div>
           </div>
         </div>
