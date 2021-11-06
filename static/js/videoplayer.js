@@ -159,3 +159,10 @@ function createClip() {
     socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
     createNewBSAlert("Clip Queued for Creation", "Success");
 }
+
+function hideComments() {
+    var commentsDiv = document.getElementById('commentsContainer');
+    var contentsDiv = document.getElementById('mainVideoPanel');
+    commentsDiv.style.display = 'none';
+    contentsDiv.className = 'col-12 w-80 mx-auto';
+}
