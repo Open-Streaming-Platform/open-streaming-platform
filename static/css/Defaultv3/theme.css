@@ -703,6 +703,13 @@ table tbody tr {
   box-shadow: var(--box-shadow);
 }
 
+.side-video-panel {
+  background-color: var(--box3-background);
+  width: 100%;
+  height: calc(100vh - var(--top-navbar-height));
+  overflow : auto;
+}
+
 .comments-container {
   background-color: var(--box1-background);
   width: 100%;
