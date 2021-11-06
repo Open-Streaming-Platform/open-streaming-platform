@@ -149,6 +149,7 @@ function checkClipConstraints() {
 }
 
 function createClip() {
+    clipplayer.pause();
     var videoID = document.getElementById('clipvideoID').value;
     var clipName = document.getElementById('clipName').value;
     var clipDescription = document.getElementById('clipDescription').value;
