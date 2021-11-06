@@ -962,9 +962,9 @@ def celery_task_page():
     from classes.shared import celery
 
     nodes = celery.control.inspect()
-    scheduled = celery.scheduled()
-    active = celery.active()
-    claimed = celery.reserved()
+    scheduled = nodes.scheduled()
+    active = nodes.active()
+    claimed = nodes.reserved()
 
     return {'nodes': str(nodes), 'scheduled': str(scheduled), 'active': str(active), 'claimed': str(claimed)}
 
