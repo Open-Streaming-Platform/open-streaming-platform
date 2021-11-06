@@ -953,6 +953,21 @@ def rtmpStat_page(node):
         return data
     return abort(500)
 
+@settings_bp.route('/admin/celery')
+@login_required
+@roles_required('Admin')
+def celery_task_page():
+
+    from classes.shared import celery
+
+    nodes = celery.control.inspect()
+    scheduled = celery.scheduled()
+    active = celery.active()
+    claimed = celery.reserved()
+
+    return {'nodes': str(nodes), 'scheduled': str(scheduled), 'active': str(active), 'claimed': str(claimed)}
+
+
 
 @settings_bp.route('/channels', methods=['POST', 'GET'])
 @login_required
