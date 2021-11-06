@@ -161,8 +161,8 @@ function createClip() {
 }
 
 function hideComments() {
-    var commentsDiv = document.getElementById('commentsContainer');
-    var contentsDiv = document.getElementById('mainVideoPanel');
+    var commentsDiv = document.getElementById('commentsPanel');
+    var contentsDiv = document.getElementById('mainContentPanel');
     commentsDiv.style.display = 'none';
-    contentsDiv.className = 'col-12 w-80 mx-auto';
+    contentsDiv.className = 'col-9 mx-auto';
 }
