@@ -990,11 +990,12 @@
             <br>
             <input id="clipName" name="clipName" class="form-control" placeholder="Clip Name" maxlength="255" required><br>
             <textarea id="clipDescription" name="clipDescription" class="form-control" placeholder="Description of the Clip" maxlength="2048"></textarea>
+            <input id="clipvideoID" name="videoID" type="hidden" value="{{ video.id }}" required>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          <button id="clipSubmitButton" type="submit" class="btn btn-success">Create</button>
+          <button id="clipSubmitButton" type="submit" class="btn btn-success" onclick="createClip();">Create</button>
         </div>
       </form>
     </div>

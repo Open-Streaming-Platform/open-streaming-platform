@@ -147,3 +147,14 @@ function checkClipConstraints() {
           }
     }
 }
+
+function createClip() {
+    var videoID = document.getElementById('clipvideoID').value;
+    var clipName = document.getElementById('clipName').value;
+    var clipDescription = document.getElementById('clipDescription').value;
+    var clipStart = document.getElementById('clipStartTime').value;
+    var clipStop = document.getElementById('clipStopTime').value;
+
+    socket.emit('createClip', {videoID: videoID, clipName: clipName, clipDescription: clipDescription, clipStart: clipStart, clipStop:clipStop});
+    createNewBSAlert("Clip Queued for Creation", "Success");
+}
