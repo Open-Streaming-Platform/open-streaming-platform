@@ -53,6 +53,12 @@ def deleteVideo(videoID):
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
             thumbnailPath = videos_root + clip.thumbnailLocation
+            videoPath = videos_root + clip.videoLocation
+
+            if videoPath != videos_root:
+                if os.path.exists(videoPath) and (
+                        clip.videoLocation is not None or clip.videoLocation != ""):
+                    os.remove(videoPath)
 
             if thumbnailPath != videos_root:
                 if os.path.exists(thumbnailPath) and (
