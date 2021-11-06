@@ -44,20 +44,7 @@ def deleteVideo(videoID):
 
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
-            thumbnailPath = videos_root + clip.thumbnailLocation
-            videoPath = videos_root + clip.videoLocation
-
-            if videoPath != videos_root:
-                if os.path.exists(videoPath) and (
-                        clip.videoLocation is not None or clip.videoLocation != ""):
-                    os.remove(videoPath)
-
-            if thumbnailPath != videos_root:
-                if os.path.exists(thumbnailPath) and (
-                        clip.thumbnailLocation is not None or clip.thumbnailLocation != ""):
-                    os.remove(thumbnailPath)
-            db.session.delete(clip)
-            db.session.commit()
+            deleteClip(clip.id)
 
         # Delete Upvotes Attached to Video
         upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
