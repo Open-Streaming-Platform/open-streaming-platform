@@ -86,9 +86,7 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            #results = video_tasks.delete_video.delay(videoQuery.id)
-                            from functions import videoFunc
-                            results = videoFunc.deleteVideo(videoQuery.id)
+                            results = video_tasks.delete_video.delay(videoQuery.id)
                             return {'results': {'message': 'Video Queued for Deletion'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
