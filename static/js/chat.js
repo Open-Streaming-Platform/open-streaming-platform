@@ -513,7 +513,8 @@ function parseOccupants(resp) {
       var username = elements[user]['nick'];
       var affiliation = elements[user]['affiliation'];
       var role = elements[user]['role'];
-      addUser(username, affiliation, role);
+      var jid = elements[user]['jid']
+      addUser(username, affiliation, role, jid);
   }
   // Handle User Count
   var userCount = OccupantsArray.length;
@@ -561,13 +562,13 @@ function userExists(username) {
   });
 }
 
-function addUser(username, affiliation, role) {
+function addUser(username, affiliation, role, jid) {
   if (userExists(username)) {
     return false;
   } else if (role == null) {
       return false;
   } else {
-      OccupantsArray.push({ username: username, affiliation: affiliation, role: role });
+      OccupantsArray.push({ username: username, affiliation: affiliation, role: role, jid: jid });
   }
 
   return true;
