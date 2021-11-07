@@ -378,7 +378,7 @@
 
 {% macro stream_control_panel(channel, current_user) %}
 <div class="stream-control-panel boxShadow">
-    {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
+    {%  if current_user.is_authenticated and channel.owningUser == current_user.id %}
     <!--Start Stream Owner Controls-->
     <div class="stream-control-owner-buttons pt-2 ms-1 float-start">
         <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
@@ -387,7 +387,7 @@
     <!--Start Stream Viewer Controls-->
     <div class="stream-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
-        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{channel.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('stream',{{channel.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
             <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
         </button>
         {% if current_user.is_authenticated %}
