@@ -809,3 +809,8 @@ table tbody tr {
 .editor-toolbar button {
     color: var(--font-color);
 }
+
+.offlineImage img {
+    width: 100%;
+    box-shadow: var(--box-shadow);
+}
