@@ -781,7 +781,7 @@ table tbody tr {
 
 /* Chrome, Edge, and Safari */
 .stream-panel::-webkit-scrollbar {
-    width: 8px;
+    width: 4px;
 }
 
 .stream-panel::-webkit-scrollbar-track {
