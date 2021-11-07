@@ -45,7 +45,7 @@ function monitor_vid(vidplayer){
                 var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
                 var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
-                onlineBadge.className = 'btn btn-danger';
+                onlineBadge.className = 'btn btn-danger boxShadow';
                 onlineBadge.innerHTML = 'LIVE';
 
                 nameDiv.innerHTML = nameDivHTML;
@@ -57,7 +57,7 @@ function monitor_vid(vidplayer){
             try {
                 videoJSObj.pause();
                 videoJSObj.reset();
-                onlineBadge.className = 'btn btn-secondary';
+                onlineBadge.className = 'btn btn-secondary boxShadow';
                 onlineBadge.innerHTML = 'OFFLINE';
                 videoContainer.style.display = "none";
                 offlineWindow.style.display = "block";

@@ -401,3 +401,23 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro stream_metadata_panel(channel, stream) %}
+<div class="stream-metadata">
+  <div class="row">
+    <div class="channelImg-sm col-auto">
+      <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+    </div>
+    <div class="col-5">
+      <div class="channel-name">{{ channel.channelName }}</div>
+      <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+      <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+    </div>
+    <div class="col">
+      <div class="float-end mx-1">
+        <i class="bi bi-people-fill"></i> {{ channel.views }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
