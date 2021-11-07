@@ -1124,3 +1124,37 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro edit_stream(stream, topics) %}
+{% if channel.owningUser == current_user.id %}
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalTitle">Edit Stream Info</h5>
+        <div class="float-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <form>
+          <div class="modal-body">
+                <h5>Name of the Stream:</h5>
+                <input type="text" id="editStreamNameInput" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
+                <br>
+                <h5>Stream Topic:</h5>
+                <select class="form-control" name="newStreamTopic" id="editChannelTopicInput" style="font-family: FontAwesome, sans-serif;" required >
+                    {% for topic in topics %}
+                    <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
+                    {% endfor %}
+                </select>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick="submitStreamChanges()">Save Changes</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endmacro %}

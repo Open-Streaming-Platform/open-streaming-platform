@@ -46,6 +46,7 @@
 <!--Start Modal Block-->
 {% block modals %}
     {{ modals.stream_share(request, stream, rtmpURI) }}
+    {{ modals.edit_stream(stream, topics) }}
 {% endblock %}
 
 <!--Start Script Block-->
