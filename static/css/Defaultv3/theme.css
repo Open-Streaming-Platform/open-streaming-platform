@@ -691,6 +691,28 @@ table tbody tr {
   text-align: center;
 }
 
+.video-panel {
+    height: calc(100vh - var(--top-navbar-height));
+    overflow: auto;
+    scrollbar-width: auto;
+    scrollbar-color: #b5b5b5 #858585;
+  }
+
+/* Chrome, Edge, and Safari */
+.video-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.video-panel::-webkit-scrollbar-track {
+    background: #858585;
+}
+
+.video-panel::-webkit-scrollbar-thumb {
+    background-color: #b5b5b5;
+    border-radius: 16px;
+    border: 0px solid #ffffff;
+}
+
 .video-control-panel {
     height: 50px;
     width: 100%;
@@ -707,7 +729,6 @@ table tbody tr {
   background-color: var(--box3-background);
   width: 100%;
   height: calc(100vh - var(--top-navbar-height));
-  overflow : auto;
 }
 
 .comments-container {
