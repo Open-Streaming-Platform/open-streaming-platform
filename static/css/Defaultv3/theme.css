@@ -771,6 +771,35 @@ table tbody tr {
     min-width: 48px;
 }
 
+.stream-panel {
+    height: calc(100vh - var(--top-navbar-height));
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: auto;
+    scrollbar-color: #b5b5b5 #858585;
+  }
+
+/* Chrome, Edge, and Safari */
+.stream-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.stream-panel::-webkit-scrollbar-track {
+    background: #858585;
+}
+
+.stream-panel::-webkit-scrollbar-thumb {
+    background-color: #b5b5b5;
+    border-radius: 16px;
+    border: 0px solid #ffffff;
+}
+
+.stream-control-panel {
+    height: 50px;
+    width: 100%;
+    background-color: var(--page-background);
+}
+
 .avatar-md {
   width: 48px;
   height: 48px;

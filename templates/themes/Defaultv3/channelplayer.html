@@ -57,4 +57,51 @@
     <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
+    <script src="/static/js/liveplayerhandler.js"></script>
+    <script>
+        var streamURL = {{ streamURL}}
+        var channelLocation = {{ channel.channelLoc }}
+        var topicJSList = [];
+        {% for x in topics %}
+        topicJSList["{{x.id}}"] =  "{{x.name}}";
+        {% endfor %}
+    </script>
+
+    <script>
+        // Initialize Stream Player
+        var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: true,
+            liveTracker: {
+                trackingThreshold: 5,
+                liveTolerance: 15
+            },
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    hls:
+                        {
+                            overrideNative: true
+                        }
+                },
+            plugins : {
+                httpSourceSelector: {
+                    default: 'auto'
+                }
+            }
+        });
+
+        qualityLevels = player.qualityLevels();
+        httpSelector = player.httpSourceSelector();
+
+        player.ready(function() {
+               this.src({
+                       src: streamURL,
+                       type: 'application/x-mpegURL'
+               });
+       });
+       player.play();
+    </script>
 {% endblock %}
