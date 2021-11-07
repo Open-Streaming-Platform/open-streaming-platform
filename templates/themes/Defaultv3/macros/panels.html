@@ -375,3 +375,26 @@
      </div>
  </div>
 {% endmacro %}
+
+{% macro stream_control_panel(channel, current_user) %}
+<div class="stream-control-panel boxShadow">
+    {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
+    <!--Start Stream Owner Controls-->
+    <div class="stream-control-owner-buttons pt-2 ms-1 float-start">
+        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
+    </div>
+    {% endif %}
+    <!--Start Stream Viewer Controls-->
+    <div class="stream-control-viewer-buttons pt-2 me-1 float-end">
+        <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
+        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{channel.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
+            <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
+        </button>
+        {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channel.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+        {% else %}
+            <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
