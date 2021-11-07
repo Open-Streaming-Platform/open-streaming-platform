@@ -810,7 +810,7 @@ table tbody tr {
     color: var(--font-color);
 }
 
-.offlineImage img {
+#offlineImage img {
     width: 100%;
     box-shadow: var(--box-shadow);
 }
