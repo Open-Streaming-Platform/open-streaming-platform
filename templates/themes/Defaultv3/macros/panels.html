@@ -359,3 +359,19 @@
     var easymde_UserBio = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("biography-{{userData.id}}") });
 </script>
 {% endmacro %}
+
+{% macro live_stream(channel)%}
+ <div class="player ml-2">
+     <div id="videoContainer">
+         <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls playsinline preload="auto" data-setup='{"fluid": true, "liveui": true}'>
+            <p class="vjs-no-js">
+              To view this video please enable JavaScript, and consider upgrading to a web browser that
+              <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+         </video>
+     </div>
+     <div id="offlineImage" style="display:none;">
+        <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %} onerror="this.onerror=null;this.src='/static/img/video-placeholder.jpg';">
+     </div>
+ </div>
+{% endmacro %}

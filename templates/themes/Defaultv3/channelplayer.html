@@ -1,0 +1,59 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
+
+<!--Start Header Block-->
+{% block head %}
+<title>{{sysSettings.siteName}} - {{channel.channelName}}</title>
+<meta name="twitter:card" content="player" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{channel.channelName}}" />
+<meta property="og:type" content="video.other" />
+<meta property="og:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/view/{{channel.channelLoc}}" />
+<meta property="og:image" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/images/{{channel.imageLocation}}" />
+<meta property="og:description" content="{{channel.description}}" />
+<meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
+<meta property="og:video:type" content="application/x-mpegURL" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+{% endblock %}
+
+<!--Start Body Block-->
+{% block body %}
+    <div class="row gx-0">
+        <div id="mainContentPanel" class="col-xl-10 col-lg-9 col-md-12 col-sm-12 col-12">
+            <div class="stream-panel">
+                {{ panel.live_stream(channel) }}
+            </div>
+        </div>
+        <div id="chatPanel" class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="side-chat-panel">
+                <div class="side-chat-panel-container">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--Start Modal Block-->
+{% block modals %}
+
+{% endblock %}
+
+<!--Start Script Block-->
+{% block scripts %}
+    <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+    <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
+    <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
+{% endblock %}
