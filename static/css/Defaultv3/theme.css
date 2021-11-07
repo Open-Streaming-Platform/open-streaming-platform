@@ -800,6 +800,12 @@ table tbody tr {
     background-color: var(--page-background);
 }
 
+.stream-metadata {
+  background-color: var(--box1-background);
+  padding: 10px;
+  box-shadow: var(--box-shadow);
+}
+
 .avatar-md {
   width: 48px;
   height: 48px;
