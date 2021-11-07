@@ -57,8 +57,8 @@ function monitor_vid(vidplayer){
             try {
                 videoJSObj.pause();
                 videoJSObj.reset();
-                onlineBadge.className = 'float-right badge badge-secondary';
-                onlineBadge.innerHTML = '<i class="fas fa-video-slash"></i><span class="d-none d-sm-none d-md-inline"> Offline</span>';
+                onlineBadge.className = 'btn btn-secondary';
+                onlineBadge.innerHTML = 'Offline';
                 videoContainer.style.display = "none";
                 offlineWindow.style.display = "block";
                 var currentStreamName = "No Stream";
