@@ -735,6 +735,7 @@ table tbody tr {
 .side-video-panel-container {
     height: 100%;
     background-color: var(--page-background);
+    overflow: hidden;
 }
 
 .comments-container {
