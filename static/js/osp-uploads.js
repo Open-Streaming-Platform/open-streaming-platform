@@ -9,10 +9,6 @@ videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() 
 
 // Used for Video Upload Cancel Cleanup
 function videouploadsocket() {
-  var conn_options = {
-    'sync disconnect on unload': true
-  };
-  var socket = io();
 
   socket.on('disconnect', function () {
     socket.emit('cancelUpload', { data: videofilename });

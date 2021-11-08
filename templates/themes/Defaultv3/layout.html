@@ -105,6 +105,14 @@
         var maxThumbnailUploadFileSize = 8; // In Megabytes
     </script>
 
+    <script>
+        // Establish SocketIO Connection
+        var conn_options = {
+          'sync disconnect on unload': true
+        };
+        var socket = io();
+    </script>
+
     <script type="text/javascript" src="/static/js/core.js"></script>
     <script type="text/javascript" src="/static/js/ui.js"></script>
     <script type="text/javascript" src="/static/js/osp-uploads.js"></script>
