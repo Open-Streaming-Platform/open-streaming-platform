@@ -584,7 +584,24 @@
 {% endmacro %}
 
 {% macro core_chat_profile_template() %}
-<div class="profileBoxBottom mt-2 mx-2">
+<div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
+  <div class="profileBoxHeader">
+    <button type="button" class="close mr-2" data-bs-dismiss="" aria-label="Close" onclick="closeProfileBox();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <img id="profileBox-photo" src="/static/img/user2.png" class="profileBoxPic rounded shadow m-2 float-left">
+    <span id="profileBox-username" class="py-2 font-weight-bold"></span><br>
+    <div id="iconBar">
+      <span class="iconBarIcon" id="iconBar-owner" style="display:none;"><i class="fas fa-crown" data-toggle="tooltip" data-placement="bottom" title="Owner"></i></span>
+      <span class="iconBarIcon" id="iconBar-admin" style="display:none;"><i class="fas fa-user-tie" data-toggle="tooltip" data-placement="bottom" title="Admin"></i></span>
+      <span class="iconBarIcon" id="iconBar-member" style="display:none;"><i class="iconBarIcon fas fa-award" data-toggle="tooltip" data-placement="bottom" title="Member"></i></span>
+      <span class="iconBarIcon" id="iconBar-mod" style="display:none;"><i class="iconBarIcon fas fa-user-shield" data-toggle="tooltip" data-placement="bottom" title="Moderator"></i></span>
+      <span class="iconBarIcon" id="iconBar-voice" style="display:none;"><i class="iconBarIcon fas fa-bullhorn" data-toggle="tooltip" data-placement="bottom" title="Participant"></i></span>
+      <span class="iconBarIcon" id="iconBar-visitor" style="display:none;"><i class="fas fa-user" data-toggle="tooltip" data-placement="bottom" title="Visitor"></i></span>
+      <span class="iconBarIcon" id="iconBar-muted" style="display:none;"><i class="iconBarIcon fas fa-comment-slash" data-toggle="tooltip" data-placement="bottom" title="Muted"></i></span>
+    </div>
+  </div>
+  <div class="profileBoxBottom mt-2 mx-2">
     <button id="profileBox-openProfileButton" type="button" class="btn btn-primary shadow">Profile</button>
     <button id="profileBox-muteButton" class="btn btn-primary shadow" onclick="toggleMute();"><i class="fas fa-toggle-off"></i> Mute</button>
     <div id="profileBox-modControls" class="dropdown dropleft float-right" style="display:none;">
@@ -603,7 +620,9 @@
           <!--<button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button>-->
           <button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button>
           <button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button>
+
       </div>
     </div>
+  </div>
 </div>
 {% endmacro %}
