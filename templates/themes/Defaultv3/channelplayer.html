@@ -61,6 +61,7 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
@@ -152,6 +153,65 @@
               socket.emit('removeViewer', {data: channelLocation});
               socket.close();
         });
+    </script>
+
+    <script>
+        function getBanList() {
+            console.log("Requesting Ban List");
+            socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
+        }
+
+        function clearBan(username) {
+            unban(username);
+            setTimeout(function(){
+                getBanList();
+            }, 2000);
+            return true;
+        }
+
+        socket.on('returnBanList', function(msg) {
+            console.log("Receiving Ban List");
+
+            document.getElementById('modDisplay').style.display = 'block';
+            document.getElementById('chatMembers').style.display = 'none';
+            document.getElementById('chat').style.display = 'none';
+
+            banList = document.getElementById('OutcastList');
+            banList.innerHTML = "";
+            for (let i = 0; i < msg['results'].length; i++){
+                var iDiv = document.createElement('div');
+                iDiv.className = 'bannedUser';
+                var username = msg["results"][i]["username"];
+                var useruuid = msg["results"][i]["useruuid"];
+                var onclickCmd = "clearBan('" + useruuid + "');"
+                iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
+                banList.appendChild(iDiv);
+            }
+            console.log(msg);
+        });
+    </script>
+
+    <script>
+        function toggleChat() {
+            var chatbox = document.getElementById("chatPanel");
+            if (chatbox.style.display === "none") {
+                chatbox.style.display = "block";
+            } else {
+                chatbox.style.display = "none";
+            }
+        }
+    </script>
+
+    <script>
+        function popoutChat() {
+            {% if current_user.is_authenticated %}
+            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
+            {% else %}
+            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
+            {% endif %}
+            var chatbox = document.getElementById("chatside");
+            chatbox.style.display = "none";
+        }
     </script>
 
     <script src="/static/js/liveplayerhandler.js"></script>
