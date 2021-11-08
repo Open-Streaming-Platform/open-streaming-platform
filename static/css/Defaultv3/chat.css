@@ -62,6 +62,8 @@
 
 .chatPanel .chatFooter {
   flex: 0 1 75px;
+  position: absolute;
+  bottom: 0;
 }
 
 .chatPanel .chatFooter input {
