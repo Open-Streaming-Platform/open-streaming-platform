@@ -824,6 +824,17 @@ table tbody tr {
     box-shadow: var(--box-shadow);
 }
 
+.chatloader {
+    display: none;
+    padding: 30px;
+}
+
+.chatloader .chatloader-view {
+    margin: 0 auto;
+    max-width: 400px;
+    text-align:center;
+}
+
 .chatPanel {
   display: none;
   flex-flow: column;
