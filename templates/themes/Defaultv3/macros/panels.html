@@ -421,3 +421,152 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro chat_loader() %}
+<div id="loader" class="chatloader">
+  <div class="chatloader-view">
+      <h2>Connecting...</h2>
+      <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+      </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro chat_guest_username_input() %}
+<div id="guestUserName" class="chatloader">
+    <div class="chatloader-view">
+          <div class="vertical-center">
+                <div class="d-flex justify-content-center my-3">
+                    <h2>Set your Nickname</h2><br>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <b>Enter name you wish to be identified by:</b>
+                </div>
+                <div class="d-flex justify-content-center px-3">
+                    <input class="form-control shadow" id="setNickName" name="setNickName">
+                </div>
+                <div class="d-flex justify-content-center my-4">
+                    <button type="button" class="btn btn-primary w-25 shadow m-1" onclick="setGuestNickLogin();">Connect</button>
+                    <a href="/login" class="btn btn-success w-25 shadow m-1">Log in</a>
+                </div>
+          </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro chat_unavailable_info() %}
+<div id="unavailable" class="chatloader">
+  <div class="chatloader-view">
+      <h2>You have been disconnected from the chat.</h2><br>
+      <br>
+      <div id="disconnectReason">Reason: (<span id="reasonCode"></span>) - <span id="reasonText"></span></div><br><br>
+      <h1><i class="fas fa-exclamation-triangle"></i></h1><br>
+      <br>
+      <button class="btn btn-success" onclick="connectChat();">Reconnect</button>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_header() %}
+<div class="chatHeader my-2">
+    <div class="chatCounts">
+        <h2 class="float-left">Live Chat</h2>
+        <span class="float-right"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+        <span class="float-right"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
+        <span id="modDisplayButton" class="float-right" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_mod_view() %}
+<div id="modDisplay" class="modDisplayOverlay">
+    <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Banned Users</b></div>
+      <div id="OutcastList" class="card-body"></div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_members_view() %}
+<div id="chatMembers" class="chatMembersOverlay">
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Moderator</b></div>
+      <div id="ModeratorList" class="card-body"></div>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Participant</b></div>
+      <div id="ParticipantList" class="card-body"></div>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Guest</b></div>
+      <div id="VisitorList" class="card-body"></div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_sticker_selector(stickerSelectorList) %}
+<div class="chatsticker-composer-popover chatsticker-composer-emoji-popover shadow">
+ <div class="chatsticker-emoji-picker w-100">
+    <div class="chatsticker-composer-popover-header"><input class="chatsticker-composer-popover-input" placeholder="Search..." aria-label="Search" value="" oninput="searchSticker();" style="background-color:#ffffff;"></div>
+    <div class="chatsticker-composer-popover-body-container">
+       <div class="chatsticker-composer-popover-body">
+          <div class="chatsticker-emoji-picker-groups">
+             <div class="chatsticker-emoji-picker-group">
+                 <div class="chatsticker-emoji-picker-group-title">Default</div>
+                 {% for sticker in stickerSelectorList['builtin'] %}
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                 {% endfor %}
+             </div>
+             <div class="chatsticker-emoji-picker-group">
+                <div class="chatsticker-emoji-picker-group-title">Global</div>
+                 {% for sticker in stickerSelectorList['global'] %}
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                 {% endfor %}
+             </div>
+             <div class="chatsticker-emoji-picker-group">
+                 <div class="chatsticker-emoji-picker-group-title">Channel</div>
+                 {% for sticker in stickerSelectorList['channel'] %}
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                 {% endfor %}
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+ <div class="chatsticker-composer-popover-caret"></div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_footer(stickerSelectorList) %}
+<div class="chatFooter pl-1">
+  <div class="chatFooterTop"></div>
+  <div class="chatFooterInput">
+      <div class="input-group">
+          <input id="chatinput" type="text" class="form-control" maxlength="750" autocomplete="off">
+          <div class="input-group-append">
+              <button type="button" class=" btn btn-success form-control" id="openEmojiButton"><i class="far fa-smile"></i></button>
+              <button type="button" class=" btn btn-primary form-control" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
+          </div>
+          {{ core_chat_sticker_selector(stickerSelectorList) }}
+      </div>
+  </div>
+  <div class="chatFooterBottom"></div>
+  <div id='log' style="display:none;"></div>
+</div>
+{% endmacro %}
+
+{% macro core_chat(stickerSelectorList) %}
+<div id="chatPanel" class="chatPanel my-2">
+    {{ core_chat_header() }}
+    <div id="chatContentWindow" class="chatContent">
+        {{ core_chat_mod_view() }}
+        {{ core_chat_members_view() }}
+        <div id="chat" class="chatSection"></div>
+    </div>
+    {{ core_chat_footer(stickerSelectorList) }}
+  </div>
+</div>
+{% endmacro %}
