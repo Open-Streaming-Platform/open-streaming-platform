@@ -701,12 +701,13 @@ table tbody tr {
 
 /* Chrome, Edge, and Safari */
 .video-panel::-webkit-scrollbar {
-    width: 8px;
+    width: 0;
+    background: transparent;
 }
 
-.video-panel::-webkit-scrollbar-track {
+/* .video-panel::-webkit-scrollbar-track {
     background: #858585;
-}
+} */
 
 .video-panel::-webkit-scrollbar-thumb {
     background-color: #b5b5b5;
@@ -782,12 +783,13 @@ table tbody tr {
 
 /* Chrome, Edge, and Safari */
 .stream-panel::-webkit-scrollbar {
-    width: 4px;
+    width: 0;
+    background: transparent;
 }
 
-.stream-panel::-webkit-scrollbar-track {
+/* .stream-panel::-webkit-scrollbar-track {
     background: #858585;
-}
+}*/
 
 .stream-panel::-webkit-scrollbar-thumb {
     background-color: #b5b5b5;
