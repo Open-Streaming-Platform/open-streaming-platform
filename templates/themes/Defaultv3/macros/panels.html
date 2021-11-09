@@ -541,7 +541,7 @@
 {% endmacro %}
 
 {% macro core_chat_footer(stickerSelectorList) %}
-<div class="chatFooter pl-1">
+<div class="chatFooter flex-end pl-1">
   <div class="chatFooterTop"></div>
   <div class="chatFooterInput">
       <div class="input-group">
@@ -559,7 +559,7 @@
 {% macro core_chat(stickerSelectorList) %}
 <div id="chatPanel" class="chatPanel my-2">
     {{ core_chat_header() }}
-    <div id="chatContentWindow" class="chatContent">
+    <div id="chatContentWindow" class="chatContent h-100">
         {{ core_chat_mod_view() }}
         {{ core_chat_members_view() }}
         <div id="chat" class="chatSection"></div>

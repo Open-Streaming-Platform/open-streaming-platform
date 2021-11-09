@@ -62,13 +62,11 @@
 
 .chatPanel .chatFooter {
   flex: 0 1 75px;
-  position: absolute;
-  bottom: 0;
 }
 
 .chatPanel .chatFooter input {
   background-color: #ECECEC;
-  border: 0px solid black;
+  border: 0 solid black;
 }
 
 .chatPanel .chatFooter .chatFooterTop {
