@@ -73,7 +73,7 @@
     background-color:var(--box2-background);
 }
 
-.chatInputBox :active {
+.chatInputBox:focus {
     background-color:var(--box2-background);
 }
 
