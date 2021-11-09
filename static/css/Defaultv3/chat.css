@@ -17,6 +17,8 @@
 .chatPanel .chatHeader {
   width:100%;
   flex: 0 1 auto;
+  background-color: var(--box2-background);
+  box-shadow: var(--box-shadow);
 }
 
 .chatPanel .chatContent {
