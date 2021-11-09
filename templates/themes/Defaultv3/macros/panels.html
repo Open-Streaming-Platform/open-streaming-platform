@@ -471,12 +471,12 @@
 {% endmacro %}
 
 {% macro core_chat_header() %}
-<div class="chatHeader mb-2">
-    <span class="float-start"><button type="button" class="btn btn-outline-primary mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
-    <h2 class="align-content-center">Live Chat</h2>
+<div class="chatHeader mb-2 p-2">
+    <span class="float-start"><button type="button" class="btn btn-link mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
+    <span class="align-content-center"><h2 class="align-content-center">Live Chat</h2></span>
     <span class="float-end">
-        <span id="channelList"><button type="button" class="btn btn-outline-primary" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-outline-warning" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+        <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
     </span>
 </div>
 {% endmacro %}
