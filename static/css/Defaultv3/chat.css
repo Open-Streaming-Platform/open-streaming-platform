@@ -73,6 +73,10 @@
     background-color:var(--box2-background);
 }
 
+.chatInputBox :active {
+    background-color:var(--box2-background);
+}
+
 .chatPanel .chatFooter .chatFooterTop {
   height: 30px;
 }
