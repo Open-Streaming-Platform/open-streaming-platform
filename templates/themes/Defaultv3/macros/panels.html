@@ -545,7 +545,7 @@
   <div class="chatFooterTop"></div>
   <div class="chatFooterInput mx-2">
       <div class="input-group">
-          <input id="chatinput" type="text" class="form-control" maxlength="750" autocomplete="off">
+          <input id="chatinput" type="text" class="form-control chatInputBox" maxlength="750" autocomplete="off">
           <button type="button" class=" btn btn-success" id="openEmojiButton"><i class="far fa-smile"></i></button>
           <button type="button" class=" btn btn-primary" id="sendChat" onclick="sendMessage();"><i class="fas fa-paper-plane"></i></button>
           {{ core_chat_sticker_selector(stickerSelectorList) }}
@@ -573,7 +573,7 @@
 <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
     <div class="chatEntry flexbox">
       <span class="chatInfo">
-        <div><span class="chatTimestamp float-right"></span></div>
+        <div><span class="chatTimestamp float-end"></span></div>
         <div><span class="chatUsername"></span></div>
         <div><span class="chatMessage"></span></div>
       </span>
