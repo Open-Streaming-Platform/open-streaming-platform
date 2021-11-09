@@ -21,6 +21,10 @@
   box-shadow: var(--box-shadow);
 }
 
+.chatPanel .chatHeader button {
+    text-decoration: none;
+}
+
 .chatPanel .chatContent {
   flex: 1 1 500px;
   overflow-x:auto;
