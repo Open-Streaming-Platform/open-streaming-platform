@@ -329,6 +329,7 @@
 .chatsticker-emoji-picker {
     width: 330px;
     height: 260px;
+    background-color: var(--box1-background);
 }
 .chatsticker-composer-popover-header {
     position: absolute;
