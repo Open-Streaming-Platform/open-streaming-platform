@@ -28,14 +28,14 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-10 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 {{ panels.stream_control_panel(channel, current_user) }}
                 {{ panels.stream_metadata_panel(channel, stream) }}
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div id="sidePanel" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}
