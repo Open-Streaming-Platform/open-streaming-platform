@@ -65,7 +65,7 @@
 }
 
 .chatPanel .chatFooter input {
-  background-color: #ECECEC;
+  color: var(--font-color);
   border: 0 solid black;
 }
 
