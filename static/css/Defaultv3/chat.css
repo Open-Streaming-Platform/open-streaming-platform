@@ -373,7 +373,7 @@
     margin: 10px -5px;
 }
 .chatsticker-emoji-picker-group-title {
-    color: #b8c3ca;
+    color: var(--font-color);
     font-weight: 400;
     font-size: 13px;
     margin: 5px;
