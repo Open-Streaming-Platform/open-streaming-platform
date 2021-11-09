@@ -30,7 +30,7 @@
 
 .chatPanel .chatContent .chatEntryContainer .chatEntry {
   padding: 5px 10px 5px 10px;
-  background-color: #ECECEC;
+  background-color: var(--box1-background);
   min-height: 56px;
   border-radius: 10px;
   margin: 5px;
