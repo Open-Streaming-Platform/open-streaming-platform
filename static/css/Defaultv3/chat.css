@@ -416,3 +416,29 @@
     border-top: 8px solid #fff;
     right: 54px;
 }
+
+.profileBox {
+  background-color: var(--box2-background);
+  width: 450px;
+  height:115px;
+  border: 0px solid black;
+}
+
+.profileBoxHeader {
+  background-color: var(--box3-background);
+  border-radius: 5px 5px 0px 0px;
+  color:var(--font-color);
+  height:60px;
+  width:100%;
+}
+
+.profileBoxHeader .close {
+  color:var(--font-color);
+}
+
+.profileBoxPic {
+  width:40px;
+  height:40px;
+  background-color: green;
+  text-align: center;
+}
