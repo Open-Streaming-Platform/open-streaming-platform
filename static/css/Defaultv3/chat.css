@@ -442,3 +442,25 @@
   background-color: green;
   text-align: center;
 }
+
+#iconBar-owner {
+  color: gold;
+}
+#iconBar-admin {
+  color: gold;
+}
+#iconBar-mod {
+  color: orange;
+}
+#iconBar-member {
+  color:gold;
+}
+#iconBar-muted {
+  color:red;
+}
+#iconBar-voice {
+  color:white;
+}
+#iconBar-visitor {
+  color:white;
+}

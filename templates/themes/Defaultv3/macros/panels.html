@@ -584,12 +584,12 @@
 {% macro core_chat_profile_template() %}
 <div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
   <div class="profileBoxHeader">
-    <button type="button" class="close mr-2" data-bs-dismiss="" aria-label="Close" onclick="closeProfileBox();">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <div class="float-end">
+       <button type="button" class="btn-close" data-bs-dismiss="" aria-label="Close" onclick="closeProfileBox();"></button>
+    </div>
     <img id="profileBox-photo" src="/static/img/user2.png" class="profileBoxPic rounded shadow m-2 float-left">
     <span id="profileBox-username" class="py-2 font-weight-bold"></span><br>
-    <div id="iconBar">
+    <div class="profileBox-iconBar" id="iconBar">
       <span class="iconBarIcon" id="iconBar-owner" style="display:none;"><i class="fas fa-crown" data-toggle="tooltip" data-placement="bottom" title="Owner"></i></span>
       <span class="iconBarIcon" id="iconBar-admin" style="display:none;"><i class="fas fa-user-tie" data-toggle="tooltip" data-placement="bottom" title="Admin"></i></span>
       <span class="iconBarIcon" id="iconBar-member" style="display:none;"><i class="iconBarIcon fas fa-award" data-toggle="tooltip" data-placement="bottom" title="Member"></i></span>
