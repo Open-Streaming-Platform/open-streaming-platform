@@ -585,10 +585,13 @@
 <div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
   <div class="profileBoxHeader">
     <div class="float-end">
-       <button type="button" class="btn-close me-2" data-bs-dismiss="" aria-label="Close" onclick="closeProfileBox();"></button>
+       <button type="button" class="btn-close mt-2 me-2" data-bs-dismiss="" aria-label="Close" onclick="closeProfileBox();"></button>
     </div>
-    <img id="profileBox-photo" src="/static/img/user2.png" class="profileBoxPic rounded shadow m-2 float-left">
-    <span class="py-2">
+    <div class="row">
+      <div class="col-auto">
+        <img id="profileBox-photo" src="/static/img/user2.png" class="profileBoxPic rounded shadow m-2 float-left">
+      </div>
+      <div class="col-9 g-0 mt-1">
         <span id="profileBox-username" class="font-weight-bold"></span><br>
         <span class="profileBox-iconBar" id="iconBar">
       <span class="iconBarIcon" id="iconBar-owner" style="display:none;"><i class="fas fa-crown" data-toggle="tooltip" data-placement="bottom" title="Owner"></i></span>
@@ -599,7 +602,8 @@
       <span class="iconBarIcon" id="iconBar-visitor" style="display:none;"><i class="fas fa-user" data-toggle="tooltip" data-placement="bottom" title="Visitor"></i></span>
       <span class="iconBarIcon" id="iconBar-muted" style="display:none;"><i class="iconBarIcon fas fa-comment-slash" data-toggle="tooltip" data-placement="bottom" title="Muted"></i></span>
     </span>
-    </span>
+      </div>
+    </div>
   </div>
   <div class="profileBoxBottom mt-2 mx-2">
     <button id="profileBox-openProfileButton" type="button" class="btn btn-primary shadow">Profile</button>
