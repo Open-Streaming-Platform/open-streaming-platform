@@ -84,3 +84,31 @@ $(document).ready( function () {
 setInterval(function() {
     monitor_vid(player);
 }, 10000);
+
+function toggleChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+}
+
+socket.on('sendChanSubResults', function (msg) {
+    var subButton = document.getElementById('chanSubStateButton');
+    if (msg['state'] === true) {
+        subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
+        subButton.className = "btn btn-sm btn-success";
+    } else {
+        subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
+        subButton.className = "btn btn-sm btn-outline-success";
+    }
+});
+
+const video = document.querySelector('video');
+video.addEventListener('play', (event) => {
+var cookieVolume = getCookie('ospvolume');
+if (!(cookieVolume == null)) {
+  player.volume(cookieVolume);
+}
+});
+
+video.addEventListener('volumechange', (event) => {
+var currentVolume = player.volume();
+setCookie('ospvolume',currentVolume, 365);
+});

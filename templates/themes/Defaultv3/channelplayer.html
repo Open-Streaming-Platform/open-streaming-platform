@@ -253,4 +253,47 @@
        });
        player.play();
     </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
+        },5000 );
+    </script>
+
+    <script>
+        socket.on('connect', function() {
+            socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
+            socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
+        });
+    </script>
+
+    <script>
+        setInterval(function() {
+          socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
+        },30000 );
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('upvoteTotalResponse', function (msg) {
+            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+            if (msg['myUpvote'] === 'True'){
+                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+                    document.getElementById("upVoteIcon").classList.remove('far');
+                    document.getElementById("upVoteIcon").classList.add('fas');
+                }
+            }
+            else if (msg['myUpvote'] === 'False'){
+                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+                    document.getElementById("upVoteIcon").classList.remove('fas');
+                    document.getElementById("upVoteIcon").classList.add('far');
+                }
+            }
+        });
+    </script>
+
+    <script>
+        function changeUpvote() {
+            socket.emit('changeUpvote', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
+        }
+    </script>
 {% endblock %}
