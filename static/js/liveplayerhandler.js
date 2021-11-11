@@ -89,6 +89,19 @@ function toggleChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });
 }
 
+function changeUpvote() {
+    socket.emit('changeUpvote', {loc: channelLocation, vidType: 'stream'});
+}
+
+function toggleChat() {
+    var chatbox = document.getElementById("chatPanel");
+    if (chatbox.style.display === "none") {
+        chatbox.style.display = "block";
+    } else {
+        chatbox.style.display = "none";
+    }
+}
+
 socket.on('sendChanSubResults', function (msg) {
     var subButton = document.getElementById('chanSubStateButton');
     if (msg['state'] === true) {
@@ -99,6 +112,37 @@ socket.on('sendChanSubResults', function (msg) {
         subButton.className = "btn btn-outline-success";
     }
 });
+
+socket.on('upvoteTotalResponse', function (msg) {
+    document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
+    if (msg['myUpvote'] === 'True'){
+        if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
+            document.getElementById("upVoteIcon").classList.remove('far');
+            document.getElementById("upVoteIcon").classList.add('fas');
+        }
+    }
+    else if (msg['myUpvote'] === 'False'){
+        if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
+            document.getElementById("upVoteIcon").classList.remove('fas');
+            document.getElementById("upVoteIcon").classList.add('far');
+        }
+    }
+});
+
+socket.on('connect', function() {
+    socket.emit('getUpvoteTotal', {loc: channelLocation, vidType: 'stream'});
+    socket.emit('getViewerTotal', {data: channelLocation} );
+});
+
+setInterval(function() {
+  socket.emit('getUpvoteTotal', {loc: channelLocation, vidType: 'stream'});
+},30000 );
+
+setInterval(function() {
+  socket.emit('getViewerTotal', {data: channelLocation} );
+},5000 );
+
+
 
 const video = document.querySelector('video');
 video.addEventListener('play', (event) => {

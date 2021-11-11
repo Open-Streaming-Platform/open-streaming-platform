@@ -157,53 +157,6 @@
     </script>
 
     <script>
-        function getBanList() {
-            console.log("Requesting Ban List");
-            socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
-        }
-
-        function clearBan(username) {
-            unban(username);
-            setTimeout(function(){
-                getBanList();
-            }, 2000);
-            return true;
-        }
-
-        socket.on('returnBanList', function(msg) {
-            console.log("Receiving Ban List");
-
-            document.getElementById('modDisplay').style.display = 'block';
-            document.getElementById('chatMembers').style.display = 'none';
-            document.getElementById('chat').style.display = 'none';
-
-            banList = document.getElementById('OutcastList');
-            banList.innerHTML = "";
-            for (let i = 0; i < msg['results'].length; i++){
-                var iDiv = document.createElement('div');
-                iDiv.className = 'bannedUser';
-                var username = msg["results"][i]["username"];
-                var useruuid = msg["results"][i]["useruuid"];
-                var onclickCmd = "clearBan('" + useruuid + "');"
-                iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
-                banList.appendChild(iDiv);
-            }
-            console.log(msg);
-        });
-    </script>
-
-    <script>
-        function toggleChat() {
-            var chatbox = document.getElementById("chatPanel");
-            if (chatbox.style.display === "none") {
-                chatbox.style.display = "block";
-            } else {
-                chatbox.style.display = "none";
-            }
-        }
-    </script>
-
-    <script>
         function popoutChat() {
             {% if current_user.is_authenticated %}
             MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
@@ -252,48 +205,5 @@
                });
        });
        player.play();
-    </script>
-
-    <script>
-        setInterval(function() {
-          socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
-        },5000 );
-    </script>
-
-    <script>
-        socket.on('connect', function() {
-            socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
-            socket.emit('getViewerTotal', {data: "{{channel.channelLoc}}"} );
-        });
-    </script>
-
-    <script>
-        setInterval(function() {
-          socket.emit('getUpvoteTotal', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
-        },30000 );
-    </script>
-
-    <script type="text/javascript" charset="utf-8">
-        socket.on('upvoteTotalResponse', function (msg) {
-            document.getElementById("totalUpvotes").innerHTML = msg['totalUpvotes'];
-            if (msg['myUpvote'] === 'True'){
-                if ( document.getElementById("upVoteIcon").classList.contains('far') ) {
-                    document.getElementById("upVoteIcon").classList.remove('far');
-                    document.getElementById("upVoteIcon").classList.add('fas');
-                }
-            }
-            else if (msg['myUpvote'] === 'False'){
-                if ( document.getElementById("upVoteIcon").classList.contains('fas') ) {
-                    document.getElementById("upVoteIcon").classList.remove('fas');
-                    document.getElementById("upVoteIcon").classList.add('far');
-                }
-            }
-        });
-    </script>
-
-    <script>
-        function changeUpvote() {
-            socket.emit('changeUpvote', {loc: '{{channel.channelLoc}}', vidType: 'stream'});
-        }
     </script>
 {% endblock %}
