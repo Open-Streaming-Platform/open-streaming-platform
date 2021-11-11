@@ -55,10 +55,10 @@
 </div>
 {% endmacro %}
 
-{% macro videos_panel(videoList, title="Videos", heightOverride=False) %}
+{% macro videos_panel(videoList, title="Videos", heightOverride=False, justification="start") %}
 <div class="videos-container boxShadow {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for video in videoList %}
           {{ cards.video_card(video) }}
       {% endfor %}
