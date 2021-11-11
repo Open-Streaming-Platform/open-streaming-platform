@@ -31,6 +31,19 @@ function showOccupants() {
     }
 }
 
+function getBanList() {
+    console.log("Requesting Ban List");
+    socket.emit('getBanList', {channelLoc: channelLocation});
+}
+
+function clearBan(username) {
+    unban(username);
+    setTimeout(function(){
+        getBanList();
+    }, 2000);
+    return true;
+}
+
 function openModDisplay() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -804,19 +817,6 @@ function getPos(el) {
          el != null;
          lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
     return {x: lx,y: ly};
-}
-
-function getBanList() {
-    console.log("Requesting Ban List");
-    socket.emit('getBanList', {channelLoc: channelLocation});
-}
-
-function clearBan(username) {
-    unban(username);
-    setTimeout(function(){
-        getBanList();
-    }, 2000);
-    return true;
 }
 
 // Sticker Selector Popup Handler
