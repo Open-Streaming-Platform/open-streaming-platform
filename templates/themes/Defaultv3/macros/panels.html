@@ -611,19 +611,19 @@
     <div id="profileBox-modControls" class="dropdown dropstart float-end" style="display:none;">
       <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <h6 class="dropdown-header">Mod Controls</h6>
-          <button class="dropdown-item" type="button" onclick="modKick();">Kick</button>
-          <button class="dropdown-item" type="button" onclick="modBan();">Ban</button>
-          <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Change Role</h6>
-          <button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Moderator</button>
-          <button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Participant</button>
-          <button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as Guest</button>
-          <div class="dropdown-divider"></div>
-          <h6 class="dropdown-header">Channel Voice Controls</h6>
-          <!--<button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button>-->
-          <button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button>
-          <button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button>
+          <li><h6 class="dropdown-header">Mod Controls</h6></li>
+          <li><button class="dropdown-item" type="button" onclick="modKick();">Kick</button></li>
+          <li><button class="dropdown-item" type="button" onclick="modBan();">Ban</button></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><h6 class="dropdown-header">Change Role</h6></li>
+          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Moderator</button></li>
+          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Participant</button></li>
+          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as Guest</button></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><h6 class="dropdown-header">Channel Voice Controls</h6></li>
+          <!--<li><button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button></li>-->
+          <li><button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button></li>
+          <li><button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button></li>
       </ul>
     </div>
   </div>
