@@ -11,6 +11,19 @@ var chatDataUpdate;
 
 const stickerRegex = /\:([A-Za-z0-9_-]+)\:/g;
 
+function getBanList() {
+    console.log("Requesting Ban List");
+    socket.emit('getBanList', {channelLoc: channelLocation});
+}
+
+function clearBan(username) {
+    unban(username);
+    setTimeout(function(){
+        getBanList();
+    }, 2000);
+    return true;
+}
+
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
