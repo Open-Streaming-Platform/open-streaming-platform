@@ -20,7 +20,7 @@
         {{ panels.user_bio_panel(streamerData) }}
     {% endif %}
     {% if channelData is defined %}
-        {{ panels.channel_metadata_panel(channelData) }}
+        {{ panels.channel_metadata_panel(channelData, subState) }}
     {% endif %}
     {% if openStreams %}
         {{ panels.live_streams_panel(openStreams) }}

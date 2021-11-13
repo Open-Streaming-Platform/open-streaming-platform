@@ -137,7 +137,7 @@
 </div>
 {% endmacro %}
 
-{% macro channel_metadata_panel(channelData) %}
+{% macro channel_metadata_panel(channelData, subState=False) %}
 <div class="channel-info-container insetBoxShadow">
   <div class="row">
     <div class="col-auto">
@@ -159,9 +159,11 @@
         </div>
         <div class="channelButtons">
           <a href="/view/{{ channelData.channelLoc }}" class="btn btn-primary btn-sm boxShadow textShadow me-2"><b>View Live Channel</b></a>
-          {% if current_user.is_authenticated %}
-          <button type="button" class="btn btn-success btn-sm boxShadow textShadow"><b><i class="bi bi-star-fill"></i> Subscribe</b></button>
-          {% endif %}
+        {% if current_user.is_authenticated %}
+            <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+        {% else %}
+            <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
+        {% endif %}
         </div>
       </div>
     </div>
@@ -170,6 +172,18 @@
     {% endif %}
   </div>
 </div>
+<script>
+    socket.on('sendChanSubResults', function (msg) {
+        var subButton = document.getElementById('chanSubStateButton');
+        if (msg['state'] === true) {
+            subButton.innerHTML = "<i class='fas fa-star'></i><span class='d-none d-sm-none d-md-inline'> Unsubscribe</span>";
+            subButton.className = "btn btn-success";
+        } else {
+            subButton.innerHTML = "<i class='far fa-star'></i><span class='d-none d-sm-none d-md-inline'> Subscribe</span>";
+            subButton.className = "btn btn-outline-success";
+        }
+    });
+</script>
 {% endmacro %}
 
 {% macro video_metadata_panel(video) %}

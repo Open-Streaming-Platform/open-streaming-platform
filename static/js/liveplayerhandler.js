@@ -85,10 +85,6 @@ setInterval(function() {
     monitor_vid(player);
 }, 10000);
 
-function toggleChannelSub(chanID) {
-    socket.emit('toggleChannelSubscription', { channelID: chanID });
-}
-
 function changeUpvote() {
     socket.emit('changeUpvote', {loc: channelLocation, vidType: 'stream'});
 }
