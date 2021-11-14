@@ -470,6 +470,7 @@
 </div>
 {% endmacro %}
 
+<!--Begin Chat-->
 {% macro chat_loader() %}
 <div id="loader" class="chatloader">
   <div class="chatloader-view">
@@ -678,6 +679,7 @@
 </div>
 {% endmacro %}
 
+<!--Begin User Channel Settings-->
 {% macro user_channel_settings_menu_option(channelID, windowName, title, iconClass) %}
 <div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channelID}}', '{{ windowName }}');" data-toggle="tooltip" data-placement="right" title={{ title }}><h2><i class="{{ iconClass }}"></i></h2></a></div>
 {% endmacro %}
@@ -1232,13 +1234,13 @@
 {% endmacro %}
 
 {% macro user_channel_settings(channel) %}
-<div id="channelEntry-{{channel.id}}" class="p-2 mx-2 mt-2 shadow" style="cursor: pointer;" onclick="toggleDiv('channelDash-{{channel.id}}')">
+<div id="channelEntry-{{channel.id}}" class="userChannelSettings-headerTab p-2 mx-2 mt-3 boxShadow" style="cursor: pointer;" onclick="toggleDiv('channelDash-{{channel.id}}')">
     <div class="row">
         <div class="ml-2 col-auto align-middle my-auto">
-            <b><h2><i class="fas fa-chevron-circle-down"></i></h2></b>
+            <b><h2 class="ps-2"><i class="fas fa-chevron-circle-down"></i></h2></b>
         </div>
         <div class="col">
-            <h5>{{channel.channelName}}</h5>
+            <h4 class="textShadow">{{channel.channelName}}</h4>
             <div class="row">
                 <div class="col-12 col-md-4">
                     <i class="fas fa-hashtag mr-2"></i> {{channel.topic|get_topicName}}
@@ -1254,7 +1256,7 @@
     </div>
 </div>
 <div class="row" id="channelDash-{{channel.id}}" style="z-index:-1;display:none;">
-  <div class="ms-4 col-auto shadow">
+  <div class="userChannelSettings-leftNav ms-3 col-auto boxShadow">
     <div class="h-100">
         {{ user_channel_settings_menu_option(channel.id, 'statWindow', 'Dashboard', 'fas fa-chart-bar') }}
         {{ user_channel_settings_menu_option(channel.id, 'videoWindow', 'Videos', 'fas fa-video') }}

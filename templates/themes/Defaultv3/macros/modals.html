@@ -505,11 +505,11 @@
 </div>
 {% endmacro %}
 
-{% macro new_sticker() %}
+{% macro new_sticker(postEndpoint) %}
 <div class="modal fade" id="newStickerModal" tabindex="-1" role="dialog" aria-labelledby="newStickerModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
-      <form action="/settings/admin" enctype=multipart/form-data method="post">
+      <form action="{{postEndpoint}}" enctype=multipart/form-data method="post">
           <div class="modal-header">
             <h5 class="modal-title" id="newStickerModalTitle">Create New Chat Sticker</h5>
               <div class="float-end">

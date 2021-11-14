@@ -823,3 +823,13 @@ table tbody tr {
     width: 100%;
     box-shadow: var(--box-shadow);
 }
+
+.userChannelSettings-headerTab {
+    background-color: var(--box1-background)
+}
+
+.userChannelSettings-leftNav {
+    background-color: var(--box2-background);
+    position: relative;
+    left: 4px;
+}
