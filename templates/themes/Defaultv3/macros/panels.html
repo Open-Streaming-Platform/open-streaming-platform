@@ -724,28 +724,6 @@
         <div id="channelCard-{{channel.id}}" class="my-2 ml-2">
             <div>
                 <div class="row">
-                    <div class="col-xl-4 col-lg-6 col-md-12">
-                        <h4>Channel Image</h4>
-                        {% if channel.imageLocation == None %}
-                        <img src="/static/img/video-placeholder.jpg" width="100%">
-                        {% else %}
-                        <div>
-                            <img src="/images/{{channel.imageLocation}}" class="stream-img card-img-top shadow" width="100%">
-                        </div>
-                        {% endif %}
-                        <input type="file" name="photo" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-
-                        <h4>Offline Stream Image</h4>
-                        {% if channel.offlineImageLocation == None %}
-                        <img src="/static/img/video-placeholder.jpg" width="100%">
-                        {% else %}
-                        <div>
-                            <img src="/images/{{channel.offlineImageLocation}}" class="stream-img card-img-top shadow" width="100%">
-                        </div>
-                        {% endif %}
-                        <input type="file" name="offlinephoto" class="form-control-file" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
-
-                    </div>
                     <div class="col-xl-6 col-lg-6 col-md-12">
                         <div class="form-group">
                             <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
@@ -847,6 +825,27 @@
                             </div>
                         </div>
 
+                    </div>
+                    <div class="col-xl-4 col-lg-6 col-md-12">
+                        <h4>Channel Image</h4>
+                        <div class="channelImg">
+                            {% if channel.imageLocation == None %}
+                            <img src="/static/img/video-placeholder.jpg">
+                            {% else %}
+                            <img src="/images/{{channel.imageLocation}}">
+                            {% endif %}
+                        </div>
+                        <input type="file" name="photo" class="form-control" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
+
+                        <h4>Offline Stream Image</h4>
+                        <div>
+                            {% if channel.offlineImageLocation == None %}
+                            <img class="boxShadow" src="/static/img/video-placeholder.jpg" width="100%">
+                            {% else %}
+                            <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" width="100%">
+                            {% endif %}
+                        </div>
+                        <input type="file" name="offlinephoto" class="form-control" value="Upload a Photo" style="margin-top:10px;width:384px;"><br>
                     </div>
                 </div>
                 <hr>
