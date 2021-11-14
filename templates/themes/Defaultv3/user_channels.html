@@ -518,7 +518,7 @@
 {% block modals %}
     {{ modals.new_sticker("/settings/channels") }}
     {{ modals.delete_sticker() }}
-    {{ modals.delete_channel() }}
+    {{ modals.confirm_delete_channel() }}
     {{ modals.delete_webhook() }}
     {{ modals.new_webhook() }}
 {% endblock %}
