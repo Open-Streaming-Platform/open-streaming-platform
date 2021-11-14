@@ -679,7 +679,7 @@
 {% endmacro %}
 
 {% macro user_channel_settings_menu_option(channelID, windowName, title, iconClass) %}
-<div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channelID}}',{{ windowName }});" data-toggle="tooltip" data-placement="right" title={{ title }}><h2><i class={{ iconClass }}></i></h2></a></div>
+<div class="my-5"><a href="javascript:void(0)" onclick="openChannelWindow('{{channelID}}', '{{ windowName }}');" data-toggle="tooltip" data-placement="right" title={{ title }}><h2><i class="{{ iconClass }}"></i></h2></a></div>
 {% endmacro %}
 
 {% macro user_channel_settings_chart(channel) %}
@@ -1254,7 +1254,7 @@
     </div>
 </div>
 <div class="row" id="channelDash-{{channel.id}}" style="z-index:-1;display:none;">
-  <div class="ml-4 col-auto shadow">
+  <div class="ms-4 col-auto shadow">
     <div class="h-100">
         {{ user_channel_settings_menu_option(channel.id, 'statWindow', 'Dashboard', 'fas fa-chart-bar') }}
         {{ user_channel_settings_menu_option(channel.id, 'videoWindow', 'Videos', 'fas fa-video') }}
