@@ -1,0 +1,73 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
+
+<!--Start Header Block-->
+{% block head %}
+<title>{{sysSettings.siteName}} - {{ title }}</title>
+<meta name="twitter:card" content="app" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{sysSettings.siteName}}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+{% endblock %}
+
+<!--Start Body Block-->
+{% block body %}
+    <div class="row gx-0">
+        <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+            <div class="video-panel">
+                {{ panels.video_player(streamURL, clip.thumbnailLocation) }}
+                {{ panels.video_control_panel(streamURL, video, current_user) }}
+                {{ panels.video_metadata_panel(clip) }}
+            </div>
+        </div>
+        <div id="sidePanel" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="side-video-panel">
+                <div class="side-video-panel-container">
+                    {{ panels.videos_panel(randomClips, title="Other Clips", heightOverride=True, justification="center") }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--Start Modal Block-->
+{% block modals %}
+    {{ modals.video_share(video, request, startTime) }}
+    {{ modals.new_thumbnail_modal() }}
+    {{ modals.edit_video_metadata(video, topics) }}
+    {{ modals.delete_video(video) }}
+{% endblock %}
+
+<!--Start Script Block-->
+{% block scripts %}
+    <script>
+    var videoID = {{ video.id }};
+    </script>
+
+    <script src="/static/vendor/videojs/js/video.js"></script>
+    <script type="text/javascript" src="/static/js/videoplayer.js"></script>
+    <script>
+        var player = videojs('video', {
+                autoplay: true,
+                errorDisplay: false,
+                liveui: false,
+                liveTracker:true,
+                html5:
+                    {
+                        nativeAudioTracks: false,
+                        nativeVideoTracks:false,
+                        hls:
+                            {
+                                overrideNative: true
+                            }
+                    }
+            });
+    </script>
+{% endblock %}
