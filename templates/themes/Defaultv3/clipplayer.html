@@ -23,7 +23,7 @@
         <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, clip.thumbnailLocation) }}
-                {{ panels.video_control_panel(streamURL, video, current_user) }}
+                {{ panels.clip_control_panel(streamURL, clip, current_user) }}
                 {{ panels.clip_metadata_panel(clip) }}
             </div>
         </div>
