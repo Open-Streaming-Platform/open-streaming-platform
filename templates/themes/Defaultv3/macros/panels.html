@@ -457,7 +457,7 @@
       <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-5">
-      <div class="video-name">{{ clip.cliplName }}</div>
+      <div class="video-name">{{ clip.clipName }}</div>
       <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
       <div class="video-topic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
     </div>
