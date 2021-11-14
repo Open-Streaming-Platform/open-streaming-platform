@@ -424,6 +424,26 @@
 </div>
 {% endmacro %}
 
+{% macro clip_metadata_panel(clip) %}
+<div class="video-metadata">
+  <div class="row">
+    <div class="channelImg-sm col-auto">
+      <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+    </div>
+    <div class="col-5">
+      <div class="video-name">{{ clip.cliplName }}</div>
+      <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
+      <div class="video-topic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
+    </div>
+    <div class="col">
+      <div class="float-end mx-1">
+        <i class="bi bi-people-fill"></i> {{ clip.views }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
 {% macro chat_loader() %}
 <div id="loader" class="chatloader">
   <div class="chatloader-view">
