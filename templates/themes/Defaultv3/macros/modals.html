@@ -1125,6 +1125,28 @@
 </div>
 {% endmacro %}
 
+{% macro delete_clip(clip) %}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalTitle">Confirm Clip Deletion</h5>
+          <div class="float-end">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+      </div>
+      <div class="modal-body">
+        <h5>Are you sure you want to delete this clip?</h5>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+        <a href="/clip/{{clip.id}}/delete" class="btn btn-danger" onclick="showSpinner();">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
 {% macro edit_stream(stream, topics) %}
 {% if channel.owningUser == current_user.id %}
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
