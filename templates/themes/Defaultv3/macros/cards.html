@@ -152,3 +152,83 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro user_settings_video_card(video) %}
+<li id="video-{{video.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+    <div class="row">
+      <div class="col-auto m-2 pt-3">
+        <div class="mb-2" style="width:270px;">
+          <img class="shadow {% if video.gifLocation != None %}gif{% endif %} lazy" id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+        </div>
+        <div>
+            <button type="button" class="btn btn-success btn-block shadow videoThumbnailUploadModalButton" data-toggle="modal" data-target="#videoThumbnailUploadModal" data-videoid="{{video.id}}">Upload Thumbnail</button>
+        </div>
+        <div class="mt-2">
+          <button class="videoMoveModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoMoveModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Move Video"><i class="fas fa-arrow-circle-right"></i></button>
+          <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Create Clip"><i class="fas fa-cut"></i></button>
+          <button class="videoEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoEditModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Edit Metadata"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-primary shadow" data-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Set Thumbnail"><i class="fas fa-camera"></i></button>
+          <button class="videoShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Share Video"><i class="fas fa-share-alt"></i></button>
+          <button class="videoDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Delete Video"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="col mt-2">
+        <h4><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h4>
+        <h5><i class="fas fa-hashtag mr-2"></i><span id="vidTopicText-{{video.id}}">{{video.topic|get_topicName}}</span></h5>
+        <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
+        <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
+        <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
+        <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
+        <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
+        <h5><i class="fas fa-users"></i> {{video.views}}</h5>
+        <h5><i class="far fa-thumbs-up"></i> {{video.upvotes|length}}</h5>
+        <h5><i class="far fa-comment-alt"></i> {{video.comments|length}}</h5>
+        <div class="form-group row">
+            <div class="col-6">
+                <label for="published-{{video.id}}" class="col-form-label"><b>Published? </b></label>
+            </div>
+            <div class="col-6">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</li>
+{% endmacro %}
+
+{% macro user_settings_clip_card(clip) %}
+<li id="clip-{{clip.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+    <div class="row">
+      <div class="col-auto m-2 pt-3">
+        <div class="mb-2" style="width:270px;">
+          <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+        </div>
+        <div class="mt-2">
+          <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
+          <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+          <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="col mt-2">
+        <h4><a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a></h4>
+        <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.recordedVideo.topic|get_topicName}}</span></h5>
+        <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</h5>
+        <h5><i class="far fa-clock mr-1"></i>{{clip.length|hms_format}}</h5>
+        <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
+        <h5><i class="fas fa-users"></i> {{clip.views}}</h5>
+        <h5><i class="far fa-thumbs-up"></i> {{clip.upvotes|length}}</h5>
+        <div class="form-group row">
+            <div class="col-6">
+                <label for="clipPublished-{{clip.id}}" class="col-form-label"><b>Published? </b></label>
+            </div>
+            <div class="col-6">
+                <input type="checkbox" data-toggle="toggle" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
+            </div>
+        </div>
+      </div>
+    </div>
+</li>
+{% endmacro %}
