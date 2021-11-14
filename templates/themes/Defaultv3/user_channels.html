@@ -24,7 +24,7 @@
                 <span class="float-right"><button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
             </div>
         {% for channel in channels %}
-            {{ panel.user_channel_settings }}
+            {{ panels.user_channel_settings(channel) }}
         {% endfor %}
         </div>
     </div>
