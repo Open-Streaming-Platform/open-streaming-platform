@@ -843,3 +843,14 @@ table tbody tr {
   list-style-type:none;
   width: 700px;
 }
+
+@media only screen and (max-width: 1130px) {
+    .topNavbar .siteTitle {
+        display:none;
+    }
+
+    .topNavbar .rightTopNavbar .searchBox input {
+        width: 210px;
+    }
+
+}
