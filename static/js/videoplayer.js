@@ -96,6 +96,8 @@ function setNewThumbnail() {
 
 function openClipModal() {
     player.pause();
+    var playerCurrentTime = player.currentTime();
+    clipplayer.currentTime(playerCurrentTime);
 
     var startInput = document.getElementById('clipStartTime');
     startInput.value = null;
