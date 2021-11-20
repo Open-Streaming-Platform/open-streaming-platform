@@ -461,6 +461,7 @@ table tbody tr {
     height: 175px;
     object-fit: cover;
     box-shadow: var(--box-shadow);
+    border-radius: 6px;
 }
 
 .channelImg-sm img {
