@@ -426,7 +426,7 @@
 {% endmacro %}
 
 {% macro scheduler_settings_panel(schedulerList) %}
-    <table class="table">
+    <table class="table align-middle table-hover">
         <thead>
             <tr>
                 <th>Status</th>
@@ -435,7 +435,8 @@
                 <th>Arguments</th>
                 <th>Start Time</th>
                 <th>Acknowledged</th>
-                <th>Worked ID</th>
+                <th>Worker ID</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -452,6 +453,7 @@
                 <td>{{ entry['time_start'] }}</td>
                 <td>{{ entry['acknowledged'] }}</td>
                 <td>{{ entry['worker_pid'] }}</td>
+                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
             {% for entry in schedulerList['claimed']['celery@osp'] %}
@@ -463,6 +465,7 @@
                 <td>{{ entry['time_start'] }}</td>
                 <td>{{ entry['acknowledged'] }}</td>
                 <td>{{ entry['worker_pid'] }}</td>
+                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
             {% for entry in schedulerList['scheduled']['celery@osp'] %}
@@ -474,6 +477,7 @@
                 <td>{{ entry['time_start'] }}</td>
                 <td>{{ entry['acknowledged'] }}</td>
                 <td>{{ entry['worker_pid'] }}</td>
+                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
         </tbody>
