@@ -833,3 +833,8 @@ table tbody tr {
     position: relative;
     left: 4px;
 }
+
+.channelVideoCard {
+  list-style-type:none;
+  width: 700px;
+}
