@@ -961,21 +961,6 @@ def rtmpStat_page(node):
         return data
     return abort(500)
 
-# Celery Task Monitor Endpoint
-@settings_bp.route('/admin/celery')
-@login_required
-@roles_required('Admin')
-def celery_task_page():
-
-    from classes.shared import celery
-
-    nodes = celery.control.inspect(['celery@osp'])
-    scheduled = nodes.scheduled()
-    active = nodes.active()
-    claimed = nodes.reserved()
-
-    return {'nodes': str(nodes), 'scheduled': str(scheduled), 'active': str(active), 'claimed': str(claimed)}
-
 @settings_bp.route('/channels', methods=['POST', 'GET'])
 @login_required
 @roles_required('Streamer')

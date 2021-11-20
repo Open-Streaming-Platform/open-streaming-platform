@@ -299,4 +299,6 @@ def localize_time(timeObj):
     return localized_datetime
 
 def epoch_to_datetime(timestamp):
+    if timestamp is None:
+        return "N/A"
     return datetime.datetime.fromtimestamp(timestamp)
