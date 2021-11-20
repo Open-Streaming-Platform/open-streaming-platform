@@ -411,6 +411,14 @@ def admin_page():
 
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
+        from classes.shared import celery
+
+        nodes = celery.control.inspect(['celery@osp'])
+        scheduled = nodes.scheduled()
+        active = nodes.active()
+        claimed = nodes.reserved()
+        schedulerList = {'nodes': str(nodes), 'scheduled': str(scheduled), 'active': str(active), 'claimed': str(claimed)}
+
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
                                roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList,
                                repoSHA=repoSHA, repoBranch=branch,
@@ -418,7 +426,7 @@ def admin_page():
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
-                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones)
+                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones, schedulerList=schedulerList)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -961,7 +969,7 @@ def celery_task_page():
 
     from classes.shared import celery
 
-    nodes = celery.control.inspect()
+    nodes = celery.control.inspect(['celery@osp'])
     scheduled = nodes.scheduled()
     active = nodes.active()
     claimed = nodes.reserved()
