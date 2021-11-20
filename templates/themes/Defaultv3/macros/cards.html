@@ -154,7 +154,7 @@
 {% endmacro %}
 
 {% macro user_settings_video_card(video) %}
-<li id="video-{{video.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+<li id="video-{{video.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
     <div class="row">
       <div class="col-auto m-2 pt-2">
         <div class="mb-2" style="width:270px;">
@@ -172,11 +172,11 @@
           <button class="videoDeleteModalButton btn btn-danger boxShadow" data-toggle="modal" data-target="#videoDeleteModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Delete Video"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>
-      <div class="col mt-2">
+      <div class="col mt-3">
         <h4><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h4>
-        <h5><i class="fas fa-hashtag mr-2"></i><span id="vidTopicText-{{video.id}}">{{video.topic|get_topicName}}</span></h5>
-        <h5><i class="far fa-calendar-alt mr-2"></i>{{video.videoDate|normalize_date}}</h5>
-        <h5><i class="far fa-clock mr-1"></i>{{video.length|hms_format}}</h5>
+        <h5><i class="fas fa-hashtag mr-2"></i> <span id="vidTopicText-{{video.id}}">{{video.topic|get_topicName}}</span></h5>
+        <h5><i class="far fa-calendar-alt mr-2"></i> {{video.videoDate|normalize_date}}</h5>
+        <h5><i class="far fa-clock mr-1"></i> {{video.length|hms_format}}</h5>
         <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
         <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
         <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
@@ -186,7 +186,7 @@
         <div class="form-group row">
             <div class="col-6">
                 <div class="form-check form-switch">
-                  <label for="published-{{video.id}}" class="col-form-label"><b>Published?</b></label>
+                  <label for="published-{{video.id}}"><b>Published?</b></label>
                   <input class="form-check-input" type="checkbox" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
                 </div>
             </div>
