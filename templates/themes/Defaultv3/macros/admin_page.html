@@ -426,7 +426,38 @@
 {% endmacro %}
 
 {% macro scheduler_settings_panel(schedulerList) %}
-{{ schedulerList }}
+    Node: {{ schedulerList['nodes'] }} <br>
+    Scheduled: <br>
+    {% for entry in schedulerList['scheduled']['celery@osp'] %}
+        id: {{ entry['id'] }}<br>
+        name: {{ entry['name'] }} <br>
+        args: {{ entry['args'] }}<br>
+        time_start: {{ entry['time_start'] }}<br>
+        acknowledged: {{ entry['acknowledged'] }}<br>
+        worker_pid: {{ entry['worker_pid'] }}<br>
+        <hr>
+    {% endfor %}
+    Active: <br>
+    {% for entry in schedulerList['active']['celery@osp'] %}
+        id: {{ entry['id'] }}<br>
+        name: {{ entry['name'] }} <br>
+        args: {{ entry['args'] }}<br>
+        time_start: {{ entry['time_start'] }}<br>
+        acknowledged: {{ entry['acknowledged'] }}<br>
+        worker_pid: {{ entry['worker_pid'] }}<br>
+        <hr>
+    {% endfor %}
+    Claimed: <br>
+    {% for entry in schedulerList['claimed']['celery@osp'] %}
+        id: {{ entry['id'] }}<br>
+        name: {{ entry['name'] }} <br>
+        args: {{ entry['args'] }}<br>
+        time_start: {{ entry['time_start'] }}<br>
+        acknowledged: {{ entry['acknowledged'] }}<br>
+        worker_pid: {{ entry['worker_pid'] }}<br>
+        <hr>
+    {% endfor %}
+
 {% endmacro %}
 
 {% macro rtmp_settings_panel(rtmpServers) %}
