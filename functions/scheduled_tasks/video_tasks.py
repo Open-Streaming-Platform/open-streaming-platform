@@ -23,7 +23,7 @@ def delete_video(self, videoID):
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Deleted: " + str(videoID)})
     return True
 
-@celery.task(bind=True)
+@celery.task(bind=True, time_limit=10800, soft_time_limit=7200)
 def create_video_clip(self, videoID, clipStart, clipStop, clipName, clipDescription):
     """
     Task to create a video clip
