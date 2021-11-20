@@ -417,7 +417,7 @@ def admin_page():
         scheduled = nodes.scheduled()
         active = nodes.active()
         claimed = nodes.reserved()
-        schedulerList = {'nodes': str(nodes), 'scheduled': str(scheduled), 'active': str(active), 'claimed': str(claimed)}
+        schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
                                roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList,
