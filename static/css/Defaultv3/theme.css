@@ -446,6 +446,7 @@ table tbody tr {
     height: 175px;
     object-fit: cover;
     box-shadow: var(--box-shadow);
+    border-radius: 6px;
 }
 
 .topicImg-sm img {
@@ -467,6 +468,7 @@ table tbody tr {
     height: 96px;
     object-fit: cover;
     box-shadow: var(--box-shadow);
+    border-radius: 6px;
 }
 
 .card {
@@ -533,6 +535,7 @@ table tbody tr {
     width: 315px;
     height: 178px;
     object-fit: cover;
+    border-radius: 6px;
 }
 
 .streamCard .streamCard-badges {
@@ -631,6 +634,7 @@ table tbody tr {
 .channel-info-picture-img {
   width: 128px;
   height: 128px;
+  border-radius: 6px;
 }
 
 .channelBadges {
