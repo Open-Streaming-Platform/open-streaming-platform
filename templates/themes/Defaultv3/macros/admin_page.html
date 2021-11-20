@@ -426,38 +426,58 @@
 {% endmacro %}
 
 {% macro scheduler_settings_panel(schedulerList) %}
-    Node: {{ schedulerList['nodes'] }} <br>
-    Scheduled: <br>
-    {% for entry in schedulerList['scheduled']['celery@osp'] %}
-        id: {{ entry['id'] }}<br>
-        name: {{ entry['name'] }} <br>
-        args: {{ entry['args'] }}<br>
-        time_start: {{ entry['time_start'] }}<br>
-        acknowledged: {{ entry['acknowledged'] }}<br>
-        worker_pid: {{ entry['worker_pid'] }}<br>
-        <hr>
-    {% endfor %}
-    Active: <br>
-    {% for entry in schedulerList['active']['celery@osp'] %}
-        id: {{ entry['id'] }}<br>
-        name: {{ entry['name'] }} <br>
-        args: {{ entry['args'] }}<br>
-        time_start: {{ entry['time_start'] }}<br>
-        acknowledged: {{ entry['acknowledged'] }}<br>
-        worker_pid: {{ entry['worker_pid'] }}<br>
-        <hr>
-    {% endfor %}
-    Claimed: <br>
-    {% for entry in schedulerList['claimed']['celery@osp'] %}
-        id: {{ entry['id'] }}<br>
-        name: {{ entry['name'] }} <br>
-        args: {{ entry['args'] }}<br>
-        time_start: {{ entry['time_start'] }}<br>
-        acknowledged: {{ entry['acknowledged'] }}<br>
-        worker_pid: {{ entry['worker_pid'] }}<br>
-        <hr>
-    {% endfor %}
-
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Task ID</th>
+                <th>Name</th>
+                <th>Arguments</th>
+                <th>Start Time</th>
+                <th>Acknowledged</th>
+                <th>Worked ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in schedulerList['active']['celery@osp'] %}
+            <tr>
+                <td>
+                    <div class="spinner-border text-success" role="status">
+                      <span class="visually-hidden">Active</span>
+                    </div>
+                </td>
+                <td>{{ entry['id'] }}</td>
+                <td>{{ entry['name'] }}</td>
+                <td>{{ entry['args'] }}</td>
+                <td>{{ entry['time_start'] }}</td>
+                <td>{{ entry['acknowledged'] }}</td>
+                <td>{{ entry['worker_pid'] }}</td>
+            </tr>
+            {% endfor %}
+            {% for entry in schedulerList['claimed']['celery@osp'] %}
+            <tr>
+                <td><i class="fas fa-business-time" style="color:orange;" title="Claimed"></i></td>
+                <td>{{ entry['id'] }}</td>
+                <td>{{ entry['name'] }}</td>
+                <td>{{ entry['args'] }}</td>
+                <td>{{ entry['time_start'] }}</td>
+                <td>{{ entry['acknowledged'] }}</td>
+                <td>{{ entry['worker_pid'] }}</td>
+            </tr>
+            {% endfor %}
+            {% for entry in schedulerList['scheduled']['celery@osp'] %}
+            <tr>
+                <td><i class="fas fa-clock" style="color: var(--font-color);" title="Scheduled"></i></td>
+                <td>{{ entry['id'] }}</td>
+                <td>{{ entry['name'] }}</td>
+                <td>{{ entry['args'] }}</td>
+                <td>{{ entry['time_start'] }}</td>
+                <td>{{ entry['acknowledged'] }}</td>
+                <td>{{ entry['worker_pid'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endmacro %}
 
 {% macro rtmp_settings_panel(rtmpServers) %}
