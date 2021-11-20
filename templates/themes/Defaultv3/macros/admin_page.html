@@ -693,7 +693,7 @@
                 {% for topic in topicsList %}
                     <div id="topic-{{ topic.id }}" class="m-2" style="width:250px;height:275px;">
                         <div class="topicImg w-100 my-2">
-                            <img class="mx-auto d-block" id="topic-pic-{{ topic.id }}"  src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+                            <img class="mx-auto d-block boxShadow" id="topic-pic-{{ topic.id }}"  src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';">
                         </div>
                         <input type="text" class="form-control boxShadow w-100" name="topic-name-{{ topic.id }}" id="topic-name-{{ topic.id }}" value="{{ topic.name }}" readonly>
                         <div class="mx-auto my-2" style="width:96px;">
