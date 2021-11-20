@@ -471,18 +471,17 @@
             {% for entry in schedulerList['scheduled']['celery@osp'] %}
             <tr>
                 <td><i class="fas fa-clock" style="color: var(--font-color);" title="Scheduled"></i></td>
-                <td>{{ entry['id'] }}</td>
-                <td>{{ entry['name'] }}</td>
-                <td>{{ entry['args'] }}</td>
+                <td>{{ entry['request']['id'] }}</td>
+                <td>{{ entry['request']['name'] }}</td>
+                <td>{{ entry['request']['args'] }}</td>
                 <td></td>
-                <td>{{ entry['acknowledged'] }}</td>
-                <td>{{ entry['worker_pid'] }}</td>
+                <td>{{ entry['request']['acknowledged'] }}</td>
+                <td>{{ entry['request']['worker_pid'] }}</td>
                 <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    {{ schedulerList }}
 {% endmacro %}
 
 {% macro rtmp_settings_panel(rtmpServers) %}
