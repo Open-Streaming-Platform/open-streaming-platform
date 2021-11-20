@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 import time
+import datetime
 import os
 import pytz
 
@@ -48,6 +49,7 @@ def init(context):
     context.jinja_env.filters['get_videoDate'] = get_videoDate
     context.jinja_env.filters['get_channelPicture'] = get_channelPicture
     context.jinja_env.filters['localize_time'] = localize_time
+    context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -295,3 +297,6 @@ def localize_time(timeObj):
     localtz = pytz.timezone(sysSettings.serverTimeZone)
     localized_datetime = localtz.localize(timeObj)
     return localized_datetime
+
+def epoch_to_datetime(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp)
