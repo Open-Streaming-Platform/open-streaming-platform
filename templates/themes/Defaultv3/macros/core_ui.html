@@ -23,7 +23,7 @@
 {% endmacro %}
 
 {% macro length_badge(timestamp) %}
-<span class="views-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ timestamp | convert_mins }} mins</b></span>
+<span class="length-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ timestamp | hms_format }}</b></span>
 {% endmacro %}
 
 {% macro toast_box(messages) %}
