@@ -50,6 +50,7 @@ def init(context):
     context.jinja_env.filters['get_channelPicture'] = get_channelPicture
     context.jinja_env.filters['localize_time'] = localize_time
     context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
+    context.jinja_env.filters['convert_mins'] = convert_mins
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -302,3 +303,10 @@ def epoch_to_datetime(timestamp):
     if timestamp is None:
         return "N/A"
     return datetime.datetime.fromtimestamp(timestamp)
+
+def convert_mins(timestamp):
+    if timestamp is not None:
+        minutes = round(timestamp / 60)
+        return minutes
+    else:
+        return "?"

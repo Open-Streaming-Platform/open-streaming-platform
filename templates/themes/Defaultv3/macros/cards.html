@@ -34,6 +34,7 @@
     <div class="streamCard-thumbnail-container zoom">
         <div class="streamCard-badges">
             {{ core_ui.views_badge(video.views) }}
+            {{ core_ui.length_badge(video.length) }}
         </div>
         <img class="streamCard-thumb boxShadow lazy {% if video.gifLocation != None %}gif{% endif %}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
