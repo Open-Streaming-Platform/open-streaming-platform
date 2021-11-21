@@ -30,7 +30,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="newRestreamModal" tabindex="-1" role="dialog" aria-labelledby="newRestreamModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
@@ -475,6 +474,7 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
 {% block modals %}
     {{ modals.new_sticker("/settings/channels") }}
@@ -485,6 +485,7 @@
     {{ modals.upload_thumbnail() }}
 {% endblock %}
 
+{% block scripts %}
 <script>
     var siteProtocol = "{{sysSettings.siteProtocol}}";
     var siteAddress = "{{sysSettings.siteAddress}}";
