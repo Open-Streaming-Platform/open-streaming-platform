@@ -75,6 +75,10 @@ body {
   min-width: 100px;
 }
 
+.min-150 {
+  min-width: 150px;
+}
+
 .noClickButton {
   pointer-events: none;
 }
