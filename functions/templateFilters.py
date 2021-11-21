@@ -293,7 +293,7 @@ def get_channelPicture(channelID):
     return channelQuery.imageLocation
 
 def localize_time(timeObj):
-    sysSettings = cachedDbCalls.getSystemSettings
+    sysSettings = cachedDbCalls.getSystemSettings()
     localtz = pytz.timezone(sysSettings.serverTimeZone)
     localized_datetime = localtz.localize(timeObj)
     return localized_datetime

@@ -104,7 +104,7 @@
                 <tbody>
                     {% for log in logsList %}
                         <tr>
-                            <td>{{log.timestamp|normalize_date}}</td>
+                            <td>{{log.timestamp| localize_time | normalize_date}}</td>
                             <td><span class="badge bg-secondary textShadow">{{log.type|get_logType}}</span></td>
                             <td>{{log.message}}</td>
                         </tr>
@@ -441,7 +441,7 @@
         </thead>
         <tbody>
             {% for entry in schedulerList['active']['celery@osp'] %}
-            <tr>
+            <tr id="{{ celeryJon-entry['id'] }}">
                 <td>
                     <div class="spinner-border text-success" role="status">
                       <span class="visually-hidden">Active</span>
@@ -450,14 +450,14 @@
                 <td>{{ entry['id'] }}</td>
                 <td>{{ entry['name'] }}</td>
                 <td>{{ entry['args'] }}</td>
-                <td>{{ entry['time_start'] | epoch_to_datetime }}</td>
+                <td>{{ entry['time_start'] | epoch_to_datetime | localize_time }}</td>
                 <td>{{ entry['acknowledged'] }}</td>
                 <td>{{ entry['worker_pid'] }}</td>
-                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
+                <td><button type="button" class="btn btn-danger" onclick="cancelCeleryJob('{{ entry['id'] }}');"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
             {% for entry in schedulerList['claimed']['celery@osp'] %}
-            <tr>
+            <tr id="{{ celeryJon-entry['id'] }}">
                 <td><i class="fas fa-business-time" style="color:orange;" title="Claimed"></i></td>
                 <td>{{ entry['id'] }}</td>
                 <td>{{ entry['name'] }}</td>
@@ -465,11 +465,11 @@
                 <td></td>
                 <td>{{ entry['acknowledged'] }}</td>
                 <td>{{ entry['worker_pid'] }}</td>
-                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
+                <td><button type="button" class="btn btn-danger" onclick="cancelCeleryJob('{{ entry['id'] }}');"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
             {% for entry in schedulerList['scheduled']['celery@osp'] %}
-            <tr>
+            <tr id="{{ celeryJon-entry['request']['id'] }}">
                 <td><i class="fas fa-clock" style="color: var(--font-color);" title="Scheduled"></i></td>
                 <td>{{ entry['request']['id'] }}</td>
                 <td>{{ entry['request']['name'] }}</td>
@@ -477,7 +477,7 @@
                 <td></td>
                 <td>{{ entry['request']['acknowledged'] }}</td>
                 <td>{{ entry['request']['worker_pid'] }}</td>
-                <td><button type="button" class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
+                <td><button type="button" class="btn btn-danger" onclick="cancelCeleryJob('{{ entry['request']['id'] }}');"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
         </tbody>
