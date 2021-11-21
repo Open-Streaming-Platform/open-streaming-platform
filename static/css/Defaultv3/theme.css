@@ -67,6 +67,9 @@ body {
     background-color: #bd2b2b;
 }
 
+.noClickButton {
+  pointer-events: none;
+}
 
 a, a:visited {
     color: inherit;
