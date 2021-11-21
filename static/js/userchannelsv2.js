@@ -79,6 +79,23 @@ function s4() {
     .substring(1);
 }
 
+function openChannelWindow(divID, windowName) {
+    var openWindow = document.getElementById(windowName + '-' + divID);
+    var statWindow = document.getElementById('statWindow-' + divID);
+    var videoWindow = document.getElementById('videoWindow-' + divID);
+    var clipWindow = document.getElementById('clipWindow-' + divID);
+    var settingsWindow = document.getElementById('settingsWindow-' + divID);
+    var chatSettingsWindow = document.getElementById('chatSettingsWindow-' + divID);
+
+    statWindow.style.display = 'none';
+    videoWindow.style.display = 'none';
+    clipWindow.style.display = 'none';
+    settingsWindow.style.display = 'none';
+    chatSettingsWindow.style.display = 'none';
+
+    openWindow.style.display = 'block';
+}
+
 function saveUploadedThumbnail() {
     var videoID = document.getElementById('videoThumbnailID').value;
     socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'} );
