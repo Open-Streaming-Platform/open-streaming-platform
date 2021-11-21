@@ -175,22 +175,22 @@
       </div>
       <div class="col mt-3">
         <h5><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h5>
-        <div class="my-1">
+        <div class="mb-1">
             <div class="btn-group boxShadow" role="group">
               <span type="button" class="btn btn-sm btn-success noClickButton"><i class="fas fa-hashtag"></i></span>
-              <span id="vidTopicText-{{video.id}}" class="btn btn-sm btn-dark noClickButton">{{video.topic|get_topicName}}</span>
+              <span id="vidTopicText-{{video.id}}" class="btn btn-sm btn-dark noClickButton min-100">{{video.topic|get_topicName}}</span>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton"><i class="fas fa-calendar"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton">{{video.videoDate|normalize_date}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-100">{{video.videoDate|normalize_date}}</button>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-danger noClickButton"><i class="fas fa-clock"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton">{{video.length|hms_format}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-100">{{video.length|hms_format}}</button>
             </div>
         </div>
         <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
@@ -199,19 +199,19 @@
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton"><i class="fas fa-users"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton">{{video.views}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-100">{{video.views}}</button>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton"><i class="far fa-thumbs-up"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton">{{video.upvotes|length}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-100">{{video.upvotes|length}}</button>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton"><i class="far fa-comment-alt"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton">{{video.comments|length}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-100">{{video.comments|length}}</button>
             </div>
         </div>
         <div class="form-group row">

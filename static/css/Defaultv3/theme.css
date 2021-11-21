@@ -67,6 +67,10 @@ body {
     background-color: #bd2b2b;
 }
 
+.min-100 {
+  min-width: 100px;
+}
+
 .noClickButton {
   pointer-events: none;
 }
