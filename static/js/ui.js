@@ -54,6 +54,11 @@ function hideDiv(divID) {
   $('#' + divID).addClass("hide");
 }
 
+function toggleDiv(divID) {
+  var x = document.getElementById(divID);
+  $(x).slideToggle();
+}
+
 function openModal(modalID) {
     $('#' + modalID).modal('show')
 }
