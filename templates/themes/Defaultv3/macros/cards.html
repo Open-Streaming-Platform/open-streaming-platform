@@ -175,17 +175,23 @@
       </div>
       <div class="col mt-3">
         <h5><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h5>
-        <div class="btn-group boxShadow" role="group">
-          <span type="button" class="btn btn-success noClickButton"><i class="fas fa-hashtag"></i></span>
-          <span id="vidTopicText-{{video.id}}" class="btn btn-dark noClickButton">{{video.topic|get_topicName}}</span>
+        <div>
+            <div class="btn-group boxShadow" role="group">
+              <span type="button" class="btn btn-success noClickButton"><i class="fas fa-hashtag"></i></span>
+              <span id="vidTopicText-{{video.id}}" class="btn btn-dark noClickButton">{{video.topic|get_topicName}}</span>
+            </div>
         </div>
-        <div class="btn-group boxShadow" role="group">
-          <button type="button" class="btn btn-primary noClickButton"><i class="fas fa-calendar"></i></button>
-          <button type="button" class="btn btn-dark noClickButton">{{video.videoDate|normalize_date}}</button>
+        <div>
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-primary noClickButton"><i class="fas fa-calendar"></i></button>
+              <button type="button" class="btn btn-dark noClickButton">{{video.videoDate|normalize_date}}</button>
+            </div>
         </div>
-        <div class="btn-group boxShadow" role="group">
-          <button type="button" class="btn btn-danger noClickButton"><i class="fas fa-clock"></i></button>
-          <button type="button" class="btn btn-dark noClickButton">{{video.length|hms_format}}</button>
+        <div>
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-danger noClickButton"><i class="fas fa-clock"></i></button>
+              <button type="button" class="btn btn-dark noClickButton">{{video.length|hms_format}}</button>
+            </div>
         </div>
         <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
         <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
