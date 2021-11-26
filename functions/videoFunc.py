@@ -254,13 +254,19 @@ def deleteClip(clipID):
 
     if clipQuery is not None:
         videoPath = videos_root + clipQuery.videoLocation
-        thumbnailPath = videos_root + clipQuery.thumbnailLocation
-        gifPath = videos_root + clipQuery.gifLocation
+        if clipQuery.thumbnailLocation is not None:
+            thumbnailPath = videos_root + clipQuery.thumbnailLocation
+        else:
+            thumbnailPath = None
+        if clipQuery.gifLocation is not None:
+            gifPath = videos_root + clipQuery.gifLocation
+        else:
+            gifPath = None
 
-        if thumbnailPath != videos_root:
+        if thumbnailPath != videos_root or thumbnailPath is not None:
             if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
                 os.remove(thumbnailPath)
-        if gifPath != videos_root:
+        if gifPath != videos_root or gifPath is not None:
             if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
                 os.remove(gifPath)
         if videoPath != videos_root:
