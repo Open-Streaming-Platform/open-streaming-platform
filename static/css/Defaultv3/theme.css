@@ -562,9 +562,10 @@ table tbody tr {
 }
 
 .streamCard .streamCard-badges {
-    position: relative;
-    top: 28px;
-    left: 5px;
+    position: absolute;
+    height: 178px;
+    width: 315px;
+    padding: 5px;
 }
 
 .channelCard {
