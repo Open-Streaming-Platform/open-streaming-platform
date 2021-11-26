@@ -828,8 +828,15 @@ function editWebhook(webhookID, chanID) {
 
 function saveUploadedThumbnail() {
     var videoID = document.getElementById('videoThumbnailID').value;
-    socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'} );
-    var thumbnailDiv = document.getElementById('videoThumb-' + videoID);
+    var thumbnailType = document.getElementById('videoThumbnailType').value;
+    var thumbnailDiv;
+    if (thumbnailType === 'video') {
+        socket.emit('saveUploadedThumbnail', {videoID: videoID, thumbnailFilename: videofilename + '.png'});
+        thumbnailDiv = document.getElementById('videoThumb-' + videoID);
+    } else if (thumbnailType === 'clip') {
+        socket.emit('saveUploadedThumbnail', {clipID: videoID, thumbnailFilename: videofilename + '.png'});
+        thumbnailDiv = document.getElementById('clipThumb-' + videoID);
+    }
     var thumbnailURL = thumbnailDiv.src;
     setTimeout(function() {
         thumbnailDiv.src = thumbnailURL + '?t=' + new Date().getTime();
@@ -940,6 +947,7 @@ function uploadThumbnailModal(videoId, type) {
 
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     document.getElementById('videoThumbnailID').value = videoId;
+    document.getElementById('videoThumbnailType').value = type;
     document.getElementById('videothumbnailFilenameDisplay').value = '';
     document.getElementById('videothumbnailFilename').value = '';
     openModal('videoThumbnailUploadModal')
