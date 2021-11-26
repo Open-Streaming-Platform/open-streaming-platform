@@ -18,9 +18,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mx-auto">
-            <div class="row m-2">
-                <div class="index-live-title"><b>Your Channels</b></div>
-                <span class="float-right"><button class="btn btn-success shadow" data-toggle="modal" data-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
+            <div class="row my-2">
+                <span class="float-right"><button class="btn btn-success shadow" data-bs-toggle="modal" data-bs-target="#newChannelModal"><i class="fas fa-plus"></i> Create Channel</button></span>
             </div>
         {% for channel in channels %}
             {{ panels.user_channel_settings(channel) }}
