@@ -458,6 +458,11 @@ function deleteChannelModal(channelID) {
     $('#confirmDeleteChannelModal').modal('show');
 }
 
+function openVideoDeleteModal(videoId) {
+    document.getElementById('videoDeleteIDSelector').value = videoId;
+    openModal('videoDeleteModal');
+}
+
 function deleteChannel() {
     var channelID = document.getElementById('deleteChannelID').value;
     socket.emit('deleteChannel', {channelID: channelID});
