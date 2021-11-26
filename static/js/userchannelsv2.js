@@ -938,7 +938,6 @@ function uploadThumbnailModal(videoId, type) {
         document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
     }
 
-    var videoId = videoId;
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     document.getElementById('videoThumbnailID').value = videoId;
     document.getElementById('videothumbnailFilenameDisplay').value = '';
