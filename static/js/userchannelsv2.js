@@ -943,4 +943,5 @@ function uploadThumbnailModal(videoId, type) {
     document.getElementById('videoThumbnailID').value = videoId;
     document.getElementById('videothumbnailFilenameDisplay').value = '';
     document.getElementById('videothumbnailFilename').value = '';
+    openModal('videoThumbnailUploadModal')
 }
