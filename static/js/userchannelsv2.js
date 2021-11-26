@@ -24,6 +24,14 @@ $('#videoThumbnailUploadModal').on('hidden.bs.modal', function () {
     socket.emit('cancelUpload', { data: videofilename });
 });
 
+$('#videoClipModal').on('hidden.bs.modal', function () {
+    clipplayer.pause();
+});
+
+$('#videoNewSSModal').on('hidden.bs.modal', function () {
+    ssplayer.pause();
+});
+
 $(document).on("click", ".videoDeleteModalButton", function () {
     var videoID = $(this).data('videoid');
     $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
