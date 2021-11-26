@@ -65,7 +65,7 @@
     {% endfor %}
 
     {% for channel in channels %}
-    document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
+      document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
       document.getElementById('streamKey-{{channel.id}}').value = guid();
     })
     {% endfor %}

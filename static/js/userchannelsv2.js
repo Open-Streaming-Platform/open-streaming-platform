@@ -4,9 +4,9 @@ var socket = io();
 
 Dropzone.autoDiscover = false;
 
-var clipplayer = videojs('videoClip', { autoplay: false });
-var ssplayer = videojs('videoSSClip', { autoplay: false });
-var clipssplayer = videojs('clipSS', {autoplay: false});
+//var clipplayer = videojs('videoClip', { autoplay: false });
+//var ssplayer = videojs('videoSSClip', { autoplay: false });
+//var clipssplayer = videojs('clipSS', { autoplay: false });
 
 var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("editVideoDescription")});
 var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription")});
@@ -95,18 +95,6 @@ $(document).on("click", ".videoEditModalButton", function () {
    easymdeVideoEditor.value(videoDescription);
    var doc = easymdeVideoEditor.codemirror.getDoc();
    doc.setValue(doc.getValue());
-
-});
-
-
-
-$(document).on("click", ".videoThumbnailUploadModalButton", function () {
-    document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
-    var videoID = $(this).data('videoid');
-    videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    document.getElementById('videoThumbnailID').value = videoID;
-    document.getElementById('videothumbnailFilenameDisplay').value = '';
-    document.getElementById('videothumbnailFilename').value = '';
 
 });
 
@@ -939,4 +927,20 @@ function moveVideoModal(videoId) {
     document.getElementById('moveVideoID').value=videoId;
     document.getElementById('moveToChannelInput').selectedIndex =0;
     openModal('videoMoveModal')
+}
+
+function uploadThumbnailModal(videoId, type) {
+    if (type === 'video') {
+        document.getElementById('videothumbnailuploadpreview').src = document.getElementById('videoThumb-' + videoId).src;
+    } else if (type === 'clip') {
+        document.getElementById('videothumbnailuploadpreview').src = document.getElementById('clipThumb-' + videoId).src;
+    } else {
+        document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
+    }
+
+    var videoId = videoId;
+    videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    document.getElementById('videoThumbnailID').value = videoId;
+    document.getElementById('videothumbnailFilenameDisplay').value = '';
+    document.getElementById('videothumbnailFilename').value = '';
 }
