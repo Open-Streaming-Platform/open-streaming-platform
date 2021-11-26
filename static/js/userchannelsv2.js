@@ -374,6 +374,8 @@ socket.on('disconnect', function () {
   socket.emit('cancelUpload', { data: videofilename });
 });
 
+/*
+
 // Dropper Configuration
 var uploadthumbnaildropper = new Dropzone(
   '#videothumbnaildropper', {
@@ -415,7 +417,7 @@ uploadthumbnaildropper.on("success", function (file) {
 uploadthumbnaildropper.on('error', function (file, response) {
   document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
   document.getElementById('videothumbnailFilenameDisplay').value = 'Error: ' + response;
-});
+});*/
 
 // Functions
 
@@ -474,7 +476,7 @@ function deleteVideo(videoID) {
     var videoEntry = document.getElementById('video-' + videoID);
     videoEntry.parentNode.removeChild(videoEntry);
     socket.emit('deleteVideo', {videoID: videoID});
-    createNewBSAlert("Video Deleted", "Success");
+    createNewBSAlert("Video Queued for Deletion", "Success");
 }
 
 function editVideoSubmit() {
