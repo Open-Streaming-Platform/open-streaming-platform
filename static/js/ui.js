@@ -106,15 +106,13 @@ $(document).ready(function()
       $(".gifhover").hover(
           function()
           {
-            var target = $(this).getElementsByTagName('img')[0];
-            var src = $(target).attr("src");
-            $(target).attr("src", src.replace(/\.png$/i, ".gif"));
+            var src = $(this).find('img').attr("src");
+            $(this).find('img').attr("src", src.replace(/\.png$/i, ".gif"));
           },
           function()
           {
-            var target = $(this).getElementsByTagName('img')[0];
-            var src = $(target).attr("src");
-            $(target).attr("src", src.replace(/\.gif$/i, ".png"));
+            var src = $(this).find('img').attr("src");
+            $(this).find('img').attr("src", src.replace(/\.gif$/i, ".png"));
           });
 });
 
