@@ -32,11 +32,6 @@ $('#videoNewSSModal').on('hidden.bs.modal', function () {
     ssplayer.pause();
 });
 
-$(document).on("click", ".videoDeleteModalButton", function () {
-    var videoID = $(this).data('videoid');
-    $("#videoDeleteButton").attr("onclick","deleteVideo(" + videoID + ")");
-});
-
 $(document).on("click", ".clipDeleteModalButton", function () {
     var clipID = $(this).data('clipid');
     $("#clipDeleteButton").attr("onclick","deleteClip(" + clipID + ")");
@@ -472,7 +467,8 @@ function deleteChannel() {
     channelDashRow.parentNode.removeChild(channelDashRow);
 }
 
-function deleteVideo(videoID) {
+function deleteVideo() {
+    videoID = document.getElementById('videoDeleteIDSelector').value;
     var videoEntry = document.getElementById('video-' + videoID);
     videoEntry.parentNode.removeChild(videoEntry);
     socket.emit('deleteVideo', {videoID: videoID});
