@@ -100,6 +100,24 @@ $(document).ready(function()
           });
 });
 
+// Stream Card png to gif Handler
+$(document).ready(function()
+  {
+      $(".gifhover").hover(
+          function()
+          {
+            var target = $(this).getElementsByTagName('img')[0];
+            var src = $(target).attr("src");
+            $(target).attr("src", src.replace(/\.png$/i, ".gif"));
+          },
+          function()
+          {
+            var target = $(this).getElementsByTagName('img')[0];
+            var src = $(target).attr("src");
+            $(target).attr("src", src.replace(/\.gif$/i, ".png"));
+          });
+});
+
 // Handler for Setting Light/Dark Mode
 document.addEventListener("DOMContentLoaded", function(event) {
   document.documentElement.setAttribute("data-theme", "dark");

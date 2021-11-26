@@ -31,7 +31,7 @@
 {% macro video_card(video) %}
 <li class="streamCard item">
   <a href="/play/{{video.id}}">
-    <div class="streamCard-thumbnail-container zoom">
+    <div class="streamCard-thumbnail-container zoom gifhover">
         <div class="streamCard-badges">
             {{ core_ui.views_badge(video.views) }}
             {{ core_ui.length_badge(video.length) }}
