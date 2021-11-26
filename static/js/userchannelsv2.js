@@ -98,11 +98,7 @@ $(document).on("click", ".videoEditModalButton", function () {
 
 });
 
-$(document).on("click", ".videoMoveModalButton", function () {
-    var videoID = $(this).data('videoid');
-    document.getElementById('moveVideoID').value=videoID;
-    document.getElementById('moveToChannelInput').selectedIndex =0;
-});
+
 
 $(document).on("click", ".videoThumbnailUploadModalButton", function () {
     document.getElementById('videothumbnailuploadpreview').src = '/static/img/video-placeholder.jpg';
@@ -937,4 +933,9 @@ function editStickerModal(stickerID, channelID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
     socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName, channelID: channelID});
     createNewBSAlert("Sticker Edited","success")
+}
+
+function moveVideoModal(videoId) {
+    document.getElementById('moveVideoID').value=videoID;
+    document.getElementById('moveToChannelInput').selectedIndex =0;
 }
