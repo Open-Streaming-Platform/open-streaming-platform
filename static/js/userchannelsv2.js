@@ -936,6 +936,7 @@ function editStickerModal(stickerID, channelID) {
 }
 
 function moveVideoModal(videoId) {
-    document.getElementById('moveVideoID').value=videoID;
+    document.getElementById('moveVideoID').value=videoId;
     document.getElementById('moveToChannelInput').selectedIndex =0;
+    openModal('videoMoveModal')
 }
