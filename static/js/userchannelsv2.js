@@ -5,7 +5,7 @@ var socket = io();
 Dropzone.autoDiscover = false;
 
 var clipplayer = videojs('videoClip', { autoplay: false });
-//var ssplayer = videojs('videoSSClip', { autoplay: false });
+var ssplayer = videojs('videoSSClip', { autoplay: false });
 //var clipssplayer = videojs('clipSS', { autoplay: false });
 
 var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("editVideoDescription")});
@@ -863,7 +863,7 @@ function openSSModal(videoID,videoLocation) {
     ssplayer.src(videoLocation);
     document.getElementById("videossID").value = videoID;
     document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
-    $("#videoNewSSModal").modal();
+    openModal('videoNewSSModal');
 }
 
 function newScreenShot() {
