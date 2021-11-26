@@ -4,7 +4,7 @@ var socket = io();
 
 Dropzone.autoDiscover = false;
 
-//var clipplayer = videojs('videoClip', { autoplay: false });
+var clipplayer = videojs('videoClip', { autoplay: false });
 //var ssplayer = videojs('videoSSClip', { autoplay: false });
 //var clipssplayer = videojs('clipSS', { autoplay: false });
 
@@ -558,11 +558,11 @@ function openClipModal(videoID,videoLocation) {
     clipName.value = null;
     clipplayer.src(videoLocation);
     document.getElementById("clipVideoID").value = videoID;
-    $("#videoClipModal").modal();
     var clipDescriptionInput = document.getElementById('clipDescription');
     clipDescriptionInput.value = null;
     easymdeVideoClip.value("");
     easymdeVideoClip.codemirror.refresh();
+    openModal('videoClipModal');
 }
 
 function setClipStart() {

@@ -166,7 +166,7 @@
         </div>
         <div class="mt-2">
           <button class="videoMoveModalButton btn btn-primary boxShadow" onclick="moveVideoModal('{{video.id}}');" data-toggle="tooltip" data-placement="top" title="Move Video"><i class="fas fa-arrow-circle-right"></i></button>
-          <button class="btn btn-primary boxShadow" data-bs-toggle="modal" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Create Clip"><i class="fas fa-cut"></i></button>
+          <button class="btn btn-primary boxShadow" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Create Clip"><i class="fas fa-cut"></i></button>
           <button class="videoEditModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoEditModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Edit Metadata"><i class="fas fa-edit"></i></button>
           <button class="btn btn-primary boxShadow" data-bs-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Set Thumbnail"><i class="fas fa-camera"></i></button>
           <button class="videoShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Share Video"><i class="fas fa-share-alt"></i></button>
