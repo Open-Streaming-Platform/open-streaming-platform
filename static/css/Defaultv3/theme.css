@@ -864,7 +864,7 @@ table tbody tr {
 
 .channelVideoCard {
   list-style-type:none;
-  width: 700px;
+  width: 480px;
 }
 
 @media only screen and (max-width: 1130px) {
