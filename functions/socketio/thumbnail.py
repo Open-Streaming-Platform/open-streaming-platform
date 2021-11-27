@@ -116,26 +116,48 @@ def setScreenShot(message):
 @socketio.on('saveUploadedThumbnail')
 def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:
-        videoID = int(message['videoID'])
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
-        if videoQuery is not None:
-            thumbnailFilename = message['thumbnailFilename']
-            if thumbnailFilename != "" or thumbnailFilename is not None:
-                videos_root = globalvars.videoRoot + 'videos/'
+        if 'videoID' in message:
+            videoID = int(message['videoID'])
+            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
+            if videoQuery is not None:
+                thumbnailFilename = message['thumbnailFilename']
+                if thumbnailFilename != "" or thumbnailFilename is not None:
+                    videos_root = globalvars.videoRoot + 'videos/'
 
-                thumbnailPath = videos_root + videoQuery.thumbnailLocation
-                shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+                    thumbnailPath = videos_root + videoQuery.thumbnailLocation
+                    shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+                    db.session.commit()
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return abort(500)
+            else:
                 db.session.commit()
                 db.session.close()
-                return 'OK'
+                return abort(401)
+        if 'clipID' in message:
+            clipID = int(message['clipID'])
+            clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+            if clipQuery is not None and clipQuery.recordedVideo.owningUser == current_user.id:
+                thumbnailFilename = message['thumbnailFilename']
+                if thumbnailFilename != "" or thumbnailFilename is not None:
+                    videos_root = globalvars.videoRoot + 'videos/'
+                    newClipThumbnail = clipQuery.recordedVideo.channel.channelLoc + '/clips/clip-' + str(clipQuery.id) + '.png'
+                    thumbnailPath = videos_root + newClipThumbnail
+                    shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+                    db.session.commit()
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return abort(500)
             else:
                 db.session.commit()
                 db.session.close()
                 return abort(500)
-        else:
-            db.session.commit()
-            db.session.close()
-            return abort(401)
     db.session.commit()
     db.session.close()
     return abort(401)
