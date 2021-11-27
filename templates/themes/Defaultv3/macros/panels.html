@@ -839,7 +839,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-12">
-                        <div class="row">
+                        <div class="row userChannelSettings-dropdownHeader">
                             <div class="col-4">
                                 <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b>{% if sysSettings.protectionEnabled == False %} - (Disabled) {% endif %}</h5></a>
                             </div>
@@ -961,7 +961,7 @@
                     </div>
                 </div>
                 <!--RTMP Restream Dropdown-->
-                <div class="row">
+                <div class="row userChannelSettings-dropdownHeader">
                     <div class="col-12">
                         <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
                         <div id="restream-{{channel.id}}" style="display:none;">
@@ -1008,7 +1008,7 @@
                     </div>
                 </div>
                 <!--Webhook Dropdown-->
-                <div class="row">
+                <div class="row userChannelSettings-dropdownHeader">
                     <div class="col-12">
                         <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
                         <div id="webhook-{{channel.id}}" style="display:none;">

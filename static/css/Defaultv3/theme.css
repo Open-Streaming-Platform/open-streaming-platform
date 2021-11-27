@@ -867,6 +867,13 @@ table tbody tr {
   width: 480px;
 }
 
+.userChannelSettings-dropdownHeader {
+    background-color: var(--box2-background);
+    padding: 15px 5px 5px 10px;
+    width: 100%;
+    box-shadow: var(--box-shadow);
+}
+
 @media only screen and (max-width: 1130px) {
     .topNavbar .siteTitle {
         display:none;
