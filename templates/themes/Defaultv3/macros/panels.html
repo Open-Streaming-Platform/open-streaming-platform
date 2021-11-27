@@ -727,11 +727,11 @@
                     <div class="col-xl-6 col-lg-6 col-md-12">
                         <div class="form-group">
                             <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
-                            <input type="text" class="form-control" name="channelName" id="channelName" value="{{channel.channelName}}" required>
+                            <input type="text" class="form-control boxShadow" name="channelName" id="channelName" value="{{channel.channelName}}" required>
                         </div>
                         <div class="form-group">
                             <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
-                            <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                            <select class="form-control boxShadow" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                                 {% for topic in topics %}
                                 <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                 {% endfor %}
@@ -739,11 +739,11 @@
                         </div>
                         <div class="form-group">
                             <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
-                            <input type="text" class="form-control" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
+                            <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                         </div>
                         <div class="form-group">
                             <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
-                            <input type="text" class="form-control" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %}} placeholder="No Spaces or Special Characters">
+                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %}} placeholder="No Spaces or Special Characters">
                             <small id="vanityURLHelpBlock" class="form-text text-muted">
                                 Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
@@ -752,11 +752,11 @@
                             <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-primary" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
+                                    <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPI('streamKey-{{channel.id}}')"><i class="fas fa-copy"></i></button>
                                 </div>
-                                <input type="text" class="form-control" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
+                                <input type="text" class="form-control boxShadow" name="streamKey" id="streamKey-{{channel.id}}" value="{{channel.streamKey}}" required readonly aria-describedby="generateGUID required">
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-warning" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
+                                    <button type="button" class="btn btn-warning boxShadow" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
                                 </div>
                             </div>
                             <small id="streamKeyHelpBlock" class="form-text text-muted">
@@ -765,37 +765,37 @@
                         </div>
                         <div class="form-group">
                             <label for="description" class="col-form-label"><b>Description</b></label>
-                            <textarea class="form-control" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
+                            <textarea class="form-control boxShadow" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
                         </div>
                         <hr>
                         <h4><b>Recording Options</b></h4>
                         {% if sysSettings.allowRecording == False %} Recording Disabled at Server Level {% endif %}
                         <div class="form-check form-switch">
                           <label class="form-check-label" for="recordSelect">Record Video {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
-                          <input class="form-check-input" type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
+                          <input class="form-check-input boxShadow" type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
                         </div>
                         <div class="form-check form-switch">
                           <label class="form-check-label" for="allowComments">Allow Comments on Recorded Videos</label>
-                          <input class="form-check-input" type="checkbox" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
+                          <input class="form-check-input boxShadow" type="checkbox" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
                         </div>
                         <div class="form-check form-switch">
                           <label class="form-check-label" for="publishSelect">Automatically Publish New Videos</label>
-                          <input class="form-check-input" type="checkbox" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                          <input class="form-check-input boxShadow" type="checkbox" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
                         </div>
                         <hr>
                         <h4><b>Chat Options</b></h4>
                         <div class="form-check form-switch">
                           <label class="form-check-label" for="chatSelect">Enable Chat</label>
-                          <input class="form-check-input" type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                          <input class="form-check-input boxShadow" type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                         </div>
                         <div class="form-group row">
                             <div class="col-12">
                                 <label for="xmppToken" class="col-form-label"><b>Protected Channel XMPP Token </b></label><br>
                                 <div class="input-group">
                                   <div class="input-group-prepend">
-                                      <button type="button" class="btn btn-primary" onclick="CopyAPI('xmppToken-{{channel.id}}');"><i class="fas fa-copy"></i></button>
+                                      <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPI('xmppToken-{{channel.id}}');"><i class="fas fa-copy"></i></button>
                                   </div>
-                                  <input type="text" class="form-control" id="xmppToken-{{channel.id}}" name="xmppToken" value="{{channel.xmppToken}}" readonly required><br>
+                                  <input type="text" class="form-control boxShadow" id="xmppToken-{{channel.id}}" name="xmppToken" value="{{channel.xmppToken}}" readonly required><br>
                                 </div>
                                 <small id="xmppTokenHelpBlock" class="form-text text-muted">
                                     Given to Authorized Users to Connect to a Protected Channel's XMPP Chat Room
@@ -806,23 +806,23 @@
                         <h4><b>Homepage Publishing Options</b></h4>
                         <div class="form-check form-switch">
                           <label class="form-check-label" for="homePublishSelect">Show channel on Homepage when live</label>
-                          <input class="form-check-input" type="checkbox" id="showHome" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
+                          <input class="form-check-input boxShadow" type="checkbox" id="homePublishSelect" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-6 col-md-12">
                         <div class="row">
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-3">
                                 <h4>Channel Image</h4>
                                 <div class="channelImg">
                                     {% if channel.imageLocation == None %}
-                                    <img src="/static/img/video-placeholder.jpg">
+                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg">
                                     {% else %}
-                                    <img src="/images/{{channel.imageLocation}}">
+                                    <img class="boxShadow" src="/images/{{channel.imageLocation}}">
                                     {% endif %}
                                 </div>
-                                <input type="file" name="photo" class="form-control" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
                             </div>
-                            <div class="col-12 col-md-12">
+                            <div class="col-12 col-md-4">
                                 <h4>Offline Stream Image</h4>
                                 <div>
                                     {% if channel.offlineImageLocation == None %}
@@ -831,7 +831,7 @@
                                     <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" width="100%">
                                     {% endif %}
                                 </div>
-                                <input type="file" name="offlinephoto" class="form-control" value="Upload a Photo" style="margin-top:10px;width:384px;">
+                                <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
                             </div>
                         </div>
                     </div>
@@ -844,7 +844,9 @@
                                 <a href="javascript:void(0)" onclick="toggleDiv('channelProtection-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Channel Protection</b>{% if sysSettings.protectionEnabled == False %} - (Disabled) {% endif %}</h5></a>
                             </div>
                             <div class="col-2">
-                                <input type="checkbox" data-toggle="toggle" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small" {% if sysSettings.protectionEnabled == False %} disabled {% endif %}>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input boxShadow" type="checkbox" id="channelProtection" name="channelProtection" {% if channel.protected == True %} checked {% endif %} data-size="small" {% if sysSettings.protectionEnabled == False %} disabled {% endif %}>
+                                </div>
                             </div>
                         </div>
                         <div id="channelProtection-{{channel.id}}" style="display:none;">
