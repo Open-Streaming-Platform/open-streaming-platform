@@ -321,7 +321,7 @@ socket.on('newInviteCode', function (msg) {
     var codeCellText = '<div class="input-group mb-3"><div class="input-group-prepend"><button type="button" class="btn btn-primary" onclick="CopyInviteCode(\'inviteCodeRO-' + code + '\',\'code\')"><i class="fas fa-copy"></i></button>' +
         '<button type="button" class="btn btn-success" onclick="CopyInviteCode(\'inviteCodeRO-' + code + '\',\'link\')"><i class="fas fa-link"></i></button></div>' +
         '<input type="text" class="form-control" name="inviteCodeRO" id="inviteCodeRO-' + code + '" value="' + code + '" readonly aria-describedby="inviteCodeRO required"></div>';
-    var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInviteCode(\''+ code + '\')"><i class="far fa-trash-alt"></i></button>';
+    var buttonText = '<button type="button" class="btn btn-danger" onclick="deleteInviteCode(\''+ code + '\')"><i class="far fa-trash-alt"></i></button>';
 
     codeCell.innerHTML = codeCellText;
     expirationCell.appendChild(document.createTextNode(expiration));
