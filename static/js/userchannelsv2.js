@@ -805,8 +805,7 @@ function openClipSSModal(clipID, videoID, videoLocation) {
     document.getElementById("clipvideossID").value = videoID;
 
     document.getElementById("newScreenShotImg").src = "/static/img/video-placeholder.jpg";
-
-    $("#clipNewSSModal").modal();
+    openModal('clipNewSSModal');
 }
 
 function openSSModal(videoID,videoLocation) {
