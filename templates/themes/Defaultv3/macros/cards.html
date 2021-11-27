@@ -220,8 +220,8 @@
               <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.comments|length}}</button>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="col-6">
+        <div class="form-group row mt-1">
+            <div class="col-12">
                 <div class="form-check form-switch">
                   <label for="published-{{video.id}}"><b>Published?</b></label>
                   <input class="form-check-input" type="checkbox" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
