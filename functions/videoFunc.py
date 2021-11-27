@@ -281,8 +281,10 @@ def deleteClip(clipID):
 
         db.session.commit()
         system.newLog(6, "Clip Deleted - ID #" + str(clipID))
+        log.info('Clip Deleted - ID: ' + str(clipID))
         return True
     else:
+        log.warning('Attempted to Delete Non-Existing Clip - ID: ' + str(clipID))
         return False
 
 def setVideoThumbnail(videoID, timeStamp):
