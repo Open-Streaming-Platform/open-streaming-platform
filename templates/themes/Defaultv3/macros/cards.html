@@ -253,7 +253,7 @@
         <div class="mt-2">
           <button class="clipEditModalButton btn btn-primary boxShadow" onclick="editClipMetadataModal('{{ clip.id }}');"><i class="fas fa-edit"></i></button>
           <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
-          <button class="clipShareModalButton btn btn-primary boxShadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+          <button class="clipShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
           <button class="clipDeleteModalButton btn btn-danger boxShadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>

@@ -105,6 +105,51 @@ $(document).ready(function () {
 
 });
 
+// Thumbnail Only Uploader
+
+// Dropper Configuration
+var uploadthumbnaildropper = new Dropzone(
+  '#videothumbnaildropper', {
+  acceptedFiles: 'image/png',
+  previewTemplate: '<div></div>',
+  clickable: '#videothumbnailuploadbutton',
+  addRemoveLinks: true,
+  paramName: 'file',
+  chunking: true,
+  forceChunking: true,
+  url: '/upload/video-files',
+  maxFilesize: 5, // megabytes
+  chunkSize: 1000000 // bytes
+}
+);
+
+uploadthumbnaildropper.on('sending', function (file, xhr, formData) {
+  formData.append('ospfilename', videofilename + '.png');
+});
+
+uploadthumbnaildropper.on("uploadprogress", function (file, progress, bytesSent) {
+  progress = Math.floor(bytesSent / file.size * 100);
+  $('#videothumbnailuploadprogress').width(progress + "%");
+  document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = '<b>' + progress + '%</b>';
+});
+
+uploadthumbnaildropper.on("addedfile", function (file) {
+  document.getElementById('videothumbnailFilename').value = videofilename + '.png';
+  document.getElementById('videothumbnailFilenameDisplay').value = file.name;
+  videouploadsocket();
+});
+
+uploadthumbnaildropper.on("success", function (file) {
+  document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
+  document.getElementById('videothumbnailuploadprogress').innerHTML = document.getElementById('videothumbnailuploadprogress').innerHTML = 'Upload complete';
+  document.getElementById('videothumbnailuploadpreview').src = '/videos/temp/' + videofilename + '.png';
+});
+
+uploadthumbnaildropper.on('error', function (file, response) {
+  document.getElementById('videothumbnailuploadstatus').innerHTML = document.getElementById('videothumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
+  document.getElementById('videothumbnailFilenameDisplay').value = 'Error: ' + response;
+});
+
 //Cancel Upload Cleanup
 function canceluploads() {
   videodropper.removeAllFiles(true);
