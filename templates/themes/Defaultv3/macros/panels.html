@@ -892,25 +892,11 @@
                                         </div>
                                         <hr>
                                         <div class="card">
-                                            <div class="card-header"><h6><b><i class="fas fa-id-badge"></i> Invited Users</b></h6></div>
+                                            <div class="card-header">
+                                                <b><i class="fas fa-id-badge"></i> Invited Users</b>
+                                                <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="newInviteUserModal('{{ channel.id }}');"><i class="fas fa-plus"></i> Add</button>
+                                            </div>
                                             <div class="card-body">
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-6">
-                                                      <label for="newInvitedUsername-{{channel.id}}" class="col-form-label"><b>Invited Username</b></label>
-                                                      <input id="newInvitedUsername-{{channel.id}}" type="text" class="form-control">
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                      <label for="newInvitedUserDays-{{channel.id}}" class="col-form-label"><b>Number of Days</b></label>
-                                                      <input id="newInvitedUserDays-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    </div>
-                                                    <div class="form-group col-md-2">
-                                                        <label for="hiddenAnchorForButton" class="col-form-label"> </label>
-                                                        <input type="hidden" id="hiddenAnchorForButton" class="form-control">
-                                                        <div class="input-group-append">
-                                                            <button type="button" class="btn btn-primary" onclick="addInvitedUser('{{channel.id}}')"><i class="fas fa-plus"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div id="invitedUsers">
                                                     <div class="table-responsive">
                                                         <table id="invitedUsersTable-{{channel.id}}" class="table" width="100%">

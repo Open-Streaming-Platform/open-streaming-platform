@@ -1738,3 +1738,39 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro new_inviteUser() %}
+<div class="modal fade" id="newInviteUserModal" tabindex="-1" role="dialog" aria-labelledby="newInviteUsersModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newInviteUsersModalTitle">Create a User Invitation</h5>
+        <div class="float-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body">
+         <div class="row">
+             <div class="col-12">
+                 <div class="form-row">
+                    <div class="form-group col-12">
+                      <label for="newInvitedUsername" class="col-form-label"><b>Invited Username</b></label>
+                      <input id="newInvitedUsername" type="text" class="form-control">
+                    </div>
+                    <div class="form-group col-12">
+                      <label for="newInvitedUserDays" class="col-form-label"><b>Number of Days</b></label>
+                      <input id="newInvitedUserDays" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire" required>
+                    </div>
+                 </div>
+             </div>
+         </div>
+         <input type="hidden" id="inviteUserChannelId" name="inviteUserChannelId" value="">
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="addInvitedUser()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

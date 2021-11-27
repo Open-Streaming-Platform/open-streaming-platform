@@ -595,10 +595,18 @@ function newInviteCodeModal(channelID) {
     openModal('newInviteCodeModal');
 }
 
-function addInvitedUser(channelID) {
-    var invitedUsernameDiv = document.getElementById('newInvitedUsername-' + channelID);
+function newInviteUserModal(channelID) {
+    document.getElementById('inviteUserChannelId').value = channelID;
+    document.getElementById('newInvitedUsername').value = '';
+    document.getElementById('newInvitedUserDays').value = '';
+    openModal('newInviteUserModal');
+}
+
+function addInvitedUser() {
+    var channelID = document.getElementById('inviteUserChannelId').value;
+    var invitedUsernameDiv = document.getElementById('newInvitedUsername');
     var invitedUsername = invitedUsernameDiv.value;
-    var daystoExpireDiv = document.getElementById('newInvitedUserDays-' + channelID);
+    var daystoExpireDiv = document.getElementById('newInvitedUserDays');
     var daystoExpire = daystoExpireDiv.value;
 
     socket.emit('addUserChannelInvite', {chanID: channelID, username: invitedUsername, daysToExpiration: daystoExpire});
