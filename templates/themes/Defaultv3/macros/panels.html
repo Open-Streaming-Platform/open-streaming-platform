@@ -764,9 +764,9 @@
                                 <h4>Offline Stream Image</h4>
                                 <div>
                                     {% if channel.offlineImageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" width="100%">
+                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" height="175px">
                                     {% else %}
-                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" width="100%">
+                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" height="175px">
                                     {% endif %}
                                 </div>
                                 <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
