@@ -255,6 +255,7 @@ socket.on('newRestreamAck', function (msg) {
 
     var newRow = tableRef.insertRow(tableRef.rows.length);
     newRow.id = 'restreamTableRow-' + restreamID;
+    newRow.className = 'align-middle';
 
     var restreamNameCell = newRow.insertCell(0);
     var restreamURLCell = newRow.insertCell(1);
@@ -287,6 +288,7 @@ socket.on('invitedUserAck', function (msg) {
 
     var newRow = tableRef.insertRow(tableRef.rows.length);
     newRow.id = 'invitedUserRow-' + inviteID;
+    newRow.className = 'align-middle';
 
     var usernameCell = newRow.insertCell(0);
     var addedDateCell = newRow.insertCell(1);
@@ -294,7 +296,7 @@ socket.on('invitedUserAck', function (msg) {
     var usedCodeCell = newRow.insertCell(3);
     var buttonCell = newRow.insertCell(4);
 
-    var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser(\'' + inviteID + '\')"><i class="far fa-trash-alt"></i></button>';
+    var buttonText = '<button type="button" class="btn btn-danger" onclick="deleteInvitedUser(\'' + inviteID + '\')"><i class="far fa-trash-alt"></i></button>';
 
     usernameCell.appendChild(document.createTextNode(username));
     addedDateCell.appendChild(document.createTextNode(addedDate));
@@ -312,6 +314,7 @@ socket.on('newInviteCode', function (msg) {
 
     var newRow = tableRef.insertRow(tableRef.rows.length);
     newRow.id = 'inviteCodeRow-' + code;
+    newRow.className = 'align-middle';
 
     var codeCell = newRow.insertCell(0);
     var expirationCell = newRow.insertCell(1);

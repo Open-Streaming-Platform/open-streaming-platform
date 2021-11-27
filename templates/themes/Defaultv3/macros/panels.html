@@ -911,12 +911,12 @@
                                                             </thead>
                                                             <tbody>
                                                                 {% for user in channel.invitedViewers %}
-                                                                <tr id="invitedUserRow-{{user.id}}">
+                                                                <tr id="invitedUserRow-{{user.id}}" class="align-middle">
                                                                     <td>{{user.userID|get_userName}}</td>
                                                                     <td>{{user.addedDate|normalize_date}}</td>
                                                                     <td>{{user.expiration|normalize_date}} {% if user.isValid() == False %}<i style="color:red;" class="fas fa-times"></i>{% endif %}</td>
                                                                     <td>{{user.usedCode.code}}</td>
-                                                                    <td><button type="button" class="btn btn-sm btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                    <td><button type="button" class="btn btn-danger" onclick="deleteInvitedUser('{{user.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                                 </tr>
                                                                 {% endfor %}
                                                             </tbody>
@@ -960,11 +960,11 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     {% for restreamDestination in channel.restreamDestinations %}
-                                                                    <tr id="restreamTableRow-{{restreamDestination.id}}">
+                                                                    <tr id="restreamTableRow-{{restreamDestination.id}}" class="align-middle">
                                                                         <td>{{restreamDestination.name}}</td>
                                                                         <td>{{restreamDestination.url}}</td>
                                                                         <td><div class="form-check form-switch"><input type="checkbox" class="form-check-input" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %}></div></td>
-                                                                        <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
+                                                                        <td><button type="button" class="btn btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></td>
                                                                     </tr>
                                                                     {% endfor %}
                                                                 </tbody>
