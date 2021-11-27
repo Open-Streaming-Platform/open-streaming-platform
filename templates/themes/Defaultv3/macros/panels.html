@@ -961,9 +961,13 @@
                     </div>
                 </div>
                 <!--RTMP Restream Dropdown-->
-                <div class="row userChannelSettings-dropdownHeader">
+                <div class="row">
                     <div class="col-12">
-                        <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
+                        <div class="row userChannelSettings-dropdownHeader">
+                            <div class="col-12">
+                                <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
+                            </div>
+                        </div>
                         <div id="restream-{{channel.id}}" style="display:none;">
                              <hr>
                              <div class="row">
@@ -1010,7 +1014,11 @@
                 <!--Webhook Dropdown-->
                 <div class="row userChannelSettings-dropdownHeader">
                     <div class="col-12">
-                        <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
+                        <div class="row userChannelSettings-dropdownHeader">
+                            <div class="col-12">
+                                <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
+                            </div>
+                        </div>
                         <div id="webhook-{{channel.id}}" style="display:none;">
                              <hr>
                              <div class="row">
@@ -1064,10 +1072,10 @@
             <input type="hidden" id="type" name="type" value="change">
             <input type="hidden" id="origStreamKey" name="origStreamKey" value="{{channel.streamKey}}">
             <div>
-                <div class="row">
+                <div class="row mt-2">
                     <div class="col-12">
-                        <button type="submit" class="btn btn-success"><span class="fa fa-save"> Save</span></button>
-                        <button class="btn btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"> Delete</i></button>
+                        <button type="submit" class="btn btn-success boxShadow"><span class="fa fa-save"> Save</span></button>
+                        <button class="btn btn-danger boxShadow" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="far fa-trash-alt"> Delete</i></button>
                     </div>
                 </div>
             </div>
