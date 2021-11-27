@@ -234,33 +234,67 @@
 {% endmacro %}
 
 {% macro user_settings_clip_card(clip) %}
-<li id="clip-{{clip.id}}" class="channelVideoCard shadow p-2 p-md-0 m-0 m-md-2">
+<li id="clip-{{clip.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-sm btn-dark boxShadow noClickButton w-100">
+                <a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a>
+            </button>
+        </div>
+    </div>
     <div class="row">
       <div class="col-auto m-2 pt-3">
         <div class="mb-2" style="width:270px;">
-          <img class="shadow {% if clip.gifLocation != None %}gif{% endif %} lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+          <img class="boxShadow {% if clip.gifLocation != None %}gif{% endif %} lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+        </div>
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success boxShadow videoThumbnailUploadModalButton" onclick="uploadThumbnailModal('{{clip.id}}','clip');">Upload Thumbnail</button>
         </div>
         <div class="mt-2">
-          <button class="clipEditModalButton btn btn-primary shadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-primary shadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
-          <button class="clipShareModalButton btn btn-primary shadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
-          <button class="clipDeleteModalButton btn btn-danger shadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
+          <button class="clipEditModalButton btn btn-primary boxShadow" data-toggle="modal" data-target="#clipEditModal" data-clipid="{{clip.id}}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
+          <button class="clipShareModalButton btn btn-primary boxShadow" data-toggle="modal" data-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+          <button class="clipDeleteModalButton btn btn-danger boxShadow" data-toggle="modal" data-target="#clipDeleteModal" data-clipid="{{clip.id}}"><i class="fas fa-trash-alt"></i></button>
         </div>
       </div>
       <div class="col mt-2">
-        <h4><a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a></h4>
-        <h5><i class="fas fa-hashtag mr-2"></i><span id="clipTopicText-{{clip.id}}">{{clip.recordedVideo.topic|get_topicName}}</span></h5>
-        <h5><i class="far fa-calendar-alt mr-2"></i>{{clip.recordedVideo.videoDate|normalize_date}}</h5>
-        <h5><i class="far fa-clock mr-1"></i>{{clip.length|hms_format}}</h5>
-        <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
-        <h5><i class="fas fa-users"></i> {{clip.views}}</h5>
-        <h5><i class="far fa-thumbs-up"></i> {{clip.upvotes|length}}</h5>
-        <div class="form-group row">
-            <div class="col-6">
-                <label for="clipPublished-{{clip.id}}" class="col-form-label"><b>Published? </b></label>
+        <div class="mb-1">
+            <div class="btn-group boxShadow" role="group">
+              <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
+              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.recordedVideo.topic|get_topicName}}</span>
             </div>
-            <div class="col-6">
-                <input type="checkbox" data-toggle="toggle" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-calendar"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.recordedVideo.videoDate|normalize_date}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-danger noClickButton min-35"><i class="fas fa-clock"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.length|hms_format}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-users"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.views}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-thumbs-up"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.upvotes|length}}</button>
+            </div>
+        </div>
+        <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
+        <div class="form-group row mt-3">
+            <div class="col-12">
+                <div class="form-check form-switch">
+                  <label for="clipPublished-{{clip.id}}"><b>Published?</b></label>
+                  <input class="form-check-input" type="checkbox" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
+                </div>
             </div>
         </div>
       </div>
