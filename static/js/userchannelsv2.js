@@ -53,22 +53,7 @@ $(document).on("click", ".clipShareModalButton", function () {
     $("#linkShareInput").attr('value',siteProtocol + siteAddress + "/clip/" + clipID);
 });
 
-$(document).on("click", ".clipEditModalButton", function () {
 
-   var clipID = $(this).data('clipid');
-   var clipName = document.getElementById('clipName-' + clipID).innerText;
-   var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
-
-
-   $("#editClipID").val(clipID);
-   $("#editClipName").val(clipName);
-
-
-   document.getElementById("clipEditDescription").value = clipDescription;
-   easymdeClipEditor.value(clipDescription);
-   var doc = easymdeClipEditor.codemirror.getDoc();
-   doc.setValue(doc.getValue());
-});
 
 $(document).on("click", ".videoEditModalButton", function () {
 
@@ -962,4 +947,19 @@ function uploadThumbnailModal(videoId, type) {
     document.getElementById('videothumbnailFilenameDisplay').value = '';
     document.getElementById('videothumbnailFilename').value = '';
     openModal('videoThumbnailUploadModal')
+}
+
+function editClipMetadataModal(clipID) {
+
+   var clipName = document.getElementById('clipName-' + clipID).innerText;
+   var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
+
+   $("#editClipID").val(clipID);
+   $("#editClipName").val(clipName);
+
+   document.getElementById("clipEditDescription").value = clipDescription;
+   easymdeClipEditor.value(clipDescription);
+   var doc = easymdeClipEditor.codemirror.getDoc();
+   doc.setValue(doc.getValue());
+   openModal('clipEditModal');
 }
