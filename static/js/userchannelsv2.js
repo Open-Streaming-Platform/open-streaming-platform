@@ -264,7 +264,7 @@ socket.on('newRestreamAck', function (msg) {
     restreamNameCell.id = "restreamRowName-" + restreamID;
     restreamURLCell.id = "restreamRowURL-" + restreamID;
 
-    var restreamEnableText = '<input type="checkbox" data-toggle="toggle" id="restreamEnableToggle-' + restreamID + '" name="restreamEnableToggle-' + restreamID + '" onchange="toggleRestream(\'' + restreamID +'\')">';
+    var restreamEnableText = '<div class="form-check form-switch"><input type="checkbox" class="form-check-input" id="restreamEnableToggle-' + restreamID + '" name="restreamEnableToggle-' + restreamID + '" onchange="toggleRestream(\'' + restreamID +'\')"></div>';
 
     var buttonText = '<button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream(\'' + restreamID + '\')"><i class="far fa-trash-alt"></i></button>';
 
