@@ -6,7 +6,7 @@ Dropzone.autoDiscover = false;
 
 var clipplayer = videojs('videoClip', { autoplay: false });
 var ssplayer = videojs('videoSSClip', { autoplay: false });
-//var clipssplayer = videojs('clipSS', { autoplay: false });
+var clipssplayer = videojs('clipSS', { autoplay: false });
 
 var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("editVideoDescription")});
 var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipDescription")});
