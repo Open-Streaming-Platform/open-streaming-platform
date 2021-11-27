@@ -555,11 +555,12 @@ function editClipSubmit() {
     socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription});
 }
 
-function deleteClip(clipID) {
+function deleteClip() {
+    var clipID = document.getElementById('clipDeleteIDSelector').value;
     var clipEntry = document.getElementById('clip-' + clipID);
     clipEntry.parentNode.removeChild(clipEntry);
     socket.emit('deleteClip', {clipID: clipID});
-    createNewBSAlert("Clip Deleted", "Success");
+    createNewBSAlert("Clip Queued for Deletion", "Success");
 }
 
 function addMod(channelLoc) {
