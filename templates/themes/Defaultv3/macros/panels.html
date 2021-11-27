@@ -851,22 +851,11 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card">
-                                            <div class="card-header"><h6><b><i class="fas fa-ticket-alt"></i> Invite Codes</b></h6></div>
+                                            <div class="card-header">
+                                                <b><i class="fas fa-ticket-alt"></i> Invite Codes</b>
+                                                <button type="button" class="btn btn-success mx-2" onclick="newInviteCodeModal('{{ channel.id }}');"></button>
+                                            </div>
                                             <div class="card-body">
-                                                <div class="form-row">
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCodeText-{{channel.id}}" class="col-form-label mr-2"><b>Invite Code</b></label>
-                                                        <input id="newInviteCodeText-{{channel.id}}" type="text" class="form-control" placeholder="Blank for Random">
-                                                    </div>
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Days Invite Code Valid</b></label>
-                                                        <input id="newInviteCode-{{channel.id}}" type="number" class="form-control" min="0" placeholder="Set to 0 to not expire">
-                                                    </div>
-                                                    <div class="form-group col-12 col-lg-4">
-                                                        <label for="newInviteCode-{{channel.id}}" class="col-form-label mr-2"><b>Options</b></label><br>
-                                                        <input type="button" id="newInviteAddButton-{{channel.id}}" class="btn btn-primary" onclick="generateInviteCode('{{channel.id}}')" value="Add">
-                                                    </div>
-                                                </div>
                                                 <div id="inviteCodes">
                                                     <div class="table-responsive">
                                                         <table id="inviteCodeTable-{{channel.id}}" class="table" width="100%">

@@ -577,14 +577,22 @@ function deleteMod(mod, channelLoc) {
     createNewBSAlert("Moderator permission revoked", "Success");
 }
 
-function generateInviteCode(channelID) {
-    var newInviteTextInput = document.getElementById('newInviteCodeText-' + channelID);
-    var newInviteElementInput = document.getElementById('newInviteCode-' + channelID);
+function generateInviteCode() {
+    var channelID = document.getElementById('inviteCodeChannelId').value;
+    var newInviteTextInput = document.getElementById('newInviteCodeText');
+    var newInviteElementInput = document.getElementById('newInviteCode');
     var daysToExpire = newInviteElementInput.value;
     var customInviteCode = newInviteTextInput.value;
     socket.emit('generateInviteCode', {chanID: channelID, daysToExpiration: daysToExpire, inviteCode: customInviteCode});
     newInviteElementInput.value = null;
     newInviteTextInput.value = "";
+}
+
+function newInviteCodeModal(channelID) {
+    document.getElementById('inviteCodeChannelId').value = channelID;
+    document.getElementById('newInviteCodeText').value = '';
+    document.getElementById('newInviteCode').value = '';
+    openModal('newInviteCodeModal');
 }
 
 function addInvitedUser(channelID) {
