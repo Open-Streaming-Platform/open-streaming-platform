@@ -748,6 +748,30 @@
                                 Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
                         </div>
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                <h4>Channel Image</h4>
+                                <div class="channelImg">
+                                    {% if channel.imageLocation == None %}
+                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg">
+                                    {% else %}
+                                    <img class="boxShadow" src="/images/{{channel.imageLocation}}">
+                                    {% endif %}
+                                </div>
+                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <h4>Offline Stream Image</h4>
+                                <div>
+                                    {% if channel.offlineImageLocation == None %}
+                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" width="100%">
+                                    {% else %}
+                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" width="100%">
+                                    {% endif %}
+                                </div>
+                                <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="streamKey-{{channel.id}}" class="col-form-label"><b>Stream Key</b></label>
                             <div class="input-group mb-3">
@@ -810,33 +834,8 @@
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-6 col-md-12">
-                        <div class="row">
-                            <div class="col-12 col-md-3">
-                                <h4>Channel Image</h4>
-                                <div class="channelImg">
-                                    {% if channel.imageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg">
-                                    {% else %}
-                                    <img class="boxShadow" src="/images/{{channel.imageLocation}}">
-                                    {% endif %}
-                                </div>
-                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <h4>Offline Stream Image</h4>
-                                <div>
-                                    {% if channel.offlineImageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" width="100%">
-                                    {% else %}
-                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" width="100%">
-                                    {% endif %}
-                                </div>
-                                <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-2">
+                        <!--Invites Dropdown-->
+                        <div class="row mt-2">
                     <div class="col-12">
                         <div class="row userChannelSettings-dropdownHeader">
                             <div class="col-4">
@@ -957,111 +956,113 @@
                         </div>
                     </div>
                 </div>
-                <!--RTMP Restream Dropdown-->
-                <div class="row mt-1">
-                    <div class="col-12">
-                        <div class="row userChannelSettings-dropdownHeader">
+                        <!--RTMP Restream Dropdown-->
+                        <div class="row mt-1">
                             <div class="col-12">
-                                <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
-                            </div>
-                        </div>
-                        <div id="restream-{{channel.id}}" style="display:none;">
-                             <hr>
-                             <div class="row">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><b><i class="fas fa-globe"></i>Restream Destinations</b>
-                                                <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="restreamList">
-                                                <div class="table-responsive">
-                                                    <table id="restreamTable-{{channel.id}}" class="table" width="100%">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Restream Destination Name</th>
-                                                                <th>URL</th>
-                                                                <th>Enabled</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for restreamDestination in channel.restreamDestinations %}
-                                                            <tr id="restreamTableRow-{{restreamDestination.id}}">
-                                                                <td>{{restreamDestination.name}}</td>
-                                                                <td>{{restreamDestination.url}}</td>
-                                                                <td><input type="checkbox" data-size="small" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
-                                                                <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
-                                                            </tr>
-                                                            {% endfor %}
-                                                        </tbody>
-                                                    </table>
+                                <div class="row userChannelSettings-dropdownHeader">
+                                    <div class="col-12">
+                                        <a href="javascript:void(0)" onclick="toggleDiv('restream-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> RTMP Restream Destinations - <span style="color:red;">Max Bitrate ({{sysSettings.restreamMaxBitrate}} Kbps)</span></b></h5></a>
+                                    </div>
+                                </div>
+                                <div id="restream-{{channel.id}}" style="display:none;">
+                                     <hr>
+                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6><b><i class="fas fa-globe"></i>Restream Destinations</b>
+                                                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
+                                                    </h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="restreamList">
+                                                        <div class="table-responsive">
+                                                            <table id="restreamTable-{{channel.id}}" class="table" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Restream Destination Name</th>
+                                                                        <th>URL</th>
+                                                                        <th>Enabled</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for restreamDestination in channel.restreamDestinations %}
+                                                                    <tr id="restreamTableRow-{{restreamDestination.id}}">
+                                                                        <td>{{restreamDestination.name}}</td>
+                                                                        <td>{{restreamDestination.url}}</td>
+                                                                        <td><input type="checkbox" data-size="small" data-toggle="toggle" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %} ></td>
+                                                                        <th><button type="button" class="btn btn-sm btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></th>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                     </div>
+                                     <hr>
                                 </div>
-                             </div>
-                             <hr>
-                        </div>
-                    </div>
-                </div>
-                <!--Webhook Dropdown-->
-                <div class="row mt-1">
-                    <div class="col-12">
-                        <div class="row userChannelSettings-dropdownHeader">
-                            <div class="col-12">
-                                <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
                             </div>
                         </div>
-                        <div id="webhook-{{channel.id}}" style="display:none;">
-                             <hr>
-                             <div class="row">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
-                                                <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="webhookList">
-                                                <div class="table-responsive">
-                                                    <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Webhook Name</th>
-                                                                <th>Trigger</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {% for webhook in channel.webhooks %}
-                                                            <tr id="webhookTableRow-{{webhook.id}}">
-                                                                <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
-                                                                <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
-                                                                <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
-                                                                <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
-                                                                <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
-                                                                <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
-                                                                    <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-vial"></i></button>
-                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
-                                                                </td>
-                                                            </tr>
-                                                            {% endfor %}
-                                                        </tbody>
-                                                    </table>
+                        <!--Webhook Dropdown-->
+                        <div class="row mt-1">
+                            <div class="col-12">
+                                <div class="row userChannelSettings-dropdownHeader">
+                                    <div class="col-12">
+                                        <a href="javascript:void(0)" onclick="toggleDiv('webhook-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Webhook Configuration</b></h5></a>
+                                    </div>
+                                </div>
+                                <div id="webhook-{{channel.id}}" style="display:none;">
+                                     <hr>
+                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6><b><i class="fas fa-globe"></i> Active Webhooks</b>
+                                                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="openNewWebhookModal('{{channel.id}}');"><i class="fas fa-plus"></i></button></span>
+                                                    </h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="webhookList">
+                                                        <div class="table-responsive">
+                                                            <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Webhook Name</th>
+                                                                        <th>Trigger</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for webhook in channel.webhooks %}
+                                                                    <tr id="webhookTableRow-{{webhook.id}}">
+                                                                        <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
+                                                                        <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
+                                                                        <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>
+                                                                        <td id="webhookRowType-{{webhook.id}}" style="display:none;">{{webhook.requestType}}</td>
+                                                                        <td id="webhookRowHeader-{{webhook.id}}" style="display:none;">{{webhook.requestHeader}}</td>
+                                                                        <td id="webhookRowPayload-{{webhook.id}}" style="display:none;">{{webhook.requestPayload}}</td>
+                                                                        <td>
+                                                                            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-edit"></i></button>
+                                                                            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('{{webhook.id}}','{{channel.id}}')"><i class="fas fa-vial"></i></button>
+                                                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('{{webhook.id}}')"><i class="far fa-trash-alt"></i></button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                     </div>
+                                     <hr>
                                 </div>
-                             </div>
-                             <hr>
+                            </div>
                         </div>
                     </div>
                 </div>
