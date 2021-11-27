@@ -61,14 +61,16 @@
 <script src="/static/vendor/videojs/js/video.js"></script>
 <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
 <script src="/static/vendor/codemirror/lib/codemirror.js"></script>
+<script src="/static/vendor/codemirror/mode/javascript/javascript.js"></script>
+<script src="/static/vendor/codemirror/addon/edit/matchbrackets.js"></script>
 <script src="/static/js/userchannelsv2.js"></script>
 <script src="/static/js/osp-uploads.js"></script>
 
 <script>
 var webhookHeaderElm = document.getElementById('webhookHeader');
 var webhookBodyElm = document.getElementById('webhookPayload');
-var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {lineNumbers: true});
-var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {lineNumbers: true});
+var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {lineNumbers: true, matchBrackets: true, autoCloseBrackets: true, mode: "application/ld+json", lineWrapping: true});
+var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {lineNumbers: true, matchBrackets: true, autoCloseBrackets: true, mode: "application/ld+json", lineWrapping: true});
 </script>
 
 <script>
