@@ -157,6 +157,13 @@
 {% macro user_settings_video_card(video) %}
 <li id="video-{{video.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
     <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-sm btn-dark noClickButton w-100">
+                <a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a>
+            </button>
+        </div>
+    </div>
+    <div class="row">
       <div class="col-auto m-2 pt-2">
         <div class="mb-2" style="width:270px;">
           <img class="boxShadow {% if video.gifLocation != None %}gif{% endif %} lazy" id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;border-radius:6px;">
@@ -174,7 +181,6 @@
         </div>
       </div>
       <div class="col mt-1">
-        <h5><a href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a></h5>
         <div class="mb-1">
             <div class="btn-group boxShadow" role="group">
               <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
