@@ -11,6 +11,7 @@
 <script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/vendor/codemirror/lib/codemirror.css">
 {% endblock %}
 
 <!--Start Body Block-->
@@ -59,8 +60,16 @@
 </script>
 <script src="/static/vendor/videojs/js/video.js"></script>
 <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+<script src="/static/vendor/codemirror/src/codemirror.js"></script>
 <script src="/static/js/userchannelsv2.js"></script>
 <script src="/static/js/osp-uploads.js"></script>
+
+<script>
+var webhookHeaderElm = document.getElementById('webhookHeader');
+var webhookBodyElm = document.getElementById('webhookPayload');
+var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {lineNumbers: true});
+var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {lineNumbers: true});
+</script>
 
 <script>
     {% for channel in channels %}
