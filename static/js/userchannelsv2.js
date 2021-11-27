@@ -32,11 +32,6 @@ $('#videoNewSSModal').on('hidden.bs.modal', function () {
     ssplayer.pause();
 });
 
-$(document).on("click", ".clipDeleteModalButton", function () {
-    var clipID = $(this).data('clipid');
-    $("#clipDeleteButton").attr("onclick","deleteClip(" + clipID + ")");
-});
-
 $(document).on("click", ".videoShareModalButton", function () {
     var videoID = $(this).data('videoid');
     $("#FBShareBtn").attr("onclick","window.open('https://www.facebook.com/sharer/sharer.php?u=" + siteProtocol + siteAddress + "/play/" + videoID + "','facebook-share-dialog','width=626,height=436');return false;");
@@ -916,4 +911,9 @@ function editClipMetadataModal(clipID) {
    var doc = easymdeClipEditor.codemirror.getDoc();
    doc.setValue(doc.getValue());
    openModal('clipEditModal');
+}
+
+function deleteClipModal(clipID) {
+    document.getElementById('clipDeleteIDSelector').value = clipID;
+    openModal('clipDeleteModal');
 }
