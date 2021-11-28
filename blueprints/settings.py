@@ -1018,10 +1018,6 @@ def settings_channels_page():
         if 'publishSelect' in request.form:
             autoPublish = True
 
-        #rtmpRestream = False
-        #if 'rtmpSelect' in request.form:
-        #    rtmpRestream = True
-
         chatEnabled = False
 
         if 'chatSelect' in request.form:
