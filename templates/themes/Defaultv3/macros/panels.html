@@ -1137,16 +1137,12 @@
                     </div>
                   </div>
               </div>
-          </div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-12">
-            <div class="row userChannelSettings-dropdownHeader">
-                <div class="col-12">
-                    <a href="javascript:void(0)" onclick="toggleDiv('stickerSettings-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b class="ms-4"><i class="fas fa-icons"></i> Chat Stickers</b></h5></a>
-                </div>
-            </div>
-            <div id="stickerSettings-{{channel.id}}" style="display:none;">
+              <div class="row userChannelSettings-dropdownHeader">
+                  <div class="col-12">
+                      <a href="javascript:void(0)" onclick="toggleDiv('stickerSettings-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b class="ms-4"><i class="far fa-grin"></i> Chat Stickers</b></h5></a>
+                  </div>
+              </div>
+              <div id="stickerSettings-{{channel.id}}" style="display:none;">
                 <div class="card">
                     <div class="card-body">
                         <button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i> Add Sticker</button>
@@ -1166,7 +1162,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+              </div>
           </div>
         </div>
       </div>
