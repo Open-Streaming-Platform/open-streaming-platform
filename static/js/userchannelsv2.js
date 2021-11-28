@@ -24,6 +24,7 @@ var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {
     lineWrapping: true,
     autoRefresh:true,
     gutters: ["CodeMirror-lint-markers"],
+    theme: 'material-darker',
     lint: true
 });
 var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
@@ -34,6 +35,7 @@ var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
     lineWrapping: true,
     autoRefresh:true,
     gutters: ["CodeMirror-lint-markers"],
+    theme: 'material-darker',
     lint: true
 });
 webhookHeaderCodeMirror.refresh();
