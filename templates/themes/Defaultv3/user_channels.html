@@ -64,8 +64,9 @@
 <script src="/static/vendor/codemirror/lib/codemirror.js"></script>
 <script src="/static/vendor/codemirror/mode/javascript/javascript.js"></script>
 <script src="/static/vendor/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="/static/vendor/codemirror/addon/lint/lint.js"></script>
 <script src="/static/vendor/JSHint/jshint.js"></script>
+<script src="/static/vendor/codemirror/addon/lint/jsonlint.js"></script>
+<script src="/static/vendor/codemirror/addon/lint/lint.js"></script>
 <script src="/static/vendor/codemirror/addon/lint/json-lint.js"></script>
 <script src="/static/js/userchannelsv2.js"></script>
 <script src="/static/js/osp-uploads.js"></script>
@@ -77,7 +78,7 @@ var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {
     lineNumbers: true,
     matchBrackets: true,
     autoCloseBrackets: true,
-    mode: "application/ld+json",
+    mode: "application/json",
     lineWrapping: true,
     autoRefresh:true,
     gutters: ["CodeMirror-lint-markers"],
@@ -87,7 +88,7 @@ var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
     lineNumbers: true,
     matchBrackets: true,
     autoCloseBrackets: true,
-    mode: "application/ld+json",
+    mode: "application/json",
     lineWrapping: true,
     autoRefresh:true,
     gutters: ["CodeMirror-lint-markers"],
