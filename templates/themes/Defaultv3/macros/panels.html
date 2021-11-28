@@ -1105,12 +1105,11 @@
                             <div class="form-group col-12 col-lg-6">
                               <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
                                   Moderator</b></label>
-                              <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
-                            </div>
-                            <div class="form-group col-12 col-lg-6">
-                              <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
-                              <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                              <div class="input-group">
+                                <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+                                <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
                                 onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                              </div>
                             </div>
                           </div>
                           <div class="row">
