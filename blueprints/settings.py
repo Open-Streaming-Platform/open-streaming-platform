@@ -970,7 +970,13 @@ def settings_channels_page():
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
     if request.method == 'POST':
-        requestType = request.form['type']
+        requestType = None
+
+        # Workaround check if we are now using a modal originally for Admin/Global
+        if 'type' in request.form:
+            requestType = request.form['type']
+        elif 'settingType' in request.form:
+            requestType = request.form['settingType']
 
         # Process New Stickers
         if requestType == "newSticker":
