@@ -72,38 +72,7 @@
 <script src="/static/js/osp-uploads.js"></script>
 
 <script>
-var webhookHeaderElm = document.getElementById('webhookHeader');
-var webhookBodyElm = document.getElementById('webhookPayload');
-var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {
-    lineNumbers: true,
-    matchBrackets: true,
-    autoCloseBrackets: true,
-    mode: "application/json",
-    lineWrapping: true,
-    autoRefresh:true,
-    gutters: ["CodeMirror-lint-markers"],
-    lint: true
-});
-var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
-    lineNumbers: true,
-    matchBrackets: true,
-    autoCloseBrackets: true,
-    mode: "application/json",
-    lineWrapping: true,
-    autoRefresh:true,
-    gutters: ["CodeMirror-lint-markers"],
-    lint: true
-});
-webhookHeaderCodeMirror.refresh();
-webhookBodyCodeMirror.refresh();
 
-webhookHeaderCodeMirror.on('change', function(cMirror) {
-    webhookHeaderElm.innerHTML = cMirror.getValue();
-});
-
-webhookBodyCodeMirror.on('change', function(cMirror) {
-    webhookBodyElm.innerHTML = cMirror.getValue();
-});
 </script>
 
 

@@ -13,7 +13,41 @@ var easymdeVideoClip = new EasyMDE({ autoDownloadFontAwesome: false, spellChecke
 var easymdeClipEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("clipEditDescription")});
 var newChanMDE = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description") });
 
+// Initialize CodeMirror
+var webhookHeaderElm = document.getElementById('webhookHeader');
+var webhookBodyElm = document.getElementById('webhookPayload');
+var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {
+    lineNumbers: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    mode: "application/json",
+    lineWrapping: true,
+    autoRefresh:true,
+    gutters: ["CodeMirror-lint-markers"],
+    lint: true
+});
+var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
+    lineNumbers: true,
+    matchBrackets: true,
+    autoCloseBrackets: true,
+    mode: "application/json",
+    lineWrapping: true,
+    autoRefresh:true,
+    gutters: ["CodeMirror-lint-markers"],
+    lint: true
+});
+webhookHeaderCodeMirror.refresh();
+webhookBodyCodeMirror.refresh();
+
+
 // Event Listeners
+webhookHeaderCodeMirror.on('change', function(cMirror) {
+    webhookHeaderElm.value = cMirror.getValue();
+});
+
+webhookBodyCodeMirror.on('change', function(cMirror) {
+    webhookBodyElm.value = cMirror.getValue();
+});
 
 window.addEventListener("beforeunload", function (e) {
   socket.emit('cancelUpload', { data: videofilename });
@@ -47,8 +81,6 @@ $(document).on("click", ".clipShareModalButton", function () {
     $("#embedURLInput").attr('value',"<iframe src='" + siteProtocol + siteAddress + "/clip/" + clipID + "?embedded=True&autoplay=True' width=600 height=345></iframe>");
     $("#linkShareInput").attr('value',siteProtocol + siteAddress + "/clip/" + clipID);
 });
-
-
 
 $(document).on("click", ".videoEditModalButton", function () {
 
@@ -701,6 +733,9 @@ function openNewWebhookModal(chanID) {
     webhookTriggerElement.value = 0;
     webhookChannelID.value = chanID;
     webhookInputAction.value = 'new';
+
+    webhookHeaderCodeMirror.getDoc().setValue('{}');
+    webhookBodyCodeMirror.getDoc().setValue('{}');
 }
 
 function submitWebhook() {
@@ -786,6 +821,9 @@ function editWebhook(webhookID, chanID) {
     webHookChannelIDInput.value = chanID;
     webhookInputAction.value = 'edit';
     webhookInputID.value = webhookID;
+
+    webhookHeaderCodeMirror.getDoc().setValue(webhookHeader.value);
+    webhookBodyCodeMirror.getDoc().setValue(webhookPayload.value);
 
     $('#newWebhookModal').modal('show');
     webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
