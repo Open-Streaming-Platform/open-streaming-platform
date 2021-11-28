@@ -71,6 +71,8 @@ var webhookHeaderElm = document.getElementById('webhookHeader');
 var webhookBodyElm = document.getElementById('webhookPayload');
 var webhookHeaderCodeMirror = CodeMirror.fromTextArea(webhookHeaderElm, {lineNumbers: true, matchBrackets: true, autoCloseBrackets: true, mode: "application/ld+json", lineWrapping: true, autoRefresh:true});
 var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {lineNumbers: true, matchBrackets: true, autoCloseBrackets: true, mode: "application/ld+json", lineWrapping: true, autoRefresh:true});
+webhookHeaderCodeMirror.refresh();
+webhookBodyCodeMirror.refresh();
 </script>
 
 <script>
