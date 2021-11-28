@@ -827,19 +827,16 @@ function editWebhook(webhookID, chanID) {
     webhookInputAction.value = 'edit';
     webhookInputID.value = webhookID;
 
+    webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
+    webhookPayload.value = JSON.stringify(JSON.parse(webhookPayload.value), undefined, 2);
+
     webhookHeaderCodeMirror.getDoc().setValue(webhookHeader.value);
-    var totalLines = webhookHeaderCodeMirror.lineCount();
-    webhookHeaderCodeMirror.autoFormatRange({line:0, ch:0}, {line:totalLines});
     webhookHeaderCodeMirror.refresh();
 
     webhookBodyCodeMirror.getDoc().setValue(webhookPayload.value);
-    totalLines = webhookBodyCodeMirror.lineCount();
-    webhookBodyCodeMirror.autoFormatRange({line:0, ch:0}, {line:totalLines});
     webhookBodyCodeMirror.refresh();
 
     $('#newWebhookModal').modal('show');
-    webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
-    webhookPayload.value = JSON.stringify(JSON.parse(webhookPayload.value), undefined, 2);
 }
 
 function saveUploadedThumbnail() {
