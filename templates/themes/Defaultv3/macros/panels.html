@@ -1093,13 +1093,15 @@
             </form>
           </div>
           <div class="col-xl-6 col-lg-6 col-md-12">
-              <div id="moderators-{{channel.id}}">
+              <div class="row userChannelSettings-dropdownHeader">
+                <div class="col-12">
+                    <a href="javascript:void(0)" onclick="toggleDiv('moderators-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b><i class="fas fa-user-shield"></i> Moderators</b></h5></a>
+                </div>
+              </div>
+              <div id="moderators-{{channel.id}}" style="display:none;">
                   <div class="row">
                     <div class="col-12">
                       <div class="card">
-                        <div class="card-header">
-                          <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
-                        </div>
                         <div class="card-body">
                           <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
@@ -1112,7 +1114,7 @@
                               </div>
                             </div>
                           </div>
-                          <div class="row mt-2">
+                          <div class="row mt-4">
                             <div class="col-12" id="mods-{{channel.channelLoc}}">
                               <div class="row">
                                 <div class="col-12 mb-2"><b>Username</b></div>
