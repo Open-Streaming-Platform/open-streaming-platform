@@ -1161,7 +1161,7 @@
                                     <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
                                     <div class="mx-auto my-2" style="width:96px;">
                                         <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id}});"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-trash"></i></button>
                                     </div>
                                 </div>
                                 {% endfor %}
