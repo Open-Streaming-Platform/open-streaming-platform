@@ -97,12 +97,12 @@ var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
 webhookHeaderCodeMirror.refresh();
 webhookBodyCodeMirror.refresh();
 
-webhookHeaderCodeMirror.on('change', function() {
-    webhookHeaderCodeMirror.save();
+webhookHeaderCodeMirror.on('change', function(cMirror) {
+    webhookHeaderElm.value = cMirror.getValue();
 });
 
-webhookBodyCodeMirror.on('change', function() {
-    webhookBodyCodeMirror.save();
+webhookBodyCodeMirror.on('change', function(cMirror) {
+    webhookBodyElm.value = cMirror.getValue();
 });
 </script>
 
