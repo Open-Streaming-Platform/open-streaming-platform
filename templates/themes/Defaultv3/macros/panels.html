@@ -614,7 +614,6 @@
         <div id="chat" class="chatSection"></div>
     </div>
     {{ core_chat_footer(stickerSelectorList) }}
-  </div>
 </div>
 {% endmacro %}
 
@@ -743,7 +742,7 @@
                         </div>
                         <div class="form-group">
                             <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
-                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %}} placeholder="No Spaces or Special Characters">
+                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
                             <small id="vanityURLHelpBlock" class="form-text text-muted">
                                 Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
