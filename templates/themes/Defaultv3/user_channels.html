@@ -98,11 +98,11 @@ webhookHeaderCodeMirror.refresh();
 webhookBodyCodeMirror.refresh();
 
 webhookHeaderCodeMirror.on('change', function(cMirror) {
-    webhookHeaderElm.value = cMirror.getValue();
+    webhookHeaderElm.innerHTML = cMirror.getValue();
 });
 
 webhookBodyCodeMirror.on('change', function(cMirror) {
-    webhookBodyElm.value = cMirror.getValue();
+    webhookBodyElm.innerHTML = cMirror.getValue();
 });
 </script>
 
