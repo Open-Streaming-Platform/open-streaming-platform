@@ -1052,11 +1052,11 @@
 
 {% macro user_channel_settings_chat(channel) %}
 <div id="chatSettingsWindow-{{channel.id}}" style="display:none;">
-        <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
-          <div id="generalChatSettings-{{ channel.id }}">
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-12">
-                <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
+    <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
+      <div id="generalChatSettings-{{ channel.id }}">
+        <div class="row">
+          <div class="col-xl-6 col-lg-6 col-md-12">
+            <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                 <div class="form-group">
                   <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
                   <input type="text" class="form-control" name="roomTitle" id="roomTitle"
@@ -1098,83 +1098,83 @@
                 </div>
                 <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
                 <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Save</button>
-                </form>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-md-12">
-                  <div id="moderators-{{channel.id}}">
-                      <div class="row">
-                        <div class="col-12">
-                          <div class="card">
-                            <div class="card-header">
-                              <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
+            </form>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-12">
+              <div id="moderators-{{channel.id}}">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
+                        </div>
+                        <div class="card-body">
+                          <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
+                              <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
+                                  Moderator</b></label>
+                              <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
                             </div>
-                            <div class="card-body">
-                              <div class="form-row">
-                                <div class="form-group col-12 col-lg-6">
-                                  <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
-                                      Moderator</b></label>
-                                  <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
-                                </div>
-                                <div class="form-group col-12 col-lg-6">
-                                  <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
-                                  <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
-                                    onclick="addMod('{{channel.channelLoc}}')" value="Add">
-                                </div>
-                              </div>
+                            <div class="form-group col-12 col-lg-6">
+                              <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
+                              <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                                onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-12" id="mods-{{channel.channelLoc}}">
                               <div class="row">
-                                <div class="col-12" id="mods-{{channel.channelLoc}}">
-                                  <div class="row">
-                                    <div class="col-12 mb-2"><b>Username</b></div>
-                                  </div>
-                                  {% for mod in channelMods[channel.channelLoc] %}
-                                  <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                                      <p>{{mod|uuid_to_username}}</p>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                                      <button type="button" class="btn btn-sm btn-danger"
-                                        onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
-                                    </div>
-                                  </div>
-                                  {% endfor %}
+                                <div class="col-12 mb-2"><b>Username</b></div>
+                              </div>
+                              {% for mod in channelMods[channel.channelLoc] %}
+                              <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                  <p>{{mod|uuid_to_username}}</p>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                  <button type="button" class="btn btn-sm btn-danger"
+                                    onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
                                 </div>
                               </div>
+                              {% endfor %}
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
                   </div>
               </div>
-            <hr>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        Chat Stickers
-                        <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i></button></span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-start">
-                            {% for sticker in channel.chatStickers %}
-                            <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
-                                <div class="mx-auto my-2" style="width:128px;">
-                                    <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
-                                </div>
-                                <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
-                                <div class="mx-auto my-2" style="width:96px;">
-                                    <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id}});"><i class="fas fa-trash"></i></button>
-                                </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Chat Stickers
+                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i></button></span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-start">
+                        {% for sticker in channel.chatStickers %}
+                        <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
+                            <div class="mx-auto my-2" style="width:128px;">
+                                <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
                             </div>
-                            {% endfor %}
+                            <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
+                            <div class="mx-auto my-2" style="width:96px;">
+                                <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id}});"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
-              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+</div>
 {% endmacro %}
 
 {% macro user_channel_settings(channel) %}
