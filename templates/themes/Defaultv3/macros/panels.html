@@ -1066,29 +1066,22 @@
                   <input type="text" class="form-control" name="roomDescr" id="roomDescr"
                     value="{{channelRooms[channel.channelLoc]['description']}}">
                 </div>
-                <div class="form-group row">
-                    <div class="form-check form-switch">
-                        <label for="moderatedSelect" class="form-check-label"><b>Moderated </b></label>
-                        <input type="checkbox" class="form-check-input" id="moderatedSelect" name="moderatedSelect"
-                                {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
-                    </div>
-                </div>
-                <div class="form-group row">
+                <div class="mt-2">
+                  <div class="form-check form-switch">
+                      <label for="moderatedSelect" class="form-check-label"><b>Moderated </b></label>
+                      <input type="checkbox" class="form-check-input" id="moderatedSelect" name="moderatedSelect"
+                              {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
+                  </div>
                   <div class="form-check form-switch">
                     <label for="allowGuests" class="form-check-label"><b>Allow guests to join room</b></label>
                     <input type="checkbox" class="form-check-input" id="allowGuests" name="allowGuests"
                             {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
                   </div>
-                </div>
-                <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsChatTooltip"
-                  title="Has no effect if moderation is disabled">
                   <div class="form-check form-switch">
                     <label for="allowGuestsChat" class="form-check-label"><b>Allow guests to chat</b></label>
                     <input type="checkbox" class="form-check-input" id="allowGuestsChat" name="allowGuestsChat"
                       {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                   </div>
-                </div>
-                <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsNickChangeTooltip">
                   <div class="form-check form-switch">
                     <label for="allowGuestsNickChange" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
                     <input type="checkbox" class="form-check-input" id="allowGuestsNickChange" name="allowGuestsNickChange"
