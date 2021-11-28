@@ -735,7 +735,13 @@ function openNewWebhookModal(chanID) {
     webhookInputAction.value = 'new';
 
     webhookHeaderCodeMirror.getDoc().setValue('{}');
+    setTimeout(function() {
+        webhookHeaderCodeMirror.refresh();
+    },1);
     webhookBodyCodeMirror.getDoc().setValue('{}');
+    setTimeout(function() {
+        webhookBodyCodeMirror.refresh();
+    },1);
 }
 
 function submitWebhook() {
@@ -823,7 +829,13 @@ function editWebhook(webhookID, chanID) {
     webhookInputID.value = webhookID;
 
     webhookHeaderCodeMirror.getDoc().setValue(webhookHeader.value);
+    setTimeout(function() {
+        webhookHeaderCodeMirror.refresh();
+    },1);
     webhookBodyCodeMirror.getDoc().setValue(webhookPayload.value);
+    setTimeout(function() {
+        webhookBodyCodeMirror.refresh();
+    },1);
 
     $('#newWebhookModal').modal('show');
     webhookHeader.value = JSON.stringify(JSON.parse(webhookHeader.value), undefined, 2);
