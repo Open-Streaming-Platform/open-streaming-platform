@@ -997,7 +997,7 @@
                                                 <div class="card-body">
                                                     <div id="webhookList">
                                                         <div class="table-responsive">
-                                                            <table id="webhookTable-{{channel.id}}" class="table table-borderless" width="100%">
+                                                            <table id="webhookTable-{{channel.id}}" class="table" width="100%">
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Webhook Name</th>
@@ -1007,7 +1007,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     {% for webhook in channel.webhooks %}
-                                                                    <tr id="webhookTableRow-{{webhook.id}}">
+                                                                    <tr id="webhookTableRow-{{webhook.id}}" class="align-middle">
                                                                         <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                         <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
                                                                         <td id="webhookRowTrigger-{{webhook.id}}">{{webhook.requestTrigger|get_webhookTrigger}}</td>

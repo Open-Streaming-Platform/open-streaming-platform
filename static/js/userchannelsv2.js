@@ -139,6 +139,7 @@ socket.on('newWebhookAck', function (msg) {
 
     var newRow = tableRef.insertRow(tableRef.rows.length);
     newRow.id = 'webhookTableRow-' + webhookID;
+    newRow.className = 'align-middle'
 
     var webhookNameCell = newRow.insertCell(0);
     var endpointURLCell = newRow.insertCell(1);
