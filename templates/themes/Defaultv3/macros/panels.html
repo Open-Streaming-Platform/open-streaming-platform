@@ -1095,7 +1095,7 @@
           <div class="col-xl-6 col-lg-6 col-md-12">
               <div class="row userChannelSettings-dropdownHeader">
                 <div class="col-12">
-                    <a href="javascript:void(0)" onclick="toggleDiv('moderators-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b><i class="fas fa-user-shield"></i> Moderators</b></h5></a>
+                    <a href="javascript:void(0)" onclick="toggleDiv('moderators-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b class="ms-4"><i class="fas fa-user-shield"></i> Moderators</b></h5></a>
                 </div>
               </div>
               <div id="moderators-{{channel.id}}" style="display:none;">
@@ -1141,25 +1141,29 @@
         </div>
         <div class="row mt-2">
           <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    Chat Stickers
-                    <span class="float-right"><button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i></button></span>
+            <div class="row userChannelSettings-dropdownHeader">
+                <div class="col-12">
+                    <a href="javascript:void(0)" onclick="toggleDiv('stickerSettings-{{channel.id}}');return false;"><h5><i class="fas fa-angle-double-down"></i> <b class="ms-4"><i class="fas fa-icons"></i> Chat Stickers</b></h5></a>
                 </div>
-                <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-start">
-                        {% for sticker in channel.chatStickers %}
-                        <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
-                            <div class="mx-auto my-2" style="width:128px;">
-                                <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+            </div>
+            <div id="stickerSettings-{{channel.id}}" style="display:none;">
+                <div class="card">
+                    <div class="card-body">
+                        <button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i> Add Sticker</button>
+                        <div class="d-flex flex-wrap justify-content-start">
+                            {% for sticker in channel.chatStickers %}
+                            <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
+                                <div class="mx-auto my-2" style="width:128px;">
+                                    <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+                                </div>
+                                <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
+                                <div class="mx-auto my-2" style="width:96px;">
+                                    <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id}});"><i class="fas fa-trash"></i></button>
+                                </div>
                             </div>
-                            <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
-                            <div class="mx-auto my-2" style="width:96px;">
-                                <button class="btn btn-warning" onclick="editStickerModal({{ sticker.id }}, {{ channel.id }});"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-danger" onclick="deleteStickerModal({{ sticker.id }}, {{ channel.id}});"><i class="fas fa-trash"></i></button>
-                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
