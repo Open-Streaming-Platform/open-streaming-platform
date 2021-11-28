@@ -96,7 +96,16 @@ var webhookBodyCodeMirror = CodeMirror.fromTextArea(webhookBodyElm, {
 });
 webhookHeaderCodeMirror.refresh();
 webhookBodyCodeMirror.refresh();
+
+webhookHeaderCodeMirror.on('change', function() {
+    webhookHeaderCodeMirror.save();
+});
+
+webhookBodyCodeMirror.on('change', function() {
+    webhookBodyCodeMirror.save();
+});
 </script>
+
 
 <script>
     {% for channel in channels %}
