@@ -1054,9 +1054,9 @@
 <div id="chatSettingsWindow-{{channel.id}}" style="display:none;">
         <div id="chatSettings-{{channel.id}}" class="my-2 ml-2">
           <div id="generalChatSettings-{{ channel.id }}">
-            <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
             <div class="row">
-              <div class="col-xl-4 col-lg-6 col-md-12">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+                <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                 <div class="form-group">
                   <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
                   <input type="text" class="form-control" name="roomTitle" id="roomTitle"
@@ -1067,98 +1067,88 @@
                   <input type="text" class="form-control" name="roomDescr" id="roomDescr"
                     value="{{channelRooms[channel.channelLoc]['description']}}">
                 </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-md-12">
                 <div class="form-group row">
-                  <div class="col-6">
-                    <label for="moderatedSelect" class="col-form-label"><b>Moderated </b></label>
-                  </div>
-                  <div class="col-6">
-                    <input type="checkbox" data-toggle="toggle" id="moderatedSelect" name="moderatedSelect"
-                      {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
-                  </div>
+                    <div class="form-check form-switch">
+                        <label for="moderatedSelect" class="form-check-label"><b>Moderated </b></label>
+                        <input type="checkbox" class="form-check-input" id="moderatedSelect" name="moderatedSelect"
+                                {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
+                    </div>
                 </div>
                 <div class="form-group row">
-                  <div class="col-6">
-                    <label for="allowGuests" class="col-form-label"><b>Allow guests to join room</b></label>
-                  </div>
-                  <div class="col-6">
-                    <input type="checkbox" data-toggle="toggle" id="allowGuests" name="allowGuests"
-                      {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
+                  <div class="form-check form-switch">
+                    <label for="allowGuests" class="form-check-label"><b>Allow guests to join room</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuests" name="allowGuests"
+                            {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
                   </div>
                 </div>
                 <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsChatTooltip"
                   title="Has no effect if moderation is disabled">
-                  <div class="col-6">
-                    <label for="allowGuestsChat" class="col-form-label"><b>Allow guests to chat</b></label>
-                  </div>
-                  <div class="col-6">
-                    <input type="checkbox" data-toggle="toggle" id="allowGuestsChat" name="allowGuestsChat"
+                  <div class="form-check form-switch">
+                    <label for="allowGuestsChat" class="form-check-label"><b>Allow guests to chat</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsChat" name="allowGuestsChat"
                       {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                   </div>
                 </div>
                 <div class="form-group row" data-toggle="tooltip" data-placement="bottom" id="allowGuestsNickChangeTooltip">
-                  <div class="col-6">
-                    <label for="allowGuestsNickChange" class="col-form-label"><b>Allow guests to set their Nickname</b></label>
-                  </div>
-                  <div class="col-6">
-                    <input type="checkbox" data-toggle="toggle" id="allowGuestsNickChange" name="allowGuestsNickChange"
+                  <div class="form-check form-switch">
+                    <label for="allowGuestsNickChange" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsNickChange" name="allowGuestsNickChange"
                       {% if channel.allowGuestNickChange == True %} checked {% endif %}>
                   </div>
                 </div>
+                <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
+                <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Save</button>
+                </form>
               </div>
-            </div>
-            <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
-            <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Save</button>
-            </form>
-            <hr>
-          </div>
-          <div class="row">
-              <div class="col-12">
-                <div id="moderators-{{channel.id}}">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="card">
-                        <div class="card-header">
-                          <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
-                        </div>
-                        <div class="card-body">
-                          <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
-                              <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
-                                  Moderator</b></label>
-                              <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+                  <div id="moderators-{{channel.id}}">
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="card">
+                            <div class="card-header">
+                              <h6><b><i class="fas fa-user-shield"></i> Moderators</b></h6>
                             </div>
-                            <div class="form-group col-12 col-lg-6">
-                              <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
-                              <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
-                                onclick="addMod('{{channel.channelLoc}}')" value="Add">
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-12" id="mods-{{channel.channelLoc}}">
+                            <div class="card-body">
+                              <div class="form-row">
+                                <div class="form-group col-12 col-lg-6">
+                                  <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add
+                                      Moderator</b></label>
+                                  <input id="addModText-{{channel.channelLoc}}" type="text" class="form-control" placeholder="Username">
+                                </div>
+                                <div class="form-group col-12 col-lg-6">
+                                  <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2">&nbsp;</label><br>
+                                  <input type="button" id="addModAddButton-{{channel.channelLoc}}" class="btn btn-primary"
+                                    onclick="addMod('{{channel.channelLoc}}')" value="Add">
+                                </div>
+                              </div>
                               <div class="row">
-                                <div class="col-12 mb-2"><b>Username</b></div>
-                              </div>
-                              {% for mod in channelMods[channel.channelLoc] %}
-                              <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
-                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                                  <p>{{mod|uuid_to_username}}</p>
+                                <div class="col-12" id="mods-{{channel.channelLoc}}">
+                                  <div class="row">
+                                    <div class="col-12 mb-2"><b>Username</b></div>
+                                  </div>
+                                  {% for mod in channelMods[channel.channelLoc] %}
+                                  <div class="row" id="mod-{{channel.channelLoc}}-{{mod}}">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                      <p>{{mod|uuid_to_username}}</p>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                      <button type="button" class="btn btn-sm btn-danger"
+                                        onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                                  <button type="button" class="btn btn-sm btn-danger"
-                                    onclick="deleteMod('{{mod}}', '{{channel.channelLoc}}')"><i class="far fa-trash-alt"></i></button>
-                                </div>
                               </div>
-                              {% endfor %}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
                   </div>
-                </div>
-                <hr>
+              </div>
+            <hr>
+            </div>
+            <div class="row">
+              <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         Chat Stickers
