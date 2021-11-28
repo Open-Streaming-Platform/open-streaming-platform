@@ -828,8 +828,13 @@ function editWebhook(webhookID, chanID) {
     webhookInputID.value = webhookID;
 
     webhookHeaderCodeMirror.getDoc().setValue(webhookHeader.value);
+    var totalLines = webhookHeaderCodeMirror.lineCount();
+    webhookHeaderCodeMirror.autoFormatRange({line:0, ch:0}, {line:totalLines});
     webhookHeaderCodeMirror.refresh();
+
     webhookBodyCodeMirror.getDoc().setValue(webhookPayload.value);
+    totalLines = webhookBodyCodeMirror.lineCount();
+    webhookBodyCodeMirror.autoFormatRange({line:0, ch:0}, {line:totalLines});
     webhookBodyCodeMirror.refresh();
 
     $('#newWebhookModal').modal('show');
