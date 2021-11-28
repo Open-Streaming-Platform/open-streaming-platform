@@ -914,7 +914,7 @@ function setClipScreenShot() {
 
 function newStickerModal(channelID) {
     document.getElementById('stickerChannelID').value = channelID;
-    $('#newStickerModal').modal('show');
+    openModal('newStickerModal');
 }
 
 
