@@ -2,8 +2,8 @@
 <div class="info-panel-box system-channels-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>API Keys</b>
-        <span class="float-end me-3">
-            <button class="btn btn-success btn-sm boxShadow" title="Add API Key" type="button"><i class="bi bi-plus"></i></button>
+        <span class="ms-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add API Key" type="button"><i class="bi bi-plus"></i> Add</button>
         </span>
     </div>
     <div class="info-panel-box-body boxShadow">
@@ -25,13 +25,24 @@
                     <td>{{ apiKey.description }}</td>
                     <td>
                       <div class="input-group mb-3">
-                        <input type="text" class="form-control disabled shadow" value="{{ apiKey.key }}">
-                        <button class="btn btn-primary shadow" type="button" id="apiKey_reset-{{ apiKey.id }}"><i class="bi bi-arrow-repeat"></i></button>
+                        <input type="text" class="form-control disabled shadow" id="apikey-{{ key.id }}" value="{{ apiKey.key }}">
+                        <button class="btn btn-primary shadow" type="button" id="apiKey_copy-{{ apiKey.id }}" onclick="CopyAPI('apikey-{{key.id}}')"><i class="fas fa-copy"></i></button>
                       </div>
                     </td>
                     <td>{{ apiKey.type | format_keyType }}</td>
                     <td>{{ apiKey.createdOn | normalize_date }}</td>
-                    <td>{{ apiKey.expiration | normalize_date }}</td>
+                    <td>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    {% if key.isValid() %}<i style="color:green;" class="fas fa-check"></i>
+                                    {% else %} <i style="color:red;" class="fas fa-times"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <span>{{key.expiration|normalize_date}}</span>
+                        </div>
+                    </td>
                     <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
                   </tr>
                   {% endfor %}
