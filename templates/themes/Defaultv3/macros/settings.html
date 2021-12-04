@@ -25,8 +25,8 @@
                     <td>{{ apiKey.description }}</td>
                     <td>
                       <div class="input-group mb-3">
-                        <input type="text" class="form-control disabled shadow" id="apikey-{{ key.id }}" value="{{ apiKey.key }}">
-                        <button class="btn btn-primary shadow" type="button" id="apiKey_copy-{{ apiKey.id }}" onclick="CopyAPI('apikey-{{key.id}}')"><i class="fas fa-copy"></i></button>
+                        <input type="text" class="form-control disabled shadow" id="apikey-{{ apiKey.id }}" value="{{ apiKey.key }}">
+                        <button class="btn btn-primary shadow" type="button" id="apiKey_copy-{{ apiKey.id }}" onclick="CopyAPI('apikey-{{apiKey.id}}')"><i class="fas fa-copy"></i></button>
                       </div>
                     </td>
                     <td>{{ apiKey.type | format_keyType }}</td>
