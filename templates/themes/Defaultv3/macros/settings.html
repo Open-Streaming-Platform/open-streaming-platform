@@ -35,12 +35,12 @@
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    {% if key.isValid() %}<i style="color:green;" class="fas fa-check"></i>
+                                    {% if apiKey.isValid() %}<i style="color:green;" class="fas fa-check"></i>
                                     {% else %} <i style="color:red;" class="fas fa-times"></i>
                                     {% endif %}
                                 </div>
                             </div>
-                            <span>{{key.expiration|normalize_date}}</span>
+                            <span>{{apiKey.expiration|normalize_date}}</span>
                         </div>
                     </td>
                     <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
