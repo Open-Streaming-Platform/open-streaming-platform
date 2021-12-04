@@ -32,5 +32,12 @@
       copyText.select();
       document.execCommand("copy");
     }
+
+    function deleteAPIKey(keyID) {
+        var apiRow = document.getElementById('apiRow-' + keyID);
+        socket.emit('deleteAPIKey', {keyId: keyID});
+        apiRow.parentNode.removeChild(apiRow);
+        createNewBSAlert("API Key Removed","success")
+    }
 </script>
 {% endblock %}
