@@ -3,7 +3,7 @@
     <div class="info-panel-box-header boxShadow textShadow">
         <b>API Keys</b>
         <span class="ms-3">
-            <button class="btn btn-success btn-sm boxShadow" title="Add API Key" type="button"><i class="bi bi-plus"></i> Add</button>
+            <button class="btn btn-success btn-sm boxShadow" title="Add API Key" type="button" data-bs-toggle="modal" data-bs-target="#createNewAPIKeyModal"><i class="bi bi-plus"></i> Create New Key</button>
         </span>
     </div>
     <div class="info-panel-box-body boxShadow">
@@ -32,18 +32,12 @@
                     <td>{{ apiKey.type | format_keyType }}</td>
                     <td>{{ apiKey.createdOn | normalize_date }}</td>
                     <td>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    {% if apiKey.isValid() %}<i style="color:green;" class="fas fa-check"></i>
-                                    {% else %} <i style="color:red;" class="fas fa-times"></i>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <span>{{apiKey.expiration|normalize_date}}</span>
-                        </div>
+                        {% if apiKey.isValid() %}<i style="color:green;" class="fas fa-check"></i>
+                        {% else %} <i style="color:red;" class="fas fa-times"></i>
+                        {% endif %}
+                        <span class="ms-2">{{apiKey.expiration|normalize_date}}</span>
                     </td>
-                    <td><button type="button" class="btn btn-danger shadow"><i class="bi bi-trash-fill"></i></button></td>
+                    <td><button type="button" class="btn btn-danger shadow" onclick="deleteKey('{{ apiKey.id }}')"><i class="bi bi-trash-fill"></i></button></td>
                   </tr>
                   {% endfor %}
                 </tbody>
