@@ -37,6 +37,7 @@ from classes import webhook
 from classes import logs
 from classes import subscriptions
 from classes import stickers
+from classes import panel
 from classes.shared import cache
 
 from functions import system
@@ -407,6 +408,8 @@ def admin_page():
         bannedWordArray = sorted(bannedWordArray)
         bannedWordString = ','.join(bannedWordArray)
 
+        globalPanelList = panel.globalPanel.query.all()
+
         globalStickers = stickers.stickers.query.filter_by(channelID=None).all()
 
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
@@ -426,7 +429,8 @@ def admin_page():
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
-                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones, schedulerList=schedulerList)
+                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
+                               schedulerList=schedulerList, globalPanelList=globalPanelList)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']

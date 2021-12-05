@@ -1,6 +1,17 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 
+{% macro text_panel(title, header-color-bg, header-color-text, body-color-bg, body-color-text, content) %}
+<div class="text-custom-container boxShadow">
+    <div class="w-100" style="background-color:{{ header-color-bg }}; color:{{ header-color-text }};">
+        <h3 class="textShadow"><b>{{ title }}</b></h3>
+    </div>
+    <div class="w-100" style="background-color:{{ body-color-bg }}; color:{{ body-color-text }};">
+        {{ content | markdown }}
+    </div>
+</div>
+{% endmacro %}
+
 {% macro announcement_panel(title, message) %}
 <div class="announcement-container boxShadow">
     <div class="float-end">

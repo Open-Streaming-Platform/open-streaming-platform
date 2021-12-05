@@ -861,16 +861,36 @@
 </div>
 {% endmacro %}
 
-{% macro panel_settings_panel() %}
+{% macro panel_settings_panel(globalPanelList) %}
 <div class="info-panel-box system-panels-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Global Panels</b>
-        <span class="float-end me-3">
-            <button class="btn btn-success btn-sm boxShadow" title="Add Panel" type="button" data-bs-toggle="modal" data-bs-target="#NewPanelModal"><i class="bi bi-plus"></i></button>
+        <span class="ms-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Panel" type="button" data-bs-toggle="modal" data-bs-target="#NewPanelModal"><i class="bi bi-plus"></i> New Panel</button>
         </span>
     </div>
     <div class="info-panel-box-body boxShadow">
         <div class="admin-panels-servers">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Order</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for panel in globalPanelList %}
+                        <tr>
+                            <td>{{ panel.name }}</td>
+                            <td>{{ panel.type }}</td>
+                            <td>{{ panel.order }}</td>
+                            <td><button class="btn btn-warning boxShadow"><i class="fas fa-edit"></i></button></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
