@@ -422,9 +422,9 @@ function onMessage(msg) {
           if (msg.charAt(0) === '/') {
               var commandString = msg.substring(1);
               var splitCommandString = commandString.split(' ');
-              var userJID = from.split('@')[0];
+              var channelId = from.split('@')[0];
 
-              var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], JID: userJID, xmppAuth: xmppPassword};
+              var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], channelId: channelId, userUUID: userUUID, xmppAuth: xmppPassword};
               console.log(commandArray);
           } else {
               var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
