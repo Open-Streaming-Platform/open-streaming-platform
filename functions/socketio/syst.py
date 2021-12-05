@@ -15,6 +15,7 @@ from classes import RecordedVideo
 from classes import Channel
 from classes import Stream
 from classes import views
+from classes import apikey
 
 from functions import system
 from functions import cachedDbCalls
@@ -283,3 +284,17 @@ def get_admin_component_status(msg):
 
         emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
 
+@socketio.on('deleteAPIKey')
+def delete_apiKey(message):
+    if current_user.is_authenticated:
+        if 'keyId' in message:
+            apiKeyID = int(message['keyId'])
+            apiKeyQuery = apikey.apikey.query.filter_by(id=apiKeyID, userID=current_user.id).first()
+            if apiKeyQuery != None:
+                db.session.delete(apiKeyQuery)
+                db.session.commit()
+                return 'OK'
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
