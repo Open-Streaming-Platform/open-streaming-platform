@@ -1802,3 +1802,78 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro new_global_panel() %}
+<div class="modal fade" id="NewPanelModal" tabindex="-1" role="dialog" aria-labelledby="NewPanelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="NewPanelModalTitle">Create a Global Panel</h5>
+            <div class="float-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="mb-2">
+              <label for="panel-name" class="form-label">Panel Name</label>
+              <input type="text" class="form-control shadow" id="panel-name" name="panel-name" required>
+            </div>
+            <div class="mb-2">
+              <label for="panel-type" class="form-label">Panel Type</label>
+              <select class="form-select shadow" id="panel-type" name="panel-type" required>
+                <option value="" selected disabled></option>
+                <option value="0">Custom Markdown/Text</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="mb-2">
+                  <div class="row">
+                    <label for="panel-header-bg" class="col-5 col-form-label">Header Background</label>
+                    <input type="color" class="form-control form-control-color shadow col-1" id="panel-header-bg" name="panel-header-bg" value="#000000" title="Choose your color">
+                  </div>
+                </div>
+                <div class="mb-2">
+                  <div class="row">
+                    <label for="panel-header-text" class="col-5 col-form-label">Header Text Color</label>
+                    <input type="color" class="form-control form-control-color shadow col-1" id="panel-header-text" name="panel-header-text" value="#ffffff" title="Choose your color">
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mb-2">
+                  <div class="row">
+                    <label for="panel-body-bg" class="col-5 col-form-label">Body Background</label>
+                    <input type="color" class="form-control form-control-color shadow col-1" id="panel-body-bg" name="panel-body-bg" value="#000000" title="Choose your color">
+                  </div>
+                </div>
+                <div class="mb-2">
+                  <div class="row">
+                    <label for="panel-body-text" class="col-5 col-form-label">Body Text Color</label>
+                    <input type="color" class="form-control form-control-color shadow col-1" id="panel-body-text" name="panel-body-text" value="#ffffff" title="Choose your color">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <label for="panel-order" class="form-label">Panel Order</label>
+              <select class="form-select shadow" id="panel-order" name="panel-order">
+                <option value="" selected disabled></option>
+                <option value="0">Custom Markdown/Text</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <label for="panel-content" class="form-label">Content</label>
+              <textarea class="form-control shadow" id="panel-content" name="panel-content" rows="6"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary shadow" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success shadow" data-bs-dismiss="modal">Save</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}

@@ -860,3 +860,18 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro panel_settings_panel() %}
+<div class="info-panel-box system-panels-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Global Panels</b>
+        <span class="float-end me-3">
+            <button class="btn btn-success btn-sm boxShadow" title="Add Panel" type="button" data-bs-toggle="modal" data-bs-target="#NewPanelModal"><i class="bi bi-plus"></i></button>
+        </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-panels-servers">
+        </div>
+    </div>
+</div>
+{% endmacro %}
