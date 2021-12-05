@@ -529,12 +529,12 @@ def admin_page():
                     systemLogo = "/images/" + filename
                     themes.faviconGenerator(globalvars.videoRoot + 'images/' + filename)
 
-            validAddress = system.formatSiteAddress(serverAddress)
-            try:
-                externalIP = socket.gethostbyname(validAddress)
-            except socket.gaierror:
-                flash("Invalid Server Address/IP", "error")
-                return redirect(url_for(".admin_page", page="settings"))
+            #validAddress = system.formatSiteAddress(serverAddress)
+            #try:
+            #    externalIP = socket.gethostbyname(validAddress)
+            #except socket.gaierror:
+            #    flash("Invalid Server Address/IP", "error")
+            #    return redirect(url_for(".admin_page", page="settings"))
 
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
