@@ -209,6 +209,11 @@
                         </select>
                     </div>
                 </div>
+                <div class="row my-3">
+                    <div class="col-12">
+                        Front Page Layout<br>
+                    </div>
+                </div>
             </div>
             <div class="col-12 col-md-6">
                 <div class="row">
@@ -871,7 +876,7 @@
     </div>
     <div class="info-panel-box-body boxShadow">
         <div class="admin-panels-servers">
-            <table class="table">
+            <table class="table table-borderless align-middle">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -886,7 +891,10 @@
                             <td>{{ panel.name }}</td>
                             <td>{{ panel.type }}</td>
                             <td>{{ panel.order }}</td>
-                            <td><button class="btn btn-warning boxShadow"><i class="fas fa-edit"></i></button></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning boxShadow"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger boxShadow"><i class="fas fa-trash"></i></button>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

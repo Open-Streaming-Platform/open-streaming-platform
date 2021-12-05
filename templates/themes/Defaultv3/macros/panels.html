@@ -1,7 +1,7 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 
-{% macro text_panel(title, header_color-bg, header_color_text, body_color_bg, body_color_text, content) %}
+{% macro text_panel(title, header_color_bg, header_color_text, body_color_bg, body_color_text, content) %}
 <div class="text-custom-container boxShadow">
     <div class="w-100" style="background-color:{{ header_color_bg }}; color:{{ header_color_text }};">
         <h3 class="textShadow"><b>{{ title }}</b></h3>
