@@ -418,24 +418,32 @@ function onMessage(msg) {
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
           var msg = Strophe.xmlunescape(Strophe.getText(body));
 
-          var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-          if (Strophe.getResourceFromJid(from) == 'SERVER') {
-              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+          // Testing Inline Commandline
+          if (msg.charAt(0) === '/') {
+              var commandString = msg.substring(1);
+              var splitCommandString = commandString.split(' ');
+              var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], JID: from};
+              console.log(commandArray);
           } else {
-              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
-          }
+              var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+              tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+              if (Strophe.getResourceFromJid(from) == 'SERVER') {
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+              } else {
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+              }
 
-          var msg = format_msg(msg)
-          msg = process_stickers(msg);
+              var msg = format_msg(msg)
+              msg = process_stickers(msg);
 
-          tempNode.querySelector("span.chatMessage").innerHTML = msg;
-          tempNode.style.display = "block";
-          chatDiv = document.getElementById("chat");
-          var needsScroll = checkChatScroll()
-          chatDiv.appendChild(tempNode);
-          if (needsScroll) {
-              scrollChatWindow();
+              tempNode.querySelector("span.chatMessage").innerHTML = msg;
+              tempNode.style.display = "block";
+              chatDiv = document.getElementById("chat");
+              var needsScroll = checkChatScroll()
+              chatDiv.appendChild(tempNode);
+              if (needsScroll) {
+                  scrollChatWindow();
+              }
           }
       }
   }
