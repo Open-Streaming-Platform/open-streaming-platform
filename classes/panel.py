@@ -11,7 +11,7 @@ class panel(db.Model):
         name : str
             Friendly Name of the Panel for Identification
         type : int
-            Indicator of Panel Type {0: Custom Markdown...}
+            Indicator of Panel Type {0: Custom Markdown, 1: Livestream List, 2: Video List, 3: Clip List, 4: Topic List}
     """
     __abstract__ = True
     name = db.Column(db.String(255))
@@ -63,11 +63,13 @@ class panelMapping(db.Model):
     pageName = db.Column(db.String(255))
     panelType = db.Column(db.Integer)
     panelId = db.Column(db.Integer)
+    panelOrder = db.Column(db.Integer)
 
-    def __init__(self, pageName, panelType, panelId):
+    def __init__(self, pageName, panelType, panelId, initialOrder):
         self.pageName = pageName
         self.panelType = panelType
         self.panelId = panelId
+        self.panelOrder = initialOrder
 
     def __repr__(self):
         return '<id %r>' % self.id
