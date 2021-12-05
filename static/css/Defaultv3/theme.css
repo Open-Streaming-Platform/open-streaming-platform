@@ -659,6 +659,7 @@ table tbody tr {
   width: 128px;
   height: 128px;
   border-radius: 6px;
+  object-fit: cover;
 }
 
 .channelBadges {
