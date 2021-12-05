@@ -949,7 +949,7 @@ def admin_page():
             if panelType != 0:
                 panelOrder = int(request.form['panel-order'])
 
-            if globalPanelId != "":
+            if globalPanelId == "":
                 newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelHeaderBg, panelHeaderText, panelBodyBg, panelBodyText, panelOrder, panelContent)
                 db.session.add(newGlobalPanel)
                 db.session.commit()
