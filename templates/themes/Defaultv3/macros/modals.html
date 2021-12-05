@@ -1807,7 +1807,7 @@
 <div class="modal fade" id="NewPanelModal" tabindex="-1" role="dialog" aria-labelledby="NewPanelModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
-      <form action="" method="post">
+      <form action="/settings/admin" id="global_panel_form" method="post">
           <div class="modal-header">
             <h5 class="modal-title" id="NewPanelModalTitle">Create a Global Panel</h5>
             <div class="float-end">
@@ -1818,6 +1818,10 @@
             <div class="mb-2">
               <label for="panel-name" class="form-label">Panel Name</label>
               <input type="text" class="form-control boxShadow" id="panel-name" name="panel-name" required>
+            </div>
+            <div class="mb-2">
+              <label for="panel-header" class="form-label">Panel Header Label</label>
+              <input type="text" class="form-control boxShadow" id="panel-header" name="panel-header" required>
             </div>
             <div class="mb-2">
               <label for="panel-type" class="form-label">Panel Type</label>
@@ -1860,13 +1864,15 @@
               <label for="panel-order" class="form-label">Panel Order</label>
               <select class="form-select boxShadow" id="panel-order" name="panel-order">
                 <option value="" selected disabled></option>
-                <option value="0">Custom Markdown/Text</option>
               </select>
             </div>
             <div class="mb-2">
               <label for="panel-content" class="form-label">Content</label>
               <textarea class="form-control boxShadow" id="panel-content" name="panel-content" rows="6"></textarea>
             </div>
+
+            <input type="hidden" value="globalPanel" id="global_panel_settingType" name="settingType">
+            <input type="hidden" value="" id=global_panel_id" name="globalPanelId">
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-primary boxShadow" data-bs-dismiss="modal">Cancel</button>
@@ -1876,4 +1882,7 @@
     </div>
   </div>
 </div>
+<script>
+    var easymde_global_panel_editor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("panel-content") });
+</script>
 {% endmacro %}

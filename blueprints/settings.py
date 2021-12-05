@@ -934,6 +934,41 @@ def admin_page():
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
+        elif settingType == "globalPanel":
+            panelName = request.form['panel-name']
+            panelType = int(request.form['panel-type'])
+            panelHeader = request.form['panel-header']
+            panelHeaderBg = request.form['panel-header-bg']
+            panelHeaderText = request.form['panel-header-text']
+            panelBodyBg = request.form['panel-body-bg']
+            panelBodyText = request.form['panel-body-text']
+            panelContent = request.form['panel-content']
+            globalPanelId = request.form['globalPanelId']
+
+            panelOrder = 0
+            if panelType != 0:
+                panelOrder = int(request.form['panel-order'])
+
+            if globalPanelId != "":
+                newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelHeaderBg, panelHeaderText, panelBodyBg, panelBodyText, panelOrder, panelContent)
+                db.session.add(newGlobalPanel)
+                db.session.commit()
+            else:
+                globalPanelId = int(globalPanelId)
+                existingPanel = panel.globalPanel.query.filter_by(id=globalPanelId).first()
+                if existingPanel is not None:
+                    existingPanel.name = panelName
+                    existingPanel.type = panelType
+                    existingPanel.header = panelHeader
+                    existingPanel.header_bg_color = panelHeaderBg
+                    existingPanel.header_text_color = panelHeaderText
+                    existingPanel.body_bg_color = panelBodyBg
+                    existingPanel.body_text_color = panelBodyText
+                    existingPanel.order = panelOrder
+                    existingPanel.content = panelContent
+                    db.session.commit()
+            return redirect(url_for('.admin_page', page="settings"))
+
         return redirect(url_for('.admin_page'))
 
 @settings_bp.route('/admin/create_test_task')
