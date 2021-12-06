@@ -47,6 +47,21 @@ class userPanel(panel):
         return '<id %r>' % self.id
 
 class panelMapping(db.Model):
+
+    """
+    OSP Content Panel Mapping
+    Attributes
+    ----------
+        pageName : str
+            html file name where the panel appears
+        panelType : int
+            Indicator of Panel Type {0: Global, 1: User}
+        panelId : int
+            ID value of the panel
+        panelOrder : int
+            Ordering of the panel as it appears on the pageName page
+    """
+
     id = db.Column(db.Integer, primary_key=True)
     pageName = db.Column(db.String(255))
     panelType = db.Column(db.Integer)
