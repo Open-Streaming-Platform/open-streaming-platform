@@ -877,11 +877,13 @@ table tbody tr {
 
 .panel-ui-list {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
   color: var(--font-color);
 }
 
 .panel-ui-list li {
-  background-color: var(--box2-background);
+  background-color: var(--box1-background);
   width: 350px;
   height: 35px;
   padding: 5px;
