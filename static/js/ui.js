@@ -63,6 +63,21 @@ function openModal(modalID) {
     $('#' + modalID).modal('show')
 }
 
+function map(arrayLike, fn) {
+    var ret = [], i = -1, len = arrayLike.length;
+    while (++i < len) ret[i] = fn(arrayLike[i]);
+    return ret;
+}
+
+function getNodeIds(node) {
+    if (node.nodeType === 1) return node.id;
+    var txt = '';
+    if (node = node.firstChild) do {
+        txt += getText(node);
+    } while (node = node.nextSibling);
+    return txt;
+}
+
 // Creates a Bootstrap Alert
 function createNewBSAlert(message,category) {
   var randomID = getRandomInt(1,9000);

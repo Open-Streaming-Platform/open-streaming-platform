@@ -49,6 +49,12 @@ var chart = new Chart(ctx, {
     }
 });
 
+// Sets the Front Page Panel Layout Object to be Sortable
+var frontPagePanelSortList = document.getElementById('panelOrderList');
+var frontPagePanelSortableObject = Sortable.create(frontPagePanelSortList, {
+  animation: 350
+});
+
 $('#maxClipLength').on('input', function() {
   var sliderValue = $(this).val();
   if (sliderValue != "") {
@@ -140,6 +146,11 @@ socket.on('admin_osp_component_status_update', function (msg) {
     console.log(msg['message']);
 });
 
+function testPageLayoutArray() {
+  var panelListItems = document.getElementById('panelOrderList').getElementsByTagName('li'),
+  panelListArray = map(panelListItems, getNodeIds);
+  console.log(panelListArray);
+}
 
 function updateSlider(inputID) {
     var sliderValue = $(inputID).val();

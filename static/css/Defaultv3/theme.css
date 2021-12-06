@@ -875,6 +875,22 @@ table tbody tr {
     box-shadow: var(--box-shadow);
 }
 
+.panel-ui-list {
+  list-style-type: none;
+  color: var(--font-color);
+}
+
+.panel-ui-list li {
+  background-color: var(--box2-background);
+  width: 350px;
+  height: 35px;
+  padding: 5px;
+  font-weight: bold;
+  text-shadow: var(--text-shadow);
+  box-shadow: var(--box-shadow);
+  margin: 5px 0px;
+}
+
 @media only screen and (max-width: 1130px) {
     .topNavbar .siteTitle {
         display:none;
