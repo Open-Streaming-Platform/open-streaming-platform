@@ -938,10 +938,6 @@ def admin_page():
             panelName = request.form['panel-name']
             panelType = int(request.form['panel-type'])
             panelHeader = request.form['panel-header']
-            panelHeaderBg = request.form['panel-header-bg']
-            panelHeaderText = request.form['panel-header-text']
-            panelBodyBg = request.form['panel-body-bg']
-            panelBodyText = request.form['panel-body-text']
             panelContent = request.form['panel-content']
             globalPanelId = request.form['globalPanelId']
 
@@ -950,7 +946,7 @@ def admin_page():
                 panelOrder = int(request.form['panel-order'])
 
             if globalPanelId == "":
-                newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelHeaderBg, panelHeaderText, panelBodyBg, panelBodyText, panelOrder, panelContent)
+                newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelOrder, panelContent)
                 db.session.add(newGlobalPanel)
                 db.session.commit()
             else:
@@ -960,10 +956,6 @@ def admin_page():
                     existingPanel.name = panelName
                     existingPanel.type = panelType
                     existingPanel.header = panelHeader
-                    existingPanel.header_bg_color = panelHeaderBg
-                    existingPanel.header_text_color = panelHeaderText
-                    existingPanel.body_bg_color = panelBodyBg
-                    existingPanel.body_text_color = panelBodyText
                     existingPanel.order = panelOrder
                     existingPanel.content = panelContent
                     db.session.commit()
