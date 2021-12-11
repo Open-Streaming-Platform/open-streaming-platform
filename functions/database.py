@@ -253,6 +253,7 @@ def dbFixes():
             {"name": "Streams", "type": 1, "header": "Currently Live", "order": 0, "content": ""},
             {"name": "Videos", "type": 2, "header": "Videos", "order": 0, "content": ""},
             {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
+            {"name": "Channels", "type": 5, "header": "Channels", "order": 0, "content": ""},
         ]
         for entry in defaultPanelList:
             newPanel = panel.globalPanel(entry['name'], entry['type'], entry['header'], entry['order'], entry['content'])
