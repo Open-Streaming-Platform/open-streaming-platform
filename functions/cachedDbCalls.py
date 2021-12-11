@@ -8,6 +8,7 @@ from classes import subscriptions
 from classes import Sec
 from classes import topics
 from classes import comments
+from classes import panel
 
 
 from classes.shared import cache
@@ -230,3 +231,7 @@ def searchUsers(term):
     else:
         return []
 
+@cache.memoize(timeout=30)
+def getGlobalPanel(panelId):
+    panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+    return panelQuery

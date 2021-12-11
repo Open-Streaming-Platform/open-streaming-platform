@@ -314,7 +314,8 @@ def convert_mins(timestamp):
     else:
         return "?"
 def globalPanelIdToPanelName(panelId):
-    panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+
+    panelQuery = cachedDbCalls.getGlobalPanel(panelId)
     if panelQuery is not None:
         return panelQuery.name
     else:

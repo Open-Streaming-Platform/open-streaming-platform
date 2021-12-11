@@ -960,6 +960,7 @@ def admin_page():
                     existingPanel.header = panelHeader
                     existingPanel.order = panelOrder
                     existingPanel.content = panelContent
+                    cache.delete_memoized(cachedDbCalls.getGlobalPanel, globalPanelId)
                     db.session.commit()
             return redirect(url_for('.admin_page', page="settings"))
 

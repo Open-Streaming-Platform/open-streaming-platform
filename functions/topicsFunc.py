@@ -7,6 +7,8 @@ from classes import topics, Channel, RecordedVideo
 
 from functions import cachedDbCalls, system
 
+from globals import globalvars
+
 def deleteTopic(topicID, toTopicID):
 
     topicID = int(topicID)
