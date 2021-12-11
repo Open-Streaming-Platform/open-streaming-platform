@@ -262,8 +262,7 @@ def dbFixes():
 
     # Establish Initial Main Page Panel Layout
     mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0).all()
-    if mainPagePanelMappingQuery is []:
-
+    if mainPagePanelMappingQuery == []:
         defaultMapping = ["Streams", "Topics", "Videos", "Clips"]
         for entry in defaultMapping:
             mappingIndex = defaultMapping.index(entry)
