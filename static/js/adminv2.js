@@ -508,6 +508,6 @@ function editGlobalPanel(panelId) {
     document.getElementById('gloabl_panel_modal_content').value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
     easymde_global_panel_editor.value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
     var doc = easymde_global_panel_editor.codemirror.getDoc();
-    doc.setValue(doc.getValue());
+    doc.setValue(easymde_global_panel_editor.value);
     openModal('NewPanelModal');
 }
