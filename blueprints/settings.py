@@ -409,6 +409,8 @@ def admin_page():
         bannedWordString = ','.join(bannedWordArray)
 
         globalPanelList = panel.globalPanel.query.all()
+        mainPagePanelMapping = panel.panelMapping.query.filter_by(name="root.main_page", type=0)
+        mainPagePanelMappingSort = sorted(mainPagePanelMapping, key=lambda x: x.order)
 
         globalStickers = stickers.stickers.query.filter_by(channelID=None).all()
 
@@ -430,7 +432,7 @@ def admin_page():
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
                                ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
-                               schedulerList=schedulerList, globalPanelList=globalPanelList)
+                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
