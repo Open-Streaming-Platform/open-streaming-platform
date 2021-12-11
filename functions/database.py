@@ -255,7 +255,7 @@ def dbFixes():
             {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
         ]
         for entry in defaultPanelList:
-            newPanel = panel.panel(entry['name'], entry['type'], entry['header'], entry['order'], entry['content'])
+            newPanel = panel.globalPanel(entry['name'], entry['type'], entry['header'], entry['order'], entry['content'])
             db.session.add(newPanel)
             db.session.commit()
 
