@@ -16,6 +16,7 @@ from classes import Channel
 from classes import Stream
 from classes import views
 from classes import apikey
+from classes import panel
 
 from functions import system
 from functions import cachedDbCalls
@@ -292,6 +293,21 @@ def delete_apiKey(message):
             apiKeyQuery = apikey.apikey.query.filter_by(id=apiKeyID, userID=current_user.id).first()
             if apiKeyQuery != None:
                 db.session.delete(apiKeyQuery)
+                db.session.commit()
+                return 'OK'
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio.on('deleteGlobalPanel')
+def delete_global_panel(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            globalPanelId = int(message['globalPanelId'])
+            panelQuery = panel.globalPanel.query.filter_by(id=globalPanelId).first()
+            if panelQuery is not None:
+                db.session.delete(panelQuery)
                 db.session.commit()
                 return 'OK'
             else:
