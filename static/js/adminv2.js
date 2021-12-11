@@ -498,3 +498,13 @@ function deleteStream() {
     streamCard.parentNode.removeChild(streamCard);
     document.getElementById('deleteStreamID').value = "";
 }
+
+function editGlobalPanel(panelId) {
+    document.getElementById('gloabl_panel_modal_id').value = panelId;
+    document.getElementById('gloabl_panel_modal_name').value = document.getElementById('globalPanel-name-' + panelId).innerHTML;
+    document.getElementById('gloabl_panel_modal_header').value = document.getElementById('globalPanel-header-' + panelId).innerHTML;
+    document.getElementById('gloabl_panel_modal_type').value = document.getElementById('globalPanel-type-' + panelId).innerHTML;
+    document.getElementById('gloabl_panel_modal_order').value = document.getElementById('globalPanel-order-' + panelId).innerHTML;
+    document.getElementById('gloabl_panel_modal_content').value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
+    openModal('NewPanelModal');
+}

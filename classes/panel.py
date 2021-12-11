@@ -35,9 +35,11 @@ class globalPanel(panel):
 
 class userPanel(panel):
     id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer)
 
-    def __init__(self, name, panelType, header, order, content):
+    def __init__(self, name, userId, panelType, header, order, content):
         self.name = name
+        self.userId = userId
         self.type = panelType
         self.header = header
         self.order = order

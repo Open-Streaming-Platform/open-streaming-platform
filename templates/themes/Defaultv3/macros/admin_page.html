@@ -895,13 +895,15 @@
                 </thead>
                 <tbody>
                     {% for panel in globalPanelList %}
-                        <tr>
-                            <td>{{ panel.name }}</td>
-                            <td>{{ panel.type }}</td>
-                            <td>{{ panel.order }}</td>
+                        <tr id="globalPanel-{{ panel.id }}">
+                            <td id="globalPanel-name-{{ panel.id }}">{{ panel.name }}</td>
+                            <td id="globalPanel-type-{{ panel.id }}">{{ panel.type }}</td>
+                            <td id="globalPanel-order-{{ panel.id }}">{{ panel.order }}</td>
+                            <td class="d-none" id="globalPanel-header-{{ panel.id }}">{{ panel.header }}</td>
+                            <td class="d-none" id="globalPanel-content-{{ panel.id }}">{{ panel.content }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning boxShadow"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger boxShadow"><i class="fas fa-trash"></i></button>
+                                <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editGlobalPanel('{{ panel.id }}');"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteGlobalPanelModal('{{ panel.id }}');"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                     {% endfor %}

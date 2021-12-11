@@ -1809,7 +1809,7 @@
     <div class="modal-content">
       <form action="/settings/admin" id="global_panel_form" method="post">
           <div class="modal-header">
-            <h5 class="modal-title" id="NewPanelModalTitle">Create a Global Panel</h5>
+            <h5 class="modal-title" id="NewPanelModalTitle">Create/Edit a Global Panel</h5>
             <div class="float-end">
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -1817,32 +1817,32 @@
           <div class="modal-body">
             <div class="mb-2">
               <label for="panel-name" class="form-label">Panel Name</label>
-              <input type="text" class="form-control boxShadow" id="panel-name" name="panel-name" required>
+              <input type="text" class="form-control boxShadow" id="gloabl_panel_modal_name" name="panel-name" required>
             </div>
             <div class="mb-2">
               <label for="panel-header" class="form-label">Panel Header Label</label>
-              <input type="text" class="form-control boxShadow" id="panel-header" name="panel-header" required>
+              <input type="text" class="form-control boxShadow" id="gloabl_panel_modal_header" name="panel-header" required>
             </div>
             <div class="mb-2">
               <label for="panel-type" class="form-label">Panel Type</label>
-              <select class="form-select boxShadow" id="panel-type" name="panel-type" required>
+              <select class="form-select boxShadow" id="gloabl_panel_modal_type" name="panel-type" required>
                 <option value="" selected disabled></option>
                 <option value="0">Custom Markdown/Text</option>
               </select>
             </div>
             <div class="mb-2">
               <label for="panel-order" class="form-label">Panel Order</label>
-              <select class="form-select boxShadow" id="panel-order" name="panel-order">
+              <select class="form-select boxShadow" id="gloabl_panel_modal_order" name="panel-order">
                 <option value="" selected disabled></option>
               </select>
             </div>
             <div class="mb-2">
               <label for="panel-content" class="form-label">Content</label>
-              <textarea class="form-control boxShadow" id="panel-content" name="panel-content" rows="6"></textarea>
+              <textarea class="form-control boxShadow" id="gloabl_panel_modal_content" name="panel-content" rows="6"></textarea>
             </div>
 
             <input type="hidden" value="globalPanel" id="global_panel_settingType" name="settingType">
-            <input type="hidden" value="" id=global_panel_id" name="globalPanelId">
+            <input type="hidden" value="" id=gloabl_panel_modal_id" name="globalPanelId">
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-primary boxShadow" data-bs-dismiss="modal">Cancel</button>
