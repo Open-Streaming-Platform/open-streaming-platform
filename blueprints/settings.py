@@ -409,8 +409,8 @@ def admin_page():
         bannedWordString = ','.join(bannedWordArray)
 
         globalPanelList = panel.globalPanel.query.all()
-        mainPagePanelMapping = panel.panelMapping.query.filter_by(pageName="root.main_page", type=0)
-        mainPagePanelMappingSort = sorted(mainPagePanelMapping, key=lambda x: x.order)
+        mainPagePanelMapping = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0)
+        mainPagePanelMappingSort = sorted(mainPagePanelMapping, key=lambda x: x.panelOrder)
 
         globalStickers = stickers.stickers.query.filter_by(channelID=None).all()
 
