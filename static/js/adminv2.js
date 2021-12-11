@@ -507,6 +507,5 @@ function editGlobalPanel(panelId) {
     document.getElementById('gloabl_panel_modal_order').value = document.getElementById('globalPanel-order-' + panelId).innerHTML;
     document.getElementById('gloabl_panel_modal_content').innerHTML = document.getElementById('globalPanel-content-' + panelId).innerHTML;
     easymde_global_panel_editor.value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
-    easymde_global_panel_editor.refresh();
     openModal('NewPanelModal');
 }
