@@ -511,3 +511,17 @@ function editGlobalPanel(panelId) {
     doc.setValue(easymde_global_panel_editor.value);
     openModal('NewPanelModal');
 }
+
+function deleteGlobalPanelModal(panelId) {
+    document.getElementById('globalPanelDeleteIDSelector').value = panelId;
+    openModal('globalPanelDeleteModal')
+}
+
+function deleteGlobalPanel() {
+    var globalPanelId = document.getElementById('globalPanelDeleteIDSelector').value;
+    socket.emit('deleteGlobalPanel', {globalPanelId: globalPanelId});
+    var panelDiv = document.getElementById('globalPanel-' + globalPanelId);
+    panelDiv.parentNode.removeChild(panelDiv);
+    document.getElementById('globalPanelDeleteIDSelector').value = "";
+    createNewBSAlert("Global Panel Deleted","success")
+}
