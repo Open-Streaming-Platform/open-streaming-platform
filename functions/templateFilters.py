@@ -8,6 +8,7 @@ from globals import globalvars
 
 from classes import Sec
 from classes import comments
+from classes import panel
 
 from functions import votes
 from functions import cachedDbCalls
@@ -51,6 +52,7 @@ def init(context):
     context.jinja_env.filters['localize_time'] = localize_time
     context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
     context.jinja_env.filters['convert_mins'] = convert_mins
+    context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -310,3 +312,9 @@ def convert_mins(timestamp):
         return minutes
     else:
         return "?"
+def globalPanelIdToPanelName(panelId):
+    panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+    if panelQuery is not None:
+        return panelQuery.name
+    else:
+        return "Unknown Panel ID # " + panelId

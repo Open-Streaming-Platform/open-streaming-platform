@@ -213,11 +213,9 @@
                     <div class="col-12">
                         <div>Front Page Layout <button type="button" class="btn btn-sm btn-success ms-2"><i class="fas fa-plus"></i></button></div>
                         <ul id="panelOrderList" class="panel-ui-list mt-2">
-                          <li id="1" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> Title 1</li>
-                          <li id="2" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> Title 2</li>
-                          <li id="3" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> Title 3</li>
-                          <li id="4" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> Title 4</li>
-                          <li id="5" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> Title 5</li>
+                            {% for entry in mainPagePanelMapping %}
+                                <li id="front-panel-mapping-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | globalPanelIdToPanelName }}</li>
+                            {% endfor %}
                         </ul>
                         <button type="button" class="btn btn-primary boxShadow" onclick="testPageLayoutArray();">Save</button>
                     </div>

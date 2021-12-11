@@ -260,6 +260,20 @@ def dbFixes():
             db.session.add(newPanel)
             db.session.commit()
 
+    # Establish Initial Main Page Panel Layout
+    mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0).all()
+    if mainPagePanelMappingQuery is []:
+
+        defaultMapping = ["Streams", "Topics", "Videos", "Clips"]
+        for entry in defaultMapping:
+            mappingIndex = defaultMapping.index(entry)
+            globalPanelQuery = panel.globalPanel.query.filter_by(name=entry).first()
+            if globalPanelQuery is not None:
+                newPanelMapping = panel.panelMapping('root.main_page', 0, globalPanelQuery.id, mappingIndex)
+                db.session.add(newPanelMapping)
+                db.session.commit()
+
+
     return True
 
 def init(app, user_datastore):
