@@ -16,6 +16,7 @@ from classes import topics
 from classes import Channel
 from classes import RecordedVideo
 from classes import Sec
+from classes import panel
 
 from functions import system
 from functions import cachedDbCalls
@@ -243,6 +244,20 @@ def dbFixes():
     for channel in ChannelQuery:
         channel.showHome = True
         db.session.commit()
+
+    # Query Existing Global Panels - If Panels are Empty, Generate Default
+    GlobalPanelQuery = panel.globalPanel.query.all()
+    if GlobalPanelQuery == []:
+        defaultPanelList = [
+            {"name": "Topics", "type": 4, "header": "Topics", "order": 0, "content": ""},
+            {"name": "Streams", "type": 1, "header": "Currently Live", "order": 0, "content": ""},
+            {"name": "Videos", "type": 2, "header": "Videos", "order": 0, "content": ""},
+            {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
+        ]
+        for entry in defaultPanelList:
+            newPanel = panel.panel(entry['name'], entry['type'], entry['header'], entry['order'], entry['content'])
+            db.session.add(newPanel)
+            db.session.commit()
 
     return True
 
