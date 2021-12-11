@@ -945,7 +945,8 @@ def admin_page():
 
             panelOrder = 0
             if panelType != 0:
-                panelOrder = int(request.form['panel-order'])
+                if 'panel-order' in request.form:
+                    panelOrder = int(request.form['panel-order'])
 
             if globalPanelId == "":
                 newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelOrder, panelContent)
