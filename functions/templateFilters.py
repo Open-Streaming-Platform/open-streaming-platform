@@ -53,6 +53,7 @@ def init(context):
     context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
     context.jinja_env.filters['convert_mins'] = convert_mins
     context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
+    context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -318,3 +319,7 @@ def globalPanelIdToPanelName(panelId):
         return panelQuery.name
     else:
         return "Unknown Panel ID # " + panelId
+
+def panelTypeIdToPanelTypeName(panelType):
+    panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List" }
+    return panelTypeMap[panelType]
