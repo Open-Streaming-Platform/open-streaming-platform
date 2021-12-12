@@ -527,7 +527,7 @@ function deleteGlobalPanel() {
 }
 
 function openFrontPageMappingModal() {
-    document.getElementById('gloabl_panel_front_page_mapping_add').value = '';
+    document.getElementById('global_panel_front_page_mapping_add').value = '';
     openModal('globalPanelAddFrontPageModal');
 }
 
