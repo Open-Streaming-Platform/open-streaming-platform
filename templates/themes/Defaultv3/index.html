@@ -24,7 +24,9 @@
 
         {% for panel in panelList %}
             {% set panelItem = getPanel(panel.panelId, 0) %}
-            {% if panelItem.type == 1  %}
+            {% if panelItem.type == 0 %}
+                {{ panels.text_panel(panelItem, panelItem.content) }}
+            {% elif panelItem.type == 1  %}
                 {% if streamList != [] %}
                     {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
                 {% endif %}
