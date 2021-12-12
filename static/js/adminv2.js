@@ -525,3 +525,21 @@ function deleteGlobalPanel() {
     document.getElementById('globalPanelDeleteIDSelector').value = "";
     createNewBSAlert("Global Panel Deleted","success")
 }
+
+function openFrontPageMappingModal() {
+    document.getElementById('gloabl_panel_front_page_mapping_add').value = '';
+    openModal('globalPanelAddFrontPageModal');
+}
+
+function add_global_panel_mapping_to_front_page() {
+    var globalPanelId = document.getElementById('global_panel_front_page_mapping_id').value;
+    var globalPanelText = document.getElementById('global_panel_front_page_mapping_id').text;
+    socket.emit('add_global_panel_mapping_front_page',{'globalPanelId': globalPanelId});
+    var panelMappingArrayElement = document.getElementById('panelOrderList');
+    var newpanelMappingArrayElementLI = document.createElement('li');
+    newpanelMappingArrayElementLI.setAttribute('id', 'front-panel-mapping-id-' + globalPanelId);
+    newpanelMappingArrayElementLI.classList = 'd-flex align-items-center';
+    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + globalPanelText;
+    panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
+    createNewBSAlert("Global Panel Added to Front Page","success")
+}

@@ -211,7 +211,7 @@
                 </div>
                 <div class="row my-3">
                     <div class="col-12">
-                        <div>Front Page Layout <button type="button" class="btn btn-sm btn-success ms-2"><i class="fas fa-plus"></i></button></div>
+                        <div>Front Page Layout <button type="button" class="btn btn-sm btn-success ms-2" onclick="openFrontPageMappingModal();"><i class="fas fa-plus"></i></button></div>
                         <ul id="panelOrderList" class="panel-ui-list mt-2">
                             {% for entry in mainPagePanelMapping %}
                                 <li id="front-panel-mapping-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | globalPanelIdToPanelName }}</li>
