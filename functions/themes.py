@@ -4,10 +4,13 @@ from PIL import Image
 from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
 from flask_security import current_user
 
+from functions import cachedDbCalls
+
 from globals import globalvars
 
 from classes.shared import db
 from classes import settings
+from classes import panel
 
 log = logging.getLogger('app.functions.database')
 
@@ -74,3 +77,9 @@ def faviconGenerator(imageLocation):
     processor.save(directory + "/favicon.ico")
     return 'OK'
 
+def getPagePanels(blueprintPageName, type=0, userID=0):
+    panelQuerySorted = None
+    if type == 0:
+        panelQuery = panel.panelMapping.query.filter_by(pageName=blueprintPageName, type=type).all()
+        panelQuerySorted = sorted(panelQuery, key=lambda x: x.panelOrder)
+    return panelQuerySorted

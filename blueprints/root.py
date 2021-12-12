@@ -124,7 +124,7 @@ def main_page():
                                    Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
                     .order_by(RecordedVideo.Clips.views.desc()).limit(16)
 
-        return render_template(themes.checkOverride('index.html'), streamList=activeStreams, videoList=recordedQuery, clipList=clipQuery)
+        return render_template(themes.checkOverride('index.html'), streamList=activeStreams, videoList=recordedQuery, clipList=clipQuery, panelList=themes.getPagePanels('root.main_page'))
 
 @root_bp.route('/search', methods=["POST"])
 def search_page():

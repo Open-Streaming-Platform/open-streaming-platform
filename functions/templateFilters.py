@@ -54,6 +54,7 @@ def init(context):
     context.jinja_env.filters['convert_mins'] = convert_mins
     context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
     context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
+    context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -313,6 +314,7 @@ def convert_mins(timestamp):
         return minutes
     else:
         return "?"
+
 def globalPanelIdToPanelName(panelId):
 
     panelQuery = cachedDbCalls.getGlobalPanel(panelId)
@@ -324,3 +326,8 @@ def globalPanelIdToPanelName(panelId):
 def panelTypeIdToPanelTypeName(panelType):
     panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List" }
     return panelTypeMap[panelType]
+
+def getGlobalPanelArg(panelId, arg):
+    panel = cachedDbCalls.getGlobalPanel(panelId)
+    result = getattr(panel, arg)
+    return result
