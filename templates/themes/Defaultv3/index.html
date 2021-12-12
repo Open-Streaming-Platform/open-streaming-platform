@@ -16,14 +16,26 @@
 
 {% block body %}
         <!-- Content Block Here-->
+
+        <!--Announcement Macro-->
+        {%  if sysSettings.serverMessage != "" and sysSettings.serverMessage != None %}
+            {{ panels.announcement_panel(sysSettings.serverMessageTitle, sysSettings.serverMessage) }}
+        {%  endif %}
+
         {% for panel in panelList %}
             {% set panelItem = getPanel(panel.panelId, 0) %}
             {% if panelItem.type == 1  %}
-                {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
+                {% if streamList != [] %}
+                    {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
+                {% endif %}
             {% elif panelItem.type == 2  %}
-                {{ panels.videos_panel(videoList, title=panelItem.header) }}
+                {% if videoList != [] %}
+                    {{ panels.videos_panel(videoList, title=panelItem.header) }}
+                {% endif %}
             {% elif panelItem.type == 3  %}
-                {{ panels.clips_panel(clipList, title=panelItem.header) }}
+                {% if clipList != [] %}
+                    {{ panels.clips_panel(clipList, title=panelItem.header) }}
+                {% endif %}
             {% elif panelItem.type == 4  %}
                 {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
             {% elif panelItem.type == 5  %}
@@ -31,31 +43,6 @@
             {% endif %}
         {% endfor %}
 
-        <!--Announcement Macro-->
-        {%  if sysSettings.serverMessage != "" and sysSettings.serverMessage != None %}
-            {{ panels.announcement_panel(sysSettings.serverMessageTitle, sysSettings.serverMessage) }}
-        {%  endif %}
-
-        <!--Featured Streamer Macro-->
-        {# {{ featured_streamer_panel(data) }} #}
-
-        <!--Top Live Streams Macro-->
-        {% if streamList != [] %}
-        {{ panels.live_streams_panel(streamList, title="Top Live Streams") }}
-        {% endif %}
-
-        <!--Trending Topics Macro-->
-        {{ panels.topics_panel(uploadTopics, title="Trending Topics") }}
-
-        {% if videoList != [] %}
-        <!--Popular Videos Macro-->
-        {{ panels.videos_panel(videoList, title="Popular Videos") }}
-        {% endif %}
-
-        {% if clipList != [] %}
-        <!--Popular Clips Macro-->
-        {{ panels.clips_panel(clipList, title="Popular Clips") }}
-        {% endif %}
 {% endblock %}
 
 {% block scripts %}
