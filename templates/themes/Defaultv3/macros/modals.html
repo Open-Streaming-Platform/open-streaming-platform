@@ -1900,7 +1900,7 @@
           <select class="form-select boxShadow" id="gloabl_panel_front_page_mapping_add" name="global_panel_front_page_mapping_id" required>
               <option value="" disabled></option>
               {% for entry in globalPanelList %}
-              <option value="{{ entry.id }}">entry.name</option>
+              <option value="{{ entry.id }}">{{ entry.name }}</option>
               {% endfor %}
           </select>
       </div>
