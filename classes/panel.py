@@ -62,6 +62,8 @@ class panelMapping(db.Model):
             ID value of the panel
         panelOrder : int
             Ordering of the panel as it appears on the pageName page
+        panelLocationId: int
+            Identifies the unique page/user/channel/etc based on the pageName.  This value is required to map to a Channel/LivePage/User/etc when couples with the correct pageName.
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -69,12 +71,14 @@ class panelMapping(db.Model):
     panelType = db.Column(db.Integer)
     panelId = db.Column(db.Integer)
     panelOrder = db.Column(db.Integer)
+    panelLocationId = db.Column(db.Integer)
 
-    def __init__(self, pageName, panelType, panelId, initialOrder):
+    def __init__(self, pageName, panelType, panelId, initialOrder, panelLocationId=0):
         self.pageName = pageName
         self.panelType = panelType
         self.panelId = panelId
         self.panelOrder = initialOrder
+        self.panelLocationId = panelLocationId
 
     def __repr__(self):
         return '<id %r>' % self.id

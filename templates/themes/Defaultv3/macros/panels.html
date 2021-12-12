@@ -10,9 +10,6 @@
 
 {% macro announcement_panel(title, message) %}
 <div class="announcement-container boxShadow">
-    <div class="float-end">
-      <button type="button" class="btn-close" aria-label="Close"></button>
-    </div>
     <h3 class="textShadow"><b>{{ title }}</b></h3>
     {{ message | markdown }}
 </div>
