@@ -314,3 +314,20 @@ def delete_global_panel(message):
                 db.session.commit()
                 db.session.close()
     return 'OK'
+
+@socketio.on('save_global_panel_mapping_front_page')
+def save_global_panel_front_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            globalPanelListArray = message['globalPanelArray']
+            existingFrontPageArray = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0).all()
+            for entry in existingFrontPageArray:
+                db.session.delete(entry)
+                db.session.commit()
+            for entry in globalPanelListArray:
+                position = globalPanelListArray[entry]
+                panelId = entry.replace('front-panel-mapping-id-', '')
+                newFrontPanelMapping = panel.panelMapping('root.main_page', 0, panelId, position)
+                db.session.add(newFrontPanelMapping)
+                db.session.commit()
+    return 'OK'

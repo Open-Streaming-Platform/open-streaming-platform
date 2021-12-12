@@ -544,3 +544,10 @@ function add_global_panel_mapping_to_front_page() {
     panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
     createNewBSAlert("Global Panel Added to Front Page","success")
 }
+
+function save_global_panel_mapping_front_page() {
+    var panelListItems = document.getElementById('panelOrderList').getElementsByTagName('li'),
+    panelListArray = map(panelListItems, getNodeIds);
+    socket.emit('save_global_panel_mapping_front_page', {globalPanelArray: panelListArray} )
+    createNewBSAlert("Front Page Panel List Saved","success")
+}
