@@ -235,3 +235,8 @@ def searchUsers(term):
 def getGlobalPanel(panelId):
     panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
     return panelQuery
+
+@cache.memoize(timeout=30)
+def getUserPanel(panelId):
+    panelQuery = panel.userPanel.query.filter_by(id=panelId).first()
+    return panelQuery

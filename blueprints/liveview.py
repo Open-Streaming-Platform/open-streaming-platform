@@ -14,6 +14,7 @@ from classes import Stream
 from classes import Sec
 from classes import banList
 from classes import stickers
+from classes import panel
 
 from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
@@ -188,8 +189,12 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
+            channelPanelList = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelType=1, panelLocationId=requestedChannel.id).all()
+            channelPanelListSorted = sorted(channelPanelList, key=lambda x: x.panelOrder)
+
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList,
+                                   bannedWords=bannedWordArray, channelPanelList=channelPanelListSorted)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:

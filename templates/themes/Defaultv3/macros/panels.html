@@ -837,6 +837,30 @@
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-12">
+                        <!--Live Channel Panel Layout Dropdown-->
+                        <div class="row mt-1">
+                            <div class="col-12">
+                                <div class="row userChannelSettings-dropdownHeader">
+                                    <div class="col-12">
+                                        <a href="javascript:void(0)" onclick="toggleDiv('channelPanel-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> Live Channel Panel Layout</b></h5></a>
+                                    </div>
+                                </div>
+                                <div id="channelPanel-{{channel.id}}" style="display:none;">
+                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <b><i class="far fa-window-maximize"></i> Configured Panels</b>
+                                                    <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick=""><i class="fas fa-plus"></i> Add</button>
+                                                </div>
+                                                <div class="card-body">
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
                         <!--Invites Dropdown-->
                         <div class="row mt-2">
                             <div class="col-12">
