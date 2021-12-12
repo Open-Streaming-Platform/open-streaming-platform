@@ -532,8 +532,8 @@ function openFrontPageMappingModal() {
 }
 
 function add_global_panel_mapping_to_front_page() {
-    var globalPanelId = document.getElementById('global_panel_front_page_mapping_id').value;
-    var globalPanelText = document.getElementById('global_panel_front_page_mapping_id').text;
+    var globalPanelId = document.getElementById('gloabl_panel_front_page_mapping_add').value;
+    var globalPanelText = document.getElementById('gloabl_panel_front_page_mapping_add').text;
     socket.emit('add_global_panel_mapping_front_page',{'globalPanelId': globalPanelId});
     var panelMappingArrayElement = document.getElementById('panelOrderList');
     var newpanelMappingArrayElementLI = document.createElement('li');
