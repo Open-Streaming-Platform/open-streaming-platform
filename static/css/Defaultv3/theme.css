@@ -358,6 +358,12 @@ table tbody tr {
     background-color: var(--box1-background);
 }
 
+.text-custom-container {
+    width:100%;
+    padding: 20px 20px;
+    background-color: var(--box2-background);
+}
+
 .featured-stream-container {
     width: 100%;
     padding: 20px 20px;

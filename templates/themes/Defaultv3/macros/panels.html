@@ -3,22 +3,17 @@
 
 {% macro text_panel(title, content) %}
 <div class="text-custom-container boxShadow">
-    <div class="w-100">
-        <h3 class="textShadow"><b>{{ title }}</b></h3>
-    </div>
-    <div class="w-100">
-        {{ content | markdown }}
-    </div>
-</div>
+    <h3 class="textShadow"><b>{{ title }}</b></h3>
+    {{ content | markdown }}
 {% endmacro %}
 
 {% macro announcement_panel(title, message) %}
-<div class="announcement-container boxShadow p-3">
+<div class="announcement-container boxShadow">
     <div class="float-end">
       <button type="button" class="btn-close" aria-label="Close"></button>
     </div>
     <h3 class="textShadow"><b>{{ title }}</b></h3>
-    {{ message }}
+    {{ message | markdown }}
 </div>
 {% endmacro %}
 
