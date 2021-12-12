@@ -55,6 +55,7 @@ def init(context):
     context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
     context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
     context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
+    context.jinja_env.filters['getPanel'] = getPanel
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -326,6 +327,12 @@ def globalPanelIdToPanelName(panelId):
 def panelTypeIdToPanelTypeName(panelType):
     panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List" }
     return panelTypeMap[panelType]
+
+def getPanel(panelId, panelType):
+    panel = None
+    if panelType == 0:
+        panel = cachedDbCalls.getGlobalPanel(panelId)
+    return panel
 
 def getGlobalPanelArg(panelId, arg):
     panel = cachedDbCalls.getGlobalPanel(panelId)

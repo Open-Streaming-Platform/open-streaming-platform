@@ -17,16 +17,17 @@
 {% block body %}
         <!-- Content Block Here-->
         {% for panel in panelList %}
-            {% if panel.panelId | getGlobalPanelArg('type') == 1  %}
-                {{ panels.live_streams_panel(streamList, title=getGlobalPanelArg(panel.panelId, 'header')) }}
-            {% elif panel.panelId | getGlobalPanelArg(type) == 2  %}
-                {{ panels.videos_panel(videoList, title=getGlobalPanelArg(panel.panelId, 'header')) }}
-            {% elif panel.panelId | getGlobalPanelArg(type) == 3  %}
-                {{ panels.clips_panel(clipList, title=getGlobalPanelArg(panel.panelId, 'header')) }}
-            {% elif panel.panelId | getGlobalPanelArg(type) == 4  %}
-                {{ panels.topics_panel(uploadTopics, title=getGlobalPanelArg(panel.panelId, 'header')) }}
-            {% elif panel.panelId | getGlobalPanelArg(type) == 5  %}
-                {{ panels.channels_panel(channelList, title=getGlobalPanelArg(panel.panelId, 'header')) }}
+            {% set panelItem = getPanel(panel.panelId, 0) %}
+            {% if panelItem.type == 1  %}
+                {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
+            {% elif panelItem.type == 2  %}
+                {{ panels.videos_panel(videoList, title=panelItem.header) }}
+            {% elif panelItem.type == 3  %}
+                {{ panels.clips_panel(clipList, title=panelItem.header) }}
+            {% elif panelItem.type == 4  %}
+                {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
+            {% elif panelItem.type == 5  %}
+                {{ panels.channels_panel(channelList, title=panelItem.header) }}
             {% endif %}
         {% endfor %}
 
