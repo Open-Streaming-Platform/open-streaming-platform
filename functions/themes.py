@@ -80,6 +80,6 @@ def faviconGenerator(imageLocation):
 def getPagePanels(blueprintPageName, type=0, userID=0):
     panelQuerySorted = None
     if type == 0:
-        panelQuery = panel.panelMapping.query.filter_by(pageName=blueprintPageName, type=type).all()
+        panelQuery = panel.panelMapping.query.filter_by(pageName=blueprintPageName, panelType=type).all()
         panelQuerySorted = sorted(panelQuery, key=lambda x: x.panelOrder)
     return panelQuerySorted
