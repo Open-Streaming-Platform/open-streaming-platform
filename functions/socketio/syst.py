@@ -325,7 +325,7 @@ def save_global_panel_front_page(message):
                 db.session.delete(entry)
                 db.session.commit()
             for entry in globalPanelListArray:
-                position = globalPanelListArray[entry]
+                position = globalPanelListArray.index(entry)
                 panelId = entry.replace('front-panel-mapping-id-', '')
                 newFrontPanelMapping = panel.panelMapping('root.main_page', 0, panelId, position)
                 db.session.add(newFrontPanelMapping)
