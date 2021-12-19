@@ -355,7 +355,7 @@ def orderVideoBy(videoList, orderById):
         return sorted(videoList, key=lambda x: x.videoDate, reverse=True)
     # Random
     elif orderById == 2:
-        return random.sample(videoList, len(videoList))
+        return random.sample(videoList, videoList.count())
     # Fallback Most Views
     else:
         return sorted(videoList, key=lambda x: x.views, reverse=True)
