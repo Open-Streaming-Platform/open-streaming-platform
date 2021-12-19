@@ -3,6 +3,7 @@ import time
 import datetime
 import os
 import pytz
+import random
 
 from globals import globalvars
 
@@ -57,6 +58,7 @@ def init(context):
     context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
     context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
     context.jinja_env.filters['getPanel'] = getPanel
+    context.jinja_env.filters['orderVideoBy'] = orderVideoBy
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -343,3 +345,14 @@ def getGlobalPanelArg(panelId, arg):
     panel = cachedDbCalls.getGlobalPanel(panelId)
     result = getattr(panel, arg)
     return result
+
+def orderVideoBy(videoList, orderById):
+    if orderById == 0:
+        return sorted(videoList, key=lambda x: x.views, reverse=True)
+    elif orderById == 1:
+        return sorted(videoList, key=lambda x: x.videoDate, reverse=True)
+    elif orderById == 2:
+        return sorted(videoList, key=lambda x: (x, random.random()))
+    else:
+        return sorted(videoList, key=lambda x: x.views, reverse=True)
+
