@@ -347,12 +347,16 @@ def getGlobalPanelArg(panelId, arg):
     return result
 
 def orderVideoBy(videoList, orderById):
+    # Most Views
     if orderById == 0:
         return sorted(videoList, key=lambda x: x.views, reverse=True)
+    # Most Recent
     elif orderById == 1:
         return sorted(videoList, key=lambda x: x.videoDate, reverse=True)
+    # Random
     elif orderById == 2:
-        return sorted(videoList, key=lambda x: (x, random.random()))
+        return random.sample(videoList, len(videoList))
+    # Fallback Most Views
     else:
         return sorted(videoList, key=lambda x: x.views, reverse=True)
 
