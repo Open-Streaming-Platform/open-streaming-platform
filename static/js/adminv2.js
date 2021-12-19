@@ -535,12 +535,12 @@ function add_global_panel_mapping_to_front_page() {
     var globalPanelElem = document.getElementById('global_panel_front_page_mapping_add');
     var globalPanelId = globalPanelElem.value;
     var globalPanelText = globalPanelElem.options[globalPanelElem.selectedIndex].text;
-    socket.emit('add_global_panel_mapping_front_page',{'globalPanelId': globalPanelId});
+    //socket.emit('add_global_panel_mapping_front_page',{'globalPanelId': globalPanelId});
     var panelMappingArrayElement = document.getElementById('panelOrderList');
     var newpanelMappingArrayElementLI = document.createElement('li');
     newpanelMappingArrayElementLI.setAttribute('id', 'front-panel-mapping-id-' + globalPanelId);
     newpanelMappingArrayElementLI.classList = 'd-flex align-items-center';
-    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + globalPanelText;
+    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + globalPanelText + '<span class="float-end"><i class="fas fa-times" onClick="RemoveFrontPageLayoutPanel();"></i></span>';
     panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
     createNewBSAlert("Global Panel Added to Front Page","success")
 }
