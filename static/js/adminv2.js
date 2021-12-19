@@ -540,7 +540,7 @@ function add_global_panel_mapping_to_front_page() {
     var newpanelMappingArrayElementLI = document.createElement('li');
     newpanelMappingArrayElementLI.setAttribute('id', 'front-panel-mapping-id-' + globalPanelId);
     newpanelMappingArrayElementLI.classList = 'd-flex align-items-center';
-    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + globalPanelText + '<span class="float-end"><i class="fas fa-times" onClick="RemoveFrontPageLayoutPanel();"></i></span>';
+    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + globalPanelText + '<span class="ms-auto me-2"><i class="fas fa-times" onClick="RemoveFrontPageLayoutPanel();"></i></span>';
     panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
     createNewBSAlert("Global Panel Added to Front Page","success")
 }

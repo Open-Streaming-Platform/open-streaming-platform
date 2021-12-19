@@ -214,7 +214,7 @@
                         <div>Front Page Layout <button type="button" class="btn btn-sm btn-success ms-2" onclick="openFrontPageMappingModal();"><i class="fas fa-plus"></i></button></div>
                         <ul id="panelOrderList" class="panel-ui-list mt-2">
                             {% for entry in mainPagePanelMapping %}
-                                <li id="front-panel-mapping-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | globalPanelIdToPanelName }} <span class="float-end"><i class="fas fa-times" onclick="RemoveFrontPageLayoutPanel();"></i></span></li>
+                                <li id="front-panel-mapping-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | globalPanelIdToPanelName }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemoveFrontPageLayoutPanel();"></i></span></li>
                             {% endfor %}
                         </ul>
                         <button type="button" class="btn btn-primary boxShadow" onclick="save_global_panel_mapping_front_page();">Save</button>
