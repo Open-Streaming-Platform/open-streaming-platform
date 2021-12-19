@@ -504,7 +504,7 @@ function editGlobalPanel(panelId) {
     document.getElementById('gloabl_panel_modal_name').value = document.getElementById('globalPanel-name-' + panelId).innerHTML;
     document.getElementById('gloabl_panel_modal_header').value = document.getElementById('globalPanel-header-' + panelId).innerHTML;
     document.getElementById('gloabl_panel_modal_type').value = document.getElementById('globalPanel-typeId-' + panelId).innerHTML;
-    document.getElementById('gloabl_panel_modal_order').value = document.getElementById('globalPanel-order-' + panelId).innerHTML;
+    document.getElementById('gloabl_panel_modal_order').value = document.getElementById('globalPanel-orderId-' + panelId).innerHTML;
     document.getElementById('gloabl_panel_modal_content').value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
     easymde_global_panel_editor.value = document.getElementById('globalPanel-content-' + panelId).innerHTML;
     var doc = easymde_global_panel_editor.codemirror.getDoc();
