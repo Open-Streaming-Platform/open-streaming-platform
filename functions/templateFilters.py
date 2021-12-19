@@ -53,6 +53,7 @@ def init(context):
     context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
     context.jinja_env.filters['convert_mins'] = convert_mins
     context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
+    context.jinja_env.filters['panelOrderIdToPanelOrderName'] = panelOrderIdToPanelOrderName
     context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
     context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
     context.jinja_env.filters['getPanel'] = getPanel
@@ -327,6 +328,10 @@ def globalPanelIdToPanelName(panelId):
 def panelTypeIdToPanelTypeName(panelType):
     panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List" }
     return panelTypeMap[panelType]
+
+def panelOrderIdToPanelOrderName(panelOrder):
+    panelOrderMap = {0: "Most Views / Live Viewers", 1: "Most Recent", 2: "Random"}
+    return panelOrderMap[panelOrder]
 
 def getPanel(panelId, panelType):
     panel = None
