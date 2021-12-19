@@ -32,7 +32,7 @@
                 {% endif %}
             {% elif panelItem.type == 2  %}
                 {% if videoList != [] %}
-                    {{ panels.videos_panel(videoList, title=panelItem.header) }}
+                    {{ panels.videos_panel(videoList, title=panelItem.header, order=panelItem.order) }}
                 {% endif %}
             {% elif panelItem.type == 3  %}
                 {% if clipList != [] %}
