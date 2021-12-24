@@ -997,7 +997,7 @@ function editChannelPanel(panelId, channelId) {
     document.getElementById('panel_modal_header').value = document.getElementById('channelPanel-header-' + panelId).innerHTML;
     document.getElementById('panel_modal_type').value = document.getElementById('channelPanel-typeId-' + panelId).innerHTML;
     document.getElementById('panel_modal_order').value = document.getElementById('channelPanel-orderId-' + panelId).innerHTML;
-    document.getElementById('panel_modal_content').value = document.getElementById('bannelPanel-content-' + panelId).innerHTML;
+    document.getElementById('panel_modal_content').value = document.getElementById('channelPanel-content-' + panelId).innerHTML;
     easymde_panel_editor.value = document.getElementById('channelPanel-content-' + panelId).innerHTML;
     var doc = easymde_panel_editor.codemirror.getDoc();
     doc.setValue(easymde_panel_editor.value);
