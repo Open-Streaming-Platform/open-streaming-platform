@@ -359,7 +359,7 @@ def save_panel_page(message):
             channelId = int(message['channelId'])
             channelQuery = Channel.Channel.query.filter_by(id=channelId, owningUser=current_user.id).first()
             if channelQuery != None:
-                PanelListArray = message['globalPanelArray']
+                PanelListArray = message['panelArray']
                 existingPageArray = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelLocationId=channelId, panelType=2).all()
 
                 for entry in existingPageArray:
