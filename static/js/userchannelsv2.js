@@ -1009,9 +1009,9 @@ function deleteChannelPanelModal(panelId) {
     openModal('panelDeleteModal')
 }
 
-function deletePanel() {
+function deletePanel(panelType) {
     var PanelId = document.getElementById('panelDeleteIDSelector').value;
-    socket.emit('deletePanel', {panelId: PanelId});
+    socket.emit('deletePanel', {panelId: PanelId, type: panelType});
     var panelDiv = document.getElementById('panel-' + PanelId);
     panelDiv.parentNode.removeChild(panelDiv);
     document.getElementById('panelDeleteIDSelector').value = "";
