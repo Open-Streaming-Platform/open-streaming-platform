@@ -854,6 +854,30 @@
                                                     <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="OpenAddChannelPanelModal('{{ channel.id }}');"><i class="fas fa-plus"></i> Add</button>
                                                 </div>
                                                 <div class="card-body">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Type</th>
+                                                            <th>Order</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for panel in channel.panels %}
+                                                        <tr>
+                                                            <td>{{ panel.name }}</td>
+                                                            <td>{{ panel.type | panelTypeIdToPanelTypeName }}</td>
+                                                            <td>{{ panel.order | panelOrderIdToPanelOrderName }}</td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-sm btn-warning boxShadow" onclick=""><i class="fas fa-edit"></i></button>
+                                                                <button type="button" class="btn btn-sm btn-danger boxShadow" onclick=""><i class="fas fa-trash"></i></button>
+                                                            </td>
+                                                        <td></td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
                                                 </div>
                                             </div>
                                         </div>

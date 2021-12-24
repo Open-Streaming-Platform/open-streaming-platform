@@ -48,6 +48,22 @@ class userPanel(panel):
     def __repr__(self):
         return '<id %r>' % self.id
 
+class channelPanel(panel):
+    __tablename__ = "channelPanel"
+    id = db.Column(db.Integer, primary_key=True)
+    channelId = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+
+    def __init__(self, name, channelId, panelType, header, order, content):
+        self.name = name
+        self.channelId = channelId
+        self.type = panelType
+        self.header = header
+        self.order = order
+        self.content = content
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
 class panelMapping(db.Model):
 
     """
@@ -57,7 +73,7 @@ class panelMapping(db.Model):
         pageName : str
             html file name where the panel appears
         panelType : int
-            Indicator of Panel Type {0: Global, 1: User}
+            Indicator of Panel Type {0: Global, 1: User, 2: Channel}
         panelId : int
             ID value of the panel
         panelOrder : int

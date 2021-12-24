@@ -43,6 +43,7 @@ class Channel(db.Model):
     webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
     restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
     chatStickers = db.relationship('stickers', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    panels = db.relationship('channelPanel', backref='channel', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description):
         self.owningUser = owningUser
