@@ -874,6 +874,7 @@
                                                                 <td class="d-none" id="channelPanel-header-{{ panel.id }}">{{ panel.header }}</td>
                                                                 <td class="d-none" id="channelPanel-content-{{ panel.id }}">{{ panel.content }}</td>
                                                                 <td>
+                                                                    <button type="button" class="btn btn-sm btn-success boxShadow" onclick="addPanelToMapping('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-arrow-right"></i></button>
                                                                     <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editChannelPanel('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-edit"></i></button>
                                                                     <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteChannelPanelModal('{{ panel.id }}');"><i class="fas fa-trash"></i></button>
                                                                 </td>
@@ -885,12 +886,11 @@
                                                 </div>
                                                 <div class="card-header">
                                                     <b><i class="far fa-window-restore"></i> Panel Order</b>
-                                                    <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="OpenAddChannelPanelModal('{{ channel.id }}');"><i class="fas fa-plus"></i> Add</button>
                                                 </div>
                                                 <div class="card-body">
-                                                    <ul id="panelOrderList" class="panel-ui-list mt-2">
+                                                    <ul id="panelOrderList-{{ channel.id }}" class="panel-ui-list mt-2">
                                                         {% for entry in channelPanelMapping[channel.id] %}
-                                                            <li id="channel-panel-mapping-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemoveLayoutPanel(this);"></i></span></li>
+                                                            <li id="channel-panel-mapping-{{ channel.id }}-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemoveLayoutPanel(this);"></i></span></li>
                                                         {% endfor %}
                                                     </ul>
                                                     <button type="button" class="btn btn-primary boxShadow" onclick="save_channel_panel_mapping({{ channel.id }});">Save</button>
