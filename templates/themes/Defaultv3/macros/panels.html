@@ -895,6 +895,13 @@
                                                     </ul>
                                                     <button type="button" class="btn btn-primary boxShadow" onclick="save_channel_panel_mapping({{ channel.id }});">Save</button>
                                                 </div>
+                                                <script>
+                                                    // Sets the Page Panel Layout Object to be Sortable
+                                                    var pagePanelSortList_{{ channel.id }} = document.getElementById('panelOrderList-{{ channel.id }}');
+                                                    var pagePanelSortableObject_{{ channel.id }} = Sortable.create(pagePanelSortList_{{ channel.id }}, {
+                                                      animation: 350
+                                                    });
+                                                </script>
                                             </div>
                                         </div>
                                      </div>
