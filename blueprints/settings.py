@@ -1045,7 +1045,7 @@ def settings_channels_page():
             panelHeader = request.form['panel-header']
             panelContent = request.form['panel-content']
             PanelId = request.form['PanelId']
-            panelChannelId = id(request.form['PanelLocationId'])
+            panelChannelId = int(request.form['PanelLocationId'])
 
             channelQuery = Channel.Channel.query.filter_by(id=panelChannelId, owningUser=current_user.id).first()
             if channelQuery is not None:
