@@ -1017,3 +1017,16 @@ function deletePanel(panelType) {
     document.getElementById('panelDeleteIDSelector').value = "";
     createNewBSAlert("Panel Deleted","success")
 }
+
+function addPanelToMapping(panelId, channelId) {
+
+    var PanelText = document.getElementById('channelPanel-name-' + panelId).innerHTML;
+
+    var panelMappingArrayElement = document.getElementById('panelOrderList-' + channelId);
+    var newpanelMappingArrayElementLI = document.createElement('li');
+    newpanelMappingArrayElementLI.setAttribute('id', 'panel-mapping-' + channelId + '-id-' + panelId);
+    newpanelMappingArrayElementLI.classList = 'd-flex align-items-center';
+    newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + PanelText + '<span class="ms-auto me-2"><i class="fas fa-times" onClick="RemovePageLayoutPanel(this);"></i></span>';
+    panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
+    createNewBSAlert("Panel Added to Live Page","success")
+}
