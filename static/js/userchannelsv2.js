@@ -1003,3 +1003,17 @@ function editChannelPanel(panelId, channelId) {
     doc.setValue(easymde_panel_editor.value);
     openModal('NewPanelModal');
 }
+
+function deleteChannelPanelModal(panelId) {
+    document.getElementById('panelDeleteIDSelector').value = panelId;
+    openModal('panelDeleteModal')
+}
+
+function deletePanel() {
+    var PanelId = document.getElementById('PanelDeleteIDSelector').value;
+    socket.emit('deletePanel', {panelId: PanelId});
+    var panelDiv = document.getElementById('panel-' + globalPanelId);
+    panelDiv.parentNode.removeChild(panelDiv);
+    document.getElementById('PanelDeleteIDSelector').value = "";
+    createNewBSAlert("Panel Deleted","success")
+}

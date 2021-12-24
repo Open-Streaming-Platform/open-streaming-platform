@@ -865,7 +865,7 @@
                                                         </thead>
                                                         <tbody>
                                                         {% for panel in channel.panels %}
-                                                            <tr>
+                                                            <tr id="panel-{{ panel.id }}">
                                                                 <td id="channelPanel-name-{{ panel.id }}">{{ panel.name }}</td>
                                                                 <td>{{ panel.type | panelTypeIdToPanelTypeName }}</td>
                                                                 <td class="d-none" id="channelPanel-typeId-{{ panel.id }}">{{ panel.type }}</td>
@@ -875,7 +875,7 @@
                                                                 <td class="d-none" id="channelPanel-content-{{ panel.id }}">{{ panel.content }}</td>
                                                                 <td>
                                                                     <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editChannelPanel('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-edit"></i></button>
-                                                                    <button type="button" class="btn btn-sm btn-danger boxShadow" onclick=""><i class="fas fa-trash"></i></button>
+                                                                    <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteChannelPanelModal('{{ panel.id }}');"><i class="fas fa-trash"></i></button>
                                                                 </td>
                                                             <td></td>
                                                             </tr>
