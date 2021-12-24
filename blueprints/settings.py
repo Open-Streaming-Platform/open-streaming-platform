@@ -936,7 +936,7 @@ def admin_page():
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
-        elif settingType == "globalPanel":
+        elif settingType == "panel":
             panelName = request.form['panel-name']
             panelType = int(request.form['panel-type'])
             panelHeader = request.form['panel-header']

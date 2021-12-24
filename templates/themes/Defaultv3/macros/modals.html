@@ -1803,6 +1803,68 @@
 </div>
 {% endmacro %}
 
+{% macro new_panel(panelSubmitURL) %}
+<div class="modal fade" id="NewPanelModal" tabindex="-1" role="dialog" aria-labelledby="NewPanelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="{{ panelSubmitURL }}" id="global_panel_form" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="NewPanelModalTitle">Create/Edit a Panel</h5>
+            <div class="float-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="mb-2">
+              <label for="panel_modal_name" class="form-label">Panel Name</label>
+              <input type="text" class="form-control boxShadow" id="panel_modal_name" name="panel-name" required>
+            </div>
+            <div class="mb-2">
+              <label for="panel_modal_header" class="form-label">Panel Header Label</label>
+              <input type="text" class="form-control boxShadow" id="panel_modal_header" name="panel-header" required>
+            </div>
+            <div class="mb-2">
+              <label for="panel_modal_type" class="form-label">Panel Type</label>
+              <select class="form-select boxShadow" id="panel_modal_type" name="panel-type" required>
+                  <option value="" disabled></option>
+                  <option value="0">Custom Markdown/Text</option>
+                  <option value="1">Live Stream List</option>
+                  <option value="2">Video List</option>
+                  <option value="3">Clip List</option>
+                  <option value="4">Topic List</option>
+                  <option value="5">Channel List</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <label for="panel_modal_order" class="form-label">Panel Order</label>
+              <select class="form-select boxShadow" id="panel_modal_order" name="panel-order">
+                  <option value="" disabled></option>
+                  <option value="0">Most Views / Live Viewers</option>
+                  <option value="1">Most Recent</option>
+                  <option value="2">Random</option>
+              </select>
+            </div>
+            <div class="mb-2">
+              <label for="panel_modal_content" class="form-label">Content</label>
+              <textarea class="form-control boxShadow" id="panel_modal_content" name="panel-content" rows="6"></textarea>
+            </div>
+
+            <input type="hidden" value="panel" id="panel_settingType" name="settingType">
+            <input type="hidden" value="" id="panel_modal_id" name="PanelId">
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-primary boxShadow" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-success boxShadow" data-bs-dismiss="modal">Save</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+    var easymde_panel_editor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById('panel_modal_content') });
+</script>
+{% endmacro %}
+
 {% macro new_global_panel() %}
 <div class="modal fade" id="NewPanelModal" tabindex="-1" role="dialog" aria-labelledby="NewPanelModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
