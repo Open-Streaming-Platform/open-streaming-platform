@@ -1039,6 +1039,44 @@ def settings_channels_page():
                 else:
                     flash("Sticker Did Not Define Channel ID", "Error")
             return redirect(url_for('settings.settings_channels_page'))
+        elif requestType == "panel":
+            panelName = request.form['panel-name']
+            panelType = int(request.form['panel-type'])
+            panelHeader = request.form['panel-header']
+            panelContent = request.form['panel-content']
+            PanelId = request.form['PanelId']
+            panelChannelId = id(request.form['PanelLocationId'])
+
+            channelQuery = Channel.Channel.query.filter_by(id=panelChannelId, owningUser=current_user.id).first()
+            if channelQuery is not None:
+
+                panelOrder = 0
+                if panelType != 0:
+                    if 'panel-order' in request.form:
+                        panelOrder = int(request.form['panel-order'])
+
+                if PanelId == "":
+                    newChannellPanel = panel.channelPanel(panelName, channelQuery.id, panelType, panelHeader, panelOrder, panelContent)
+                    db.session.add(newChannellPanel)
+                    db.session.commit()
+                    flash("New Channel Panel Added", "Success")
+                else:
+                    existingPanel = panel.channelPanel.query.filter_by(id=PanelId, channelId=channelQuery.id).first()
+                    if existingPanel is not None:
+                        existingPanel.name = panelName
+                        existingPanel.type = panelType
+                        existingPanel.header = panelHeader
+                        existingPanel.order = panelOrder
+                        existingPanel.content = panelContent
+                        cache.delete_memoized(cachedDbCalls.getChannelPanel, PanelId)
+                        db.session.commit()
+                        flash("Panel Updated", "Success")
+                    else:
+                        flash("Invalid Panel", "Error")
+                return redirect(url_for('settings.settings_channels_page'))
+            else:
+                flash("Invalid Channel", "Error")
+                return redirect(url_for('settings.settings_channels_page'))
 
         channelName = system.strip_html(request.form['channelName'])
         topic = request.form['channeltopic']
