@@ -1019,9 +1019,7 @@ function deletePanel(panelType) {
 }
 
 function addPanelToMapping(panelId, channelId) {
-
     var PanelText = document.getElementById('channelPanel-name-' + panelId).innerHTML;
-
     var panelMappingArrayElement = document.getElementById('panelOrderList-' + channelId);
     var newpanelMappingArrayElementLI = document.createElement('li');
     newpanelMappingArrayElementLI.setAttribute('id', 'panel-mapping-' + channelId + '-id-' + panelId);
@@ -1029,4 +1027,16 @@ function addPanelToMapping(panelId, channelId) {
     newpanelMappingArrayElementLI.innerHTML = '<i class="fas fa-bars me-2"></i> ' + PanelText + '<span class="ms-auto me-2"><i class="fas fa-times" onClick="RemovePageLayoutPanel(this);"></i></span>';
     panelMappingArrayElement.appendChild(newpanelMappingArrayElementLI);
     createNewBSAlert("Panel Added to Live Page","success")
+}
+
+function savePanelMapping(channelId) {
+    var panelListItems = document.getElementById('panelOrderList-' + channelId).getElementsByTagName('li'),
+    panelListArray = map(panelListItems, getNodeIds);
+    socket.emit('save_panel_mapping_page', {panelArray: panelListArray, channelId: channelId} )
+    createNewBSAlert("Channel Panel List Saved","success")
+}
+
+function RemovePageLayoutPanel(callingElm) {
+    var listElm = callingElm.parentElement.parentElement;
+    listElm.parentNode.removeChild(listElm);
 }

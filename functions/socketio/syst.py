@@ -351,3 +351,28 @@ def save_global_panel_front_page(message):
                 db.session.add(newFrontPanelMapping)
                 db.session.commit()
     return 'OK'
+
+@socketio.on('save_panel_mapping_page')
+def save_panel_page(message):
+    if current_user.is_authenticated:
+        if 'channelId' in message:
+            channelId = int(message['channelId'])
+            channelQuery = Channel.Channel.query.filter_by(id=channelId, owningUser=current_user.id).first()
+            if channelQuery != None:
+                PanelListArray = message['globalPanelArray']
+                existingPageArray = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelLocationId=channelId, panelType=2).all()
+
+                for entry in existingPageArray:
+                    db.session.delete(entry)
+                    db.session.commit()
+
+                for entry in PanelListArray:
+                    position = PanelListArray.index(entry)
+                    panelId = entry.replace('channel-panel-mapping-' + channelId + '-id-', '')
+                    newPanelMapping = panel.panelMapping('liveview.view_page', 2, panelId, position, panelLocationId=channelId)
+                    db.session.add(newPanelMapping)
+                    db.session.commit()
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
