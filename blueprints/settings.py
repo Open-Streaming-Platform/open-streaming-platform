@@ -941,7 +941,7 @@ def admin_page():
             panelType = int(request.form['panel-type'])
             panelHeader = request.form['panel-header']
             panelContent = request.form['panel-content']
-            globalPanelId = request.form['globalPanelId']
+            globalPanelId = request.form['PanelId']
 
             panelOrder = 0
             if panelType != 0:
