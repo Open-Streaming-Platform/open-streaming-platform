@@ -1292,8 +1292,9 @@ def settings_channels_page():
                 channelModList.append(user['username'] + "@" + user['domain'])
         channelMods[chan.channelLoc] = channelModList
 
-    # Calculate Channel Views by Date based on Video or Live Views
+    # Calculate Channel Views by Date based on Video or Live Views and Generate Chanel Panel Ordering
     user_channels_stats = {}
+    channelPanelOrder = {}
     for channel in user_channels:
 
         # 30 Days Viewer Stats
@@ -1336,8 +1337,14 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
+        channelPanelOrderMappingQuery = panel.panelMapping.query.filter_by(panelType=2, panelLocationId=channel.id).all()
+        ChannelPanelOrderArray = []
+        for panelEntry in channelPanelOrderMappingQuery:
+            ChannelPanelOrderArray.append(panelEntry)
+        channelPanelOrder[channel.id] = sorted(ChannelPanelOrderArray, key=lambda x: x.panelOrder)
+
     return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
-                           viewStats=user_channels_stats, rtmpList=activeRTMPList)
+                           viewStats=user_channels_stats, rtmpList=activeRTMPList, channelPanelMapping=channelPanelOrder)
 
 
 @settings_bp.route('/channels/chat', methods=['POST', 'GET'])
