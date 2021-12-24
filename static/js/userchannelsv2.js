@@ -1010,10 +1010,10 @@ function deleteChannelPanelModal(panelId) {
 }
 
 function deletePanel() {
-    var PanelId = document.getElementById('PanelDeleteIDSelector').value;
+    var PanelId = document.getElementById('panelDeleteIDSelector').value;
     socket.emit('deletePanel', {panelId: PanelId});
-    var panelDiv = document.getElementById('panel-' + globalPanelId);
+    var panelDiv = document.getElementById('panel-' + PanelId);
     panelDiv.parentNode.removeChild(panelDiv);
-    document.getElementById('PanelDeleteIDSelector').value = "";
+    document.getElementById('panelDeleteIDSelector').value = "";
     createNewBSAlert("Panel Deleted","success")
 }
