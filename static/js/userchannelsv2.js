@@ -984,3 +984,8 @@ function deleteClipModal(clipID) {
     document.getElementById('clipDeleteIDSelector').value = clipID;
     openModal('clipDeleteModal');
 }
+
+function OpenAddChannelPanelModal(channelId) {
+    document.getElementById('panel_location_id').value = channelId;
+    openModal('NewPanelModal');
+}
