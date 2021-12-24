@@ -300,6 +300,26 @@ def delete_apiKey(message):
                 db.session.close()
     return 'OK'
 
+@socketio.on('deletePanel')
+def delete_global_panel(message):
+    if current_user.is_authenticated:
+        panelType = message['type']
+        if panelType == 'channel':
+            panelId = int(message['panelId'])
+            panelQuery = panel.channelPanel.query.filter_by(id=panelId).first()
+            if panelQuery != None:
+                channelQuery = Channel.Channel.query.filter_by(id=panelQuery.channelId, owningUser=current_user.id).first()
+                if channelQuery != None:
+                    db.session.delete(panelQuery)
+                    db.session.commit()
+                else:
+                    db.session.commit()
+                    db.session.close()
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
 @socketio.on('deleteGlobalPanel')
 def delete_global_panel(message):
     if current_user.is_authenticated:
