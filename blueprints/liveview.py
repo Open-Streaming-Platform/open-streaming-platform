@@ -189,7 +189,7 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
-            channelPanelList = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelType=1, panelLocationId=requestedChannel.id).all()
+            channelPanelList = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelType=2, panelLocationId=requestedChannel.id).all()
             channelPanelListSorted = sorted(channelPanelList, key=lambda x: x.panelOrder)
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,

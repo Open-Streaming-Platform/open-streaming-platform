@@ -348,6 +348,8 @@ def getPanel(panelId, panelType):
     panel = None
     if panelType == 0:
         panel = cachedDbCalls.getGlobalPanel(panelId)
+    elif panelType == 2:
+        panel = cachedDbCalls.getChannelPanel(panelId)
     return panel
 
 def getGlobalPanelArg(panelId, arg):

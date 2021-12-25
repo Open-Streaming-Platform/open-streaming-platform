@@ -33,6 +33,30 @@
                 {{ panels.live_stream(channel) }}
                 {{ panels.stream_control_panel(channel, current_user) }}
                 {{ panels.stream_metadata_panel(channel, stream) }}
+
+                {% for panel in channelPanelList %}
+                    {% set panelItem = getPanel(panel.panelId, 2) %}
+                    {% if panelItem.type == 0 %}
+                        {{ panels.text_panel(panelItem.header, panelItem.content) }}
+                    {% elif panelItem.type == 1  %}
+                        {% if streamList != [] %}
+                            {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
+                        {% endif %}
+                    {% elif panelItem.type == 2  %}
+                        {% if videoList != [] %}
+                            {{ panels.videos_panel(videoList, title=panelItem.header, order=panelItem.order) }}
+                        {% endif %}
+                    {% elif panelItem.type == 3  %}
+                        {% if clipList != [] %}
+                            {{ panels.clips_panel(clipList, title=panelItem.header) }}
+                        {% endif %}
+                    {% elif panelItem.type == 4  %}
+                        {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
+                    {% elif panelItem.type == 5  %}
+                        {{ panels.channels_panel(channelList, title=panelItem.header) }}
+                    {% endif %}
+                {% endfor %}
+
             </div>
         </div>
         <div id="sidePanel" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
