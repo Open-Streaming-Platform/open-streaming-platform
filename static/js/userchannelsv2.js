@@ -1030,10 +1030,11 @@ function addPanelToMapping(panelId, channelId) {
 }
 
 function savePanelMapping(channelId) {
-    var panelListItems = document.getElementById('panelOrderList-' + channelId).getElementsByTagName('li'),
+    var panelListItems = document.getElementById('panelOrderList-' + channelId).getElementsByTagName('li');
     panelListArray = map(panelListItems, getNodeIds);
-    socket.emit('save_panel_mapping_page', {panelArray: panelListArray, channelId: channelId} )
-    createNewBSAlert("Channel Panel List Saved","success")
+    socket.emit('save_panel_mapping_page', {panelArray: panelListArray, channelId: channelId} );
+    console.log(panelListArray);
+    createNewBSAlert("Channel Panel List Saved","success");
 }
 
 function RemovePageLayoutPanel(callingElm) {
