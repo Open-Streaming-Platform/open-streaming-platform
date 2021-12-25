@@ -330,7 +330,7 @@ def globalPanelIdToPanelName(panelId):
 
 def channelPanelIdToPanelName(panelId):
 
-    panelQuery = cachedDbCalls.getChannelPanelPanel(panelId)
+    panelQuery = cachedDbCalls.getChannelPanel(panelId)
     if panelQuery is not None:
         return panelQuery.name
     else:
