@@ -890,7 +890,7 @@
                                                 <div class="card-body">
                                                     <ul id="panelOrderList-{{ channel.id }}" class="panel-ui-list mt-2">
                                                         {% for entry in channelPanelMapping[channel.id] %}
-                                                            <li id="channel-panel-mapping-{{ channel.id }}-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemovePageLayoutPanel(this);"></i></span></li>
+                                                            <li id="panel-mapping-{{ channel.id }}-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemovePageLayoutPanel(this);"></i></span></li>
                                                         {% endfor %}
                                                     </ul>
                                                     <button type="button" class="btn btn-primary boxShadow" onclick="savePanelMapping({{ channel.id }});">Save</button>

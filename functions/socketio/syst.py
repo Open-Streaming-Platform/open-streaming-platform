@@ -368,7 +368,7 @@ def save_panel_page(message):
 
                 for entry in PanelListArray:
                     position = PanelListArray.index(entry)
-                    panelId = entry.replace('channel-panel-mapping-' + channelId + '-id-', '')
+                    panelId = entry.replace('panel-mapping-' + str(channelId) + '-id-', '')
                     newPanelMapping = panel.panelMapping('liveview.view_page', 2, panelId, position, panelLocationId=channelId)
                     db.session.add(newPanelMapping)
                     db.session.commit()
