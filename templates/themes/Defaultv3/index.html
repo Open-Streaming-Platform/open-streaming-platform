@@ -43,7 +43,7 @@
             {% elif panelItem.type == 5  %}
                 {{ panels.channels_panel(channelList, title=panelItem.header) }}
             {% elif panelItem.type == 6 %}
-                {% set liveStream = getLiveStream(panel.target) %}
+                {% set liveStream = getLiveStream(panelItem.target) %}
                 {% if liveStream != None %}
                     {{ panels.featured_streamer_panel(liveStream, liveStream.channel, panelItem.content, title=panelItem.header) }}
                 {% endif %}
