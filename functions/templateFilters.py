@@ -357,7 +357,7 @@ def getPanel(panelId, panelType):
     return panel
 
 def getLiveStream(channelId):
-    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId).first()
+    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId, active=True).first()
     return liveStreamQuery
 
 def getLiveStreamURL(channel):
