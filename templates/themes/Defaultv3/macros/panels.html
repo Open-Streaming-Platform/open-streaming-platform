@@ -92,9 +92,7 @@
   <h4 class="textShadow"><b>{{ title }}</b></h4>
   <div class="row">
     <div class="col-sm-12 col-md-5">
-        <a href="/view/{{ channel.channelLoc }}">
         {{ live_stream(channel, videoDivID=channel.id, muted=True) }}
-        </a>
     </div>
     <div class="col-sm-12 col-md-7">
       <div class="ms-4">
@@ -161,6 +159,12 @@
            });
    });
    player.play();
+
+   player.on('click', function(evt) {
+       if (evt.target.tagName === 'VIDEO') {
+           window.open("/view/{{ channel.channelLoc }}","_self")
+       }
+   });
 </script>
 {% endmacro %}
 
