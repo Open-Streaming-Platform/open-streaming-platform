@@ -489,6 +489,7 @@ app.logger.info({"level": "info", "message": "Setting Jinja2 Global Env Function
 app.jinja_env.globals.update(check_isValidChannelViewer=securityFunc.check_isValidChannelViewer)
 app.jinja_env.globals.update(check_isCommentUpvoted=votes.check_isCommentUpvoted)
 app.jinja_env.globals.update(getPanel=templateFilters.getPanel)
+app.jinja_env.globals.update(getLiveStream=templateFilters.getLiveStream)
 
 app.logger.info({"level": "info", "message": "Setting Flask Context Processors"})
 #----------------------------------------------------------------------------#

@@ -18,6 +18,7 @@ class panel(db.Model):
     type = db.Column(db.Integer)
     header = db.Column(db.String(1024))
     order = db.Column(db.Integer)
+    target = db.Column(db.Integer)
     content = db.Column(db.Text)
 
 class globalPanel(panel):

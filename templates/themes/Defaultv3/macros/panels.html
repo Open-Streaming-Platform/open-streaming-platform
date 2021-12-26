@@ -81,40 +81,85 @@
 </div>
 {% endmacro %}
 
-{% macro featured_streamer_panel(data) %}
+{% macro featured_streamer_panel(stream, channel, panelContent, title="Featured Stream") %}
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+<script src="/static/vendor/videojs/js/video.js"></script>
+<script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+<script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+
 <div class="featured-stream-container insetBoxShadow">
-  <h1 class="textShadow"><b>Featured Stream</b></h1>
+  <h1 class="textShadow"><b>{{ title }}/b></h1>
   <div class="row">
     <div class="col-sm-12 col-md-5">
-      <img class="w-100 boxShadow" src="/static/img/sample/fakelive.gif">
+      {{ live_stream(channel) }}
     </div>
     <div class="col-sm-12 col-md-7">
       <div class="stream-metadata ms-4">
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-2">
-              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="https://i.pravatar.cc/62?u=theuser2pravatar.com" alt="Username Picture">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="{{ channel.owningUser| get_pictureLocation}}" alt="Username Picture">
             </div>
             <div class="col-10">
               <div class="card-body">
                 <p class="card-text textShadow">
-                  <b>Stream Name</b><br>
-                  Streamer Username<br>
-                  Stream Topic
+                  <b>{{ stream.streamName}}</b><br>
+                     {{ channel.owningUser | get_userName }}<br>
+                     {{ stream.topic | get_topicName}}
                 </p>
                 <span class="live-badge boxShadow textShadow"><b>Live</b></span>
-                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">40201</b></span>
+                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.views }}</b></span>
               </div>
             </div>
           </div>
         </div>
         <div class="stream-metadata-description">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam nostrum deserunt beatae possimus autem aspernatur, temporibus dolore labore laudantium quaerat, ducimus neque fuga, repellat dolorem et earum corporis odit! Blanditiis.
+          {{ panelContent }}
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="/static/js/liveplayerhandler.js"></script>
+<script>
+    // Initialize Stream Player
+    var player = videojs('video', {
+        autoplay: true,
+        errorDisplay: false,
+        liveui: true,
+        liveTracker: {
+            trackingThreshold: 5,
+            liveTolerance: 15
+        },
+        html5:
+            {
+                nativeAudioTracks: false,
+                nativeVideoTracks:false,
+                vhs:
+                    {
+                        overrideNative: true
+                    }
+            },
+        plugins : {
+            httpSourceSelector: {
+                default: 'auto'
+            }
+        }
+    });
+
+    qualityLevels = player.qualityLevels();
+    httpSelector = player.httpSourceSelector();
+
+    player.ready(function() {
+           this.src({
+                   src: {{ channel | getLiveStreamURL }},
+                   type: 'application/x-mpegURL'
+           });
+   });
+   player.play();
+</script>
 {% endmacro %}
 
 {% macro user_bio_panel(userData) %}

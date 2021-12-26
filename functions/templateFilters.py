@@ -10,6 +10,8 @@ from globals import globalvars
 from classes import Sec
 from classes import comments
 from classes import panel
+from classes import Stream
+from classes import settings
 
 from functions import votes
 from functions import cachedDbCalls
@@ -57,6 +59,8 @@ def init(context):
     context.jinja_env.filters['channelPanelIdToPanelName'] = channelPanelIdToPanelName
     context.jinja_env.filters['panelOrderIdToPanelOrderName'] = panelOrderIdToPanelOrderName
     context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
+    context.jinja_env.filters['getLiveStream'] = getLiveStream
+    context.jinja_env.filters['getLiveStreamURL'] = getLiveStreamURL
     context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
     context.jinja_env.filters['getPanel'] = getPanel
     context.jinja_env.filters['orderVideoBy'] = orderVideoBy
@@ -351,6 +355,34 @@ def getPanel(panelId, panelType):
     elif panelType == 2:
         panel = cachedDbCalls.getChannelPanel(panelId)
     return panel
+
+def getLiveStream(channelId):
+    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId).first()
+    return liveStreamQuery
+
+def getLiveStreamURL(channel):
+    sysSettings = cachedDbCalls.getSystemSettings()
+
+    # Stream URL Generation
+    streamURL = ''
+    edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
+    if sysSettings.proxyFQDN != None:
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/proxy-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/proxy/' + channel.channelLoc + '/index.m3u8'
+    elif edgeQuery != []:
+        # Handle Selecting the Node using Round Robin Logic
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/edge-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/edge/' + channel.channelLoc + '/index.m3u8'
+    else:
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/live-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/live/' + channel.channelLoc + '/index.m3u8'
+    return streamURL
 
 def getGlobalPanelArg(panelId, arg):
     panel = cachedDbCalls.getGlobalPanel(panelId)
