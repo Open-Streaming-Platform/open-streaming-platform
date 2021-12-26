@@ -89,7 +89,7 @@
 <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
 
 <div class="featured-stream-container insetBoxShadow">
-  <h1 class="textShadow"><b>{{ title }}/b></h1>
+  <h4 class="textShadow"><b>{{ title }}</b></h4>
   <div class="row">
     <div class="col-sm-12 col-md-5">
       {{ live_stream(channel) }}
@@ -99,7 +99,7 @@
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-2">
-              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="{{ channel.owningUser| get_pictureLocation}}" alt="Username Picture">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channel.owningUser | get_pictureLocation}}" alt="Username Picture">
             </div>
             <div class="col-10">
               <div class="card-body">
@@ -109,7 +109,7 @@
                      {{ stream.topic | get_topicName}}
                 </p>
                 <span class="live-badge boxShadow textShadow"><b>Live</b></span>
-                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.views }}</b></span>
+                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.totalViewers }}</b></span>
               </div>
             </div>
           </div>
@@ -122,7 +122,6 @@
   </div>
 </div>
 
-<script src="/static/js/liveplayerhandler.js"></script>
 <script>
     // Initialize Stream Player
     var player = videojs('video', {
@@ -160,6 +159,7 @@
    });
    player.play();
 </script>
+<script src="/static/js/liveplayerhandler.js"></script>
 {% endmacro %}
 
 {% macro user_bio_panel(userData) %}
