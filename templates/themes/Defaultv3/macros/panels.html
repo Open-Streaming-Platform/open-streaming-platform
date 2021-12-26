@@ -95,7 +95,7 @@
       {{ live_stream(channel, videoDivID=channel.id, muted=True) }}
     </div>
     <div class="col-sm-12 col-md-7">
-      <div class="stream-metadata ms-4">
+      <div class="ms-4">
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-2">
@@ -109,7 +109,7 @@
                      {{ stream.topic | get_topicName}}
                 </p>
                 <span class="live-badge boxShadow textShadow"><b>Live</b></span>
-                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.totalViewers }}</b></span>
+                <span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ stream.currentViewers }}</b></span>
               </div>
             </div>
           </div>
@@ -144,7 +144,8 @@
         plugins : {
             httpSourceSelector: {
                 default: 'auto'
-            }
+            },
+            reloadSourceOnError: {}
         }
     });
 
