@@ -341,7 +341,7 @@ def channelPanelIdToPanelName(panelId):
         return "Unknown Panel ID # " + panelId
 
 def panelTypeIdToPanelTypeName(panelType):
-    panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List" }
+    panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List", 6: "Featured Live Stream"}
     return panelTypeMap[panelType]
 
 def panelOrderIdToPanelOrderName(panelOrder):
