@@ -153,7 +153,7 @@
 
     player.ready(function() {
            this.src({
-                   src: {{ channel | getLiveStreamURL }},
+                   src: '{{ channel | getLiveStreamURL }}',
                    type: 'application/x-mpegURL'
            });
    });
