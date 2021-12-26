@@ -242,9 +242,9 @@
 </div>
 {% endmacro %}
 
-{% macro video_player(videoURL, videoThumbnail, isAutoPlay=True, videoDivID='', muted=False) %}
+{% macro video_player(videoURL, videoThumbnail, isAutoPlay=True) %}
 <div class="player">
-    <video id="video{{ videoDivID }}" class="shadow video-js vjs-big-play-centered" poster="/videos/{{videoThumbnail}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline {% if Muted == True %} muted {% endif %} preload="auto" data-setup='{"fluid": true}'>
+    <video id="video" class="shadow video-js vjs-big-play-centered" poster="/videos/{{videoThumbnail}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline preload="auto" data-setup='{"fluid": true}'>
         <source src="{{videoURL}}" type="video/mp4">
         <p class="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to a web browser that
@@ -436,10 +436,10 @@
 </script>
 {% endmacro %}
 
-{% macro live_stream(channel)%}
+{% macro live_stream(channel, videoDivID='', muted=False)%}
  <div class="player ml-2">
      <div id="videoContainer">
-         <video id="video" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls playsinline preload="auto" data-setup='{"fluid": true, "liveui": true}'>
+         <video id="video{{ videoDivID }}" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" autoplay controls playsinline preload="auto" {% if muted == True %} muted {% endif %} data-setup='{"fluid": true, "liveui": true}'>
             <p class="vjs-no-js">
               To view this video please enable JavaScript, and consider upgrading to a web browser that
               <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
