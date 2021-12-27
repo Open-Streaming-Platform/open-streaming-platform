@@ -327,6 +327,10 @@ def delete_global_panel(message):
             globalPanelId = int(message['globalPanelId'])
             panelQuery = panel.globalPanel.query.filter_by(id=globalPanelId).first()
             if panelQuery is not None:
+                globalPanelMappingQuery = panel.panelMapping.query.filter_by(id=panelQuery.id).all()
+                for panelMap in globalPanelMappingQuery:
+                    db.session.delete(panelMap)
+                    db.session.commit()
                 db.session.delete(panelQuery)
                 db.session.commit()
                 return 'OK'
