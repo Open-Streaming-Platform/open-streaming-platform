@@ -565,7 +565,7 @@ function setGlobalPanelTarget() {
     var targetId = document.getElementById('globalPanelTargetChannelOption').value;
     var channelNameElm = document.getElementById('globalPanelTargetChannelOption')
     var channelName = channelNameElm.options[channelNameElm.selectedIndex].text;
-    socket.emit('setGlobalPanelTarget', {panelId: panelId, targetId});
+    socket.emit('setGlobalPanelTarget', {panelId: panelId, targetId: targetId});
     document.getElementById('globalPanel-targetName-' + panelId).innerHTML = channelName;
     document.getElementById('globalPanel-target-' + panelId).innerHTML = panelId
     createNewBSAlert('Panel Target Set', 'success')

@@ -380,3 +380,16 @@ def save_panel_page(message):
                 db.session.commit()
                 db.session.close()
     return 'OK'
+
+@socketio.on('setGlobalPanelTarget')
+def set_global_panel_target(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            panelId = message['panelId']
+            targetId = message['targetId']
+            panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+            if panelQuery is not None:
+                panelQuery.target = targetId
+            db.session.commit()
+            db.session.close()
+    return 'OK'
