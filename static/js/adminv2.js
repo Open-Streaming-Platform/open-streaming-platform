@@ -523,6 +523,8 @@ function deleteGlobalPanel() {
     var panelDiv = document.getElementById('globalPanel-' + globalPanelId);
     panelDiv.parentNode.removeChild(panelDiv);
     document.getElementById('globalPanelDeleteIDSelector').value = "";
+    var MappingElement = document.getElementById('front-panel-mapping-id-' + globalPanelId);
+    MappingElement.parentNode.removeChild(MappingElement);
     createNewBSAlert("Global Panel Deleted","success")
 }
 
