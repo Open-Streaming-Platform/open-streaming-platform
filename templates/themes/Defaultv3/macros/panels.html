@@ -124,7 +124,7 @@
 
 <script>
     // Initialize Stream Player
-    var player = videojs('video{{ channel.id }}', {
+    var player{{ channel.id }} = videojs('video{{ channel.id }}', {
         autoplay: true,
         errorDisplay: false,
         liveui: true,
@@ -149,18 +149,18 @@
         }
     });
 
-    qualityLevels = player.qualityLevels();
-    httpSelector = player.httpSourceSelector();
+    qualityLevels = player{{ channel.id }}.qualityLevels();
+    httpSelector = player{{ channel.id }}.httpSourceSelector();
 
-    player.ready(function() {
+    player{{ channel.id }}.ready(function() {
            this.src({
                    src: '{{ channel | getLiveStreamURL }}',
                    type: 'application/x-mpegURL'
            });
    });
-   player.play();
+   player{{ channel.id }}.play();
 
-   player.on('click', function(evt) {
+   player{{ channel.id }}.on('click', function(evt) {
        if (evt.target.tagName === 'VIDEO') {
            window.open("/view/{{ channel.channelLoc }}","_self")
        }
