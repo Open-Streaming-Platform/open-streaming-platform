@@ -552,6 +552,12 @@ function save_global_panel_mapping_front_page() {
     createNewBSAlert("Front Page Panel List Saved","success")
 }
 
+function setGlobalPanelTargetModal(panelId) {
+    document.getElementById('globalPanelTargetChannelPanelId').value = panelId;
+    document.getElementById('globalPanelTargetChannelOption').value = document.getElementById('globalPanel-target-' + panelId).innerHTML;
+    openModal('globalPanelTargetChannelModal');
+}
+
 function RemoveFrontPageLayoutPanel(callingElm) {
     var listElm = callingElm.parentElement.parentElement;
     listElm.parentNode.removeChild(listElm);
