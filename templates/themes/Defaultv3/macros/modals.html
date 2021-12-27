@@ -1940,3 +1940,32 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro gloabal_panel_target_channels(channelList) %}
+<div class="modal fade" id="globalPanelTargetChannelModal" tabindex="-1" role="dialog" aria-labelledby="globalPanelTargetChannelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="globalPanelTargetChannelModalTitle">Select a Target Channel for the Panel</h5>
+        <div class="float-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body">
+          <label for="globalPanelTargetChannelOption" class="form-label">Panel Name</label>
+          <select class="form-select boxShadow" id="globalPanelTargetChannelOption" name="globalPanelTargetChannelOption" required>
+              <option value="" disabled></option>
+              {% for chan in channelList %}
+              <option value="{{ chan.id }}">{{ channel.channelName }}</option>
+              {% endfor %}
+          </select>
+          <input type="hidden" id="globalPanelTargetChannelPanelId" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary boxShadow" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success boxShadow" data-bs-dismiss="modal" onclick="setGlobalPanelTargetChannel();">Set</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
