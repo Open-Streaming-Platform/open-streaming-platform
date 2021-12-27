@@ -560,6 +560,17 @@ function setGlobalPanelTargetModal(panelId) {
     openModal('globalPanelTargetChannelModal');
 }
 
+function setGlobalPanelTarget() {
+    var panelId = document.getElementById('globalPanelTargetChannelPanelId').value;
+    var targetId = document.getElementById('globalPanelTargetChannelOption').value;
+    var channelNameElm = document.getElementById('globalPanelTargetChannelOption')
+    var channelName = channelNameElm.options[channelNameElm.selectedIndex].text;
+    socket.emit('setGlobalPanelTarget', {panelId: panelId, targetId});
+    document.getElementById('globalPanel-targetName-' + panelId).innerHTML = channelName;
+    document.getElementById('globalPanel-target-' + panelId).innerHTML = panelId
+    createNewBSAlert('Panel Target Set', 'success')
+}
+
 function RemoveFrontPageLayoutPanel(callingElm) {
     var listElm = callingElm.parentElement.parentElement;
     listElm.parentNode.removeChild(listElm);

@@ -906,10 +906,10 @@
                                 {% if panel.target != None %}
                                     <td id="globalPanel-targetName-{{ panel.id }}">{{ panel.target | get_channelName }}</td>
                                 {% else %}
-                                    <td style="color: red;"><b>Not Set</b></td>
+                                    <td id="globalPanel-targetName-{{ panel.id }}"><b>Not Set</b></td>
                                 {% endif %}
                             {% else %}
-                                <td></td>
+                                <td id="globalPanel-targetName-{{ panel.id }}"></td>
                             {% endif %}
                             <td class="d-none" id="globalPanel-target-{{ panel.id }}">{{ panel.target }}</td>
                             <td>
