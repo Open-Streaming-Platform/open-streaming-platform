@@ -888,6 +888,7 @@
                         <th>Name</th>
                         <th>Type</th>
                         <th>Order</th>
+                        <th>Target</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -901,6 +902,15 @@
                             <td class="d-none" id="globalPanel-orderId-{{ panel.id }}">{{ panel.order }}</td>
                             <td class="d-none" id="globalPanel-header-{{ panel.id }}">{{ panel.header }}</td>
                             <td class="d-none" id="globalPanel-content-{{ panel.id }}">{{ panel.content }}</td>
+                            {% if panel.type == 6 %}
+                                {% if panel.target != None %}
+                                    <td id="globalPanel-targetName-{{ panel.id }}">{{ panel.target | get_channelName }}</td>
+                                {% else %}
+                                    <td style="color: red;"><b>Not Set</b></td>
+                                {% endif %}
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td class="d-none" id="globalPanel-target-{{ panel.id }}">{{ panel.target }}</td>
                             <td>
                                 {% if panel.type in [6] %}
