@@ -152,12 +152,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 $("#systemSearchInput").on('change keydown paste input', function(){
     var searchInput = document.getElementById('systemSearchInput').value;
-
-    $.post('/apiv1/channel/search', {term: searchInput}, function(data, textStatus) {
-      //data contains the JSON object
-      //textStatus contains the status: success, error, etc
-        console.log(data);
-        console.log(textStatus);
-    }, "json");
+    if (searchInput.length() > 3) {
+        $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
+            var channelResults = data['results'];
+        }, "json");
+        $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
+            var streamResults = data['results'];
+        }, "json");
+        $.post('/apiv1/video/search', {term: searchInput}, function (data, textStatus) {
+            var videoResults = data['results'];
+        }, "json");
+        $.post('/apiv1/clip/search', {term: searchInput}, function (data, textStatus) {
+            var clipResults = data['results'];
+        }, "json");
+        $.post('/apiv1/user/search', {term: searchInput}, function (data, textStatus) {
+            var userResults = data['results'];
+        }, "json");
+    }
 });
 
