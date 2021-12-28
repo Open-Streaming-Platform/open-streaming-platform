@@ -37,7 +37,7 @@
         <hr>
         {% for provider in SystemOAuthProviders %}
             <div class="my-2">
-                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block boxShadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
                     {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
                     {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
                     {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
