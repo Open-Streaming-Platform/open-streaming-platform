@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 $("#systemSearchInput").on('change keydown paste input', function(){
     var searchInput = document.getElementById('systemSearchInput').value;
-    var searchClearButton = document.getElementById('searchClear')
+    var searchClearButton = document.getElementById('searchClearIcon')
 
     // Show and Hide Search Clear Button
     if (searchInput.length >= 1) {
