@@ -164,6 +164,13 @@ $("#systemSearchInput").on('change keydown paste input', function(){
     if (searchInput.length >= 3) {
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
+            for (var i = 0; i < channelResults.length; i++) {
+                var ul = document.getElementById("searchResultList");
+                var li = document.createElement("li");
+                li.appendChild(document.createTextNode(channelResults[i][1]));
+                li.classList = "list-group-item"
+                ul.appendChild(li);
+            }
         }, "json");
         $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
             var streamResults = data['results'];
@@ -177,6 +184,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         $.post('/apiv1/user/search', {term: searchInput}, function (data, textStatus) {
             var userResults = data['results'];
         }, "json");
+
     }
 });
 
