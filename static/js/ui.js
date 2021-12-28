@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 $("#systemSearchInput").on('change keydown paste input', function(){
     var searchInput = document.getElementById('systemSearchInput').value;
-    if (searchInput.length > 3) {
+    if (searchInput.length >= 3) {
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
         }, "json");
