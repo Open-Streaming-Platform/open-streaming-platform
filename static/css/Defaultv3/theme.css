@@ -209,17 +209,17 @@ table tbody tr {
     padding-right: 40px;
 }
 
-.topNavbar .rightTopNavbar .searchBox .searchIcon {
+.topNavbar .rightTopNavbar .searchBox i {
     font-size: medium;
     position: relative;
     color: var(--font-color);
+}
+
+.topNavbar .rightTopNavbar .searchBox .searchIcon {
     left: 50px;
 }
 
 .topNavbar .rightTopNavbar .searchBox .searchClear {
-    font-size: medium;
-    position: relative;
-    color: var(--font-color);
     right: 50px;
 }
 
