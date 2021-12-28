@@ -212,8 +212,15 @@ table tbody tr {
 .topNavbar .rightTopNavbar .searchBox i {
     font-size: medium;
     position: relative;
-    left: 50px;
     color: var(--font-color);
+}
+
+.topNavbar .rightTopNavbar .searchBox .searchIcon {
+ left: 50px;
+}
+
+.topNavbar .rightTopNavbar .searchBox .searchClear {
+ right: 50px;
 }
 
 .topNavbar .rightTopNavbar .searchBox input {
@@ -226,7 +233,6 @@ table tbody tr {
 }
 
 .topNavbar .rightTopNavbar .searchBox input[type=text] {
-    background-image: url('searchicon.png');
     background-position: 10px 10px;
     background-repeat: no-repeat;
     padding: 12px 40px;
