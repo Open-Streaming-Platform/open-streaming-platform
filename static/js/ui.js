@@ -149,3 +149,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     setDarkMode()
   }
 });
+
+$("#systemSearchInput").on('change keydown paste input', function(){
+    var searchInput = document.getElementById('systemSearchInput').value;
+    $.getJSON('/apiv1/channel/search?term=' + searchInput, function(data) {
+        console.log(data['results'])
+    })
+});
+
