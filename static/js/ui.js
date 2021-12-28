@@ -152,6 +152,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 $("#systemSearchInput").on('change keydown paste input', function(){
     var searchInput = document.getElementById('systemSearchInput').value;
+    var searchClearButton = document.getElementById('searchClear')
+
+    // Show and Hide Search Clear Button
+    if (searchInput.length >= 1) {
+        searchClearButton.style.display = 'block';
+    } else {
+        searchClearButton.style.display = 'none';
+    }
+
     if (searchInput.length >= 3) {
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];

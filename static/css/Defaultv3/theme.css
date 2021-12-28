@@ -216,11 +216,12 @@ table tbody tr {
 }
 
 .topNavbar .rightTopNavbar .searchBox .searchIcon {
- left: 50px;
+    left: 50px;
 }
 
 .topNavbar .rightTopNavbar .searchBox .searchClear {
- right: 50px;
+    right: 50px;
+    display: none;
 }
 
 .topNavbar .rightTopNavbar .searchBox input {
