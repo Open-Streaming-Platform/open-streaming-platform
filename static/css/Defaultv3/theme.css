@@ -221,10 +221,8 @@ table tbody tr {
 
 .topNavbar .rightTopNavbar .searchBox .searchClear {
     right: 50px;
-}
-
-.topNavbar .rightTopNavbar .searchBox .searchClear i {
-    display: none;
+    margin-right: -45px;
+    display:none;
 }
 
 .topNavbar .rightTopNavbar .searchBox input {
