@@ -56,7 +56,7 @@
         </form>
         {% if chosen_method=="authenticator" and chosen_method in choices %}
           <hr>
-          <div class="center">
+          <div class="text-center mb-4">
               <div class="mb-2">
                 {{ _fsdomain("Open an authenticator app on your device and scan the following QRcode (or enter the code below manually) to start receiving codes:") }}
               </div>
@@ -71,8 +71,8 @@
               name="two_factor_verify_code_form">
             {{ two_factor_verify_code_form.hidden_tag() }}
             <div class="user-box">
-                <input autocomplete="off" class="form-control" id="code" name="code" type="text" value="">
-                <label for="code"><i class="fas fa-shield-alt"></i> Authentication Code</label>
+                <input autocomplete="off" id="code" name="code" type="text" value="">
+                <label><i class="fas fa-shield-alt"></i> Authentication Code</label>
             </div>
             <div class="d-grid gap-2">
                 <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Save Token">
