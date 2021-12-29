@@ -1803,7 +1803,7 @@
 </div>
 {% endmacro %}
 
-{% macro new_panel(panelSubmitURL) %}
+{% macro new_panel(panelSubmitURL, panelLocationType=0) %}
 <div class="modal fade" id="NewPanelModal" tabindex="-1" role="dialog" aria-labelledby="NewPanelModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1828,12 +1828,14 @@
               <select class="form-select boxShadow" id="panel_modal_type" name="panel-type" required>
                   <option value="" disabled></option>
                   <option value="0">Custom Markdown/Text</option>
+                  {% if panelLocationType == 0 %}
                   <option value="1">Live Stream List</option>
                   <option value="2">Video List</option>
                   <option value="3">Clip List</option>
                   <option value="4">Topic List</option>
                   <option value="5">Channel List</option>
                   <option value="6">Featured Live Channel</option>
+                  {% endif %}
               </select>
             </div>
             <div class="mb-2">
