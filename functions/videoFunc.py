@@ -327,7 +327,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
 
     videoPublishState = ChannelQuery.autoPublish
 
-    newVideo = RecordedVideo.RecordedVideo(current_user.id, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
+    newVideo = RecordedVideo.RecordedVideo(ChannelQuery.owningUser, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
                                            "", currentTime, ChannelQuery.allowComments, videoPublishState)
 
     videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
@@ -340,7 +340,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
                 os.mkdir(videos_root + ChannelQuery.channelLoc)
             except OSError:
                 system.newLog(4,
-                              "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
+                              "File Upload Failed - OSError - Unable to Create Directory - Channel:" + ChannelQuery.channelLoc)
                 db.session.close()
                 return ("Error", "Error uploading video - Unable to create directory")
         shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
@@ -392,7 +392,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
         else:
             newVideo.published = False
         db.session.commit()
-        system.newLog(4, "File Upload Successful - Username:" + current_user.username)
+        system.newLog(4, "File Upload Successful - Channel:" + ChannelQuery.channelLoc)
 
         return ("Success", newVideo)
     else:
