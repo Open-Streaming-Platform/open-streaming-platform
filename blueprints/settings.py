@@ -422,6 +422,7 @@ def admin_page():
         scheduled = nodes.scheduled()
         active = nodes.active()
         claimed = nodes.reserved()
+        raw=nodes = celery.control.inspect()
         schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
@@ -432,7 +433,7 @@ def admin_page():
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
                                ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
-                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort)
+                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort, raw=raw)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
