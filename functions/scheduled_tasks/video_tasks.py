@@ -3,10 +3,11 @@ from celery.result import AsyncResult
 
 import datetime
 import logging
-from classes.shared import celery
-from classes import RecordedVideo, Channel, settings
+from classes.shared import celery, db
+from classes import RecordedVideo, Channel, settings, subscriptions, notifications
 
-from functions import videoFunc
+from functions import videoFunc, cachedDbCalls, templateFilters, subsFunc, system
+from functions.scheduled_tasks import message_tasks
 
 log = logging.getLogger('app.functions.scheduler.video_tasks')
 
@@ -108,3 +109,58 @@ def check_video_published_exists(self):
                       "message": "Unhealthy Video Object Identified and Removed.  Removed: " + str(vidId)})
             count = count + 1
     return "Video Health Check Performed.  Removed " + str(count) + " video objects"
+
+@celery.task(bind=True)
+def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId):
+    """
+    Processes Video Upload following user submittal
+    """
+    sysSettings = cachedDbCalls.getSystemSettings()
+    ChannelQuery = Channel.Channel.query.filter_by(id=channelId).first()
+    results = videoFunc.processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription,
+                                           ChannelQuery)
+
+    if results[0] == "Success":
+        newVideo = results[1]
+        if ChannelQuery.autoPublish is True:
+            if ChannelQuery.imageLocation is None:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + ChannelQuery.imageLocation)
+            subtaskResults = subtask('functions.scheduled_tasks.message_tasks.send_webhook', args=(ChannelQuery.id, 6),
+                              kwargs={
+                                  "channelurl": (sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(ChannelQuery.id)),
+                                  "channeltopic": templateFilters.get_topicName(ChannelQuery.topic),
+                                  "channelimage": channelImage,
+                                  "streamer": templateFilters.get_userName(ChannelQuery.owningUser),
+                                  "channeldescription": str(ChannelQuery.description),
+                                  "videoname": newVideo.channelName,
+                                  "videodate": newVideo.videoDate,
+                                  "videodescription": newVideo.description,
+                                  "videotopic": templateFilters.get_topicName(newVideo.topic),
+                                  "videourl": (sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(newVideo.id)),
+                                  "videothumbnail": (sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + newVideo.thumbnailLocation)
+                              }
+                              ).apply_async()
+
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=ChannelQuery.id).all()
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(
+                    templateFilters.get_userName(ChannelQuery.owningUser) + " has posted a new video to "
+                    + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
+                    "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
+                db.session.add(newNotification)
+            db.session.commit()
+
+            try:
+                subsFunc.processSubscriptions(ChannelQuery.id,
+                                              sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
+                                              "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
+                                              "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(
+                                                  newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
+            except:
+                system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
+        return (results[0])
+    else:
+        return (results[0] + ":" + results[1])

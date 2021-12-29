@@ -2,8 +2,9 @@ import subprocess
 import os
 import shutil
 import logging
+import datetime
 
-from flask import flash
+from flask import flash, current_app
 from flask_security import current_user
 import ffmpeg
 
@@ -320,3 +321,79 @@ def setVideoThumbnail(videoID, timeStamp):
         return True
     else:
         return False
+
+def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery):
+    currentTime = datetime.datetime.utcnow()
+
+    videoPublishState = ChannelQuery.autoPublish
+
+    newVideo = RecordedVideo.RecordedVideo(current_user.id, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
+                                           "", currentTime, ChannelQuery.allowComments, videoPublishState)
+
+    videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
+    videos_root = current_app.config['WEB_ROOT'] + 'videos/'
+    videoPath = videos_root + videoLoc
+
+    if videoFilename != "":
+        if not os.path.isdir(videos_root + ChannelQuery.channelLoc):
+            try:
+                os.mkdir(videos_root + ChannelQuery.channelLoc)
+            except OSError:
+                system.newLog(4,
+                              "File Upload Failed - OSError - Unable to Create Directory - Username:" + current_user.username)
+                db.session.close()
+                return ("Error", "Error uploading video - Unable to create directory")
+        shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
+    else:
+        db.session.close()
+        return ("Error", "Error uploading video - Couldn't move video file")
+
+    newVideo.videoLocation = videoLoc
+
+    if thumbnailFilename != "":
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + videoFilename.rsplit(".", 1)[-1]
+
+        thumbnailPath = videos_root + thumbnailLoc
+        try:
+            shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+        except:
+            pass
+        newVideo.thumbnailLocation = thumbnailLoc
+    else:
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+
+        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1',
+                         videos_root + thumbnailLoc])
+        newVideo.thumbnailLocation = thumbnailLoc
+
+    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+    gifresult = subprocess.call(
+        ['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', videos_root + videoLoc, '-filter_complex',
+         '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1',
+         '-y', videos_root + newGifFullThumbnailLocation])
+    newVideo.gifLocation = newGifFullThumbnailLocation
+
+    if videoTitle != "":
+        newVideo.channelName = system.strip_html(videoTitle)
+    else:
+        newVideo.channelName = currentTime
+
+    newVideo.topic = topic
+
+    newVideo.description = system.strip_html(videoDescription)
+
+    if os.path.isfile(videoPath):
+        newVideo.pending = False
+        db.session.add(newVideo)
+        db.session.commit()
+
+        if ChannelQuery.autoPublish is True:
+            newVideo.published = True
+        else:
+            newVideo.published = False
+        db.session.commit()
+        system.newLog(4, "File Upload Successful - Username:" + current_user.username)
+
+        return ("Success", newVideo)
+    else:
+        return ("Failure", "Video File Missing")
