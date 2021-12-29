@@ -423,6 +423,7 @@ def admin_page():
         active = nodes.active()
         claimed = nodes.reserved()
         raw=nodes = celery.control.inspect()
+        raw=raw.scheduled()
         schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
