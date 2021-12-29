@@ -44,6 +44,15 @@ class RecordedVideo(db.Model):
     def __repr__(self):
         return '<id %r>' % self.id
 
+    def get_video_exists(self):
+        videos_root = globalvars.videoRoot + 'videos/'
+        filePath = videos_root + self.videoLocation
+
+        if filePath != videos_root:
+            if os.path.exists(filePath):
+                return True
+        return False
+
     def get_upvotes(self):
         return len(self.upvotes)
 

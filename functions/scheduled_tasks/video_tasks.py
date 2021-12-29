@@ -13,6 +13,7 @@ log = logging.getLogger('app.functions.scheduler.video_tasks')
 def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
     sender.add_periodic_task(3600, check_video_retention.s(), name='Check Video Retention and Cleanup')
+    sender.add_periodic_task(21600, check_video_published_exists.s(), name='Check Video Health')
 
 @celery.task(bind=True)
 def delete_video(self, videoID):
@@ -89,3 +90,21 @@ def check_video_retention(self):
                         videoCount = videoCount + 1
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Retention Check Performed.  Removed: " + str(videoCount)})
     return "Removed Videos " + str(videoCount)
+
+
+@celery.task(bind=True)
+def check_video_published_exists(self):
+    """
+    Checks the overall health of all videos by checking whether a video is published and the file exists
+    """
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=True, pending=False).all()
+    count = 0
+    for video in videoQuery:
+        videoResult = video.get_video_exists()
+        if videoResult is False:
+            vidId = video.id
+            videoFunc.deleteVideo(video.id)
+            log.info({"level": "warning", "taskID": self.request.id.__str__(),
+                      "message": "Unhealthy Video Object Identified and Removed.  Removed: " + str(vidId)})
+            count = count + 1
+    return "Video Health Check Performed.  Removed " + str(count) + " video objects"
