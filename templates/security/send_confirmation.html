@@ -7,28 +7,27 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card my-5 shadow text-left">
-                    <h5 class="card-header text-white bg-dark mb-3">
-                        Confirm Email Adddress
-                    </h5>
-                    <div class="card-body text-left">
-                        <div>
-
-                            {{fields_errors(send_confirmation_form.email)}}
-                            <form action="{{ url_for_security('send_confirmation') }}" method="POST" name="send_confirmation_form">
-                              {{ send_confirmation_form.hidden_tag() }}
-                              {{ render_field(send_confirmation_form.email, class_="form-control") }}
-                              {{ render_field(send_confirmation_form.submit, class_="form-control") }}
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{fields_errors(send_confirmation_form.email)}}
+<div class="login-box">
+    <div class="branding d-flex justify-content-center">
+        <div class="circular_image">
+            <img src="{{sysSettings.systemLogo}}">
         </div>
     </div>
-
+    <h2 class="title">Confirm Email Adddress</h2>
+    <form action="{{ url_for_security('send_confirmation') }}" method="POST" name="send_confirmation_form">
+    {{ send_confirmation_form.hidden_tag() }}
+        <div class="user-box">
+            <input autocomplete="off" id="email" name="email" required="" type="email" value="">
+            <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        </div>
+        <small class="hint d-flex justify-content-around">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </small>
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Request Reset">
+        </div>
+    </form>
+</div>
 {% endblock %}
