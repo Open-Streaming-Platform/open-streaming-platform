@@ -479,6 +479,7 @@
                 <td><button type="button" class="btn btn-danger" onclick="cancelCeleryJob('{{ entry['id'] }}');"><i class="fas fa-trash"></i></button></td>
             </tr>
             {% endfor %}
+            {{ schedulerList['scheduled'] }}
             {% for entry in schedulerList['scheduled']['celery@osp'] %}
             <tr id="{{ celeryJon-entry['request']['id'] }}">
                 <td><i class="fas fa-clock" style="color: var(--font-color);" title="Scheduled"></i></td>
