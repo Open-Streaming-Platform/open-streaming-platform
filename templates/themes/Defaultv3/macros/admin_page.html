@@ -452,7 +452,7 @@
         </thead>
         <tbody>
             {% for entry in schedulerList['active']['celery@osp'] %}
-            <tr id="{{ celeryJon-entry['id'] }}">
+            <tr id="celeryJob-{{entry['id'] }}">
                 <td>
                     <div class="spinner-border text-success" role="status">
                       <span class="visually-hidden">Active</span>
@@ -468,7 +468,7 @@
             </tr>
             {% endfor %}
             {% for entry in schedulerList['claimed']['celery@osp'] %}
-            <tr id="{{ celeryJon-entry['id'] }}">
+            <tr id="celeryJob-{{entry['id'] }}">
                 <td><i class="fas fa-business-time" style="color:orange;" title="Claimed"></i></td>
                 <td>{{ entry['id'] }}</td>
                 <td>{{ entry['name'] }}</td>
@@ -480,7 +480,7 @@
             </tr>
             {% endfor %}
             {% for entry in schedulerList['scheduled']['celery@osp'] %}
-            <tr id="{{ celeryJon-entry['request']['id'] }}">
+            <tr id="celeryJob-{{entry['request']['id'] }}">
                 <td><i class="fas fa-clock" style="color: var(--font-color);" title="Scheduled"></i></td>
                 <td>{{ entry['request']['id'] }}</td>
                 <td>{{ entry['request']['name'] }}</td>
