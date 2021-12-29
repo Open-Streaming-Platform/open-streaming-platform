@@ -98,7 +98,7 @@ def upload_vid():
         return redirect(url_for('root.main_page'))
 
     else:
-        results = video_tasks.process_video_upload.delay(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery)
+        results = video_tasks.process_video_upload.delay(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery.id)
 
     db.session.commit()
     db.session.close()
