@@ -57,17 +57,16 @@
         {% if chosen_method=="authenticator" and chosen_method in choices %}
           <hr>
           <div class="center">
-              <div>
+              <div class="mb-2">
                 {{ _fsdomain("Open an authenticator app on your device and scan the following QRcode (or enter the code below manually) to start receiving codes:") }}
               </div>
-              <div class="d-flex justify-content-center">
+              <div class="d-flex justify-content-center mb-2">
                   <img style="background-color: white;" alt="{{ _fsdomain("Two factor authentication code") }}" id="qrcode" src="{{ authr_qrcode }}">
               </div>
             <div class="d-flex justify-content-center">
               {{ authr_key }}
             </div>
           </div>
-        <hr>
         <form id="2favalidation" action="{{ url_for_security("two_factor_token_validation") }}" method="POST"
               name="two_factor_verify_code_form">
             {{ two_factor_verify_code_form.hidden_tag() }}
