@@ -432,7 +432,7 @@ def admin_page():
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
                                ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
-                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort, raw=raw)
+                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
