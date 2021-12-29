@@ -384,6 +384,13 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
 
     if os.path.isfile(videoPath):
         newVideo.pending = False
+        duration = None
+        try:
+            duration = videoFunc.getVidLength(videoPath)
+        except:
+            pass
+        if duration is not None:
+            newVideo.length = duration
         db.session.add(newVideo)
         db.session.commit()
 
