@@ -99,7 +99,8 @@
     {{ modals.osp_systeminfo_modal(sysSettings.version) }}
 
     <!--Upload Video Modal-->
-    {{ modals.osp_videoupload_modal(uploadTopics, ownedChannels) }}
+    <!--{{ modals.osp_videoupload_modal(uploadTopics, ownedChannels) }}-->
+    {{ modals.video_upload_modal(uploadsTopics, ownedChannels) }}
 
     {% block modals %}
     {% endblock %}

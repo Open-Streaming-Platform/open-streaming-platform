@@ -129,6 +129,90 @@ table tbody tr {
     box-shadow: inset var(--box-shadow);
 }
 
+.nu-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  font-family: sans-serif;
+  background: linear-gradient(#141e30, #243b55);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+  color: #cccccc;
+}
+
+.nu-modal .title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.nu-modal {
+  color: white;
+  position: relative;
+  top: -90px;
+  margin-bottom:-60px;
+}
+
+.nu-modal .input-box {
+  position: relative;
+}
+
+.nu-modal .input-box input {
+  width: 100%;
+  padding: 0px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-top: 0px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.nu-modal .input-box label {
+  position: relative;
+  top: -35px;
+  left: 0;
+  padding: 5px 0px;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.nu-modal .input-box input:focus ~ label,
+.nu-modal .input-box input:valid ~ label {
+  top: -55px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 16px;
+}
+
+.nu-modal hr {
+  border-top: 2px solid white;
+}
+
+.nu-modal .hint {
+  text-align: center;
+  color: gray;
+  position: relative;
+  top: -15px
+}
+
+.nu-modal .hint a {
+  text-decoration: none;
+  color: gray;
+}
+
+.nu-modal .hint a:hover {
+  color: white;
+  transition: .5s;
+}
+
 .modal-content {
     background-color: var(--page-background);
     font-size: 16px;
