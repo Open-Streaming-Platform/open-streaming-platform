@@ -437,6 +437,7 @@
 {% endmacro %}
 
 {% macro scheduler_settings_panel(schedulerList) %}
+    {{ celeryStatus }}
     <table class="table align-middle">
         <thead>
             <tr>
