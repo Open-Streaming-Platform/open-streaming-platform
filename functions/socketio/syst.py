@@ -267,8 +267,7 @@ def get_admin_component_status(msg):
             from classes.shared import celery
             workerStatus = celery.control.ping()
             if workerStatus == []:
-                message = "No OSP-Celery Instances Connected" + str(celeryControl)
-
+                message = "No OSP-Celery Instances Connected"
             else:
                 if len(workerStatus) > 0:
                     verifiedWorker = 0
