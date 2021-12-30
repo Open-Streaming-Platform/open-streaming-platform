@@ -974,7 +974,10 @@ def admin_page():
 @roles_required('Admin')
 def createtestask():
     result = system.testCelery.apply_async(countdown=1)
-    return str(result)
+    from classes.shared import celery
+    celeryControl = celery.control.inspect()
+    celeryStats = celeryControl.stats()
+    return str(result) + str(celeryStats)
 
 @settings_bp.route('/admin/rtmpstat/<node>')
 @login_required
