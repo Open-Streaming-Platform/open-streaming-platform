@@ -576,9 +576,9 @@ table tbody tr {
 }
 
 .streamCard .streamCard-badges {
-    position: absolute;
-    height: 178px;
-    width: 315px;
+    position: relative;
+    top:30px;
+    margin-top: -30px;
     padding: 5px;
 }
 
