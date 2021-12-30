@@ -424,8 +424,6 @@ def admin_page():
         claimed = nodes.reserved()
         schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
 
-        celeryStatus = celery.control.inspect().stats()
-
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
                                roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList,
                                repoSHA=repoSHA, repoBranch=branch,
@@ -434,7 +432,7 @@ def admin_page():
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
                                ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
-                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort, celeryStatus=celeryStatus)
+                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -974,10 +972,7 @@ def admin_page():
 @roles_required('Admin')
 def createtestask():
     result = system.testCelery.apply_async(countdown=1)
-    from classes.shared import celery
-    celeryControl = celery.control.inspect()
-    celeryStats = celeryControl.stats()
-    return str(result) + str(celeryStats)
+    return str(result)
 
 @settings_bp.route('/admin/rtmpstat/<node>')
 @login_required
