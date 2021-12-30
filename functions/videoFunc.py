@@ -386,7 +386,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
         newVideo.pending = False
         duration = None
         try:
-            duration = videoFunc.getVidLength(videoPath)
+            duration = getVidLength(videoPath)
         except:
             pass
         if duration is not None:
