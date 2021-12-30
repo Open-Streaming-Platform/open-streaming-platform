@@ -133,8 +133,8 @@ app.config['SECURITY_MSG_USER_DOES_NOT_EXIST'] = ("Invalid Username or Password"
 app.config['SECURITY_MSG_DISABLED_ACCOUNT'] = ("Account Disabled","error")
 app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
-app.config['CELERY_BROKER_URL'] = RedisURL
-app.config['CELERY_RESULT_BACKEND'] = RedisURL
+app.config['broker_url'] = RedisURL
+app.config['result_backend'] = RedisURL
 
 #----------------------------------------------------------------------------#
 # Set Logging Configuration
@@ -231,8 +231,8 @@ r.flushdb()
 app.logger.info({"level": "info", "message": "Initializing Celery"})
 from classes.shared import celery
 
-celery.conf.broker_url = app.config['CELERY_BROKER_URL']
-celery.conf.result_backend = app.config['CELERY_RESULT_BACKEND']
+celery.conf.broker_url = app.config['broker_url']
+celery.conf.result_backend = app.config['result_backend']
 celery.conf.update(app.config)
 
 class ContextTask(celery.Task):
