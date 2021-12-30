@@ -39,7 +39,7 @@ WTForms==2.3.3
 requests==2.20.0
 flask-markdown==0.3
 xmltodict==0.12.0
-redis==3.3.11
+redis==3.4.1
 flask-limiter==1.1.0
 gunicorn==20.0.4
 flask-session==0.3.2
