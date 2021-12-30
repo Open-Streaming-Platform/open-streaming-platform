@@ -419,8 +419,7 @@ def admin_page():
         from classes.shared import celery
 
         nodes = celery.control.inspect(['celery@osp'])
-        # scheduled = nodes.scheduled() Deprecated
-        scheduled = {'celery@osp': []}
+        scheduled = nodes.scheduled()
         active = nodes.active()
         claimed = nodes.reserved()
         schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
