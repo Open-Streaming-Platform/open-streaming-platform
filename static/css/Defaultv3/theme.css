@@ -779,7 +779,25 @@ table tbody tr {
 .side-video-panel-container {
     height: 100%;
     background-color: var(--page-background);
-    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: auto;
+    scrollbar-color: #b5b5b5 #858585;
+}
+
+/* Chrome, Edge, and Safari */
+.side-video-panel-container::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
+/* .side-video-panel-container::-webkit-scrollbar-track {
+    background: #858585;
+} */
+
+.side-video-panel-container::-webkit-scrollbar-thumb {
+    background-color: #b5b5b5;
+    border-radius: 16px;
+    border: 0px solid #ffffff;
 }
 
 .comments-container {
