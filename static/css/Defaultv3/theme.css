@@ -406,7 +406,6 @@ table tbody tr {
     width: 100%;
     padding: 20px 20px;
     background-color: var(--page-background);
-    box-shadow: var(--box-shadow);
 }
 
 .clips-container {

@@ -59,8 +59,8 @@
 </div>
 {% endmacro %}
 
-{% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start") %}
-<div class="videos-container boxShadow {% if heightOverride == True %}h-100{% endif %}">
+{% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start", shadow=True) %}
+<div class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for video in videoList | orderVideoBy(order) %}
@@ -70,8 +70,8 @@
 </div>
 {% endmacro %}
 
-{% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start") %}
-<div class="clips-container boxShadow {% if heightOverride == True %}h-100{% endif %}">
+{% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start", shadow=True) %}
+<div class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for clip in clipsList %}
