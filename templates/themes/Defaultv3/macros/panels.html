@@ -239,7 +239,9 @@
       <div class="video-name">{{ video.channelName }}</div>
       <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
       <div class="video-topic">{{ video.topic | get_topicName }}</div>
+      {% if video.description != None %}
       <div class="video-description">{{ video.description | markdown }}</div>
+      {% endif %}
     </div>
     <div class="col">
       <div class="float-end mx-1">
@@ -516,7 +518,9 @@
       <div class="video-name">{{ clip.clipName }}</div>
       <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
       <div class="video-topic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
+      {% if clip.description != None %}
       <div class="video-description">{{ clip.description | markdown }}</div>
+      {% endif %}
     </div>
     <div class="col">
       <div class="float-end mx-1">
