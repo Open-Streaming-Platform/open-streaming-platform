@@ -4,7 +4,6 @@ from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegi
 from flask_security import UserMixin, RoleMixin
 from email_validator import validate_email, caching_resolver
 from .shared import db
-from classes import Sec
 from globals import globalvars
 
 import datetime
@@ -28,7 +27,7 @@ class ExtendedRegisterForm(RegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
-        if validate_email(email, dns_resolver=resolver) is False:
+        if validate_email(self.email, dns_resolver=self.resolver) is False:
             success = False
         return success
 
@@ -51,7 +50,7 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
-        if validate_email(email, dns_resolver=resolver) is False:
+        if validate_email(self.email, dns_resolver=self.resolver) is False:
             success = False
         return success
 
