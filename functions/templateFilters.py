@@ -305,7 +305,7 @@ def get_videoComments(videoID):
     return commentsQuery
 
 def get_videoTags(videoId):
-    tagQuery = RecordedVideo.video_tags.query.filter_by(videoId=videoId).all()
+    tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
     tagArray = []
     for tag in tagQuery:
         tagArray.append(tag.name)
