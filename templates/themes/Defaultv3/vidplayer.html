@@ -23,7 +23,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, video.thumbnailLocation) }}
                 {{ panels.video_control_panel(streamURL, video, current_user) }}
@@ -31,7 +31,7 @@
                 {{ panels.comments_panel(video.id | get_videoComments, video.allowComments, sysSettings.allowComments) }}
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div id="sidePanel" class="col-xl-4 col-lg-3 col-md-12 col-sm-12 col-12">
             <div class="side-video-panel">
                 <div class="side-video-panel-container">
                     {{ panels.videos_panel(randomRecorded, title="Other Videos", heightOverride=True, justification="center", shadow=False) }}
