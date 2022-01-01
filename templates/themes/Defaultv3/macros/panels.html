@@ -240,13 +240,27 @@
     <div class="channelImg-sm col-auto">
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-5">
-      <div class="video-name">{{ video.channelName }}</div>
-      <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
-      <div class="video-topic">{{ video.topic | get_topicName }}</div>
-      {% if video.description != None %}
-      <div class="video-description">{{ video.description | markdown }}</div>
-      {% endif %}
+    <div class="col-8">
+        <div class="row g-0">
+            <div class="col-auto">
+                <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            </div>
+            <div class="col-12 textShadow">
+                <div class="video-name"><b>{{ video.channelName }}</b></div>
+                <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
+                <div class="video-topic">{{ video.topic | get_topicName }}</div>
+            </div>
+        </div>
+        <div class="streamCard-tags row g-0">
+            <div class="col-12">
+                  {% for tag in video.id | get_videoTags %}
+                    <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+                  {% endfor %}
+            </div>
+        </div>
+        {% if video.description != None %}
+        <div class="video-description">{{ video.description | markdown }}</div>
+        {% endif %}
     </div>
     <div class="col">
       <div class="float-end mx-1">
