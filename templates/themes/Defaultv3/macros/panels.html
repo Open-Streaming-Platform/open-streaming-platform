@@ -513,10 +513,24 @@
     <div class="channelImg-sm col-auto">
       <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-5">
-      <div class="channel-name">{{ channel.channelName }}</div>
-      <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
-      <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+    <div class="col-8">
+        <div class="row">
+            <div class="col-auto">
+                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            </div>
+            <div class="col-11 textShadow">
+                <div class="channel-name"><b>{{ channel.channelName }}</b></div>
+                <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+            </div>
+            <div class="streamCard-tags row g-0">
+                <div class="col-12">
+                      {% for tag in channel.id | get_channelTags %}
+                        <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                      {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col">
       <div class="float-end mx-1">
