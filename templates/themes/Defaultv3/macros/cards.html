@@ -48,11 +48,11 @@
               <p class="card-text textShadow">
                 <b>{{ video.channelName | limit_title }}</b><br>
                    {{ video.owningUser | get_userName }}<br>
-                   {{ video.topic | get_topicName }}
+                   {{ video.topic | get_topicName }}<br>
+                  {% for tag in video.id | get_videoTags %}
+                    <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+                  {% endfor %}
               </p>
-              {% for tag in video.tags %}
-                <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
-              {% endfor %}
             </div>
           </div>
         </div>
