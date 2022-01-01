@@ -12,6 +12,7 @@ from classes import comments
 from classes import panel
 from classes import Stream
 from classes import settings
+from classes import RecordedVideo
 
 from functions import votes
 from functions import cachedDbCalls
@@ -43,6 +44,7 @@ def init(context):
     context.jinja_env.filters['format_keyType'] = format_keyType
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
     context.jinja_env.filters['get_channelName'] = get_channelName
+    context.jinja_env.filters['get_videoTags'] = get_videoTags
     context.jinja_env.filters['get_videoComments'] = get_videoComments
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
     context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
@@ -301,6 +303,13 @@ def get_videoDate(videoID):
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
     return commentsQuery
+
+def get_videoTags(videoId):
+    tagQuery = RecordedVideo.video_tags.query.filter_by(videoId=videoId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    return tagArray
 
 def get_channelPicture(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
