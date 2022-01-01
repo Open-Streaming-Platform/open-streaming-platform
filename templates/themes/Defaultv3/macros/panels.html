@@ -213,7 +213,7 @@
           {% endif %}
         </div>
         <div>
-            {% for tag in channel.id | get_channelTags %}
+            {% for tag in channelData.id | get_channelTags %}
                 <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
             {% endfor %}
         </div>
