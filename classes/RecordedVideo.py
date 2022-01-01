@@ -73,6 +73,7 @@ class RecordedVideo(db.Model):
             'thumbnailLocation': '/videos/' + self.thumbnailLocation,
             'gifLocation': '/videos/' + self.gifLocation,
             'ClipIDs': [obj.id for obj in self.clips],
+            'tags': [obj.id for obj in self.tags],
         }
 
     def remove(self):
@@ -99,7 +100,7 @@ class video_tags(db.Model):
     taggedByUser = db.Column(db.Integer)
 
     def __init__(self, tagName, videoID, userID):
-        self.tagName = tagName
+        self.name = tagName
         self.videoID = videoID
         self.taggedByUser = userID
 

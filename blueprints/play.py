@@ -154,19 +154,42 @@ def vid_change_page(videoID):
     newVideoTopic = request.form['newVidTopic']
     description = request.form['description']
 
-    allowComments = False
-    if 'allowComments' in request.form:
-        allowComments = True
+    videoQuery = cachedDbCalls.getVideo(videoID)
 
-    result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
-    cache.delete_memoized(cachedDbCalls.getVideo, videoID)
+    if videoQuery.owningUser == current_user.id:
 
-    if result is True:
-        flash("Changed Video Metadata", "success")
-        return redirect(url_for('.view_vid_page', videoID=videoID))
+        if 'videoTags' in request.form:
+            videoTagString = request.form['videoTags']
+            tagArray = system.parseTags(videoTagString)
+            existingTagArray = RecordedVideo.video_tags.query.filter_by(videoID=videoID).all()
+
+            for currentTag in existingTagArray:
+                if currentTag.name not in tagArray:
+                    db.session.delete(currentTag)
+                else:
+                    tagArray.remove(currentTag.name)
+            db.session.commit()
+            for currentTag in tagArray:
+                newTag = RecordedVideo.video_tags(currentTag, videoID, current_user.id)
+                db.session.add(newTag)
+                db.session.commit()
+
+        allowComments = False
+        if 'allowComments' in request.form:
+            allowComments = True
+
+        result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
+        cache.delete_memoized(cachedDbCalls.getVideo, videoID)
+
+        if result is True:
+            flash("Changed Video Metadata", "success")
+            return redirect(url_for('.view_vid_page', videoID=videoID))
+        else:
+            flash("Error Changing Video Metadata", "error")
+            return redirect(url_for("root.main_page"))
     else:
-        flash("Error Changing Video Metadata", "error")
-        return redirect(url_for("root.main_page"))
+        flash("No Access to edit video metadata", "error")
+        return redirect(url_for('.view_vid_page', videoID=videoID))
 
 @play_bp.route('/<videoID>/delete')
 @login_required

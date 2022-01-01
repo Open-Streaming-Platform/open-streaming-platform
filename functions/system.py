@@ -88,6 +88,10 @@ def table2Dict(table):
         dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
     return dataList
 
+def parseTags(tagString):
+    tagString = tagString.split(',')
+    return tagString
+
 def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
     try:
         server = smtplib.SMTP(smtpServer, int(smtpPort))

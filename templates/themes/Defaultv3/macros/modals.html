@@ -1368,10 +1368,10 @@
       <form action="/play/{{video.id}}/change" method="post">
         <div class="modal-body">
           <h5>Name of the Video:</h5>
-          <input type="text" class="form-control" value="{{video.channelName}}" name="newVidName" required>
+          <input type="text" class="form-control boxShadow" value="{{video.channelName}}" name="newVidName" required>
           <br>
           <h5>Stream Topic:</h5>
-          <select class="form-control" name="newVidTopic" id="channeltopic" required>
+          <select class="form-control boxShadow" name="newVidTopic" id="channeltopic" required>
             {% for topic in topics %}
             <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
             {% endfor %}
@@ -1379,25 +1379,44 @@
           <br>
           <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>
-            <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
+            <textarea class="form-control boxShadow" name="description" id="description" value="" maxlength="2048">{{video.description}}</textarea>
           </div>
+          <div class="row mt-2">
+           <div class="form-group">
+              <label for="videoTags" class="col-form-label"><b>Banned Chat Words</b></label>
+              <input type="basic" id="videoTags" name="videoTags" class="form-control" value="{{bannedWords}}">
+           </div>
+         </div>
           <div class="form-group row mt-3">
             <div class="col-8">
               <div class="form-check form-switch">
                 <label class="form-check-label" for="allowComments"><b>Allow Comments on This Video</b></label>
-                <input class="form-check-input" type="checkbox" name="allowComments" id="allowComments" {% if video.allowComments == True %} checked {% endif %}>
+                <input class="form-check-input boxShadow" type="checkbox" name="allowComments" id="allowComments" {% if video.allowComments == True %} checked {% endif %}>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <input type="submit" class="btn btn-primary" onclick="showSpinner();" value="Save Changes">
+          <button type="button" class="btn btn-secondary boxShadow" data-bs-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary boxShadow" onclick="showSpinner();" value="Save Changes">
         </div>
       </form>
     </div>
   </div>
 </div>
+<script>
+// The DOM element you wish to replace with Tagify
+var videoTags = document.getElementById('videoTags');
+
+// initialize Tagify on the above input node reference
+var tagify_videoTags = new Tagify(videoTags, {
+  originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+  maxTags: 4,
+  texts: {
+    duplicate: "Duplicates are not allowed"
+  }
+})
+</script>
 {% endmacro %}
 
 {% macro edit_video_metadata_socketio(topics) %}
