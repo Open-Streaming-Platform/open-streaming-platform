@@ -50,6 +50,9 @@
                    {{ video.owningUser | get_userName }}<br>
                    {{ video.topic | get_topicName }}
               </p>
+              {% for tag in video.tags %}
+                <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+              {% endfor %}
             </div>
           </div>
         </div>
