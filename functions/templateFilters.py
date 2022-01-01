@@ -309,7 +309,8 @@ def get_videoTags(videoId):
     tagArray = []
     for tag in tagQuery:
         tagArray.append(tag.name)
-    return tagArray
+    tagString = ",".join(tagArray)
+    return tagString
 
 def get_channelPicture(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
