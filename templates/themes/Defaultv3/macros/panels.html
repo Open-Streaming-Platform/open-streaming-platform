@@ -212,6 +212,11 @@
             {{ core_ui.protected_badge() }}
           {% endif %}
         </div>
+        <div>
+            {% for tag in channel.id | get_channelTags %}
+                <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
         <div class="channelButtons">
           <a href="/view/{{ channelData.channelLoc }}" class="btn btn-primary boxShadow textShadow me-2"><b>View Live Channel</b></a>
         {% if current_user.is_authenticated %}
