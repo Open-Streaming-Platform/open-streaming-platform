@@ -1355,7 +1355,7 @@
 </div>
 {% endmacro %}
 
-{% macro edit_video_metadata(video, topics) %}
+{% macro edit_video_metadata(video, topics, maxTags=4, maxTagLength=12) %}
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1411,7 +1411,8 @@ var videoTags = document.getElementById('videoTags');
 // initialize Tagify on the above input node reference
 var tagify_videoTags = new Tagify(videoTags, {
   originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
-  maxTags: 4,
+  maxTags: {{maxTags}},
+  pattern: /^.{0,{{ maxTagLength }}$/,
   texts: {
     duplicate: "Duplicates are not allowed"
   }
