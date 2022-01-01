@@ -778,7 +778,7 @@
 </div>
 {% endmacro %}
 
-{% macro user_channel_settings_settings(channel) %}
+{% macro user_channel_settings_settings(channel, maxTags=4, maxTagLength=12) %}
 <div id="settingsWindow-{{channel.id}}" style="display:none;">
     <form action="/settings/channels" enctype=multipart/form-data method="post">
         <div id="channelCard-{{channel.id}}" class="my-2 ml-2">
@@ -846,6 +846,10 @@
                             <small id="streamKeyHelpBlock" class="form-text text-muted">
                                 RTMP Ingests: {% for server in rtmpList %}rtmp://{{server}}/stream/ {% endfor %}
                             </small>
+                        </div>
+                        <div class="form-group">
+                          <label for="channelTags" class="col-form-label"><b>Channel Tags</b></label>
+                          <input type="basic" id="channelTagsInput-{{ channel.id }}" name="channelTags" class="form-control boxShadow" value="{{channel.id | get_channelTags_csv}}">
                         </div>
                         <div class="form-group">
                             <label for="description" class="col-form-label"><b>Description</b></label>
@@ -1179,6 +1183,20 @@
         </div>
     </form>
 </div>
+<script>
+    // The DOM element you wish to replace with Tagify
+    var channelTags_{{ channel.id }} = document.getElementById('channelTagsInput-{{ channel.id }}');
+
+    // initialize Tagify on the above input node reference
+    var tagify_{{ channel.id }} = new Tagify(channelTags_{{ channel.id }}, {
+       originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+       maxTags: {{maxTags}},
+       pattern: /^.{0,{{ maxTagLength }}}$/,
+       texts: {
+           duplicate: "Duplicates are not allowed"
+       }
+    })
+</script>
 {% endmacro %}
 
 {% macro user_channel_settings_chat(channel) %}

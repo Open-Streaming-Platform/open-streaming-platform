@@ -1165,6 +1165,22 @@ def settings_channels_page():
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
 
+                if 'channelTags' in request.form:
+                    channelTagString = request.form['channelTags']
+                    tagArray = system.parseTags(channelTagString)
+                    existingTagArray = Channel.channel_tags.query.filter_by(channelID=requestedChannel.id).all()
+
+                    for currentTag in existingTagArray:
+                        if currentTag.name not in tagArray:
+                            db.session.delete(currentTag)
+                        else:
+                            tagArray.remove(currentTag.name)
+                    db.session.commit()
+                    for currentTag in tagArray:
+                        newTag = Channel.channel_tags(currentTag, requestedChannel.id, current_user.id)
+                        db.session.add(newTag)
+                        db.session.commit()
+
                 vanityURL = None
                 if 'vanityURL' in request.form:
                     requestedVanityURL = request.form['vanityURL']

@@ -44,6 +44,7 @@ class Channel(db.Model):
     restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
     chatStickers = db.relationship('stickers', backref='channel', cascade="all, delete-orphan", lazy="joined")
     panels = db.relationship('channelPanel', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    tags = db.relationship('channel_tags', backref='channel', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description):
         self.owningUser = owningUser
@@ -101,7 +102,8 @@ class Channel(db.Model):
             'allowGuestNickChange': self.allowGuestNickChange,
             'vanityURL': self.vanityURL,
             'showHome': self.showHome,
-            'maxVideoRetention': self.maxVideoRetention
+            'maxVideoRetention': self.maxVideoRetention,
+            'tags': [obj.id for obj in self.tags]
         }
 
     def authed_serialize(self):
@@ -127,8 +129,24 @@ class Channel(db.Model):
             'allowGuestNickChange': self.allowGuestNickChange,
             'vanityURL': self.vanityURL,
             'showHome': self.showHome,
-            'maxVideoRetention': self.maxVideoRetention
+            'maxVideoRetention': self.maxVideoRetention,
+            'tags': [obj.id for obj in self.tags]
         }
+
+class channel_tags(db.Model):
+    __tablename__ = "channel_tags"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    taggedByUser = db.Column(db.Integer)
+
+    def __init__(self, tagName, channelID, userID):
+        self.name = tagName
+        self.channelID = channelID
+        self.taggedByUser = userID
+
+    def __repr__(self):
+        return '<id %r>' % self.id
 
 class restreamDestinations(db.Model):
     __tablename__ = "restreamDestinations"

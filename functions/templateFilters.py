@@ -13,6 +13,7 @@ from classes import panel
 from classes import Stream
 from classes import settings
 from classes import RecordedVideo
+from classes import Channel
 
 from functions import votes
 from functions import cachedDbCalls
@@ -47,6 +48,8 @@ def init(context):
     context.jinja_env.filters['get_videoTags'] = get_videoTags
     context.jinja_env.filters['get_videoTags_csv'] = get_videoTags_csv
     context.jinja_env.filters['get_videoComments'] = get_videoComments
+    context.jinja_env.filters['get_channelTags'] = get_channelTags
+    context.jinja_env.filters['get_channelTags_csv'] = get_channelTags_csv
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
     context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
     context.jinja_env.filters['channeltoOwnerID'] = channeltoOwnerID
@@ -311,6 +314,18 @@ def get_videoTags(videoId):
 
 def get_videoTags_csv(videoId):
     tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    tagString = ",".join(tagArray)
+    return tagString
+
+def get_channelTags(channelId):
+    tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
+    return tagQuery
+
+def get_channelTags_csv(channelId):
+    tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
     tagArray = []
     for tag in tagQuery:
         tagArray.append(tag.name)
