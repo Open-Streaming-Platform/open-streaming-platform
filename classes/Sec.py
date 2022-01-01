@@ -58,11 +58,11 @@ class OSPLoginForm(LoginForm):
 
     def validate(self):
         isvalid = False
-        userQuery = Sec.User.query.filter_by(username=self.email.data.strip(), authType=0).first()
+        userQuery = User.query.filter_by(username=self.email.data.strip(), authType=0).first()
         if userQuery is not None:
             isvalid = True
         if isvalid is False:
-            userQuery = Sec.User.query.filter_by(email=self.email.data.strip(), authType=0).first()
+            userQuery = User.query.filter_by(email=self.email.data.strip(), authType=0).first()
             if userQuery is not None:
                 isvalid = True
         if isvalid is True:
