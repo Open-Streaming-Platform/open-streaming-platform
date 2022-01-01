@@ -1412,7 +1412,7 @@ var videoTags = document.getElementById('videoTags');
 var tagify_videoTags = new Tagify(videoTags, {
   originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
   maxTags: {{maxTags}},
-  pattern: /^.{0,{{ maxTagLength }}$/,
+  pattern: /^.{0,{{ maxTagLength }}}$/,
   texts: {
     duplicate: "Duplicates are not allowed"
   }
