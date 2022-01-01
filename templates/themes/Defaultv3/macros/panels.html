@@ -241,9 +241,9 @@
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-8">
-        <div class="row g-0">
+        <div class="row">
             <div class="col-auto">
-                <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
             </div>
             <div class="col-12 textShadow">
                 <div class="video-name"><b>{{ video.channelName }}</b></div>
