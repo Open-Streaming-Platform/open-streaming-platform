@@ -74,6 +74,7 @@ function onInput( e ) {
     fetch('/apiv1/user/search?term=' + value, {signal: controller.signal})
         .then(RES => RES.json())
         .then(function (newWhitelist) {
+            console.log(newWhitelist);
             resultWhitelist = []
             for (var i = 0; i < newWhitelist.length; i++) {
                 var entry = newWhitelist[i];
@@ -85,6 +86,7 @@ function onInput( e ) {
                     }
                     )
             }
+            console.log(resultWhitelist);
             tagify.whitelist = resultWhitelist // update whitelist Array in-place
             tagify.loading(false).dropdown.show(value) // render the suggestions dropdown
         })
