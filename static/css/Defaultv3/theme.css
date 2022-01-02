@@ -1059,6 +1059,7 @@ table tbody tr {
 
 /* Suggestions items */
 .tagify__dropdown.users-list .tagify__dropdown__item{
+    color: black;
     padding: .5em .7em;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -1106,15 +1107,15 @@ table tbody tr {
 
 
 /* Tags items */
-#users-list .tagify__tag{
+.tagify .tagify__tag{
     white-space: nowrap;
 }
 
-#users-list .tagify__tag:hover .tagify__tag__avatar-wrap{
+.tagify  .tagify__tag:hover .tagify__tag__avatar-wrap{
     transform: scale(1.6) translateX(-10%);
 }
 
-#users-list .tagify__tag .tagify__tag__avatar-wrap{
+.tagify .tagify__tag .tagify__tag__avatar-wrap{
     width: 16px;
     height: 16px;
     white-space: normal;
@@ -1124,7 +1125,7 @@ table tbody tr {
     transition: .12s ease-out;
 }
 
-#users-list .tagify__tag img{
+.tagify .tagify__tag img{
     width: 100%;
     vertical-align: top;
     pointer-events: none;

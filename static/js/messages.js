@@ -81,6 +81,7 @@ function onInput( e ) {
                 {
                     value: entry[0],
                     name: entry[1],
+                    email: '',
                     avatar: '/images/' + entry[3]
                 }
                 )
