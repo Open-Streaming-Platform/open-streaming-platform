@@ -32,7 +32,6 @@ function suggestionItemTemplate(tagData){
             </div>` : ''
             }
             <strong>${tagData.name}</strong>
-            <span>${tagData.email}</span>
         </div>
     `
 }
@@ -124,4 +123,10 @@ function getAddAllSuggestionsElm(){
             }, 0) + " Members"
         }]
       )
+}
+
+function openNewMessageModal() {
+    document.getElementById('toUsersList').value = '';
+    document.getElementById('messageContent').value = ''
+    openModal('newMessageModal')
 }
