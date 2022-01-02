@@ -72,11 +72,11 @@ function onInput( e ) {
     tagify.loading(true).dropdown.hide()
 
     $.post('/apiv1/user/search', {term: value}, function (RES) {
-        var newWhitelist = RES.json();
+        var newWhitelist = RES['results'];
         console.log(newWhitelist);
         resultWhitelist = []
         for (var i = 0; i < newWhitelist.length; i++) {
-            var entry = newWhitelist['results'][i];
+            var entry = newWhitelist[i];
             resultWhitelist.push(
                 {
                     value: entry[0],
