@@ -148,13 +148,13 @@ function sendMessage() {
 }
 
 function getMessage(messageID) {
-    $('#message-loading').display.show();
+    $('#message-loading').show();
     socket.emit('getMessage', {messageID: messageID});
 }
 
 socket.on('returnMessage', function (msg) {
-    $('#message-loading').display.hide();
-    $('#message').display.show();
+    $('#message-loading').hide();
+    $('#message').show();
     document.getElementById('message-content').innerHTML = msg['content'];
     document.getElementById('message-subject').innerHTML = msg['subject'];
 });
