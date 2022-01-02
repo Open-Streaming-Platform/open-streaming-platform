@@ -1409,3 +1409,58 @@
   </div>
 </div>
 {% endmacro %}
+
+{% macro messages_panel(messageList) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Messages</b>
+      <span class="float-end textShadow">
+        <span id="selectedMessages" class="me-4">
+          <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
+          <button class="btn btn-sm btn-danger boxShadow"><i class="fas fa-trash"></i> Delete Selected</button>
+        </span>
+        <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
+        <button class="btn btn-sm btn-success boxShadow"><i class="fas fa-paper-plane"></i> New Message</button>
+      </span>
+    </div>
+    <div class="messages-list info-panel-box-body boxShadow">
+      <table class="table table-hover table-dark">
+        <thead>
+          <tr>
+            <th scope="col" class="col-auto" colspan="1"></th>
+            <th scope="col" class="col-1">Sent Timestamp</th>
+            <th scope="col" class="col-2">From</th>
+            <th scope="col" class="col-10">Subject</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for message in messageList %}
+          <tr>
+            <td>
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            </td>
+            <td>{{ message.timestamp}}</td>
+            <td>
+              <img class="avatar-small" src="/images/{{ message.fromUserID | get_pictureLocation }}"> <!--TODO: Add Check for System Messages and no photos-->
+              <span class="ms-2">{{ message.fromUserID | get_userName }}</span>
+            </td>
+            <td>{{ message.subject}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="messages-view-header boxShadow textShadow">
+        <b>Content</b>
+        <span class="float-end textShadow">
+        <button class="btn btn-sm btn-danger boxShadow"><i class="fas fa-trash"></i> Delete</button>
+        <button class="btn btn-sm btn-success boxShadow"><i class="fas fa-reply"></i> Reply</button>
+      </span>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+      <div class="messages-view">
+        <div class="message"></div>
+      </div>
+    </div>
+</div>
+{% endmacro %}

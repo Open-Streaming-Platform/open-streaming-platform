@@ -177,6 +177,12 @@ def search_page():
     return redirect(url_for('root.main_page'))
 
 @login_required
+@root_bp.route('/messages')
+def messages_page():
+    messageList = notifications.userMessage.query.filter_by(toUserID=current_user.id).all()
+    return render_template(themes.checkOverride('messages.html'), messageList=messageList)
+
+@login_required
 @root_bp.route('/notifications')
 def notification_page():
     notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
