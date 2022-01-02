@@ -2077,3 +2077,29 @@ var tagify_videoTags = new Tagify(videoTags, {
   </div>
 </div>
 {% endmacro %}
+
+{% macro create_message() %}
+<div class="modal fade" id="newMessageModal" tabindex="-1" role="dialog" aria-labelledby="newMessageModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="newMessageModalTitle">Create a New Message</h5>
+            <div class="float-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <label for="toUsersList" class="form-label">Panel Name</label>
+            <input class="form-control boxShadow" id="toUsersList" name='toUsersList' value=''>
+            <label for="messageContent" class="form-label">Message</label>
+            <textarea class="form-control boxShadow" id="messageContent" name="messageContent"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="sendMessage();">Send Message</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endmacro %}
