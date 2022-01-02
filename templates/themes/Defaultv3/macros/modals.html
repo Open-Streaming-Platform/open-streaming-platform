@@ -2089,13 +2089,17 @@ var tagify_videoTags = new Tagify(videoTags, {
             </div>
         </div>
         <div class="modal-body">
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label for="toUsersList" class="form-label">Send Message To:</label>
-                <input class="form-control boxShadow" id="toUsersList" name='toUsersList' value=''>
+                <input class="form-control boxShadow" id="toUsersList" name='toUsersList' value='' required>
+            </div>
+            <div class="form-group mb-2">
+                <label for="messageSubject" class="form-label">Subject:</label>
+                <input type="text" class="form-control boxShadow" id="messageSubject" name="messageSubject" required>
             </div>
             <div class="form-group">
                 <label for="messageContent" class="form-label">Message:</label>
-                <textarea class="form-control boxShadow" id="messageContent" name="messageContent" rows="10"></textarea>
+                <textarea class="form-control boxShadow" id="messageContent" name="messageContent" rows="10" required></textarea>
             </div>
         </div>
         <div class="modal-footer">

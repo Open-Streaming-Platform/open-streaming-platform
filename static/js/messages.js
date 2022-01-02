@@ -125,6 +125,24 @@ function getAddAllSuggestionsElm(){
 
 function openNewMessageModal() {
     document.getElementById('toUsersList').value = '';
+    document.getElementById('messageSubject').value = '';
     document.getElementById('messageContent').value = ''
     openModal('newMessageModal')
+}
+
+function sendMessage() {
+    var sendMessageTo = JSON.parse(document.getElementById('toUsersList').value);
+    var messageSubject = document.getElementById('messageSubject').value;
+    var messageContent = document.getElementById('messageContent').value;
+
+    if ((sendMessageTo === '') || (messageSubject.trim() === '') || (messageContent.trim === '')) {
+    createNewBSAlert('Message Not Sent.  Required Fields Were Empty', 'error');
+    } else {
+        socket.emit('sendMessage', {
+            sendMessageTo: sendMessageTo,
+            messageSubject: messageSubject,
+            messageContent: messageContent
+        });
+        createNewBSAlert('Message Queued', 'success');
+    }
 }
