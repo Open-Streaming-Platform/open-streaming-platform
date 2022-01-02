@@ -77,7 +77,7 @@ function onInput( e ) {
             console.log(newWhitelist);
             resultWhitelist = []
             for (var i = 0; i < newWhitelist.length; i++) {
-                var entry = newWhitelist[i];
+                var entry = newWhitelist['results'][i];
                 resultWhitelist.push(
                     {
                         value: entry[0],
