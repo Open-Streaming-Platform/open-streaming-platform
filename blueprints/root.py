@@ -176,19 +176,20 @@ def search_page():
 
     return redirect(url_for('root.main_page'))
 
-@login_required
 @root_bp.route('/messages')
+@login_required
 def messages_page():
     messageList = notifications.userMessage.query.filter_by(toUserID=current_user.id).all()
     return render_template(themes.checkOverride('messages.html'), messageList=messageList)
 
-@login_required
 @root_bp.route('/notifications')
+@login_required
 def notification_page():
     notificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id, read=False).order_by(notifications.userNotification.timestamp.desc())
     return render_template(themes.checkOverride('notifications.html'), notificationList=notificationQuery)
 
 @root_bp.route('/unsubscribe')
+@login_required
 def unsubscribe_page():
     if 'email' in request.args:
         emailAddress = request.args.get("email")
