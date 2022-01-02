@@ -13,7 +13,7 @@ def sendMessage(message):
         messageSubject = message['messageSubject']
         messageContent = message['messageContent']
         for destination in sendMessageTo:
-            UserCheck = cachedDbCalls.getUser(sendMessageTo[int(destination.value)])
+            UserCheck = cachedDbCalls.getUser(int(destination.value))
             if UserCheck is not None:
                 message_tasks.send_message.delay(messageSubject, messageContent, current_user.id, UserCheck.id)
     return 'OK'
