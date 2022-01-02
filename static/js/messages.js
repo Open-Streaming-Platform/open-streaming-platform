@@ -146,3 +146,15 @@ function sendMessage() {
         createNewBSAlert('Message Queued', 'success');
     }
 }
+
+function getMessage(messageID) {
+    document.getElementById('message-loading').display.show();
+    socket.emit('getMessage', {messageID: messageID});
+}
+
+socket.on('returnMessage', function (msg) {
+    document.getElementById('message-loading').display.hide();
+    document.getElementById('message').display.show();
+    document.getElementById('message-content').innerHTML = msg['content'];
+    document.getElementById('message-subject').innerHTML = msg['subject'];
+}
