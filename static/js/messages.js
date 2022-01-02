@@ -1,4 +1,5 @@
 var inputElm = document.querySelector('input[name=toUsersList]');
+var controller = new AbortController();
 
 function tagTemplate(tagData){
     return `
