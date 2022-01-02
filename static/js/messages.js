@@ -157,4 +157,6 @@ socket.on('returnMessage', function (msg) {
     $('#message').show();
     document.getElementById('message-content').innerHTML = msg['content'];
     document.getElementById('message-subject').innerHTML = msg['subject'];
+    document.getElementById('message-timestamp').innerHTML = msg['timestamp'];
+    document.getElementById('message-from').src = '/images/' + msg['fromUserPhoto'];
 });
