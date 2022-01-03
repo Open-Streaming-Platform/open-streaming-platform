@@ -1049,12 +1049,12 @@ table tbody tr {
 }
 
 /* Chrome, Edge, and Safari */
-.messages-view ::-webkit-scrollbar {
+.messages-view::-webkit-scrollbar {
     width: 0;
     background: transparent;
 }
 
-.messages-view ::-webkit-scrollbar-thumb {
+.messages-view::-webkit-scrollbar-thumb {
     background-color: #b5b5b5;
     border-radius: 16px;
     border: 0px solid #ffffff;
