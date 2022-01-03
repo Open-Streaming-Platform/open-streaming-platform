@@ -26,7 +26,7 @@ def getMessage(message):
         messageQuery = notifications.userMessage.query.filter_by(id=messageID, toUserID=current_user.id).first()
         if messageQuery != None:
             fromUserQuery = cachedDbCalls.getUser(messageQuery.fromUserID)
-            emit('returnMessage', {'status': 'success', 'fromUser': messageQuery.fromUserID, 'fromUserPhoto': fromUserQuery.pictureLocation, 'subject': messageQuery.subject,
+            emit('returnMessage', {'status': 'success', 'fromUser': messageQuery.fromUserID, 'fromUsername': fromUserQuery.username, 'fromUserPhoto': fromUserQuery.pictureLocation, 'subject': messageQuery.subject,
                                    'timestamp': str(messageQuery.timestamp), 'content': messageQuery.message}, broadcast=False)
             messageQuery.read = True
         db.session.commit()

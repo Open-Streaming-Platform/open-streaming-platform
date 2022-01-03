@@ -1435,7 +1435,7 @@
         </thead>
         <tbody>
         {% for message in messageList %}
-          <tr>
+          <tr id="message-{{ message.id }}" class="align-middle">
             <td>
               <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
             </td>
@@ -1460,16 +1460,17 @@
     <div class="info-panel-box-body boxShadow">
       <div class="messages-view">
         <div id="message-loading" style="display: none;">
-            <div class="d-flex align-items-center">
-              <strong>Loading...</strong>
-              <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         </div>
         <div id="message" class="message" style="display: none;">
-            <div><b>From:</b> <img id="message-from" src="" class="avatar-small" ></img></div>
-            <div><b>Sent: </b> <span id="message-timestamp"></span></div>
-            <div><b>Subject: </b> <span id="message-subject"></span></div>
-            <div class="mt-2" id="message-content"></div>
+            <div class="mb-s"><b>From:</b> <span class="me-2"><img id="message-from-img" src="" class="avatar-small"></span><span id="message-from-username"></span></div>
+            <div class="mb-2"><b>Sent: </b> <span id="message-timestamp"></span></div>
+            <div class="mb-2"><b>Subject: </b> <span id="message-subject"></span></div>
+            <div class="" id="message-content"></div>
         </div>
       </div>
     </div>

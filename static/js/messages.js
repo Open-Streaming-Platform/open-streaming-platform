@@ -158,5 +158,6 @@ socket.on('returnMessage', function (msg) {
     document.getElementById('message-content').innerHTML = msg['content'];
     document.getElementById('message-subject').innerHTML = msg['subject'];
     document.getElementById('message-timestamp').innerHTML = msg['timestamp'];
-    document.getElementById('message-from').src = '/images/' + msg['fromUserPhoto'];
+    document.getElementById('message-from-img').src = '/images/' + msg['fromUserPhoto'];
+    document.getElementById('message-from-username').innerHTML = msg['fromUsername'];
 });
