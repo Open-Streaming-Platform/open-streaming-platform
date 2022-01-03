@@ -1430,7 +1430,7 @@
             <th scope="col" class="col-auto" colspan="1"></th>
             <th scope="col" class="col-1">Sent Timestamp</th>
             <th scope="col" class="col-2">From</th>
-            <th scope="col" class="col-10">Subject</th>
+            <th scope="col" class="col-10 ps-3">Subject</th>
           </tr>
         </thead>
         <tbody>
@@ -1441,7 +1441,7 @@
             </td>
             <td>{{ message.timestamp}}</td>
             <td>
-              <img class="avatar-small" src="/images/{{ message.fromUserID | get_pictureLocation }}"> <!--TODO: Add Check for System Messages and no photos-->
+              <img class="avatar-small" src="/images/{{ message.fromUserID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
               <span class="ms-2">{{ message.fromUserID | get_userName }}</span>
             </td>
             <td><button class="btn btn-link" onclick="getMessage({{ message.id }});">{{ message.subject }}</button></td>
