@@ -855,7 +855,7 @@ table tbody tr {
 .videoStream,
 video.video-js,
 video.vjs-tech {
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh - 190px);
   position: relative !important;
   width: 100%;
   height: auto !important;
@@ -880,15 +880,16 @@ video.vjs-tech {
 }
 
 .video-control-panel {
-    height: 50px;
+    background-color: var(--box1-background);
     width: 100%;
-    background-color: var(--page-background);
+    height: 100%;
 }
 
 .video-metadata {
-  background-color: var(--box1-background);
-  padding: 10px;
-  box-shadow: var(--box-shadow);
+    background-color: var(--box1-background);
+    width: 100%;
+    /*padding: 10px;*/
+    /* box-shadow: var(--box-shadow); */
 }
 
 #sidePanel{

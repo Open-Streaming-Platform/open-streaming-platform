@@ -243,26 +243,29 @@
 
 {% macro video_metadata_panel(video) %}
 <div class="video-metadata">
-  <div class="row">
-    <div class="channelImg-sm col-auto">
+  <div class="row py-3">
+    <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-8">
         <div class="row">
+          <div class="col-11 textShadow">
             <div class="col-auto">
-                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              <span class="align-middle mx-2 fs-5">{{ video.owningUser | get_userName }}</span>
             </div>
-            <div class="col-11 textShadow">
-                <div class="video-name"><b>{{ video.channelName }}</b></div>
-                <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
-                <div class="video-topic">{{ video.topic | get_topicName }}</div>
+            <div class="video-name"><span class="fs-5"><b>{{ video.channelName }}</b></span></div>
+            <div class="video-channelName fs-5">{{ video.channelID | get_channelName }}</div>
+            <div class="video-topic mr-2">{{ video.topic | get_topicName }}
+              {% for tag in video.id | get_videoTags %}
+              <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+              {% endfor %}
             </div>
+          </div>
         </div>
         <div class="streamCard-tags row g-0">
             <div class="col-12">
-                  {% for tag in video.id | get_videoTags %}
-                    <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
-                  {% endfor %}
+                 
             </div>
         </div>
         {% if video.description != None %}
@@ -291,7 +294,7 @@
 {% endmacro %}
 
 {% macro video_control_panel(streamURL, video, current_user) %}
-<div class="video-control-panel boxShadow">
+<div class="video-control-panel">
     {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
     <!--Start Video Owner Controls-->
     <div class="video-control-owner-buttons pt-2 ms-1 float-start">
@@ -346,7 +349,7 @@
 
 {% macro comments_panel(commentList, videoAllowComments, systemAllowComments) %}
 <div id="commentsContainer" class="comments-container boxShadow">
-  <div class="comments-header-container boxShadow">
+  <div class="comments-header-container my-2 boxShadow">
     <span class="fs-3 textShadow"><b>Comments</b></span>
     <span class="float-end me-3 mt-1" onclick="openModal('commentModal');"><i class="text-center fs-4 bi bi-plus-square"></i></span>
   </div>

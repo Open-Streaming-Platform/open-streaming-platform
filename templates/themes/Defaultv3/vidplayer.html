@@ -26,8 +26,14 @@
         <div id="mainContentPanel" class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, video.thumbnailLocation) }}
-                {{ panels.video_control_panel(streamURL, video, current_user) }}
-                {{ panels.video_metadata_panel(video) }}
+                <div class="row gx-0 boxShadow">
+                    <div class="col-6">
+                        {{ panels.video_metadata_panel(video) }}
+                    </div>
+                    <div class="col-6">
+                        {{ panels.video_control_panel(streamURL, video, current_user) }}
+                    </div>
+                </div>
                 {{ panels.comments_panel(video.id | get_videoComments, video.allowComments, sysSettings.allowComments) }}
             </div>
         </div>
