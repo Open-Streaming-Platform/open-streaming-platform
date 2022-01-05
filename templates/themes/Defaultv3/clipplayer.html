@@ -23,8 +23,14 @@
         <div id="mainContentPanel" class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, clip.thumbnailLocation) }}
-                {{ panels.clip_control_panel(streamURL, clip, current_user) }}
-                {{ panels.clip_metadata_panel(clip) }}
+                <div class="row gx-0 boxShadow">
+                    <div class="col-6">
+                        {{ panels.clip_metadata_panel(clip) }}
+                    </div>
+                    <div class="col-6">
+                        {{ panels.clip_control_panel(streamURL, clip, current_user) }}
+                    </div>
+                </div>
             </div>
         </div>
         <div id="sidePanel" class="col-xl-4 col-lg-3 col-md-12 col-sm-12 col-12">

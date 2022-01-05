@@ -891,7 +891,15 @@ video.vjs-tech {
     /*padding: 10px;*/
     /* box-shadow: var(--box-shadow); */
 }
-
+.ownerbuttons-dropdown-content {
+    background-color: var(--box2-background);
+    color: var(--font-color);
+    min-width: 195px;
+    z-index: 1;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 7px;
+}
 #sidePanel{
     max-width: var(--side-panel-width);
 }
