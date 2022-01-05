@@ -852,6 +852,7 @@ table tbody tr {
 .video-js.vjs-fluid,
 .video-js.vjs-16-9,
 .video-js.vjs-4-3,
+.videoStream,
 video.video-js,
 video.vjs-tech {
   max-height: calc(100vh - 220px);
