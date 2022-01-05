@@ -1,16 +1,26 @@
 0.9.0
 ==============================================
 OSP-Core: Adds Celery Task Queue and Celery Beat Task Scheduler
-OSP-Core: Offloads Recording Completion, Video Delete, Clip Delete, Clip Creation, Webhook Functions to Task Queue for Responsiveness
+OSP-Core: Adds New Theme Default Theme - Defaultv3
+OSP-Core: Adds Ability to Create Admin Level Custom Panels on Front Page
+OSP-Core: Adds Ability to Create User Level Custom Panels on the Channel Live Page
+OSP-Core: Adds Channel Level and Video Level "Tags"
+OSP-Core: Offloads Recording Completion, Video Delete, Clip Delete, Clip Creation, Video Upload, Webhook Functions to Task Queue for Responsiveness
 OSP-Core: Adds Ability to Set Video Retention at a Global and Channel Level by number of days. Lowest value will be used.
 OSP-Core: Adds Setting to Enable/Disable Global RTMP Restreams
 OSP-Core: Removes Unused Database Columns
+OSP-Core: Adds User to User Messaging System
 OSP-Core: Adds allowRestream and hubUUID to Server API Settings Return
+OSP-Core: Adds Periodic Checks to Check if a Video Contains a Thumbnail
+OSP-Core: Adds Periodic Checks to Check if a Video exists in a correct state (Not Pending and Video Exists)
 OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #440
 OSP-Core: Fixed an Issue when OSP will attempt to keep adding the default Topic "Other", even after deletion - #407
 OSP-Core: Fixed an issue where Webhook tests would fail if no Video Recording Existed on a server - #442
 OSP-Core: Updates Pillow to 8.3.2 to fix CVE-2021-34552
 OSP-Core: Removes APScheduler Assignment
+OSP-Core: Added Channel Invites API Endpoint for getting/adding/removing user invites to a channel
+OSP-Core: New Security UI for Login, Registration, Password Reset, TOTP Configuration
+OSP-Core: Corrects a security issue where video metadata could be edited by a non-owning user
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 
 
