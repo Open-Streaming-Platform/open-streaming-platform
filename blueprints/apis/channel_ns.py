@@ -10,6 +10,7 @@ from classes import Channel
 from classes import apikey
 from classes import Sec
 from classes import topics
+from classes import invites
 from classes import views
 from classes.shared import db
 
@@ -33,6 +34,16 @@ channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 channelParserPost.add_argument('commentsEnabled', type=bool, required=True)
+
+channelInviteGetInvite = reqparse.RequestParser()
+channelInviteGetInvite.add_argument('userID', type=int)
+
+channelInvitePostInvite = reqparse.RequestParser()
+channelInvitePostInvite.add_argument('userID', type=int, required=True)
+channelInvitePostInvite.add_argument('expirationDays', type=int, required=True)
+
+channelInviteDeleteInvite = reqparse.RequestParser()
+channelInviteDeleteInvite.add_argument('userID', type=int, required=True)
 
 channelSearchPost = reqparse.RequestParser()
 channelSearchPost.add_argument('term', type=str, required=True)
@@ -220,6 +231,140 @@ class api_1_GetRestreams(Resource):
             db.session.commit()
             return {'results': {'message': 'Request Error'}}, 400
 
+# Invites Endpoint for a Channel
+@api.route('/<string:channelEndpointID>/invites')
+@api.doc(security='apikey')
+@api.doc(params={'channelEndpointID': 'GUID Channel Location'})
+class api_1_Invites(Resource):
+    @api.expect(channelInviteGetInvite)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def get(self, channelEndpointID):
+        """
+             Returns channel protection invites for a channel
+        """
+        args = channelInviteGetInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        inviteReturnArray = {'results': []}
+                        invitedUserQuery = []
+                        if 'userID' in args:
+                            invitedUserQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id, userID=int(args['userID'])).all()
+                        else:
+                            invitedUserQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id).all()
+                        for invite in invitedUserQuery:
+                            inviteReturn = {'id': invite.id, 'userID': invite.userId, 'addedDate': str(invite.addedDate), 'expiration': str(invite.expiration), 'inviteCode': invite.inviteCode, 'isValid': invite.isValid()}
+                            inviteReturnArray['results'].append(inviteReturn)
+                        return inviteReturnArray
+                db.session.commit()
+                db.session.close()
+                return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+    def post(self, channelEndpointID):
+        """
+        Creates a new user invite for a channel
+        """
+        args = channelInvitePostInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        if 'userID' in args and 'expirationDays' in args:
+                            userQuery = Sec.User.query.filter_by(id=int(args['userID'])).first()
+                            if userQuery is not None:
+                                newInvite = invites.invitedViewer(userQuery.id, requestedChannel.id, int(args['expirationDays']))
+                                db.session.add(newInvite)
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Success'}}
+                            else:
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Request Error - Invalid User'}}, 400
+                    else:
+                        db.session.commit()
+                        db.session.close()
+                        return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+    def delete(self, channelEndpointID):
+        """
+        Deletes a user invite from a channel
+        """
+        args = channelInviteDeleteInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        if 'userID' in args:
+                            inviteQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id, user=int(args['userID'])).first()
+                            if inviteQuery != None:
+                                db.session.delete(inviteQuery)
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Success'}}
+                            else:
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Request Error - Invalid User'}}, 400
+                    else:
+                        db.session.commit()
+                        db.session.close()
+                        return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/authed/')
 class api_1_ListChannelAuthed(Resource):
