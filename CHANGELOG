@@ -21,6 +21,7 @@ OSP-Core: Removes APScheduler Assignment
 OSP-Core: Added Channel Invites API Endpoint for getting/adding/removing user invites to a channel
 OSP-Core: New Security UI for Login, Registration, Password Reset, TOTP Configuration
 OSP-Core: Corrects a security issue where video metadata could be edited by a non-owning user
+OSP-Core: Corrects an issue where TOTP + "Remember Me" Setting on Login would result in a 500 error
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 
 
