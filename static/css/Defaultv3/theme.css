@@ -24,6 +24,8 @@
     --nav-userphoto-width: 42px;
     --nav-userphoto-height: 42px;
 
+    --side-panel-width: 350px;
+
   }
 
 [data-theme="light"] {
@@ -823,8 +825,13 @@ table tbody tr {
   text-align: center;
 }
 
+#mainContentPanel{
+    width: calc(100% - var(--side-panel-width));
+}
+
 .video-panel {
     height: calc(100vh - var(--top-navbar-height));
+    height: auto;
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: auto;
@@ -835,6 +842,31 @@ table tbody tr {
 .video-panel::-webkit-scrollbar {
     width: 0;
     background: transparent;
+}
+
+/* Make the video relative, instead of absolute, so that
+   the parent container will size based on the video. Also,
+   note the max-height rule. Note the line-height 0 is to prevent
+   a small artifact on the bottom of the video.
+ */
+.video-js.vjs-fluid,
+.video-js.vjs-16-9,
+.video-js.vjs-4-3,
+.videoStream,
+video.video-js,
+video.vjs-tech {
+  max-height: calc(100vh - 190px);
+  position: relative !important;
+  width: 100%;
+  height: auto !important;
+  max-width: 100% !important;
+  padding-top: 0 !important;
+  line-height: 0;
+}
+
+/* Fix the control bar due to us resetting the line-height on the video-js */
+.vjs-control-bar {
+  line-height: 1;
 }
 
 /* .video-panel::-webkit-scrollbar-track {
@@ -848,15 +880,28 @@ table tbody tr {
 }
 
 .video-control-panel {
-    height: 50px;
+    background-color: var(--box1-background);
     width: 100%;
-    background-color: var(--page-background);
+    height: 100%;
 }
 
 .video-metadata {
-  background-color: var(--box1-background);
-  padding: 10px;
-  box-shadow: var(--box-shadow);
+    background-color: var(--box1-background);
+    width: 100%;
+    /*padding: 10px;*/
+    /* box-shadow: var(--box-shadow); */
+}
+.ownerbuttons-dropdown-content {
+    background-color: var(--box2-background);
+    color: var(--font-color);
+    min-width: 195px;
+    z-index: 1;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 7px;
+}
+#sidePanel{
+    max-width: var(--side-panel-width);
 }
 
 .side-video-panel {
@@ -947,16 +992,16 @@ table tbody tr {
     border: 0px solid #ffffff;
 }
 
-.stream-control-panel {
+/*.stream-control-panel {
     height: 50px;
     width: 100%;
     background-color: var(--page-background);
-}
+}*/
 
 .stream-metadata {
   background-color: var(--box1-background);
-  padding: 10px;
-  box-shadow: var(--box-shadow);
+  /*padding: 10px;
+  box-shadow: var(--box-shadow);*/
 }
 
 .avatar-md {

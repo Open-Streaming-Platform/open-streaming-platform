@@ -31,9 +31,14 @@
         <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
-                {{ panels.stream_control_panel(channel, current_user) }}
-                {{ panels.stream_metadata_panel(channel, stream) }}
-
+                <div class="row gx-0 boxShadow">
+                    <div class="col-6">
+                        {{ panels.stream_metadata_panel(channel, stream) }}
+                    </div>
+                    <div class="col-6">
+                        {{ panels.stream_control_panel(channel, current_user) }}
+                    </div>
+                </div>
                 {% for panel in channelPanelList %}
                     {% set panelItem = getPanel(panel.panelId, 2) %}
                     {% if panelItem.type == 0 %}

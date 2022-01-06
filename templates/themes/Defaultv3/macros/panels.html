@@ -243,30 +243,33 @@
 
 {% macro video_metadata_panel(video) %}
 <div class="video-metadata">
-  <div class="row">
-    <div class="channelImg-sm col-auto">
+  <div class="row py-3">
+    <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-8">
         <div class="row">
+          <div class="col-11 textShadow">
             <div class="col-auto">
-                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              <span class="align-middle mx-2 fs-5">{{ video.owningUser | get_userName }}</span>
             </div>
-            <div class="col-11 textShadow">
-                <div class="video-name"><b>{{ video.channelName }}</b></div>
-                <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
-                <div class="video-topic">{{ video.topic | get_topicName }}</div>
+            <div class="video-name"><span class="fs-5"><b>{{ video.channelName }}</b></span></div>
+            <div class="video-channelName fs-5">{{ video.channelID | get_channelName }}</div>
+            <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{video.topic}}/">{{ video.topic | get_topicName }}</a>
+              {% for tag in video.id | get_videoTags %}
+              <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+              {% endfor %}
             </div>
+          </div>
         </div>
         <div class="streamCard-tags row g-0">
             <div class="col-12">
-                  {% for tag in video.id | get_videoTags %}
-                    <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
-                  {% endfor %}
+                 
             </div>
         </div>
         {% if video.description != None %}
-        <div class="video-description">{{ video.description | markdown }}</div>
+        <div class="video-description py-3">{{ video.description | markdown }}</div>
         {% endif %}
     </div>
     <div class="col">
@@ -291,62 +294,73 @@
 {% endmacro %}
 
 {% macro video_control_panel(streamURL, video, current_user) %}
-<div class="video-control-panel boxShadow">
-    {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
-    <!--Start Video Owner Controls-->
-    <div class="video-control-owner-buttons pt-2 ms-1 float-start">
-        <a href="{{streamURL}}" class="btn btn-primary boxShadow" data-toggle="tooltip" data-placement="top" title="Download Video" download><i class="fas fa-download"></i></a>
-        <button type="button" class="btn btn-primary boxShadow" onclick="newThumbnailRequest();"><i class="fas fa-camera"></i></button>
-        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('moveModal');" data-toggle="tooltip" data-placement="top" title="Move to Another Channel"><i class="fas fa-arrow-circle-right"></i></button>
-        <button type="button" class="btn btn-primary boxShadow" onclick="openClipModal();"><i class="fas fa-cut"></i></button>
-        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
-        <button type="button" class="btn btn-danger boxShadow" onclick="openModal('deleteModal');"><i class="fas fa-trash-alt"></i></button>
-    </div>
+<div class="video-control-panel">
+  <!--Start Video Viewer Controls-->
+  <div class="video-control-viewer-buttons pt-2 me-1 float-end">
+    <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
+    <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %}
+      disabled aria-disabled="true" {% endif %}>
+      <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
+    </button>
+    {% if current_user.is_authenticated %}
+    <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span
+        class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+    {% else %}
+    <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
     {% endif %}
-    <!--Start Video Viewer Controls-->
-    <div class="video-control-viewer-buttons pt-2 me-1 float-end">
-        <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
-        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('video',{{video.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-            <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
-        </button>
-        {% if current_user.is_authenticated %}
-            <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{video.channelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
-        {% else %}
-            <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
-        {% endif %}
+  </div>
+  {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
+    <!--Start Video Owner Controls-->
+    <div class="video-control-owner-buttons pt-2 me-1 float-end">
+      <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>
+      <ul class="dropdown-menu ownerbuttons-dropdown-content" aria-labelledby="ownerbuttons">
+        <li><a href="{{streamURL}}"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-download"></i></button>Download video</a></li>
+        <li><a href="#"><span onclick="newThumbnailRequest();"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-camera"></i></button>Create thumbnail</span></a></li>
+        <li><a href="#"><span onclick="openModal('moveModal');"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-arrow-circle-right"></i></button>Move to channel</span></a></li>
+        <li><a href="#"><span onclick="openClipModal();"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-cut"></i></button>Create clip</span></a></a></li>
+        <li><a href="#"><span onclick="openModal('editModal');"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-edit"></i></button>Edit meta data</span></a</a></li>
+        <li><a href="#"><span onclick="openModal('deleteModal');"><button type="button" class="btn col-3 m-1 btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>Delete video</span></a></li>
+      </ul>
     </div>
+  {% endif %}
+
 </div>
 {% endmacro %}
 
 {% macro clip_control_panel(streamURL, clip, current_user) %}
-<div class="video-control-panel boxShadow">
-    {%  if current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id %}
-    <!--Start Video Owner Controls-->
-    <div class="video-control-owner-buttons pt-2 ms-1 float-start">
-        <a href="{{streamURL}}" class="btn btn-primary boxShadow" data-toggle="tooltip" data-placement="top" title="Download Video" download><i class="fas fa-download"></i></a>
-        <button type="button" class="btn btn-primary boxShadow" onclick="newThumbnailRequest();"><i class="fas fa-camera"></i></button>
-        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
-        <button type="button" class="btn btn-danger boxShadow" onclick="openModal('deleteModal');"><i class="fas fa-trash-alt"></i></button>
-    </div>
-    {% endif %}
+  <div class="video-control-panel">
     <!--Start Video Viewer Controls-->
     <div class="video-control-viewer-buttons pt-2 me-1 float-end">
-        <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
-        <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %} disabled aria-disabled="true" {% endif %}>
-            <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
-        </button>
-        {% if current_user.is_authenticated %}
-            <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.parentVideo | videotoChannelID}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
-        {% else %}
-            <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
-        {% endif %}
+      <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
+      <button id="upvoteButton" type="button" class="btn btn-outline-success boxShadow" data-toggle="tooltip" data-placement="top" title="Upvote" onclick="changeUpvote('clip',{{clip.id}});" title="Upvote" {% if current_user.is_authenticated==false %}
+        disabled aria-disabled="true" {% endif %}>
+        <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
+      </button>
+      {% if current_user.is_authenticated %}
+      <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.parentVideo | videotoChannelID}}")'>{% if subState == True %}<i
+          class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
+      {% else %}
+      <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
+      {% endif %}
     </div>
-</div>
+    {%  if current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id %}
+      <!--Start Video Owner Controls-->
+      <div class="video-control-owner-buttons pt-2 me-1 float-end">
+        <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>
+        <ul class="dropdown-menu ownerbuttons-dropdown-content" aria-labelledby="ownerbuttons">
+          <li><a href="{{streamURL}}"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-download"></i></button>Download clip</a></li>
+          <li><a href="#"><span onclick="newThumbnailRequest();"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-camera"></i></button>Create thumbnail</span></a></li>
+          <li><a href="#"><span onclick="openModal('editModal');"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-edit"></i></button>Edit meta data</span></a></li>
+          <li><a href="#"><span onclick="openModal('deleteModal');"><button type="button" class="btn col-3 m-1 btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>Delete clip</span></a></li>
+        </ul>
+    </div>
+    {% endif %}
+  </div>
 {% endmacro %}
 
 {% macro comments_panel(commentList, videoAllowComments, systemAllowComments) %}
 <div id="commentsContainer" class="comments-container boxShadow">
-  <div class="comments-header-container boxShadow">
+  <div class="comments-header-container my-2 boxShadow">
     <span class="fs-3 textShadow"><b>Comments</b></span>
     <span class="float-end me-3 mt-1" onclick="openModal('commentModal');"><i class="text-center fs-4 bi bi-plus-square"></i></span>
   </div>
@@ -489,13 +503,7 @@
 {% endmacro %}
 
 {% macro stream_control_panel(channel, current_user) %}
-<div class="stream-control-panel boxShadow">
-    {%  if current_user.is_authenticated and channel.owningUser == current_user.id %}
-    <!--Start Stream Owner Controls-->
-    <div class="stream-control-owner-buttons pt-2 ms-1 float-start">
-        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
-    </div>
-    {% endif %}
+<div class="video-control-panel">
     <!--Start Stream Viewer Controls-->
     <div class="stream-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
@@ -511,30 +519,39 @@
             <span class="btn btn-danger boxShadow" id="liveIndicatorBadge">LIVE</span>
         </span>
     </div>
+    {% if current_user.is_authenticated and channel.owningUser == current_user.id %}
+    <!--Start Stream Owner Controls-->
+    <div class="stream-control-owner-buttons pt-2 me-1 float-end">
+        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
+    </div>
+    {% endif %}
 </div>
 {% endmacro %}
 
 {% macro stream_metadata_panel(channel, stream) %}
 <div class="stream-metadata">
-  <div class="row">
-    <div class="channelImg-sm col-auto">
+  <div class="row py-3">
+    <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-8">
         <div class="row">
             <div class="col-auto">
-                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+                <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+                <span class="align-middle mx-2 fs-5">{{ channel.owningUser | get_userName }}</span>
             </div>
             <div class="col-11 textShadow">
-                <div class="channel-name"><b>{{ channel.channelName }}</b></div>
-                <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
-                <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+                <div id="streamMetadataName" class="mr-5 fs-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div class="channel-name fs-5">{{ channel.channelName }}</div>
+                <div id="streamMetadataTopic"><i class="fas fa-hashtag"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
+                  {% for tag in channel.id | get_channelTags %}
+                  <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                  {% endfor %}
+                </div>
             </div>
             <div class="streamCard-tags row g-0">
                 <div class="col-12">
-                      {% for tag in channel.id | get_channelTags %}
-                        <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
-                      {% endfor %}
+                      
                 </div>
             </div>
         </div>
@@ -550,16 +567,22 @@
 
 {% macro clip_metadata_panel(clip) %}
 <div class="video-metadata">
-  <div class="row">
-    <div class="channelImg-sm col-auto">
+  <div class="row py-3">
+    <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-5">
-      <div class="video-name">{{ clip.clipName }}</div>
-      <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
-      <div class="video-topic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
+      <div class="video-name"><span class="fs-5"><b>{{ clip.clipName }}</b></span></div>
+      <div class="video-channelName fs-5">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
+      <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+        <!-- TBD: Tags for clips
+        {% for tag in clip.id | get_videoTags %}
+          <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+        {% endfor %}
+        -->
+      </div>
       {% if clip.description != None %}
-      <div class="video-description">{{ clip.description | markdown }}</div>
+      <div class="video-description py-3">{{ clip.description | markdown }}</div>
       {% endif %}
     </div>
     <div class="col">
