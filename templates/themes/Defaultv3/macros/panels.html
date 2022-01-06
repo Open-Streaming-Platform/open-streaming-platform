@@ -247,7 +247,7 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-8">
+    <div class="col">
         <div class="row">
           <div class="col-11 textShadow">
             <div class="col-auto">
@@ -532,7 +532,7 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-8">
+    <div class="col">
         <div class="row">
             <div class="col-auto">
                 <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
@@ -567,7 +567,7 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-5">
+    <div class="col">
       <div class="video-name"><b>{{ clip.clipName }}</b></div>
       <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
       <div class="video-topic mt-2 me-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
