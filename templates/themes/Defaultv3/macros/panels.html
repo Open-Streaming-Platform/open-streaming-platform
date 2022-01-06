@@ -503,13 +503,7 @@
 {% endmacro %}
 
 {% macro stream_control_panel(channel, current_user) %}
-<div class="stream-control-panel boxShadow">
-    {%  if current_user.is_authenticated and channel.owningUser == current_user.id %}
-    <!--Start Stream Owner Controls-->
-    <div class="stream-control-owner-buttons pt-2 ms-1 float-start">
-        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
-    </div>
-    {% endif %}
+<div class="video-control-panel">
     <!--Start Stream Viewer Controls-->
     <div class="stream-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
@@ -525,23 +519,30 @@
             <span class="btn btn-danger boxShadow" id="liveIndicatorBadge">LIVE</span>
         </span>
     </div>
+    {% if current_user.is_authenticated and channel.owningUser == current_user.id %}
+    <!--Start Stream Owner Controls-->
+    <div class="stream-control-owner-buttons pt-2 me-1 float-end">
+        <button type="button" class="btn btn-primary boxShadow" onclick="openModal('editModal');"><i class="fas fa-edit"></i></button>
+    </div>
+    {% endif %}
 </div>
 {% endmacro %}
 
 {% macro stream_metadata_panel(channel, stream) %}
 <div class="stream-metadata">
-  <div class="row">
-    <div class="channelImg-sm col-auto">
+  <div class="row py-3">
+    <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col-8">
         <div class="row">
             <div class="col-auto">
-                <img class="mt-1 avatar-md boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+                <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+                <span class="align-middle mx-2 fs-5">{{ channel.owningUser | get_userName }}</span>
             </div>
             <div class="col-11 textShadow">
-                <div class="channel-name"><b>{{ channel.channelName }}</b></div>
-                <div id="streamMetadataName" class="mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div id="streamMetadataName" class="mr-5 fs-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div class="channel-name fs-5"><b>{{ channel.channelName }}</b></div>
                 <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
             </div>
             <div class="streamCard-tags row g-0">
