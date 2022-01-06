@@ -27,10 +27,10 @@
             <div class="video-panel">
                 {{ panels.video_player(streamURL, video.thumbnailLocation) }}
                 <div class="row gx-0 boxShadow">
-                    <div class="col-6">
+                    <div class="col-xl-6 col-lg-12">
                         {{ panels.video_metadata_panel(video) }}
                     </div>
-                    <div class="col-6 box1-fill">
+                    <div class="col-xl-6 col-lg-12 box1-fill">
                         <div class="row gx-0">
                             <div class="col">
                                 {{ panels.video_control_panel(streamURL, video, current_user) }}
