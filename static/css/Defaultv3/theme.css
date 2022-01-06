@@ -24,7 +24,7 @@
     --nav-userphoto-width: 42px;
     --nav-userphoto-height: 42px;
 
-    --side-panel-width: 350px;
+    --side-panel-width: 410px;
 
   }
 
@@ -886,6 +886,7 @@ video.vjs-tech {
 }
 
 .video-views-text {
+    font-size: 1.25em;
     color: var(--accent-color);
 }
 .video-metadata {
@@ -894,6 +895,15 @@ video.vjs-tech {
     /*padding: 10px;*/
     /* box-shadow: var(--box-shadow); */
 }
+
+.video-name,
+.video-channelName,
+.video-streamer,
+.channel-name {
+    font-size: 1.25em;
+}
+
+
 .ownerbuttons-dropdown-content {
     background-color: var(--box2-background);
     color: var(--font-color);
