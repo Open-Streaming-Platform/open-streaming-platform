@@ -256,7 +256,7 @@
             </div>
             <div class="video-name"><span class="fs-5"><b>{{ video.channelName }}</b></span></div>
             <div class="video-channelName fs-5">{{ video.channelID | get_channelName }}</div>
-            <div class="video-topic mr-2">{{ video.topic | get_topicName }}
+            <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{video.topic}}/">{{ video.topic | get_topicName }}</a>
               {% for tag in video.id | get_videoTags %}
               <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
               {% endfor %}
@@ -543,7 +543,7 @@
             <div class="col-11 textShadow">
                 <div id="streamMetadataName" class="mr-5 fs-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
                 <div class="channel-name fs-5">{{ channel.channelName }}</div>
-                <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b>
+                <div id="streamMetadataTopic"><i class="fas fa-hashtag"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
                   {% for tag in channel.id | get_channelTags %}
                   <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
                   {% endfor %}
@@ -574,7 +574,7 @@
     <div class="col-5">
       <div class="video-name"><span class="fs-5"><b>{{ clip.clipName }}</b></span></div>
       <div class="video-channelName fs-5">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
-      <div class="video-topic mr-2">{{ clip.parentVideo | get_videoTopic | get_topicName }}
+      <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
         <!-- TBD: Tags for clips
         {% for tag in clip.id | get_videoTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
