@@ -885,6 +885,9 @@ video.vjs-tech {
     height: 100%;
 }
 
+.video-views-text {
+    color: var(--accent-color);
+}
 .video-metadata {
     background-color: var(--box1-background);
     width: 100%;

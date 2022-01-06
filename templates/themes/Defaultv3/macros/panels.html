@@ -274,7 +274,7 @@
 {% macro video_views_panel(video) %}
 <div class="video-views-panel">
   <div class="float-end mx-1 my-2">
-    <span title="Views"><i class="bi bi-people-fill"></i> {{ video.views }}</span>
+    <span title="Views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ video.views }}</b></span>
   </div>
 </div>
 {% endmacro %}
@@ -556,7 +556,7 @@
 {% macro stream_views_panel(channel, stream) %}
 <div class="video-views-panel">
   <div class="float-end mx-1 my-2">
-    <span title="Total views"><i class="bi bi-people-fill"></i> {{ channel.views }}</span><span title="Current viewers"><i class="fas fa-eye mx-2"></i>{{channel.currentViewers}}</span>
+    <span title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b class="video-views-text"> {{channel.currentViewers}}</b></span>
   </div>
 </div>
 {% endmacro %}
@@ -588,7 +588,7 @@
 {% macro clip_views_panel(clip) %}
 <div class="video-views-panel">
   <div class="float-end mx-1 my-2">
-    <span title="Views"><i class="bi bi-people-fill"></i> {{ clip.views }}</span>
+    <span title="Views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ clip.views }}</b></span>
   </div>
 </div>
 {% endmacro %}
