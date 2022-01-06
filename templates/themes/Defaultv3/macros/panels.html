@@ -263,11 +263,6 @@
             </div>
           </div>
         </div>
-        <div class="streamCard-tags row g-0">
-            <div class="col-12">
-                 
-            </div>
-        </div>
         {% if video.description != None %}
         <div class="video-description py-3">{{ video.description | markdown }}</div>
         {% endif %}
@@ -547,11 +542,6 @@
                   {% for tag in channel.id | get_channelTags %}
                   <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
                   {% endfor %}
-                </div>
-            </div>
-            <div class="streamCard-tags row g-0">
-                <div class="col-12">
-                      
                 </div>
             </div>
         </div>
