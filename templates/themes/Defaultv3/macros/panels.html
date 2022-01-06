@@ -99,7 +99,7 @@
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-2">
-              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channel.owningUser | get_pictureLocation}}" alt="Username Picture">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channel.owningUser | get_pictureLocation}}"  onerror="this.src='/static/img/user2.png';" alt="Username Picture">
             </div>
             <div class="col-10">
               <div class="card-body">
@@ -247,36 +247,34 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ video.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-8">
+    <div class="col">
         <div class="row">
           <div class="col-11 textShadow">
             <div class="col-auto">
               <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
-              <span class="align-middle mx-2 fs-5">{{ video.owningUser | get_userName }}</span>
+              <span class="align-middle video-streamer mx-2">{{ video.owningUser | get_userName }}</span>
             </div>
-            <div class="video-name"><span class="fs-5"><b>{{ video.channelName }}</b></span></div>
-            <div class="video-channelName fs-5">{{ video.channelID | get_channelName }}</div>
-            <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{video.topic}}/">{{ video.topic | get_topicName }}</a>
+            <div class="video-name"><b>{{ video.channelName }}</b></div>
+            <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
+            <div class="video-topic mt-2 me-2"><i class="fas fa-hashtag"></i><a href="/topic/{{video.topic}}/">{{ video.topic | get_topicName }}</a>
               {% for tag in video.id | get_videoTags %}
               <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
               {% endfor %}
             </div>
           </div>
         </div>
-        <div class="streamCard-tags row g-0">
-            <div class="col-12">
-                 
-            </div>
-        </div>
         {% if video.description != None %}
-        <div class="video-description py-3">{{ video.description | markdown }}</div>
+        <div class="video-description py-4">{{ video.description | markdown }}</div>
         {% endif %}
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ video.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro video_views_panel(video) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ video.views }}</b></span>
   </div>
 </div>
 {% endmacro %}
@@ -534,33 +532,31 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ channel.id | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-8">
+    <div class="col">
         <div class="row">
             <div class="col-auto">
                 <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
-                <span class="align-middle mx-2 fs-5">{{ channel.owningUser | get_userName }}</span>
+                <span class="align-middle mx-2 video-streamer">{{ channel.owningUser | get_userName }}</span>
             </div>
             <div class="col-11 textShadow">
-                <div id="streamMetadataName" class="mr-5 fs-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
-                <div class="channel-name fs-5">{{ channel.channelName }}</div>
-                <div id="streamMetadataTopic"><i class="fas fa-hashtag"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
+                <div id="streamMetadataName" class="video-name mt-2 mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
+                <div class="channel-name">{{ channel.channelName }}</div>
+                <div id="streamMetadataTopic" class="mt-2"><i class="fas fa-hashtag"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
                   {% for tag in channel.id | get_channelTags %}
                   <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
                   {% endfor %}
                 </div>
             </div>
-            <div class="streamCard-tags row g-0">
-                <div class="col-12">
-                      
-                </div>
-            </div>
         </div>
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ channel.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro stream_views_panel(channel, stream) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b class="video-views-text">{{channel.currentViewers}}</b></span>
   </div>
 </div>
 {% endmacro %}
@@ -571,10 +567,10 @@
     <div class="channelImg-sm mx-2 col-auto">
       <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
-    <div class="col-5">
-      <div class="video-name"><span class="fs-5"><b>{{ clip.clipName }}</b></span></div>
-      <div class="video-channelName fs-5">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
-      <div class="video-topic mr-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+    <div class="col">
+      <div class="video-name"><b>{{ clip.clipName }}</b></div>
+      <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
+      <div class="video-topic mt-2 me-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
         <!-- TBD: Tags for clips
         {% for tag in clip.id | get_videoTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
@@ -582,14 +578,17 @@
         -->
       </div>
       {% if clip.description != None %}
-      <div class="video-description py-3">{{ clip.description | markdown }}</div>
+      <div class="video-description py-4">{{ clip.description | markdown }}</div>
       {% endif %}
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ clip.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro clip_views_panel(clip) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ clip.views }}</b></span>
   </div>
 </div>
 {% endmacro %}

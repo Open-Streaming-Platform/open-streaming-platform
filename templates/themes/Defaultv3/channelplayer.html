@@ -32,11 +32,20 @@
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 <div class="row gx-0 boxShadow">
-                    <div class="col-6">
+                    <div class="col-xl-6 col-lg-12">
                         {{ panels.stream_metadata_panel(channel, stream) }}
                     </div>
-                    <div class="col-6">
-                        {{ panels.stream_control_panel(channel, current_user) }}
+                    <div class="col-xl-6 col-lg-12 box1-fill">
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_control_panel(channel, current_user) }}
+                            </div>
+                        </div>
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_views_panel(channel, stream) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% for panel in channelPanelList %}
@@ -64,7 +73,7 @@
 
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+        <div id="sidePanel" class="col">
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}
