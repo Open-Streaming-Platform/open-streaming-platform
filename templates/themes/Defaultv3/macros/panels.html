@@ -542,14 +542,16 @@
             </div>
             <div class="col-11 textShadow">
                 <div id="streamMetadataName" class="mr-5 fs-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
-                <div class="channel-name fs-5"><b>{{ channel.channelName }}</b></div>
-                <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b></div>
+                <div class="channel-name fs-5">{{ channel.channelName }}</div>
+                <div id="streamMetadataTopic"><b><i class="fas fa-hashtag"></i><a href="/topic/{{stream.topic}}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a></b>
+                  {% for tag in channel.id | get_channelTags %}
+                  <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                  {% endfor %}
+                </div>
             </div>
             <div class="streamCard-tags row g-0">
                 <div class="col-12">
-                      {% for tag in channel.id | get_channelTags %}
-                        <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
-                      {% endfor %}
+                      
                 </div>
             </div>
         </div>
