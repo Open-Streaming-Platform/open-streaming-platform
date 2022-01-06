@@ -27,8 +27,17 @@
                     <div class="col-6">
                         {{ panels.clip_metadata_panel(clip) }}
                     </div>
-                    <div class="col-6">
-                        {{ panels.clip_control_panel(streamURL, clip, current_user) }}
+                    <div class="col-6 box1-fill">
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.clip_control_panel(streamURL, clip, current_user) }}
+                            </div>
+                        </div>
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.clip_views_panel(clip) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

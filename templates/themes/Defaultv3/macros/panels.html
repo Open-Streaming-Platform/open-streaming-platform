@@ -267,11 +267,14 @@
         <div class="video-description py-3">{{ video.description | markdown }}</div>
         {% endif %}
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ video.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro video_views_panel(video) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Views"><i class="bi bi-people-fill"></i> {{ video.views }}</span>
   </div>
 </div>
 {% endmacro %}
@@ -546,11 +549,14 @@
             </div>
         </div>
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ channel.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro stream_views_panel(channel, stream) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Total views"><i class="bi bi-people-fill"></i> {{ channel.views }}</span><span title="Current viewers"><i class="fas fa-eye mx-2"></i>{{channel.currentViewers}}</span>
   </div>
 </div>
 {% endmacro %}
@@ -575,11 +581,14 @@
       <div class="video-description py-3">{{ clip.description | markdown }}</div>
       {% endif %}
     </div>
-    <div class="col">
-      <div class="float-end mx-1">
-        <i class="bi bi-people-fill"></i> {{ clip.views }}
-      </div>
-    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro clip_views_panel(clip) %}
+<div class="video-views-panel">
+  <div class="float-end mx-1 my-2">
+    <span title="Views"><i class="bi bi-people-fill"></i> {{ clip.views }}</span>
   </div>
 </div>
 {% endmacro %}

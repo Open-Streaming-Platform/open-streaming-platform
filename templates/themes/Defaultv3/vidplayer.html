@@ -30,8 +30,17 @@
                     <div class="col-6">
                         {{ panels.video_metadata_panel(video) }}
                     </div>
-                    <div class="col-6">
-                        {{ panels.video_control_panel(streamURL, video, current_user) }}
+                    <div class="col-6 box1-fill">
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.video_control_panel(streamURL, video, current_user) }}
+                            </div>
+                        </div>
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.video_views_panel(video) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {{ panels.comments_panel(video.id | get_videoComments, video.allowComments, sysSettings.allowComments) }}

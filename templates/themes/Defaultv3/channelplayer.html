@@ -35,8 +35,17 @@
                     <div class="col-6">
                         {{ panels.stream_metadata_panel(channel, stream) }}
                     </div>
-                    <div class="col-6">
-                        {{ panels.stream_control_panel(channel, current_user) }}
+                    <div class="col-6 box1-fill">
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_control_panel(channel, current_user) }}
+                            </div>
+                        </div>
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_views_panel(channel, stream) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {% for panel in channelPanelList %}
