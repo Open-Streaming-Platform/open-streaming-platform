@@ -28,7 +28,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 <div class="row gx-0 boxShadow">
@@ -73,7 +73,7 @@
 
             </div>
         </div>
-        <div id="sidePanel" class="col">
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}

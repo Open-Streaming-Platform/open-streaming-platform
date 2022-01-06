@@ -20,7 +20,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, clip.thumbnailLocation) }}
                 <div class="row gx-0 boxShadow">
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div id="sidePanel" class="col">
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
             <div class="side-video-panel">
                 <div class="side-video-panel-container">
                     {{ panels.clips_panel(randomClips, title="Other Clips", heightOverride=True, justification="center") }}

@@ -825,8 +825,16 @@ table tbody tr {
   text-align: center;
 }
 
-#mainContentPanel{
-    width: calc(100% - var(--side-panel-width));
+@media (min-width: 1200px) {
+    #mainContentPanel{
+        width: calc(100% - var(--side-panel-width));
+    }
+}
+
+@media (min-width: 1200px){
+    #sidePanel {
+        max-width: var(--side-panel-width);
+    }
 }
 
 .video-panel {
@@ -912,9 +920,6 @@ video.vjs-tech {
     border-radius: 4px;
     font-size: 16px;
     padding: 7px;
-}
-#sidePanel{
-    max-width: var(--side-panel-width);
 }
 
 .side-video-panel {
