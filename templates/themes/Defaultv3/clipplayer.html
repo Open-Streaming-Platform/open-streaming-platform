@@ -20,14 +20,14 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-8 col-lg-9 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="video-panel">
                 {{ panels.video_player(streamURL, clip.thumbnailLocation) }}
                 <div class="row gx-0 boxShadow">
-                    <div class="col-xl-6 col-lg-12">
+                    <div class="col-xl-8 col-lg-8 col-md-12">
                         {{ panels.clip_metadata_panel(clip) }}
                     </div>
-                    <div class="col-xl-6 col-lg-12 box1-fill">
+                    <div class="col-xl-4 col-lg-4 col-md-12 box1-fill">
                         <div class="row gx-0">
                             <div class="col">
                                 {{ panels.clip_control_panel(streamURL, clip, current_user) }}
@@ -42,7 +42,7 @@
                 </div>
             </div>
         </div>
-        <div id="sidePanel" class="col">
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
             <div class="side-video-panel">
                 <div class="side-video-panel-container">
                     {{ panels.clips_panel(randomClips, title="Other Clips", heightOverride=True, justification="center") }}
