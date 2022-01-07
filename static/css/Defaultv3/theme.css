@@ -837,10 +837,28 @@ table tbody tr {
     }
 }
 
+/* pretty scrollbars */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--box2-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--box1-background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
 .video-panel {
     height: calc(100vh - var(--top-navbar-height));
     height: auto;
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
     scrollbar-width: auto;
     scrollbar-color: #b5b5b5 #858585;
@@ -925,13 +943,13 @@ video.vjs-tech {
 .side-video-panel {
   background-color: var(--box3-background);
   width: 100%;
-  height: calc(100vh - var(--top-navbar-height));
+/*  height: calc(100vh - var(--top-navbar-height)); this breaks scrolling */
 }
 
 .side-video-panel-container {
     height: 100%;
     background-color: var(--page-background);
-    overflow-y: scroll;
+    overflow-y: hidden;
     scrollbar-width: auto;
     scrollbar-color: #b5b5b5 #858585;
 }
@@ -988,9 +1006,9 @@ video.vjs-tech {
 
 .stream-panel {
     height: calc(100vh - var(--top-navbar-height));
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: auto;
+    scrollbar-width: none;
     scrollbar-color: #b5b5b5 #858585;
   }
 
