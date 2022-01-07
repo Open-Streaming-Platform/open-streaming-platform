@@ -710,6 +710,10 @@ table tbody tr {
     background-color: var(--box1-background);
 }
 
+.box2-fill {
+    background-color: var(--box2-background);
+}
+
 .green-fill {
     background-color: var(--green-background);
 }
@@ -906,7 +910,7 @@ video.vjs-tech {
 }
 
 .video-control-panel {
-    background-color: var(--box1-background);
+    background-color: var(--box2-background);
     width: 100%;
     height: 100%;
 }
@@ -916,7 +920,7 @@ video.vjs-tech {
     color: var(--accent-color);
 }
 .video-metadata {
-    background-color: var(--box1-background);
+    background-color: var(--box2-background);
     width: 100%;
     /*padding: 10px;*/
     /* box-shadow: var(--box-shadow); */
@@ -1035,7 +1039,7 @@ video.vjs-tech {
 }*/
 
 .stream-metadata {
-  background-color: var(--box1-background);
+  background-color: var(--box2-background);
   /*padding: 10px;
   box-shadow: var(--box-shadow);*/
 }
