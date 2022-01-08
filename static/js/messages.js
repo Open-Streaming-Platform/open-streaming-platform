@@ -238,7 +238,7 @@ socket.on('returnMessage', function (msg) {
     document.getElementById('message-timestamp').innerHTML = msg['timestamp'];
     document.getElementById('message-from-img').src = '/images/' + msg['fromUserPhoto'];
     document.getElementById('message-from-username').innerHTML = msg['fromUsername'];
-    document.getElementById('message-from-id').innerHTML = message['fromUser'];
+    document.getElementById('message-from-id').innerHTML = msg['fromUser'];
     document.getElementById('active-messageId').value = msg['id'];
 });
 
