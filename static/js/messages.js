@@ -243,7 +243,24 @@ socket.on('returnMessage', function (msg) {
 });
 
 function replyMessage() {
-    tagify.addTags(document.getElementById('message-from-username').innerHTML);
+    var fromUser = document.getElementById('message-from-username').innerHTML
+    $.post('/apiv1/user/search', {term: fromUser}, function (RES) {
+        var newWhitelist = RES['results'];
+        resultWhitelist = []
+        for (var i = 0; i < newWhitelist.length; i++) {
+            var entry = newWhitelist[i];
+            resultWhitelist.push(
+                {
+                    value: entry[0],
+                    name: entry[1],
+                    email: '',
+                    avatar: '/images/' + entry[3]
+                }
+            )
+        }
+    });
+    tagify.whitelist = resultWhitelist // update whitelist Array in-place
+    tagify.addTags(fromUser);
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
