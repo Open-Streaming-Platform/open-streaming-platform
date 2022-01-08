@@ -145,6 +145,23 @@ $(document).ready(function(){
     });
 });
 
+function markCheckedMessageAsRead() {
+    var messagesArrayList = getAllCheckedMessages();
+    socket.emit('markMessageRead', {messageId: messagesArrayList});
+    for (var i = 0; i < messagesArrayList.length; i++) {
+        document.getElementById('message-subject-' + messagesArrayList[i]).classList.remove('bold');
+    }
+}
+
+function markAllMessagesAsRead() {
+    var checkboxes = document.getElementsByName('messageList-checkbox');
+    for (var checkbox of checkboxes)
+    {
+        checkbox.checked = true;
+    }
+    markCheckedMessageAsRead()
+}
+
 function openNewMessageModal() {
     document.getElementById('toUsersList').value = '';
     document.getElementById('messageSubject').value = '';

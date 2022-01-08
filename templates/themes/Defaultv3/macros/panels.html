@@ -1438,10 +1438,10 @@
         <b>Messages</b>
       <span class="float-end textShadow">
         <span id="selectedMessages" class="me-4" style="display: none;">
-          <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
+          <button class="btn btn-sm btn-primary boxShadow" onclick="markCheckedMessageAsRead();"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
           <button class="btn btn-sm btn-danger boxShadow" onclick="deleteSelectedMessage();"><i class="fas fa-trash"></i> Delete Selected</button>
         </span>
-        <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
+        <button class="btn btn-sm btn-primary boxShadow" onclick="markAllMessagesAsRead();"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
         <button type="button" class="btn btn-sm btn-success boxShadow" onclick="openNewMessageModal();"><i class="fas fa-paper-plane"></i> New Message</button>
       </span>
     </div>

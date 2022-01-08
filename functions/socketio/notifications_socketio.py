@@ -45,3 +45,16 @@ def deleteMessage(message):
                     db.session.commit()
             db.session.close()
     return 'OK'
+
+@socketio.on('markMessageRead')
+def markMessagesRead(message):
+    if current_user.is_authenticated:
+        if 'messageId' in message:
+            messages = message['messageId']
+            for message in messages:
+                messageQuery = notifications.userMessage.query.filter_by(id=int(message), toUserID=current_user.id).first()
+                if messageQuery is not None:
+                    messageQuery.read = True
+                    db.session.commit()
+            db.session.close()
+    return 'OK'
