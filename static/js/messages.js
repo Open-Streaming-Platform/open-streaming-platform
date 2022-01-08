@@ -258,9 +258,9 @@ function replyMessage() {
                 }
             )
         }
+        tagify.whitelist = resultWhitelist // update whitelist Array in-place
+        tagify.addTags(fromUser);
     });
-    tagify.whitelist = resultWhitelist // update whitelist Array in-place
-    tagify.addTags(fromUser);
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
