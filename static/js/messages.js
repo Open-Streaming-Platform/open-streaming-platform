@@ -135,6 +135,16 @@ function getAllCheckedMessages() {
     return messageIdArray;
 }
 
+$(document).ready(function(){
+    $('input[name="messageList-checkbox"]').click(function(){
+        if ($('input[name="messageList-checkbox"]:checked').length > 0) {
+            $('#selectedMessages').show();
+        } else {
+            $('#selectedMessages').hide();
+        }
+    });
+});
+
 function openNewMessageModal() {
     document.getElementById('toUsersList').value = '';
     document.getElementById('messageSubject').value = '';
