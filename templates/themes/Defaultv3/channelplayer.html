@@ -35,7 +35,7 @@
                     <div class="col-xl-8 col-lg-8 col-md-12">
                         {{ panels.stream_metadata_panel(channel, stream) }}
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-12 box1-fill">
+                    <div class="col-xl-4 col-lg-4 col-md-12 box2-fill">
                         <div class="row gx-0">
                             <div class="col">
                                 {{ panels.stream_control_panel(channel, current_user) }}
@@ -107,6 +107,15 @@
     <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
     <script src='/static/js/chatv2.js' type="text/javascript"></script>
+
+
+    <script>
+        function submitStreamChanges() {
+            var newStreamNameDiv = document.getElementById("editStreamNameInput");
+            var newStreamTopicDiv = document.getElementById("editChannelTopicInput");
+            socket.emit('updateStreamData', { name: newStreamNameDiv.value, topic: newStreamTopicDiv.value, channel: "{{channel.channelLoc}}" });
+        }
+    </script>
 
     <script>
         var streamURL = '{{ streamURL }}';
