@@ -213,6 +213,7 @@ function deleteSelectedMessage() {
         messageListRow.parentNode.removeChild(messageListRow);
     }
     $('#message').hide();
+    $('#messages-view-control').hide();
 }
 
 function deleteActiveMessage() {
@@ -221,6 +222,7 @@ function deleteActiveMessage() {
     var messageListRow = document.getElementById('message-' + messageId);
     messageListRow.parentNode.removeChild(messageListRow);
     $('#message').hide();
+    $('#messages-view-control').hide();
 
 }
 
@@ -240,6 +242,7 @@ socket.on('returnMessage', function (msg) {
     document.getElementById('message-from-username').innerHTML = msg['fromUsername'];
     document.getElementById('message-from-id').innerHTML = msg['fromUser'];
     document.getElementById('active-messageId').value = msg['id'];
+    $('#messages-view-control').show();
 });
 
 function replyMessage() {
