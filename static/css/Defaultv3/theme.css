@@ -947,7 +947,7 @@ video.vjs-tech {
 .side-video-panel {
   background-color: var(--box3-background);
   width: 100%;
-/*  height: calc(100vh - var(--top-navbar-height)); this breaks scrolling */
+  height: calc(100vh - var(--top-navbar-height));
 }
 
 .side-video-panel-container {
