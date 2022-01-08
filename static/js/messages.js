@@ -243,7 +243,7 @@ socket.on('returnMessage', function (msg) {
 });
 
 function replyMessage() {
-    document.getElementById('toUsersList').value = document.getElementById('message-from-id').innerHTML;
+    tagify.addTags(document.getElementById('message-from-username').innerHTML);
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
