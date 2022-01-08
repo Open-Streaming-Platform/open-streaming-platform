@@ -37,9 +37,11 @@ def getMessage(message):
 def deleteMessage(message):
     if current_user.is_authenticated:
         if 'messageId' in message:
-            messageQuery = notifications.userMessage.query.filter_by(id=int(message['messageId']), toUserID=current_user.id).first()
-            if messageQuery is not None:
-                db.session.delete(messageQuery)
-            db.session.commit()
+            messages = message['messageId']
+            for message in messages:
+                messageQuery = notifications.userMessage.query.filter_by(id=int(message), toUserID=current_user.id).first()
+                if messageQuery is not None:
+                    db.session.delete(messageQuery)
+                    db.session.commit()
             db.session.close()
     return 'OK'

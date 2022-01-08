@@ -123,6 +123,18 @@ function getAddAllSuggestionsElm(){
       )
 }
 
+function getAllCheckedMessages() {
+    var messageIdArray = [];
+    var checkboxes = document.getElementsByName('messageList-checkbox');
+    for (var checkbox of checkboxes)
+    {
+        if (checkbox.checked) {
+            messageIdArray.push(checkbox.value);
+        }
+    }
+    return messageIdArray;
+}
+
 function openNewMessageModal() {
     document.getElementById('toUsersList').value = '';
     document.getElementById('messageSubject').value = '';
@@ -147,9 +159,19 @@ function sendMessage() {
     }
 }
 
+function deleteSelectedMessage() {
+    var messagesArrayList = getAllCheckedMessages();
+    socket.emit('deleteMessage', {messageId: messagesArrayList});
+    for (var i = 0; i < messagesArrayList.length; i++) {
+        var messageListRow = document.getElementById('message-' + messagesArrayList[i]);
+        messageListRow.parentNode.removeChild(messageListRow);
+    }
+    $('#message').hide();
+}
+
 function deleteActiveMessage() {
     var messageId = document.getElementById('active-messageId').value;
-    socket.emit('deleteMessage', {messageId: messageId});
+    socket.emit('deleteMessage', {messageId: [messageId]});
     var messageListRow = document.getElementById('message-' + messageId);
     messageListRow.parentNode.removeChild(messageListRow);
     $('#message').hide();

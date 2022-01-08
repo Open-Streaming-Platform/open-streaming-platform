@@ -1439,7 +1439,7 @@
       <span class="float-end textShadow">
         <span id="selectedMessages" class="me-4">
           <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
-          <button class="btn btn-sm btn-danger boxShadow"><i class="fas fa-trash"></i> Delete Selected</button>
+          <button class="btn btn-sm btn-danger boxShadow" onclick="deleteSelectedMessage();"><i class="fas fa-trash"></i> Delete Selected</button>
         </span>
         <button class="btn btn-sm btn-primary boxShadow"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
         <button type="button" class="btn btn-sm btn-success boxShadow" onclick="openNewMessageModal();"><i class="fas fa-paper-plane"></i> New Message</button>
@@ -1459,7 +1459,7 @@
         {% for message in messageList %}
           <tr id="message-{{ message.id }}" class="align-middle">
             <td>
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <input name="messageList-checkbox" class="form-check-input" type="checkbox" value="{{ message.id }}" id="flexCheckDefault">
             </td>
             <td>{{ message.timestamp}}</td>
             <td>
