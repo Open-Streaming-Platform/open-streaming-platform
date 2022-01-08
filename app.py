@@ -496,13 +496,15 @@ app.logger.info({"level": "info", "message": "Setting Flask Context Processors"}
 @app.context_processor
 def inject_notifications():
     notificationList = []
+    messagesListCount = 0
     if current_user.is_authenticated:
         userNotificationQuery = notifications.userNotification.query.filter_by(userID=current_user.id).all()
         for entry in userNotificationQuery:
             if entry.read is False:
                 notificationList.append(entry)
         notificationList.sort(key=lambda x: x.timestamp, reverse=True)
-    return dict(notifications=notificationList)
+        messagesListCount = notifications.userMessage.query.filter_by(toUserID=current_user.id, read=False).count()
+    return dict(notifications=notificationList, messageCount=messagesListCount)
 
 @app.context_processor
 def inject_recaptchaEnabled():
