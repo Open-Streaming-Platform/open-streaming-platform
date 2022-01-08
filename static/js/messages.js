@@ -135,6 +135,15 @@ function getAllCheckedMessages() {
     return messageIdArray;
 }
 
+function toggleAllMessages() {
+    var allChecks = document.getElementById('selectAllCheckbox').checked;
+    var checkboxes = document.getElementsByName('messageList-checkbox');
+    for (var checkbox of checkboxes)
+    {
+        checkbox.checked = allChecks;
+    }
+}
+
 $(document).ready(function(){
     $('input[name="messageList-checkbox"]').click(function(){
         if ($('input[name="messageList-checkbox"]:checked').length > 0) {
@@ -160,6 +169,10 @@ function markAllMessagesAsRead() {
         checkbox.checked = true;
     }
     markCheckedMessageAsRead()
+    for (var checkbox of checkboxes)
+    {
+        checkbox.checked = false;
+    }
 }
 
 function openNewMessageModal() {
