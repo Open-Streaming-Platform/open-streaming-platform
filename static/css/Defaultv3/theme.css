@@ -861,7 +861,7 @@ table tbody tr {
 
 .video-panel {
     height: calc(100vh - var(--top-navbar-height));
-    overflow-y: hidden;
+    overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-width: auto;
     scrollbar-color: #b5b5b5 #858585;
