@@ -142,6 +142,12 @@ function toggleAllMessages() {
     {
         checkbox.checked = allChecks;
     }
+
+    if (allChecks === true) {
+        $('#selectedMessages').show();
+    } else {
+        $('#selectedMessages').hide();
+    }
 }
 
 $(document).ready(function(){
