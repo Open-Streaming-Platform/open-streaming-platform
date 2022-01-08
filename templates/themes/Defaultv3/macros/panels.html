@@ -1466,7 +1466,13 @@
               <img class="avatar-small" src="/images/{{ message.fromUserID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
               <span class="ms-2">{{ message.fromUserID | get_userName }}</span>
             </td>
-            <td><button class="btn btn-link" onclick="getMessage({{ message.id }});">{{ message.subject }}</button></td>
+              <td>
+                  <button class="btn btn-link" onclick="getMessage({{ message.id }});">
+                      {% if message.read == True %}<b>{{ message.subject }}</b>
+                      {% else %}{{ message.subject }}
+                      {% endif %}
+                  </button>
+              </td>
           </tr>
         {% endfor %}
         </tbody>
@@ -1494,6 +1500,7 @@
             <div class="mb-2"><b>Subject: </b> <span id="message-subject"></span></div>
             <hr>
             <div class="" id="message-content"></div>
+            <input class="d-none" id="active-messageId">
         </div>
       </div>
     </div>

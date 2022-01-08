@@ -147,6 +147,15 @@ function sendMessage() {
     }
 }
 
+function deleteActiveMessage() {
+    var messageId = document.getElementById('active-messageId').value;
+    socket.emit('deleteMessage', {messageId: messageId});
+    var messageListRow = document.getElementById('message-' + messageId);
+    messageListRow.parentNode.removeChild(messageListRow);
+    $('#message').hide();
+
+}
+
 function getMessage(messageID) {
     $('#message-loading').show();
     socket.emit('getMessage', {messageID: messageID});
@@ -160,4 +169,5 @@ socket.on('returnMessage', function (msg) {
     document.getElementById('message-timestamp').innerHTML = msg['timestamp'];
     document.getElementById('message-from-img').src = '/images/' + msg['fromUserPhoto'];
     document.getElementById('message-from-username').innerHTML = msg['fromUsername'];
+    document.getElementById('active-messageId').value = msg['id'];
 });

@@ -27,8 +27,19 @@ def getMessage(message):
         if messageQuery != None:
             fromUserQuery = cachedDbCalls.getUser(messageQuery.fromUserID)
             emit('returnMessage', {'status': 'success', 'fromUser': messageQuery.fromUserID, 'fromUsername': fromUserQuery.username, 'fromUserPhoto': fromUserQuery.pictureLocation, 'subject': messageQuery.subject,
-                                   'timestamp': str(messageQuery.timestamp), 'content': messageQuery.message}, broadcast=False)
+                                   'timestamp': str(messageQuery.timestamp), 'content': messageQuery.message, 'id': messageQuery.id}, broadcast=False)
             messageQuery.read = True
         db.session.commit()
         db.session.close()
+    return 'OK'
+
+@socketio.on('deleteMessage')
+def deleteMessage(message):
+    if current_user.is_authenticated:
+        if 'messageId' in message:
+            messageQuery = notifications.userMessage.query.filter_by(id=int(message['messageId']), toUserID=current_user.id).first()
+            if messageQuery is not None:
+                db.session.delete(messageQuery)
+            db.session.commit()
+            db.session.close()
     return 'OK'
