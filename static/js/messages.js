@@ -159,6 +159,7 @@ function deleteActiveMessage() {
 function getMessage(messageID) {
     $('#message-loading').show();
     socket.emit('getMessage', {messageID: messageID});
+    document.getElementById('message-subject-' + messageID).classList.remove('bold');
 }
 
 socket.on('returnMessage', function (msg) {

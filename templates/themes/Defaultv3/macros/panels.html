@@ -1468,8 +1468,7 @@
             </td>
               <td>
                   <button class="btn btn-link" onclick="getMessage({{ message.id }});">
-                      {% if message.read == True %}<b>{{ message.subject }}</b>
-                      {% else %}{{ message.subject }}
+                      <span id="message-subject-{{ message.id }}" class="{% if message.read == False %}bold{% endif %}">{{ message.subject }}</span>
                       {% endif %}
                   </button>
               </td>
