@@ -240,3 +240,9 @@ socket.on('returnMessage', function (msg) {
     document.getElementById('message-from-username').innerHTML = msg['fromUsername'];
     document.getElementById('active-messageId').value = msg['id'];
 });
+
+function replyMessage() {
+    document.getElementById('toUsersList').value = document.getElementById('message-from-username').innerHTML;
+    document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
+    openModal('newMessageModal');
+}
