@@ -27,7 +27,7 @@ class ExtendedRegisterForm(RegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
-        if validate_email(self.email, dns_resolver=self.resolver) is False:
+        if validate_email(self.email.data.strip(), dns_resolver=self.resolver) is False:
             success = False
         return success
 
@@ -50,7 +50,7 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
-        if validate_email(str(self.email.data), dns_resolver=self.resolver) is False:
+        if validate_email(self.email.data.strip(), dns_resolver=self.resolver) is False:
             success = False
         return success
 
