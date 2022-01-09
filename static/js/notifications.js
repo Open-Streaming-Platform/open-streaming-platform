@@ -8,7 +8,7 @@ function clearListNotification(notificationID) {
 }
 
 function clearAllListNotifications() {
-  var ids = $('.notificationBodyFull .notification-box').map(function(){
+  var ids = $('.notification-box').map(function(){
     return $(this).attr('id');
     }).get();
   ids.forEach(function (item, index) {
