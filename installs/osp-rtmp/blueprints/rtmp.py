@@ -45,7 +45,12 @@ def user_auth_check():
         if stage2Response['results']['success'] is True:
 
             channelLocation = stage2Response['results']['channelLoc']
-            inputLocation = "rtmp://127.0.0.1:1935/stream-data/" + channelLocation
+
+            adaptiveState = stage2Response['results']['adaptive']
+            if adaptiveState is True:
+                inputLocation = "rtmp://127.0.0.1:1935/stream-data-adapt/" + channelLocation
+            else:
+                inputLocation = "rtmp://127.0.0.1:1935/stream-data/" + channelLocation
 
             # Validate OSP's System Settings
             sysSettingsRequest = requests.get(globalvars.apiLocation + "/apiv1/server")

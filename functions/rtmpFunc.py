@@ -131,7 +131,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
             except:
                 system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
-            returnMessage = {'time': str(currentTime), 'request': 'Stage2', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': str(ipaddress), 'message': 'Success - Stream Authenticated & Initialized'}
+            returnMessage = {'time': str(currentTime), 'request': 'Stage2', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': str(ipaddress), 'adaptive': sysSettings.adaptiveStreaming, 'message': 'Success - Stream Authenticated & Initialized'}
             db.session.close()
             return returnMessage
         else:
