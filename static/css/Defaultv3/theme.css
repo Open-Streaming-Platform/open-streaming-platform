@@ -1154,6 +1154,10 @@ video.vjs-tech {
   padding: 10px;
 }
 
+.notificationCardList {
+    list-style-type:none;
+}
+
 /* Suggestions items */
 .tagify__dropdown.users-list .tagify__dropdown__item{
     color: black;

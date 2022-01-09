@@ -1513,7 +1513,7 @@
         <div class="info-panel-box-header boxShadow textShadow">
         <b>Notifications</b>
         <span class="float-end textShadow">
-            <button type="button" class="btn btn-success" onclick="clearAllListNotifications();">Mark all as read</button>
+            <button type="button" class="btn btn-sm btn-success boxShadow" onclick="clearAllListNotifications();">Mark all as read</button>
         </span>
         </div>
         <div class="info-panel-box-body boxShadow">
@@ -1522,11 +1522,11 @@
                       {% for entry in notificationList %}
                       <li class="notification-box my-2" id="notificationList-{{entry.notificationID}}">
                         <div class="row">
-                          <div class="col-lg-1 col-sm-1 col-1 {% if entry.read == False %}unreadItemIndicator{% endif %}">
+                          <div class="col-auto {% if entry.read == False %}unreadItemIndicator{% endif %}">
                             <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
                           </div>
-                          <div class="col-lg-11 col-sm-11 col-11">
-                            <span class="float-right"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                          <div class="col-lg-7 col-sm-8 col-9">
+                            <span class="float-end"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
                             <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
                             <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
                           </div>
