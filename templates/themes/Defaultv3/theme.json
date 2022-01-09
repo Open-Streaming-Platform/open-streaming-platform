@@ -3,5 +3,5 @@
   "Maintainer": "Deamos",
   "Version": "3.0",
   "Description": "The Default OSP Theme",
-  "Override": ["index.html", "admin.html", "videoListView.html", "channels.html", "topics.html", "streamers.html", "apikeys.html", "vidplayer.html", "userSettings.html", "channelplayer.html", "clipplayer.html", "user_channels.html", "404.html", "500.html", "messages.html"]
+  "Override": ["index.html", "admin.html", "videoListView.html", "channels.html", "topics.html", "streamers.html", "apikeys.html", "vidplayer.html", "userSettings.html", "channelplayer.html", "clipplayer.html", "user_channels.html", "404.html", "500.html", "messages.html", "notifications.html"]
 }
