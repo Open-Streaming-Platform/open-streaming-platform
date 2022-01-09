@@ -23,23 +23,5 @@ function clearAllListNotifications() {
 }
 
 function clearNotification(notificationID) {
-  var notification = document.getElementById('notification-' + notificationID);
-  notification.parentNode.removeChild(notification);
-
-  var newCount = notificationCount - 1;
-  if (newCount <= 0) {
-    var emptyNotificationBar = document.getElementById("notification-empty");
-
-    notificationCountMobile.style.display = "none";
-    notificationCountNav.style.display = "none";
-    emptyNotificationBar.style.display = "block";
-    newCount = 0;
-  }
-
-  notificationCountMobile.innerText = newCount;
-  notificationCountNav.innerText = newCount;
-  notificationCountMenu.innerText = newCount;
-  notificationCount = notificationCount - 1;
-
   socket.emit('markNotificationAsRead', { data: notificationID });
 }
