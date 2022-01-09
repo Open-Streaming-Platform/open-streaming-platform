@@ -76,7 +76,16 @@
                         </span>
                     {% endif %}
                 </a>
-                <a href="#"><i class="textShadow bi bi-bell-fill"></i></a>
+                <a href="/notifications">
+                    <i class="textShadow bi bi-bell-fill"></i>
+                    {% if notificationList | count > 0 %}
+                        <span class="messagesIndicator" id="MessagesCountNav">
+                            {% if notificationList | count < 10 %}{{ notificationList | count }}
+                            {% else %}9+
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </a>
                 {% else %}
                 <a class="btn loginButton shadow textShadow" href="/login">Log In</a>
                 {% endif %}
