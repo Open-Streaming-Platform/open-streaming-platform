@@ -124,6 +124,10 @@
     <script>
         var maxVideoUploadFileSize = 4096; // In Megabytes
         var maxThumbnailUploadFileSize = 8; // In Megabytes
+
+        {% if current_user.is_authenticated %}
+        var notificationCount = {{ notifications | count }};
+        {% endif %}
     </script>
 
     <script>

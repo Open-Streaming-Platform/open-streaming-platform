@@ -24,4 +24,5 @@ function clearAllListNotifications() {
 
 function clearNotification(notificationID) {
   socket.emit('markNotificationAsRead', { data: notificationID });
+  notificationCount = notificationCount - 1;
 }
