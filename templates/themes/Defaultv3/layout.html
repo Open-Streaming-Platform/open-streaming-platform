@@ -78,9 +78,9 @@
                 </a>
                 <a href="/notifications">
                     <i class="textShadow bi bi-bell-fill"></i>
-                    {% if notificationList | count > 0 %}
+                    {% if notifications | count > 0 %}
                         <span class="messagesIndicator" id="MessagesCountNav">
-                            {% if notificationList | count < 10 %}{{ notificationList | count }}
+                            {% if notifications | count < 10 %}{{ notifications | count }}
                             {% else %}9+
                             {% endif %}
                         </span>
