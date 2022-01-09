@@ -1525,7 +1525,7 @@
                           <div class="col-auto {% if entry.read == False %}unreadItemIndicator{% endif %}">
                             <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
                           </div>
-                          <div class="col-lg-7 col-sm-8 col-9">
+                          <div class="col-lg-11 col-sm-11 col-11">
                             <span class="float-end"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
                             <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
                             <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
