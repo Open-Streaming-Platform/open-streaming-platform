@@ -31,8 +31,9 @@
                     {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
                 {% endif %}
             {% elif panelItem.type == 2  %}
-                {% if videoList != [] %}
-                    {{ panels.videos_panel(videoList, title=panelItem.header, order=panelItem.order) }}
+                {% set panelVideoList = getPanelVideoList(panelItem.order, 16) %}
+                {% if panelVideoList != [] %}
+                    {{ panels.videos_panel(panelVideoList, title=panelItem.header, order=panelItem.order) }}
                 {% endif %}
             {% elif panelItem.type == 3  %}
                 {% if clipList != [] %}
