@@ -159,6 +159,18 @@ install_nginx_core() {
           sudo unzip -qq -o v1.2.1.zip >> $OSPLOG 2>&1
           sudo tar xfz zlib-1.2.11.tar.gz >> $OSPLOG 2>&1
           sudo tar xfz master.tar.gz >> $OSPLOG 2>&1
+
+          # Apply Any Precompile Nginx-RTMP Patches
+          echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
+          if cd nginx-rtmp-module-1.2.1
+          then
+            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch >> $OSPLOG 2>&1
+            sudo patch -s -p 1 < 1158.patch
+          else
+              echo "Unable to Access Nginx-RTMP Module Source"
+              exit 1
+          fi
+
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-1.17.3
           then
