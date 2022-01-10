@@ -188,6 +188,7 @@ install_nginx_core() {
           then
             sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch >> $OSPLOG 2>&1
             sudo patch -s -p 1 < 1158.patch
+            cd ..
           else
               echo "Unable to Access Nginx-RTMP Module Source"
               exit 1
