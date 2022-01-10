@@ -42,6 +42,28 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+reset_nginx() {
+  if cd /usr/local/nginx/conf
+  then
+    echo 5 | dialog --title "Reset Nginx Configuration" --gauge "Stopping Nginx-OSP" 10 70 0
+    sudo systemctl stop nginx-osp
+    sudo systemctl disable nginx-osp
+    echo 20 | dialog --title "Reset Nginx Configuration" --gauge "Backing up Existing Conf" 10 70 0
+    sudo mkdir /tmp/nginxbak >> $OSPLOG 2>&1
+    sudo cp -R /usr/local/nginx/conf /tmp/nginxbak >> $OSPLOG 2>&1
+    cd /
+    echo 30 | dialog --title "Reset Nginx Configuration" --gauge "Removing Previous Nginx Instance" 10 70 0
+    sudo rm -rf /usr/local/nginx >> $OSPLOG 2>&1
+    echo 50 | dialog --title "Reset Nginx Configuration" --gauge "Rebuilding Nginx from Source" 10 70 0
+    install_nginx_core
+    echo 75 | dialog --title "Reset Nginx Configuration" --gauge "Restoring Nginx Conf" 10 70 0
+    sudo cp -R /tmp/nginxbak/conf/* /usr/local/nginx/conf/ >> $OSPLOG 2>&1
+    echo 90 | dialog --title "Reset Nginx Configuration" --gauge "Restarting Nginx-OSP" 10 70 0
+    sudo systemctl stop nginx-osp
+    sudo systemctl start nginx-osp
+  fi
+}
+
 reset_ejabberd() {
   echo 5 | dialog --title "Reset eJabberd Configuration" --gauge "Stopping eJabberd" 10 70 0
   sudo systemctl stop ejabberd >> $OSPLOG 2>&1
