@@ -33,6 +33,11 @@
 <script>
     $(document).ready(function () {
         $('#messageTable').DataTable({
+            language: {
+                emptyTable: "No messages",
+                info: "Showing _START_ to _END_ of _TOTAL_ messages",
+                infoEmpty: "Showing 0 to 0 of 0 messages",
+            },
             columnDefs: [ {
                 targets: 1,
                 width: "160px"
