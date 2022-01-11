@@ -1099,9 +1099,9 @@ video.vjs-tech {
 
 
 .messages-list {
-  height: 35vh;
-  overflow-y: scroll;
-
+  /* height: 35vh; */
+  /* overflow-y: scroll; */
+  /* overflow-x: hidden; */
 }
 
 /* Chrome, Edge, and Safari */
@@ -1127,7 +1127,7 @@ video.vjs-tech {
 }
 
 .info-panel-box .messages-view {
-  height: 45vh;
+  height: 42vh;
   overflow-y: scroll;
 }
 

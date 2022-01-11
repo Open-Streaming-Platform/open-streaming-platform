@@ -1445,16 +1445,16 @@
         <button type="button" class="btn btn-sm btn-success boxShadow" onclick="openNewMessageModal();"><i class="fas fa-paper-plane"></i> New Message</button>
       </span>
     </div>
-    <div class="messages-list info-panel-box-body boxShadow">
-      <table class="table table-hover table-dark">
+    <div class="info-panel-box-body boxShadow">
+      <table id="messageTable" class="table">
         <thead>
           <tr>
             <th scope="col" class="col-auto" colspan="1">
                 <input class="form-check-input" type="checkbox" value="" id="selectAllCheckbox" onclick="toggleAllMessages();">
             </th>
-            <th scope="col" class="col-1">Sent Timestamp</th>
-            <th scope="col" class="col-2">From</th>
-            <th scope="col" class="col-10 ps-3">Subject</th>
+            <th>Sent Timestamp</th>
+            <th>From</th>
+            <th>Subject</th>
           </tr>
         </thead>
         <tbody>
