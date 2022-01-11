@@ -2,6 +2,7 @@ import os
 import time
 import hashlib
 import datetime
+import logging
 
 from flask import Blueprint, request, redirect, current_app, abort
 
@@ -25,6 +26,8 @@ from functions import videoFunc
 from functions import xmpp
 from functions import cachedDbCalls
 from functions.scheduled_tasks import message_tasks
+
+log = logging.getLogger('app.functions.rtmpFunctions')
 
 def rtmp_stage1_streamkey_check(key, ipaddress):
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -80,7 +83,9 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
             db.session.close()
             return returnMessage
     else:
-        returnMessage = {'time': str(currentTime), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': str(ipaddress), 'message': 'Unauthorized Key'}
+        returnedResult = {'time': str(currentTime), 'request': 'Stage1', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': str(ipaddress), 'message': 'Unauthorized Key'}
+        log.warning(returnedResult)
+        returnMessage = returnedResult
         db.session.close()
         return returnMessage
 
@@ -224,8 +229,6 @@ def rtmp_user_deauth_check(key, ipaddress):
             db.session.add(newStreamHistory)
             db.session.commit()
 
-            #for vid in streamUpvotes:
-            #    db.session.delete(vid)
             stream.endTimeStamp = currentTime
             stream.active = False
             stream.pending = False
@@ -254,72 +257,76 @@ def rtmp_user_deauth_check(key, ipaddress):
         db.session.close()
         return returnMessage
 
-@celery.task()
-def rtmp_rec_Complete_handler(channelLoc, path):
-    sysSettings = cachedDbCalls.getSystemSettings()
+@celery.task(bind=True, max_retries=5)
+def rtmp_rec_Complete_handler(self, channelLoc, path):
+    try:
+        sysSettings = cachedDbCalls.getSystemSettings()
 
-    currentTime = datetime.datetime.utcnow()
+        currentTime = datetime.datetime.utcnow()
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
 
-    if requestedChannel is not None:
+        if requestedChannel is not None:
 
-        pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
 
-        videoPath = path.replace('/tmp/', requestedChannel.channelLoc + '/')
-        imagePath = videoPath.replace('.flv','.png')
-        gifPath = videoPath.replace('.flv', '.gif')
-        videoPath = videoPath.replace('.flv','.mp4')
+            videoPath = path.replace('/tmp/', requestedChannel.channelLoc + '/')
+            imagePath = videoPath.replace('.flv','.png')
+            gifPath = videoPath.replace('.flv', '.gif')
+            videoPath = videoPath.replace('.flv','.mp4')
 
-        pendingVideo.thumbnailLocation = imagePath
-        pendingVideo.videoLocation = videoPath
-        pendingVideo.gifLocation = gifPath
+            pendingVideo.thumbnailLocation = imagePath
+            pendingVideo.videoLocation = videoPath
+            pendingVideo.gifLocation = gifPath
 
-        videos_root = current_app.config['WEB_ROOT'] + 'videos/'
-        fullVidPath = videos_root + videoPath
+            videos_root = current_app.config['WEB_ROOT'] + 'videos/'
+            fullVidPath = videos_root + videoPath
 
-        pendingVideo.pending = False
+            pendingVideo.pending = False
 
-        if requestedChannel.autoPublish is True:
-            pendingVideo.published = True
-        else:
-            pendingVideo.published = False
+            if requestedChannel.autoPublish is True:
+                pendingVideo.published = True
+            else:
+                pendingVideo.published = False
 
-        db.session.commit()
-
-        if requestedChannel.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-        else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
-
-        if requestedChannel.autoPublish is True:
-            message_tasks.send_webhook.delay(requestedChannel.id, 6, channelname=requestedChannel.channelName,
-                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
-                   channeltopic=templateFilters.get_topicName(requestedChannel.topic),
-                   channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
-                   channeldescription=str(requestedChannel.description), videoname=pendingVideo.channelName,
-                   videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=templateFilters.get_topicName(pendingVideo.topic),
-                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
-                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(pendingVideo.thumbnailLocation)))
-
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
-            for sub in subscriptionQuery:
-                # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
-                                                                 "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
-                db.session.add(newNotification)
             db.session.commit()
 
-            subsFunc.processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
-                             "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
-                             "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+            if requestedChannel.imageLocation is None:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            else:
+                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + requestedChannel.imageLocation)
 
-        while not os.path.exists(fullVidPath):
-            time.sleep(1)
+            if requestedChannel.autoPublish is True:
+                message_tasks.send_webhook.delay(requestedChannel.id, 6, channelname=requestedChannel.channelName,
+                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
+                       channeltopic=templateFilters.get_topicName(requestedChannel.topic),
+                       channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
+                       channeldescription=str(requestedChannel.description), videoname=pendingVideo.channelName,
+                       videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=templateFilters.get_topicName(pendingVideo.topic),
+                       videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
+                       videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(pendingVideo.thumbnailLocation)))
 
-        returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': None, 'message': 'Success - Recorded Video Processing Complete'}
-        db.session.close()
-        return returnMessage
-    else:
-        returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': False, 'channelLoc': channelLoc, 'ipAddress': None, 'message': 'Failed - Requested Channel Does Not Exist'}
-        return returnMessage
+                subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id).all()
+                for sub in subscriptionQuery:
+                    # Create Notification for Channel Subs
+                    newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
+                                                                     "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+                    db.session.add(newNotification)
+                db.session.commit()
+
+                subsFunc.processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
+                                 "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
+                                 "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+
+            while not os.path.exists(fullVidPath):
+                time.sleep(1)
+
+            returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': True, 'channelLoc': requestedChannel.channelLoc, 'ipAddress': None, 'message': 'Success - Recorded Video Processing Complete'}
+            db.session.close()
+            return returnMessage
+        else:
+            returnMessage = {'time': str(currentTime), 'request': 'RecordingClose', 'success': False, 'channelLoc': channelLoc, 'ipAddress': None, 'message': 'Failed - Requested Channel Does Not Exist'}
+            return returnMessage
+    except Exception as ex:
+        log.exception("Failed to process Recording Close - Attempt #" + str(self.request.retries) + " : " + str(ex))
+        self.retry(countdown=3 ** self.request.retries)
