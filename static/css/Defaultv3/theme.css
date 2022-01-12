@@ -853,6 +853,7 @@ table tbody tr {
 
 ::-webkit-scrollbar-thumb {
   background: var(--box1-background);
+  border-radius: 16px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -1099,9 +1100,9 @@ video.vjs-tech {
 
 
 .messages-list {
-  height: 35vh;
-  overflow-y: scroll;
-
+  /* height: 35vh; */
+  /* overflow-y: scroll; */
+  /* overflow-x: hidden; */
 }
 
 /* Chrome, Edge, and Safari */
@@ -1127,21 +1128,21 @@ video.vjs-tech {
 }
 
 .info-panel-box .messages-view {
-  height: 45vh;
+  height: 42vh;
   overflow-y: scroll;
 }
 
 /* Chrome, Edge, and Safari */
-.messages-view::-webkit-scrollbar {
+/* .messages-view::-webkit-scrollbar {
     width: 0;
     background: transparent;
-}
+} */
 
-.messages-view::-webkit-scrollbar-thumb {
+/* .messages-view::-webkit-scrollbar-thumb {
     background-color: #b5b5b5;
     border-radius: 16px;
     border: 0px solid #ffffff;
-}
+} */
 
 .info-panel-box .messages-view .messages-view-controls {
   width: 100%;
