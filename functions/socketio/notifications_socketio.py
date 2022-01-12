@@ -1,5 +1,6 @@
 from flask_security import current_user
 from flask_socketio import emit
+import markdown as md
 
 from classes.shared import db, socketio
 from classes import notifications
@@ -27,7 +28,7 @@ def getMessage(message):
         if messageQuery != None:
             fromUserQuery = cachedDbCalls.getUser(messageQuery.fromUserID)
             emit('returnMessage', {'status': 'success', 'fromUser': messageQuery.fromUserID, 'fromUsername': fromUserQuery.username, 'fromUserPhoto': fromUserQuery.pictureLocation, 'subject': messageQuery.subject,
-                                   'timestamp': str(messageQuery.timestamp), 'content': messageQuery.message, 'id': messageQuery.id}, broadcast=False)
+                                   'timestamp': str(messageQuery.timestamp), 'content': md.markdown(messageQuery.message), 'id': messageQuery.id}, broadcast=False)
             messageQuery.read = True
         db.session.commit()
         db.session.close()
