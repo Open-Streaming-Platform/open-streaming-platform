@@ -194,7 +194,7 @@ function openNewMessageModal() {
 function sendMessage() {
     var sendMessageTo = JSON.parse(document.getElementById('toUsersList').value);
     var messageSubject = document.getElementById('messageSubject').value;
-    var messageContent = document.getElementById('messageContent').value;
+    var messageContent = easymde_new_message.value();
 
     if ((sendMessageTo === '') || (messageSubject.trim() === '') || (messageContent.trim === '')) {
     createNewBSAlert('Message Not Sent.  Required Fields Were Empty', 'error');
