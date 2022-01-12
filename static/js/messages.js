@@ -184,7 +184,10 @@ function markAllMessagesAsRead() {
 function openNewMessageModal() {
     document.getElementById('toUsersList').value = '';
     document.getElementById('messageSubject').value = '';
-    document.getElementById('messageContent').value = ''
+    document.getElementById('messageContent').value = '';
+    easymde_new_message.value = '';
+    var doc = easymde_new_message.codemirror.getDoc();
+    doc.setValue(easymde_new_message.value);
     openModal('newMessageModal')
 }
 
@@ -264,6 +267,10 @@ function replyMessage() {
         tagify.whitelist = resultWhitelist // update whitelist Array in-place
         tagify.addTags(fromUser);
     });
+    easymde_new_message.value = '';
+    var doc = easymde_new_message.codemirror.getDoc();
+    doc.setValue(easymde_new_message.value);
+
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
