@@ -188,13 +188,14 @@ function openNewMessageModal() {
     easymde_new_message.value = '';
     var doc = easymde_new_message.codemirror.getDoc();
     doc.setValue(easymde_new_message.value);
+    easymde_new_message.codemirror.refresh();
     openModal('newMessageModal')
 }
 
 function sendMessage() {
     var sendMessageTo = JSON.parse(document.getElementById('toUsersList').value);
     var messageSubject = document.getElementById('messageSubject').value;
-    var messageContent = easymde_new_message.value();
+    var messageContent = easymde_new_message.codemirror.getDoc().getValue();
 
     if ((sendMessageTo === '') || (messageSubject.trim() === '') || (messageContent.trim === '')) {
     createNewBSAlert('Message Not Sent.  Required Fields Were Empty', 'error');
@@ -270,7 +271,7 @@ function replyMessage() {
     easymde_new_message.value = '';
     var doc = easymde_new_message.codemirror.getDoc();
     doc.setValue(easymde_new_message.value);
-
+    easymde_new_message.codemirror.refresh();
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
