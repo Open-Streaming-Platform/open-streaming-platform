@@ -24,6 +24,7 @@ OSP-Core: Corrects a security issue where video metadata could be edited by a no
 OSP-Core: Corrects an issue where TOTP + "Remember Me" Setting on Login would result in a 500 error
 OSP-Core: Fix for editing a channel which contains a shortcode that causes the short code to be cleared due to a invalid check
 OSP-Core: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
+OSP-Core: Adds Server Admin Access to View Protected Channels
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 
