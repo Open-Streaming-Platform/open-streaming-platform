@@ -21,6 +21,11 @@ log = logging.getLogger('app.functions.securityFunctions')
 @limiter.limit("100/second")
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
+
+        # Allow Admin
+        if current_user.has_role('Admin'):
+            return True
+
         # Verify if a Cached Entry Exists
         cachedResult = cache.checkInviteCache(channelID)
         if cachedResult is True:
