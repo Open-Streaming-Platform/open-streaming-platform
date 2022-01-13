@@ -520,6 +520,18 @@ install_celery_beat() {
   sudo systemctl enable osp-celery-beat >> $OSPLOG 2>&1
 }
 
+install_celery_flower() {
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery Flower" 10 70 0
+  sudo cp -rf $DIR/setup/celery/osp-celery-flower.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/celery-flower /etc/default/celery-flower >> $OSPLOG 2>&1
+  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  sed -i "s/CHANGEME/$ADMINPASS/" /etc/default/celery-flower/celery-flower >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery-flower >> $OSPLOG 2>&1
+  result=$(echo "OSP-Celery-Flower Install Completed! \n\nVisit http://FQDN:5572 to configure\n\nUsername: Admin \nPassword: $ADMINPASS")
+        display_result "Install OSP-Celery-Flower"
+}
+
 upgrade_celery() {
   install_celery
   sudo systemctl restart osp-celery >> $OSPLOG 2>&1
@@ -616,6 +628,7 @@ install_menu() {
       "5" "Install OSP-Proxy" \
       "6" "Install eJabberd" \
       "7" "Install Celery Beat" \
+      "8" "Install Celery Flower" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -718,6 +731,13 @@ install_menu() {
         echo 50 | dialog --title "Installing OSP" --gauge "Setting up Celery Beat"
         install_celery_beat
         echo 75 | dialog --title "Installing OSP" --gauge "Starting Celery Beat" 10 70 0
+        sudo systemctl start osp-celery
+        sudo systemctl start osp-celery-beat
+        ;;
+      8 )
+        echo 50 | dialog --title "Installing OSP" --gauge "Setting up Celery Flower"
+        install_celery_flower
+        echo 75 | dialog --title "Installing OSP" --gauge "Starting Celery Flower" 10 70 0
         sudo systemctl start osp-celery
         sudo systemctl start osp-celery-beat
     esac
