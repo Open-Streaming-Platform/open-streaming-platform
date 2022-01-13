@@ -522,13 +522,14 @@ install_celery_beat() {
 
 install_celery_flower() {
   echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery Flower" 10 70 0
+  sudo pip3 install flower >> $OSPLOG 2>&1
   sudo cp -rf $DIR/setup/celery/osp-celery-flower.service /etc/systemd/system >> $OSPLOG 2>&1
   sudo cp -rf $DIR/setup/celery/celery-flower /etc/default/celery-flower >> $OSPLOG 2>&1
-  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
-  sed -i "s/CHANGEME/$ADMINPASS/" /etc/default/celery-flower/celery-flower >> $OSPLOG 2>&1
+  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 )
+  sed -i "s/CHANGEME/$ADMINPASS/" /etc/default/celery-flower >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable osp-celery-flower >> $OSPLOG 2>&1
-  result=$(echo "OSP-Celery-Flower Install Completed! \n\nVisit http://FQDN:5572 to configure\n\nUsername: Admin \nPassword: $ADMINPASS")
+  result=$(echo "OSP-Celery-Flower Install Completed! \n\nVisit http://FQDN:5572 to configure\n\nUsername: Admin \nPassword: $ADMINPASS \n\nYou can change the password by editing the /etc/default/celery-flower file")
         display_result "Install OSP-Celery-Flower"
 }
 
