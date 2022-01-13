@@ -946,6 +946,15 @@ video.vjs-tech {
     top: 0;
 }
 
+#videoContainer.vid-theater-mode{
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
 .ownerbuttons-dropdown-content {
     background-color: var(--box2-background);
     color: var(--font-color);
