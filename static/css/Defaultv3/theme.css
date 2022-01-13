@@ -441,6 +441,10 @@ table tbody tr {
     overflow : auto;
 }
 
+#sidePanel {
+    background-color: var(--page-background);
+}
+
 .aboutLogo {
     width: 300px;
     height: 300px;
@@ -933,6 +937,14 @@ video.vjs-tech {
     font-size: 1.25em;
 }
 
+#videoContainer.theater-mode{
+    width: calc(100% - var(--side-panel-width));
+    height: 100vh;
+    max-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
 
 .ownerbuttons-dropdown-content {
     background-color: var(--box2-background);
