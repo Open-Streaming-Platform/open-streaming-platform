@@ -70,7 +70,7 @@
           </div>
         </div>
         <div class="tab-pane fade w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-          <form id="system-settings" method="post" action="/settings/admin">
+          <form id="system-settings" enctype=multipart/form-data method="post" action="/settings/admin">
               <div class="row mt-2 mx-2">
                 <div class="col-12">
                     {{ admin.settings_panel(sysSettings) }}
