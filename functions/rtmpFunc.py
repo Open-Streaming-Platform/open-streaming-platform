@@ -198,7 +198,7 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     if authedStream is not []:
         for stream in authedStream:
-            streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
+
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", originalStreamID=stream.id).first()
 
             wasRecorded = False
@@ -214,6 +214,9 @@ def rtmp_user_deauth_check(key, ipaddress):
                 wasRecorded = True
                 recordingID = pendingVideo.id
 
+                db.session.commit()
+
+                streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
                 for upvote in streamUpvotes:
                     newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
                     db.session.add(newVideoUpvote)
