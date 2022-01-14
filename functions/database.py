@@ -239,6 +239,9 @@ def dbFixes():
         channel.allowGuestNickChange = True
         db.session.commit()
 
+    ChannelQuery = Channel.Channel.query.filter_by(private=None).update(dict(private=False))
+    db.session.commit()
+
     # Check Existing Channels without showHome
     ChannelQuery = Channel.Channel.query.filter_by(showHome=None).all()
     for channel in ChannelQuery:

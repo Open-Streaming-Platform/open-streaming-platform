@@ -24,6 +24,7 @@ class Channel(db.Model):
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
     channelMuted = db.Column(db.Boolean)
+    private = db.Column(db.Boolean)
     showChatJoinLeaveNotification = db.Column(db.Boolean)
     defaultStreamName = db.Column(db.String(255))
     autoPublish = db.Column(db.Boolean)
@@ -73,6 +74,7 @@ class Channel(db.Model):
         self.allowGuestNickChange = True
         self.showHome = showHome 
         self.maxVideoRetention = 0
+        self.private = False
 
     def __repr__(self):
         return '<id %r>' % self.id
