@@ -27,6 +27,7 @@ OSP-Core: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 OSP-Core: Adds Server Admin Access to View Protected Channels
 OSP-Core: Theater Mode Added to Streams, Videos, & Clips
 OSP-Core: API Endpoints to Add/Remove RTMP Servers Added to apiv1/server/rtmp
+OSP-Core: Adds Option for Admin to Restrict Total Number of User Owned Channels - #294
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 
