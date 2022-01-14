@@ -365,6 +365,13 @@
                         <small>Set to 0 for Indefinite Retention</small>
                     </div>
                </div>
+               <div class="row">
+                    <div class="col-3">
+                        <label for="limitMaxChannels" class="form-label">Maximum Allowed # of Channels per User</label>
+                        <input type="number" name="limitMaxChannels"  id="limitMaxChannels" class="form-control boxShadow" value="{{sysSettings.limitMaxChannels}}">
+                        <small>Set to 0 for No Restrictions</small>
+                    </div>
+               </div>
                 <div class="row">
                     <div class="col-3">
                         <label for="maximumBitrateRtmp" class="form-label">Maximum Bitrate for RTMP Restream (Kb/s)</label>

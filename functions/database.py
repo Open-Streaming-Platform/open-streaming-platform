@@ -101,6 +101,9 @@ def dbFixes():
     if sysSettings.maxClipLength is None:
         sysSettings.maxClipLength = 301
         db.session.commit()
+    if sysSettings.limitMaxChannels is None:
+        sysSettings.limitMaxChannels = 0
+        db.session.commit()
     # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
     channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
     for chan in channelQuery:

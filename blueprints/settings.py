@@ -556,6 +556,8 @@ def admin_page():
             sysSettings.systemTheme = theme
             if 'mainPageSort' in request.form:
                 sysSettings.sortMainBy = int(request.form['mainPageSort'])
+            if 'limitMaxChannels' in request.form:
+                sysSettings.limitMaxChannels = int(request.form['limitMaxChannels'])
             if 'maxVideoRetention' in request.form:
                 sysSettings.maxVideoRetention = int(request.form['maxVideoRetention'])
             # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
@@ -1112,6 +1114,13 @@ def settings_channels_page():
             showHome = True
 
         if requestType == 'new':
+            # Check Maximum Channel Limit
+            if sysSettings.limitMaxChannels != 0 and current_user.has_role('Admin') is False:
+                channelCount = Channel.Channel.query.filter_by(owningUser=current_user.id).count()
+                if channelCount >= sysSettings.limitMaxChannels:
+                    flash("Maximum Number of Channels Allowed Reached - Limit: " + str(sysSettings.limitMaxChannels), "error")
+                    db.session.commit()
+                    redirect(url_for('.settings_channels_page'))
 
             newUUID = str(uuid.uuid4())
 

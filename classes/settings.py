@@ -62,6 +62,7 @@ class settings(db.Model):
         self.serverMessage = ""
         self.restreamMaxBitrate = 3500
         self.maxClipLength = 90
+        self.limitMaxChannels = 0
         self.buildEdgeOnRestart = True
         self.protectionEnabled = False
         self.maintenanceMode = False
