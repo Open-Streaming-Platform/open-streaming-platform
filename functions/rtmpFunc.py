@@ -163,7 +163,7 @@ def rtmp_record_auth_check(channelLoc):
             if existingRecordingQuery:
                 for recording in existingRecordingQuery:
                     db.session.delete(recording)
-                    db.session.commit()
+                db.session.commit()
 
             streamID = None
             existingStream = Stream.Stream.query.filter_by(complete=False, linkedChannel=channelRequest.id).first()
