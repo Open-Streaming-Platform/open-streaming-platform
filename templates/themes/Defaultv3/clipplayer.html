@@ -86,4 +86,29 @@
                     }
             });
     </script>
+    
+    <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
+    <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
+    <script>
+        player.theaterMode({ elementToToggle: 'videoContainer', className: 'vid-theater-mode' });
+        // get default maxHeight
+        var videoMaxHeight = document.getElementById("video").style.maxHeight;
+        player.on('theaterMode', function (elm, data) {
+            if (data.theaterModeIsOn) {
+                document.getElementById("nav").style.display = 'none';
+                document.getElementById("video").style.maxHeight = '100vh';
+                document.getElementById("video_html5_api").style.maxHeight = '100vh';
+                document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
+                document.getElementById("sidePanel").style.display = 'none';
+                document.getElementById("commentsContainer").style.display = 'none';
+            } else {
+                document.getElementById("nav").style.display = 'block';
+                document.getElementById("video").style.maxHeight = videoMaxHeight;
+                document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
+                document.getElementById("video_html5_api").style.removeProperty('height');
+                document.getElementById("sidePanel").style.removeProperty('display');
+                document.getElementById("commentsContainer").style.removeProperty('display');
+            }
+        });
+    </script>
 {% endblock %}

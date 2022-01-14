@@ -262,27 +262,36 @@
         // get default maxHeight
         var videoMaxHeight = document.getElementById("video").style.maxHeight;
 
+        function enableTheaterMode() {
+            document.getElementById("nav").style.display = 'none';
+            document.getElementById("video").style.maxHeight = '100vh';
+            document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
+            document.getElementById("sidePanel").style.maxHeight = '100vh';
+            document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
+            document.getElementById("sidePanel").style.position = 'fixed';
+            document.getElementById("sidePanel").style.top = '0';
+            document.getElementById("sidePanel").style.right = '0';
+        }
+
+        function disableTheaterMode() {
+            document.getElementById("nav").style.display = 'block';
+            document.getElementById("video").style.maxHeight = videoMaxHeight;
+            document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
+            document.getElementById("video_html5_api").style.removeProperty('height');
+            document.getElementById("sidePanel").style.removeProperty('maxHeight');
+            document.getElementById("sidePanel").style.removeProperty('height');
+            document.getElementById("sidePanel").style.removeProperty('position');
+            document.getElementById("sidePanel").style.removeProperty('top');
+            document.getElementById("sidePanel").style.removeProperty('right');
+            document.getElementById("videoContainer").classList.remove('theater-mode');
+        }
+
         player.on('theaterMode', function (elm, data) {
             if (data.theaterModeIsOn) {
-                document.getElementById("nav").style.display = 'none';
-                document.getElementById("video").style.maxHeight = '100vh';
-                document.getElementById("video_html5_api").style.maxHeight = '100vh';
-                document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
-                document.getElementById("sidePanel").style.maxHeight = '100vh';
-                document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
-                document.getElementById("sidePanel").style.position = 'fixed';
-                document.getElementById("sidePanel").style.top = '0';
-                document.getElementById("sidePanel").style.right = '0';
+                enableTheaterMode();
             } else {
-                document.getElementById("nav").style.display = 'block';
-                document.getElementById("video").style.maxHeight = videoMaxHeight;
-                document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
-                document.getElementById("video_html5_api").style.removeProperty('height');
-                document.getElementById("sidePanel").style.removeProperty('maxHeight');
-                document.getElementById("sidePanel").style.removeProperty('height');
-                document.getElementById("sidePanel").style.removeProperty('position');
-                document.getElementById("sidePanel").style.removeProperty('top');
-                document.getElementById("sidePanel").style.removeProperty('right');
+                disableTheaterMode();
             }
         });
     </script>

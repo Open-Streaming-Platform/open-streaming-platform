@@ -66,6 +66,7 @@ function monitor_vid(vidplayer){
                 streamTimeStamp = new Date('UTC');
                 var nameDivHTML = '<span><b> ' + currentStreamName +  '</b></span>';
                 nameDiv.innerHTML = nameDivHTML;
+                disableTheaterMode();
 
             } catch(e) {
                 console.log("OSP tried restarting the stream but had an issue:" + e)

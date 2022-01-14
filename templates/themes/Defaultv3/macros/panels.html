@@ -280,7 +280,7 @@
 {% endmacro %}
 
 {% macro video_player(videoURL, videoThumbnail, isAutoPlay=True) %}
-<div class="player">
+<div class="player" id="videoContainer">
     <video id="video" class="shadow video-js vjs-big-play-centered" poster="/videos/{{videoThumbnail}}" {% if isAutoPlay == True %}autoplay{% endif %} controls playsinline preload="auto" data-setup='{"fluid": true}'>
         <source src="{{videoURL}}" type="video/mp4">
         <p class="vjs-no-js">
