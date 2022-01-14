@@ -10,7 +10,7 @@ from functions import cachedDbCalls
 
 rtmpPost = reqparse.RequestParser()
 rtmpPost.add_argument('address', type=str, required=True)
-rtmpPort.add_argument('hide', type=bool, default=False)
+rtmpPost.add_argument('hide', type=bool, default=False)
 
 rtmpDelete = reqparse.RequestParser()
 rtmpDelete.add_argument('address', type=str, required=True)
