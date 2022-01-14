@@ -26,14 +26,18 @@ def runSubscription(subject, destination, message):
 
 def processSubscriptions(channelID, subject, message):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
-    if subscriptionQuery:
-        system.newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
 
-        subCount = 0
-        for sub in subscriptionQuery:
-            userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
-            if userQuery is not None:
-                result = runSubscription(subject, userQuery.email, message)
-                subCount = subCount + 1
-        system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
+    sysSettings = cachedDbCalls.getSystemSettings()
+    if sysSettings.maintenanceMode == False:
+        if subscriptionQuery:
+            system.newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
+
+            subCount = 0
+            for sub in subscriptionQuery:
+                userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+                if userQuery is not None:
+                    result = runSubscription(subject, userQuery.email, message)
+                    subCount = subCount + 1
+            system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
+    db.session.commit()
     return True
