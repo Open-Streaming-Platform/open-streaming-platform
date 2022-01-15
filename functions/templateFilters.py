@@ -5,6 +5,8 @@ import os
 import pytz
 import random
 
+from flask_security import current_user
+
 from globals import globalvars
 
 from classes import Sec
@@ -59,6 +61,7 @@ def init(context):
     context.jinja_env.filters['get_videoTopic'] = get_videoTopic
     context.jinja_env.filters['get_videoDate'] = get_videoDate
     context.jinja_env.filters['get_channelPicture'] = get_channelPicture
+    context.jinja_env.filters['is_channelObjVisible'] = is_channelObjVisible
     context.jinja_env.filters['localize_time'] = localize_time
     context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
     context.jinja_env.filters['convert_mins'] = convert_mins
@@ -347,6 +350,19 @@ def get_channelTags_csv(channelId):
 def get_channelPicture(channelID):
     channelQuery = cachedDbCalls.getChannel(channelID)
     return channelQuery.imageLocation
+
+def is_channelObjVisible(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    visible=False
+    if channelQuery != None:
+        if channelQuery.private:
+            if current_user.is_authenticated:
+                if current_user.id == channelQuery.owningUser or current_user.has_role('Admin'):
+                    visible = True
+        else:
+            visible = True
+    return visible
+
 
 def localize_time(timeObj):
     sysSettings = cachedDbCalls.getSystemSettings()
