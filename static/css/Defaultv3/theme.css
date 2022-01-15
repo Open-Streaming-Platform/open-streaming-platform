@@ -618,6 +618,13 @@ table tbody tr {
     text-align: center;
 }
 
+.private-badge {
+    padding: 2px 8px;
+    background-color: #1c4b62;
+    border-radius: 4px;
+    text-align: center;
+}
+
 .offline-badge {
     padding: 2px 8px;
     background-color: var(--box1-background);
