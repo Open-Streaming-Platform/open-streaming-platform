@@ -44,6 +44,7 @@ def init(context):
     context.jinja_env.filters['uuid_to_username'] = uuid_to_username
     context.jinja_env.filters['format_keyType'] = format_keyType
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
+    context.jinja_env.filters['get_channelPrivateStatus'] = get_channelPrivateStatus
     context.jinja_env.filters['get_channelName'] = get_channelName
     context.jinja_env.filters['get_videoTags'] = get_videoTags
     context.jinja_env.filters['get_videoTags_csv'] = get_videoTags_csv
