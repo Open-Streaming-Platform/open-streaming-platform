@@ -1113,6 +1113,8 @@ def settings_channels_page():
         if 'showHome' in request.form:
             showHome = True
 
+        private = False
+
         if 'private' in request.form:
             private = True
 
