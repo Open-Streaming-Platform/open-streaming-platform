@@ -195,7 +195,7 @@ function onPresence(presence) {
   var from = $(presence).attr('from'); // the jabber_id of the contact
   if (!presence_type) presence_type = "online";
   log(' >' + from + ' --> ' + presence_type);
-  if (presence_type != 'error') {
+  if (presence_type !== 'error') {
     if (presence_type === 'unavailable') {
       // Mark contact as offline
     } else {
@@ -230,19 +230,29 @@ function sendMessage() {
     if (message.length > 750) {
         message = message.slice(0,750);
     }
-    if (message != '') {
-        var o = {to: ROOMNAME + '@' + ROOM_SERVICE, type: 'groupchat'};
-        var m = $msg(o);
-        m.c('body', null, message);
-        connection.send(m.tree());
-        chatInput.value = "";
+
+    // Testing Inline Commandline
+    if (message.charAt(0) === '/') {
+        var commandString = message.substring(1);
+        var splitCommandString = commandString.split(' ');
+        var channelId = from.split('@')[0];
+        var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], channelId: channelId, userUUID: userUUID, xmppAuth: xmppPassword};
+        console.log(commandArray);
+    } else {
+        if (message !== '') {
+            var o = {to: ROOMNAME + '@' + ROOM_SERVICE, type: 'groupchat'};
+            var m = $msg(o);
+            m.c('body', null, message);
+            connection.send(m.tree());
+            chatInput.value = "";
+        }
     }
     return true;
 }
 
 
 function room_msg_handler(a, b, c) {
-    if (debug == true) {
+    if (debug === true) {
         console.log(a);
         console.log(b);
         console.log(c);
@@ -275,7 +285,7 @@ function room_pres_handler(a, b, c) {
 
   // Handle Public Presence Notifications
   var messageTimestamp = moment().format('hh:mm A');
-  if (presenceType == "unavailable") {
+  if (presenceType === "unavailable") {
 
       var msgfrom = "SERVER";
       if (status.includes("307")) {
@@ -294,7 +304,7 @@ function room_pres_handler(a, b, c) {
   // Check if is own status change (Kicks/Bans/Etc)
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {
       console.log("Current User Status Change to: " + presenceType)
-      if (presenceType == "unavailable") {
+      if (presenceType === "unavailable") {
 
           clearInterval(occupantCheck);
           clearInterval(chatDataUpdate);
@@ -326,7 +336,7 @@ function room_pres_handler(a, b, c) {
               reasonCodeSpan.textContent = "999";
               reasonTextSpan.textContent = "Disconnection";
           }
-      } else if (presenceType == "error") {
+      } else if (presenceType === "error") {
           error = $(presenceStatement).find("error");
           errorCode = error[0].attributes.code.value;
           clearInterval(occupantCheck);
@@ -345,7 +355,7 @@ function room_pres_handler(a, b, c) {
 }
 
 function room_roster_handler(a,b,c) {
-    if (debug == true) {
+    if (debug === true) {
         console.log(a);
         console.log(b);
         console.log(c);
@@ -418,34 +428,24 @@ function onMessage(msg) {
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
           var msg = Strophe.xmlunescape(Strophe.getText(body));
 
-          // Testing Inline Commandline
-          if (msg.charAt(0) === '/') {
-              var commandString = msg.substring(1);
-              var splitCommandString = commandString.split(' ');
-              var channelId = from.split('@')[0];
-
-              var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], channelId: channelId, userUUID: userUUID, xmppAuth: xmppPassword};
-              console.log(commandArray);
+          var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+          if (Strophe.getResourceFromJid(from) == 'SERVER') {
+              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
           } else {
-              var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-              tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-              if (Strophe.getResourceFromJid(from) == 'SERVER') {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
-              } else {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
-              }
+              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+          }
 
-              var msg = format_msg(msg)
-              msg = process_stickers(msg);
+          msg = format_msg(msg)
+          msg = process_stickers(msg);
 
-              tempNode.querySelector("span.chatMessage").innerHTML = msg;
-              tempNode.style.display = "block";
-              chatDiv = document.getElementById("chat");
-              var needsScroll = checkChatScroll()
-              chatDiv.appendChild(tempNode);
-              if (needsScroll) {
-                  scrollChatWindow();
-              }
+          tempNode.querySelector("span.chatMessage").innerHTML = msg;
+          tempNode.style.display = "block";
+          chatDiv = document.getElementById("chat");
+          var needsScroll = checkChatScroll()
+          chatDiv.appendChild(tempNode);
+          if (needsScroll) {
+              scrollChatWindow();
           }
       }
   }
