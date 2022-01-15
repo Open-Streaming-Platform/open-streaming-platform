@@ -184,6 +184,16 @@ def channeltoOwnerID(channelID):
     channelObj = cachedDbCalls.getChannel(channelID)
     return channelObj.owningUser
 
+def get_channelPrivateStatus(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
+    if channelObj is not None:
+        if channelObj.private is False:
+            return False
+        else:
+            return True
+    return True
+
+
 def get_channelTopic(channelID):
     channelObj = cachedDbCalls.getChannel(channelID)
     return channelObj.topic
