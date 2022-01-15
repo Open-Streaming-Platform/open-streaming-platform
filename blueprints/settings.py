@@ -1113,6 +1113,9 @@ def settings_channels_page():
         if 'showHome' in request.form:
             showHome = True
 
+        if 'private' in request.form:
+            private = True
+
         if requestType == 'new':
             # Check Maximum Channel Limit
             if sysSettings.limitMaxChannels != 0 and current_user.has_role('Admin') is False:
@@ -1173,6 +1176,7 @@ def settings_channels_page():
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
+                requestedChannel.private = private
 
                 if 'channelTags' in request.form:
                     channelTagString = request.form['channelTags']
