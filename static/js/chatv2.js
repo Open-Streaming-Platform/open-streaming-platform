@@ -235,7 +235,7 @@ function sendMessage() {
     if (message.charAt(0) === '/') {
         var commandString = message.substring(1);
         var splitCommandString = commandString.split(' ');
-        var channelId = from.split('@')[0];
+        var channelId = ROOMNAME;
         var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], channelId: channelId, userUUID: userUUID, xmppAuth: xmppPassword};
         console.log(commandArray);
         chatInput.value = "";
