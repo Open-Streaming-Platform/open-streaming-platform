@@ -34,6 +34,15 @@ def channel_view_page(chanID):
 
     if channelData is not None:
 
+        if channelData.private:
+            if current_user.is_authenticated:
+                if current_user.id != channelData.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Channel", "error")
+                    return redirect(url_for("root.main_page"))
+            else:
+                flash("No Such Channel", "error")
+                return redirect(url_for("root.main_page"))
+
         openStreams = Stream.Stream.query.filter_by(active=True, linkedChannel=chanID).all()
 
         recordedVids = cachedDbCalls.getAllVideo_View(chanID)

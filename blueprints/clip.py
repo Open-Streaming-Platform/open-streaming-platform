@@ -46,6 +46,9 @@ def view_clip_page(clipID):
                 if current_user.id != associatedChannel.owningUser and current_user.has_role('Admin') is False:
                     flash("No Such Video at URL", "error")
                     return redirect(url_for("root.main_page"))
+            else:
+                flash("No Such Video at URL", "error")
+                return redirect(url_for("root.main_page"))
 
         if associatedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(associatedChannel.id):
