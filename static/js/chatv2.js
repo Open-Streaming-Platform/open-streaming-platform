@@ -238,6 +238,7 @@ function sendMessage() {
         var channelId = from.split('@')[0];
         var commandArray = {command: splitCommandString[0], argString: splitCommandString[1], channelId: channelId, userUUID: userUUID, xmppAuth: xmppPassword};
         console.log(commandArray);
+        chatInput.value = "";
     } else {
         if (message !== '') {
             var o = {to: ROOMNAME + '@' + ROOM_SERVICE, type: 'groupchat'};
