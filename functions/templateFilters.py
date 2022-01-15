@@ -6,6 +6,7 @@ import pytz
 import random
 
 from flask_security import current_user
+from sqlalchemy import func
 
 from globals import globalvars
 

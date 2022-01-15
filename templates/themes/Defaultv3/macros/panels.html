@@ -20,7 +20,9 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
       {% for stream in streamList %}
-        {{ cards.live_stream_card(stream) }}
+          {% if stream.linkedChannel | is_channelObjVisible %}
+            {{ cards.live_stream_card(stream) }}
+          {% endif %}
       {% endfor %}
   </ul>
 </div>
@@ -53,7 +55,9 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
   {% for channel in channelList %}
-    {{ cards.channel_card(channel) }}
+      {% if channel.id | is_channelObjVisible %}
+        {{ cards.channel_card(channel) }}
+      {% endif %}
   {% endfor %}
   </ul>
 </div>
@@ -64,7 +68,9 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for video in videoList | orderVideoBy(order) %}
-          {{ cards.video_card(video) }}
+          {% if video.channelID | is_channelObjVisible %}
+            {{ cards.video_card(video) }}
+          {% endif %}
       {% endfor %}
   </ul>
 </div>
@@ -75,7 +81,9 @@
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for clip in clipsList %}
-          {{ cards.clip_card(clip) }}
+          {% if clip.parentVideo | videotoChannelID | is_channelObjVisible %}
+            {{ cards.clip_card(clip) }}
+          {% endif %}
       {% endfor %}
   </ul>
 </div>
