@@ -458,7 +458,7 @@ def getPanelVideoList(order, limitTo):
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
             .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser,
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
                            RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
@@ -469,7 +469,7 @@ def getPanelVideoList(order, limitTo):
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
             .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser,
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
                            RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
@@ -480,7 +480,7 @@ def getPanelVideoList(order, limitTo):
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
             .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser,
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
                            RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
@@ -491,7 +491,7 @@ def getPanelVideoList(order, limitTo):
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
             .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser,
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
                            RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
