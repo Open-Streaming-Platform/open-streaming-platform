@@ -37,6 +37,13 @@ def view_page(loc):
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     if requestedChannel is not None:
+
+        if requestedChannel.private:
+            if current_user.is_authenticated:
+                if current_user.id != requestedChannel.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Stream at URL", "error")
+                    return redirect(url_for("root.main_page"))
+
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))

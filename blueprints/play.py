@@ -47,6 +47,12 @@ def view_vid_page(videoID):
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
 
+        if channelData.private:
+            if current_user.is_authenticated:
+                if current_user.id != channelData.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Video at URL", "error")
+                    return redirect(url_for("root.main_page"))
+
         if channelData.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(channelData.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
