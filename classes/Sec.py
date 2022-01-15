@@ -109,6 +109,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
+    messageBanList = db.relationship('messageBanList', backref='owner', cascade="all, delete-orphan", lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
 
