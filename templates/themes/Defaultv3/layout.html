@@ -54,11 +54,17 @@
                 <!--Authenticated User Dropdown Menu-->
                 <span class="userImageBlock" id="userImageBlock">
                     <span class="boxShadow navbar-dropdown-content textShadow fade-in" id="userMenuDropdown">
+                        {% if current_user.has_role('Streamer') %}
                         <a href="/settings/channels"><span class="bi bi-tv-fill"></span> <b>My Channels</b></a>
-                        <a href="/settings/api"><span class="bi bi-key-fill"></span> <b>API Keys</b></a>
+                        {% endif %}
+                        {% if current_user.has_role('Streamer') or current_user.has_role('Admin') %}
+                            <a href="/settings/api"><span class="bi bi-key-fill"></span> <b>API Keys</b></a>
+                        {% endif %}
                         <a href="/settings/user/subscriptions"><span class="bi bi-star-fill"></span> <b>Subscriptions</b></a>
                         <a href="/settings/user"><span class="bi bi-gear-fill"></span> <b>Settings</b></a>
+                        {% if current_user.has_role('Admin') %}
                         <a href="/settings/admin"><span class="bi bi-server"></span> <b>Admin</b></a>
+                        {% endif %}
                         <a href="/logout"><span class="bi bi-box-arrow-right"></span> <b>Logout</b></a>
                     </span>
                     <a href="#" id="userDropDownButton" onclick="showUserNav();">
@@ -66,7 +72,11 @@
                         <i class="bi bi-caret-down-fill"></i>
                     </a>
                 </span>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
+                {% if sysSettings.allowUploads == True %}
+                    {% if current_user.has_role('Uploader') %}
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
+                    {% endif %}
+                {% endif %}
                 <a href="/messages"><i class="textShadow bi bi-envelope-fill"></i>
                     {% if messageCount > 0 %}
                         <span class="messagesIndicator" id="MessagesCountNav">
