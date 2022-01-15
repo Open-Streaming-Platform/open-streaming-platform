@@ -29,7 +29,7 @@ class api_1_ListVideos(Resource):
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in videoList]}
+        return {'results': [ob.serialize() for ob in videoList if ob.channel.private is False]}
 
 
 @api.route('/<int:videoID>')
@@ -41,7 +41,7 @@ class api_1_ListVideo(Resource):
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in videoList]}
+        return {'results': [ob.serialize() for ob in videoList if ob.channel.private is False]}
 
     @api.expect(videoParserPut)
     @api.doc(security='apikey')

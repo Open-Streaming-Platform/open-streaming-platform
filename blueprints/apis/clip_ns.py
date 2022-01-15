@@ -7,7 +7,7 @@ from classes import apikey
 from classes import upvotes
 from classes.shared import db
 
-from functions import cachedDbCalls, videoFunc
+from functions import cachedDbCalls, videoFunc, templateFilters
 from functions.scheduled_tasks import video_tasks
 
 from globals import globalvars
@@ -29,7 +29,7 @@ class api_1_ListClips(Resource):
         """
         clipsList = RecordedVideo.Clips.query.filter_by(published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in clipsList]}
+        return {'results': [ob.serialize() for ob in clipsList if ob.recordedVideo.channel.private is False]}
 
 
 @api.route('/<int:clipID>')
@@ -41,7 +41,7 @@ class api_1_ListClip(Resource):
         """
         clipList = RecordedVideo.Clips.query.filter_by(id=clipID, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in clipList]}
+        return {'results': [ob.serialize() for ob in clipList if ob.recordedVideo.channel.private is False]}
 
     @api.expect(clipParserPut)
     @api.doc(security='apikey')

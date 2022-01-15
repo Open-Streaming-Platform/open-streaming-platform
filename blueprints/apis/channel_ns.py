@@ -88,7 +88,7 @@ class api_1_ListChannels(Resource):
         """
         channelList = Channel.Channel.query.all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in channelList]}
+        return {'results': [ob.serialize() for ob in channelList if ob.private is False]}
 
     # Channel - Create Channel
     @api.expect(channelParserPost)

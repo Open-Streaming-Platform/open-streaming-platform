@@ -25,7 +25,7 @@ class api_1_ListStreams(Resource):
         """
         streamList = Stream.Stream.query.filter_by(active=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in streamList]}
+        return {'results': [ob.serialize() for ob in streamList if ob.channel.private is False]}
 
 
 @api.route('/<int:streamID>')
