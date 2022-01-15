@@ -226,6 +226,9 @@
           {% if channelData.protected and sysSettings.protectionEnabled %}
             {{ core_ui.protected_badge() }}
           {% endif %}
+          {% if channelData.private %}
+            {{ core_ui.private_badge() }}
+          {% endif %}
         </div>
         <div>
             {% for tag in channelData.id | get_channelTags %}
