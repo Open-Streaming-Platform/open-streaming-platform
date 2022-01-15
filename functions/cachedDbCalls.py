@@ -39,36 +39,36 @@ def searchStreams(term):
 
 ### Channel Related DB Calls
 @cache.memoize(timeout=60)
-def getAllChannels(showPrivate=False):
+def getAllChannels():
     channelQuery = Channel.Channel.query.\
         with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
                       Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(private=showPrivate).all()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).all()
     return channelQuery
 
 @cache.memoize(timeout=60)
-def getChannel(channelID, showPrivate=False):
+def getChannel(channelID):
     channelQuery = Channel.Channel.query.\
         with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
                       Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(id=channelID, private=showPrivate).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(id=channelID).first()
     return channelQuery
 
 @cache.memoize(timeout=600)
-def getChannelByLoc(channelLoc, showPrivate=False):
+def getChannelByLoc(channelLoc):
     channelQuery = Channel.Channel.query.\
         with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
                       Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(channelLoc=channelLoc, private=showPrivate).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(channelLoc=channelLoc).first()
     return channelQuery
 
 @cache.memoize(timeout=60)
@@ -101,9 +101,9 @@ def getChannelLocationFromID(channelID):
 def searchChannels(term):
     if term is not None:
         ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by(private=False).all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
         ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by(private=False).all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery
         resultsArray = list(set(resultsArray))
         return resultsArray
