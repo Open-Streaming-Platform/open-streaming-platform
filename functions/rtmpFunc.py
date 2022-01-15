@@ -260,7 +260,7 @@ def rtmp_user_deauth_check(key, ipaddress):
         db.session.close()
         return returnMessage
 
-@celery.task(bind=True, max_retries=5)
+@celery.task(bind=True, max_retries=20)
 def rtmp_rec_Complete_handler(self, channelLoc, path):
     try:
         sysSettings = cachedDbCalls.getSystemSettings()
