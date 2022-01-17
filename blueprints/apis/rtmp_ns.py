@@ -230,7 +230,8 @@ class api_1_rtmp_playbackauth(Resource):
         if clientIP == "127.0.0.1" or clientIP == "localhost":
             return 'OK'
         else:
-            streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+            streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).with_entities(Channel.Channel.id, Channel.Channel.channelLoc,
+                                                                                           Channel.Channel.owningUser, Channel.Channel.protected).first()
             if streamQuery is not None:
 
                 if streamQuery.protected is False:
