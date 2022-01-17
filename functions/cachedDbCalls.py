@@ -97,6 +97,14 @@ def getChannelLocationFromID(channelID):
     else:
         return None
 
+@cache.memoize(timeout=1200)
+def getChannelIDFromLocation(channelLocation):
+    ChannelQuery = Channel.Channel.query.filter_by(channelLoc=channelLocation).with_entities(Channel.Channel.id, Channel.Channel.channelLoc).first()
+    if ChannelQuery is not None:
+        return ChannelQuery.id
+    else:
+        return None
+
 @cache.memoize(timeout=120)
 def searchChannels(term):
     if term is not None:
