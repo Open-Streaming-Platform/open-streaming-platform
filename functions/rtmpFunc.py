@@ -32,7 +32,8 @@ log = logging.getLogger('app.functions.rtmpFunctions')
 def rtmp_stage1_streamkey_check(key, ipaddress):
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
+    channelRequest = Channel.Channel.query.filter_by(streamKey=key)\
+        .with_entities(Channel.Channel.id, Channel.Channel.channelLoc, Channel.Channel.topic, Channel.Channel.owningUser, Channel.Channel.defaultStreamName).first()
 
     currentTime = datetime.datetime.utcnow()
 
@@ -94,7 +95,8 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
 
     currentTime = datetime.datetime.utcnow()
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    requestedChannel = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
 
     if requestedChannel is not None:
         authedStream = Stream.Stream.query.filter_by(pending=True, streamKey=requestedChannel.streamKey).first()
@@ -123,7 +125,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
                 newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has started a live stream in " + requestedChannel.channelName, "/view/" + str(requestedChannel.channelLoc),
-                                                                 "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+                                                                 "/images/" + str(templateFilters.get_pictureLocation(requestedChannel.owningUser)), sub.userID)
                 db.session.add(newNotification)
             db.session.commit()
 
@@ -151,7 +153,8 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
 def rtmp_record_auth_check(channelLoc):
 
     sysSettings = cachedDbCalls.getSystemSettings()
-    channelRequest = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    #channelRequest = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    channelRequest = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
     currentTime = datetime.datetime.utcnow()
 
     if channelRequest is not None:
@@ -267,7 +270,8 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
 
         currentTime = datetime.datetime.utcnow()
 
-        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+        requestedChannel = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
 
         if requestedChannel is not None:
 
@@ -305,7 +309,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
                        channeltopic=templateFilters.get_topicName(requestedChannel.topic),
                        channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                        channeldescription=str(requestedChannel.description), videoname=pendingVideo.channelName,
-                       videodate=pendingVideo.videoDate, videodescription=pendingVideo.description,videotopic=templateFilters.get_topicName(pendingVideo.topic),
+                       videodate=pendingVideo.videoDate, videodescription=pendingVideo.description, videotopic=templateFilters.get_topicName(pendingVideo.topic),
                        videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/play/' + str(pendingVideo.id)),
                        videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + str(pendingVideo.thumbnailLocation)))
 
@@ -313,7 +317,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
                 for sub in subscriptionQuery:
                     # Create Notification for Channel Subs
                     newNotification = notifications.userNotification(templateFilters.get_userName(requestedChannel.owningUser) + " has posted a new video to " + requestedChannel.channelName + " titled " + pendingVideo.channelName, '/play/' + str(pendingVideo.id),
-                                                                     "/images/" + str(requestedChannel.owner.pictureLocation), sub.userID)
+                                                                     "/images/" + str(templateFilters.get_pictureLocation(requestedChannel.owningUser)), sub.userID)
                     db.session.add(newNotification)
                 db.session.commit()
 
