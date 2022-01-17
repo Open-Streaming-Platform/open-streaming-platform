@@ -37,8 +37,8 @@ function suggestionItemTemplate(tagData){
 }
 
 // initialize Tagify on the above input node reference
-var input = inputElm,
-    tagify = new Tagify(input, {
+var input = inputElm;
+tagify = new Tagify(input, {
     tagTextProp: 'name', // very important since a custom template is used with this property as text
     enforceWhitelist: true,
     skipInvalid: true, // do not remporarily add invalid tags
