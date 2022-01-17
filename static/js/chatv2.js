@@ -857,4 +857,25 @@ function searchSticker() {
     else{
       $(".chatsticker-emoji-picker-emoji").show();
     }
-};
+}
+
+socket.on('returnBanList', function(msg) {
+    console.log("Receiving Ban List");
+
+    document.getElementById('modDisplay').style.display = 'block';
+    document.getElementById('chatMembers').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+
+    banList = document.getElementById('OutcastList');
+    banList.innerHTML = "";
+    for (let i = 0; i < msg['results'].length; i++){
+        var iDiv = document.createElement('div');
+        iDiv.className = 'bannedUser';
+        var username = msg["results"][i]["username"];
+        var useruuid = msg["results"][i]["useruuid"];
+        var onclickCmd = "clearBan('" + useruuid + "');"
+        iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
+        banList.appendChild(iDiv);
+    }
+    console.log(msg);
+});
