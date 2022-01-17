@@ -12,7 +12,7 @@ function monitor_vid(vidplayer){
     onlineBadge = document.getElementById('liveIndicatorBadge');
 
     $.getJSON('/apiv1/channel/' + channelLocation + '/streams', function(data) {
-        var streamList = data['results'][0];
+        var streamList = data['results'];
 
         if (streamList.length > 0) {
             var currentStream = streamList[0];
