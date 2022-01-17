@@ -71,6 +71,17 @@ def getChannelByLoc(channelLoc):
                       Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey).filter_by(channelLoc=channelLoc).first()
     return channelQuery
 
+@cache.memoize(timeout=600)
+def getChannelByStreamKey(StreamKey):
+    channelQuery = Channel.Channel.query.\
+        with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
+                      Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                      Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                      Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                      Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey).filter_by(streamKey=StreamKey).first()
+    return channelQuery
+
 @cache.memoize(timeout=60)
 def getChannelSubCount(channelID):
     SubscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).count()

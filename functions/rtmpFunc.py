@@ -32,8 +32,7 @@ log = logging.getLogger('app.functions.rtmpFunctions')
 def rtmp_stage1_streamkey_check(key, ipaddress):
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    channelRequest = Channel.Channel.query.filter_by(streamKey=key)\
-        .with_entities(Channel.Channel.id, Channel.Channel.channelLoc, Channel.Channel.topic, Channel.Channel.owningUser, Channel.Channel.defaultStreamName).first()
+    channelRequest = cachedDbCalls.getChannelByStreamKey(key)
 
     currentTime = datetime.datetime.utcnow()
 
@@ -197,7 +196,8 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).all()
 
-    channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
+    #channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
+    channelRequest = cachedDbCalls.getChannelByStreamKey(key)
 
     if authedStream is not []:
         for stream in authedStream:
