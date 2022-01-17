@@ -116,7 +116,10 @@ def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTit
     Processes Video Upload following user submittal
     """
     sysSettings = cachedDbCalls.getSystemSettings()
-    ChannelQuery = Channel.Channel.query.filter_by(id=channelId).first()
+
+    #ChannelQuery = Channel.Channel.query.filter_by(id=channelId).first()
+    ChannelQuery = cachedDbCalls.getChannel(channelId)
+
     results = videoFunc.processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription,
                                            ChannelQuery)
 
@@ -149,7 +152,7 @@ def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTit
                 newNotification = notifications.userNotification(
                     templateFilters.get_userName(ChannelQuery.owningUser) + " has posted a new video to "
                     + ChannelQuery.channelName + " titled " + newVideo.channelName, '/play/' + str(newVideo.id),
-                    "/images/" + ChannelQuery.owner.pictureLocation, sub.userID)
+                    "/images/" + templateFilters.get_pictureLocation(ChannelQuery.owningUser), sub.userID)
                 db.session.add(newNotification)
             db.session.commit()
 

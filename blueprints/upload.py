@@ -90,7 +90,8 @@ def upload_vid():
     videoTitle = request.form['videoTitle']
     videoDescription = request.form['videoDescription']
 
-    ChannelQuery = Channel.Channel.query.filter_by(id=channel).first()
+    #ChannelQuery = Channel.Channel.query.filter_by(id=channel).first()
+    ChannelQuery = cachedDbCalls.getChannel(channel)
 
     if ChannelQuery.owningUser != current_user.id:
         flash('You are not allowed to upload to this channel!')

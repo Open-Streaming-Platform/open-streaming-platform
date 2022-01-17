@@ -76,7 +76,8 @@ def channel_view_link_page(channelLoc):
 # Allow a direct link to any open stream for a channel
 @channels_bp.route('/<loc>/stream')
 def channel_stream_link_page(loc):
-    requestedChannel = Channel.Channel.query.filter_by(id=int(loc)).first()
+    #requestedChannel = Channel.Channel.query.filter_by(id=int(loc)).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(loc)
     if requestedChannel is not None:
         openStreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=requestedChannel.id).first()
         if openStreamQuery is not None:

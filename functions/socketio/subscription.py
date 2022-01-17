@@ -19,7 +19,8 @@ def toggle_chanSub(payload):
     if current_user.is_authenticated:
         sysSettings = cachedDbCalls.getSystemSettings()
         if 'channelID' in payload:
-            channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
+            #channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
+            channelQuery = cachedDbCalls.getChannel(int(payload['channelID']))
             if channelQuery is not None:
                 currentSubscription = subscriptions.channelSubs.query.filter_by(channelID=channelQuery.id, userID=current_user.id).first()
                 subState = False
