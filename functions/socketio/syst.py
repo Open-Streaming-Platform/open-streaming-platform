@@ -61,6 +61,8 @@ def deleteChannelAdmin(message):
     if channelQuery is not None:
         if current_user.has_role('Admin') or channelQuery.owningUser == current_user.id:
             result = channelFunc.delete_channel(channelID)
+            # Invalidate Channel Cache
+            cachedDbCalls.invalidateChannelCache(channelID)
     return 'OK'
 
 @socketio.on('deleteStream')
