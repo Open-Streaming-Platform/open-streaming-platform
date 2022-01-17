@@ -47,7 +47,11 @@ def delete_channel(channelID):
         ejabberd.destroy_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
 
         system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
+
+        cachedDbCalls.invalidateChannelCache(channelQuery.id)
+
         db.session.delete(channelQuery)
         db.session.commit()
+
     db.session.close()
     return True
