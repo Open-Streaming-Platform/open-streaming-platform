@@ -11,12 +11,11 @@ function monitor_vid(vidplayer){
 
     onlineBadge = document.getElementById('liveIndicatorBadge');
 
-    $.getJSON('/apiv1/channel/' + channelLocation, function(data) {
-        var channelList = data['results'][0];
-        var streamIDList = channelList['stream'];
+    $.getJSON('/apiv1/channel/' + channelLocation + '/streams', function(data) {
+        var streamList = data['results'][0];
 
-        if (streamIDList.length > 0) {
-            var currentStreamID = streamIDList[0];
+        if (streamList.length > 0) {
+            var currentStream = streamList[0];
 
             videoContainer.style.display = "block";
             offlineWindow.style.display = "none";
@@ -33,25 +32,22 @@ function monitor_vid(vidplayer){
                 }
             }
 
-            $.getJSON('/apiv1/stream/' + currentStreamID, function(data) {
-                var streamData = data['results'][0];
-                var currentStreamTopic = streamData['topic'];
-                var currentStreamName = streamData['streamName'];
-                streamTimeStamp = new Date(streamData['startTimestamp'] + ' UTC');
+            var currentStreamTopic = currentStream['topic'];
+            var currentStreamName = currentStream['streamName'];
+            streamTimeStamp = new Date(currentStream['startTimestamp'] + ' UTC');
 
-                var topicDiv = document.getElementById('streamMetadataTopic');
-                var nameDiv = document.getElementById('streamMetadataName');
+            var topicDiv = document.getElementById('streamMetadataTopic');
+            var nameDiv = document.getElementById('streamMetadataName');
 
-                var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
-                var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
+            var nameDivHTML = '<b><i class="fas fa-video"></i> <span> ' + currentStreamName +  '</span></b>';
+            var topicDivHTML = '<b><i class="fas fa-hashtag"></i> <a href="/topics/' + currentStreamTopic + '"><span>' + topicJSList[currentStreamTopic] +  '</span></a></b>';
 
-                onlineBadge.className = 'btn btn-danger boxShadow';
-                onlineBadge.innerHTML = 'LIVE';
+            onlineBadge.className = 'btn btn-danger boxShadow';
+            onlineBadge.innerHTML = 'LIVE';
 
-                nameDiv.innerHTML = nameDivHTML;
-                topicDiv.innerHTML = topicDivHTML;
+            nameDiv.innerHTML = nameDivHTML;
+            topicDiv.innerHTML = topicDivHTML;
 
-            });
 
         } else {
             try {
