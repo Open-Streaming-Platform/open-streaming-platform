@@ -50,6 +50,7 @@ def view_page(loc):
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
+
             # Reload due to detached session during Valid User Check:
             requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
@@ -88,7 +89,7 @@ def view_page(loc):
             else:
                 streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
 
-        topicList = topics.topics.query.all()
+        topicList = cachedDbCalls.getAllTopics()
         chatOnly = request.args.get("chatOnly")
 
         # Grab List of Stickers for Chat
@@ -161,8 +162,6 @@ def view_page(loc):
                 flash("Chat is Not Enabled For This Stream","error")
 
         isEmbedded = request.args.get("embedded")
-
-        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
         if isEmbedded is None or isEmbedded == "False" or isEmbedded == "false":
 
