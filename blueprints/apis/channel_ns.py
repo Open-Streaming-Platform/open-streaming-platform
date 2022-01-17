@@ -12,11 +12,13 @@ from classes import Sec
 from classes import topics
 from classes import invites
 from classes import views
+from classes import Stream
 from classes.shared import db
 
 from functions import system
 from functions import cachedDbCalls
 from functions import channelFunc
+from functions import templateFilters
 
 from globals import globalvars
 
@@ -196,6 +198,47 @@ class api_1_ListChannel(Resource):
 
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+# Invites Endpoint for a Channel
+@api.route('/<string:channelEndpointID>/streams')
+@api.doc(params={'channelEndpointID': 'GUID Channel Location'})
+class api_1_Streams(Resource):
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def get(self, channelEndpointID):
+        """
+        Returns list of active streams on a channel
+        """
+        sysSettings = cachedDbCalls.getSystemSettings()
+        channelIDQuery = cachedDbCalls.getChannelIDFromLocation(channelEndpointID)
+
+        if channelIDQuery is not None:
+            StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelIDQuery, active=True, complete=False)\
+                .with_entities(Stream.Stream.id, Stream.Stream.topic, Stream.Stream.streamName, Stream.Stream.startTimestamp, Stream.Stream.uuid, Stream.Stream.currentViewers,
+                               Stream.Stream.totalViewers).all()
+
+            results = []
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/live-adapt/' + channelEndpointID + '.m3u8'
+            else:
+                streamURL = '/live/' + channelEndpointID + '/index.m3u8'
+            for entry in StreamQuery:
+                results.append(
+                    {
+                        'id': entry.id,
+                        'uuid': entry.uuid,
+                        'topic': entry.topic,
+                        'streamName': entry.streamName,
+                        'startTimestamp': entry.startTimestamp,
+                        'currentViewers': entry.currentViewers,
+                        'totalViewers': entry.totalViewers,
+                        'streamURL': streamURL
+                    })
+            db.session.commit()
+            return {'results': results}
+
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+
 
 
 # TODO Add Ability to Add/Delete/Change
