@@ -96,7 +96,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
     currentTime = datetime.datetime.utcnow()
 
     #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    requestedChannel = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
+    requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
 
     if requestedChannel is not None:
         authedStream = Stream.Stream.query.filter_by(pending=True, streamKey=requestedChannel.streamKey).first()
@@ -154,7 +154,7 @@ def rtmp_record_auth_check(channelLoc):
 
     sysSettings = cachedDbCalls.getSystemSettings()
     #channelRequest = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    channelRequest = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
+    channelRequest = cachedDbCalls.getChannelByLoc(channelLoc)
     currentTime = datetime.datetime.utcnow()
 
     if channelRequest is not None:
@@ -271,7 +271,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
         currentTime = datetime.datetime.utcnow()
 
         #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-        requestedChannel = cachedDbCalls.getChannel(cachedDbCalls.getChannelIDFromLocation(channelLoc))
+        requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
 
         if requestedChannel is not None:
 

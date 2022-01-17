@@ -57,7 +57,7 @@ def getChannel(channelID):
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(id=channelID).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey).filter_by(id=channelID).first()
     return channelQuery
 
 @cache.memoize(timeout=600)
@@ -68,7 +68,7 @@ def getChannelByLoc(channelLoc):
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).filter_by(channelLoc=channelLoc).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey).filter_by(channelLoc=channelLoc).first()
     return channelQuery
 
 @cache.memoize(timeout=60)
