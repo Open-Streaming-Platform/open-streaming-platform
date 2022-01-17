@@ -1251,6 +1251,9 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
+                # Invalidate Channel Cache
+                cachedDbCalls.invalidateChannelCache(requestedChannel.id)
+
                 flash("Channel Saved")
                 db.session.commit()
             else:

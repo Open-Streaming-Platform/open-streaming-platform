@@ -178,7 +178,12 @@ class api_1_ListChannel(Resource):
                                 possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
                                 if possibleTopics is not None:
                                     channelQuery.topic = int(args['topicID'])
+
+                        # Invalidate Channel Cache
+                        cachedDbCalls.invalidateChannelCache(channelQuery.id)
+
                         db.session.commit()
+
                         return {'results': {'message': 'Channel Updated'}}, 200
         return {'results': {'message': 'Request Error'}},400
 
@@ -195,6 +200,11 @@ class api_1_ListChannel(Resource):
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery is not None:
                         results = channelFunc.delete_channel(channelQuery.id)
+
+                        # Invalidate Channel Cache
+                        cachedDbCalls.invalidateChannelCache(channelQuery.id)
+
+                        db.session.commit()
 
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400

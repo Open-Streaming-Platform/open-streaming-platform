@@ -129,6 +129,17 @@ def searchChannels(term):
     else:
         return []
 
+def invalidateChannelCache(channelId):
+    lastCachedKey = getChannel(channelId).streamKey
+    channelLoc = getChannelLocationFromID(channelId)
+
+    cache.delete_memoized(getChannel, channelId)
+    cache.delete_memoized(getChannelByLoc, channelLoc)
+    cache.delete_memoized(getChannelByStreamKey, lastCachedKey)
+
+    return True
+
+
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getAllVideo_View(channelID):
