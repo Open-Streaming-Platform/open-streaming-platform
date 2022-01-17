@@ -2113,3 +2113,41 @@ var tagify_videoTags = new Tagify(videoTags, {
     var easymde_new_message = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("messageContent") });
 </script>
 {% endmacro %}
+
+{% macro open_message_banlist(banList) %}
+<div class="modal fade" id="messageBanListModal" tabindex="-1" role="dialog" aria-labelledby="messageBanListModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="messageBanListModalTitle">Messages Ban List</h5>
+            <div class="float-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="modal-body">
+             <div class="mb-3 row">
+                <label for="messageBanListUser" class="col-form-label col-form-label">Add to Ban List: </label>
+                 <div class="col-sm-10">
+                     <div class="input-group">
+                        <input class="form-control boxShadow" id="messageBanListUser" name='messageBanListUser' value='' required>
+                        <button class="btn btn-primary" type="button"><i class="fas fa-plus"></i></button>
+                     </div>
+                 </div>
+            </div>
+            <ul class="messageBanList">
+                {% for ban in banList %}
+                <li>
+                    <div class="row">
+                        <div class="col-3">{{ ban.messageFrom }}</div>
+                        <div class="col-8">
+                            <button class="btn btn-danger"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
