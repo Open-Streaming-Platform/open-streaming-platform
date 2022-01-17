@@ -30,6 +30,8 @@ OSP-Core: API Endpoints to Add/Remove RTMP Servers Added to apiv1/server/rtmp
 OSP-Core: Adds Option for Admin to Restrict Total Number of User Owned Channels - #294
 OSP-Core: Disables Email Subscriptions from Being Sent When Maintenance Mode is Enabled - #444
 OSP-Core: Adds Option to Set a Channel as Private
+OSP-Core: Created new Endpoint - /apiv1/channels/<channelUUID>/streams
+OSP-Core: Optimized Video JS Monitor Function to Use New Stream API Endpoint and Reduce Load
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 
