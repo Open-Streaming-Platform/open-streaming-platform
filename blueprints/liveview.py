@@ -35,7 +35,8 @@ def view_page(loc):
     elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
         xmppserver = ejabberdServer
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+    #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(loc)
     if requestedChannel is not None:
 
         if requestedChannel.private:
@@ -52,7 +53,7 @@ def view_page(loc):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
             # Reload due to detached session during Valid User Check:
-            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+            requestedChannel = cachedDbCalls.getChannelByLoc(loc)
 
 
         # Pull ejabberd Chat Options for Room
@@ -185,12 +186,15 @@ def view_page(loc):
             else:
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
-            clipsList = []
-            for vid in requestedChannel.recordedVideo:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
+            clipsList = cachedDbCalls.getAllClipsForChannel_View(requestedChannel.id)
+            #for vid in requestedChannel.recordedVideo:
+            #    for clip in vid.clips:
+            #        if clip.published is True:
+            #            clipsList.append(clip)
             clipsList.sort(key=lambda x: x.views, reverse=True)
+
+            videoList = cachedDbCalls.getAllVideo_View(requestedChannel.id)
+            videoList.sort(key=lambda x: x.views, reverse=True)
 
             subState = False
             if current_user.is_authenticated:
@@ -201,7 +205,7 @@ def view_page(loc):
             channelPanelList = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelType=2, panelLocationId=requestedChannel.id).all()
             channelPanelListSorted = sorted(channelPanelList, key=lambda x: x.panelOrder)
 
-            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
+            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList, videoList=videoList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList,
                                    bannedWords=bannedWordArray, channelPanelList=channelPanelListSorted)
         else:
