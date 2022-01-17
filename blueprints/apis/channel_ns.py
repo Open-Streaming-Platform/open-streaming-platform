@@ -228,7 +228,7 @@ class api_1_Streams(Resource):
                         'uuid': entry.uuid,
                         'topic': entry.topic,
                         'streamName': entry.streamName,
-                        'startTimestamp': entry.startTimestamp,
+                        'startTimestamp': str(entry.startTimestamp),
                         'currentViewers': entry.currentViewers,
                         'totalViewers': entry.totalViewers,
                         'streamURL': streamURL
