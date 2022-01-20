@@ -64,7 +64,7 @@ def markMessagesRead(message):
 def addToBanList(message):
     if current_user.is_authenticated:
         if 'banListUsers' in message:
-            banList = message['banList']
+            banList = message['banListUsers']
             for user in banList:
                 UserCheck = cachedDbCalls.getUser(int(user['value']))
                 if UserCheck is not None:
