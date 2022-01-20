@@ -2130,13 +2130,13 @@ var tagify_videoTags = new Tagify(videoTags, {
                  <div class="col-sm-10">
                      <div class="input-group">
                         <input class="form-control boxShadow" id="messageBanListUser" name='messageBanListUser' value='' required>
-                        <button class="btn btn-primary" type="button"><i class="fas fa-plus"></i></button>
+                        <button class="btn btn-primary" type="button" onclick="addToBanList();"><i class="fas fa-plus"></i></button>
                      </div>
                  </div>
             </div>
             <ul class="messageBanList">
                 {% for ban in banList %}
-                <li>
+                <li id="{{ ban.id }}">
                     <div class="row">
                         <div class="col-3">{{ ban.messageFrom }}</div>
                         <div class="col-8">

@@ -3,7 +3,7 @@ from flask_socketio import emit
 import markdown as md
 
 from classes.shared import db, socketio
-from classes import notifications
+from classes import notifications, banList
 
 from functions.scheduled_tasks import message_tasks
 from functions import cachedDbCalls
@@ -56,6 +56,20 @@ def markMessagesRead(message):
                 messageQuery = notifications.userMessage.query.filter_by(id=int(message), toUserID=current_user.id).first()
                 if messageQuery is not None:
                     messageQuery.read = True
+                    db.session.commit()
+            db.session.close()
+    return 'OK'
+
+@socketio.on('addToMessageBanList')
+def addToBanList(message):
+    if current_user.is_authenticated:
+        if 'banListUsers' in message:
+            banList = message['banList']
+            for user in banList:
+                UserCheck = cachedDbCalls.getUser(int(user['value']))
+                if UserCheck is not None:
+                    newBan = banList.messageBanList(current_user.id, UserCheck.id)
+                    db.session.add(newBan)
                     db.session.commit()
             db.session.close()
     return 'OK'

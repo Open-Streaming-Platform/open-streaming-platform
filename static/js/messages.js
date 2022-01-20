@@ -367,3 +367,9 @@ function replyMessage() {
     document.getElementById('messageSubject').value = "RE: " + document.getElementById('message-subject').innerHTML;
     openModal('newMessageModal');
 }
+
+function addToBanList() {
+    var banListUsersValues = JSON.parse(document.getElementById('messageBanListUser').value);
+    socket.emit('addToMessageBanList', {banListUsers: banListUsersValues});
+    document.getElementById('messageBanListUser').value = '';
+}
