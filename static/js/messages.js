@@ -60,9 +60,7 @@ messageToTaggify = new Tagify(input, {
 })
 
 // listen to any keystrokes which modify tagify's input
-messageToTaggify.on('input', onInput);
-
-function onInput( e ) {
+messageToTaggify.on('input', function(e) {
     var value = e.detail.value
     messageToTaggify.whitelist = null // reset the whitelist
 
@@ -70,7 +68,7 @@ function onInput( e ) {
     controller && controller.abort()
     controller = new AbortController()
 
-    // show loading animation and hide the suggestions dropdown
+   // show loading animation and hide the suggestions dropdown
     messageToTaggify.loading(true).dropdown.hide()
 
     $.post('/apiv1/user/search', {term: value}, function (RES) {
@@ -90,41 +88,41 @@ function onInput( e ) {
         messageToTaggify.whitelist = resultWhitelist // update whitelist Array in-place
         messageToTaggify.loading(false).dropdown.show(value) // render the suggestions dropdown
         })
-}
-
-messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow)
-messageToTaggify.on('dropdown:select', onSelectSuggestion)
+});
 
 var addAllSuggestionsElm;
-
-function onDropdownShow(e){
+messageToTaggify.on('dropdown:show dropdown:updated', function(e) {
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
     if( messageToTaggify.suggestedListItems.length > 1 ){
-        addAllSuggestionsElm = getAddAllSuggestionsElm();
+        addAllSuggestionsElm = function(){
+                // suggestions items should be based on "dropdownItem" template
+            return messageToTaggify.parseTemplate('dropdownItem', [{
+                class: "addAll",
+                name: "Add all",
+                email: messageToTaggify.whitelist.reduce(function(remainingSuggestions, item){
+                    return messageToTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
+                }, 0) + " Members"
+            }]
+            )};
 
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
         dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
     }
-}
+})
 
-function onSelectSuggestion(e){
+messageToTaggify.on('dropdown:select', function(e){
     if( e.detail.elm === addAllSuggestionsElm )
-        messageToTaggify.dropdown.selectAll();
-}
+    messageToTaggify.dropdown.selectAll();
+})
 
-// create a "add all" custom suggestion element every time the dropdown changes
-function getAddAllSuggestionsElm(){
-    // suggestions items should be based on "dropdownItem" template
-    return messageToTaggify.parseTemplate('dropdownItem', [{
-            class: "addAll",
-            name: "Add all",
-            email: messageToTaggify.whitelist.reduce(function(remainingSuggestions, item){
-                return messageToTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
-            }, 0) + " Members"
-        }]
-      )
-}
+
+/////////////////////////////////////////////////////////////////
+// Ban List Names
+/////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////
 
 function getAllCheckedMessages() {
     var messageIdArray = [];
