@@ -90,7 +90,12 @@ messageToTaggify.on('input', function(e) {
         })
 });
 
-messageToTaggify.on('dropdown:show dropdown:updated', function(e) {
+messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow)
+messageToTaggify.on('dropdown:select', onSelectSuggestion)
+
+var addAllSuggestionsElm;
+
+function onDropdownShow(e){
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
     if( messageToTaggify.suggestedListItems.length > 1 ){
@@ -99,10 +104,7 @@ messageToTaggify.on('dropdown:show dropdown:updated', function(e) {
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
         dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
     }
-})
-messageToTaggify.on('dropdown:select', onSelectSuggestion)
-
-var addAllSuggestionsElm;
+}
 
 function onSelectSuggestion(e){
     if( e.detail.elm === addAllSuggestionsElm )
