@@ -13,6 +13,7 @@ from classes import notifications
 from classes import Channel
 from classes import Stream
 from classes import settings
+from classes import banList
 
 from functions import themes
 from functions import system
@@ -180,7 +181,8 @@ def search_page():
 @login_required
 def messages_page():
     messageList = notifications.userMessage.query.filter_by(toUserID=current_user.id).all()
-    return render_template(themes.checkOverride('messages.html'), messageList=messageList)
+    messageBanList = banList.messageBanList.query.filter_by(userID=current_user.id).all()
+    return render_template(themes.checkOverride('messages.html'), messageList=messageList, messageBanList=messageBanList)
 
 @root_bp.route('/notifications')
 @login_required
