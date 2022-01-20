@@ -35,10 +35,13 @@ function suggestionItemTemplate(tagData){
         </div>
     `
 }
+/////////////////////////////////////////////////////////////////
+/ Message To Input Handler
+/////////////////////////////////////////////////////////////////
 
 // initialize Tagify on the above input node reference
 var input = inputElm;
-tagify = new Tagify(input, {
+messageToTaggify = new Tagify(input, {
     tagTextProp: 'name', // very important since a custom template is used with this property as text
     enforceWhitelist: true,
     skipInvalid: true, // do not remporarily add invalid tags
@@ -57,18 +60,18 @@ tagify = new Tagify(input, {
 })
 
 // listen to any keystrokes which modify tagify's input
-tagify.on('input', onInput);
+messageToTaggify.on('input', onInput);
 
 function onInput( e ) {
     var value = e.detail.value
-    tagify.whitelist = null // reset the whitelist
+    messageToTaggify.whitelist = null // reset the whitelist
 
     // https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort
     controller && controller.abort()
     controller = new AbortController()
 
     // show loading animation and hide the suggestions dropdown
-    tagify.loading(true).dropdown.hide()
+    messageToTaggify.loading(true).dropdown.hide()
 
     $.post('/apiv1/user/search', {term: value}, function (RES) {
         var newWhitelist = RES['results'];
@@ -84,20 +87,20 @@ function onInput( e ) {
                 }
                 )
         }
-        tagify.whitelist = resultWhitelist // update whitelist Array in-place
-        tagify.loading(false).dropdown.show(value) // render the suggestions dropdown
+        messageToTaggify.whitelist = resultWhitelist // update whitelist Array in-place
+        messageToTaggify.loading(false).dropdown.show(value) // render the suggestions dropdown
         })
 }
 
-tagify.on('dropdown:show dropdown:updated', onDropdownShow)
-tagify.on('dropdown:select', onSelectSuggestion)
+messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow)
+messageToTaggify.on('dropdown:select', onSelectSuggestion)
 
 var addAllSuggestionsElm;
 
 function onDropdownShow(e){
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
-    if( tagify.suggestedListItems.length > 1 ){
+    if( messageToTaggify.suggestedListItems.length > 1 ){
         addAllSuggestionsElm = getAddAllSuggestionsElm();
 
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
@@ -107,17 +110,17 @@ function onDropdownShow(e){
 
 function onSelectSuggestion(e){
     if( e.detail.elm === addAllSuggestionsElm )
-        tagify.dropdown.selectAll();
+        messageToTaggify.dropdown.selectAll();
 }
 
 // create a "add all" custom suggestion element every time the dropdown changes
 function getAddAllSuggestionsElm(){
     // suggestions items should be based on "dropdownItem" template
-    return tagify.parseTemplate('dropdownItem', [{
+    return messageToTaggify.parseTemplate('dropdownItem', [{
             class: "addAll",
             name: "Add all",
-            email: tagify.whitelist.reduce(function(remainingSuggestions, item){
-                return tagify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
+            email: messageToTaggify.whitelist.reduce(function(remainingSuggestions, item){
+                return messageToTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
             }, 0) + " Members"
         }]
       )
@@ -265,8 +268,8 @@ function replyMessage() {
                 }
             )
         }
-        tagify.whitelist = resultWhitelist // update whitelist Array in-place
-        tagify.addTags(fromUser);
+        messageToTaggify.whitelist = resultWhitelist // update whitelist Array in-place
+        messageToTaggify.addTags(fromUser);
     });
     easymde_new_message.value = '';
     var doc = easymde_new_message.codemirror.getDoc();
