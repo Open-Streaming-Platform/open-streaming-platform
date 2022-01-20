@@ -90,29 +90,29 @@ messageToTaggify.on('input', function(e) {
         })
 });
 
-messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow)
-messageToTaggify.on('dropdown:select', onSelectSuggestion)
+messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow_messageToTaggify)
+messageToTaggify.on('dropdown:select', onSelectSuggestion_messageToTaggify)
 
 var addAllSuggestionsElm;
 
-function onDropdownShow(e){
+function onDropdownShow_messageToTaggify(e){
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
     if( messageToTaggify.suggestedListItems.length > 1 ){
-        addAllSuggestionsElm = getAddAllSuggestionsElm();
+        addAllSuggestionsElm = getAddAllSuggestionsElm_messageToTaggify();
 
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
         dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
     }
 }
 
-function onSelectSuggestion(e){
+function onSelectSuggestion_messageToTaggify(e){
     if( e.detail.elm === addAllSuggestionsElm )
         messageToTaggify.dropdown.selectAll();
 }
 
 // create a "add all" custom suggestion element every time the dropdown changes
-function getAddAllSuggestionsElm(){
+function getAddAllSuggestionsElm_messageToTaggify(){
     // suggestions items should be based on "dropdownItem" template
     return messageToTaggify.parseTemplate('dropdownItem', [{
             class: "addAll",
