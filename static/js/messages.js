@@ -90,32 +90,37 @@ messageToTaggify.on('input', function(e) {
         })
 });
 
-var addAllSuggestionsElm;
 messageToTaggify.on('dropdown:show dropdown:updated', function(e) {
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
     if( messageToTaggify.suggestedListItems.length > 1 ){
-        addAllSuggestionsElm = function(){
-                // suggestions items should be based on "dropdownItem" template
-            return messageToTaggify.parseTemplate('dropdownItem', [{
-                class: "addAll",
-                name: "Add all",
-                email: messageToTaggify.whitelist.reduce(function(remainingSuggestions, item){
-                    return messageToTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
-                }, 0) + " Members"
-            }]
-            )};
+        addAllSuggestionsElm = getAddAllSuggestionsElm();
 
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
         dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
     }
 })
+messageToTaggify.on('dropdown:select', onSelectSuggestion)
 
-messageToTaggify.on('dropdown:select', function(e){
+var addAllSuggestionsElm;
+
+function onSelectSuggestion(e){
     if( e.detail.elm === addAllSuggestionsElm )
-    messageToTaggify.dropdown.selectAll();
-})
+        messageToTaggify.dropdown.selectAll();
+}
 
+// create a "add all" custom suggestion element every time the dropdown changes
+function getAddAllSuggestionsElm(){
+    // suggestions items should be based on "dropdownItem" template
+    return messageToTaggify.parseTemplate('dropdownItem', [{
+            class: "addAll",
+            name: "Add all",
+            email: messageToTaggify.whitelist.reduce(function(remainingSuggestions, item){
+                return messageToTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
+            }, 0) + " Members"
+        }]
+      )
+}
 
 /////////////////////////////////////////////////////////////////
 // Ban List Names
