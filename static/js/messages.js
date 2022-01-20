@@ -1,4 +1,5 @@
-var inputElm = document.querySelector('input[name=toUsersList]');
+var inputElm_messageTo = document.querySelector('input[name=toUsersList]');
+var inputElm_BanFrom = document.querySelector('input[name=messageBanListUser]');
 var controller = new AbortController();
 
 function tagTemplate(tagData){
@@ -40,8 +41,8 @@ function suggestionItemTemplate(tagData){
 /////////////////////////////////////////////////////////////////
 
 // initialize Tagify on the above input node reference
-var input = inputElm;
-messageToTaggify = new Tagify(input, {
+var input_messageTo = inputElm_messageTo;
+messageToTaggify = new Tagify(input_messageTo, {
     tagTextProp: 'name', // very important since a custom template is used with this property as text
     enforceWhitelist: true,
     skipInvalid: true, // do not remporarily add invalid tags
@@ -93,21 +94,21 @@ messageToTaggify.on('input', function(e) {
 messageToTaggify.on('dropdown:show dropdown:updated', onDropdownShow_messageToTaggify)
 messageToTaggify.on('dropdown:select', onSelectSuggestion_messageToTaggify)
 
-var addAllSuggestionsElm;
+var addAllSuggestionsElm_messageToTaggify;
 
 function onDropdownShow_messageToTaggify(e){
     var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
 
     if( messageToTaggify.suggestedListItems.length > 1 ){
-        addAllSuggestionsElm = getAddAllSuggestionsElm_messageToTaggify();
+        addAllSuggestionsElm_messageToTaggify = getAddAllSuggestionsElm_messageToTaggify();
 
         // insert "addAllSuggestionsElm" as the first element in the suggestions list
-        dropdownContentElm.insertBefore(addAllSuggestionsElm, dropdownContentElm.firstChild)
+        dropdownContentElm.insertBefore(addAllSuggestionsElm_messageToTaggify, dropdownContentElm.firstChild)
     }
 }
 
 function onSelectSuggestion_messageToTaggify(e){
-    if( e.detail.elm === addAllSuggestionsElm )
+    if( e.detail.elm === addAllSuggestionsElm_messageToTaggify)
         messageToTaggify.dropdown.selectAll();
 }
 
@@ -127,7 +128,90 @@ function getAddAllSuggestionsElm_messageToTaggify(){
 /////////////////////////////////////////////////////////////////
 // Ban List Names
 /////////////////////////////////////////////////////////////////
+// initialize Tagify on the above input node reference
+var input_BanFrom = inputElm_BanFrom;
+banFromTaggify = new Tagify(input_BanFrom, {
+    tagTextProp: 'name', // very important since a custom template is used with this property as text
+    enforceWhitelist: true,
+    skipInvalid: true, // do not remporarily add invalid tags
+    dropdown: {
+        closeOnSelect: false,
+        enabled: 0,
+        classname: 'users-list',
+        searchKeys: ['name']  // very important to set by which keys to search for suggesttions when typing
+    },
+    templates: {
+        tag: tagTemplate,
+        dropdownItem: suggestionItemTemplate
+    },
+    whitelist: [],
+    controller
+})
 
+// listen to any keystrokes which modify tagify's input
+banFromTaggify.on('input', function(e) {
+    var value = e.detail.value
+    banFromTaggify.whitelist = null // reset the whitelist
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/AbortController/abort
+    controller && controller.abort()
+    controller = new AbortController()
+
+   // show loading animation and hide the suggestions dropdown
+    banFromTaggify.loading(true).dropdown.hide()
+
+    $.post('/apiv1/user/search', {term: value}, function (RES) {
+        var newWhitelist = RES['results'];
+        resultWhitelist = []
+        for (var i = 0; i < newWhitelist.length; i++) {
+            var entry = newWhitelist[i];
+            resultWhitelist.push(
+                {
+                    value: entry[0],
+                    name: entry[1],
+                    email: '',
+                    avatar: '/images/' + entry[3]
+                }
+                )
+        }
+        banFromTaggify.whitelist = resultWhitelist // update whitelist Array in-place
+        banFromTaggify.loading(false).dropdown.show(value) // render the suggestions dropdown
+        })
+});
+
+banFromTaggify.on('dropdown:show dropdown:updated', onDropdownShow_banFromTaggify)
+banFromTaggify.on('dropdown:select', onSelectSuggestion_banFromTaggify)
+
+var addAllSuggestionsElm_banFromTaggify;
+
+function onDropdownShow_banFromTaggify(e){
+    var dropdownContentElm = e.detail.tagify.DOM.dropdown.content;
+
+    if( banFromTaggify.suggestedListItems.length > 1 ){
+        addAllSuggestionsElm_banFromTaggify = getAddAllSuggestionsElm_banFromTaggify();
+
+        // insert "addAllSuggestionsElm" as the first element in the suggestions list
+        dropdownContentElm.insertBefore(addAllSuggestionsElm_banFromTaggify, dropdownContentElm.firstChild)
+    }
+}
+
+function onSelectSuggestion_banFromTaggify(e){
+    if( e.detail.elm === addAllSuggestionsElm_banFromTaggify )
+        banFromTaggify.dropdown.selectAll();
+}
+
+// create a "add all" custom suggestion element every time the dropdown changes
+function getAddAllSuggestionsElm_banFromTaggify(){
+    // suggestions items should be based on "dropdownItem" template
+    return banFromTaggify.parseTemplate('dropdownItem', [{
+            class: "addAll",
+            name: "Add all",
+            email: banFromTaggify.whitelist.reduce(function(remainingSuggestions, item){
+                return banFromTaggify.isTagDuplicate(item.value) ? remainingSuggestions : remainingSuggestions + 1
+            }, 0) + " Members"
+        }]
+      )
+}
 
 /////////////////////////////////////////////////////////////////
 
