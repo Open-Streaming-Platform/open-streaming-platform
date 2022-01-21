@@ -64,10 +64,10 @@ def markMessagesRead(message):
 def addToBanList(message):
     if current_user.is_authenticated:
         if 'banListUsers' in message:
-            messageBanList = message['banListUsers']
-            for user in messageBanList:
+            requestedBanList = message['banListUsers']
+            for user in requestedBanList:
                 UserCheck = cachedDbCalls.getUser(int(user['value']))
-                if UserCheck is not None:
+                if UserCheck is not None and current_user.id != int(user['value']):
                     newBan = banList.messageBanList(current_user.id, UserCheck.id)
                     db.session.add(newBan)
                     db.session.commit()
