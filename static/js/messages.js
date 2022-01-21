@@ -381,9 +381,15 @@ function addToBanList() {
         newli.innerHTML = '<div class="row">' +
             '<div class="col-auto"><img class="avatar-small" src="' + userPhoto + '"></div>' +
             '<div class="col-3">' + username + '</div>' +
-            '<div class="col-8"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></div>' +
+            '<div class="col-8"><button class="btn btn-sm btn-danger" onclick="removeFromBanList(this,' + userId + ')"><i class="fas fa-times"></i></button></div>' +
             '</div>'
         banListDiv.appendChild(newli);
     }
     document.getElementById('messageBanListUser').value = '';
+}
+
+function removeFromBanList(ele, userID) {
+    socket.emit('removeFromMessageBanList', {userID: userID});
+    parentElement = ele.parentNode.parentNode.parentNode;
+    parentElement.removeChild(parentElement);
 }

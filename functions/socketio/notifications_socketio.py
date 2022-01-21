@@ -68,8 +68,22 @@ def addToBanList(message):
             for user in requestedBanList:
                 UserCheck = cachedDbCalls.getUser(int(user['value']))
                 if UserCheck is not None and current_user.id != int(user['value']):
-                    newBan = banList.messageBanList(current_user.id, UserCheck.id)
-                    db.session.add(newBan)
+                    existingBanSearch = banList.messageBanList.query.filter_by(userID=current_user.id, messageFrom=UserCheck.id).first()
+                    if existingBanSearch is None:
+                        newBan = banList.messageBanList(current_user.id, UserCheck.id)
+                        db.session.add(newBan)
                     db.session.commit()
             db.session.close()
+    return 'OK'
+
+@socketio.on('removeFromMessageBanList')
+def removeFromBanList(message):
+    if current_user.is_authenticated:
+        if 'userID' in message:
+            userID = message['userID']
+            existingBanSearch = banList.messageBanList.query.filter_by(userID=current_user.id, messageFrom=int(userID)).first()
+            if existingBanSearch is not None:
+                db.session.delete(existingBanSearch)
+            db.session.commit()
+        db.session.close()
     return 'OK'
