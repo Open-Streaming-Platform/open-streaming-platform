@@ -17,7 +17,11 @@ def sendMessage(message):
         for destination in sendMessageTo:
             UserCheck = cachedDbCalls.getUser(int(destination['value']))
             if UserCheck is not None:
-                message_tasks.send_message.delay(messageSubject, messageContent, current_user.id, UserCheck.id)
+                existingBanSearch = banList.messageBanList.query.filter_by(userID=UserCheck.id, messageFrom=current_user.id).first()
+                if existingBanSearch is None:
+                    message_tasks.send_message.delay(messageSubject, messageContent, current_user.id, UserCheck.id)
+                else:
+                    emit('messageBanWarning', {'message':'User ' + UserCheck.username + ' has blocked messages from your account. Message Not Sent!'}, broadcast=False)
     return 'OK'
 
 @socketio.on('getMessage')

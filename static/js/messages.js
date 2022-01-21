@@ -393,3 +393,7 @@ function removeFromBanList(ele, userID) {
     parentElement = ele.parentNode.parentNode.parentElement;
     parentElement.parentNode.removeChild(parentElement);
 }
+
+socket.on('messageBanWarning', function(msg) {
+   createNewBSAlert(msg['message'], 'error');
+});
