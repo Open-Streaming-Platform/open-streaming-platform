@@ -390,6 +390,6 @@ function addToBanList() {
 
 function removeFromBanList(ele, userID) {
     socket.emit('removeFromMessageBanList', {userID: userID});
-    parentElement = ele.parentNode.parentNode.parentNode;
-    parentElement.removeChild(parentElement);
+    parentElement = ele.parentNode.parentNode.parentElement;
+    parentElement.parentNode.removeChild(parentElement);
 }
