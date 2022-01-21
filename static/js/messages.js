@@ -77,12 +77,16 @@ messageToTaggify.on('input', function(e) {
         resultWhitelist = []
         for (var i = 0; i < newWhitelist.length; i++) {
             var entry = newWhitelist[i];
+            var avatar = '/images/' + entry[3]
+            if (entry[3] === '/static/img/user2.png') {
+                avatar = entry[3];
+            }
             resultWhitelist.push(
                 {
                     value: entry[0],
                     name: entry[1],
                     email: '',
-                    avatar: '/images/' + entry[3]
+                    avatar: avatar
                 }
                 )
         }
@@ -165,12 +169,16 @@ banFromTaggify.on('input', function(e) {
         resultWhitelist = []
         for (var i = 0; i < newWhitelist.length; i++) {
             var entry = newWhitelist[i];
+            var avatar = '/images/' + entry[3]
+            if (entry[3] === '/static/img/user2.png') {
+                avatar = entry[3];
+            }
             resultWhitelist.push(
                 {
                     value: entry[0],
                     name: entry[1],
                     email: '',
-                    avatar: '/images/' + entry[3]
+                    avatar: avatar
                 }
                 )
         }
@@ -348,12 +356,16 @@ function replyMessage() {
         resultWhitelist = []
         for (var i = 0; i < newWhitelist.length; i++) {
             var entry = newWhitelist[i];
+            var avatar = '/images/' + entry[3]
+            if (entry[3] === '/static/img/user2.png') {
+                avatar = entry[3];
+            }
             resultWhitelist.push(
                 {
                     value: entry[0],
                     name: entry[1],
                     email: '',
-                    avatar: '/images/' + entry[3]
+                    avatar: avatar
                 }
             )
         }

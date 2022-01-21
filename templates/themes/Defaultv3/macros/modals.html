@@ -2138,7 +2138,7 @@ var tagify_videoTags = new Tagify(videoTags, {
                 {% for ban in banList %}
                 <li id="{{ ban.id }}">
                     <div class="row">
-                        <div class="col-auto"><img class="avatar-small" src="/images/{{ ban.messageFrom | get_pictureLocation}}"></div>
+                        <div class="col-auto"><img class="avatar-small" src="/images/{{ ban.messageFrom | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';"></div>
                         <div class="col-3">{{ ban.messageFrom | get_userName}}</div>
                         <div class="col-8">
                             <button class="btn btn-sm btn-danger" onclick="removeFromBanList(this, {{ ban.messageFrom }})"><i class="fas fa-times"></i></button>
