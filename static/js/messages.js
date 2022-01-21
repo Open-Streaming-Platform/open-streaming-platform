@@ -371,5 +371,19 @@ function replyMessage() {
 function addToBanList() {
     var banListUsersValues = JSON.parse(document.getElementById('messageBanListUser').value);
     socket.emit('addToMessageBanList', {banListUsers: banListUsersValues});
+    var banListDiv = document.getElementById("messageBanList");
+    for (var i = 0; i < banListUsersValues.length; i++) {
+        var userId = banListUsersValues[i]['value'];
+        var userPhoto = banListUsersValues[i]['avatar'];
+        var username = banListUsersValues[i]['name'];
+        var newli = document.createElement("li");
+        newli.id = '';
+        newli.innerHTML = '<div class="row">' +
+            '<div class="col-auto"><img class="avatar-small" src="' + userPhoto + '"></div>' +
+            '<div class="col-3">' + username + '</div>' +
+            '<div class="col-8"><button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button></div>' +
+            '</div>'
+        banListDiv.appendChild(newli);
+    }
     document.getElementById('messageBanListUser').value = '';
 }

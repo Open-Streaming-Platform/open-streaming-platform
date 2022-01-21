@@ -2134,13 +2134,14 @@ var tagify_videoTags = new Tagify(videoTags, {
                      </div>
                  </div>
             </div>
-            <ul class="messageBanList">
+            <ul id="messageBanList" class="messageBanList">
                 {% for ban in banList %}
                 <li id="{{ ban.id }}">
                     <div class="row">
-                        <div class="col-3">{{ ban.messageFrom }}</div>
+                        <div class="col-auto"><img class="avatar-small" src="/images/{{ ban.messageFrom | get_pictureLocation}}"></div>
+                        <div class="col-3">{{ ban.messageFrom | get_userName}}</div>
                         <div class="col-8">
-                            <button class="btn btn-danger"><i class="fas fa-times"></i></button>
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                 </li>
