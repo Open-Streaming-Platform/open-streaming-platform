@@ -80,6 +80,8 @@ messageToTaggify.on('input', function(e) {
             var avatar = '/images/' + entry[3]
             if (entry[3] === '/static/img/user2.png') {
                 avatar = entry[3];
+            } else if (entry[3] === null) {
+                avatar = '/static/img/user2.png';
             }
             resultWhitelist.push(
                 {
@@ -172,6 +174,8 @@ banFromTaggify.on('input', function(e) {
             var avatar = '/images/' + entry[3]
             if (entry[3] === '/static/img/user2.png') {
                 avatar = entry[3];
+            } else if (entry[3] === null) {
+                avatar = '/static/img/user2.png';
             }
             resultWhitelist.push(
                 {
@@ -359,6 +363,8 @@ function replyMessage() {
             var avatar = '/images/' + entry[3]
             if (entry[3] === '/static/img/user2.png') {
                 avatar = entry[3];
+            } else if (entry[3] === null) {
+                avatar = '/static/img/user2.png';
             }
             resultWhitelist.push(
                 {
