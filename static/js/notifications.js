@@ -14,12 +14,9 @@ function clearAllListNotifications() {
   ids.forEach(function (item, index) {
     if (item != 'notificationList-empty') {
       item = item.replace('notificationList-','');
-      clearNotification(item);
+      clearListNotification(item);
     }
   });
-  if (notificationCount <= 0) {
-    emptyNotificationList.style.display = "block";
-  }
 }
 
 function clearNotification(notificationID) {
