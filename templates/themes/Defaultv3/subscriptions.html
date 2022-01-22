@@ -57,14 +57,6 @@
 
 {% block scripts %}
 
-<script type="text/javascript" charset="utf-8">
-  var conn_options = {
-    'sync disconnect on unload': true
-  };
-
-  var socket = io();
-</script>
-
 <script>
 function deleteChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });

@@ -130,7 +130,7 @@ def user_page():
 @settings_bp.route('/user/subscriptions')
 @login_required
 def subscription_page():
-    channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
+    channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).with_entities(subscriptions.channelSubs.id, subscriptions.channelSubs.channelID).all()
 
     return render_template(themes.checkOverride('subscriptions.html'), channelSubList=channelSubList)
 
