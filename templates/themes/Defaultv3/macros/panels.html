@@ -1550,7 +1550,7 @@
                   </li>
                   {% endfor %}
                 {% endif %}
-              <li class="notification-box" id="notificationList-empty" style="{% if notificationList == [] %}d-none{% endif %}">
+              <li class="notification-box" id="notificationList-empty" {% if notificationList != [] %} style="display:none;" {% endif %}>
                 <div class="row">
                   <div class="col-lg-12 col-sm-12 col-12">
                     <div>No Notifications</div>
