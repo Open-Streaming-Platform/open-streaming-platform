@@ -48,27 +48,30 @@
                         </div>
                     </div>
                 </div>
+
                 {% for panel in channelPanelList %}
                     {% set panelItem = getPanel(panel.panelId, 2) %}
                     {% if panelItem.type == 0 %}
                         {{ panels.text_panel(panelItem.header, panelItem.content) }}
                     {% elif panelItem.type == 1  %}
+                        {% set panelStreamList = getPanelStreamList(panelItem.order, 16) %}
                         {% if streamList != [] %}
-                            {{ panels.live_streams_panel(streamList, title=panelItem.header) }}
+                            {{ panels.live_streams_panel(panelStreamList, title=panelItem.header, order=panelItem.order) }}
                         {% endif %}
                     {% elif panelItem.type == 2  %}
-                        {% if videoList != [] %}
-                            {{ panels.videos_panel(videoList, title=panelItem.header, order=panelItem.order) }}
+                        {% set panelVideoList = getPanelVideoList(panelItem.order, 16) %}
+                        {% if panelVideoList != [] %}
+                            {{ panels.videos_panel(panelVideoList, title=panelItem.header, order=panelItem.order) }}
                         {% endif %}
                     {% elif panelItem.type == 3  %}
+                        {% set panelClipList = getPanelClipList(panelItem.order, 16) %}
                         {% if clipList != [] %}
-                            {{ panels.clips_panel(clipList, title=panelItem.header) }}
+                            {{ panels.clips_panel(panelClipList, title=panelItem.header, order=panelItem.order) }}
                         {% endif %}
                     {% elif panelItem.type == 4  %}
                         {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
                     {% elif panelItem.type == 5  %}
                         {{ panels.channels_panel(channelList, title=panelItem.header) }}
-                    {% endif %}
                 {% endfor %}
 
             </div>

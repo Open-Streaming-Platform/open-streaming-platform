@@ -458,6 +458,17 @@ def getChannelPanelArg(panelId, arg):
     result = getattr(panel, arg)
     return result
 
+def getPanelStreamList(order, limitTo):
+    if order == 0:
+        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
+    elif order == 1:
+        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.startTimestamp.desc()).limit(limitTo)
+    elif order == 2:
+        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(func.random()).limit(limitTo)
+    else:
+        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
+    return activeStreams
+
 def getPanelVideoList(order, limitTo):
     if order == 0:
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
@@ -504,6 +515,53 @@ def getPanelVideoList(order, limitTo):
                            Channel.Channel.channelName.label('ChanName')) \
             .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo)
     return recordedQuery
+
+def getPanelClipList(order, limitTo):
+    if order == 0:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo)
+    elif order == 1:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo)
+    elif order == 2:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, Channel.Channel.owningUser,
+                           RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName,
+                           Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation,
+                           RecordedVideo.Clips.parentVideo) \
+            .order_by(func.random()).limit(limitTo)
+    else:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo)
+    return clipQuery
 
 def orderVideoBy(videoList, orderById):
     # Most Views
