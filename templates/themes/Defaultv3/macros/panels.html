@@ -468,16 +468,16 @@
                         </thead>
                         <tbody>
                         {% for socialNetwork in socialNetworkList %}
-                            <tr>
+                            <tr id="socialNetwork-{{ socialNetwork.id }}">
                                 <td class="socialIcons">
                                     <img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ socialNetwork.socialType }}.png">
                                 </td>
                                 <td>{{ socialNetwork.socialType }}</td>
                                 <td>{{ socialNetwork.url }}</td>
-                                <td><button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button></td>
+                                <td><button class="btn btn-sm btn-danger" onclick="deleteSocialNetwork({{ socialNetwork.id }});"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>
                         {% endfor %}
-                            <tr>
+                            <tr id="newSocialNetwork">
                                 <td class="socialIcons">
                                     <img id="socialIconInput" class="socialIcon boxShadow" src="/static/img/socialnetwork/social-mt.png"></td>
                                 <td>
@@ -498,7 +498,7 @@
                                     <input class="form-control boxShadow" type="text" id="socialNetworkURL" name="socialNetworkURL">
                                 </td>
                                 <td>
-                                    <button class="btn btn-success boxShadow"><i class="fas fa-plus"></i></button>
+                                    <button class="btn btn-success boxShadow" type="button" onclick="addSocialNetwork();"><i class="fas fa-plus"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -545,6 +545,20 @@
         var changeValElm = document.getElementById('socialNetworkType');
         var changeVal = changeValElm.options[changeValElm.selectedIndex].value;
         document.getElementById('socialIconInput').src = '/static/img/socialnetwork/social-' + changeVal + '.png'
+    }
+
+    function addSocialNetwork() {
+        var changeValElm = document.getElementById('socialNetworkType');
+        var socialNetworkType = changeValElm.options[changeValElm.selectedIndex].value;
+        var socialNetworkURL = document.getElementById('socialNetworkURL').value;
+
+        socket.emit('addSocialNetwork', {socialType: socialNetworkType, url: socialNetworkURL});
+    }
+
+    function deleteSocialNetwork(id) {
+        socket.emit('removeSocialNetwork', {id: id});
+        var elm = document.getElementById('socialNetwork-' + id);
+        elm.parentElement.removeChild(elm);
     }
 </script>
 {% endmacro %}

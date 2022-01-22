@@ -395,3 +395,29 @@ def set_global_panel_target(message):
             db.session.commit()
             db.session.close()
     return 'OK'
+
+@socketio.on('addSocialNetwork')
+def add_social_network(message):
+    if current_user.is_authenticated:
+        socialType = message['socialType']
+        url = message['url']
+
+        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=url).first()
+        if socialQuery is not None:
+            newSocial = Sec.UserSocial(current_user.id, message['socialType'], message['url'])
+            db.session.add(newSocial)
+            db.session.commit()
+            socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=url).first()
+            emit('returnSocialNetwork', {'id': socialQuery.id, 'socialType': socialQuery.socialType, 'url': socialQuery.url}, broadcast=False)
+        db.session.close()
+    return 'OK'
+
+@socketio.on('removeSocialNetwork')
+def delete_social_network(message):
+    if current_user.is_authenticated:
+        socialQuery = Sec.UserSocial.query.filter_by(id=message['id']).first()
+        if socialQuery is not None:
+            db.session.delete(socialQuery)
+            db.session.commit()
+        db.session.close()
+    return 'OK'
