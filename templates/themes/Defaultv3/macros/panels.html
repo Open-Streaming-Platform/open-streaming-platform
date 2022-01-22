@@ -1561,3 +1561,33 @@
         </div>
     </div>
 {% endmacro %}
+
+{% macro subscriptions_panel(channelSubList) %}
+<div class="info-panel-box system-appearance-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Channel Subscriptions</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th>Channel Name</th>
+                    <th>Streamer</th>
+                    <th>Topic</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sub in channelSubList %}
+                <tr id="chanSub-{{sub.channelID}}" class="table align-middle">
+                    <td>{{sub.channelID | get_channelName}}</td>
+                    <td>{{sub.channelID | channeltoOwnerID | get_userName}}</td>
+                    <td>{{sub.channelID | get_channelTopic | get_topicName}}</td>
+                    <td><button type="button" class="btn btn-sm btn-danger mb-2" onclick='deleteChannelSub("{{sub.channelID}}")'><i class="fas fa-trash-alt"></i></button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endmacro %}

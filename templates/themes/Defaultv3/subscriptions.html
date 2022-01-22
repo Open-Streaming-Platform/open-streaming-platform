@@ -1,4 +1,8 @@
 {% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+
 {% block head %}
 <title>{{sysSettings.siteName}} - Subscriptions</title>
 
@@ -6,52 +10,7 @@
 
 {% block body %}
 <div class="container-fluid p-2" id="subscriptions-container">
-    <div class="row m-2">
-        <div class="index-video-title"><b>Subscriptions</b></div>
-    </div>
-    <div class="card m-2">
-        <div class="card-header">
-            <b>Channel Subscriptions</b>
-        </div>
-        <div class="card-body">
-            <table class="table table-hover table-borderless">
-                <thead>
-                    <tr>
-                        <th>
-                            Channel Name
-                        </th>
-                        <th>
-                            Streamer
-                        </th>
-                        <th>
-                            Topic
-                        </th>
-                        <th>
-                            Options
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for sub in channelSubList %}
-                    <tr id="chanSub-{{sub.channelID}}">
-                        <td>
-                            {{sub.channelID | get_channelName}}
-                        </td>
-                        <td>
-                            {{sub.channelID | channeltoOwnerID | get_userName}}
-                        </td>
-                        <td>
-                            {{sub.channelID | get_channelTopic | get_topicName}}
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger mb-2" onclick='deleteChannelSub("{{sub.channelID}}")'><i class="fas fa-trash-alt"></i></button>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    {{ panels.subscriptions_panel(channelSubList) }}
 </div>
 {% endblock %}
 
