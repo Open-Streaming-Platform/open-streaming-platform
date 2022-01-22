@@ -469,14 +469,17 @@
                         <tbody>
                         {% for socialNetwork in socialNetworkList %}
                             <tr>
-                                <td><img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ socialNetwork.socialType }}.png"></td>
+                                <td class="socialIcons">
+                                    <img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ socialNetwork.socialType }}.png">
+                                </td>
                                 <td>{{ socialNetwork.socialType }}</td>
                                 <td>{{ socialNetwork.url }}</td>
                                 <td><button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>
                         {% endfor %}
                             <tr>
-                                <td><img id="socialIconInput" class="socialIcon boxShadow" src="/static/img/socialnetwork/social-mt.png"></td>
+                                <td class="socialIcons">
+                                    <img id="socialIconInput" class="socialIcon boxShadow" src="/static/img/socialnetwork/social-mt.png"></td>
                                 <td>
                                     <select class="form-select boxShadow" id="socialNetworkType" name="socialNetworkType" onchange="updateSocialInputIcon();">
                                         <option value="mt" selected disabled></option>
