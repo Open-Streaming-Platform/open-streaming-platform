@@ -75,7 +75,9 @@ def init(context):
     context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
     context.jinja_env.filters['getPanel'] = getPanel
     context.jinja_env.filters['orderVideoBy'] = orderVideoBy
+    context.jinja_env.filters['getPanelStreamList'] = getPanelStreamList
     context.jinja_env.filters['getPanelVideoList'] = getPanelVideoList
+    context.jinja_env.filters['getPanelClipList'] = getPanelClipList
 
 #----------------------------------------------------------------------------#
 # Template Filters
