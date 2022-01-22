@@ -125,7 +125,7 @@ class User(db.Model, UserMixin):
             'page': '/profile/' + str(self.username) + '/'
         }
 
-class UserSocial(db.Modal):
+class UserSocial(db.Model):
     __tablename__ = "UserSocial"
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.ForeignKey(User.id))
