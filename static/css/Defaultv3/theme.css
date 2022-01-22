@@ -47,6 +47,10 @@ body {
     font-size: var(--font-size);
 }
 
+.table {
+    color: var(--font-color);
+}
+
 .badge {
     color: white;
 }
