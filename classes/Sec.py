@@ -124,6 +124,17 @@ class User(db.Model, UserMixin):
             'page': '/profile/' + str(self.username) + '/'
         }
 
+class UserSocial(db.Modal):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.ForeignKey(User.id))
+    socialType = db.Column(db.String(128))
+    url = db.Column(db.String(512))
+
+    def __init__(self, userID, socialType, url):
+        self.userID = userID
+        self.socialType = socialType
+        self.url = url
+
 class OAuth2Token(db.Model):
     __tablename__ = "OAuth2Token"
     id = db.Column(db.Integer, primary_key=True)
