@@ -72,7 +72,7 @@ def view_clip_page(clipID):
 
             if isEmbedded is None or isEmbedded == "False":
 
-                randomClips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.id != clipQuery.id).filter(RecordedVideo.Clips.published == True).order_by(func.random()).limit(12)
+                randomClips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.id != clipQuery.id).filter(RecordedVideo.Clips.published == True).order_by(func.random()).limit(4)
 
                 subState = False
                 if current_user.is_authenticated:
