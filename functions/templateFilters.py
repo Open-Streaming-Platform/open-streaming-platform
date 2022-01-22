@@ -309,8 +309,13 @@ def get_channelName(channelID):
     return channelQuery.channelName
 
 def get_channelProtected(channelID):
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelQuery = cachedDbCalls.getChannel(channelID)
-    return channelQuery.protected
+    protected = False
+    if channelQuery != None:
+        if channelQuery.protected is True and sysSettings.protectionEnabled is True:
+            protected = True
+    return protected
 
 def get_channelLocationFromID(channelID):
     channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)

@@ -4,6 +4,9 @@
 <li class="streamCard item">
     <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
         <div class="streamCard-badges">
+            {% if stream.linkedChannel | get_channelProtected %}
+                {{ core_ui.protected_badge() }}
+            {% endif %}
             {{ core_ui.live_badge() }}
             {{ core_ui.live_views_badge(stream.currentViewers) }}
         </div>
@@ -40,6 +43,9 @@
   <a href="/play/{{video.id}}">
     <div class="streamCard-thumbnail-container zoom {% if video.gifLocation != None %}gifhover{% endif %}">
         <div class="streamCard-badges">
+            {% if video.channelID | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+            {% endif %}
             {{ core_ui.views_badge(video.views) }}
             {{ core_ui.length_badge(video.length) }}
         </div>
@@ -77,6 +83,9 @@
   <a href="/clip/{{clip.id}}">
     <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
         <div class="streamCard-badges">
+            {% if clip.parentVideo | videotoChannelID | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+            {% endif %}
             {{ core_ui.views_badge(clip.views) }}
         </div>
         <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
@@ -127,7 +136,7 @@
         {% if channelData.id | get_channelLiveStatus %}
             {{ core_ui.live_badge() }}
         {% endif %}
-        {% if channelData.protected and sysSettings.protectionEnabled %}
+        {% if channelData.id | get_channelProtected %}
             {{ core_ui.protected_badge() }}
         {% endif %}
         {% if channelData.private %}
