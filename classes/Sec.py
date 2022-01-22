@@ -112,6 +112,7 @@ class User(db.Model, UserMixin):
     messageBanList = db.relationship('messageBanList', backref='owner', cascade="all, delete-orphan", lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+    socialNetworks = db.relationship('UserSocial', backref='user', cascade="all, delete-orphan", lazy="dynamic")
 
     def serialize(self):
         return {
@@ -125,6 +126,7 @@ class User(db.Model, UserMixin):
         }
 
 class UserSocial(db.Modal):
+    __tablename__ = "UserSocial"
     id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.ForeignKey(User.id))
     socialType = db.Column(db.String(128))
