@@ -48,7 +48,7 @@ body {
 }
 
 .table {
-    color: var(--font-color);
+    color: var(--font-color) !important;
 }
 
 .badge {
