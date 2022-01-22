@@ -58,7 +58,9 @@ settings_bp = Blueprint('settings', __name__, url_prefix='/settings')
 def user_page():
     if request.method == 'GET':
         # Checks Total Used Space
-        userChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+        userChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).with_entities(Channel.Channel.channelLoc, Channel.Channel.channelName).all()
+        socialNetworks = Sec.UserSocial.query.filter_by(userID=current_user.id).with_entities(Sec.UserSocial.id, Sec.UserSocial.socialType, Sec.UserSocial.url).all()
+
         totalSpaceUsed = 0
         channelUsage = []
         for chan in userChannels:
@@ -76,7 +78,7 @@ def user_page():
             channelUsage.append({'name': chan.channelName, 'usage': total_size})
             totalSpaceUsed = totalSpaceUsed + total_size
 
-        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage)
+        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage, socialNetworks=socialNetworks)
 
     elif request.method == 'POST':
 

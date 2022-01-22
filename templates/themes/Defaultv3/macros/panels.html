@@ -456,6 +456,50 @@
                         </div>
                     </div>
                     <hr>
+                    <b>Bio Social Networks</b>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Type</th>
+                                <th>URL</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for socialNetwork in socialNetworkList %}
+                            <tr>
+                                <td><img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ socialNetwork.socialType }}.png"></td>
+                                <td>{{ socialNetwork.socialType }}</td>
+                                <td>{{ socialNetwork.url }}</td>
+                                <td><button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>
+                        {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <select id="socialNetworkType" name="socialNetworkType">
+                                        <option value="Facebook">Facebook</option>
+                                        <option value="Twitter">Twitter</option>
+                                        <option value="Reddit">Reddit</option>
+                                        <option value="Instagram">Instagram</option>
+                                        <option value="LinkedIn">LinkedIn</option>
+                                        <option value="YouTube">YouTube</option>
+                                        <option value="Steam">Steam</option>
+                                        <option value="Pinterest">Pinterest</option>
+                                        <option value="URL">URL</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="form-control boxShadow" type="text" id="socialNetworkURL" name="socialNetworkURL">
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-success"><i class="fas fa-plus"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
                     <b>Storage Usage</b>
                     <div class="mt-2">
                         <table class="table table-sm">
