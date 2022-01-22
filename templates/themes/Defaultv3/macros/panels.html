@@ -476,9 +476,10 @@
                             </tr>
                         {% endfor %}
                             <tr>
-                                <td></td>
+                                <td><img id="socialIconInput" class="socialIcon boxShadow" src="/static/img/socialnetwork/social-mt.png"></td>
                                 <td>
-                                    <select class="form-select boxShadow" id="socialNetworkType" name="socialNetworkType">
+                                    <select class="form-select boxShadow" id="socialNetworkType" name="socialNetworkType" onchange="updateSocialInputIcon();">
+                                        <option value="mt" selected disabled></option>
                                         <option value="Facebook">Facebook</option>
                                         <option value="Twitter">Twitter</option>
                                         <option value="Reddit">Reddit</option>
@@ -536,6 +537,12 @@
 </div>
 <script>
     var easymde_UserBio = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("biography-{{userData.id}}") });
+
+    function updateSocialInputIcon() {
+        var changeValElm = document.getElementById('socialNetworkType');
+        var changeVal = changeValElm.options[changeValElm.selectedIndex].value;
+        document.getElementById('socialIconInput').src = '/static/img/socialnetwork/social-' + changeVal + '.ping'
+    }
 </script>
 {% endmacro %}
 
