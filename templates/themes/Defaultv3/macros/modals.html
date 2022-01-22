@@ -72,7 +72,7 @@
                         </div>
                         <div class="form-group">
                             <label for="uploadToChannelID">Channel</label>
-                            <select name="uploadToChannelID" class="form-control" required>
+                            <select name="uploadToChannelID" class="form-select" required>
                               {% for chan in channelList %}
                                   <option value="{{chan.id}}">{{chan.channelName}}</option>
                               {% endfor %}
@@ -80,7 +80,7 @@
                         </div>
                         <div class="form-group">
                             <label for="uploadTopic">Topic</label>
-                            <select name="uploadTopic" class="form-control" required>
+                            <select name="uploadTopic" class="form-select" required>
                                 {% for topic in topicList %}
                                     <option value="{{topic.id}}">{{topic.name}}</option>
                                 {% endfor %}
@@ -160,7 +160,7 @@
             </div>
             <div class="form-group">
               <label for="uploadToChannelID">Channel</label>
-              <select name="uploadToChannelID" class="form-control" required>
+              <select name="uploadToChannelID" class="form-select" required>
                 {% for chan in channelList %}
                 <option value="{{chan.id}}">{{chan.channelName}}</option>
                 {% endfor %}
@@ -168,7 +168,7 @@
             </div>
             <div class="form-group">
               <label for="uploadTopic">Topic</label>
-              <select name="uploadTopic" class="form-control" required>
+              <select name="uploadTopic" class="form-select" required>
                 {% for topic in topicList %}
                 <option value="{{topic.id}}">{{topic.name}}</option>
                 {% endfor %}
@@ -283,7 +283,7 @@
             <div class="row">
                 <div class="form-group col-md-12">
                     <label for="oAuthPreset">Authentication Type</label>
-                    <select class="form-control required" id="oAuthPreset" name="oAuthPreset" required>
+                    <select class="form-select required" id="oAuthPreset" name="oAuthPreset" required>
                         <option value="Custom">Custom OAuth2</option>
                         <option value="Discord">Discord</option>
                         <option value="Reddit">Reddit</option>
@@ -554,7 +554,7 @@
                     </div>
                     <div class="form-group col-md-2">
                         <label for="webhookReqType">Type</label>
-                        <select id="webhookReqType" class="form-control">
+                        <select id="webhookReqType" class="form-select">
                              <option value=0 selected>POST</option>
                              <option value=1>GET</option>
                              <option value=2>PUT</option>
@@ -563,7 +563,7 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="webhookTrigger">Trigger Event</label>
-                        <select id="webhookTrigger" class="form-control">
+                        <select id="webhookTrigger" class="form-select">
                              <option value=0 selected>Stream Start</option>
                              <option value=1>Stream End</option>
                              <option value=2>Stream Viewer Join</option>
@@ -1197,7 +1197,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <h5>Move this Video to Channel:</h5>
-          <select name="moveToChannelID" class="form-control" required>
+          <select name="moveToChannelID" class="form-select" required>
             {% for chan in ownedChannels %}
             {% if chan.id != video.channelID %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
@@ -1224,7 +1224,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <h5>Move this Video to Channel:</h5>
-          <select id="moveToChannelInput" name="moveToChannelID" class="form-control">
+          <select id="moveToChannelInput" name="moveToChannelID" class="form-select">
             <option disabled selected value>-- Select Destination Channel --</option>
             {% for chan in current_user.channels %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
@@ -1371,7 +1371,7 @@
           <input type="text" class="form-control boxShadow" value="{{video.channelName}}" name="newVidName" required>
           <br>
           <h5>Stream Topic:</h5>
-          <select class="form-control boxShadow" name="newVidTopic" id="channeltopic" required>
+          <select class="form-select boxShadow" name="newVidTopic" id="channeltopic" required>
             {% for topic in topics %}
             <option value={{topic.id}} {% if video.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
             {% endfor %}
@@ -1435,7 +1435,7 @@ var tagify_videoTags = new Tagify(videoTags, {
           <input type="text" class="form-control" value="" id="editVideoName" name="newVidName" required>
           <br>
           <h5>Video Topic:</h5>
-          <select class="form-control" name="newVidTopic" id="editVideoTopic" required>
+          <select class="form-select" name="newVidTopic" id="editVideoTopic" required>
             {% for topic in topics %}
             <option value={{topic.id}}>{{topic.name}}</option>
             {% endfor %}
@@ -1630,7 +1630,7 @@ var tagify_videoTags = new Tagify(videoTags, {
                 <input type="text" id="editStreamNameInput" class="form-control" value="{{stream.streamName}}" name="newStreamName" required>
                 <br>
                 <h5>Stream Topic:</h5>
-                <select class="form-control" name="newStreamTopic" id="editChannelTopicInput" style="font-family: FontAwesome, sans-serif;" required >
+                <select class="form-select" name="newStreamTopic" id="editChannelTopicInput" style="font-family: FontAwesome, sans-serif;" required >
                     {% for topic in topics %}
                     <option value={{topic.id}} {% if stream.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                     {% endfor %}
@@ -1748,7 +1748,7 @@ var tagify_videoTags = new Tagify(videoTags, {
                 </div>
                 <div class="form-group mb-2">
                     <label for="channeltopic" class="col-form-label"><b>Topic</b></label>
-                    <select class="form-control" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                    <select class="form-select" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                         {% for topic in topics %}
                         <option value={{topic.id}}>{{topic.name}}</option>
                         {% endfor %}
@@ -1887,7 +1887,7 @@ var tagify_videoTags = new Tagify(videoTags, {
               </div>
               <div class="form-group col-12 my-2">
                   <label class="form-check-label" for="keyTypeForm"><i class="fas fa-award"></i> Key Type </label>
-                  <select name="keyType" id="keyTypeForm" class="form-control" required>
+                  <select name="keyType" id="keyTypeForm" class="form-select" required>
                       <option value="1">User</option>
                       {% if current_user.has_role('Admin') %}
                       <option value="2">Admin</option>

@@ -908,7 +908,7 @@
                         </div>
                         <div class="form-group">
                             <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
-                            <select class="form-control boxShadow" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
+                            <select class="form-select boxShadow" name="channeltopic" id="channeltopic" style="font-family: FontAwesome, sans-serif;" required >
                                 {% for topic in topics %}
                                 <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                 {% endfor %}
