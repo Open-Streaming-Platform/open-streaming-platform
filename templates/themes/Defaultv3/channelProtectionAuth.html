@@ -7,12 +7,12 @@
 {% block body %}
     <div class="container">
         <div class="login-box" style="width:550px;">
-            <h2 class="title">Protected Channel - Invitation Code</h2>
-            <div class="my-2">
-                <div class="mb-2">The requested channel is protected and requires an invite or invitation code to view.</div>
+            <h2 class="title">Protected Channel</h2>
+            <div class="my-2 text-center">
+                <div class="mb-2">The requested channel has protection enabled and requires an invite or invitation code to view.  Please enter your invitation code below.</div>
             </div>
             <div class="my-2">
-                <div class="text-center mb-4">
+                <div class="mb-4">
                     <form action="/settings/user/addInviteCode" method="get">
                         <div class="user-box mt-4">
                             <input autocomplete="off" id="inviteCode" name="inviteCode" required="" type="text" value="">
