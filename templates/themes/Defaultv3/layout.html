@@ -88,7 +88,7 @@
         {% if sysSettings.allowUploads == True %}
             {% if current_user.has_role('Uploader') %}
                 <li class="nav-item">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill"></i></a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill bs-icon"></i></a>
                 </li>
             {% endif %}
         {% endif %}
@@ -111,9 +111,11 @@
         </li>
         {% endif %}
 
+        {% if current_user.is_authenticated == False %}
         <li class="nav-item">
           <a class="btn loginButton shadow textShadow" href="/login">Log In</a>
         </li>
+        {% endif %}
 
         <li class="nav-item">
           <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></a>

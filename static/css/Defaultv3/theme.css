@@ -348,6 +348,9 @@ table tbody tr {
     height: var(--site-logo-height);
 }
 
+.nav-link {
+    display: inline;
+}
 
 .topNavbar {
     position: fixed;
