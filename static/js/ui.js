@@ -156,7 +156,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
     // Show and Hide Search Clear Button
     if (searchInput.length >= 1) {
-        searchClearButton.style.display = 'inline';
+        searchClearButton.style.display = 'initial';
     } else {
         searchClearButton.style.display = 'none';
     }
