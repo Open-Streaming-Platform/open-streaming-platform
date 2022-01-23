@@ -272,12 +272,19 @@ table tbody tr {
 
 .topNavbar {
     position: fixed;
-    left: var(--left-sidebar-width);
     top: 0px;
     height: var(--top-navbar-height);
-    width: calc(100vw - var(--left-sidebar-width));
+    width: 100vw;
     line-height: var(--top-navbar-height);
     z-index: 901;
+}
+
+.topNavbar .logo {
+    position: relative;
+    width: var(--site-logo-width);
+    height: var(--site-logo-height);
+    top: 14px;
+    left: 0;
 }
 
 .topNavbar .siteTitle {
@@ -406,19 +413,11 @@ table tbody tr {
 .sideNavbar {
     position: fixed;
     left: 0;
-    top: 0;
-    height: 100vh;
+    top: var(--top-navbar-height);
+    height: calc(100vh - var(--top-navbar-height));
     width: var(--left-sidebar-width);
     text-align: center;
     z-index: 901;
-}
-
-.sideNavbar .logo {
-    position: relative;
-    width: var(--site-logo-width);
-    height: var(--site-logo-height);
-    top: 14px;
-    left: 0;
 }
 
 .sideNavbar .sideIcons {
