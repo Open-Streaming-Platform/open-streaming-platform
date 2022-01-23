@@ -127,26 +127,27 @@
 {% endmacro %}
 
 {% macro topic_card(topic) %}
+  <li class="topicCard item">
     <a href="/topic/{{topic.id}}/">
-        <li class="topicCard item">
-          <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ topic.name }}"></div>
-          <div class="topicName"><b>{{ topic.name }}</b></div>
-        </li>
+      <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ topic.name }}"></div>
     </a>
+      <div class="topicName mt-2"><a href="/topic/{{topic.id}}/" data-toggle="tooltip" title="{{topic.name}}"><b>{{ topic.name | limit_title20 }}</b></a></div>
+  </li>
+    
 {% endmacro %}
 
 {% macro streamer_card(streamerInfo) %}
     <a href="/streamer/{{ streamerInfo.id }}">
         <li class="streamer-avatar">
           <img class="shadow zoom" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
-          <div class="username"><b>{{ streamerInfo.username }}</b></div>
+          <div class="username m-t2"><b>{{ streamerInfo.username }}</b></div>
         </li>
     </a>
 {% endmacro %}
 
 {% macro channel_card(channelData) %}
 <li class="channelCard item">
-    <a href="/channel/{{channelData.id}}/">
+    
     <div class="zoom">
         <div class="channelCard-badges">
         {% if channelData.id | get_channelLiveStatus %}
@@ -160,22 +161,26 @@
         {% endif %}
         {{ core_ui.views_badge(channelData.currentViewers) }}
         </div>
-        <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
+        <a href="/channel/{{channelData.id}}/">
+          <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
+        </a>
     </div>
     <div class="channelMetadata mt-2">
         <div class="row">
-            <div class="col-3">
+            <!-- <div class="col-3">
                 <img class="mt-2 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channelData.owningUser | get_pictureLocation }}" alt="{{ channelData.channelName }} Picture" onerror="this.src='/static/img/user2.png';">
-            </div>
-            <div class="col-9">
-                <div class="channelName"><b>{{ channelData.channelName }}</b></div>
+            </div> -->
+            <div class="col">
+                <div class="channelName mt-2">
+                  <b><a href="/channel/{{channelData.id}}/" data-toggle="tooltop" title="{{channelData.channelName}}">{{ channelData.channelName | limit_title20 }}</a></b>
+                </div>
                 <div class="channelOwner">
-                  <b>{{ channelData.owningUser | get_userName }}</b>
+                  <b><a href="/streamer/{{channelData.owningUser}}/">{{ channelData.owningUser | get_userName }}</a></b>
                 </div>
             </div>
         </div>
     </div>
-    </a>
+
 </li>
 {% endmacro %}
 
