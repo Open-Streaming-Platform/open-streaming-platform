@@ -127,7 +127,7 @@ def searchChannels(term):
             .with_entities(Channel.channel_tags.name, Channel.channel_tags.channelID).filter_by().all()
         tagSearchArray = []
         for channel in ChannelTagQuery:
-            ChannelNameQuery = Channel.Channel.query.filter_by(id=channel.id)\
+            ChannelNameQuery = Channel.Channel.query.filter_by(id=channel.channelID)\
                 .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc,Channel.Channel.private).filter_by().first()
             if ChannelNameQuery is not None:
                 tagSearchArray.append(ChannelTagQuery)
