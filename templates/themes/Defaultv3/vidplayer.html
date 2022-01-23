@@ -106,6 +106,7 @@
         player.on('theaterMode', function (elm, data) {
             if (data.theaterModeIsOn) {
                 document.getElementById("nav").style.display = 'none';
+                document.getElementById("leftnav").style.display = 'none';
                 document.getElementById("video").style.maxHeight = '100vh';
                 document.getElementById("video_html5_api").style.maxHeight = '100vh';
                 document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
@@ -113,6 +114,7 @@
                 document.getElementById("commentsContainer").style.display = 'none';
             } else {
                 document.getElementById("nav").style.display = 'block';
+                document.getElementById("leftnav").style.display = 'block';
                 document.getElementById("video").style.maxHeight = videoMaxHeight;
                 document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
                 document.getElementById("video_html5_api").style.removeProperty('height');
