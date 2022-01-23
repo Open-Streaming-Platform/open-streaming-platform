@@ -270,6 +270,31 @@ table tbody tr {
     display: none;
 }
 
+.navbar {
+  height: 60px;
+  color: var(--font-color);
+  background-color: var(--navbar-background);
+  box-shadow: var(--box-shadow);
+  list-style-type: none;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar-title {
+  position: relative;
+  top: 1px;
+  margin-left: 10px;
+}
+
+.bs-icon {
+  font-size: 2em;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .topNavbar {
     position: fixed;
     top: 0px;
