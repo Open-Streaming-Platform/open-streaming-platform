@@ -330,6 +330,13 @@ table tbody tr {
     outline: none;
 }
 
+.navbar .userImage {
+    object-fit: cover;
+    border-radius:50%;
+    width: var(--nav-userphoto-width);
+    height: var(--nav-userphoto-height);
+}
+
 .bs-icon {
   font-size: 2em;
   margin-left: 10px;
@@ -363,27 +370,6 @@ table tbody tr {
 .topNavbar .rightTopNavbar {
     float: right;
     padding-right: 30px;
-}
-
-.topNavbar .rightTopNavbar .userImageBlock {
-    height: 100%;
-    width: 62px;
-    position: relative;
-    top: -8px;
-}
-
-.topNavbar .rightTopNavbar .userImageBlock i {
-    position: relative;
-    top: 5px;
-    left: -10px;
-    font-size: 18px;
-}
-
-.topNavbar .rightTopNavbar .userImageBlock .userImage {
-    object-fit: cover;
-    border-radius:50%;
-    width: var(--nav-userphoto-width);
-    height: var(--nav-userphoto-height);
 }
 
 .navbar-dropdown-content {
