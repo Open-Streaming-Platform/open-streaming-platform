@@ -656,10 +656,17 @@ table tbody tr {
     text-align: center;
 }
 
+.date-badge {
+    padding: 2px 8px;
+    background-color: #206CFF;
+    border-radius: 4px;
+    text-align: center;
+}
+
 .streamCard {
     height: 290px;
     width: 315px;
-    margin: 0 15px 0 0;
+    margin: 0 15px 15px 0;
 }
 
 .streamCard a:hover, a:active {
@@ -680,6 +687,15 @@ table tbody tr {
     top:30px;
     margin-top: -30px;
     padding: 5px;
+}
+
+.streamCard .streamCard-date {
+    color: white;
+    position: relative;
+    top:178px;
+    margin-top: -30px;
+    padding: 5px;
+    text-align: right;
 }
 
 .streamCard .streamCard-tags {

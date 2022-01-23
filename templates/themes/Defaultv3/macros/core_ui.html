@@ -30,6 +30,10 @@
 <span class="length-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ timestamp | hms_format }}</b></span>
 {% endmacro %}
 
+{% macro date_badge(videoDate) %}
+<span class="date-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ videoDate | normalize_date }}</b></span>
+{% endmacro %}
+
 {% macro toast_box(messages) %}
 <div style="position: absolute; top: 65px; right: 70px;z-index:9999999;" id="toastDiv">
     {%- with messages = get_flashed_messages(with_categories=true) -%}
