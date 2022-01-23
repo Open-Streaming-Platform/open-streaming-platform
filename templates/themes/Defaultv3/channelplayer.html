@@ -72,6 +72,7 @@
                         {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
                     {% elif panelItem.type == 5  %}
                         {{ panels.channels_panel(channelList, title=panelItem.header) }}
+                    {% endif %}
                 {% endfor %}
 
             </div>
