@@ -51,15 +51,15 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <!--Search Bar-->
-        <span class="searchBox">
+        <div class="searchBox">
             <i class="searchIcon bi bi-search"></i>
             <input id="systemSearchInput" class="insetBoxShadow" type="text" placeholder="Search...">
             <i id="searchClearIcon" class="searchClear fas fa-times" onclick="document.getElementById('systemSearchInput').value = '';this.style.display='none'"></i>
-            <span class="searchResults" style="display:none;">
-                <ul id="searchResultList" class="list-group list-group-flush">
-                </ul>
-            </span>
-        </span>
+        </div>
+        <div class="searchResults" style="display:none;">
+          <ul id="searchResultList" class="list-group list-group-flush">
+          </ul>
+        </div>
 
         <!--Begin Authenticated User Navbar Options-->
         {% if current_user.is_authenticated %}
