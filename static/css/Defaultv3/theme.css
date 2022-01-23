@@ -283,8 +283,8 @@ table tbody tr {
     position: relative;
     width: var(--site-logo-width);
     height: var(--site-logo-height);
-    top: 14px;
-    left: 0;
+    top: 0;
+    left: 14px;
 }
 
 .topNavbar .siteTitle {
