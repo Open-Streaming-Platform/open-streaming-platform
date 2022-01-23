@@ -549,13 +549,13 @@
 
     function addSocialNetwork() {
         var changeValElm = document.getElementById('socialNetworkType');
-        var socialNetworkType = changeValElm.options[changeValElm.selectedIndex].value;
-        var socialNetworkURL = document.getElementById('socialNetworkURL').value;
 
-        socket.emit('addSocialNetwork', {socialType: socialNetworkType, url: socialNetworkURL});
+        socket.emit('addSocialNetwork', {socialType: changeValElm.options[changeValElm.selectedIndex].value, url: document.getElementById('socialNetworkURL').value});
 
         changeValElm.selectedIndex = 0;
-        socialNetworkURL.value = '';
+        document.getElementById('socialNetworkURL').value = '';
+
+        updateSocialInputIcon();
 
     }
 
