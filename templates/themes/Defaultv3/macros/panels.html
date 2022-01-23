@@ -495,7 +495,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input class="form-control boxShadow" type="text" id="socialNetworkURL" name="socialNetworkURL">
+                                    <input class="form-control boxShadow" type="text" id="socialNetworkURL" name="socialNetworkURL" placeholder="https://example.com" pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?">
                                 </td>
                                 <td>
                                     <button class="btn btn-success boxShadow" type="button" onclick="addSocialNetwork();"><i class="fas fa-plus"></i></button>
@@ -553,6 +553,10 @@
         var socialNetworkURL = document.getElementById('socialNetworkURL').value;
 
         socket.emit('addSocialNetwork', {socialType: socialNetworkType, url: socialNetworkURL});
+
+        changeValElm.selectedIndex = 0;
+        socialNetworkURL.value = '';
+
     }
 
     function deleteSocialNetwork(id) {
@@ -560,6 +564,8 @@
         var elm = document.getElementById('socialNetwork-' + id);
         elm.parentElement.removeChild(elm);
     }
+
+
 </script>
 {% endmacro %}
 
