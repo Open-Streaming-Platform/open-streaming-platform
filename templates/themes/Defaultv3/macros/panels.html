@@ -381,7 +381,7 @@
 </div>
 {% endmacro %}
 
-{% macro user_settings_panel(userData, channelUsage, sysSettings) %}
+{% macro user_settings_panel(userData, channelUsage, sysSettings, socialNetworkList) %}
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>User Settings</b>
@@ -564,7 +564,6 @@
         var elm = document.getElementById('socialNetwork-' + id);
         elm.parentElement.removeChild(elm);
     }
-
 
 </script>
 {% endmacro %}
