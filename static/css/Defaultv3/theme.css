@@ -261,7 +261,6 @@ table tbody tr {
 
 .loginButton {
     position: relative;
-    top: -4px;
     color: var(--font-color);
     background-color: var(--box2-background);
 }
@@ -301,7 +300,7 @@ table tbody tr {
 }
 
 .navbar .searchBox .searchIcon {
-    left: 50px;
+    left: 35px;
 }
 
 .navbar .searchBox .searchClear {
