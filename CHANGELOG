@@ -32,6 +32,7 @@ OSP-Core: Disables Email Subscriptions from Being Sent When Maintenance Mode is 
 OSP-Core: Adds Option to Set a Channel as Private
 OSP-Core: Created new Endpoint - /apiv1/channels/<channelUUID>/streams
 OSP-Core: Optimized Video JS Monitor Function to Use New Stream API Endpoint and Reduce Load
+OSP-Core: Added Social Network Links for User Bios - #357
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 
