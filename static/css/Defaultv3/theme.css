@@ -304,8 +304,7 @@ table tbody tr {
 }
 
 .navbar .searchBox .searchClear {
-    right: 50px;
-    margin-right: -45px;
+    right: 25px;
     display:none;
 }
 
