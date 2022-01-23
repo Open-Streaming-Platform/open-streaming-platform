@@ -352,73 +352,18 @@ table tbody tr {
     display: inline;
 }
 
-.topNavbar {
-    position: fixed;
-    top: 0px;
-    height: var(--top-navbar-height);
-    width: 100vw;
-    line-height: var(--top-navbar-height);
-    z-index: 901;
+.show {
+    display: inline !important;
 }
 
-.topNavbar .siteTitle {
-    position: relative;
-    font-size: 24px;
-    margin-left: 34px;
-    display: inline-block;
-    vertical-align: middle;
-    line-height: normal;
-}
-
-.topNavbar .rightTopNavbar {
-    float: right;
-    padding-right: 30px;
-}
-
-.navbar-dropdown-content {
-    display: none;
-    position: absolute;
-    top: 35px;
+.dropdown-menu {
+    color: var(--font-color);
     background-color: var(--box2-background);
-    min-width: 195px;
-    z-index: 1;
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 7px;
+    box-shadow: var(--box-shadow);
 }
 
-.navbar-dropdown-content hr {
-    background-color: var(--font-color);
-    height: 0px;
-    border: 0;
-    margin: 8px;
-}
-
-.navbar-dropdown-content a {
-    float: none;
-    display: block;
-    padding: 6px 15px;
-    text-align: left;
-    line-height: normal;
-}
-
-.navbar-dropdown-content span {
-    padding-right: 10px;
-}
-
-.navbar-dropdown-content a, .navbar-dropdown-content a:visited {
-    color: inherit;
-    text-decoration: none;
-}
-
-.navbar-dropdown-content a:hover, .navbar-dropdown-content a:active {
-    color: var(--link-hover-color);
-}
-
-
-.topNavbar .rightTopNavbar i {
-    font-size: 25px;
-    padding: 15px;
+.dropdown-menu[data-bs-popper] {
+    top: 0;
 }
 
 .sideNavbar {
