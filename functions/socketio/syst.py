@@ -413,14 +413,14 @@ def add_social_network(message):
             db.session.add(newSocial)
             db.session.commit()
             socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
-            emit('returnSocialNetwork', {'id': socialQuery.id, 'socialType': socialQuery.socialType, 'url': socialQuery.parsedURL}, broadcast=False)
+            emit('returnSocialNetwork', {'id': str(socialQuery.id), 'socialType': socialQuery.socialType, 'url': socialQuery.parsedURL}, broadcast=False)
         db.session.close()
     return 'OK'
 
 @socketio.on('removeSocialNetwork')
 def delete_social_network(message):
     if current_user.is_authenticated:
-        socialQuery = Sec.UserSocial.query.filter_by(id=message['id']).first()
+        socialQuery = Sec.UserSocial.query.filter_by(id=int(message['id'])).first()
         if socialQuery is not None:
             db.session.delete(socialQuery)
             db.session.commit()
