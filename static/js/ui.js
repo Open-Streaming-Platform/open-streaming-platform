@@ -86,6 +86,12 @@ function createNewBSAlert(message,category) {
           '<div class="float-end"><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" onclick="hideDiv(\'toast-' + randomID + '\')"></button></div></div><div class="toast-body">' + message + '</div></div>')
 }
 
+function clearSearch() {
+    document.getElementById('systemSearchInput').value = '';
+    document.getElementById('searchClearIcon').style.display='none';
+    document.getElementById('searchResultList').innerHTML = '';
+}
+
 // Watches the Mouse Target Location Opens User Navigation Bar
 $(document).click(function(event) {
     var target = event.target.parentNode;
