@@ -409,7 +409,7 @@ def add_social_network(message):
         socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
 
         if socialQuery is None:
-            newSocial = Sec.UserSocial(current_user.id, message['socialType'], message['url'])
+            newSocial = Sec.UserSocial(current_user.id, socialType, parsedURL)
             db.session.add(newSocial)
             db.session.commit()
             socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
