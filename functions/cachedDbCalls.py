@@ -123,7 +123,15 @@ def searchChannels(term):
             .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
         ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
             .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
-        resultsArray = ChannelNameQuery + ChannelDescriptionQuery
+        ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%"))\
+            .with_entities(Channel.channel_tags.name, Channel.channel_tags.channelID).filter_by().all()
+        tagSearchArray = []
+        for channel in ChannelTagQuery:
+            ChannelNameQuery = Channel.Channel.query.filter_by(id=channel.id)\
+                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc,Channel.Channel.private).filter_by().first()
+            if ChannelNameQuery is not None:
+                tagSearchArray.append(ChannelTagQuery)
+        resultsArray = ChannelNameQuery + ChannelDescriptionQuery + tagSearchArray
         resultsArray = list(set(resultsArray))
         return resultsArray
     else:
