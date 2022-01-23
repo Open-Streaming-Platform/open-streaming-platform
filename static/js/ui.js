@@ -193,6 +193,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             var userResults = data['results'];
         }, "json");
 
+    } else {
+        document.getElementById('searchResultList').innerHTML = '';
     }
 });
 
