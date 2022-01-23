@@ -302,7 +302,7 @@
 {% endmacro %}
 
 {% macro video_control_panel(streamURL, video, current_user) %}
-<div class="video-control-panel">
+<div id="vidControls" class="video-control-panel">
   <!--Start Video Viewer Controls-->
   <div class="video-control-viewer-buttons pt-2 me-1 float-end">
     <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
@@ -336,7 +336,7 @@
 {% endmacro %}
 
 {% macro clip_control_panel(streamURL, clip, current_user) %}
-  <div class="video-control-panel">
+  <div id="vidControls" class="video-control-panel">
     <!--Start Video Viewer Controls-->
     <div class="video-control-viewer-buttons pt-2 me-1 float-end">
       <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
@@ -560,7 +560,7 @@
 {% endmacro %}
 
 {% macro stream_control_panel(channel, current_user) %}
-<div class="video-control-panel">
+<div id="vidControls" class="video-control-panel">
     <!--Start Stream Viewer Controls-->
     <div class="stream-control-viewer-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow" onclick="openModal('shareModal');"><i class="fas fa-share-alt"></i></button>
