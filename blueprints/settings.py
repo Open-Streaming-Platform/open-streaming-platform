@@ -339,6 +339,7 @@ def admin_page():
         roleList = Sec.Role.query.all()
         channelList = Channel.Channel.query.all()
         streamList = Stream.Stream.query.filter_by(active=True).all()
+        streamHistory = Stream.Stream.query.filter_by(active=False).all()
         topicsList = topics.topics.query.all()
         rtmpServers = settings.rtmpServer.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
@@ -427,7 +428,7 @@ def admin_page():
         schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
 
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
-                               roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList,
+                               roleList=roleList, channelList=channelList, streamList=streamList, streamHistory=streamHistory, topicsList=topicsList,
                                repoSHA=repoSHA, repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
