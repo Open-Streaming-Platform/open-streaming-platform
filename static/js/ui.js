@@ -16,14 +16,14 @@ function toggleDarkMode() {
 
 function setLightMode() {
     darkModeIcon = document.getElementById('darkModeIcon');
-    darkModeIcon.className = 'textShadow bi bi-brightness-alt-high-fill';
+    darkModeIcon.className = 'textShadow bi bi-brightness-alt-high-fill bs-icon';
     document.documentElement.setAttribute("data-theme", 'light');
     setCookie('ospLightMode', true);
 }
 
 function setDarkMode() {
     darkModeIcon = document.getElementById('darkModeIcon');
-    darkModeIcon.className = 'textShadow bi bi-brightness-alt-low';
+    darkModeIcon.className = 'textShadow bi bi-brightness-alt-low bs-icon';
     document.documentElement.setAttribute("data-theme", 'dark');
     setCookie('ospLightMode', false);
 }
