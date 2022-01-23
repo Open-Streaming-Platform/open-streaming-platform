@@ -412,8 +412,11 @@ def add_social_network(message):
             newSocial = Sec.UserSocial(current_user.id, socialType, parsedURL)
             db.session.add(newSocial)
             db.session.commit()
-            socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
-            emit('returnSocialNetwork', {'id': str(socialQuery.id), 'socialType': socialQuery.socialType, 'url': socialQuery.parsedURL}, broadcast=False)
+            NewSocialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
+            if NewSocialQuery is not None:
+                emit('returnSocialNetwork', {'id': str(NewSocialQuery.id), 'socialType': NewSocialQuery.socialType, 'url': NewSocialQuery.parsedURL}, broadcast=False)
+            else:
+                emit('returnSocialNetwork', {'id': "Error"}, broadcast=False)
         db.session.close()
     return 'OK'
 
