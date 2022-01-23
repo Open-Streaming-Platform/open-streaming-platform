@@ -670,7 +670,7 @@ table tbody tr {
 }
 
 .streamCard a:hover, a:active {
-    color: inherit;
+    /*color: inherit;*/
     text-decoration: none;
 }
 
