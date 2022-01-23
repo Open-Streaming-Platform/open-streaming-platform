@@ -870,7 +870,7 @@ upgrade_menu() {
 ##########################################################
 # Start Main Script Execution
 ##########################################################
-sudo mkdir /var/log/osp/ >> /dev/null
+sudo mkdir -p /var/log/osp/ >> /dev/null
 if [ $# -eq 0 ]
   then
     while true; do
