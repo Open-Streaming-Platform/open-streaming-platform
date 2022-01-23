@@ -83,7 +83,7 @@
                 <li><a href="/logout" class="dropdown-item"><span class="bi bi-box-arrow-right"></span> <b>Logout</b></a></li>
               </ul>
             </li>
-        {% endif %}
+
 
         {% if sysSettings.allowUploads == True %}
             {% if current_user.has_role('Uploader') %}
@@ -109,6 +109,7 @@
               {% endif %}
             </a>
         </li>
+        {% endif %}
 
         <li class="nav-item">
           <a class="btn loginButton shadow textShadow" href="/login">Log In</a>

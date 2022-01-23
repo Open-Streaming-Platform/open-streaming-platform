@@ -289,6 +289,48 @@ table tbody tr {
   margin-left: 10px;
 }
 
+.navbar .searchBox {
+    position: relative;
+    padding-right: 40px;
+}
+
+.navbar .searchBox i {
+    font-size: medium;
+    position: relative;
+    color: var(--font-color);
+}
+
+.navbar .searchBox .searchIcon {
+    left: 50px;
+}
+
+.navbar .searchBox .searchClear {
+    right: 50px;
+    margin-right: -45px;
+    display:none;
+}
+
+.navbar .searchBox input {
+    height: 35px;
+    width: 350px;
+    border-radius: 8px;
+    border: 0 black solid;
+    background-color: var(--page-background);
+    color: var(--font-color);
+}
+
+.navbar .searchBox input[type=text] {
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 40px;
+    box-sizing: border-box;
+    font-size: large;
+}
+
+.navbar .searchBox input[type=text]:focus {
+    outline: none;
+}
+
 .bs-icon {
   font-size: 2em;
   margin-left: 10px;
@@ -296,11 +338,8 @@ table tbody tr {
 }
 
 .navbar-brand .logo {
-    position: relative;
     width: var(--site-logo-width);
     height: var(--site-logo-height);
-    top: 0;
-    left: 14px;
 }
 
 
@@ -325,48 +364,6 @@ table tbody tr {
 .topNavbar .rightTopNavbar {
     float: right;
     padding-right: 30px;
-}
-
-.topNavbar .rightTopNavbar .searchBox {
-    position: relative;
-    padding-right: 40px;
-}
-
-.topNavbar .rightTopNavbar .searchBox i {
-    font-size: medium;
-    position: relative;
-    color: var(--font-color);
-}
-
-.topNavbar .rightTopNavbar .searchBox .searchIcon {
-    left: 50px;
-}
-
-.topNavbar .rightTopNavbar .searchBox .searchClear {
-    right: 50px;
-    margin-right: -45px;
-    display:none;
-}
-
-.topNavbar .rightTopNavbar .searchBox input {
-    height: 35px;
-    width: 350px;
-    border-radius: 8px;
-    border: 0 black solid;
-    background-color: var(--page-background);
-    color: var(--font-color);
-}
-
-.topNavbar .rightTopNavbar .searchBox input[type=text] {
-    background-position: 10px 10px;
-    background-repeat: no-repeat;
-    padding: 12px 40px;
-    box-sizing: border-box;
-    font-size: large;
-}
-
-.topNavbar .rightTopNavbar .searchBox input[type=text]:focus {
-    outline: none;
 }
 
 .topNavbar .rightTopNavbar .userImageBlock {
