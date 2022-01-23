@@ -68,7 +68,7 @@
             <p class="card-text textShadow">
               <a href="/play/{{video.id}}" data-toggle="tooltip" title="{{ video.channelName }}"><b>{{ video.channelName | limit_title30 }}</b></a><br>
               <a href="/channel/{{video.channelID}}" data-toggle="tooltip" title="{{ video.channelID | get_channelName }}">{{ video.channelID | get_channelName | limit_title30}}</a><br>
-                 {{ video.topic | get_topicName }}<br>
+              <a href="/topic/{{video.topic}}" data-toggle="tooltip" title="{{ video.topic | get_topicName }}">{{ video.topic | get_topicName | limit_title30}}</a><br>
             </p>
           </div>
         </div>
