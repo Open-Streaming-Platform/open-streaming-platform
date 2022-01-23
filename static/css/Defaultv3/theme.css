@@ -275,6 +275,7 @@ table tbody tr {
   background-color: var(--navbar-background);
   box-shadow: var(--box-shadow);
   list-style-type: none;
+  z-index: 90;
 }
 
 .navbar a {
