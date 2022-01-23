@@ -23,6 +23,7 @@ function deleteSocialNetwork(id) {
 }
 
 socket.on('returnSocialNetwork', function (msg) {
+    console.log(msg);
     var socialNetworkTable = document.getElementById('socialNetworkTable');
 
     var returnID = msg['id']
