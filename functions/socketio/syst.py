@@ -7,6 +7,7 @@ from flask import abort, current_app
 from flask_socketio import emit
 from flask_security import current_user
 from sqlalchemy.sql.expression import func
+from urllib.parse import urlparse
 
 from classes.shared import db, socketio, limiter
 from classes import Sec
@@ -399,16 +400,20 @@ def set_global_panel_target(message):
 @socketio.on('addSocialNetwork')
 def add_social_network(message):
     if current_user.is_authenticated:
+
         socialType = message['socialType']
         url = message['url']
 
-        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=url).first()
-        if socialQuery is not None:
+        parsedURL = urlparse(url).geturl()
+
+        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
+
+        if socialQuery is None:
             newSocial = Sec.UserSocial(current_user.id, message['socialType'], message['url'])
             db.session.add(newSocial)
             db.session.commit()
-            socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=url).first()
-            emit('returnSocialNetwork', {'id': socialQuery.id, 'socialType': socialQuery.socialType, 'url': socialQuery.url}, broadcast=False)
+            socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
+            emit('returnSocialNetwork', {'id': socialQuery.id, 'socialType': socialQuery.socialType, 'url': socialQuery.parsedURL}, broadcast=False)
         db.session.close()
     return 'OK'
 
