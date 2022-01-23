@@ -78,7 +78,7 @@ def user_page():
             channelUsage.append({'name': chan.channelName, 'usage': total_size})
             totalSpaceUsed = totalSpaceUsed + total_size
 
-        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage, socialNetworks=socialNetworks)
+        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage, socialNetworkList=socialNetworks)
 
     elif request.method == 'POST':
 
