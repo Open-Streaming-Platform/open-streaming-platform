@@ -504,17 +504,17 @@ table tbody tr {
 .item .topicName {
     text-align: center;
     font-size: 1.25em;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .item .channelName {
     font-size: 1.25em;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .item .channelOwner {
     font-size: 1.0em;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .topicImg img {
@@ -611,14 +611,21 @@ table tbody tr {
     text-align: center;
 }
 
+.date-badge {
+    padding: 2px 8px;
+    background-color: #206CFF;
+    border-radius: 4px;
+    text-align: center;
+}
+
 .streamCard {
     height: 290px;
     width: 315px;
-    margin: 0 15px 0 0;
+    margin: 0 15px 15px 0;
 }
 
 .streamCard a:hover, a:active {
-    color: inherit;
+    /*color: inherit;*/
     text-decoration: none;
 }
 
@@ -637,6 +644,15 @@ table tbody tr {
     padding: 5px;
 }
 
+.streamCard .streamCard-date {
+    color: white;
+    position: relative;
+    top:178px;
+    margin-top: -30px;
+    padding: 5px;
+    text-align: right;
+}
+
 .streamCard .streamCard-tags {
     position: relative;
     top: -10px;
@@ -647,7 +663,7 @@ table tbody tr {
 }
 
 .channelCard a:hover, a:active {
-    color: inherit;
+    /* color: inherit; */
     text-decoration: none;
 }
 
@@ -796,6 +812,7 @@ table tbody tr {
 .streamer-avatar .username {
   margin-top: 10px;
   text-align: center;
+  font-size: 1.25em;
 }
 
 @media (min-width: 1200px) {
