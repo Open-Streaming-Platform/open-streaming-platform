@@ -187,8 +187,21 @@ def searchVideos(term):
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+        VideoTagQuery = RecordedVideo.video_tags.query.filter(RecordedVideo.video_tags.name.like("%" + term + "%"))\
+            .with_entites(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name, RecordedVideo.video_tags.videoID)
+        tagSearchArray = []
+        for vid in VideoTagQuery:
+            VideoTagEntryQuery = RecordedVideo.RecordedVideo.query.filter_by(id=vid.videoID, published=True)\
+                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).filter_by().first()
+            if VideoTagEntryQuery is not None:
+                tagSearchArray.append(VideoTagEntryQuery)
+
         resultsArray = VideoNameQuery + VideoDescriptionQuery
         resultsArray = list(set(resultsArray))
+        for entry in tagSearchArray:
+            if entry not in resultsArray:
+                resultsArray.append(entry)
+
         return resultsArray
     else:
         return []
