@@ -363,7 +363,7 @@ table tbody tr {
 }
 
 .dropdown-menu[data-bs-popper] {
-    top: 0;
+    top: calc(var(--top-navbar-height));
 }
 
 .sideNavbar {
