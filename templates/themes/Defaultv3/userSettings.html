@@ -18,3 +18,7 @@
 {% block body %}
     {{ panels.user_settings_panel(current_user, channelUsage, sysSettings, socialNetworkList) }}
 {% endblock %}
+
+{% block scripts %}
+<script src="/static/js/usersettings.js"></script>
+{% endblock %}
