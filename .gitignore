@@ -1,5 +1,6 @@
 *.pyc
 config.py
+celerybeat-schedule.db
 .vscode/
 /venv/
 TODO
