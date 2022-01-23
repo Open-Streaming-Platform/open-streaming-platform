@@ -87,33 +87,38 @@
 
 {% macro clip_card(clip) %}
 <li class="streamCard item">
-  <a href="/clip/{{clip.id}}">
+  
     <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
         <div class="streamCard-badges">
             {% if clip.parentVideo | videotoChannelID | get_channelProtected %}
             {{ core_ui.protected_badge() }}
             {% endif %}
             {{ core_ui.views_badge(clip.views) }}
+            {{ core_ui.length_badge(clip.length) }}
         </div>
-        <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+        <a href="/clip/{{clip.id}}">
+          <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+        </a>
     </div>
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-2">
-            <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ clip.parentVideo | videotoChannelID | channeltoOwnerID  | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            <a href="/streamer/{{clip.parentVideo | videotoChannelID | channeltoOwnerID}}">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ clip.parentVideo | videotoChannelID | channeltoOwnerID  | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            </a>
           </div>
           <div class="col-10">
             <div class="card-body">
               <p class="card-text textShadow">
-                <b>{{ clip.clipName | limit_title }}</b><br>
-                   {{ clip.parentVideo | videotoChannelID | channeltoOwnerID | get_userName }}<br>
-                   {{ clip.parentVideo | get_videoTopic | get_topicName }}
+                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName | limit_title30 }}</b></a><br>
+                <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName | limit_title30 }}</a><br>
+                <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName | limit_title30 }}</a>
               </p>
             </div>
           </div>
         </div>
     </div>
-  </a>
+
 </li>
 {% endmacro %}
 
