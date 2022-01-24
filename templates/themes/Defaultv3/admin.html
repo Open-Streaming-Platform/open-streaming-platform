@@ -217,6 +217,11 @@
         $('#logTable').DataTable({
             "order": [[ 0, "desc" ]]
         });
+        $('#streamHistoryTable').DataTable({
+            "order": [[ 0, "desc" ]],
+            "bLengthChange": false,
+            "bFilter": false,
+        });
     } );
 </script>
 

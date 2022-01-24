@@ -840,6 +840,7 @@
 {% endmacro %}
 
 {% macro streams_settings_panel(streamList) %}
+<!-- Current streams-->
 <div class="info-panel-box system-streams-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Streams</b>
@@ -872,6 +873,42 @@
                       <td><button type="button" class="btn btn-sm btn-danger" onclick="openStreamDeleteModal('{{stream.id}}')"><i class="bi bi-trash-fill"></i></button></td>
                     </tr>
                 {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Stream history-->
+<div class="info-panel-box system-streams-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Stream history</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="admin-streams-servers">
+            <table id="streamHistoryTable" class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Name</th>
+                        <th>Channel</th>
+                        <th>Owner</th>
+                        <th>Topic</th>
+                        <th>Total Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stream in streamHistory %}
+                    <tr id="streamCard-{{stream.id}}">
+                        <td>{{stream.startTimestamp | normalize_date}}</td>
+                        <td>{{stream.endTimeStamp | normalize_date}}</td>
+                        <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
+                        <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
+                        <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
+                        <td><a href="/topic/{{stream.channel.topic}}">{{stream.channel.topic|get_topicName}}</a></td>
+                        <td>{{stream.totalViewers}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
