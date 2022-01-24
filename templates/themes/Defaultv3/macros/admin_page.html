@@ -888,7 +888,8 @@
             <table id="streamHistoryTable" class="table table-borderless align-middle">
                 <thead>
                     <tr>
-                        <th>Date</th>
+                        <th>Start</th>
+                        <th>End</th>
                         <th>Name</th>
                         <th>Channel</th>
                         <th>Owner</th>
@@ -900,6 +901,7 @@
                     {% for stream in streamHistory %}
                     <tr id="streamCard-{{stream.id}}">
                         <td>{{stream.startTimestamp | normalize_date}}</td>
+                        <td>{{stream.endTimeStamp | normalize_date}}</td>
                         <td><a href="/view/{{stream.channel.channelLoc}}/">{{stream.streamName}}</a></td>
                         <td><a href="/channel/{{stream.channel.id}}">{{stream.channel.channelName}}</a></td>
                         <td><a href="/profile/{{stream.channel.owningUser|get_userName}}">{{stream.channel.owningUser|get_userName}}</a></td>
