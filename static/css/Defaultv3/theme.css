@@ -305,8 +305,9 @@ table tbody tr {
 }
 
 .navbar .searchBox .searchClear {
-    right: 25px;
+    right: 10px;
     display: none;
+    margin-left: -15px;
 }
 
 .navbar .searchBox input {
@@ -342,6 +343,17 @@ table tbody tr {
     border-radius:50%;
     width: var(--nav-userphoto-width);
     height: var(--nav-userphoto-height);
+}
+
+.list-group-flush {
+    border-radius: 6px;
+    position: relative;
+    top: -5px;
+}
+
+.list-group-item {
+    color: var(--font-color);
+    background-color: var(--box1-background);
 }
 
 .bs-icon {

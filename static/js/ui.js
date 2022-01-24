@@ -178,6 +178,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 li.appendChild(document.createTextNode(channelResults[i][1]));
                 li.classList = "list-group-item";
                 ul.appendChild(li);
+                console.log(data['results']);
             }
         }, "json");
         $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
