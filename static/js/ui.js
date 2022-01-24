@@ -178,7 +178,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
     resultsContainerDiv = document.getElementById("searchResults");
 
     if (searchInput.length >= 3) {
-        resultsContainerDiv.style.display = 'block';
+
         document.getElementById("searchResults");
         var ul = document.getElementById("searchResultsList-Channels");
         ul.innerHTML = '';
@@ -188,31 +188,37 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         ul.innerHTML = '';
         var ul = document.getElementById("searchResultsList-Users");
         ul.innerHTML = '';
+
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
             console.log(data['results']);
             ul = document.getElementById("searchResultsList-Channels");
+            ul.innerHTML = '';
             for (var i = 0; i < channelResults.length; i++) {
                 var li = document.createElement("li");
-                li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/">' + channelResults[i][1] + '</a>'
                 li.classList = "list-group-item";
+                li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/">' + channelResults[i][1] + '</a>'
                 ul.appendChild(li);
             }
         }, "json");
+
         $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
             var streamResults = data['results'];
         }, "json");
+
         $.post('/apiv1/video/search', {term: searchInput}, function (data, textStatus) {
             var videoResults = data['results'];
         }, "json");
+
         $.post('/apiv1/clip/search', {term: searchInput}, function (data, textStatus) {
             var clipResults = data['results'];
         }, "json");
+
         $.post('/apiv1/user/search', {term: searchInput}, function (data, textStatus) {
             var userResults = data['results'];
         }, "json");
 
-        $('.searchResults').toggle().toggle() // Fix for Visual Funkiness Causing Dupes
+        resultsContainerDiv.style.display = 'block';
 
     } else {
         resultsContainerDiv.style.display = 'none';
