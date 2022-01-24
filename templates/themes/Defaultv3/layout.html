@@ -56,8 +56,24 @@
             <input id="systemSearchInput" class="insetBoxShadow" type="text" placeholder="Search...">
             <i id="searchClearIcon" class="searchClear fas fa-times" onclick="clearSearch();"></i>
         </div>
-        <div class="searchResults">
+        <div class="searchResults" style="display:none;">
           <ul id="searchResultList" class="list-group list-group-flush">
+              <li>Channels
+                  <ul id="searchResultsList-Channels">
+                  </ul>
+              </li>
+              <li>Videos
+                  <ul id="searchResultsList-Videos">
+                  </ul>
+              </li>
+              <li>Clips
+                  <ul id="searchResultsList-Clips">
+                  </ul>
+              </li>
+              <li>Users
+                  <ul id="searchResultsList-Users">
+                  </ul>
+              </li>
           </ul>
         </div>
 
