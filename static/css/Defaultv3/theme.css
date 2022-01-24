@@ -338,6 +338,11 @@ table tbody tr {
     width: 390px;
 }
 
+.navbar .searchResults .searchResults-Group {
+    background-color: var(--box1-background);
+    list-style: none;
+}
+
 .navbar .userImage {
     object-fit: cover;
     border-radius:50%;
