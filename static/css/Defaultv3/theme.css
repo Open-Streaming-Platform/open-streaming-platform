@@ -338,9 +338,18 @@ table tbody tr {
     width: 390px;
 }
 
-.navbar .searchResults .searchResults-Group {
+.navbar .searchResults .list-group {
     background-color: var(--box1-background);
+
+}
+
+.navbar .searchResults .searchResults-Group {
     list-style: none;
+    border-radius: 6px;
+}
+
+.navbar .searchResults .searchResults-Group ul {
+    padding-inline-start: 0;
 }
 
 .navbar .userImage {
@@ -359,6 +368,7 @@ table tbody tr {
 .list-group-item {
     color: var(--font-color);
     background-color: var(--box1-background);
+    border: 0 solid black;
 }
 
 .bs-icon {
