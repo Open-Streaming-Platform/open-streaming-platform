@@ -212,6 +212,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             var userResults = data['results'];
         }, "json");
 
+        $('.searchResults').toggle().toggle() // Fix for Visual Funkiness Causing Dupes
+
     } else {
         resultsContainerDiv.style.display = 'none';
         var ul = document.getElementById("searchResultsList-Channels");

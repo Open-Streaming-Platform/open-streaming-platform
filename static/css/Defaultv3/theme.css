@@ -346,6 +346,7 @@ table tbody tr {
 .navbar .searchResults .searchResults-Group {
     list-style: none;
     border-radius: 6px;
+    padding: .75rem .75rem .5rem .75rem;
 }
 
 .navbar .searchResults .searchResults-Group ul {
