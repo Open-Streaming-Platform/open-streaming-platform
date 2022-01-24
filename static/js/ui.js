@@ -89,8 +89,15 @@ function createNewBSAlert(message,category) {
 function clearSearch() {
     document.getElementById('systemSearchInput').value = '';
     document.getElementById('searchClearIcon').style.display = 'none';
-    document.getElementById('searchResultList').innerHTML = '';
     document.getElementById("searchResults").style.display = 'none';
+    var ul = document.getElementById("searchResultsList-Channels");
+    ul.innerHTML = '';
+    var ul = document.getElementById("searchResultsList-Videos");
+    ul.innerHTML = '';
+    var ul = document.getElementById("searchResultsList-Clips");
+    ul.innerHTML = '';
+    var ul = document.getElementById("searchResultsList-Users");
+    ul.innerHTML = '';
 }
 
 // Watches the Mouse Target Location Opens User Navigation Bar
@@ -175,6 +182,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         document.getElementById("searchResults");
         var ul = document.getElementById("searchResultsList-Channels");
         ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Videos");
+        ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Clips");
+        ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Users");
+        ul.innerHTML = '';
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
             console.log(data['results']);
@@ -200,7 +213,14 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
     } else {
         resultsContainerDiv.style.display = 'none';
-        document.getElementById('searchResultList').innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Channels");
+        ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Videos");
+        ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Clips");
+        ul.innerHTML = '';
+        var ul = document.getElementById("searchResultsList-Users");
+        ul.innerHTML = '';
     }
 });
 
