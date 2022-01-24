@@ -88,8 +88,9 @@ function createNewBSAlert(message,category) {
 
 function clearSearch() {
     document.getElementById('systemSearchInput').value = '';
-    document.getElementById('searchClearIcon').style.display='none';
+    document.getElementById('searchClearIcon').style.display = 'none';
     document.getElementById('searchResultList').innerHTML = '';
+    document.getElementById("searchResults").style.display = 'none';
 }
 
 // Watches the Mouse Target Location Opens User Navigation Bar
@@ -167,18 +168,21 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         searchClearButton.style.display = 'none';
     }
 
+    resultsContainerDiv = document.getElementById("searchResults");
+
     if (searchInput.length >= 3) {
-        var ul = document.getElementById("searchResultList");
+        resultsContainerDiv.style.display = 'block';
+        document.getElementById("searchResults");
+        var ul = document.getElementById("searchResultsList-Channels");
         ul.innerHTML = '';
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
+            console.log(data['results']);
             for (var i = 0; i < channelResults.length; i++) {
-                var ul = document.getElementById("searchResultList");
                 var li = document.createElement("li");
-                li.appendChild(document.createTextNode(channelResults[i][1]));
+                li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/">' + channelResults[i][1] + '</a>'
                 li.classList = "list-group-item";
                 ul.appendChild(li);
-                console.log(data['results']);
             }
         }, "json");
         $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
@@ -195,6 +199,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         }, "json");
 
     } else {
+        resultsContainerDiv.style.display = 'none';
         document.getElementById('searchResultList').innerHTML = '';
     }
 });
