@@ -191,6 +191,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
             console.log(data['results']);
+            ul = document.getElementById("searchResultsList-Channels");
             for (var i = 0; i < channelResults.length; i++) {
                 var li = document.createElement("li");
                 li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/">' + channelResults[i][1] + '</a>'
