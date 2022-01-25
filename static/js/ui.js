@@ -257,7 +257,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul = document.getElementById("searchResultsList-Users");
             ul.innerHTML = '';
 
-            if (clipResults.length === 0) {
+            if (userResults.length === 0) {
                 ulGroup.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
