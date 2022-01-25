@@ -264,7 +264,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 for (var i = 0; i < userResults.length; i++) {
                     var li = document.createElement("li");
                     li.classList = "list-group-item";
-                    li.innerHTML = '<a href="/profile/' + userResults[i][1] + '">' + userResults[i][1] + '</a>'
+                    li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="/images/' + userResults[i][3] + '" class="avatar-small boxShadow mr-2">' + userResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
             }
