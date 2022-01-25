@@ -178,6 +178,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
     resultsContainerDiv = document.getElementById("searchResults");
 
     if (searchInput.length >= 3) {
+        resultsContainerDiv.style.display = 'none';
 
         document.getElementById("searchResults");
         var ul = document.getElementById("searchResultsList-Channels");
