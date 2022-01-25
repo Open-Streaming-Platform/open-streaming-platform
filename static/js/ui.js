@@ -213,7 +213,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             for (var i = 0; i < videoResults.length; i++) {
                 var li = document.createElement("li");
                 li.classList = "list-group-item";
-                li.innerHTML = '<a href="/play/' + videoResults[i][0] + '/">' + videoResults[i][1] + '</a>'
+                li.innerHTML = '<a href="/play/' + videoResults[i][0] + '">' + videoResults[i][1] + '</a>'
                 ul.appendChild(li);
             }
         }, "json");
@@ -225,7 +225,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             for (var i = 0; i < clipResults.length; i++) {
                 var li = document.createElement("li");
                 li.classList = "list-group-item";
-                li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '/">' + clipResults[i][1] + '</a>'
+                li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '">' + clipResults[i][1] + '</a>'
                 ul.appendChild(li);
             }
         }, "json");
@@ -237,7 +237,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             for (var i = 0; i < userResults.length; i++) {
                 var li = document.createElement("li");
                 li.classList = "list-group-item";
-                li.innerHTML = '<a href="/profile/' + userResults[i][1] + '/">' + userResults[i][1] + '</a>'
+                li.innerHTML = '<a href="/profile/' + userResults[i][1] + '">' + userResults[i][1] + '</a>'
                 ul.appendChild(li);
             }
         }, "json");
