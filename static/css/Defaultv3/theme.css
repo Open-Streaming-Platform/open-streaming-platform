@@ -340,7 +340,7 @@ table tbody tr {
 
 .navbar .searchResults .list-group {
     background-color: var(--box1-background);
-
+    box-shadow: var(--box-shadow);
 }
 
 .navbar .searchResults .searchResults-Group {
