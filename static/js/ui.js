@@ -191,7 +191,6 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
-            console.log(data['results']);
             ul = document.getElementById("searchResultsList-Channels");
             ul.innerHTML = '';
             for (var i = 0; i < channelResults.length; i++) {
@@ -208,14 +207,38 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
         $.post('/apiv1/video/search', {term: searchInput}, function (data, textStatus) {
             var videoResults = data['results'];
+            ul = document.getElementById("searchResultsList-Videos");
+            ul.innerHTML = '';
+            for (var i = 0; i < videoResults.length; i++) {
+                var li = document.createElement("li");
+                li.classList = "list-group-item";
+                li.innerHTML = '<a href="/play/' + videoResults[i][0] + '/">' + videoResults[i][1] + '</a>'
+                ul.appendChild(li);
+            }
         }, "json");
 
         $.post('/apiv1/clip/search', {term: searchInput}, function (data, textStatus) {
             var clipResults = data['results'];
+            ul = document.getElementById("searchResultsList-Clips");
+            ul.innerHTML = '';
+            for (var i = 0; i < clipResults.length; i++) {
+                var li = document.createElement("li");
+                li.classList = "list-group-item";
+                li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '/">' + clipResults[i][1] + '</a>'
+                ul.appendChild(li);
+            }
         }, "json");
 
         $.post('/apiv1/user/search', {term: searchInput}, function (data, textStatus) {
             var userResults = data['results'];
+            ul = document.getElementById("searchResultsList-Users");
+            ul.innerHTML = '';
+            for (var i = 0; i < userResults.length; i++) {
+                var li = document.createElement("li");
+                li.classList = "list-group-item";
+                li.innerHTML = '<a href="/profile/' + userResults[i][1] + '/">' + userResults[i][1] + '</a>'
+                ul.appendChild(li);
+            }
         }, "json");
 
         resultsContainerDiv.style.display = 'block';
