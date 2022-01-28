@@ -120,15 +120,15 @@ def getChannelIDFromLocation(channelLocation):
 def searchChannels(term):
     if term is not None:
         ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation).filter_by().all()
         ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private).filter_by().all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation).filter_by().all()
         ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%"))\
             .with_entities(Channel.channel_tags.name, Channel.channel_tags.channelID).filter_by().all()
         tagSearchArray = []
         for channel in ChannelTagQuery:
             ChannelTagEntryQuery = Channel.Channel.query.filter_by(id=channel.channelID)\
-                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc,Channel.Channel.private).filter_by().first()
+                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc,Channel.Channel.private, Channel.Channel.imageLocation).filter_by().first()
             if ChannelTagEntryQuery is not None:
                 tagSearchArray.append(ChannelTagEntryQuery)
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery

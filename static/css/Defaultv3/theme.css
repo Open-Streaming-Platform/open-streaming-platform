@@ -533,6 +533,12 @@ table tbody tr {
     object-fit: cover;
 }
 
+.small-channel-thumb {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+}
+
 .itemList {
     padding: 0;
     list-style-type: none;
