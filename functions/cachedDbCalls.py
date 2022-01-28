@@ -231,9 +231,9 @@ def getAllClipsForChannel_View(channelID):
 def searchClips(term):
     if term is not None:
         clipNameQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation).all()
         clipDescriptionQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation).all()
         resultsArray = clipNameQuery + clipDescriptionQuery
         resultsArray = list(set(resultsArray))
         return resultsArray

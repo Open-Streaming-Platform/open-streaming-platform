@@ -251,9 +251,17 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < clipResults.length; i++) {
+
+                    var videoImage = clipResults[i][3];
+                    if (videoImage === null) {
+                        videoImage = '/static/img/video-locked.jpg';
+                    } else {
+                        videoImage = '/videos/' + clipResults[i][3];
+                    }
+
                     var li = document.createElement("li");
                     li.classList = "list-group-item";
-                    li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '">' + clipResults[i][1] + '</a>'
+                    li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
             }
