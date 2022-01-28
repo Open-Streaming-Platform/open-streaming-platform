@@ -201,11 +201,11 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < channelResults.length; i++) {
-                    var channelImage = channelResults[i][3];
+                    var channelImage = channelResults[i][4];
                     if (channelImage === null) {
                         channelImage = '/static/img/video-placeholder.jpg';
                     } else {
-                        channelImage = '/images/' + channelResults[i][3];
+                        channelImage = '/images/' + channelResults[i][4];
                     }
 
                     var li = document.createElement("li");
