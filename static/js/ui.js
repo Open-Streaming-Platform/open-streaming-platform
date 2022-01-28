@@ -205,7 +205,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     if (channelImage === null) {
                         channelImage = '/static/img/video-placeholder.jpg';
                     } else {
-                        channelImage = '/videos/' + channelResults[i][3];
+                        channelImage = '/images/' + channelResults[i][3];
                     }
 
                     var li = document.createElement("li");
