@@ -229,7 +229,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     if (videoImage === null) {
                         videoImage = '/static/img/video-locked.jpg';
                     } else {
-                        videoImage = '/images/' + videoResults[i][3];
+                        videoImage = '/videos/' + videoResults[i][3];
                     }
 
                     var li = document.createElement("li");
