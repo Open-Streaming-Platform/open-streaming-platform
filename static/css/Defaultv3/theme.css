@@ -528,8 +528,8 @@ table tbody tr {
 }
 
 .small-thumb {
-    width: 50px;
-    height: 24px;
+    width: 64px;
+    height: 36px;
     object-fit: cover;
 }
 
