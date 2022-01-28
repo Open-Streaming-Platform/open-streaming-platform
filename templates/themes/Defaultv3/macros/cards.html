@@ -23,7 +23,7 @@
               <div class="col-10">
                 <div class="card-body">
                   <p class="card-text textShadow">
-                    <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName | limit_title30 }}</b></a><br>
+                    <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName | limit_title30 }}</a></b><br>
                     <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | channeltoOwnerID | get_channelName }}">{{ stream.linkedChannel | channeltoOwnerID | get_channelName | limit_title30 }}</a><br>
                     <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName | limit_title30}}</a>
                   </p>
