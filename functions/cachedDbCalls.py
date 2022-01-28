@@ -184,15 +184,15 @@ def getVideoCommentCount(videoID):
 def searchVideos(term):
     if term is not None:
         VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid,RecordedVideo.RecordedVideo.thumbnailLocation).all()
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation).all()
         VideoTagQuery = RecordedVideo.video_tags.query.filter(RecordedVideo.video_tags.name.like("%" + term + "%"))\
             .with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name, RecordedVideo.video_tags.videoID)
         tagSearchArray = []
         for vid in VideoTagQuery:
             VideoTagEntryQuery = RecordedVideo.RecordedVideo.query.filter_by(id=vid.videoID, published=True)\
-                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).filter_by().first()
+                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid,RecordedVideo.RecordedVideo.thumbnailLocation).filter_by().first()
             if VideoTagEntryQuery is not None:
                 tagSearchArray.append(VideoTagEntryQuery)
 

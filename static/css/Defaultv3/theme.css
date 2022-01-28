@@ -527,6 +527,12 @@ table tbody tr {
   border-radius: 50%;
 }
 
+.small-thumb {
+    width: 50px;
+    height: 24px;
+    object-fit: cover;
+}
+
 .itemList {
     padding: 0;
     list-style-type: none;
