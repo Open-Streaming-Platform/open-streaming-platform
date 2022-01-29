@@ -199,14 +199,14 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
             groupShowMore.style.display = 'none';
 
-            var limit = 3;
+            var chanlimit = 3;
 
             if (channelResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < limit; i++) {
+                for (var i = 0; i < chanlimit; i++) {
                     var channelImage = channelResults[i][4];
                     if (channelImage === null) {
                         channelImage = '/static/img/video-placeholder.jpg';
@@ -219,7 +219,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage +'">' + channelResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
-                if (channelResults.length >= limit) {
+                if (channelResults.length >= chanlimit) {
                     groupShowMore.style.display = 'block';
                 }
             }
@@ -238,14 +238,14 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
             groupShowMore.style.display = 'none';
 
-            var limit = 5;
+            var vidlimit = 5;
 
             if (videoResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < limit; i++) {
+                for (var i = 0; i < vidlimit; i++) {
 
                     var videoImage = videoResults[i][3];
                     if (videoImage === null) {
@@ -260,7 +260,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     ul.appendChild(li);
                 }
 
-                if (videoResults.length >= limit) {
+                if (videoResults.length >= vidlimit) {
                     groupShowMore.style.display = 'block';
                 }
             }
@@ -275,14 +275,14 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
             groupShowMore.style.display = 'none';
 
-            var limit = 5;
+            var cliplimit = 5;
 
             if (clipResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < limit; i++) {
+                for (var i = 0; i < cliplimit; i++) {
 
                     var videoImage = clipResults[i][3];
                     if (videoImage === null) {
@@ -297,7 +297,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     ul.appendChild(li);
                 }
 
-                if (clipResults.length >= limit) {
+                if (clipResults.length >= cliplimit) {
                     groupShowMore.style.display = 'block';
                 }
             }
@@ -312,14 +312,14 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
             groupShowMore.style.display = 'none';
 
-            var limit = 4;
+            var userlimit = 4;
 
             if (userResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < limit; i++) {
+                for (var i = 0; i < userlimit; i++) {
                     var li = document.createElement("li");
                     li.classList = "list-group-item";
                     var userImage = userResults[i][3];
@@ -331,7 +331,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
-                if (userResults.length >= limit) {
+                if (userResults.length >= userlimit) {
                     groupShowMore.style.display = 'block';
                 }
             }
