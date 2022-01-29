@@ -193,14 +193,18 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         $.post('/apiv1/channel/search', {term: searchInput}, function (data, textStatus) {
             var channelResults = data['results'];
             var ulGroup = document.getElementById("searchResultsGroup-Channels");
+            var groupShowMore = document.getElementById('searchResults-Channels-ShowMore');
             ul = document.getElementById("searchResultsList-Channels");
             ul.innerHTML = '';
 
+            var limit = 3;
+
             if (channelResults.length === 0) {
                 ulGroup.style.display = 'none';
+                groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < channelResults.length; i++) {
+                for (var i = 0; i <= limit; i++) {
                     var channelImage = channelResults[i][4];
                     if (channelImage === null) {
                         channelImage = '/static/img/video-placeholder.jpg';
@@ -213,6 +217,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage +'">' + channelResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
+                if (channelResults.length > limit) {
+                    groupShowMore.style.display = 'block';
+                }
             }
         }, "json");
 
@@ -223,14 +230,18 @@ $("#systemSearchInput").on('change keydown paste input', function(){
         $.post('/apiv1/video/search', {term: searchInput}, function (data, textStatus) {
             var videoResults = data['results'];
             var ulGroup = document.getElementById("searchResultsGroup-Videos");
+            var groupShowMore = document.getElementById('searchResults-Videos-ShowMore');
             ul = document.getElementById("searchResultsList-Videos");
             ul.innerHTML = '';
 
+            var limit = 5;
+
             if (videoResults.length === 0) {
                 ulGroup.style.display = 'none';
+                groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < videoResults.length; i++) {
+                for (var i = 0; i <= limit; i++) {
 
                     var videoImage = videoResults[i][3];
                     if (videoImage === null) {
@@ -244,20 +255,28 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/play/' + videoResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage +'">' + videoResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
+
+                if (videoResults.length > limit) {
+                    groupShowMore.style.display = 'block';
+                }
             }
         }, "json");
 
         $.post('/apiv1/clip/search', {term: searchInput}, function (data, textStatus) {
             var clipResults = data['results'];
             var ulGroup = document.getElementById("searchResultsGroup-Clips");
+            var groupShowMore = document.getElementById('searchResults-Clips-ShowMore');
             ul = document.getElementById("searchResultsList-Clips");
             ul.innerHTML = '';
 
+            var limit = 5;
+
             if (clipResults.length === 0) {
                 ulGroup.style.display = 'none';
+                groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < clipResults.length; i++) {
+                for (var i = 0; i <= limit; i++) {
 
                     var videoImage = clipResults[i][3];
                     if (videoImage === null) {
@@ -271,20 +290,28 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
+
+                if (clipResults.length > limit) {
+                    groupShowMore.style.display = 'block';
+                }
             }
         }, "json");
 
         $.post('/apiv1/user/search', {term: searchInput}, function (data, textStatus) {
             var userResults = data['results'];
             var ulGroup = document.getElementById("searchResultsGroup-Users");
+            var groupShowMore = document.getElementById('searchResults-Clips-ShowMore');
             ul = document.getElementById("searchResultsList-Users");
             ul.innerHTML = '';
 
+            var limit = 4;
+
             if (userResults.length === 0) {
                 ulGroup.style.display = 'none';
+                groupShowMore.style.display = 'none';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < userResults.length; i++) {
+                for (var i = 0; i <= limit; i++) {
                     var li = document.createElement("li");
                     li.classList = "list-group-item";
                     var userImage = userResults[i][3];
@@ -295,6 +322,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     }
                     li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
                     ul.appendChild(li);
+                }
+                if (userResults.length > limit) {
+                    groupShowMore.style.display = 'block';
                 }
             }
         }, "json");
