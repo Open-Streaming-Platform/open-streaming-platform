@@ -197,6 +197,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul = document.getElementById("searchResultsList-Channels");
             ul.innerHTML = '';
 
+            groupShowMore.style.display = 'none';
+
             var limit = 3;
 
             if (channelResults.length === 0) {
@@ -234,6 +236,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul = document.getElementById("searchResultsList-Videos");
             ul.innerHTML = '';
 
+            groupShowMore.style.display = 'none';
+
             var limit = 5;
 
             if (videoResults.length === 0) {
@@ -269,6 +273,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul = document.getElementById("searchResultsList-Clips");
             ul.innerHTML = '';
 
+            groupShowMore.style.display = 'none';
+
             var limit = 5;
 
             if (clipResults.length === 0) {
@@ -303,6 +309,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             var groupShowMore = document.getElementById('searchResults-Clips-ShowMore');
             ul = document.getElementById("searchResultsList-Users");
             ul.innerHTML = '';
+
+            groupShowMore.style.display = 'none';
 
             var limit = 4;
 
