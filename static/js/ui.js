@@ -219,9 +219,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage +'">' + channelResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
-                if (channelResults.length >= chanlimit) {
-                    groupShowMore.style.display = 'block';
-                }
+            }
+            if (channelResults.length >= chanlimit) {
+                groupShowMore.style.display = 'block';
             }
         }, "json");
 
@@ -259,10 +259,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/play/' + videoResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage +'">' + videoResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
-
-                if (videoResults.length >= vidlimit) {
-                    groupShowMore.style.display = 'block';
-                }
+            }
+            if (videoResults.length >= vidlimit) {
+                groupShowMore.style.display = 'block';
             }
         }, "json");
 
@@ -297,9 +296,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     ul.appendChild(li);
                 }
 
-                if (clipResults.length >= cliplimit) {
-                    groupShowMore.style.display = 'block';
-                }
+            }
+            if (clipResults.length >= cliplimit) {
+                groupShowMore.style.display = 'block';
             }
         }, "json");
 
