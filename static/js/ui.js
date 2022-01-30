@@ -207,18 +207,20 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < chanlimit; i++) {
-                    var channelImage = channelResults[i][4];
-                    if (channelImage === null) {
-                        channelImage = '/static/img/video-placeholder.jpg';
-                    } else {
-                        channelImage = '/images/' + channelResults[i][4];
-                    }
+                for (var i = 0; i < channelResults.length; i++) {
+                    if (i < chanlimit) {
+                        var channelImage = channelResults[i][4];
+                        if (channelImage === null) {
+                            channelImage = '/static/img/video-placeholder.jpg';
+                        } else {
+                            channelImage = '/images/' + channelResults[i][4];
+                        }
 
-                    var li = document.createElement("li");
-                    li.classList = "list-group-item";
-                    li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage +'">' + channelResults[i][1] + '</a>'
-                    ul.appendChild(li);
+                        var li = document.createElement("li");
+                        li.classList = "list-group-item";
+                        li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage + '">' + channelResults[i][1] + '</a>'
+                        ul.appendChild(li);
+                    }
                 }
             }
             if (channelResults.length > chanlimit) {
@@ -248,19 +250,20 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < vidlimit; i++) {
+                for (var i = 0; i < videoResults; i++) {
+                    if (i < vidlimit) {
+                        var videoImage = videoResults[i][3];
+                        if (videoImage === null) {
+                            videoImage = '/static/img/video-locked.jpg';
+                        } else {
+                            videoImage = '/videos/' + videoResults[i][3];
+                        }
 
-                    var videoImage = videoResults[i][3];
-                    if (videoImage === null) {
-                        videoImage = '/static/img/video-locked.jpg';
-                    } else {
-                        videoImage = '/videos/' + videoResults[i][3];
+                        var li = document.createElement("li");
+                        li.classList = "list-group-item";
+                        li.innerHTML = '<a href="/play/' + videoResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + videoResults[i][1] + '</a>'
+                        ul.appendChild(li);
                     }
-
-                    var li = document.createElement("li");
-                    li.classList = "list-group-item";
-                    li.innerHTML = '<a href="/play/' + videoResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage +'">' + videoResults[i][1] + '</a>'
-                    ul.appendChild(li);
                 }
             }
             if (videoResults.length > vidlimit) {
@@ -286,19 +289,20 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < cliplimit; i++) {
+                for (var i = 0; i < clipResults.length; i++) {
+                    if (i < cliplimit) {
+                        var videoImage = clipResults[i][3];
+                        if (videoImage === null) {
+                            videoImage = '/static/img/video-placeholder.jpg';
+                        } else {
+                            videoImage = '/videos/' + clipResults[i][3];
+                        }
 
-                    var videoImage = clipResults[i][3];
-                    if (videoImage === null) {
-                        videoImage = '/static/img/video-placeholder.jpg';
-                    } else {
-                        videoImage = '/videos/' + clipResults[i][3];
+                        var li = document.createElement("li");
+                        li.classList = "list-group-item";
+                        li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[i][1] + '</a>'
+                        ul.appendChild(li);
                     }
-
-                    var li = document.createElement("li");
-                    li.classList = "list-group-item";
-                    li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[i][1] + '</a>'
-                    ul.appendChild(li);
                 }
 
             }
@@ -325,17 +329,19 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < userlimit; i++) {
-                    var li = document.createElement("li");
-                    li.classList = "list-group-item";
-                    var userImage = userResults[i][3];
-                    if (userImage === null) {
-                        userImage = '/static/img/user2.png';
-                    } else {
-                        userImage = '/images/' + userResults[i][3];
+                for (var i = 0; i < userResults.length; i++) {
+                    if (i < userlimit) {
+                        var li = document.createElement("li");
+                        li.classList = "list-group-item";
+                        var userImage = userResults[i][3];
+                        if (userImage === null) {
+                            userImage = '/static/img/user2.png';
+                        } else {
+                            userImage = '/images/' + userResults[i][3];
+                        }
+                        li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
+                        ul.appendChild(li);
                     }
-                    li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
-                    ul.appendChild(li);
                 }
             }
             if (userResults.length > userlimit) {
