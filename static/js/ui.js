@@ -207,18 +207,18 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < channelResults.length; i++) {
-                    if (i < chanlimit) {
-                        var channelImage = channelResults[i][4];
+                for (var ic = 0; ic < channelResults.length; ic++) {
+                    if (ic < chanlimit) {
+                        var channelImage = channelResults[ic][4];
                         if (channelImage === null) {
                             channelImage = '/static/img/video-placeholder.jpg';
                         } else {
-                            channelImage = '/images/' + channelResults[i][4];
+                            channelImage = '/images/' + channelResults[ic][4];
                         }
 
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/channel/' + channelResults[i][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage + '">' + channelResults[i][1] + '</a>'
+                        li.innerHTML = '<a href="/channel/' + channelResults[ic][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage + '">' + channelResults[ic][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -250,18 +250,18 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < videoResults; i++) {
-                    if (i < vidlimit) {
-                        var videoImage = videoResults[i][3];
+                for (var iv = 0; iv < videoResults; iv++) {
+                    if (iv < vidlimit) {
+                        var videoImage = videoResults[iv][3];
                         if (videoImage === null) {
                             videoImage = '/static/img/video-locked.jpg';
                         } else {
-                            videoImage = '/videos/' + videoResults[i][3];
+                            videoImage = '/videos/' + videoResults[iv][3];
                         }
 
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/play/' + videoResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + videoResults[i][1] + '</a>'
+                        li.innerHTML = '<a href="/play/' + videoResults[iv][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + videoResults[iv][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -289,18 +289,18 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < clipResults.length; i++) {
-                    if (i < cliplimit) {
-                        var videoImage = clipResults[i][3];
+                for (var icl = 0; icl < clipResults.length; icl++) {
+                    if (icl < cliplimit) {
+                        var videoImage = clipResults[icl][3];
                         if (videoImage === null) {
                             videoImage = '/static/img/video-placeholder.jpg';
                         } else {
-                            videoImage = '/videos/' + clipResults[i][3];
+                            videoImage = '/videos/' + clipResults[icl][3];
                         }
 
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/clip/' + clipResults[i][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[i][1] + '</a>'
+                        li.innerHTML = '<a href="/clip/' + clipResults[icl][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[icl][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -329,17 +329,17 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
-                for (var i = 0; i < userResults.length; i++) {
+                for (var iu = 0; iu < userResults.length; iu++) {
                     if (i < userlimit) {
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        var userImage = userResults[i][3];
+                        var userImage = userResults[iu][3];
                         if (userImage === null) {
                             userImage = '/static/img/user2.png';
                         } else {
-                            userImage = '/images/' + userResults[i][3];
+                            userImage = '/images/' + userResults[iu][3];
                         }
-                        li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
+                        li.innerHTML = '<a href="/profile/' + userResults[iu][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[iu][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
