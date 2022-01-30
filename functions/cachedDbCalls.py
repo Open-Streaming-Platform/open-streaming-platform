@@ -149,11 +149,10 @@ def searchChannels(term):
                 tagSearchArray.append(ChannelTagEntryQuery)
 
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery
+        resultsArray = list(set(resultsArray))
         for entry in tagSearchArray:
             if entry not in resultsArray:
                 resultsArray.append(entry)
-
-        resultsArray = list(set(resultsArray))
 
         return resultsArray
     else:
