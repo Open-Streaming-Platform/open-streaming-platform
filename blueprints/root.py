@@ -194,10 +194,13 @@ def search_page():
                         if len(chanVidQuery) > 0:
                             channelListArray.append(channel)
                     channelList = channelListArray
-                return render_template(themes.checkOverride('channels.html'), channelList=channelList)
+                return render_template(themes.checkOverride('videoListView.html'), userChannels=channelList)
             elif type == "streams":
                 openStreams = cachedDbCalls.searchStreams(term)
                 return render_template(themes.checkOverride('videoListView.html'), openStreams=openStreams)
+            elif type == "videos":
+                recordedVids = cachedDbCalls.searchVideos(term)
+                return render_template(themes.checkOverride('videoListView.html'), recordedVids=recordedVids)
 
     return redirect(url_for('root.main_page'))
 
