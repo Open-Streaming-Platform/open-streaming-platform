@@ -136,7 +136,7 @@ def searchChannels(term):
         ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%")) \
             .with_entities(Channel.channel_tags.id, Channel.channel_tags.name, Channel.channel_tags.channelID).all()
 
-        tagSearchArray = []
+        ChannelTagEntryQuery = []
         for channel in ChannelTagQuery:
             ChannelTagEntryQuery = Channel.Channel.query.filter_by(id=channel.channelID) \
                 .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
@@ -145,12 +145,10 @@ def searchChannels(term):
                                Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                                Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
                                Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
-            if ChannelTagEntryQuery is not None:
-                tagSearchArray.append(ChannelTagEntryQuery)
 
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery
         resultsArray = list(set(resultsArray))
-        for entry in tagSearchArray:
+        for entry in ChannelTagEntryQuery:
             if entry not in resultsArray:
                 resultsArray.append(entry)
 
