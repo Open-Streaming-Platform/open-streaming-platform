@@ -204,7 +204,7 @@ def searchVideos(term):
 
         VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
-                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
@@ -212,7 +212,7 @@ def searchVideos(term):
 
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
-                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
@@ -225,7 +225,7 @@ def searchVideos(term):
         for vid in VideoTagQuery:
             VideoTagEntryQuery = RecordedVideo.RecordedVideo.query.filter_by(id=vid.videoID, published=True)\
                 .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
-                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
