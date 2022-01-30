@@ -204,6 +204,9 @@ def search_page():
             elif type == "clips":
                 clipsList = cachedDbCalls.searchClips(term)
                 return render_template(themes.checkOverride('videoListView.html'), clipsList=clipsList)
+            elif type == "users":
+                streamerList = cachedDbCalls.searchUsers(term)
+                return render_template(themes.checkOverride('streamers.html'), streamerList=streamerList)
 
     return redirect(url_for('root.main_page'))
 

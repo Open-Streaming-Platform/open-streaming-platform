@@ -347,6 +347,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (clipResults.length > cliplimit) {
                 groupShowMore.style.display = 'block';
                 groupShowMore.className = 'd-flex';
+                document.getElementById('searchResults-Clips-ShowMore-link').href = "/search?type=clips&term=" + searchInput;
             }
         }, "json");
 
@@ -384,6 +385,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (userResults.length > userlimit) {
                 groupShowMore.style.display = 'block';
                 groupShowMore.className = 'd-flex';
+                document.getElementById('searchResults-Users-ShowMore-link').href = "/search?type=users&term=" + searchInput;
             }
         }, "json");
 
