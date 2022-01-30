@@ -8,6 +8,7 @@ from globals import globalvars
 
 from classes.shared import db
 from classes import Channel
+from classes import panel
 
 from functions import videoFunc
 from functions import cachedDbCalls
@@ -17,6 +18,19 @@ def delete_channel(channelID):
 
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
     if channelQuery is not None:
+
+        panelMappingQuery = panel.panelMapping.query.filter_by(panelType=2, panelLocationId=channelQuery.id).all()
+        for map in panelMappingQuery:
+            db.session.delete(map)
+
+        channelPanelQuery = panel.channelPanel.query.filter_by(channelId=channelQuery.id).all()
+        for pan in channelPanelQuery:
+            db.session.delete(pan)
+
+        globalPanelQuery = panel.globalPanel.query.filter_by(type=6, target=channelQuery.id).all()
+        for globalpan in globalPanelQuery:
+            db.session.delete(globalpan)
+
         for vid in channelQuery.recordedVideo:
             videoFunc.deleteVideo(vid.id)
 
