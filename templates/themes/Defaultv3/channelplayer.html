@@ -129,6 +129,35 @@
         topicJSList["{{x.id}}"] =  "{{x.name}}";
         {% endfor %}
     </script>
+    
+    <script>
+        // Handing of Stream Timer
+        function convertToHMS(timestamp) {
+            var sec_num = parseInt(timestamp, 10); // don't forget the second param
+            var hours = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (hours < 10) { hours = "0" + hours; }
+            if (minutes < 10) { minutes = "0" + minutes; }
+            if (seconds < 10) { seconds = "0" + seconds; }
+            return hours + ':' + minutes + ':' + seconds;
+        }
+
+        var streamTimeStamp = new Date('{{ stream.startTimestamp }} UTC');
+
+        var timer = setInterval(updateTimer, 1000);
+        function updateTimer() {
+            if (isNaN(streamTimeStamp.getTime())) {
+                document.getElementById('streamTime').innerHTML = '--:--:--';
+            } else {
+                var currentTimestamp = new Date()
+                var timerDif = Math.floor((currentTimestamp.getTime() - streamTimeStamp.getTime()) / 1000);
+                var timerDifParsed = convertToHMS(timerDif);
+                document.getElementById('streamTime').innerHTML = timerDifParsed;
+            }
+        }
+    </script>
 
     <script>
         // Settings and Event Hooks for XMPP

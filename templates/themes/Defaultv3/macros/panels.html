@@ -615,7 +615,7 @@
 {% macro stream_views_panel(channel, stream) %}
 <div class="video-views-panel">
   <div class="float-end mx-1 my-2">
-    <span title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b class="video-views-text">{{channel.currentViewers}}</b></span>
+    <i class="fas fa-clock mx-2"></i><span class="video-views-text" title="Time live" id="streamTime">00:00:00</span><span class="ms-2" title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b class="video-views-text">{{channel.currentViewers}}</b></span>
   </div>
 </div>
 {% endmacro %}
