@@ -251,7 +251,8 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             } else {
                 ulGroup.style.display = 'block';
                 for (var iv = 0; iv < videoResults; iv++) {
-                    //if (iv < vidlimit) {
+                    console.log(iv);
+                    if (iv < vidlimit) {
 
                         var videoImage = videoResults[iv][3];
                         if (videoImage === null) {
@@ -259,12 +260,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                         } else {
                             videoImage = '/videos/' + videoResults[iv][3];
                         }
-
+                        console.log(preappend);
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
                         li.innerHTML = '<a href="/play/' + videoResults[iv][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + videoResults[iv][1] + '</a>'
                         ul.appendChild(li);
-                    //}
+                    }
                 }
             }
             if (videoResults.length > vidlimit) {
