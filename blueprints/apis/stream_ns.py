@@ -76,10 +76,11 @@ class api_1_SearchStreams(Resource):
         """
             Searches Stream Names and Metadata and returns Name and Link
         """
+        sysSettings = cachedDbCalls.getSystemSettings()
         args = streamSearchPost.parse_args()
         returnArray = []
         if 'term' in args:
             returnArray = cachedDbCalls.searchStreams(args['term'])
-            return {'results': returnArray}
+            return {'results': returnArray, 'adaptive': sysSettings.adaptiveStreaming}
         else:
             return {'results': {'message': 'Request Error'}}, 400

@@ -230,6 +230,44 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
         $.post('/apiv1/stream/search', {term: searchInput}, function (data, textStatus) {
             var streamResults = data['results'];
+            var ulGroup = document.getElementById("searchResultsGroup-Streams");
+            var groupShowMore = document.getElementById('searchResults-Streams-ShowMore');
+            ul = document.getElementById("searchResultsList-Streams");
+            ul.innerHTML = '';
+
+            groupShowMore.style.display = 'none';
+            groupShowMore.className = '';
+
+            var streamlimit = 5;
+
+            if (streamResults.length === 0) {
+                ulGroup.style.display = 'none';
+            } else {
+                ulGroup.style.display = 'block';
+                for (var is = 0; is < streamResults.length; is++) {
+                    if (is < streamlimit) {
+
+                        var videoImage = streamResults[is][3];
+                        if (videoImage === null) {
+                            videoImage = '/static/img/video-locked.jpg';
+                        } else {
+                            if (data['adaptive'] === true) {
+                                videoImage = '/stream-thumb-adapt/' + streamResults[is][2] + '.png';
+                            } else {
+                                videoImage = '/stream-thumb/' + streamResults[is][2] + '.png';
+                            }
+                        }
+                        var li = document.createElement("li");
+                        li.classList = "list-group-item";
+                        li.innerHTML = '<a href="/play/' + streamResults[is][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + streamResults[is][1] + '</a>'
+                        ul.appendChild(li);
+                    }
+                }
+            }
+            if (streamResults.length > streamlimit) {
+                groupShowMore.style.display = 'block';
+                groupShowMore.className = 'd-flex';
+            }
         }, "json");
 
         $.post('/apiv1/video/search', {term: searchInput}, function (data, textStatus) {
