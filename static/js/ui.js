@@ -217,7 +217,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/channel/' + channelResults[ic][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage + '">' + channelResults[ic][1] + '</a>'
+                        li.innerHTML = '<a href="/channel/' + channelResults[ic][0] + '/"><img class="small-channel-thumb boxShadow me-2" src="' + channelImage + '" onerror="this.src=\'/static/img/video-placeholder.jpg\';">' + channelResults[ic][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -260,7 +260,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                         }
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/play/' + streamResults[is][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + streamResults[is][1] + '</a>'
+                        li.innerHTML = '<a href="/play/' + streamResults[is][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '" onerror="this.src=\'/static/img/video-placeholder.jpg\';">' + streamResults[is][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -299,7 +299,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                         }
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/play/' + videoResults[iv][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + videoResults[iv][1] + '</a>'
+                        li.innerHTML = '<a href="/play/' + videoResults[iv][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '" onerror="this.src=\'/static/img/video-placeholder.jpg\';">' + videoResults[iv][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -338,7 +338,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
 
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
-                        li.innerHTML = '<a href="/clip/' + clipResults[icl][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '">' + clipResults[icl][1] + '</a>'
+                        li.innerHTML = '<a href="/clip/' + clipResults[icl][0] + '"><img class="small-thumb boxShadow me-2" src="' + videoImage + '" onerror="this.src=\'/static/img/video-placeholder.jpg\';">' + clipResults[icl][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
@@ -377,7 +377,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                         } else {
                             userImage = '/images/' + userResults[iu][3];
                         }
-                        li.innerHTML = '<a href="/profile/' + userResults[iu][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[iu][1] + '</a>'
+                        li.innerHTML = '<a href="/profile/' + userResults[iu][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2" onerror="this.src=\'/static/img/user2.png\';">' + userResults[iu][1] + '</a>'
                         ul.appendChild(li);
                     }
                 }
