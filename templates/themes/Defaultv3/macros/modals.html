@@ -1297,6 +1297,11 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  $('#clipModal').on('hidden.bs.modal', function () {
+    clipplayer.pause();
+  });
+</script>
 {% endmacro %}
 
 {% macro create_clip_socketio() %}
