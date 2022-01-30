@@ -120,15 +120,35 @@ def getChannelIDFromLocation(channelLocation):
 def searchChannels(term):
     if term is not None:
         ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation).filter_by().all()
-        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation).filter_by().all()
-        ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%"))\
-            .with_entities(Channel.channel_tags.name, Channel.channel_tags.channelID).filter_by().all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                           Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                           Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                           Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                           Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                           Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%")) \
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                           Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                           Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                           Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                           Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                           Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+        ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%")) \
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                           Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                           Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                           Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                           Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                           Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
         tagSearchArray = []
         for channel in ChannelTagQuery:
-            ChannelTagEntryQuery = Channel.Channel.query.filter_by(id=channel.channelID)\
-                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc,Channel.Channel.private, Channel.Channel.imageLocation).filter_by().first()
+            ChannelTagEntryQuery = Channel.Channel.query.filter_by(id=channel.channelID) \
+                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                               Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                               Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                               Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                               Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                               Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
             if ChannelTagEntryQuery is not None:
                 tagSearchArray.append(ChannelTagEntryQuery)
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery

@@ -127,53 +127,74 @@ def main_page():
 
         return render_template(themes.checkOverride('index.html'), streamList=activeStreams, videoList=recordedQuery, clipList=clipQuery, panelList=themes.getPagePanels('root.main_page'))
 
-@root_bp.route('/search', methods=["POST"])
+@root_bp.route('/search', methods=["POST", "GET"])
 def search_page():
-    if 'term' in request.form:
-        search = str(request.form['term'])
+    # Deprecated Method Under Old Theme - To be removed in future
+    if request.method == 'POST':
+        if 'term' in request.form:
+            search = str(request.form['term'])
 
-        topicList = topics.topics.query.filter(topics.topics.name.contains(search)).all()
+            topicList = topics.topics.query.filter(topics.topics.name.contains(search)).all()
 
-        streamerList = []
-        streamerList1 = Sec.User.query.filter(Sec.User.username.contains(search)).all()
-        streamerList2 = Sec.User.query.filter(Sec.User.biography.contains(search)).all()
-        for stream in streamerList1:
-            if stream.has_role('Streamer'):
-                streamerList.append(stream)
-        for stream in streamerList2:
-            if stream not in streamerList and stream.has_role('streamer'):
-                streamerList.append(stream)
+            streamerList = []
+            streamerList1 = Sec.User.query.filter(Sec.User.username.contains(search)).all()
+            streamerList2 = Sec.User.query.filter(Sec.User.biography.contains(search)).all()
+            for stream in streamerList1:
+                if stream.has_role('Streamer'):
+                    streamerList.append(stream)
+            for stream in streamerList2:
+                if stream not in streamerList and stream.has_role('streamer'):
+                    streamerList.append(stream)
 
-        channelList = []
-        channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.contains(search)).all()
-        channelList2 = Channel.Channel.query.filter(Channel.Channel.description.contains(search)).all()
-        for channel in channelList1:
-            channelList.append(channel)
-        for channel in channelList2:
-            if channel not in channelList:
+            channelList = []
+            channelList1 = Channel.Channel.query.filter(Channel.Channel.channelName.contains(search)).all()
+            channelList2 = Channel.Channel.query.filter(Channel.Channel.description.contains(search)).all()
+            for channel in channelList1:
                 channelList.append(channel)
+            for channel in channelList2:
+                if channel not in channelList:
+                    channelList.append(channel)
 
-        videoList = []
-        videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
-        videoList2 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.description.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
-        for video in videoList1:
-            videoList.append(video)
-        for video in videoList2:
-            if video not in videoList:
+            videoList = []
+            videoList1 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
+            videoList2 = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.description.contains(search)).filter(RecordedVideo.RecordedVideo.pending == False, RecordedVideo.RecordedVideo.published == True).all()
+            for video in videoList1:
                 videoList.append(video)
+            for video in videoList2:
+                if video not in videoList:
+                    videoList.append(video)
 
-        streamList = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.contains(search)).all()
+            streamList = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.contains(search)).all()
 
-        clipList = []
-        clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).filter(RecordedVideo.Clips.published == True).all()
-        clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).filter(RecordedVideo.Clips.published == True).all()
-        for clip in clipList1:
-            clipList.append(clip)
-        for clip in clipList2:
-            if clip not in clipList:
+            clipList = []
+            clipList1 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.contains(search)).filter(RecordedVideo.Clips.published == True).all()
+            clipList2 = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.description.contains(search)).filter(RecordedVideo.Clips.published == True).all()
+            for clip in clipList1:
                 clipList.append(clip)
+            for clip in clipList2:
+                if clip not in clipList:
+                    clipList.append(clip)
 
-        return render_template(themes.checkOverride('search.html'), topicList=topicList, streamerList=streamerList, channelList=channelList, videoList=videoList, streamList=streamList, clipList=clipList)
+            return render_template(themes.checkOverride('search.html'), topicList=topicList, streamerList=streamerList, channelList=channelList, videoList=videoList, streamList=streamList, clipList=clipList)
+
+    elif request.method == 'GET':
+        if 'type' in request.args and 'term' in request.args:
+            type = request.args.get("type")
+            term = request.args.get("term")
+
+            if type == "channels":
+                sysSettings = cachedDbCalls.getSystemSettings()
+
+                channelList = cachedDbCalls.searchChannels(term)
+
+                if sysSettings.showEmptyTables is False:
+                    channelListArray = []
+                    for channel in channelList:
+                        chanVidQuery = cachedDbCalls.getChannelVideos(channel.id)
+                        if len(chanVidQuery) > 0:
+                            channelListArray.append(channel)
+                    channelList = channelListArray
+                return render_template(themes.checkOverride('channels.html'), channelList=channelList)
 
     return redirect(url_for('root.main_page'))
 
