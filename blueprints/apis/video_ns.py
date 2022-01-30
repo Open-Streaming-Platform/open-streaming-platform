@@ -105,8 +105,8 @@ class api_1_SearchVideos(Resource):
             finalArray = []
             returnArray = cachedDbCalls.searchVideos(args['term'])
             for vid in returnArray:
-                vid.videoDate = str(vid.videoDate)
-                finalArray.append(vid)
+                newVidObj = [vid.id, vid.channelName, vid.uuid, vid.thumbnailLocation]
+                finalArray.append(newVidObj)
             return {'results': finalArray}
         else:
             return {'results': {'message': 'Request Error'}}, 400
