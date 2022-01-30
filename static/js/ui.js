@@ -204,6 +204,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (channelResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
+                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < chanlimit; i++) {
@@ -222,6 +223,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             }
             if (channelResults.length > chanlimit) {
                 groupShowMore.style.display = 'block';
+                groupShowMore.className = 'd-flex';
             }
         }, "json");
 
@@ -243,6 +245,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (videoResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
+                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < vidlimit; i++) {
@@ -262,6 +265,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             }
             if (videoResults.length > vidlimit) {
                 groupShowMore.style.display = 'block';
+                groupShowMore.className = 'd-flex';
             }
         }, "json");
 
@@ -279,6 +283,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (clipResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
+                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < cliplimit; i++) {
@@ -299,6 +304,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             }
             if (clipResults.length > cliplimit) {
                 groupShowMore.style.display = 'block';
+                groupShowMore.className = 'd-flex';
             }
         }, "json");
 
@@ -316,6 +322,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (userResults.length === 0) {
                 ulGroup.style.display = 'none';
                 groupShowMore.style.display = 'none';
+                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var i = 0; i < userlimit; i++) {
@@ -333,6 +340,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             }
             if (userResults.length > userlimit) {
                 groupShowMore.style.display = 'block';
+                groupShowMore.className = 'd-flex';
             }
         }, "json");
 
