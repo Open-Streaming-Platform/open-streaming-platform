@@ -201,6 +201,9 @@ def search_page():
             elif type == "videos":
                 recordedVids = cachedDbCalls.searchVideos(term)
                 return render_template(themes.checkOverride('videoListView.html'), recordedVids=recordedVids)
+            elif type == "clips":
+                clipsList = cachedDbCalls.searchClips(term)
+                return render_template(themes.checkOverride('videoListView.html'), clipsList=clipsList)
 
     return redirect(url_for('root.main_page'))
 

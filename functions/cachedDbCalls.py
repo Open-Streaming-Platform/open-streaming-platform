@@ -266,9 +266,23 @@ def getAllClipsForChannel_View(channelID):
 def searchClips(term):
     if term is not None:
         clipNameQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation).all()
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo).all()
+
         clipDescriptionQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation).all()
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo).all()
+
         resultsArray = clipNameQuery + clipDescriptionQuery
         resultsArray = list(set(resultsArray))
         return resultsArray
