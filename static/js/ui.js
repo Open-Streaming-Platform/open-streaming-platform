@@ -225,6 +225,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (channelResults.length > chanlimit) {
                 groupShowMore.style.display = 'block';
                 groupShowMore.className = 'd-flex';
+                document.getElementById('searchResults-Channels-ShowMore-link').href = "/search?type=channels&term=" + searchInput;
             }
         }, "json");
 
