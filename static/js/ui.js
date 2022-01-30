@@ -220,7 +220,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     ul.appendChild(li);
                 }
             }
-            if (channelResults.length >= chanlimit) {
+            if (channelResults.length > chanlimit) {
                 groupShowMore.style.display = 'block';
             }
         }, "json");
@@ -260,7 +260,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     ul.appendChild(li);
                 }
             }
-            if (videoResults.length >= vidlimit) {
+            if (videoResults.length > vidlimit) {
                 groupShowMore.style.display = 'block';
             }
         }, "json");
@@ -297,7 +297,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 }
 
             }
-            if (clipResults.length >= cliplimit) {
+            if (clipResults.length > cliplimit) {
                 groupShowMore.style.display = 'block';
             }
         }, "json");
@@ -330,9 +330,9 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                     li.innerHTML = '<a href="/profile/' + userResults[i][1] + '"><img src="' + userImage + '" class="avatar-small boxShadow me-2">' + userResults[i][1] + '</a>'
                     ul.appendChild(li);
                 }
-                if (userResults.length >= userlimit) {
-                    groupShowMore.style.display = 'block';
-                }
+            }
+            if (userResults.length > userlimit) {
+                groupShowMore.style.display = 'block';
             }
         }, "json");
 
