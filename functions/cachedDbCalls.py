@@ -206,7 +206,7 @@ def searchVideos(term):
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
-                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
@@ -214,7 +214,7 @@ def searchVideos(term):
             .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
-                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
@@ -227,7 +227,7 @@ def searchVideos(term):
                 .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
-                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.videoLocation,
                            RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
