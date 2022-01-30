@@ -295,6 +295,7 @@ def getAllTopics():
     topicQuery = topics.topics.query.all()
     return topicQuery
 
+@cache.memoize(timeout=120)
 def searchTopics(term):
     if term is not None:
         topicNameQuery = topics.topics.query.filter(topics.topics.name.like("%" + term + "%"))\
