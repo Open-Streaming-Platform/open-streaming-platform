@@ -7,6 +7,7 @@ from classes import subscriptions
 
 from functions import themes
 from functions import cachedDbCalls
+from functions import securityFunc
 
 channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 
@@ -28,8 +29,7 @@ def channels_page():
 @channels_bp.route('/<int:chanID>/')
 def channel_view_page(chanID):
     chanID = int(chanID)
-
-    #channelData = Channel.Channel.query.filter_by(id=chanID).first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelData = cachedDbCalls.getChannel(chanID)
 
     if channelData is not None:
@@ -42,6 +42,10 @@ def channel_view_page(chanID):
             else:
                 flash("No Such Channel", "error")
                 return redirect(url_for("root.main_page"))
+
+        if channelData.protected and sysSettings.protectionEnabled:
+            if not securityFunc.check_isValidChannelViewer(channelData.id):
+                return render_template(themes.checkOverride('channelProtectionAuth.html'))
 
         openStreams = Stream.Stream.query.filter_by(active=True, linkedChannel=chanID).all()
 
