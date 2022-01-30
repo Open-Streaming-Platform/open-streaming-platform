@@ -222,7 +222,8 @@ def search_page():
                 openStreams = cachedDbCalls.searchStreams(term)
                 recordedVids = cachedDbCalls.searchVideos(term)
                 clipsList = cachedDbCalls.searchClips(term)
-                return render_template(themes.checkOverride('videoListView.html'), userChannels=channelList, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList)
+                userList = cachedDbCalls.searchUsers(term)
+                return render_template(themes.checkOverride('videoListView.html'), userChannels=channelList, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, userList=userList)
 
     return redirect(url_for('root.main_page'))
 
