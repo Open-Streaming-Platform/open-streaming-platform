@@ -307,6 +307,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (videoResults.length > vidlimit) {
                 groupShowMore.style.display = 'block';
                 groupShowMore.className = 'd-flex';
+                document.getElementById('searchResults-Videos-ShowMore-link').href = "/search?type=videos&term=" + searchInput;
             }
         }, "json");
 

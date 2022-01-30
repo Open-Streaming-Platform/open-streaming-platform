@@ -201,22 +201,39 @@ def getVideoCommentCount(videoID):
 @cache.memoize(timeout=120)
 def searchVideos(term):
     if term is not None:
+
         VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid,RecordedVideo.RecordedVideo.thumbnailLocation).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+
         VideoTagQuery = RecordedVideo.video_tags.query.filter(RecordedVideo.video_tags.name.like("%" + term + "%"))\
             .with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name, RecordedVideo.video_tags.videoID)
-        tagSearchArray = []
+
+        VideoTagEntryQuery = []
         for vid in VideoTagQuery:
             VideoTagEntryQuery = RecordedVideo.RecordedVideo.query.filter_by(id=vid.videoID, published=True)\
-                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid,RecordedVideo.RecordedVideo.thumbnailLocation).filter_by().first()
-            if VideoTagEntryQuery is not None:
-                tagSearchArray.append(VideoTagEntryQuery)
+                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
         resultsArray = VideoNameQuery + VideoDescriptionQuery
         resultsArray = list(set(resultsArray))
-        for entry in tagSearchArray:
+        for entry in VideoTagEntryQuery:
             if entry not in resultsArray:
                 resultsArray.append(entry)
 
