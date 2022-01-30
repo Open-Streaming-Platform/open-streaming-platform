@@ -164,9 +164,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 });
 
-$("#systemSearchInput").on('change keydown paste input', function(){
+$("#systemSearchInput").on('change keydown paste input', function(e){
     var searchInput = document.getElementById('systemSearchInput').value;
     var searchClearButton = document.getElementById('searchClearIcon')
+
+    // Get results page on enter
+    var code = e.key;
+    if (code === "Enter") {
+        window.location.href = "/search?type=all&term=" + searchInput;
+    }
 
     // Show and Hide Search Clear Button
     if (searchInput.length >= 1) {
