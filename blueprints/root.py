@@ -195,6 +195,9 @@ def search_page():
                             channelListArray.append(channel)
                     channelList = channelListArray
                 return render_template(themes.checkOverride('channels.html'), channelList=channelList)
+            elif type == "streams":
+                openStreams = cachedDbCalls.searchStreams(term)
+                return render_template(themes.checkOverride('videoListView.html'), openStreams=openStreams)
 
     return redirect(url_for('root.main_page'))
 

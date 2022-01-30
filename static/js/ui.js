@@ -268,6 +268,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             if (streamResults.length > streamlimit) {
                 groupShowMore.style.display = 'block';
                 groupShowMore.className = 'd-flex';
+                document.getElementById('searchResults-Streams-ShowMore-link').href = "/search?type=streams&term=" + searchInput;
             }
         }, "json");
 

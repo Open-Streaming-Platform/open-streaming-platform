@@ -35,7 +35,6 @@ class Stream(db.Model):
         self.active = False
         self.pending = True
         self.complete = False
-        self.channelMuted = False
 
     def __repr__(self):
         return '<id %r>' % self.id

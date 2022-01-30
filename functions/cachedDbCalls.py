@@ -30,7 +30,9 @@ def searchStreams(term):
     if term is not None:
         StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.like("%" + term + "%"))\
             .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)\
-            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc).all()
+            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc, Stream.Stream.uuid, Stream.Stream.startTimestamp,
+                           Stream.Stream.topic, Stream.Stream.currentViewers, Stream.Stream.totalViewers, Stream.Stream.active, Stream.Stream.rtmpServer).all()
+
         resultsArray = StreamNameQuery
         resultsArray = list(set(resultsArray))
         return resultsArray
