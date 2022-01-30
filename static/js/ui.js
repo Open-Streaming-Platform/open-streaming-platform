@@ -198,13 +198,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul.innerHTML = '';
 
             groupShowMore.style.display = 'none';
+            groupShowMore.className = '';
 
             var chanlimit = 3;
 
             if (channelResults.length === 0) {
                 ulGroup.style.display = 'none';
-                groupShowMore.style.display = 'none';
-                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var ic = 0; ic < channelResults.length; ic++) {
@@ -241,13 +240,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul.innerHTML = '';
 
             groupShowMore.style.display = 'none';
+            groupShowMore.className = '';
 
             var vidlimit = 5;
 
             if (videoResults.length === 0) {
                 ulGroup.style.display = 'none';
-                groupShowMore.style.display = 'none';
-                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var iv = 0; iv < videoResults.length; iv++) {
@@ -280,13 +278,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul.innerHTML = '';
 
             groupShowMore.style.display = 'none';
+            groupShowMore.className = '';
 
             var cliplimit = 5;
 
             if (clipResults.length === 0) {
                 ulGroup.style.display = 'none';
-                groupShowMore.style.display = 'none';
-                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var icl = 0; icl < clipResults.length; icl++) {
@@ -320,13 +317,12 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             ul.innerHTML = '';
 
             groupShowMore.style.display = 'none';
+            groupShowMore.className = '';
 
             var userlimit = 4;
 
             if (userResults.length === 0) {
                 ulGroup.style.display = 'none';
-                groupShowMore.style.display = 'none';
-                groupShowMore.className = '';
             } else {
                 ulGroup.style.display = 'block';
                 for (var iu = 0; iu < userResults.length; iu++) {
