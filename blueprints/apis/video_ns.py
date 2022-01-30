@@ -102,7 +102,11 @@ class api_1_SearchVideos(Resource):
         args = videoSearchPost.parse_args()
         returnArray = []
         if 'term' in args:
+            finalArray = []
             returnArray = cachedDbCalls.searchVideos(args['term'])
-            return {'results': returnArray}
+            for vid in returnArray:
+                vid.videoDate = str(vid.videoDate)
+                finalArray.append(vid)
+            return {'results': finalArray}
         else:
             return {'results': {'message': 'Request Error'}}, 400

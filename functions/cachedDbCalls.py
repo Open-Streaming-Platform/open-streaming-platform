@@ -207,7 +207,7 @@ def searchVideos(term):
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
-                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
@@ -215,7 +215,7 @@ def searchVideos(term):
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
-                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
         VideoTagQuery = RecordedVideo.video_tags.query.filter(RecordedVideo.video_tags.name.like("%" + term + "%"))\
@@ -228,7 +228,7 @@ def searchVideos(term):
                            RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
                            RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
-                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
                            RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
 
         resultsArray = VideoNameQuery + VideoDescriptionQuery
