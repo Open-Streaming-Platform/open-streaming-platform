@@ -252,6 +252,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
                 ulGroup.style.display = 'block';
                 for (var iv = 0; iv < videoResults; iv++) {
                     if (iv < vidlimit) {
+
                         var videoImage = videoResults[iv][3];
                         if (videoImage === null) {
                             videoImage = '/static/img/video-locked.jpg';
@@ -330,7 +331,7 @@ $("#systemSearchInput").on('change keydown paste input', function(){
             } else {
                 ulGroup.style.display = 'block';
                 for (var iu = 0; iu < userResults.length; iu++) {
-                    if (i < userlimit) {
+                    if (iu < userlimit) {
                         var li = document.createElement("li");
                         li.classList = "list-group-item";
                         var userImage = userResults[iu][3];
