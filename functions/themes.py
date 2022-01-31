@@ -45,7 +45,7 @@ def checkOverride(themeHTMLFile):
 # Code Modified from https://github.com/Hecsall/favicon-generator
 def faviconGenerator(imageLocation):
     originalImage = imageLocation
-    directory = '/opt/osp/static'
+    directory = globalvars.videoRoot + 'images'
 
     index = 0
 

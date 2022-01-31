@@ -484,6 +484,14 @@ install_osp() {
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
 
+  # Copy Initial Favicons
+  sudo cp $DIR/static/android-chrome-192x192.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/android-chrome-512x512.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/apple-touch-icon.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon.ico $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon-16x16.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon-32x32.png  $web_root/images/ >> $OSPLOG 2>&1
+
   install_celery
 
   # Setup Logrotate
