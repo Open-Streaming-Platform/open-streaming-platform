@@ -96,6 +96,11 @@
                       {{ admin.panel_settings_panel(globalPanelList) }}
                   </div>
               </div>
+              <div class="row mt-4 mx-2">
+                  <div class="col-12">
+                      {{ admin.terms_settings_panel(sysSettings) }}
+                  </div>
+              </div>
               <div id="settings-form-submit-group" style="display:none;position:fixed;right: 56px;bottom: 35px;" class="form-submit-buttons">
                     <button id="settingsReset" type="button" onclick="resetSettings();" class="btn btn-secondary mx-1 boxShadow"><i class="bi bi-x-square-fill"></i> Reset</button>
                     <button id="settingsSubmit" type="submit" class="btn btn-success mx-1 boxShadow"><i class="bi bi-save-fill"></i> Save</button>

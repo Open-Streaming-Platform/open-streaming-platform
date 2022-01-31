@@ -971,3 +971,28 @@
     </div>
 </div>
 {% endmacro %}
+
+{% macro terms_settings_panel(sysSettings) %}
+<div class="info-panel-box system-terms-settings-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>Terms & Conditions / Privacy </b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <label for="settings-termsconditions-input" class="form-label">Terms and Conditions</label>
+                <textarea class="form-control boxShadow" name="termsSettings" id="settings-termsconditions-input" maxlength="2048">{{sysSettings.terms}}</textarea>
+                <script>
+                    var easymde_terms = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("settings-termsconditions-input") });
+                </script>
+            </div>
+            <div class="col-md-6 col-12">
+                <label for="settings-privacy-input" class="form-label">Privacy</label>
+                <textarea class="form-control boxShadow" name="privacySettings" id="settings-privacy-input" maxlength="2048">{{sysSettings.privacy}}</textarea>
+                <script>
+                    var easymde_privacy = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("settings-privacy-input") });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
