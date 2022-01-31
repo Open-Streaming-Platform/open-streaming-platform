@@ -35,8 +35,8 @@ class settings(db.Model):
     hubUUID = db.Column(db.String(255))
     hubURL = db.Column(db.String(255))
     maxVideoRetention = db.Column(db.Integer)
-    terms = db.Column(db.Text)
-    privacy = db.Column(db.Text)
+    terms = db.Column(db.String(4096))
+    privacy = db.Column(db.String(4096))
 
     def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
