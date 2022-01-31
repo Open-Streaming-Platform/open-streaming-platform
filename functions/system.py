@@ -4,13 +4,15 @@ import subprocess
 import os
 import datetime
 import smtplib
-from flask import flash
+from flask import flash, current_app
 from html.parser import HTMLParser
 import ipaddress
 import json
 import secrets
 import logging
 import time
+import shutil
+from pathlib import Path
 
 from globals import globalvars
 
@@ -170,6 +172,13 @@ def systemFixes(app):
     for user in userQuery:
         user.fs_uniquifier = str(secrets.token_hex(nbytes=16))
         db.session.commit()
+
+    log.info({"level": "info", "message": "Checking Pre 0.9.x Favicon Location"})
+    path = Path(globalvars.videoRoot + '/images/favicon.ico')
+    if not path.is_file():
+        transferFiles = ['android-chrome-192x192.png', 'android-chrome-512x512.png', 'apple-touch-icon.png', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png']
+        for file in transferFiles:
+            shutil.copy('/opt/osp/static/' + file, globalvars.videoRoot + '/images/', follow_symlinks=True)
 
     return True
 
