@@ -34,6 +34,9 @@
     {% if clipsList %}
         {{ panels.clips_panel(clipsList) }}
     {% endif %}
+    {% if userList %}
+        {{ panels.users_panel(userList) }}
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}

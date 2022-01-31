@@ -207,6 +207,23 @@ def search_page():
             elif type == "users":
                 streamerList = cachedDbCalls.searchUsers(term)
                 return render_template(themes.checkOverride('streamers.html'), streamerList=streamerList)
+            elif type == "all":
+                sysSettings = cachedDbCalls.getSystemSettings()
+                channelList = cachedDbCalls.searchChannels(term)
+
+                if sysSettings.showEmptyTables is False:
+                    channelListArray = []
+                    for channel in channelList:
+                        chanVidQuery = cachedDbCalls.getChannelVideos(channel.id)
+                        if len(chanVidQuery) > 0:
+                            channelListArray.append(channel)
+                    channelList = channelListArray
+                
+                openStreams = cachedDbCalls.searchStreams(term)
+                recordedVids = cachedDbCalls.searchVideos(term)
+                clipsList = cachedDbCalls.searchClips(term)
+                userList = cachedDbCalls.searchUsers(term)
+                return render_template(themes.checkOverride('videoListView.html'), userChannels=channelList, openStreams=openStreams, recordedVids=recordedVids, clipsList=clipsList, userList=userList)
 
     return redirect(url_for('root.main_page'))
 

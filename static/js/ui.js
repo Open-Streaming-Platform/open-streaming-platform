@@ -164,9 +164,27 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 });
 
-$("#systemSearchInput").on('change keydown paste input', function(){
+// Hide search box and remove click listener
+function boxCloser(e) {
+    if (e.target.id != 'searchResults') {
+        document.body.removeEventListener('click', boxCloser, false);
+        $('#searchResults').hide();
+    }
+}
+
+// Search
+$("#systemSearchInput").on('change keydown paste input', function(e){
     var searchInput = document.getElementById('systemSearchInput').value;
     var searchClearButton = document.getElementById('searchClearIcon')
+
+    // add click listener to hide search box
+    document.body.addEventListener('click', boxCloser, false);
+
+    // Get results page on enter
+    var code = e.key;
+    if (code === "Enter") {
+        window.location.href = "/search?type=all&term=" + searchInput;
+    }
 
     // Show and Hide Search Clear Button
     if (searchInput.length >= 1) {

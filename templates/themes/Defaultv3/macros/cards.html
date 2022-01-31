@@ -145,6 +145,15 @@
     </a>
 {% endmacro %}
 
+{% macro user_card(userInfo) %}
+<a href="/profile/{{ userInfo.username }}">
+  <li class="streamer-avatar">
+    <img class="shadow zoom" src="/images/{{ userInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+    <div class="username m-t2"><b>{{ userInfo.username }}</b></div>
+  </li>
+</a>
+{% endmacro %}
+
 {% macro channel_card(channelData) %}
 <li class="channelCard item">
     
