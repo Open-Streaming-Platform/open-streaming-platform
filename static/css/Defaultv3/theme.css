@@ -240,7 +240,7 @@ table tbody tr {
 }
 
 .show {
-    display: inline-block !important;
+    display: block !important;
 }
 
 .toast {
@@ -385,10 +385,6 @@ table tbody tr {
 
 .nav-link {
     display: inline;
-}
-
-.show {
-    display: inline !important;
 }
 
 .dropdown-menu {
