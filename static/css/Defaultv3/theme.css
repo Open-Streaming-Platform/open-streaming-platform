@@ -240,7 +240,7 @@ table tbody tr {
 }
 
 .show {
-    display: block !important;
+    display: inline !important;
 }
 
 .toast {
