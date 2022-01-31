@@ -1,4 +1,4 @@
-{% macro osp_systeminfo_modal(version, terms, privacy) %}
+{% macro osp_systeminfo_modal(version) %}
  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content shadow">
@@ -49,14 +49,6 @@
               <i class="bi bi-card-text"></i><br>
               MIT License
             </p>
-          </div>
-          <div class="d-flex justify-content-around">
-              {% if privacy != '' or privacy != None  %}
-                  <span><i class="fas fa-user-secret"></i> Privacy Info</span>
-              {% endif %}
-              {% if terms != '' or terms != None  %}
-                  <span><i class="fas fa-balance-scale"></i> Terms and Conditions</span>
-              {% endif %}
           </div>
         </div>
       </div>
