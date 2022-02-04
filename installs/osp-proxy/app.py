@@ -51,14 +51,17 @@ def adaptive(endpoint,channelLocation):
 def home(endpoint,channelLocation,file):
     channelParsed = channelLocation.split('_')[0]
 
-    username = request.args.get('user')
-    token = request.args.get('token')
-    clientIp = request.remote_addr
+    if 'proxyAuth' in request.cookies:
+        proxyAuth = request.cookies.get('proxyAuth')
 
-    authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": username, "addr": clientIp, "name": channelLocation, "hash": token })
-    returnDataJson = authCheck.json()
-    if returnDataJson['results'] is False:
-        abort(403)
+        clientIp = request.remote_addr
+
+        authData = proxyAuth.split(",")
+        authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": authData[0], "addr": clientIp, "name": channelLocation, "hash": authData[1] })
+        returnDataJson = authCheck.json()
+
+        if returnDataJson['results'] is False:
+            abort(403)
 
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
     if hasattr(config, 'forceDestination'):
