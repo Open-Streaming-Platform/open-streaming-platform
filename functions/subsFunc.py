@@ -9,6 +9,7 @@ from classes import Sec
 
 from functions import system
 from functions import cachedDbCalls
+from classes.shared import db
 
 log = logging.getLogger('app.functions.subsFunc')
 
