@@ -351,7 +351,13 @@ def proxy_redirect(channelLoc, file):
             validationToken = hashlib.sha256(
                 (current_user.username + channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
 
-    return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file + '?user=' + user + '&token=' + validationToken)
+    redirectURL = protocol + proxyAddress + '/live/' + channelLoc + '/' + file
+    resp = redirect(redirectURL)
+    proxyAuthToken = user + "," + validationToken
+    resp.set_cookie('proxyAuth', proxyAuthToken, domain=proxyAddress)
+    return resp
+
+    #return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file + '?user=' + user + '&token=' + validationToken)
 
 @root_bp.route('/proxy-adapt/<channelLoc>.m3u8')
 def proxy_adaptive_redirect(channelLoc):
