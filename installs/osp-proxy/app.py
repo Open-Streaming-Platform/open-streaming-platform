@@ -57,7 +57,7 @@ def home(endpoint,channelLocation,file):
         if 'proxyAuth' in request.cookies:
             proxyAuth = request.cookies.get('proxyAuth')
             clientIp = request.remote_addr
-            authData = proxyAuth.split(",")
+            authData = proxyAuth.split("_")
             authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": authData[0], "addr": clientIp, "name": channelLocation, "hash": authData[1] })
             returnDataJson = authCheck.json()
 

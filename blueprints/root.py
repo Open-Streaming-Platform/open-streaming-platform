@@ -353,7 +353,7 @@ def proxy_redirect(channelLoc, file):
 
     redirectURL = protocol + proxyAddress + '/live/' + channelLoc + '/' + file
     resp = redirect(redirectURL)
-    proxyAuthToken = user + "," + validationToken
+    proxyAuthToken = user + "_" + validationToken
     resp.set_cookie('proxyAuth', proxyAuthToken, domain=proxyAddress)
     return resp
 
