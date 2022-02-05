@@ -2,6 +2,7 @@ import hashlib
 
 from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort, flash, Response
 from flask_security import current_user, login_required
+from flask_cors import CORS, cross_origin
 from sqlalchemy.sql.expression import func
 
 from classes.shared import db
@@ -336,6 +337,7 @@ def rtmp_check():
 
 # Redirect Streams
 @root_bp.route('/proxy/<channelLoc>/<file>')
+@cross_origin(origin='*',headers=['Content-Type','X-Token-Session'])
 def proxy_redirect(channelLoc, file):
     sysSettings = cachedDbCalls.getSystemSettings()
     proxyAddress = sysSettings.proxyFQDN
