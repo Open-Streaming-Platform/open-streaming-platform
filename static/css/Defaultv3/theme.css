@@ -397,6 +397,10 @@ table tbody tr {
     top: calc(var(--top-navbar-height));
 }
 
+.dropdown-item {
+    color: var(--font-color);
+}
+
 .sideNavbar {
     position: fixed;
     left: 0;
