@@ -171,8 +171,7 @@
         // Initialize Stream Player
         videojs.Hls.xhr.beforeRequest = (options) => {
             options.headers = {
-                "X-Token-Session": hls_token,
-                "Access-Control-Allow-Origin": "*",
+                "X-Token-Session": hls_token
             };
             return options;
         };
