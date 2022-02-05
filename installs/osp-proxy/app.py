@@ -54,11 +54,11 @@ def home(endpoint,channelLocation,file):
     # Perform Auth Check for Encryption Keys
     fileExt = file[-3:]
     if fileExt == "key":
-        if 'proxyAuth' in request.cookies:
-            proxyAuth = request.cookies.get('proxyAuth')
+        if 'X-Token-Session' in request.headers:
+            hlsToken = request.headers.get('X-Token-Session')
+            hlsUser = request.headers.get('X-User-Session')
             clientIp = request.remote_addr
-            authData = proxyAuth.split("_")
-            authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": authData[0], "addr": clientIp, "name": channelLocation, "hash": authData[1] })
+            authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": hlsUser, "addr": clientIp, "name": channelLocation, "hash": hlsToken })
             returnDataJson = authCheck.json()
 
             if returnDataJson['results'] is False or returnDataJson['results'] == 'False' or returnDataJson['results'] == 'false':

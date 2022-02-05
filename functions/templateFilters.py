@@ -7,6 +7,7 @@ import random
 
 from flask_security import current_user
 from sqlalchemy import func
+import hashlib
 
 from globals import globalvars
 
@@ -80,6 +81,7 @@ def init(context):
     context.jinja_env.filters['getPanelStreamList'] = getPanelStreamList
     context.jinja_env.filters['getPanelVideoList'] = getPanelVideoList
     context.jinja_env.filters['getPanelClipList'] = getPanelClipList
+    context.jinja_env.filters['generatePlaybackAuthToken'] = generatePlaybackAuthToken
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -597,3 +599,13 @@ def orderVideoBy(videoList, orderById):
     else:
         return sorted(videoList, key=lambda x: x.views, reverse=True)
 
+def generatePlaybackAuthToken(channelLoc):
+    validationToken = "NA"
+    if current_user.is_authenticated:
+        if current_user.authType == 0:
+            validationToken = hashlib.sha256(
+                (current_user.username + channelLoc + current_user.password).encode('utf-8')).hexdigest()
+        else:
+            validationToken = hashlib.sha256(
+                (current_user.username + channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
+    return validationToken

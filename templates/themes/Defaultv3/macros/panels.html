@@ -149,7 +149,24 @@
 </div>
 
 <script>
+
+    // Generate HLS Tokens
+    {% if current_user.is_authenticated %}
+        var hls_user = "{{ current_user.username }}"
+    {% else %}
+        var hls_user = "Guest"
+    {% endif %}
+    var hls_token = "{{ channel.channelLoc | generatePlaybackAuthToken }}"
+
     // Initialize Stream Player
+    videojs.Hls.xhr.beforeRequest = (options) => {
+        options.headers = {
+            ...options.headers,
+            "X-Token-Session": hls_token,
+            "X-User-Session": hls_user
+        };
+        return options;
+    };
     var player{{ channel.id }} = videojs('video{{ channel.id }}', {
         autoplay: true,
         errorDisplay: false,

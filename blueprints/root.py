@@ -340,24 +340,7 @@ def proxy_redirect(channelLoc, file):
     sysSettings = cachedDbCalls.getSystemSettings()
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
-    validationToken = "NA"
-    user = "Guest"
-    if current_user.is_authenticated:
-        user = current_user.username
-        if current_user.authType == 0:
-            validationToken = hashlib.sha256(
-                (current_user.username + channelLoc + current_user.password).encode('utf-8')).hexdigest()
-        else:
-            validationToken = hashlib.sha256(
-                (current_user.username + channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
-
-    redirectURL = protocol + proxyAddress + '/live/' + channelLoc + '/' + file
-    resp = redirect(redirectURL)
-    proxyAuthToken = user + "_" + validationToken
-    resp.set_cookie('proxyAuth', proxyAuthToken, domain=proxyAddress)
-    return resp
-
-    #return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file + '?user=' + user + '&token=' + validationToken)
+    return redirect(protocol + proxyAddress + '/live/' + channelLoc + '/' + file)
 
 @root_bp.route('/proxy-adapt/<channelLoc>.m3u8')
 def proxy_adaptive_redirect(channelLoc):
