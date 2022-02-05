@@ -55,10 +55,10 @@ def home(endpoint,channelLocation,file):
     fileExt = file[-3:]
     if fileExt == "key":
         if 'X-Token-Session' in request.headers:
-            hlsToken = request.headers.get('X-Token-Session')
-            hlsUser = request.headers.get('X-User-Session')
+            inboundHlsToken = request.headers.get('X-Token-Session')
+            hlsToken = inboundHlsToken.split('_')
             clientIp = request.remote_addr
-            authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": hlsUser, "addr": clientIp, "name": channelLocation, "hash": hlsToken })
+            authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": hlsToken[0], "addr": clientIp, "name": channelLocation, "hash": hlsToken[1]})
             returnDataJson = authCheck.json()
 
             if returnDataJson['results'] is False or returnDataJson['results'] == 'False' or returnDataJson['results'] == 'false':

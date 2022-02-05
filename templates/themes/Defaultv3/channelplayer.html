@@ -166,13 +166,12 @@
         {% else %}
             var hls_user = "Guest"
         {% endif %}
-        var hls_token = "{{ channel.channelLoc | generatePlaybackAuthToken }}"
+        var hls_token = "{{ hls_user }}_{{ channel.channelLoc | generatePlaybackAuthToken }}"
 
         // Initialize Stream Player
         videojs.Hls.xhr.beforeRequest = (options) => {
             options.headers = {
                 "X-Token-Session": hls_token,
-                "X-User-Session": hls_user,
                 "Access-Control-Allow-Origin": "*",
             };
             return options;
