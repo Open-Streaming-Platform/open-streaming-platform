@@ -338,7 +338,9 @@ def admin_page():
         userList = Sec.User.query.all()
         roleList = Sec.Role.query.all()
         channelList = Channel.Channel.query.all()
-        streamList = Stream.Stream.query.filter_by(active=True).all()
+        streamList = Stream.Stream.query.filter_by(active=True)\
+            .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
+                           Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp).all()
         streamHistory = Stream.Stream.query.filter_by(active=False).all()
         topicsList = topics.topics.query.all()
         rtmpServers = settings.rtmpServer.query.all()
