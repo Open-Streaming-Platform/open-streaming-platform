@@ -168,6 +168,7 @@ function updateSlider(inputID) {
 }
 
 function get_osp_component_status(component) {
+    console.log("Getting Status: " + component)
     socket.emit('admin_get_component_status', {component: component});
 }
 
