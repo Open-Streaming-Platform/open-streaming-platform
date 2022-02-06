@@ -865,7 +865,7 @@
                     <tr id="streamCard-{{stream.id}}">
                       <td><img src="/stream-thumb/{{stream.linkedChannel | get_channelLocationFromID}}.png" onerror="this.src='/static/img/video-placeholder.jpg';" style="width:128px;height:71px;"></td>
                       <td><a href="/view/{{stream.linkedChannel | get_channelLocationFromID}}/">{{stream.streamName}}</a></td>
-                      <td><a href="/channel/{{stream.linkedChannel}}">{{stream.channel.channelName}}</a></td>
+                      <td><a href="/channel/{{stream.linkedChannel}}">{{stream.linkedChannel | get_channelName }}</a></td>
                       <td><a href="/profile/{{stream.linkedChannel | channeltoOwnerID | get_userName}}">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</a></td>
                       <td><a href="/topic/{{stream.linkedChannel | get_channelTopic}}">{{stream.linkedChannel | get_channelTopic |get_topicName}}</a></td>
                       <td>{{stream.currentViewers}}</td>
