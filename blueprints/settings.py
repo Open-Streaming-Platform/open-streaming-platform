@@ -344,7 +344,7 @@ def admin_page():
         streamHistory = Stream.Stream.query.filter_by(active=False)\
             .with_entities(Stream.Stream.id, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp,
                            Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.totalViewers).all()
-        topicsList = topics.topics.query.all()
+        topicsList = cachedDbCalls.getAllTopics()
         rtmpServers = settings.rtmpServer.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
 
