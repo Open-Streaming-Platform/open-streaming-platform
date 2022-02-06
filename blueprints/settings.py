@@ -337,7 +337,10 @@ def admin_page():
         appDBVer = dbVersion.dbVersion.query.first().version
         userList = Sec.User.query.all()
         roleList = Sec.Role.query.all()
-        channelList = Channel.Channel.query.all()
+        channelList = Channel.Channel.query\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.imageLocation, Channel.Channel.owningUser,
+                           Channel.Channel.topic, Channel.Channel.channelLoc, Channel.Channel.views, Channel.Channel.chatEnabled,
+                           Channel.Channel.record, Channel.Channel.allowComments, Channel.Channel.protected, Channel.Channel.private)
         streamList = Stream.Stream.query.filter_by(active=True)\
             .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
                            Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp).all()
