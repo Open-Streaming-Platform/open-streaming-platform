@@ -193,6 +193,7 @@ def disable_2fa(msg):
 
 @socketio.on('admin_get_component_status')
 def get_admin_component_status(msg):
+    sysSettings = cachedDbCalls.getSystemSettings()
     if current_user.has_role('Admin'):
         component = msg['component']
 
@@ -223,6 +224,14 @@ def get_admin_component_status(msg):
             elif workingServers > 0:
                 status = "Problem"
                 message = str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
+        elif component == "osp_proxy":
+            r = requests.get(sysSettings.siteProtocol + sysSettings.proxyproxyFQDN + "/ping")
+            if r.status_code == 200:
+                response = r.json()
+                if 'results' in response:
+                    if response['results']['message'] == "Pong":
+                        status = "OK"
+                        message = "OSP-Proxy Connection Successful"
         elif component == "osp_ejabberd_xmlrpc":
             results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
             if results['res'] == 0:

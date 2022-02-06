@@ -21,7 +21,7 @@ rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 @app.route('/ping')
 def ping():
-    return {'result': "pong"}
+    return {'result': {"message": "pong"}}
 
 @app.route('/<endpoint>/<channelLocation>.m3u8')
 def adaptive(endpoint,channelLocation):
