@@ -944,10 +944,8 @@
     <div class="row mx-lg-2">
         <ul id="clipList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
           {% set channelClips = channel.id | get_channelClips  %}
-          {% for video in channelClips %}
-              {% for clip in video.clips %}
-                {{ cards.user_settings_clip_card(clip) }}
-              {% endfor %}
+          {% for clip in channelClips %}
+            {{ cards.user_settings_clip_card(clip) }}
           {% endfor %}
         </ul>
     </div>
