@@ -255,12 +255,34 @@
     <script>
         function popoutChat() {
             {% if current_user.is_authenticated %}
-            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
             {% else %}
-            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
             {% endif %}
-            var chatbox = document.getElementById("chatside");
+            checkWindow = true;
+            setTimeout(function () { popinChat('chatWindow'); }, 1000);
+            var chatbox = document.getElementById("sidePanel");
             chatbox.style.display = "none";
+            var mainContentbox = document.getElementById("mainContentPanel");
+            mainContentbox.style.width = "100%";
+        }
+    </script>
+
+    <script>
+        function popinChat(win) {
+            if (checkWindow == true) {
+                if (win == 'chatWindow') {
+                    if (popoutWindow.closed) {
+                        var chatbox = document.getElementById("sidePanel");
+                        chatbox.style.display = "block";
+                        var mainContentbox = document.getElementById("mainContentPanel");
+                        mainContentbox.style.setProperty('width', 'calc(100% - var(--side-panel-width))');
+                        connectChat();
+                    } else {
+                        setTimeout(function () { popinChat('chatWindow'); }, 1000);
+                    }
+                }
+            }
         }
     </script>
 
