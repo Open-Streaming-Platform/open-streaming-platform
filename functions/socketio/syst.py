@@ -225,13 +225,19 @@ def get_admin_component_status(msg):
                 status = "Problem"
                 message = str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
         elif component == "osp_proxy":
-            r = requests.get(sysSettings.siteProtocol + sysSettings.proxyproxyFQDN + "/ping")
-            if r.status_code == 200:
-                response = r.json()
-                if 'results' in response:
-                    if response['results']['message'] == "Pong":
-                        status = "OK"
-                        message = "OSP-Proxy Connection Successful"
+            if sysSettings.proxyFQDN != None and sysSettings.proxyFQDN != '':
+                r = requests.get(sysSettings.siteProtocol + sysSettings.proxyFQDN + "/ping")
+                if r.status_code == 200:
+                    response = r.json()
+                    if 'results' in response:
+                        if response['results']['message'] == "Pong":
+                            status = "OK"
+                            message = "OSP-Proxy Connection Successful"
+                        else:
+                            message = "OSP-Proxy Failed Check"
+            else:
+                status = "Problem"
+                message = "No OSP-Proxy Configured"
         elif component == "osp_ejabberd_xmlrpc":
             results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
             if results['res'] == 0:
