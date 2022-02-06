@@ -1366,7 +1366,9 @@ def settings_channels_page():
         statsViewsRecordedDayDict = {}
         statsViewsRecordedDayArray = []
 
-        for vid in channel.recordedVideo:
+        recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
+
+        for vid in recordedVidsQuery:
             statsViewsRecordedDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
                 views.views.viewType == 1).filter(views.views.itemID == vid.id).filter(
                 views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(

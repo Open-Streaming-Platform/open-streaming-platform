@@ -99,7 +99,12 @@ def isChannelLive(channelID):
 
 @cache.memoize(timeout=10)
 def getChannelVideos(channelID):
-    VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID).all()
+    VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID)\
+        .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.gifLocation,
+                       RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.videoLocation, RecordedVideo.RecordedVideo.topic,
+                       RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.description,
+                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.published,
+                       RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser).all()
     return VideoQuery
 
 @cache.memoize(timeout=1200)

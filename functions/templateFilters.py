@@ -635,12 +635,7 @@ def get_channelWebhooks(channelID):
     return webhookQuery
 
 def get_channelVideos(channelID):
-    videosQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID) \
-        .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.gifLocation,
-                       RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.videoLocation, RecordedVideo.RecordedVideo.topic,
-                       RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.description,
-                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.published,
-                       RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser).all()
+    videosQuery = cachedDbCalls.getChannelVideos(channelID)
     return videosQuery
 
 def get_channelClips(channelID):
