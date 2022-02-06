@@ -631,7 +631,7 @@ def get_channelRestreamDestinations(channelID):
     return restreamDestQuery
 
 def get_channelWebhooks(channelID):
-    webhookQuery = webhook.webhook.query.query.filter_by(channelID=channelID).all()
+    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID).all()
     return webhookQuery
 
 def get_channelVideos(channelID):
