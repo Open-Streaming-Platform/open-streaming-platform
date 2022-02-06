@@ -383,13 +383,12 @@
             document.getElementById("video").style.maxHeight = '100vh';
             document.getElementById("video_html5_api").style.maxHeight = '100vh';
             document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
-            if ( $('#sidePanel').is(':visible')) {
-                document.getElementById("sidePanel").style.maxHeight = '100vh';
-                document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
-                document.getElementById("sidePanel").style.position = 'fixed';
-                document.getElementById("sidePanel").style.top = '0';
-                document.getElementById("sidePanel").style.right = '0';
-            } else {
+            document.getElementById("sidePanel").style.maxHeight = '100vh';
+            document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
+            document.getElementById("sidePanel").style.position = 'fixed';
+            document.getElementById("sidePanel").style.top = '0';
+            document.getElementById("sidePanel").style.right = '0';
+            if ( $('#sidePanel').is(':hidden')) {
                 document.getElementById("videoContainer").style.setProperty('width', '100%');
             }
         }
