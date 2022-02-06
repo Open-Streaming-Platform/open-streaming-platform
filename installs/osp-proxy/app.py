@@ -19,6 +19,10 @@ rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 # Routes
 #----------------------------------------------------------------------------#
+@app.route('/ping')
+def ping():
+    return {'result': "pong"}
+
 @app.route('/<endpoint>/<channelLocation>.m3u8')
 def adaptive(endpoint,channelLocation):
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
