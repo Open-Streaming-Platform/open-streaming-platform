@@ -137,8 +137,8 @@ install_ffmpeg() {
   #Setup FFMPEG for recordings and Thumbnails
   echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
-  echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  #sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
+  #echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   sudo apt-get update >> $OSPLOG 2>&1
   echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
