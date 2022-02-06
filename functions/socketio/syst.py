@@ -193,7 +193,6 @@ def disable_2fa(msg):
 
 @socketio.on('admin_get_component_status')
 def get_admin_component_status(msg):
-    sysSettings = cachedDbCalls.getSystemSettings()
     if current_user.has_role('Admin'):
         component = msg['component']
 
@@ -225,6 +224,7 @@ def get_admin_component_status(msg):
                 status = "Problem"
                 message = str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
         elif component == "osp_proxy":
+            sysSettings = cachedDbCalls.getSystemSettings()
             if sysSettings.proxyFQDN != None and sysSettings.proxyFQDN != '':
                 r = requests.get(sysSettings.siteProtocol + sysSettings.proxyFQDN + "/ping")
                 if r.status_code == 200:
