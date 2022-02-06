@@ -647,6 +647,6 @@ def get_channelClips(channelID):
             videoIDList.append(video.id)
 
     channelQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.parentVideo.in_(videoIDList))\
-        .with_entity(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
+        .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
                      RecordedVideo.Clips.length, RecordedVideo.Clips.views, RecordedVideo.Clips.description, RecordedVideo.Clips.published, RecordedVideo.Clips.parentVideo).all()
     return channelQuery
