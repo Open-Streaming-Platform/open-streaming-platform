@@ -11,7 +11,7 @@ import ffmpeg
 
 from globals import globalvars
 
-from classes.shared import db
+from classes.shared import db, cache
 from classes import Channel
 from classes import RecordedVideo
 from classes import upvotes
@@ -412,6 +412,10 @@ def processStreamVideo(path, channelLoc):
     destinationPath = globalvars.videoRoot + 'videos/' + channelLoc + '/' + path.replace('flv', 'mp4')
 
     processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', inputPath, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
+
+    channelID = cachedDbCalls.getChannelIDFromLocation(channelLoc)
+
+    cache.delete_memoized(cachedDbCalls.getChannelVideos, channelID)
 
     oldFilePath = pathlib.Path(inputPath)
     oldFilePath.unlink()
