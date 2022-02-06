@@ -672,7 +672,7 @@ table tbody tr {
 .streamCard {
     height: 290px;
     width: 315px;
-    margin: 0 15px 15px 0;
+    margin: 0 10px 5px 0;
 }
 
 .streamCard a:hover, a:active {
