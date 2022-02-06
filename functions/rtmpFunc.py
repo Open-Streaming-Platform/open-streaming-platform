@@ -3,6 +3,7 @@ import time
 import hashlib
 import datetime
 import logging
+import pathlib
 
 from flask import Blueprint, request, redirect, current_app, abort
 
@@ -270,12 +271,20 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
 
         currentTime = datetime.datetime.utcnow()
 
-        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
         requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
 
         if requestedChannel is not None:
 
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
+
+            pendingPath = path.replace('/tmp/', current_app.config['WEB_ROOT'] + 'pending/')
+            pathlibPath = pathlib.Path(pendingPath)
+            while pathlibPath.is_file() == False:
+                time.sleep(2)
+
+            fileName = pathlibPath.name
+
+            videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
 
             videoPath = path.replace('/tmp/', requestedChannel.channelLoc + '/')
             imagePath = videoPath.replace('.flv','.png')

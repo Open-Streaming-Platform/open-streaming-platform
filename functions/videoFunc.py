@@ -3,6 +3,7 @@ import os
 import shutil
 import logging
 import datetime
+import pathlib
 
 from flask import flash, current_app
 from flask_security import current_user
@@ -404,3 +405,15 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
         return ("Success", newVideo)
     else:
         return ("Failure", "Video File Missing")
+
+def processStreamVideo(path, channelLoc):
+
+    inputPath = globalvars.videoRoot + 'pending/' + path
+    destinationPath = globalvars.videoRoot + 'videos/' + channelLoc + '/' + path.replace('flv', 'mp4')
+
+    processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', inputPath, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
+
+    oldFilePath = pathlib.Path(inputPath)
+    oldFilePath.unlink()
+
+    return True
