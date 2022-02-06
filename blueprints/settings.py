@@ -343,7 +343,7 @@ def admin_page():
                            Channel.Channel.record, Channel.Channel.allowComments, Channel.Channel.protected, Channel.Channel.private)
         streamList = Stream.Stream.query.filter_by(active=True)\
             .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
-                           Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp).all()
+                           Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.totalViewers).all()
         streamHistory = Stream.Stream.query.filter_by(active=False)\
             .with_entities(Stream.Stream.id, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp,
                            Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.totalViewers).all()
