@@ -641,7 +641,12 @@ def get_channelVideos(channelID):
 def get_channelClips(channelID):
     channelVideos = get_channelVideos(channelID)
 
-    channelQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.parentVideo.in_(channelVideos.id))\
+    videoIDList = []
+    for video in channelVideos:
+        if video.id not in videoIDList:
+            videoIDList.append(video.id)
+
+    channelQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.parentVideo.in_(videoIDList))\
         .with_entity(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
                      RecordedVideo.Clips.length, RecordedVideo.Clips.views, RecordedVideo.Clips.description, RecordedVideo.Clips.published, RecordedVideo.Clips.parentVideo).all()
     return channelQuery
