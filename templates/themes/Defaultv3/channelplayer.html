@@ -255,13 +255,78 @@
     <script>
         function popoutChat() {
             {% if current_user.is_authenticated %}
-            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
             {% else %}
-            MyWindows=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
             {% endif %}
-            var chatbox = document.getElementById("chatside");
-            chatbox.style.display = "none";
+            checkWindow = true;
+            setTimeout(function () { popinChat('chatWindow'); }, 1000);
+            document.getElementById("sidePanel").style.display = "none";
+            document.getElementById("mainContentPanel").style.setProperty('width', '100%');
+            if ( $('#videoContainer').hasClass('theater-mode')) {
+                document.getElementById("videoContainer").style.setProperty('width', '100%');
+            }
         }
+    </script>
+
+    <script>
+        function popinChat(win) {
+            if (checkWindow == true) {
+                if (win == 'chatWindow') {
+                    if (popoutWindow.closed) {
+                        document.getElementById("sidePanel").style.display = "block";
+                        document.getElementById("mainContentPanel").style.setProperty('width', 'calc(100% - var(--side-panel-width))');
+                        if ($('#videoContainer').hasClass('theater-mode')) {
+                            document.getElementById("videoContainer").style.removeProperty('width');
+                        }
+                        connectChat();
+                    } else {
+                        setTimeout(function () { popinChat('chatWindow'); }, 1000);
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        var conn_options = {
+            'sync disconnect on unload': true
+        };
+
+        var socket = io("/", { reconnection: true, forceNew: false });
+    </script>
+
+    <script>
+        setInterval(function () {
+            socket.emit('getViewerTotal', { data: "{{channel.channelLoc}}" });
+        }, 5000);
+    </script>
+
+    <script>
+        socket.on('connect', function () {
+            socket.emit('newViewer', { data: '{{channel.channelLoc}}' });
+            socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
+        });
+    </script>
+    
+    <script>
+        socket.on('disconnect', function () {
+            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
+        });
+    </script>
+    
+    
+    <script>
+        window.addEventListener("beforeunload", function (e) {
+            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
+            return null;
+        });
+    </script>
+    
+    <script type="text/javascript" charset="utf-8">
+        socket.on('viewerTotalResponse', function (msg) {
+            document.getElementById("currentViewers").innerHTML = msg['data'];
+        });
     </script>
 
     <script src="/static/js/liveplayerhandler.js"></script>
@@ -323,6 +388,9 @@
             document.getElementById("sidePanel").style.position = 'fixed';
             document.getElementById("sidePanel").style.top = '0';
             document.getElementById("sidePanel").style.right = '0';
+            if ( $('#sidePanel').is(':hidden')) {
+                document.getElementById("videoContainer").style.setProperty('width', '100%');
+            }
         }
 
         function disableTheaterMode() {

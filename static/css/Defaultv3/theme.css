@@ -338,8 +338,12 @@ table tbody tr {
     width: 390px;
 }
 
+.navbar .searchResults a:hover {
+    color: var(--link-hover-color)
+}
+
 .navbar .searchResults .list-group {
-    background-color: var(--box1-background);
+    background-color: var(--box2-background);
     box-shadow: var(--box-shadow);
 }
 
@@ -368,7 +372,7 @@ table tbody tr {
 
 .list-group-item {
     color: var(--font-color);
-    background-color: var(--box1-background);
+    background-color: var(--box2-background);
     border: 0 solid black;
 }
 
@@ -395,6 +399,10 @@ table tbody tr {
 
 .dropdown-menu[data-bs-popper] {
     top: calc(var(--top-navbar-height));
+}
+
+.dropdown-item {
+    color: var(--font-color);
 }
 
 .sideNavbar {

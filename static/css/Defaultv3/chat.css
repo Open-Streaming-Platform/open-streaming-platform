@@ -9,6 +9,15 @@
     text-align:center;
 }
 
+.chat-popout {
+  background-color: var(--page-background);
+}
+
+.chat-popout .chatPanel .chatContent {
+  flex: 1 1 calc(100vh - 160px);
+  overflow-x:auto;
+}
+
 .chatPanel {
   display: none;
   flex-flow: column;

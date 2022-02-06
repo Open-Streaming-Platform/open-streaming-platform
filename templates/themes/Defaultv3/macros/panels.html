@@ -289,11 +289,11 @@
           <div class="col-11 textShadow">
             <div class="col-auto">
               <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
-              <span class="align-middle video-streamer mx-2">{{ video.owningUser | get_userName }}</span>
+              <span class="align-middle video-streamer mx-2"><a href="/streamer/{{ video.owningUser }}">{{ video.owningUser | get_userName }}</a></span>
             </div>
             <div class="video-name"><b>{{ video.channelName }}</b></div>
-            <div class="video-channelName">{{ video.channelID | get_channelName }}</div>
-            <div class="video-topic mt-2 me-2"><i class="fas fa-hashtag"></i><a href="/topic/{{video.topic}}/">{{ video.topic | get_topicName }}</a>
+            <div class="video-channelName"><a href="/channel/{{ video.channelID }}">{{ video.channelID | get_channelName }}</a></div>
+            <div class="video-topic mt-2 me-2"><a href="/topic/{{video.topic}}/"><i class="fas fa-hashtag"></i> {{ video.topic | get_topicName }}</a>
               {% for tag in video.id | get_videoTags %}
               <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
               {% endfor %}
@@ -622,12 +622,12 @@
         <div class="row">
             <div class="col-auto">
                 <img class="avatar-small boxShadow img-fluid rounded-circle" src="/images/{{channel.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
-                <span class="align-middle mx-2 video-streamer">{{ channel.owningUser | get_userName }}</span>
+                <span class="align-middle mx-2 video-streamer"><a href="/streamer/{{ channel.owningUser }}">{{ channel.owningUser | get_userName }}</a></span>
             </div>
             <div class="col-11 textShadow">
                 <div id="streamMetadataName" class="video-name mt-2 mr-5"><b><i class="fas fa-video"></i> {% if stream != None %} {{stream.streamName}} {% else %} No Stream {% endif %}</b></div>
-                <div class="channel-name">{{ channel.channelName }}</div>
-                <div id="streamMetadataTopic" class="mt-2"><i class="fas fa-hashtag"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/">{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
+                <div class="channel-name"><a href="/channel/{{ channel.id }}">{{ channel.channelName }}</a></div>
+                <div id="streamMetadataTopic" class="mt-2"></i><a href="/topic/{% if stream != None %}{{stream.topic}}{% else %}{{channel.topic}}{% endif %}/"><i class="fas fa-hashtag"></i>{% if stream != None %} {{stream.topic|get_topicName}} {% else %} {{channel.topic|get_topicName}} {% endif %}</a>
                   {% for tag in channel.id | get_channelTags %}
                   <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
                   {% endfor %}
@@ -642,7 +642,7 @@
 {% macro stream_views_panel(channel, stream) %}
 <div class="video-views-panel">
   <div class="float-end mx-1 my-2">
-    <i class="fas fa-clock mx-2"></i><span class="video-views-text" title="Time live" id="streamTime">00:00:00</span><span class="ms-2" title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b class="video-views-text">{{channel.currentViewers}}</b></span>
+    <i class="fas fa-clock mx-2"></i><span class="video-views-text" title="Time live" id="streamTime">00:00:00</span><span class="ms-2" title="Total views"><i class="bi bi-people-fill"></i><b class="video-views-text"> {{ channel.views }}</b></span><span title="Current viewers"><i class="fas fa-eye mx-2"></i><b><span class="video-views-text" id="currentViewers">{{channel.currentViewers}}</span></b></span>
   </div>
 </div>
 {% endmacro %}
@@ -655,8 +655,8 @@
     </div>
     <div class="col">
       <div class="video-name"><b>{{ clip.clipName }}</b></div>
-      <div class="video-channelName">{{ clip.parentVideo | videotoChannelID | get_channelName }}</div>
-      <div class="video-topic mt-2 me-2"><i class="fas fa-hashtag"></i><a href="/topic/{{clip.parentVideo | get_videoTopic}}/">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+      <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a></div>
+      <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.parentVideo | get_videoTopic}}/"><i class="fas fa-hashtag"></i> {{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
         <!-- TBD: Tags for clips
         {% for tag in clip.id | get_videoTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
@@ -823,6 +823,32 @@
         <div id="chat" class="chatSection"></div>
     </div>
     {{ core_chat_footer(stickerSelectorList) }}
+</div>
+{% endmacro %}
+
+{% macro core_popoutchat(stickerSelectorList) %}
+<div id="chatPanel" class="chatPanel h-100">
+  {{ core_popoutchatchat_header() }}
+  <div id="chatContentWindow" class="chatContent h-100">
+    {{ core_chat_mod_view() }}
+    {{ core_chat_members_view() }}
+    <div id="chat" class="chatSection"></div>
+  </div>
+  {{ core_chat_footer(stickerSelectorList) }}
+</div>
+{% endmacro %}
+
+{% macro core_popoutchatchat_header() %}
+<div class="chatHeader flex d-flex justify-content-between mb-2 p-2">
+  <span class="chat-header-left">
+    <button type="button" class="btn btn-sm btn-link mx-2" onclick="popinChat();"><i class="fa fa-window-restore"></i></button>
+    <button type="button" class="btn btn-sm btn-link mx-2" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></button>
+  </span>
+  <span class="chat-header-center fs-4 textShadow">Live Chat</span>
+  <span class="chat-header-right">
+    <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+    <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+  </span>
 </div>
 {% endmacro %}
 
