@@ -174,6 +174,7 @@ function get_osp_component_status(component) {
 function get_all_osp_component_status() {
     get_osp_component_status('osp_core');
     get_osp_component_status('osp_rtmp');
+    get_osp_component_status('osp_proxy');
     get_osp_component_status('osp_celery');
     get_osp_component_status('osp_ejabberd_chat');
     get_osp_component_status('osp_ejabberd_xmlrpc');
