@@ -230,10 +230,11 @@ def get_admin_component_status(msg):
                 if r.status_code == 200:
                     response = r.json()
                     if 'results' in response:
-                        if response['results']['message'] == "Pong":
+                        if response['results']['message'] == "pong":
                             status = "OK"
                             message = "OSP-Proxy Connection Successful"
                         else:
+                            status = "Failed"
                             message = "OSP-Proxy Failed Check"
             else:
                 status = "Problem"
