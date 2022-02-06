@@ -1275,8 +1275,13 @@ def settings_channels_page():
                 flash("Invalid Change Attempt", "Error")
             redirect(url_for('.settings_channels_page'))
 
-    topicList = topics.topics.query.all()
-    user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+    topicList = cachedDbCalls.getAllTopics()
+    #user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+    user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id)\
+        .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.topic, Channel.Channel.views,
+                       Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
+                       Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
+                       Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
@@ -1392,8 +1397,8 @@ def settings_channels_page():
             ChannelPanelOrderArray.append(panelEntry)
         channelPanelOrder[channel.id] = sorted(ChannelPanelOrderArray, key=lambda x: x.panelOrder)
 
-    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
-                           viewStats=user_channels_stats, rtmpList=activeRTMPList, channelPanelMapping=channelPanelOrder)
+    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms,
+                           channelMods=channelMods, viewStats=user_channels_stats, rtmpList=activeRTMPList, channelPanelMapping=channelPanelOrder)
 
 
 @settings_bp.route('/channels/chat', methods=['POST', 'GET'])

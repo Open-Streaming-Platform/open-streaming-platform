@@ -903,7 +903,8 @@
     <div class="my-4 mx-3"><h4>Video List</h4></div>
     <div class="row mx-lg-2">
         <ul id="videoList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
-          {% for video in channel.recordedVideo %}
+          {% set channelVideos = channel.id | get_channelVideos %}
+          {% for video in channelVideos %}
             {{ cards.user_settings_video_card(video) }}
           {% endfor %}
         </ul>
@@ -916,7 +917,8 @@
     <div class="my-4 mx-3"><h4>Clip List</h4></div>
     <div class="row mx-lg-2">
         <ul id="clipList-{{channel.id}}" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
-          {% for video in channel.recordedVideo %}
+          {% set channelClips = channel.id | get_channelClips  %}
+          {% for video in channelClips %}
               {% for clip in video.clips %}
                 {{ cards.user_settings_clip_card(clip) }}
               {% endfor %}
@@ -1155,7 +1157,8 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                            {% for code in channel.inviteCodes %}
+                                                            {% set channelInviteCodes = channel.id | get_channelInviteCodes %}
+                                                            {% for code in channelInviteCodes %}
                                                             <tr id="inviteCodeRow-{{code.code}}" class="align-middle">
                                                                 <td>
                                                                     <div class="input-group">
@@ -1197,7 +1200,8 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {% for user in channel.invitedViewers %}
+                                                                {% set channelInvitedUsers = channel.id | get_channelInvitedUsers %}
+                                                                {% for user in channelInvitedUsers %}
                                                                 <tr id="invitedUserRow-{{user.id}}" class="align-middle">
                                                                     <td>{{user.userID|get_userName}}</td>
                                                                     <td>{{user.addedDate|normalize_date}}</td>
@@ -1246,7 +1250,8 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    {% for restreamDestination in channel.restreamDestinations %}
+                                                                    {% set channelRestreamDestinations = channel.id | get_channelRestreamDestinations %}
+                                                                    {% for restreamDestination in channelRestreamDestinations %}
                                                                     <tr id="restreamTableRow-{{restreamDestination.id}}" class="align-middle">
                                                                         <td>{{restreamDestination.name}}</td>
                                                                         <td>{{restreamDestination.url}}</td>
@@ -1293,6 +1298,7 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
+                                                                    {% set channelWebhooks = channel.id | get_channelWebhooks %}
                                                                     {% for webhook in channel.webhooks %}
                                                                     <tr id="webhookTableRow-{{webhook.id}}" class="align-middle">
                                                                         <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
@@ -1496,7 +1502,7 @@
                     <i class="fas fa-users"></i> {{channel.views}}
                 </div>
                 <div class="col-12 col-md-4">
-                    <i class="fas fa-star"></i> {{channel.subscriptions|length}}
+                    <i class="fas fa-star"></i> {{channel.id | get_channelSubCount }}
                 </div>
             </div>
         </div>

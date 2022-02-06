@@ -267,13 +267,13 @@
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-thumbs-up"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.upvotes|length}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ video.id | get_Video_Upvotes }}</button>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-comment-alt"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.comments|length}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ video.id | get_Video_Comments }}</button>
             </div>
         </div>
         <div class="form-group row mt-3">
@@ -308,7 +308,7 @@
         </div>
         <div class="mt-2">
           <button class="clipEditModalButton btn btn-primary boxShadow" onclick="editClipMetadataModal('{{ clip.id }}');"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.recordedVideo.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
+          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.parentVideo}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
           <button class="clipShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
           <button class="clipDeleteModalButton btn btn-danger boxShadow" onclick="deleteClipModal('{{clip.id}}');"><i class="fas fa-trash-alt"></i></button>
         </div>
@@ -317,13 +317,13 @@
         <div class="mb-1">
             <div class="btn-group boxShadow" role="group">
               <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
-              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.recordedVideo.topic|get_topicName}}</span>
+              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_channelTopic |get_topicName}}</span>
             </div>
         </div>
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-calendar"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.recordedVideo.videoDate|normalize_date}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_videoDate |normalize_date}}</button>
             </div>
         </div>
         <div class="my-1">
@@ -341,7 +341,7 @@
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-thumbs-up"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.upvotes|length}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ clip.id | get_Clip_Upvotes }}</button>
             </div>
         </div>
         <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>

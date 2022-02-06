@@ -18,6 +18,8 @@ from classes import Stream
 from classes import settings
 from classes import RecordedVideo
 from classes import Channel
+from classes import invites
+from classes import webhook
 
 from functions import votes
 from functions import cachedDbCalls
@@ -82,6 +84,12 @@ def init(context):
     context.jinja_env.filters['getPanelVideoList'] = getPanelVideoList
     context.jinja_env.filters['getPanelClipList'] = getPanelClipList
     context.jinja_env.filters['generatePlaybackAuthToken'] = generatePlaybackAuthToken
+    context.jinja_env.filters['get_channelInviteCodes'] = get_channelInviteCodes
+    context.jinja_env.filters['get_channelInvitedUsers'] = get_channelInvitedUsers
+    context.jinja_env.filters['get_channelRestreamDestinations'] = get_channelRestreamDestinations
+    context.jinja_env.filters['get_channelWebhooks'] = get_channelWebhooks
+    context.jinja_env.filters['get_channelVideos'] = get_channelVideos
+    context.jinja_env.filters['get_channelClips'] = get_channelClips
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -609,3 +617,36 @@ def generatePlaybackAuthToken(channelLoc):
             validationToken = hashlib.sha256(
                 (current_user.username + channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
     return validationToken
+
+def get_channelInviteCodes(channelID):
+    codeQuery = invites.inviteCode.query.filter_by(channelID=channelID).all()
+    return codeQuery
+
+def get_channelInvitedUsers(channelID):
+    inviteQuery = invites.invitedViewer.query.filter_by(channelID=channelID).all()
+    return inviteQuery
+
+def get_channelRestreamDestinations(channelID):
+    restreamDestQuery = Channel.restreamDestinations.query.filter_by(channel=channelID).all()
+    return restreamDestQuery
+
+def get_channelWebhooks(channelID):
+    webhookQuery = webhook.webhook.query.query.filter_by(channelID=channelID).all()
+    return webhookQuery
+
+def get_channelVideos(channelID):
+    videosQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID) \
+        .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.gifLocation,
+                       RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.videoLocation, RecordedVideo.RecordedVideo.topic,
+                       RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.description,
+                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.published,
+                       RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser).all()
+    return videosQuery
+
+def get_channelClips(channelID):
+    channelVideos = get_channelVideos(channelID)
+
+    channelQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.parentVideo.in_(channelVideos.id))\
+        .with_entity(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
+                     RecordedVideo.Clips.length, RecordedVideo.Clips.views, RecordedVideo.Clips.description, RecordedVideo.Clips.published, RecordedVideo.Clips.parentVideo).all()
+    return channelQuery
