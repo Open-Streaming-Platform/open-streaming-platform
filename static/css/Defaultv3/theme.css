@@ -1067,6 +1067,7 @@ video.vjs-tech {
     overflow-x: hidden;
     scrollbar-width: none;
     scrollbar-color: #b5b5b5 #858585;
+    background-color: var(--box2-background);
   }
 
 /* Chrome, Edge, and Safari */
