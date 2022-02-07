@@ -31,7 +31,6 @@ def init(context):
     context.jinja_env.filters['normalize_date'] = normalize_date
     context.jinja_env.filters['limit_title'] = limit_title
     context.jinja_env.filters['limit_title20'] = limit_title20
-    context.jinja_env.filters['limit_title30'] = limit_title30
     context.jinja_env.filters['format_kbps'] = format_kbps
     context.jinja_env.filters['hms_format'] = hms_format
     context.jinja_env.filters['get_topicName'] = get_topicName
@@ -133,12 +132,6 @@ def limit_title(titleStr):
 def limit_title20(titleStr):
     if len(titleStr) > 20:
         return titleStr[:17] + "..."
-    else:
-        return titleStr
-
-def limit_title30(titleStr):
-    if len(titleStr) > 30:
-        return titleStr[:27] + "..."
     else:
         return titleStr
 
