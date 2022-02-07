@@ -242,7 +242,7 @@
     <div class="col">
       <div class="channel-metadata align-top">
         <div class="fs-4 textShadow"><b>{{ channelData.channelName }}</b></div>
-        <div class="textShadow"><a href="#"><b>{{ channelData.owningUser|get_userName }}</b></a></div>
+        <div class="textShadow"><a href="/streamer/{{ channelData.owningUser }}"><b>{{ channelData.owningUser|get_userName }}</b></a></div>
         <div class="channelBadges">
           {% if channelData.id | get_channelLiveStatus %}
             {{ core_ui.live_badge() }}
