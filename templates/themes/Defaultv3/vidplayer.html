@@ -97,6 +97,13 @@
         {% endif %}
     </script>
 
+    {% if startTime != None %}
+    <script>
+        player.currentTime({{ startTime }});
+        player.play();
+    </script>
+    {% endif %}
+
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
     <script>
