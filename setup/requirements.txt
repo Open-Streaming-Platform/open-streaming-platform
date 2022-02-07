@@ -56,3 +56,4 @@ celery==5.1.2
 ffmpeg-python==0.2.0
 click==7.1
 bidict==0.21.4
+email_validator==1.1.3
