@@ -292,7 +292,7 @@
               <span class="align-middle video-streamer mx-2"><a href="/streamer/{{ video.owningUser }}">{{ video.owningUser | get_userName }}</a></span>
             </div>
             <div class="video-name"><b>{{ video.channelName }}</b></div>
-            <div class="video-channelName"><a href="/channel/{{ video.channelID }}">{{ video.channelID | get_channelName }}</a></div>
+            <div class="video-channelName"><a href="/channel/{{ video.channelID }}">{{ video.channelID | get_channelName }}</a> ⋅ {{ video.videoDate }}</div>
             <div class="video-topic mt-2 me-2"><a href="/topic/{{video.topic}}/"><i class="fas fa-hashtag"></i> {{ video.topic | get_topicName }}</a>
               {% for tag in video.id | get_videoTags %}
               <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
