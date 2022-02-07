@@ -669,6 +669,12 @@ table tbody tr {
     text-align: center;
 }
 
+.streamCard .card-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .streamCard {
     height: 290px;
     width: 315px;
