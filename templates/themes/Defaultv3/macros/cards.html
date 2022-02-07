@@ -168,7 +168,7 @@
         {% if channelData.private %}
             {{ core_ui.private_badge() }}
         {% endif %}
-        {{ core_ui.views_badge(channelData.currentViewers) }}
+        {{ core_ui.views_badge(channelData.views) }}
         </div>
         <a href="/channel/{{channelData.id}}/">
           <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
