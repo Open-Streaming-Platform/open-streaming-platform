@@ -202,8 +202,12 @@
     <div class="col-11 mt-2">
       <div class="comment-header">
         <span><b><a href="/profile/{{ comment.userID | get_userName }}">{{ comment.userID | get_userName }}</a></b></span>
-        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span><br>
-        <span class=mt-1>{{ comment.comment | markdown }}</span>
+        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span>
+      </div>
+      <div class="row">
+        <div class="col mt-2">
+          <span>{{ comment.comment | markdown }}</span>
+        </div>
       </div>
     </div>
   </div>
