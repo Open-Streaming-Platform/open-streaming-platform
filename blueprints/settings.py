@@ -340,7 +340,8 @@ def admin_page():
         channelList = Channel.Channel.query\
             .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.imageLocation, Channel.Channel.owningUser,
                            Channel.Channel.topic, Channel.Channel.channelLoc, Channel.Channel.views, Channel.Channel.chatEnabled,
-                           Channel.Channel.record, Channel.Channel.allowComments, Channel.Channel.protected, Channel.Channel.private)
+                           Channel.Channel.record, Channel.Channel.allowComments, Channel.Channel.protected, Channel.Channel.private,
+                           Channel.Channel.allowGuestNickChange)
         streamList = Stream.Stream.query.filter_by(active=True)\
             .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
                            Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.totalViewers).all()
@@ -1281,7 +1282,8 @@ def settings_channels_page():
         .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.topic, Channel.Channel.views,
                        Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
                        Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
-                       Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName).all()
+                       Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName,
+                       Channel.Channel.allowGuestNickChange).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
