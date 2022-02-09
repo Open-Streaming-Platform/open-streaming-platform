@@ -338,6 +338,12 @@ table tbody tr {
     width: 390px;
 }
 
+.searchResults .list-group-item {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .navbar .searchResults a:hover {
     color: var(--link-hover-color)
 }
