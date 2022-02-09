@@ -283,8 +283,7 @@ function room_pres_handler(a, b, c) {
   } else {
     var presenceType = 'online';
   }
-    console.log(showpartjoin);
-    console.log(presenceType);
+
   // Handle Public Presence Notifications
   var messageTimestamp = moment().format('hh:mm A');
     if (presenceType === "unavailable") {
@@ -296,12 +295,10 @@ function room_pres_handler(a, b, c) {
             msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
             serverMessage(msg);
         } else if (showpartjoin == "True") {
-            console.log("bleeeeh");
             msg = Strophe.getResourceFromJid(from) + " has left the room.";
             serverMessage(msg);
         }
     } else if (presenceType === "online" && showpartjoin == "True") {
-        console.log("blaaaaah");
         msg = Strophe.getResourceFromJid(from) + " joined the room.";
         serverMessage(msg);
     }
