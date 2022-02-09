@@ -351,7 +351,9 @@
       <ul class="dropdown-menu ownerbuttons-dropdown-content" aria-labelledby="ownerbuttons">
         <li><a href="{{streamURL}}"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-download"></i></button>Download video</a></li>
         <li><a href="#"><span onclick="newThumbnailRequest();"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-camera"></i></button>Create thumbnail</span></a></li>
+        {% if video.owningUser == current_user.id %}
         <li><a href="#"><span onclick="openModal('moveModal');"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-arrow-circle-right"></i></button>Move to channel</span></a></li>
+        {% endif %}
         <li><a href="#"><span onclick="openClipModal();"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-cut"></i></button>Create clip</span></a></li>
         <li><a href="#"><span onclick="openModal('editModal');"><button type="button" class="btn col-3 m-1 btn-primary boxShadow"><i class="fas fa-edit"></i></button>Edit meta data</span></a></li>
         <li><a href="#"><span onclick="openModal('deleteModal');"><button type="button" class="btn col-3 m-1 btn-danger boxShadow"><i class="fas fa-trash-alt"></i></button>Delete video</span></a></li>
