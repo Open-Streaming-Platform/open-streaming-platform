@@ -344,7 +344,7 @@
     <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
     {% endif %}
   </div>
-  {%  if current_user.is_authenticated and video.owningUser == current_user.id %}
+  {%  if (current_user.is_authenticated and video.owningUser == current_user.id) or current_user.has_role('Admin') %}
     <!--Start Video Owner Controls-->
     <div class="video-control-owner-buttons pt-2 me-1 float-end">
       <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>
@@ -378,7 +378,7 @@
       <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
       {% endif %}
     </div>
-    {%  if current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id %}
+    {%  if (current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id) or current_user.has_role('Admin') %}
       <!--Start Video Owner Controls-->
       <div class="video-control-owner-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>

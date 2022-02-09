@@ -165,7 +165,7 @@ def vid_change_page(videoID):
 
     videoQuery = cachedDbCalls.getVideo(videoID)
 
-    if videoQuery.owningUser == current_user.id:
+    if videoQuery.owningUser == current_user.id or current_user.has_role('Admin'):
 
         if 'videoTags' in request.form:
             videoTagString = request.form['videoTags']
