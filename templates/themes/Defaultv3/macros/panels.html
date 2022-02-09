@@ -1419,6 +1419,11 @@
                     <input type="checkbox" class="form-check-input" id="allowGuestsNickChange" name="allowGuestsNickChange"
                       {% if channel.allowGuestNickChange == True %} checked {% endif %}>
                   </div>
+                  <div class="form-check form-switch">
+                    <label for="showJoinPartMsg" class="form-check-label"><b>Show join and part messages</b></label>
+                    <input type="checkbox" class="form-check-input" id="showJoinPartMsg" name="showJoinPartMsg"
+                      {% if channel.showChatJoinLeaveNotification==True %} checked {% endif %}>
+                  </div>
                 </div>
                 <input type="hidden" id="channelLoc" name="channelLoc" value="{{channel.channelLoc}}">
                 <button type="submit" class="btn btn-success"><i class="fas fa-edit"></i> Save</button>
