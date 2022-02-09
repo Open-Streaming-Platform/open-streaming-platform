@@ -531,6 +531,26 @@
                         </tbody>
                     </table>
                     <hr>
+                    <b>E-Mail notifications</b>
+                    <p>
+                      Send an e-mail notification if...
+                    </p>
+                    <div class="form-check form-switch">
+                      <label for="email-video" class="form-check-label">a new video is published on a subscribed channel</label>
+                      <input type="checkbox" class="form-check-input" id="email-video" name="emailVideo"
+                        {% if userData.emailVideo==True %} checked {% endif %}>
+                    </div>
+                    <div class="form-check form-switch">
+                      <label for="email-stream" class="form-check-label">a subscribed stream goes live</label>
+                      <input type="checkbox" class="form-check-input" id="email-stream" name="emailStream"
+                        {% if userData.emailStream==True %} checked {% endif %}>
+                    </div>
+                    <div class="form-check form-switch">
+                      <label for="email-message" class="form-check-label">a new message is recieved</label>
+                      <input type="checkbox" class="form-check-input" id="email-message" name="emailMessage"
+                        {% if userData.emailMessage==True %} checked {% endif %}>
+                    </div>
+                    <hr>
                     <b>Storage Usage</b>
                     <div class="mt-2">
                         <table class="table table-sm">

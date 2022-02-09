@@ -85,6 +85,19 @@ def user_page():
         biography = request.form['biography']
         current_user.biography = biography
 
+        if 'emailVideo' in request.form:
+            current_user.emailVideo = True
+        else:
+            current_user.emailVideo = False
+        if 'emailStream' in request.form:
+            current_user.emailStream = True
+        else:
+            current_user.emailStream = False
+        if 'emailMessage' in request.form:
+            current_user.emailMessage = True
+        else:
+            current_user.emailMessage = False
+
         if current_user.authType == 0:
             password1 = request.form['password1']
             password2 = request.form['password2']
