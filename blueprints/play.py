@@ -204,7 +204,7 @@ def vid_change_page(videoID):
 @login_required
 def delete_vid_page(videoID):
     videoQuery = cachedDbCalls.getVideo(videoID)
-    if videoQuery.owningUser == current_user.id:
+    if videoQuery.owningUser == current_user.id or current_user.has_role('Admin'):
         result = video_tasks.delete_video.delay(videoID)
 
         cache.delete_memoized(cachedDbCalls.getVideo, videoID)
