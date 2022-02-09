@@ -23,14 +23,14 @@
               <div class="col-10">
                 <div class="card-body">
                   <p class="card-text textShadow">
-                    <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName | limit_title30 }}</a></b><br>
-                    <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | channeltoOwnerID | get_channelName }}">{{ stream.linkedChannel | channeltoOwnerID | get_channelName | limit_title30 }}</a><br>
-                    <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName | limit_title30}}</a>
+                    <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName }}</a></b><br>
+                    <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | get_channelName }}">{{ stream.linkedChannel | get_channelName  }}</a><br>
+                    <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName }}</a>
                   </p>
                 </div>
               </div>
             </div>
-            <div class="streamCard-tags row mt-2 g-0">
+            <div class="streamCard-tags row g-0">
                 <div class="col-12">
                       {% for tag in stream.linkedChannel | get_channelTags %}
                         <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
@@ -70,9 +70,9 @@
         <div class="col-10">
           <div class="card-body">
             <p class="card-text textShadow">
-              <a href="/play/{{video.id}}" data-toggle="tooltip" title="{{ video.channelName }}"><b>{{ video.channelName | limit_title30 }}</b></a><br>
-              <a href="/channel/{{video.channelID}}" data-toggle="tooltip" title="{{ video.channelID | get_channelName }}">{{ video.channelID | get_channelName | limit_title30}}</a><br>
-              <a href="/topic/{{video.topic}}" data-toggle="tooltip" title="{{ video.topic | get_topicName }}">{{ video.topic | get_topicName | limit_title30}}</a><br>
+              <a href="/play/{{video.id}}" data-toggle="tooltip" title="{{ video.channelName }}"><b>{{ video.channelName }}</b></a><br>
+              <a href="/channel/{{video.channelID}}" data-toggle="tooltip" title="{{ video.channelID | get_channelName }}">{{ video.channelID | get_channelName }}</a><br>
+              <a href="/topic/{{video.topic}}" data-toggle="tooltip" title="{{ video.topic | get_topicName }}">{{ video.topic | get_topicName }}</a><br>
             </p>
           </div>
         </div>
@@ -114,9 +114,9 @@
           <div class="col-10">
             <div class="card-body">
               <p class="card-text textShadow">
-                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName | limit_title30 }}</b></a><br>
-                <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName | limit_title30 }}</a><br>
-                <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName | limit_title30 }}</a>
+                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName }}</b></a><br>
+                <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName  }}</a><br>
+                <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
               </p>
             </div>
           </div>
@@ -168,7 +168,7 @@
         {% if channelData.private %}
             {{ core_ui.private_badge() }}
         {% endif %}
-        {{ core_ui.views_badge(channelData.currentViewers) }}
+        {{ core_ui.views_badge(channelData.views) }}
         </div>
         <a href="/channel/{{channelData.id}}/">
           <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
@@ -202,8 +202,21 @@
     <div class="col-11 mt-2">
       <div class="comment-header">
         <span><b><a href="/profile/{{ comment.userID | get_userName }}">{{ comment.userID | get_userName }}</a></b></span>
-        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span><br>
-        <span class=mt-1>{{ comment.comment | markdown }}</span>
+        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span>
+      </div>
+      <div class="row my-2">
+        <div class="col-11">
+          <span>{{ comment.comment | markdown }}</span>
+        </div>
+        <div class="col-1">
+          {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
+          <span class="float-end me-2">
+            <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" data-toggle="modal" data-target="#deleteCommentModal">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </span>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>

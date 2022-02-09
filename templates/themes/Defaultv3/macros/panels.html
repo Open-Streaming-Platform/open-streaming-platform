@@ -221,7 +221,7 @@
         <span class="fs-4 textShadow"><b>{{userData.username}}</b></span><br>
         <div class="socialIcons mt-3">
             {% for social in userData.socialNetworks %}
-            <a href="{{ social.url }}"><img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ social.socialType}}.png"></a>
+            <a href="{{ social.url }}" target="_blank"><img class="socialIcon boxShadow" src="/static/img/socialnetwork/social-{{ social.socialType}}.png"></a>
             {% endfor %}
         </div>
       </div>
@@ -242,7 +242,7 @@
     <div class="col">
       <div class="channel-metadata align-top">
         <div class="fs-4 textShadow"><b>{{ channelData.channelName }}</b></div>
-        <div class="textShadow"><a href="#"><b>{{ channelData.owningUser|get_userName }}</b></a></div>
+        <div class="textShadow"><a href="/streamer/{{ channelData.owningUser }}"><b>{{ channelData.owningUser|get_userName }}</b></a></div>
         <div class="channelBadges">
           {% if channelData.id | get_channelLiveStatus %}
             {{ core_ui.live_badge() }}
@@ -292,7 +292,7 @@
               <span class="align-middle video-streamer mx-2"><a href="/streamer/{{ video.owningUser }}">{{ video.owningUser | get_userName }}</a></span>
             </div>
             <div class="video-name"><b>{{ video.channelName }}</b></div>
-            <div class="video-channelName"><a href="/channel/{{ video.channelID }}">{{ video.channelID | get_channelName }}</a></div>
+            <div class="video-channelName"><a href="/channel/{{ video.channelID }}">{{ video.channelID | get_channelName }}</a> ⋅ {{ video.videoDate }}</div>
             <div class="video-topic mt-2 me-2"><a href="/topic/{{video.topic}}/"><i class="fas fa-hashtag"></i> {{ video.topic | get_topicName }}</a>
               {% for tag in video.id | get_videoTags %}
               <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>

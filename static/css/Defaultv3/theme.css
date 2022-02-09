@@ -338,6 +338,12 @@ table tbody tr {
     width: 390px;
 }
 
+.searchResults .list-group-item {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .navbar .searchResults a:hover {
     color: var(--link-hover-color)
 }
@@ -667,6 +673,12 @@ table tbody tr {
     background-color: #206CFF;
     border-radius: 4px;
     text-align: center;
+}
+
+.streamCard .card-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .streamCard {

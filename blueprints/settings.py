@@ -1141,7 +1141,7 @@ def settings_channels_page():
                 if channelCount >= sysSettings.limitMaxChannels:
                     flash("Maximum Number of Channels Allowed Reached - Limit: " + str(sysSettings.limitMaxChannels), "error")
                     db.session.commit()
-                    redirect(url_for('.settings_channels_page'))
+                    return redirect(url_for('settings.settings_channels_page'))
 
             newUUID = str(uuid.uuid4())
 
