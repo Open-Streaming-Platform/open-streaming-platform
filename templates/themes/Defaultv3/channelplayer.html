@@ -124,6 +124,7 @@
     <script>
         var streamURL = '{{ streamURL }}';
         var channelLocation = '{{ channel.channelLoc }}';
+        var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
         var topicJSList = [];
         {% for x in topics -%}
         topicJSList["{{x.id}}"] =  "{{x.name}}";
