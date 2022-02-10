@@ -247,6 +247,9 @@ def unsubscribe_page():
         emailAddress = request.args.get("email")
         userQuery = Sec.User.query.filter_by(email=emailAddress).first()
         if userQuery is not None:
+            userQuery.emailVideo = False
+            userQuery.emailStream = False
+            userQuery.emailMessage = False
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(userID=userQuery.id).all()
             for sub in subscriptionQuery:
                 db.session.delete(sub)
