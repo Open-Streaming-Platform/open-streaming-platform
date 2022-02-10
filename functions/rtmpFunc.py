@@ -134,7 +134,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
                                  sysSettings.siteName + " - " + requestedChannel.channelName + " has started a stream",
                                  "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName +
                                  " has started a new video stream.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + str(requestedChannel.channelLoc)
-                                 + "'>" + requestedChannel.channelName + "</a></p>")
+                                 + "'>" + requestedChannel.channelName + "</a></p>", "stream")
             except:
                 system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
 
@@ -332,7 +332,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
 
                 subsFunc.processSubscriptions(requestedChannel.id, sysSettings.siteName + " - " + requestedChannel.channelName + " has posted a new video",
                                  "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + requestedChannel.channelName + " has posted a new video titled <u>" + pendingVideo.channelName +
-                                 "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>")
+                                 "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(pendingVideo.id) + "'>" + pendingVideo.channelName + "</a></p>", "video")
 
             while not os.path.exists(fullVidPath):
                 time.sleep(1)

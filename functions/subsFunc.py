@@ -25,7 +25,7 @@ def runSubscription(subject, destination, message):
         email.send(msg)
         return True
 
-def processSubscriptions(channelID, subject, message):
+def processSubscriptions(channelID, subject, message, type):
     subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
 
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -35,10 +35,17 @@ def processSubscriptions(channelID, subject, message):
 
             subCount = 0
             for sub in subscriptionQuery:
+                send = False
                 userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
                 if userQuery is not None:
-                    result = runSubscription(subject, userQuery.email, message)
-                    subCount = subCount + 1
+                    if type == "video" and userQuery.emailVideo == True:
+                        send = True
+                    elif type == "stream" and userQuery.emailStream == True:
+                        send = True
+
+                    if send == True:
+                        result = runSubscription(subject, userQuery.email, message)
+                        subCount = subCount + 1
             system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
     db.session.commit()
     return True
