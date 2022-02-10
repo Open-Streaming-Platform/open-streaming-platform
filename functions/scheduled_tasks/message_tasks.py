@@ -44,7 +44,7 @@ def send_message(self, subject, message, fromUser, toUser):
                   <li><b>Time Sent: </b>""" + str(datetime.datetime.now()) + """</li>
                   <li><b>Message: </b>""" + shortMessage + """</li>
                 </ul>
-                To view the full message, visit <a href='""" + fullSiteURL + """>""" + fullSiteURL + """</a>
+                To view the full message, visit <a href='""" + fullSiteURL + """'>""" + fullSiteURL + """</a>
             </div>
             """
             send_email.delay(sysSettings.siteName + ' - New Message Notification', userNotificationQuery.email, emailContent)
