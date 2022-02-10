@@ -1,11 +1,14 @@
+import datetime
+
 from celery.canvas import subtask
 from celery.result import AsyncResult
+from flask_mail import Message
 
 import logging, json, requests
-from classes.shared import celery, db
+from classes.shared import celery, db, email
 from classes import notifications, Sec, webhook
 
-from functions import notifications, webhookFunc, system
+from functions import notifications, webhookFunc, system, cachedDbCalls, templateFilters
 
 log = logging.getLogger('app.functions.scheduler.message_tasks')
 
@@ -13,8 +16,39 @@ def setup_message_tasks(sender, **kwargs):
     pass
 
 @celery.task(bind=True)
+def send_email(self, subject, destination, message):
+    sysSettings = cachedDbCalls.getSystemSettings()
+    finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
+    msg = Message(subject=subject, recipients=[destination])
+    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+    msg.body = finalMessage
+    msg.html = finalMessage
+    email.send(msg)
+    log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Email Sent", "subject": subject, "to": destination})
+    return True
+
+@celery.task(bind=True)
 def send_message(self, subject, message, fromUser, toUser):
+    sysSettings = cachedDbCalls.getSystemSettings
+    datetime.datetime.now()
     result = notifications.sendMessage(subject, message, fromUser, toUser)
+    userNotificationQuery = Sec.User.query.filter_by(id=toUser).with_entities(Sec.User.email, Sec.User.emailMessage).first()
+    if userNotificationQuery is not None:
+        if userNotificationQuery.emailMessage is True:
+            shortMessage = (message[:75] + '..') if len(message) > 75 else message
+            fullSiteURL = sysSettings.siteProtocol + sysSettings.siteAddress + '/messages'
+            emailContent = """
+            <div>
+                A user has sent a message to an account associated with you.<br>
+                <ul>
+                  <li><b>From: </b>""" + templateFilters.get_userName(fromUser) + """</li>
+                  <li><b>Time Sent: </b>""" + str(datetime.datetime.now()) + """</li>
+                  <li><b>Message: </b>""" + shortMessage + """</li>
+                </ul>
+                To view the full message, visit <a href='""" + fullSiteURL + """>""" + fullSiteURL + """</a>
+            </div>
+            """
+            send_email.delay(sysSettings.siteName + ' - New Message Notification', userNotificationQuery.email, emailContent)
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Message Sent", "subject": subject, "from": fromUser, "to": toUser})
     return True
 
