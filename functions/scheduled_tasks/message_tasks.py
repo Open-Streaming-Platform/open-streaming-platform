@@ -30,7 +30,6 @@ def send_email(self, subject, destination, message):
 @celery.task(bind=True)
 def send_message(self, subject, message, fromUser, toUser):
     sysSettings = cachedDbCalls.getSystemSettings()
-    datetime.datetime.now()
     result = notifications.sendMessage(subject, message, fromUser, toUser)
     userNotificationQuery = Sec.User.query.filter_by(id=toUser).with_entities(Sec.User.email, Sec.User.emailMessage).first()
     if userNotificationQuery is not None:
