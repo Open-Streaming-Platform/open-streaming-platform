@@ -1434,6 +1434,8 @@ def settings_channels_chat_page():
             ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
             ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
 
+            channelQuery.chatFormat = request.form['chatFormat']
+
             if 'moderatedSelect' in request.form:
                 ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
             else:
