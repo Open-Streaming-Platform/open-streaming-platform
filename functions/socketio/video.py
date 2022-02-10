@@ -42,11 +42,22 @@ def editVideoSocketIO(message):
         if message['videoAllowComments'] == "True" or message['videoAllowComments'] == True:
             videoAllowComments = True
 
-        result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
-        if result is True:
-            db.session.commit()
-            db.session.close()
-            return 'OK'
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery != None:
+            if current_user.has_role('Admin') or videoQuery.owningUser == current_user.id:
+                result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
+                if result is True:
+                    db.session.commit()
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return abort(500)
+            else:
+                db.session.commit()
+                db.session.close()
+                return abort(403)
         else:
             db.session.commit()
             db.session.close()
