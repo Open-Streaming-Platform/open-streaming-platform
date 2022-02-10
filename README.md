@@ -2,13 +2,11 @@
 <div align="center">
 <h1 align="center">Open Streaming Platform</h1>
   <a href="https://github.com/github_username/repo_name">
-    <img src="https://i.imgur.com/D3BFfX6.png" alt="Logo" width="256">
+    <img src="https://i.imgur.com/WBA40Yc.png" alt="Logo" width="128">
   </a>
 </div>
 <br>
-
-
-<p align="center">
+<div align="center">
     Open-Source Video Streaming for Everyone
     <br />
     <a href="https://wiki.openstreamingplatform.com"><strong>Explore the docs »</strong></a>
@@ -19,8 +17,8 @@
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/issues/new">Report Bug</a>
     ·
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/issues/new">Request Feature</a>
-</p>
-
+</div>
+<br>
 <div align="center">
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/releases"><img src="https://img.shields.io/badge/dynamic/json?color=blue&label=release&query=%24%5B0%5D.tag_name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108%2Freleases"></a>
     <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/v/deamos/openstreamingplatform/latest?color=blue&label=docker%20version"></a>
