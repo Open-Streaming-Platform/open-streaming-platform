@@ -42,6 +42,11 @@
         </div>
 
         <script>
+            var conn_options = {
+                'sync disconnect on unload': true
+            };
+            var socket = io();
+
             var channelLocation = '{{ channel.channelLoc }}';
         </script>
         <script>
