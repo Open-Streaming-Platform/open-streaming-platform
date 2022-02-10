@@ -43,13 +43,30 @@
   z-index: 100;
 }
 
-.chatPanel .chatContent .chatEntryContainer .chatEntry {
+.chatPanel .chatContent .chatEntryContainer .chat-messenger {
   padding: 5px 10px 5px 10px;
   background-color: var(--box1-background);
   min-height: 56px;
   border-radius: 10px;
   margin: 5px;
 }
+
+.chatPanel .chatContent .chatEntryContainer .chat-messenger .sticker {
+  height: 48px;
+}
+
+.chatPanel .chatContent .chatEntryContainer .chat-irc {
+  padding: 5px 10px 5px 10px;
+  min-height: 32px;
+  margin: 5px;
+}
+
+.chatPanel .chatContent .chatEntryContainer .chat-irc .sticker {
+  height: 32px;
+  margin-top: -5px;
+  margin-bottom: -5px;
+}
+
 .chatPanel .chatContent .chatEntryContainer .chatEntry .chatImage {
   width: 64px;
   display: inline-block;

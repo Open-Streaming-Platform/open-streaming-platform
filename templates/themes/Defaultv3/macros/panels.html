@@ -874,15 +874,26 @@
 </div>
 {% endmacro %}
 
-{% macro core_chat_message_template() %}
+{% macro core_chat_message_template_messenger() %}
 <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
-    <div class="chatEntry boxShadow flexbox">
+    <div class="chatEntry chat-messenger boxShadow flexbox">
       <span class="chatInfo">
         <div><span class="chatTimestamp float-end"></span></div>
         <div><span class="chatUsername"></span></div>
         <div><span class="chatMessage"></span></div>
       </span>
     </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_message_template_irc() %}
+<div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
+  <div class="chatEntry chat-irc flexbox">
+    <span class="chatInfo">
+      <span class="chatTimestamp me-2"></span><span class="chatUsername ml-1"></span>:
+      <span class="chatMessage ml-1"></span>
+    </span>
+  </div>
 </div>
 {% endmacro %}
 
