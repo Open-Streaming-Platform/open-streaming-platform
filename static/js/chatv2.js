@@ -286,21 +286,22 @@ function room_pres_handler(a, b, c) {
 
   // Handle Public Presence Notifications
   var messageTimestamp = moment().format('hh:mm A');
-  if (presenceType === "unavailable") {
-
-      var msgfrom = "SERVER";
-      if (status.includes("307")) {
-          msg = Strophe.getResourceFromJid(from) + " was kicked from the room.";
-      } else if (status.includes("301")) {
-          msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
-      } else {
-          msg = Strophe.getResourceFromJid(from) + " has left the room.";
-      }
-      serverMessage(msg);
-  //} else if (presenceType == 'online') {
-  //    msg = Strophe.getResourceFromJid(from) + " joined the room.";
-  //    serverMessage(msg);
-  }
+    if (presenceType === "unavailable") {
+        var msgfrom = "SERVER";
+        if (status.includes("307")) {
+            msg = Strophe.getResourceFromJid(from) + " was kicked from the room.";
+            serverMessage(msg);
+        } else if (status.includes("301")) {
+            msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
+            serverMessage(msg);
+        } else if (showpartjoin == "True") {
+            msg = Strophe.getResourceFromJid(from) + " has left the room.";
+            serverMessage(msg);
+        }
+    } else if (presenceType === "online" && showpartjoin == "True") {
+        msg = Strophe.getResourceFromJid(from) + " joined the room.";
+        serverMessage(msg);
+    }
 
   // Check if is own status change (Kicks/Bans/Etc)
   if (from === ROOMNAME + '@' + ROOM_SERVICE + '/' + username && to === fullJID) {

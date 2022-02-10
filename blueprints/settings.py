@@ -1283,7 +1283,7 @@ def settings_channels_page():
                        Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
                        Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
                        Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName,
-                       Channel.Channel.allowGuestNickChange).all()
+                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
@@ -1439,6 +1439,10 @@ def settings_channels_chat_page():
                 channelQuery.allowGuestNickChange = True
             else:
                 channelQuery.allowGuestNickChange = False
+            if 'showJoinPartMsg' in request.form:
+                channelQuery.showChatJoinLeaveNotification = True
+            else:
+                channelQuery.showChatJoinLeaveNotification = False
             db.session.commit()
 
     return redirect(url_for('settings.settings_channels_page'))
