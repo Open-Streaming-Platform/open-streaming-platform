@@ -84,7 +84,7 @@ def deleteVideo(videoID):
 
 def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments):
 
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, owningUser=current_user.id).first()
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
     sysSettings = cachedDbCalls.getSystemSettings()
 
     if recordedVidQuery is not None:
@@ -102,7 +102,7 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
         message_tasks.send_webhook.delay(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
                    channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
-                   channelimage=channelImage, streamer=templateFilters.get_userName(recordedVidQuery.channel.owningUser),
+                   channelimage=channelImage, streamer=templateFilters.get_userName(recordedVidQuery.owningUser),
                    channeldescription=str(recordedVidQuery.channel.description), videoname=recordedVidQuery.channelName,
                    videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
                    videotopic=templateFilters.get_topicName(recordedVidQuery.topic),
@@ -240,7 +240,7 @@ def changeClipMetadata(clipID, name, description):
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 
     if clipQuery is not None:
-        if clipQuery.recordedVideo.owningUser == current_user.id:
+        if clipQuery.recordedVideo.owningUser == current_user.id or current_user.has_role('Admin'):
 
             clipQuery.clipName = system.strip_html(name)
             clipQuery.description = system.strip_html(description)

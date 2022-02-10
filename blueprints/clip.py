@@ -99,7 +99,7 @@ def view_clip_page(clipID):
 def delete_clip_page(clipID):
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
-    if clipQuery.recordedVideo.owningUser == current_user.id:
+    if clipQuery.recordedVideo.owningUser == current_user.id or current_user.has_role('Admin'):
         result = video_tasks.delete_video_clip.delay(int(clipID))
         flash("Clip scheduled for deletion", "success")
         return redirect(url_for('root.main_page'))

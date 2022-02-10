@@ -33,14 +33,14 @@ def newScreenShot(message):
     if 'clipID' in message:
         video = message['clipID']
         clipQuery = RecordedVideo.Clips.query.filter_by(id=int(video)).first()
-        if clipQuery is not None and clipQuery.recordedVideo.owningUser == current_user.id:
+        if clipQuery is not None and (clipQuery.recordedVideo.owningUser == current_user.id or current_user.has_role('Admin')):
             videoLocation = videos_root + clipQuery.videoLocation
             thumbnailLocation = videos_root + clipQuery.recordedVideo.channel.channelLoc + '/tempThumbnail.png'
             channelLocation = clipQuery.recordedVideo.channel.channelLoc
     else:
         if video is not None:
             videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
-            if videoQuery is not None and videoQuery.owningUser == current_user.id:
+            if videoQuery is not None and (videoQuery.owningUser == current_user.id or current_user.has_role('Admin')):
                 videoLocation = videos_root + videoQuery.videoLocation
                 thumbnailLocation = videos_root + videoQuery.channel.channelLoc + '/tempThumbnail.png'
                 channelLocation = videoQuery.channel.channelLoc
@@ -69,14 +69,14 @@ def setScreenShot(message):
         video = message['loc']
         if video is not None:
             videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(video)).first()
-            if videoQuery is not None and videoQuery.owningUser == current_user.id:
+            if videoQuery is not None and (videoQuery.owningUser == current_user.id or current_user.has_role('Admin')):
                 # Offloads Video Thumbnail Creation to Task Queue
                 video_tasks.update_video_thumbnail.delay(videoQuery.id, timeStamp)
 
     elif 'clipID' in message:
         clipID = message['clipID']
         clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-        if clipQuery is not None and current_user.id == clipQuery.recordedVideo.owningUser:
+        if clipQuery is not None and (current_user.id == clipQuery.recordedVideo.owningUser or current_user.has_role('Admin')):
             thumbnailLocation = clipQuery.thumbnailLocation
             fullthumbnailLocation = videos_root + thumbnailLocation
             videoLocation = videos_root + clipQuery.videoLocation
