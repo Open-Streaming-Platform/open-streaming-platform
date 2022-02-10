@@ -143,7 +143,7 @@ def togglePublishedSocketIO(message):
                 subsFunc.processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
                                      sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + videoQuery.channel.channelName + " has posted a new video titled <u>" +
                                      videoQuery.channelName + "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" +
-                                     str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>")
+                                     str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>", "video")
 
             db.session.commit()
             db.session.close()

@@ -113,6 +113,9 @@ class User(db.Model, UserMixin):
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
     socialNetworks = db.relationship('UserSocial', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+    emailVideo = db.Column(db.Boolean)
+    emailStream = db.Column(db.Boolean)
+    emailMessage = db.Column(db.Boolean)
 
     def serialize(self):
         return {

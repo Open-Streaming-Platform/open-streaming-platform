@@ -161,7 +161,7 @@ def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTit
                                               sysSettings.siteName + " - " + ChannelQuery.channelName + " has posted a new video",
                                               "<html><body><img src='" + sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + ChannelQuery.channelName + " has posted a new video titled <u>" + newVideo.channelName +
                                               "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" + str(
-                                                  newVideo.id) + "'>" + newVideo.channelName + "</a></p>")
+                                                  newVideo.id) + "'>" + newVideo.channelName + "</a></p>", "video")
             except:
                 system.newLog(0, "Subscriptions Failed due to possible misconfiguration")
         return (results[0])
