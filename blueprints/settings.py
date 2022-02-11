@@ -1459,6 +1459,7 @@ def settings_channels_chat_page():
             else:
                 channelQuery.showChatJoinLeaveNotification = False
             db.session.commit()
+            cachedDbCalls.invalidateChannelCache(channelQuery.id)
 
     return redirect(url_for('settings.settings_channels_page'))
 
