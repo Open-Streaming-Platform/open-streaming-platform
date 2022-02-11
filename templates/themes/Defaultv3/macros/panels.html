@@ -62,16 +62,26 @@
 {% endmacro %}
 
 {% macro channels_panel(channelList, title="Channels" ) %}
-<div class="channels-container insetBoxShadow">
+{%- set listClass = '' | generateRandomString %}
+<div id="{{ listClass }}" class="channels-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start class" style="width:100%">
   {% for channel in channelList %}
       {% if channel.id | is_channelObjVisible %}
         {{ cards.channel_card(channel) }}
       {% endif %}
   {% endfor %}
   </ul>
+  <ul id="paging_{{ listClass }}" class="pagination justify-content-center"></ul>
 </div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_channelName', 'list_channelOwner'],
+        page: 12,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+</script>
 {% endmacro %}
 
 {% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start", shadow=True) %}
@@ -94,7 +104,6 @@
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-
 </script>
 {% endmacro %}
 
@@ -117,7 +126,6 @@
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-
 </script>
 {% endmacro %}
 

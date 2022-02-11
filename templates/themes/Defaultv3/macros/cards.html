@@ -164,7 +164,8 @@
 
 {% macro channel_card(channelData) %}
 <li class="channelCard item">
-    
+    <div class="d-none list_channelName">{{channelData.channelName}}</div>
+    <div class="d-none list_channelOwner">{{ channelData.owningUser | get_userName }}</div>
     <div class="zoom">
         <div class="channelCard-badges">
         {% if channelData.id | get_channelLiveStatus %}
