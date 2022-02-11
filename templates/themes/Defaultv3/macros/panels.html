@@ -435,7 +435,7 @@
                         </div>
                         <div class="form-group mt-2">
                             <label for="emailAddress"><b>Email Address</b></label>
-                            <input type="email" name="emailAddress" id="emailAddress" class="form-control boxShadow" value="{{userData.email}}" required>
+                            <input type="email" name="emailAddress" id="emailAddress" class="form-control boxShadow" autocomplete="new-password" value="{{userData.email}}" required>
                         </div>
                         <hr class="mt-2">
                         {% if current_user.authType == 0 %}
@@ -446,10 +446,10 @@
                         <hr class="mt-2">
                         <div class="form-group">
                             <label for="password"><b>Change Password</b></label>
-                            <input type="password" id="password" class="form-control boxShadow" name="password1" placeholder="New Password">
+                            <input type="password" id="password" class="form-control boxShadow" name="password1" autocomplete="new-password" placeholder="New Password">
                         </div>
                         <div class="form-group mt-2">
-                            <input type="password" id="password2" class="form-control boxShadow" name="password2" placeholder="Confirm New Password">
+                            <input type="password" id="password2" class="form-control boxShadow" name="password2" autocomplete="new-password" placeholder="Confirm New Password">
                         </div>
                         {% endif %}
                         <hr class="mt-2">
