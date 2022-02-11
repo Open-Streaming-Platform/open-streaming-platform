@@ -4,6 +4,7 @@ import datetime
 import os
 import pytz
 import random
+import string
 
 from flask_security import current_user
 from sqlalchemy import func
@@ -25,6 +26,7 @@ from functions import votes
 from functions import cachedDbCalls
 
 def init(context):
+    context.jinja_env.filters['generateRandomString'] = generateRandomString
     context.jinja_env.filters['normalize_uuid'] = normalize_uuid
     context.jinja_env.filters['normalize_urlroot'] = normalize_urlroot
     context.jinja_env.filters['normalize_url'] = normalize_url
@@ -93,6 +95,11 @@ def init(context):
 #----------------------------------------------------------------------------#
 # Template Filters
 #----------------------------------------------------------------------------#
+
+def generateRandomString(x):
+    letters = string.ascii_lowercase
+    randomString = (''.join(random.choice(letters) for i in range(10)))
+    return randomString
 
 def normalize_uuid(uuidstr):
     return uuidstr.replace("-", "")
