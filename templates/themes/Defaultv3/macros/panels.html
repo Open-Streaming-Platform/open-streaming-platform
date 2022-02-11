@@ -866,14 +866,14 @@
 {% macro core_popoutchatchat_header() %}
 <div class="chatHeader flex d-flex justify-content-between mb-2 p-2">
   <span class="chat-header-left">
-    <button type="button" class="btn btn-sm btn-link mx-2" onclick="popinChat();"><i class="fa fa-window-restore"></i></button>
-    <button type="button" class="btn btn-sm btn-link mx-2" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></button>
+    <button type="button" class="btn btn-sm btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="pop-in chat" onclick="popinChat();"><i class="fa fa-window-restore"></i></button>
+    <button type="button" class="btn btn-sm btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="Toggle dark mode" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></button>
   </span>
   <span class="chat-header-center fs-4 textShadow">Live Chat</span>
   <span class="chat-header-right">
     <span id="joinPartButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show part/join messages (visible only to you)" onclick="toggleJoinPart();"><i id="joinPartIcon" class="{% if channel.showChatJoinLeaveNotification == True %}fas fa-user-circle{% elif channel.showChatJoinLeaveNotification == False %}far fa-user-circle{%endif%}"></i></button></span>
-    <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-    <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+    <span id="channelList"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show participant list" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+    <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show banned users" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
   </span>
 </div>
 {% endmacro %}
