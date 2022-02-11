@@ -97,6 +97,10 @@
 <li class="streamCard item">
   
     <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
+        <div class="d-none list-clipName">{{ clip.clipName }}</div>
+        <div class="d-none list-clipViews">{{ clip.views }}</div>
+        <div class="d-none list-clipLength">{{ clip.length }}</div>
+        <div class="d-none list-clipTopic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
         <div class="streamCard-badges">
             {% if clip.parentVideo | videotoChannelID | get_channelProtected %}
             {{ core_ui.protected_badge() }}
@@ -118,7 +122,7 @@
           <div class="col-10">
             <div class="card-body">
               <p class="card-text textShadow">
-                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName }}</b></a><br>
+                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName }}</a></b><br>
                 <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName  }}</a><br>
                 <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
               </p>

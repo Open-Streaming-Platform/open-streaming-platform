@@ -85,7 +85,7 @@
           {% endif %}
       {% endfor %}
   </ul>
-  <ul class="pagination justify-content-center"></ul>
+  <ul id="paging_{{ listClass }}" class="pagination justify-content-center"></ul>
 </div>
 <script>
     list_{{ listClass }}_options = {
@@ -94,13 +94,19 @@
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+    var paging_{{ listClass }} = document.getElementById('paging_{{ listClass }}');
+
+    if (paging_{{ listClass }}.length) {
+        paging_{{ listClass }}.style.display = 'none';
+    }
 </script>
 {% endmacro %}
 
 {% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start", shadow=True) %}
+{%- set listClass = '' | generateRandomString %}
 <div class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
+  <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }} list" style="width:100%">
       {% for clip in clipsList %}
           {% if clip.parentVideo | videotoChannelID | is_channelObjVisible %}
             {{ cards.clip_card(clip) }}
@@ -108,6 +114,19 @@
       {% endfor %}
   </ul>
 </div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_clipName', 'list_clipViews', 'list_clipLength', 'list_clipTopic'],
+        page: 12,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+    var paging_{{ listClass }} = document.getElementById('paging_{{ listClass }}');
+
+    if (paging_{{ listClass }}.length) {
+        paging_{{ listClass }}.style.display = 'none';
+    }
+</script>
 {% endmacro %}
 
 {% macro featured_streamer_panel(stream, channel, panelContent, title="Featured Stream") %}
