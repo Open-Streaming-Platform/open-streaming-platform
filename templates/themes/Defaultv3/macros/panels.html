@@ -752,11 +752,14 @@
 
 {% macro core_chat_header() %}
 <div class="chatHeader flex d-flex justify-content-between mb-2 p-2">
-    <span class="chat-header-left"><button type="button" class="btn btn-link mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
+    <span class="chat-header-left">
+      <button type="button" class="btn btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="pop-out chat" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button>
+    </span>
     <span class="chat-header-center fs-4 textShadow">Live Chat</span>
     <span class="chat-header-right">
-        <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+        <span id="joinPartButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show part/join messages (visible only to you)" onclick="toggleJoinPart();"><i id ="joinPartIcon" class="{% if channel.showChatJoinLeaveNotification == True %}fas fa-user-circle{% elif channel.showChatJoinLeaveNotification == False %}far fa-user-circle{%endif%}"></i></button></span>
+        <span id="channelList"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show participant list" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show banned users" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
     </span>
 </div>
 {% endmacro %}
@@ -868,6 +871,7 @@
   </span>
   <span class="chat-header-center fs-4 textShadow">Live Chat</span>
   <span class="chat-header-right">
+    <span id="joinPartButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show part/join messages (visible only to you)" onclick="toggleJoinPart();"><i id="joinPartIcon" class="{% if channel.showChatJoinLeaveNotification == True %}fas fa-user-circle{% elif channel.showChatJoinLeaveNotification == False %}far fa-user-circle{%endif%}"></i></button></span>
     <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
     <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
   </span>

@@ -24,6 +24,17 @@ function clearBan(username) {
     return true;
 }
 
+function toggleJoinPart() {
+    joinPartIcon = document.getElementById('joinPartIcon');
+    if (showpartjoin == "True") {
+        showpartjoin = "False";
+        joinPartIcon.className = 'far fa-user-circle';
+    } else {
+        showpartjoin = "True";
+        joinPartIcon.className = 'fas fa-user-circle';
+    }
+}
+
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -520,9 +531,11 @@ function statusCheck() {
   }
 
   // Update UI based on Roles
-  if (CHATSTATUS['role'] === "moderator") {
+    if (CHATSTATUS['role'] === "moderator") {
+      document.getElementById('joinPartButton').style.display = "inline";
       document.getElementById('modDisplayButton').style.display = "inline";
-  } else {
+    } else {
+      document.getElementById('joinPartButton').style.display = "none";
       document.getElementById('modDisplayButton').style.display = "none";
   }
 
