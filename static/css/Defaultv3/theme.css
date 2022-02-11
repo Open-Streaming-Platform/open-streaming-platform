@@ -135,6 +135,18 @@ table tbody tr {
     box-shadow: inset var(--box-shadow);
 }
 
+.pagination {
+
+}
+
+.pagination li {
+    padding: 5px 10px;
+    margin: 0 15px;
+    background-color: gray;
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+}
+
 .nu-modal {
   position: absolute;
   top: 50%;
