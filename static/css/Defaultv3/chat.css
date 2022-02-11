@@ -13,6 +13,11 @@
   background-color: var(--page-background);
 }
 
+/* Dark mode toggle icon alignment fix for pop-out chat */
+.chatHeader #darkModeIcon {
+  font-size: 1.3rem;
+}
+
 .chat-popout .chatPanel .chatContent {
   flex: 1 1 calc(100vh - 160px);
   overflow-x:auto;
