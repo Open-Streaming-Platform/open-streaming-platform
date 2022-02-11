@@ -46,6 +46,10 @@
 <li class="streamCard item">
   
   <div class="streamCard-thumbnail-container zoom {% if video.gifLocation != None %}gifhover{% endif %}">
+      <div class="d-none list-videoName">{{ video.channelName }}</div>
+      <div class="d-none list-videoViews">{{ video.views }}</div>
+      <div class="d-none list-videoDate">{{ video.videoDate }}</div>
+      <div class="d-none list-videoTopic">{{ video.topic | get_topicName }}</div>
       <div class="streamCard-badges">
           {% if video.channelID | get_channelProtected %}
           {{ core_ui.protected_badge() }}

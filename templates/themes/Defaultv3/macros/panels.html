@@ -75,7 +75,8 @@
 {% endmacro %}
 
 {% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start", shadow=True) %}
-<div class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+{%- set listClass = '' | generateRandomString %}
+<div class="videos-container {{ listClass }} {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }}" style="width:100%">
       {% for video in videoList | orderVideoBy(order) %}
@@ -84,7 +85,16 @@
           {% endif %}
       {% endfor %}
   </ul>
+  <ul class="pagination"></ul>
 </div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_videoName', 'list_videoViews', 'list_videoDate', 'list_videoTopic'],
+        page: 12,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+</script>
 {% endmacro %}
 
 {% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start", shadow=True) %}
