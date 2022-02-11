@@ -141,10 +141,16 @@ table tbody tr {
 
 .pagination li {
     padding: 5px 10px;
-    margin: 0 15px;
-    background-color: gray;
+    margin: 0 2px;
+    background-color: dimgray;
     border-radius: 6px;
     box-shadow: var(--box-shadow);
+    font-weight: bold;
+    text-shadow: var(--text-shadow);
+}
+
+.pagination .active {
+    background-color: lightslategray;
 }
 
 .nu-modal {
