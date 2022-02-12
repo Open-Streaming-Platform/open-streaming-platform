@@ -195,14 +195,17 @@ def dbFixes():
         db.session.commit()
 
     # Check for Users with email notifications not set
-    userQuery = Sec.User.query.all()
+    userQuery = Sec.User.query.filter_by(emailVideo=None).all()
     for user in userQuery:
-        if user.emailVideo is None:
-            user.emailVideo = 1
-        if user.emailStream is None:
-            user.emailStream = 1
-        if user.emailMessage is None:
-            user.emailMessage = 1
+        user.emailVideo = 1
+        db.session.commit()
+    userQuery = Sec.User.query.filter_by(emailStream=None).all()
+    for user in userQuery:
+        user.emailStream = 1
+        db.session.commit()
+    useQuery = Sec.User.query.filter_by(emailMessage=None).all()
+    for user in userQuery:
+        user.emailMessage = 1
         db.session.commit()
 
     userQuery = Sec.User.query.all()
