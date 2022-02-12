@@ -24,6 +24,17 @@ function clearBan(username) {
     return true;
 }
 
+function toggleJoinPart() {
+    joinPartIcon = document.getElementById('joinPartIcon');
+    if (showpartjoin == "True") {
+        showpartjoin = "False";
+        joinPartIcon.className = 'far fa-user-circle';
+    } else {
+        showpartjoin = "True";
+        joinPartIcon.className = 'fas fa-user-circle';
+    }
+}
+
 function showOccupants() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -300,7 +311,9 @@ function room_pres_handler(a, b, c) {
         }
     } else if (presenceType === "online" && showpartjoin == "True") {
         msg = Strophe.getResourceFromJid(from) + " joined the room.";
-        serverMessage(msg);
+        setTimeout(function () {
+            serverMessage(msg);
+        }, 500);
     }
 
   // Check if is own status change (Kicks/Bans/Etc)
@@ -392,7 +405,7 @@ function process_stickers(msg) {
           var stickerData = stickerList.filter(d => d.name === stickerName);
           if (stickerData.length !== 0) {
               var stickerFilename = stickerData[0]['file'];
-              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" height="48px" alt="${stickerName}" title="${stickerName}" />`);
+              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" class="sticker" alt="${stickerName}" title="${stickerName}" />`);
           } else {
               msg = msg.replace(`:${stickerName}:`, '');
           }
@@ -421,7 +434,9 @@ function onMessage(msg) {
       } else {
           var messageTimestamp = moment().format('hh:mm A');
       }
-
+      if (msg.getElementsByTagName('stanza-id')[0] != undefined) {
+          messageId = msg.getElementsByTagName('stanza-id')[0].getAttribute('id');
+      }
       if (type == "chat" && messageElement.length > 0) {
           var body = messageElement[0];
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
@@ -432,6 +447,7 @@ function onMessage(msg) {
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+          tempNode.id = messageId;
           if (Strophe.getResourceFromJid(from) == 'SERVER') {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
           } else {
@@ -520,9 +536,11 @@ function statusCheck() {
   }
 
   // Update UI based on Roles
-  if (CHATSTATUS['role'] === "moderator") {
+    if (CHATSTATUS['role'] === "moderator") {
+      document.getElementById('joinPartButton').style.display = "inline";
       document.getElementById('modDisplayButton').style.display = "inline";
-  } else {
+    } else {
+      document.getElementById('joinPartButton').style.display = "none";
       document.getElementById('modDisplayButton').style.display = "none";
   }
 

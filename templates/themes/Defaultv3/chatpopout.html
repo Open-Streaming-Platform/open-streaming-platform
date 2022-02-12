@@ -36,7 +36,11 @@
             {{ panels.chat_unavailable_info() }}
             {{ panels.core_popoutchat(stickerSelectorList) }}
             <!--Chat Templates-->
-            {{ panels.core_chat_message_template() }}
+            {% if channel.chatFormat == 'irc' %}
+                {{ panels.core_chat_message_template_irc() }}
+            {% else %}
+                {{ panels.core_chat_message_template_messenger() }}
+            {% endif %}
             {{ panels.core_chat_profile_template() }}
         </div>
 
@@ -45,6 +49,7 @@
                 'sync disconnect on unload': true
             };
             var socket = io();
+            var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
             var channelLocation = '{{ channel.channelLoc }}';
         </script>
         <script src="/static/js/chatv2.js" type="text/javascript"></script>

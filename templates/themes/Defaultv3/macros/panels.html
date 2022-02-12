@@ -464,7 +464,7 @@
                         </div>
                         <div class="form-group mt-2">
                             <label for="emailAddress"><b>Email Address</b></label>
-                            <input type="email" name="emailAddress" id="emailAddress" class="form-control boxShadow" value="{{userData.email}}" required>
+                            <input type="email" name="emailAddress" id="emailAddress" class="form-control boxShadow" autocomplete="new-password" value="{{userData.email}}" required>
                         </div>
                         <hr class="mt-2">
                         {% if current_user.authType == 0 %}
@@ -475,10 +475,10 @@
                         <hr class="mt-2">
                         <div class="form-group">
                             <label for="password"><b>Change Password</b></label>
-                            <input type="password" id="password" class="form-control boxShadow" name="password1" placeholder="New Password">
+                            <input type="password" id="password" class="form-control boxShadow" name="password1" autocomplete="new-password" placeholder="New Password">
                         </div>
                         <div class="form-group mt-2">
-                            <input type="password" id="password2" class="form-control boxShadow" name="password2" placeholder="Confirm New Password">
+                            <input type="password" id="password2" class="form-control boxShadow" name="password2" autocomplete="new-password" placeholder="Confirm New Password">
                         </div>
                         {% endif %}
                         <hr class="mt-2">
@@ -781,11 +781,14 @@
 
 {% macro core_chat_header() %}
 <div class="chatHeader flex d-flex justify-content-between mb-2 p-2">
-    <span class="chat-header-left"><button type="button" class="btn btn-link mx-2" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button></span>
+    <span class="chat-header-left">
+      <button type="button" class="btn btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="pop-out chat" onclick="popoutChat();"><i class="fas fa-external-link-alt"></i></button>
+    </span>
     <span class="chat-header-center fs-4 textShadow">Live Chat</span>
     <span class="chat-header-right">
-        <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+        <span id="joinPartButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show part/join messages (visible only to you)" onclick="toggleJoinPart();"><i id ="joinPartIcon" class="{% if channel.showChatJoinLeaveNotification == True %}fas fa-user-circle{% elif channel.showChatJoinLeaveNotification == False %}far fa-user-circle{%endif%}"></i></button></span>
+        <span id="channelList"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show participant list" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+        <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show banned users" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
     </span>
 </div>
 {% endmacro %}
@@ -892,26 +895,38 @@
 {% macro core_popoutchatchat_header() %}
 <div class="chatHeader flex d-flex justify-content-between mb-2 p-2">
   <span class="chat-header-left">
-    <button type="button" class="btn btn-sm btn-link mx-2" onclick="popinChat();"><i class="fa fa-window-restore"></i></button>
-    <button type="button" class="btn btn-sm btn-link mx-2" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></button>
+    <button type="button" class="btn btn-sm btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="pop-in chat" onclick="popinChat();"><i class="fa fa-window-restore"></i></button>
+    <button type="button" class="btn btn-sm btn-link mx-2" data-toggle="tooltip" data-placement="bottom" title="Toggle dark mode" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></button>
   </span>
   <span class="chat-header-center fs-4 textShadow">Live Chat</span>
   <span class="chat-header-right">
-    <span id="channelList"><button type="button" class="btn btn-link" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
-    <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
+    <span id="joinPartButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show part/join messages (visible only to you)" onclick="toggleJoinPart();"><i id="joinPartIcon" class="{% if channel.showChatJoinLeaveNotification == True %}fas fa-user-circle{% elif channel.showChatJoinLeaveNotification == False %}far fa-user-circle{%endif%}"></i></button></span>
+    <span id="channelList"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show participant list" onclick="showOccupants();"><i class="fas fa-user-friends"></i> <span id="chatTotal"></span></button></span>
+    <span id="modDisplayButton" style="display:none;"><button type="button" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Show banned users" onclick="openModDisplay();"><i class="fas fa-user-shield"></i></button></span>
   </span>
 </div>
 {% endmacro %}
 
-{% macro core_chat_message_template() %}
+{% macro core_chat_message_template_messenger() %}
 <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
-    <div class="chatEntry boxShadow flexbox">
+    <div class="chatEntry chat-messenger boxShadow flexbox">
       <span class="chatInfo">
         <div><span class="chatTimestamp float-end"></span></div>
         <div><span class="chatUsername"></span></div>
         <div><span class="chatMessage"></span></div>
       </span>
     </div>
+</div>
+{% endmacro %}
+
+{% macro core_chat_message_template_irc() %}
+<div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
+  <div class="chatEntry chat-irc flexbox">
+    <span class="chatInfo">
+      <span class="chatTimestamp me-2"></span><span class="chatUsername ml-1"></span>:
+      <span class="chatMessage ml-1"></span>
+    </span>
+  </div>
 </div>
 {% endmacro %}
 
@@ -1448,6 +1463,13 @@
                   <label for="roomDescr" class="col-form-label"><b>Description</b></label>
                   <input type="text" class="form-control" name="roomDescr" id="roomDescr"
                     value="{{channelRooms[channel.channelLoc]['description']}}">
+                </div>
+                <div class="form-group">
+                  <label for="chatFormat" class="col-form-label"><b>Chat message format</b></label>
+                  <select class="form-select boxShadow" name="chatFormat" id="chatFormat" style="font-family: FontAwesome, sans-serif;" required>
+                    <option value="messenger" {% if channel.chatFormat=="messenger" %} selected {% endif %}>Messenger</option>
+                    <option value="irc" {% if channel.topic=="irc" %} selected {% endif %}>IRC</option>
+                  </select>
                 </div>
                 <div class="mt-2">
                   <div class="form-check form-switch">

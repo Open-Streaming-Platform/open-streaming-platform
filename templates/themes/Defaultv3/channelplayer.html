@@ -85,7 +85,11 @@
                     {{ panels.chat_unavailable_info() }}
                     {{ panels.core_chat(stickerSelectorList) }}
                     <!--Chat Templates-->
-                    {{ panels.core_chat_message_template() }}
+                    {% if channel.chatFormat == 'irc' %}
+                        {{ panels.core_chat_message_template_irc() }}
+                    {% else  %}
+                        {{ panels.core_chat_message_template_messenger() }}
+                    {% endif %}
                     {{ panels.core_chat_profile_template() }}
                 </div>
             </div>
