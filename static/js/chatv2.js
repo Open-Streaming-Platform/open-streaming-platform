@@ -434,7 +434,9 @@ function onMessage(msg) {
       } else {
           var messageTimestamp = moment().format('hh:mm A');
       }
-
+      if (msg.getElementsByTagName('stanza-id')[0] != undefined) {
+          messageId = msg.getElementsByTagName('stanza-id')[0].getAttribute('id');
+      }
       if (type == "chat" && messageElement.length > 0) {
           var body = messageElement[0];
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
@@ -445,6 +447,7 @@ function onMessage(msg) {
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
           tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+          tempNode.id = messageId;
           if (Strophe.getResourceFromJid(from) == 'SERVER') {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
           } else {
