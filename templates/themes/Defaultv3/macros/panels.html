@@ -80,7 +80,7 @@
 {%- set listClass = '' | generateRandomString %}
 <div id="{{ listClass }}" class="channels-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start class" style="width:100%">
+  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start list" style="width:100%">
   {% for channel in channelList %}
       {% if channel.id | is_channelObjVisible %}
         {{ cards.channel_card(channel) }}
