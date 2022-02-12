@@ -283,6 +283,11 @@ table tbody tr {
   color: inherit;
 }
 
+.navbar .nav-item a:hover{
+  text-decoration: none;
+  color: var(--link-hover-color);
+}
+
 .navbar-title {
   position: relative;
   top: 1px;
