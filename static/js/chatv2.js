@@ -311,7 +311,9 @@ function room_pres_handler(a, b, c) {
         }
     } else if (presenceType === "online" && showpartjoin == "True") {
         msg = Strophe.getResourceFromJid(from) + " joined the room.";
-        serverMessage(msg);
+        setTimeout(function () {
+            serverMessage(msg);
+        }, 500);
     }
 
   // Check if is own status change (Kicks/Bans/Etc)
