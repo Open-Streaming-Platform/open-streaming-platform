@@ -2,7 +2,10 @@
 
 {% macro live_stream_card(stream) %}
 <li class="streamCard item">
-    
+        <div class="d-none list_streamName">{{ stream.streamName }}</div>
+        <div class="d-none list_streamOwner">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</div>
+        <div class="d-none list_streamViewers">{{stream.currentViewers}}</div>
+        <div class="d-none list_streamTopic">{{stream.topic | get_topicName }}</div>
         <div class="streamCard-badges">
             {% if stream.linkedChannel | get_channelProtected %}
                 {{ core_ui.protected_badge() }}

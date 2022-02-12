@@ -16,16 +16,26 @@
 {% endmacro %}
 
 {% macro live_streams_panel(streamList, title="Currently Live") %}
-<div class="live-container boxShadow">
+{%- set listClass = '' | generateRandomString %}
+<div id="{{ listClass }}" class="live-container boxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-start list" style="width:100%">
       {% for stream in streamList %}
           {% if stream.linkedChannel | is_channelObjVisible %}
             {{ cards.live_stream_card(stream) }}
           {% endif %}
       {% endfor %}
   </ul>
+  <ul id="paging_{{ listClass }}" class="pagination justify-content-center"></ul>
 </div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_streamName', 'list_streamOwner', 'list_streamViewers', 'list_streamTopic'],
+        page: 12,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+</script>
 {% endmacro %}
 
 {% macro topics_panel(topicList, title="Topics" ) %}
