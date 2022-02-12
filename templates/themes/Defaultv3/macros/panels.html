@@ -31,13 +31,14 @@
 <script>
     list_{{ listClass }}_options = {
         valueNames: ['list_streamName', 'list_streamOwner', 'list_streamViewers', 'list_streamTopic'],
-        page: 12,
+        page: 10,
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
     list_{{ listClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
@@ -91,13 +92,14 @@
 <script>
     list_{{ listClass }}_options = {
         valueNames: ['list_channelName', 'list_channelOwner'],
-        page: 12,
+        page: 10,
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
     list_{{ listClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
@@ -118,13 +120,14 @@
 <script>
     list_{{ listClass }}_options = {
         valueNames: ['list_videoName', 'list_videoViews', 'list_videoDate', 'list_videoTopic'],
-        page: 12,
+        page: 10,
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
     list_{{ listClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
@@ -144,13 +147,14 @@
 <script>
     list_{{ listClass }}_options = {
         valueNames: ['list_clipName', 'list_clipViews', 'list_clipLength', 'list_clipTopic'],
-        page: 12,
+        page: 10,
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
     list_{{ listClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
