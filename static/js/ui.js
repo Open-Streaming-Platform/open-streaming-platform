@@ -172,6 +172,23 @@ function boxCloser(e) {
     }
 }
 
+function resetGifHover() {
+    $(document).ready(function()
+      {
+          $(".gifhover").hover(
+              function()
+              {
+                var src = $(this).find('img').attr("src");
+                $(this).find('img').attr("src", src.replace(/\.png$/i, ".gif"));
+              },
+              function()
+              {
+                var src = $(this).find('img').attr("src");
+                $(this).find('img').attr("src", src.replace(/\.gif$/i, ".png"));
+              });
+    });
+}
+
 // Search
 $("#systemSearchInput").on('change keydown paste input', function(e){
     var searchInput = document.getElementById('systemSearchInput').value;
