@@ -1,5 +1,5 @@
 from flask_security import current_user
-from flask_socketio import emit
+from flask_socketio import emit, join_room
 from sqlalchemy.sql.expression import func
 
 from classes.shared import db, socketio
@@ -110,3 +110,9 @@ def socketio_xmpp_getBanList(message):
 
     emit('returnBanList', {'results': bannedUserList}, broadcast=False)
     return 'OK'
+
+@socketio.on('deleteMessageRequest')
+def deleteMessageRequest(msgData):
+    room = msgData['channel']
+    messageId = msgData['messageId']
+    emit('deleteMessage', messageId, broadcast=True)

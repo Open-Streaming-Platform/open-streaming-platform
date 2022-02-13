@@ -794,12 +794,12 @@ function displayProfileBox(elem) {
     var modControlsBox = div.querySelector('div#profileBox-modControls');
     var deleteMessageButton = div.querySelector('div#profileBox-deleteMessage');
     if (CHATSTATUS.role === "moderator") {
-        deleteMessageButton.style.display = "block";
-        $(deleteMessageButton).click(function () { deleteMessage(messageDivId); });
         // Prevent Owner from Showing Controls on Themselves
         if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
             modControlsBox.style.display = "block";
         }
+        deleteMessageButton.style.display = "block";
+        $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
     }
 
     //Begin Async Call to Update Profile Data from API
@@ -824,13 +824,17 @@ function closeProfileBox() {
   }
 }
 
-function deleteMessage(messageDivId) {
-    $('#' + messageDivId).fadeOut('slow');
+function messageDeleteRequest(messageDivId) {
+    socket.emit('deleteMessageRequest', { channel: channelLocation, messageId: messageDivId });
+}
+
+socket.on('deleteMessage', function (messageId) {
+    $('#' + messageId).fadeOut('slow');
     setTimeout(function () {
-        $('#' + messageDivId).remove();
+        $('#' + messageId).remove();
     }, 1000);
     closeProfileBox();
-}
+});
 
 function updateProfileBox(elem, username) {
     var apiEndpoint = '/apiv1/user/' + username;
