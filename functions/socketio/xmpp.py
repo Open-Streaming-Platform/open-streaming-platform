@@ -112,7 +112,20 @@ def socketio_xmpp_getBanList(message):
     return 'OK'
 
 @socketio.on('deleteMessageRequest')
-def deleteMessageRequest(msgData):
-    room = msgData['channel']
-    messageId = msgData['messageId']
-    emit('deleteMessage', messageId, broadcast=True)
+def deleteMessageRequest(message):
+    if current_user.is_authenticated:
+        if 'channelLoc' in message and 'messageId' in message:
+            from app import ejabberd
+            messageId = str(message['messageId'])
+            channelLoc = str(message['channelLoc'])
+            channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+            if channelQuery is not None:
+                user = Sec.User.query.filter_by(id=current_user.id).first()
+                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
+                if user.uuid in channelAffiliations:
+                    userAffiliation = channelAffiliations[user.uuid]
+                    if userAffiliation == 'owner' or userAffiliation == 'admin':
+                        # TBD: add message id to db
+                        emit('deleteMessage', messageId, broadcast=True)
+    db.session.close()
+    return 'OK'

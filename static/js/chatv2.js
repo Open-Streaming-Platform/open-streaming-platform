@@ -825,7 +825,7 @@ function closeProfileBox() {
 }
 
 function messageDeleteRequest(messageDivId) {
-    socket.emit('deleteMessageRequest', { channel: channelLocation, messageId: messageDivId });
+    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId });
 }
 
 socket.on('deleteMessage', function (messageId) {
