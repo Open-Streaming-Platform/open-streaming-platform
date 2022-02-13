@@ -422,6 +422,8 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
+  var messageDisplayThreshold = moment().subtract(2, 'days');
+    
 
   if (Strophe.getResourceFromJid(from) == null) {
       from = ROOMNAME + "@" + ROOM_SERVICE + "/SERVER";
@@ -430,9 +432,9 @@ function onMessage(msg) {
   if  (!(CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from)))) {
 
       if (timestampElement[0] != undefined) {
-          var messageTimestamp = moment(timestampElement[0].getAttribute("stamp")).format('hh:mm A');
+          var messageTimestamp = moment(timestampElement[0].getAttribute("stamp"));
       } else {
-          var messageTimestamp = moment().format('hh:mm A');
+          var messageTimestamp = moment();
       }
       if (msg.getElementsByTagName('stanza-id')[0] != undefined) {
           messageId = msg.getElementsByTagName('stanza-id')[0].getAttribute('id');
@@ -440,13 +442,14 @@ function onMessage(msg) {
       if (type == "chat" && messageElement.length > 0) {
           var body = messageElement[0];
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
-      } else if (type == "groupchat" && messageElement.length > 0) {
+      // Check if message is of type groupchat, not null, within now and the message display threshold
+      } else if (type == "groupchat" && messageElement.length > 0 && messageTimestamp > messageDisplayThreshold) {
           var body = messageElement[0];
           var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
           var msg = Strophe.xmlunescape(Strophe.getText(body));
 
           var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
+          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp.format('hh:mm A');
           tempNode.id = messageId;
           if (Strophe.getResourceFromJid(from) == 'SERVER') {
               tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
