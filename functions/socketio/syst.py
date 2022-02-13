@@ -456,7 +456,7 @@ def update_hub_url(message):
             db.session.close()
     return 'OK'
 
-@socketio('addServerToHub')
+@socketio.on('addServerToHub')
 def add_server_to_hub(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
@@ -476,7 +476,7 @@ def add_server_to_hub(message):
                 db.session.close()
     return 'OK'
 
-@socketio('deleteServerFromHub')
+@socketio.on('deleteServerFromHub')
 def remove_server_from_hub(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
