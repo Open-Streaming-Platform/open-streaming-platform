@@ -18,7 +18,26 @@
 {% block body %}
     <div class="m-2">
         <h3>Hub Settings</h3>
+        <div class="input-group mb-3">
+            <label for="hubURL">Hub URL</label>
+            <input type="text" id="hubURL" class="form-control boxShadow">
+            <button class="btn btn-primary" type="button">Save</button>
+        </div>
         <button class="btn btn-success boxShadow mx-2">Add to Hub</button>
         <button class="btn btn-danger boxShadow mx-2">Remove from Hub</button>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function updateHubURL() {
+            socket.emit('updateHubURL', {hubURL: document.getElementById('hubURL').value});
+        }
+        function addServerToHub() {
+            socket.emit('addServerToHub',{})
+        }
+        function removeServerFromHub() {
+            socket.emit('removeServerFromHub', {})
+        }
+    </script>
 {% endblock %}

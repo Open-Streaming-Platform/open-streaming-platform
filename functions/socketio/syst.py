@@ -9,7 +9,7 @@ from flask_security import current_user
 from sqlalchemy.sql.expression import func
 from urllib.parse import urlparse
 
-from classes.shared import db, socketio, limiter
+from classes.shared import db, socketio, limiter, cache
 from classes import Sec
 from classes import settings
 from classes import RecordedVideo
@@ -437,9 +437,31 @@ def add_social_network(message):
 @socketio.on('removeSocialNetwork')
 def delete_social_network(message):
     if current_user.is_authenticated:
-        socialQuery = Sec.UserSocial.query.filter_by(id=int(message['id'])).first()
+        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, id=int(message['id'])).first()
         if socialQuery is not None:
             db.session.delete(socialQuery)
             db.session.commit()
         db.session.close()
     return 'OK'
+
+@socketio.on('updateHubURL')
+def update_hub_url(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubURL = message['hubURL']
+            db.session.commit()
+            cache.delete_memoized(cachedDbCalls.getSystemSettings)
+            db.session.close()
+    return 'OK'
+
+@socketio('addServerToHub')
+def add_server_to_hub(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = cachedDbCalls.getSystemSettings()
+            r = requests.post(sysSettings.hubURL, data={'address': sysSettings.siteAddress,
+                                                        'protocol': sysSettings.siteProtocol,
+                                                        'port': 80})
+            if r.status_code == 200:
+                pass
