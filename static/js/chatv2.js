@@ -427,8 +427,8 @@ function onMessage(msg) {
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
   var messageDisplayThreshold = moment().subtract(2, 'days');
+  var messageBanned = false;
     
-
   if (Strophe.getResourceFromJid(from) == null) {
       from = ROOMNAME + "@" + ROOM_SERVICE + "/SERVER";
   }
@@ -443,13 +443,19 @@ function onMessage(msg) {
       if (msg.getElementsByTagName('stanza-id')[0] != undefined) {
           messageId = msg.getElementsByTagName('stanza-id')[0].getAttribute('id');
       }
+      // Check if message is from history and not banned
+      if (messageTimestamp < jointime) {
+          if (bannedMessages.includes(messageId)) {
+              messageBanned = true;
+          }
+      }
       if (type == "chat" && messageElement.length > 0) {
           var body = messageElement[0];
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
       // Check if message is of type groupchat, not null, within now and the message display threshold
       } else if (type == "groupchat" && messageElement.length > 0 && messageTimestamp > messageDisplayThreshold) {
-          // Check if message is from history and not banned
-          if (messageTimestamp < jointime && !(bannedMessages.includes(messageId))) {
+          
+          if ( messageBanned != true) {
               var body = messageElement[0];
               var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
               var msg = Strophe.xmlunescape(Strophe.getText(body));
