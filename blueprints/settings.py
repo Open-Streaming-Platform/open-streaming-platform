@@ -1027,6 +1027,12 @@ def rtmpStat_page(node):
         return data
     return abort(500)
 
+@settings_bp.route('/admin/features')
+@login_required
+@roles_required('Admin')
+def admin_devFeatures():
+    return render_template(themes.checkOverride('devfeatures.html'))
+
 @settings_bp.route('/channels', methods=['POST', 'GET'])
 @login_required
 @roles_required('Streamer')
