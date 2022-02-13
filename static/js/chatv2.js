@@ -750,6 +750,7 @@ function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
     var username = elem.textContent;
+    var messageDivId = $(elem).closest('div.chatEntryContainer').attr('id');
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
 
@@ -791,7 +792,10 @@ function displayProfileBox(elem) {
     }
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
+    var deleteMessageButton = div.querySelector('div#profileBox-deleteMessage');
     if (CHATSTATUS.role === "moderator") {
+        deleteMessageButton.style.display = "block";
+        $(deleteMessageButton).click(function () { deleteMessage(messageDivId); });
         // Prevent Owner from Showing Controls on Themselves
         if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
             modControlsBox.style.display = "block";
@@ -804,7 +808,7 @@ function displayProfileBox(elem) {
     // Format ProfileBox
     div.style.position = 'absolute';
     div.style.top =  (position.y - ChatContentWindow.scrollTop) + "px";
-    div.style.left = position.x + "px";
+    div.style.left = position.x - 75 + "px";
     div.style.zIndex = 10;
     div.style.display= "block";
 
@@ -818,6 +822,11 @@ function closeProfileBox() {
   if (profileBox != null) {
     document.getElementById('newProfileBox').remove();
   }
+}
+
+function deleteMessage(messageDivId) {
+    console.log("Deleting " + messageDivId)
+    document.getElementById(messageDivId).remove();
 }
 
 function updateProfileBox(elem, username) {
