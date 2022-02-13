@@ -21,10 +21,10 @@
         <div class="input-group mb-3">
             <label for="hubURL" class="form-label">Hub URL</label>
             <input type="text" id="hubURL" class="form-control boxShadow" value="{{ sysSettings.hubURL }}">
-            <button class="btn btn-primary" type="button">Save</button>
+            <button class="btn btn-primary" type="button" onclick="updateHubURL();">Save</button>
         </div>
-        <button class="btn btn-success boxShadow mx-2">Add to Hub</button>
-        <button class="btn btn-danger boxShadow mx-2">Remove from Hub</button>
+        <button class="btn btn-success boxShadow mx-2" onclick="addServerToHub();">Add to Hub</button>
+        <button class="btn btn-danger boxShadow mx-2" onclick="removeServerFromHub();">Remove from Hub</button>
     </div>
 {% endblock %}
 
