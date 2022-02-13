@@ -825,8 +825,11 @@ function closeProfileBox() {
 }
 
 function deleteMessage(messageDivId) {
-    console.log("Deleting " + messageDivId)
-    document.getElementById(messageDivId).remove();
+    $('#' + messageDivId).fadeOut('slow');
+    setTimeout(function () {
+        $('#' + messageDivId).remove();
+    }, 1000);
+    closeProfileBox();
 }
 
 function updateProfileBox(elem, username) {
