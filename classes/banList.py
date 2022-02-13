@@ -60,3 +60,17 @@ class chatBannedWords(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class chatBannedMessages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    msgID = db.Column(db.String(64))
+    timestamp = db.Column(db.DateTime)
+    channelLoc = db.Column(db.String(255))
+
+    def __init__(self, msgID, timestamp, channelLoc):
+        self.msgID = msgID
+        self.timestamp = timestamp
+        self.channelLoc = channelLoc
+
+    def __repr__(self):
+        return '<id %r>' % self.id
