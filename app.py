@@ -187,6 +187,7 @@ from classes import subscriptions
 from classes import notifications
 from classes import stickers
 from classes import panel
+from classes import hub
 
 #----------------------------------------------------------------------------#
 # Function Imports

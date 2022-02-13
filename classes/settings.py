@@ -69,7 +69,6 @@ class settings(db.Model):
         self.buildEdgeOnRestart = True
         self.protectionEnabled = False
         self.maintenanceMode = False
-        self.hubUUID = None
         self.hubURL = "https://hub.openstreamingplatform.com"
         self.maxVideoRetention = 0
         #self.terms = ''
@@ -98,7 +97,6 @@ class settings(db.Model):
             'protectionEnabled': self.protectionEnabled,
             'adaptiveStreaming': self.adaptiveStreaming,
             'maintenanceMode': self.maintenanceMode,
-            'hubUUID': self.hubUUID,
             'hubURL': self.hubURL,
             'maxVideoRetention': self.maxVideoRetention
         }
