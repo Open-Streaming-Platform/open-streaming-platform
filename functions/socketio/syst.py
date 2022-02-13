@@ -18,6 +18,7 @@ from classes import Stream
 from classes import views
 from classes import apikey
 from classes import panel
+from classes import hub
 
 from functions import system
 from functions import cachedDbCalls
@@ -460,8 +461,31 @@ def add_server_to_hub(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
             sysSettings = cachedDbCalls.getSystemSettings()
-            r = requests.post(sysSettings.hubURL, data={'address': sysSettings.siteAddress,
+            r = requests.post(sysSettings.hubURL + '/api/server', data={'address': sysSettings.siteAddress,
                                                         'protocol': sysSettings.siteProtocol,
                                                         'port': 80})
             if r.status_code == 200:
-                pass
+                results = r.json()
+                hubQuery = hub.hub.query.all()
+                for hubentry in hubQuery:
+                    db.session.delete(hubentry)
+                    db.session.commit()
+                newHub = hub.hub(results['serverUUID'], results['token'])
+                db.session.add(newHub)
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio('deleteServerFromHub')
+def remove_server_from_hub(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = cachedDbCalls.getSystemSettings()
+            hubQuery = hub.hub.query.first()
+            if hubQuery != None:
+                r = requests.delete(sysSettings.hubURL + '/api/server', data={'id': hubQuery.hubUUID, 'token': hubQuery.hubToken})
+                if r.status_code == 200:
+                    db.session.delete(hubQuery)
+                    db.session.commit()
+            db.session.close()
+    return 'OK'
