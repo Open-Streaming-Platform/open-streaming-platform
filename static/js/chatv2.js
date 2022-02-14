@@ -150,6 +150,7 @@ function onConnect(status) {
 
     CHATSTATUS['jid'] = fullJID;
     jointime = moment();
+    messageDisplayThreshold = moment().subtract(chatHistory, 'days');
     occupantCheck = setInterval(queryOccupants, 5000);
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
@@ -426,7 +427,6 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
-  var messageDisplayThreshold = moment().subtract(chatHistory, 'days');
   var messageBanned = false;
     
   if (Strophe.getResourceFromJid(from) == null) {
