@@ -811,8 +811,10 @@ function displayProfileBox(elem) {
         if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
             modControlsBox.style.display = "block";
         }
-        deleteMessageButton.style.display = "block";
-        $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
+        if (messageDivId != undefined) {
+            deleteMessageButton.style.display = "block";
+            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
+        }
     }
 
     //Begin Async Call to Update Profile Data from API
