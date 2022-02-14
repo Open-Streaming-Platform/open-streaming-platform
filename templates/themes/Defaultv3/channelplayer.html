@@ -130,6 +130,7 @@
         var channelLocation = '{{ channel.channelLoc }}';
         var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
         var bannedMessages = '{{bannedMessages|tojson}}';
+        var chatHistory = '{{channel.chatHistory}}'
         var topicJSList = [];
         {% for x in topics -%}
         topicJSList["{{x.id}}"] =  "{{x.name}}";

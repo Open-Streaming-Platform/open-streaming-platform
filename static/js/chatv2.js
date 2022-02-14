@@ -426,7 +426,7 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
-  var messageDisplayThreshold = moment().subtract(2, 'days');
+  var messageDisplayThreshold = moment().subtract(chatHistory, 'days');
   var messageBanned = false;
     
   if (Strophe.getResourceFromJid(from) == null) {

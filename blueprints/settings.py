@@ -1296,7 +1296,7 @@ def settings_channels_page():
                        Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
                        Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
                        Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName,
-                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.chatFormat).all()
+                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.chatFormat, Channel.Channel.chatHistory).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
@@ -1435,6 +1435,8 @@ def settings_channels_chat_page():
             ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
 
             channelQuery.chatFormat = request.form['chatFormat']
+
+            channelQuery.chatHistory = request.form['chatHistory']
 
             if 'moderatedSelect' in request.form:
                 ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
