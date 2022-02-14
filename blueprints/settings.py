@@ -1296,7 +1296,7 @@ def settings_channels_page():
                        Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
                        Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
                        Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName,
-                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification).all()
+                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.chatFormat).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []

@@ -1499,7 +1499,7 @@
                   <label for="chatFormat" class="col-form-label"><b>Chat message format</b></label>
                   <select class="form-select boxShadow" name="chatFormat" id="chatFormat" style="font-family: FontAwesome, sans-serif;" required>
                     <option value="messenger" {% if channel.chatFormat=="messenger" %} selected {% endif %}>Messenger</option>
-                    <option value="irc" {% if channel.topic=="irc" %} selected {% endif %}>IRC</option>
+                    <option value="irc" {% if channel.chatFormat=="irc" %} selected {% endif %}>IRC</option>
                   </select>
                 </div>
                 <div class="mt-2">
