@@ -28,7 +28,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != 1 %} style="width: 100%;" {% endif %}>
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 <div class="row gx-0 mb-2">
@@ -77,7 +77,7 @@
 
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled != 1 %} style="display: none;" {% endif %}>
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}
