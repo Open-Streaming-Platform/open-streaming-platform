@@ -259,6 +259,12 @@ def dbFixes():
     ChannelQuery = Channel.Channel.query.filter_by(private=None).update(dict(private=False))
     db.session.commit()
 
+    # Check Existing Channels without chatHistory
+    ChannelQuery = Channel.Channel.query.filter_by(chatHistory=None).all()
+    for channel in ChannelQuery:
+        channel.chatHistory = 2
+        db.session.commit()
+
     # Check Existing Channels without showHome
     ChannelQuery = Channel.Channel.query.filter_by(showHome=None).all()
     for channel in ChannelQuery:

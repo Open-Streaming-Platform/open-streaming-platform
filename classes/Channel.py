@@ -47,8 +47,9 @@ class Channel(db.Model):
     panels = db.relationship('channelPanel', backref='channel', cascade="all, delete-orphan", lazy="joined")
     tags = db.relationship('channel_tags', backref='channel', cascade="all, delete-orphan", lazy="joined")
     chatFormat = db.Column(db.String(16))
+    chatHistory = db.Column(db.Integer)
 
-    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description, chatmsgFormat):
+    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description, chatFormat, chatHistory):
         self.owningUser = owningUser
         self.streamKey = streamKey
         self.channelName = channelName
@@ -77,6 +78,7 @@ class Channel(db.Model):
         self.maxVideoRetention = 0
         self.private = False
         self.chatFormat = "messenger"
+        self.chatHistory = 2
 
     def __repr__(self):
         return '<id %r>' % self.id
