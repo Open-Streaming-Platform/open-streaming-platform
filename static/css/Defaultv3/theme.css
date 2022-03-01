@@ -135,6 +135,11 @@ table tbody tr {
     box-shadow: inset var(--box-shadow);
 }
 
+.navbar-toggler {
+    background-color: var(--box2-background);
+    color: var(--font-color);
+}
+
 .pagination {
 
 }
