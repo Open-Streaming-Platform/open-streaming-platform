@@ -134,7 +134,7 @@
 
 {% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start", shadow=True) %}
 {%- set listClass = '' | generateRandomString %}
-<div class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+<div id="{{ listClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }} list" style="width:100%">
       {% for clip in clipsList %}
