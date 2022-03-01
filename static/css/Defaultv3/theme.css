@@ -1329,6 +1329,10 @@ video.vjs-tech {
 }
 
 @media only screen and (max-width: 1130px) {
+    :root {
+        --left-sidebar-width: 0;
+    }
+
     .topNavbar .siteTitle {
         display:none;
     }
