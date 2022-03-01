@@ -1333,6 +1333,10 @@ video.vjs-tech {
         display:none;
     }
 
+    .sideNavbar {
+        display: none;
+    }
+
     .topNavbar .rightTopNavbar .searchBox input {
         width: 210px;
     }
