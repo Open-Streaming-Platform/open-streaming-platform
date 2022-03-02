@@ -49,7 +49,7 @@ class Channel(db.Model):
     chatFormat = db.Column(db.String(16))
     chatHistory = db.Column(db.Integer)
 
-    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description, chatFormat, chatHistory):
+    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description):
         self.owningUser = owningUser
         self.streamKey = streamKey
         self.channelName = channelName
