@@ -38,6 +38,8 @@ OSP-Core: Adds ability for admins to edit video and clip metadata and thumbnails
 OSP-Core: Adds user settings for e-mail notifications for streams, new videos and messages #261
 OSP-Core: Adds channel option to toggle part/join messages #384
 OSP-Core: Adds channel option for 'messenger' or 'IRC' style chat message format
+OSP-Core: Upgrades VideoJS to 7.17.0
+OSP-Core: Adds Playback Speed Rates to Video Playback (.25x, .5x, 1x, 1.5x, 2x)
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 
