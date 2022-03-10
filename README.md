@@ -24,6 +24,7 @@
     <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/v/deamos/openstreamingplatform/latest?color=blue&label=docker%20version"></a>
     <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/pulls/deamos/openstreamingplatform"></a>
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager"><img src="https://img.shields.io/badge/dynamic/json?color=green&logo=gitlab&label=stars&query=%24.star_count&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108"></a>
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/graphs/master"><img src="https://badgen.net/gitlab/contributors/osp-group/flask-nginx-rtmp-manager/"></a>
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange"></a>
 </div>
 
