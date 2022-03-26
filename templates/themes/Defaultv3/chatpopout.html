@@ -50,6 +50,8 @@
             };
             var socket = io();
             var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
+            var bannedMessages = '{{bannedMessages|tojson}}';
+            var chatHistory = '{{channel.chatHistory}}';
             var channelLocation = '{{ channel.channelLoc }}';
         </script>
         <script src="/static/js/chatv2.js" type="text/javascript"></script>

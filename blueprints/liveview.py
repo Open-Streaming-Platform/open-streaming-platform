@@ -68,6 +68,11 @@ def view_page(loc):
         for bannedWord in bannedWordQuery:
             bannedWordArray.append(bannedWord.word)
 
+        channelBannedMessagesQuery = banList.chatBannedMessages.query.filter_by(channelLoc=requestedChannel.channelLoc).all()
+        bannedMessagesList = []
+        for bannedMessage in channelBannedMessagesQuery:
+            bannedMessagesList.append(bannedMessage.msgID)
+
         streamData = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
         # Stream URL Generation
@@ -158,7 +163,7 @@ def view_page(loc):
                         return(redirect(url_for("root.main_page")))
 
                 return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser,
-                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
+                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray, bannedMessages=bannedMessagesList)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
@@ -207,7 +212,7 @@ def view_page(loc):
 
             return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList, videoList=videoList,
                                    subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList,
-                                   bannedWords=bannedWordArray, channelPanelList=channelPanelListSorted)
+                                   bannedWords=bannedWordArray, bannedMessages=bannedMessagesList, channelPanelList=channelPanelListSorted)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:

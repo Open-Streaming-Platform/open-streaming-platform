@@ -149,6 +149,8 @@ function onConnect(status) {
     queryOccupants();
 
     CHATSTATUS['jid'] = fullJID;
+    jointime = moment();
+    messageDisplayThreshold = moment().subtract(chatHistory, 'days');
     occupantCheck = setInterval(queryOccupants, 5000);
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
@@ -310,10 +312,13 @@ function room_pres_handler(a, b, c) {
             serverMessage(msg);
         }
     } else if (presenceType === "online" && showpartjoin == "True") {
-        msg = Strophe.getResourceFromJid(from) + " joined the room.";
-        setTimeout(function () {
-            serverMessage(msg);
-        }, 500);
+        // Hack to prevent join messages for every presence recieved on join
+        if (moment().subtract(2, 'seconds') > jointime) {
+            msg = Strophe.getResourceFromJid(from) + " joined the room.";
+            setTimeout(function () {
+                serverMessage(msg);
+            }, 500);
+        }
     }
 
   // Check if is own status change (Kicks/Bans/Etc)
@@ -422,7 +427,8 @@ function onMessage(msg) {
   var type = msg.getAttribute('type');
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
-
+  var messageBanned = false;
+    
   if (Strophe.getResourceFromJid(from) == null) {
       from = ROOMNAME + "@" + ROOM_SERVICE + "/SERVER";
   }
@@ -430,40 +436,50 @@ function onMessage(msg) {
   if  (!(CHATSTATUS.muteList.includes(Strophe.getResourceFromJid(from)))) {
 
       if (timestampElement[0] != undefined) {
-          var messageTimestamp = moment(timestampElement[0].getAttribute("stamp")).format('hh:mm A');
+          var messageTimestamp = moment(timestampElement[0].getAttribute("stamp"));
       } else {
-          var messageTimestamp = moment().format('hh:mm A');
+          var messageTimestamp = moment();
       }
       if (msg.getElementsByTagName('stanza-id')[0] != undefined) {
           messageId = msg.getElementsByTagName('stanza-id')[0].getAttribute('id');
       }
+      // Check if message is from history and not banned
+      if (messageTimestamp < jointime) {
+          if (bannedMessages.includes(messageId)) {
+              messageBanned = true;
+          }
+      }
       if (type == "chat" && messageElement.length > 0) {
           var body = messageElement[0];
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
-      } else if (type == "groupchat" && messageElement.length > 0) {
-          var body = messageElement[0];
-          var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
-          var msg = Strophe.xmlunescape(Strophe.getText(body));
+      // Check if message is of type groupchat, not null, within now and the message display threshold
+      } else if (type == "groupchat" && messageElement.length > 0 && messageTimestamp > messageDisplayThreshold) {
+          
+          if ( messageBanned != true) {
+              var body = messageElement[0];
+              var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));
+              var msg = Strophe.xmlunescape(Strophe.getText(body));
 
-          var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
-          tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp;
-          tempNode.id = messageId;
-          if (Strophe.getResourceFromJid(from) == 'SERVER') {
-              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
-          } else {
-              tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
-          }
+              var tempNode = document.querySelector("div[data-type='chatmessagetemplate']").cloneNode(true);
+              tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp.format('hh:mm A');
+              tempNode.id = messageId;
+              if (Strophe.getResourceFromJid(from) == 'SERVER') {
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+              } else {
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+              }
 
-          msg = format_msg(msg)
-          msg = process_stickers(msg);
+              msg = format_msg(msg)
+              msg = process_stickers(msg);
 
-          tempNode.querySelector("span.chatMessage").innerHTML = msg;
-          tempNode.style.display = "block";
-          chatDiv = document.getElementById("chat");
-          var needsScroll = checkChatScroll()
-          chatDiv.appendChild(tempNode);
-          if (needsScroll) {
-              scrollChatWindow();
+              tempNode.querySelector("span.chatMessage").innerHTML = msg;
+              tempNode.style.display = "block";
+              chatDiv = document.getElementById("chat");
+              var needsScroll = checkChatScroll()
+              chatDiv.appendChild(tempNode);
+              if (needsScroll) {
+                  scrollChatWindow();
+              }
           }
       }
   }
@@ -747,6 +763,7 @@ function displayProfileBox(elem) {
     closeProfileBox();
     var position = getPos(elem);
     var username = elem.textContent;
+    var messageDivId = $(elem).closest('div.chatEntryContainer').attr('id');
     var div = document.querySelector("div[data-type='profileBoxTemplate']").cloneNode(true);
     div.id="newProfileBox";
 
@@ -788,10 +805,15 @@ function displayProfileBox(elem) {
     }
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
+    var deleteMessageButton = div.querySelector('div#profileBox-deleteMessage');
     if (CHATSTATUS.role === "moderator") {
         // Prevent Owner from Showing Controls on Themselves
         if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
             modControlsBox.style.display = "block";
+        }
+        if (messageDivId != undefined) {
+            deleteMessageButton.style.display = "block";
+            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
         }
     }
 
@@ -801,7 +823,7 @@ function displayProfileBox(elem) {
     // Format ProfileBox
     div.style.position = 'absolute';
     div.style.top =  (position.y - ChatContentWindow.scrollTop) + "px";
-    div.style.left = position.x + "px";
+    div.style.left = position.x - 75 + "px";
     div.style.zIndex = 10;
     div.style.display= "block";
 
@@ -816,6 +838,18 @@ function closeProfileBox() {
     document.getElementById('newProfileBox').remove();
   }
 }
+
+function messageDeleteRequest(messageDivId) {
+    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId });
+}
+
+socket.on('deleteMessage', function (messageId) {
+    $('#' + messageId).fadeOut('slow');
+    setTimeout(function () {
+        $('#' + messageId).remove();
+    }, 1000);
+    closeProfileBox();
+});
 
 function updateProfileBox(elem, username) {
     var apiEndpoint = '/apiv1/user/' + username;
