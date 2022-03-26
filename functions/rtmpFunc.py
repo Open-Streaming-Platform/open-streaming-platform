@@ -286,7 +286,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
 
             videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
 
-            videoPath = path.replace('/tmp/', requestedChannel.channelLoc + '/')
+            videoPath = path.replace('/var/www/pending/', requestedChannel.channelLoc + '/')
             imagePath = videoPath.replace('.flv','.png')
             gifPath = videoPath.replace('.flv', '.gif')
             videoPath = videoPath.replace('.flv','.mp4')
