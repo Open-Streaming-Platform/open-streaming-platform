@@ -9,6 +9,7 @@ from globals import globalvars
 from classes.shared import db
 from classes import Channel
 from classes import panel
+from classes import banList
 
 from functions import videoFunc
 from functions import cachedDbCalls
@@ -30,6 +31,14 @@ def delete_channel(channelID):
         globalPanelQuery = panel.globalPanel.query.filter_by(type=6, target=channelQuery.id).all()
         for globalpan in globalPanelQuery:
             db.session.delete(globalpan)
+
+        bannedChatMessagesQuery = banList.chatBannedMessages.query.filter_by(channelLoc=channelQuery.channelLoc).all()
+        for message in bannedChatMessagesQuery:
+            db.session.delete(message)
+
+        bannedUsersQuery = banList.channelBanList.query.filter_by(channelLoc=channelQuery.channelLoc).all()
+        for user in bannedUsersQuery:
+            db.session.delete(user)
 
         for vid in channelQuery.recordedVideo:
             videoFunc.deleteVideo(vid.id)
