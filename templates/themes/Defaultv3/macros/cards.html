@@ -221,7 +221,6 @@
           <span>{{ comment.comment | markdown }}</span>
         </div>
         <div class="col-1">
-          {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
           <span class="float-end me-2">
             {% if check_isCommentUpvoted(comment.id) %}
                 <button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
@@ -230,11 +229,12 @@
                       class="far fa-thumbs-up"></i>
             {% endif %}
                 <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
+            {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
             <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" onclick="confirmDeleteComment('{{ comment.id }}');">
               <i class="fas fa-trash-alt"></i>
             </button>
+            {% endif %}
           </span>
-          {% endif %}
         </div>
       </div>
     </div>
