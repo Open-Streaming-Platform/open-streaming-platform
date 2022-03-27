@@ -206,7 +206,7 @@
 {% endmacro %}
 
 {% macro comment_card(comment) %}
-<div class="comment">
+<div class="comment" id="vidComment-{{ comment.id }}">
   <div class="row gx-0">
     <div class="comment-avatar col-1 mt-2">
         <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
@@ -223,7 +223,7 @@
         <div class="col-1">
           {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
           <span class="float-end me-2">
-            <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" data-toggle="modal" data-target="#deleteCommentModal">
+            <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" onclick="confirmDeleteComment('{{ comment.id }}');">
               <i class="fas fa-trash-alt"></i>
             </button>
           </span>

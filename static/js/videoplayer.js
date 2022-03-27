@@ -168,3 +168,17 @@ function hideComments() {
     commentsDiv.style.display = 'none';
     contentsDiv.className = 'col-9 mx-auto';
 }
+
+function confirmDeleteComment(commentId) {
+    document.getElementById('deleteCommentId').value = commentId;
+    openModal('confirmDeleteCommentModal');
+}
+
+function deleteComment(){
+    var commentId = document.getElementById('deleteCommentId').value;
+    document.getElementById('deleteCommentId').value = '';
+    socket.emit('deleteComment', {commentID: commentId});
+    var commentDiv = document.getElementById('vidComment-' + commentId);
+    commentDiv.parentElement.removeChild(commentDiv);
+}
+
