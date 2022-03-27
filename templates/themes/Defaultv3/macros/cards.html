@@ -208,10 +208,10 @@
 {% macro comment_card(comment) %}
 <div class="comment" id="vidComment-{{ comment.id }}">
   <div class="row gx-0">
-    <div class="comment-avatar col-1 mt-2">
+    <div class="comment-avatar col-auto mx-1 mt-2">
         <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
     </div>
-    <div class="col-11 mt-2">
+    <div class="col mt-2">
       <div class="comment-header">
         <span><b><a href="/profile/{{ comment.userID | get_userName }}">{{ comment.userID | get_userName }}</a></b></span>
         <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span>
