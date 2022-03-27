@@ -115,4 +115,12 @@
             }
         });
     </script>
+
+    {% if startTime != None %}
+        <script>
+          player.currentTime({{startTime}});
+          player.play();
+        </script>
+    {% endif %}
+
 {% endblock %}
