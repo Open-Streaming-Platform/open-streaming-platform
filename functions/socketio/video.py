@@ -236,7 +236,7 @@ def deleteVideoCommentSocketIO(message):
     commentID = int(message['commentID'])
     commentQuery = comments.videoComments.query.filter_by(id=commentID).first()
     if commentQuery is not None:
-        recordedVid = RecordedVideo.RecordedVideo.query.filter_by(commentQuery.videoID).with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser).first()
+        recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=commentQuery.videoID).with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser).first()
         if current_user.has_role('Admin') or recordedVid.owningUser == current_user.id or commentQuery.userID == current_user.id:
             upvoteQuery = upvotes.commentUpvotes.query.filter_by(commentID=commentQuery.id).all()
             for vote in upvoteQuery:
