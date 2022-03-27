@@ -6,6 +6,8 @@ from classes import RecordedVideo
 from classes import settings
 from classes import notifications
 from classes import subscriptions
+from classes import comments
+from classes import upvotes
 
 from functions import system
 from functions import webhookFunc
@@ -228,3 +230,20 @@ def deleteClipSocketIO(message):
         db.session.commit()
         db.session.close()
         return abort(401)
+
+@socketio.on('deleteVideoComment')
+def deleteVideoCommentSocketIO(message):
+    commentID = message['commentID']
+    commentQuery = comments.videoComments.query.filter_by(id=commentID).first()
+    if commentQuery is not None:
+        recordedVid = RecordedVideo.RecordedVideo.query.filter_by(commentQuery.videoID).with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.owningUser).first()
+        if current_user.has_role('Admin') or recordedVid.owningUser == current_user.id or commentQuery.userID == current_user.id:
+            upvoteQuery = upvotes.commentUpvotes.query.filter_by(commentID=commentQuery.id).all()
+            for vote in upvoteQuery:
+                db.session.delete(vote)
+            db.session.delete(commentQuery)
+            db.session.commit()
+            system.newLog(4, "Video Comment Deleted by " + current_user.username + "to Video ID #" + str(recordedVid.id))
+    db.session.commit()
+    db.session.close()
+    return 'OK'
