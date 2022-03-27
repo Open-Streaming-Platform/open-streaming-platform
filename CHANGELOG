@@ -17,6 +17,8 @@ OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #
 OSP-Core: Fixed an Issue when OSP will attempt to keep adding the default Topic "Other", even after deletion - #407
 OSP-Core: Fixed an issue where Webhook tests would fail if no Video Recording Existed on a server - #442
 OSP-Core: Updates Pillow to 8.3.2 to fix CVE-2021-34552
+OSP-Core: Added Message Moderation / Deleting of Chat Messages
+OSP-Core: Adds User to User Messaging/Mail
 OSP-Core: Removes APScheduler Assignment
 OSP-Core: Added Channel Invites API Endpoint for getting/adding/removing user invites to a channel
 OSP-Core: New Security UI for Login, Registration, Password Reset, TOTP Configuration
@@ -39,10 +41,15 @@ OSP-Core: Adds user settings for e-mail notifications for streams, new videos an
 OSP-Core: Adds channel option to toggle part/join messages #384
 OSP-Core: Adds channel option for 'messenger' or 'IRC' style chat message format
 OSP-Core: Upgrades VideoJS to 7.17.0
+OSP-Core: Upgrades JQuery to 3.6.0
+OSP-Core: Upgrades to Bootstrap 5.1.3
 OSP-Core: Adds Playback Speed Rates to Video Playback (.25x, .5x, 1x, 1.5x, 2x)
+OSP-Core: Adds startTime Argument to Clip Player playback, similar to how Video Playback works
+OSP-Core: Additional Database Query Optimization and Caching
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
-
+OSP-RTMP: Moves all Live Stream Playback to use HLS Encryption and Moves Channel Protection to use Key Authorization Validation
+OSP-Proxy: Updates to use HLS Key Encryption via Proxy
 
 0.8.17
 ==============================================
