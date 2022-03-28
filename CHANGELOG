@@ -43,6 +43,7 @@ OSP-Core: Adds channel option for 'messenger' or 'IRC' style chat message format
 OSP-Core: Upgrades VideoJS to 7.17.0
 OSP-Core: Upgrades JQuery to 3.6.0
 OSP-Core: Upgrades to Bootstrap 5.1.3
+OSP-Core: Upgrades Zlib to 1.2.12
 OSP-Core: Adds Playback Speed Rates to Video Playback (.25x, .5x, 1x, 1.5x, 2x)
 OSP-Core: Adds startTime Argument to Clip Player playback, similar to how Video Playback works
 OSP-Core: Additional Database Query Optimization and Caching
