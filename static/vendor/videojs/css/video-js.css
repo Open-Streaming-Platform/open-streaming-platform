@@ -1574,31 +1574,16 @@ video::-webkit-media-text-track-display {
 .video-js.vjs-layout-small .vjs-duration,
 .video-js.vjs-layout-small .vjs-remaining-time,
 .video-js.vjs-layout-small .vjs-playback-rate,
-.video-js.vjs-layout-small .vjs-chapters-button,
-.video-js.vjs-layout-small .vjs-descriptions-button,
-.video-js.vjs-layout-small .vjs-captions-button,
-.video-js.vjs-layout-small .vjs-subtitles-button,
-.video-js.vjs-layout-small .vjs-audio-button,
 .video-js.vjs-layout-small .vjs-volume-control, .video-js.vjs-layout-x-small .vjs-current-time,
 .video-js.vjs-layout-x-small .vjs-time-divider,
 .video-js.vjs-layout-x-small .vjs-duration,
 .video-js.vjs-layout-x-small .vjs-remaining-time,
 .video-js.vjs-layout-x-small .vjs-playback-rate,
-.video-js.vjs-layout-x-small .vjs-chapters-button,
-.video-js.vjs-layout-x-small .vjs-descriptions-button,
-.video-js.vjs-layout-x-small .vjs-captions-button,
-.video-js.vjs-layout-x-small .vjs-subtitles-button,
-.video-js.vjs-layout-x-small .vjs-audio-button,
 .video-js.vjs-layout-x-small .vjs-volume-control, .video-js.vjs-layout-tiny .vjs-current-time,
 .video-js.vjs-layout-tiny .vjs-time-divider,
 .video-js.vjs-layout-tiny .vjs-duration,
 .video-js.vjs-layout-tiny .vjs-remaining-time,
 .video-js.vjs-layout-tiny .vjs-playback-rate,
-.video-js.vjs-layout-tiny .vjs-chapters-button,
-.video-js.vjs-layout-tiny .vjs-descriptions-button,
-.video-js.vjs-layout-tiny .vjs-captions-button,
-.video-js.vjs-layout-tiny .vjs-subtitles-button,
-.video-js.vjs-layout-tiny .vjs-audio-button,
 .video-js.vjs-layout-tiny .vjs-volume-control {
   display: none;
 }
@@ -1606,18 +1591,15 @@ video::-webkit-media-text-track-display {
   width: auto;
   width: initial;
 }
-.video-js.vjs-layout-x-small:not(.vjs-liveui) .vjs-subs-caps-button, .video-js.vjs-layout-x-small:not(.vjs-live) .vjs-subs-caps-button, .video-js.vjs-layout-tiny .vjs-subs-caps-button {
+.video-js.vjs-layout-x-small .vjs-progress-control, .video-js.vjs-layout-tiny .vjs-progress-control {
   display: none;
 }
-.video-js.vjs-layout-x-small.vjs-liveui .vjs-custom-control-spacer, .video-js.vjs-layout-tiny .vjs-custom-control-spacer {
+.video-js.vjs-layout-x-small .vjs-custom-control-spacer {
   flex: auto;
   display: block;
 }
-.video-js.vjs-layout-x-small.vjs-liveui.vjs-no-flex .vjs-custom-control-spacer, .video-js.vjs-layout-tiny.vjs-no-flex .vjs-custom-control-spacer {
+.video-js.vjs-layout-x-small.vjs-no-flex .vjs-custom-control-spacer {
   width: auto;
-}
-.video-js.vjs-layout-x-small.vjs-liveui .vjs-progress-control, .video-js.vjs-layout-tiny .vjs-progress-control {
-  display: none;
 }
 
 .vjs-modal-dialog.vjs-text-track-settings {
