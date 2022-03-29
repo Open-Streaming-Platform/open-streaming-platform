@@ -40,7 +40,7 @@ OSP-Core: Adds ability for admins to edit video and clip metadata and thumbnails
 OSP-Core: Adds user settings for e-mail notifications for streams, new videos and messages #261
 OSP-Core: Adds channel option to toggle part/join messages #384
 OSP-Core: Adds channel option for 'messenger' or 'IRC' style chat message format
-OSP-Core: Upgrades VideoJS to 7.17.0
+OSP-Core: Upgrades VideoJS to 7.18.1
 OSP-Core: Upgrades JQuery to 3.6.0
 OSP-Core: Upgrades to Bootstrap 5.1.3
 OSP-Core: Upgrades Zlib to 1.2.12
