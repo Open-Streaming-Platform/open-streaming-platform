@@ -108,6 +108,14 @@
             }
         }
         
+        function toggleFullscreen() {
+            if (player.isFullscreen()) {
+                player.exitFullscreen();
+            } else  {
+                player.requestFullscreen();
+            }
+        }
+        
         document.addEventListener("keydown", (e) => {
             if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
                 switch (e.keyCode) {
@@ -128,6 +136,9 @@
                     case 0: case 32: // spacebar
                         e.preventDefault();
                         togglePlayPause();
+                        break;
+                    case 70: // F
+                        toggleFullscreen();
                         break;
                     default:
                         return;
