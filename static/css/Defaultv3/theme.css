@@ -976,6 +976,10 @@ video.vjs-tech {
   line-height: 1;
 }
 
+.video-js .vjs-play-progress {
+    background: #3488DB !important;
+}
+
 /* .video-panel::-webkit-scrollbar-track {
     background: #858585;
 } */
