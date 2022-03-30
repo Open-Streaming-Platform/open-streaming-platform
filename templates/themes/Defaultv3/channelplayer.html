@@ -423,5 +423,15 @@
                 disableTheaterMode();
             }
         });
+
+        player.on('fullscreenchange', function (elm, data) {
+            if (player.isFullscreen()) {
+                document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            } else if (data.theaterModeIsOn) {
+                document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            } else {
+                document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
+            }
+        });
     </script>
 {% endblock %}
