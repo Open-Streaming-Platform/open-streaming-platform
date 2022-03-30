@@ -376,6 +376,55 @@
        player.play();
     </script>
 
+    <script>
+        function togglePlayPause() {
+            if (player.paused()) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (player.isFullscreen()) {
+                player.exitFullscreen();
+            } else  {
+                player.requestFullscreen();
+            }
+        }
+        
+        document.addEventListener("keydown", (e) => {
+            if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
+                switch (e.keyCode) {
+                    case 37: // left arrow
+                        player.currentTime(player.currentTime() - 5);
+                        break;
+                    case 39: // right arrow
+                        player.currentTime(player.currentTime() + 5);
+                        break;
+                    case 38: // up arrow
+                        e.preventDefault();
+                        player.volume(player.volume() + 0.1);
+                        break;
+                    case 40: // down arrow
+                        e.preventDefault();
+                        player.volume(player.volume() - 0.1);
+                        break;
+                    case 0: case 32: // spacebar
+                        e.preventDefault();
+                        togglePlayPause();
+                        break;
+                    case 70: // F
+                        toggleFullscreen();
+                        break;
+                    default:
+                        return;
+                }
+            }
+        })
+    </script>
+
+
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
     <script>
