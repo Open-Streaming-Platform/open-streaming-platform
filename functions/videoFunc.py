@@ -44,6 +44,10 @@ def deleteVideo(videoID):
         thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
         gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
 
+        videoTags = RecordedVideo.video_tags.query.filter_by(videoID=recordedVid.id).all()
+        for tag in videoTags:
+            db.session.delete(tag)
+
         # Delete Clips Attached to Video
         for clip in recordedVid.clips:
             deleteClip(clip.id)
@@ -271,6 +275,11 @@ def deleteClip(clipID):
     videos_root = globalvars.videoRoot + 'videos/'
 
     if clipQuery is not None:
+
+        clipTags = RecordedVideo.clip_tags.query.filter_by(clipID=clipQuery.id).all()
+        for tag in clipTags:
+            db.session.delete(tag)
+
         videoPath = videos_root + clipQuery.videoLocation
         if clipQuery.thumbnailLocation is not None:
             thumbnailPath = videos_root + clipQuery.thumbnailLocation
