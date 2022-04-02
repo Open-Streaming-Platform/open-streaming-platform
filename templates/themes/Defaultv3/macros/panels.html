@@ -751,7 +751,7 @@
       <div class="video-name"><b>{{ clip.clipName }}</b></div>
       <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a></div>
       <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.parentVideo | get_videoTopic}}/"><i class="fas fa-hashtag"></i> {{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
-          {% for tag in video.id | get_clipTags %}
+          {% for tag in clip.id | get_clipTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
           {% endfor %}
       </div>
