@@ -130,7 +130,7 @@ def normalize_url(urlString):
     return str(reparsedString)
 
 def normalize_date(dateStr):
-    return str(dateStr)[:19]
+    return str(dateStr)[:16]
 
 def limit_title(titleStr):
     if len(titleStr) > 40:
