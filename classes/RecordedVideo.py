@@ -180,7 +180,7 @@ class clip_tags(db.Model):
     taggedByUser = db.Column(db.Integer)
 
     def __init__(self, tagName, clipID, userID):
-        self.tagName = tagName
+        self.name = tagName
         self.clipID = clipID
         self.taggedByUser = userID
 
