@@ -1591,6 +1591,20 @@ var tagify_clipTags = new Tagify(clipTags, {
     </div>
   </div>
 </div>
+<script>
+// The DOM element you wish to replace with Tagify
+var clipTags = document.getElementById('editClipTags');
+
+// initialize Tagify on the above input node reference
+var tagify_clipTags = new Tagify(clipTags, {
+  originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+  maxTags: {{maxTags}},
+  pattern: /^.{0,{{ maxTagLength }}}$/,
+  texts: {
+    duplicate: "Duplicates are not allowed"
+  }
+})
+</script>
 {% endmacro %}
 
 {% macro delete_video(video) %}
