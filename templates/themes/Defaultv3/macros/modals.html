@@ -1559,7 +1559,7 @@ var tagify_clipTags = new Tagify(clipTags, {
 </script>
 {% endmacro %}
 
-{% macro edit_clip_metadata_userchannels() %}
+{% macro edit_clip_metadata_userchannels(maxTags=4, maxTagLength=12) %}
 <div class="modal fade" id="clipEditModal" tabindex="-1" role="dialog" aria-labelledby="clipEditModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
