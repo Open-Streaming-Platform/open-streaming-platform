@@ -986,7 +986,7 @@ function editClipMetadataModal(clipID) {
    var doc = easymdeClipEditor.codemirror.getDoc();
    doc.setValue(doc.getValue());
 
-   document.getElementById('editClipTags').value = clipTags;
+   document.getElementById('editClipTags').value = clipTags.value;
 
    openModal('clipEditModal');
 }
