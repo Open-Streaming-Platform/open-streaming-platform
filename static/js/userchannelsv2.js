@@ -593,7 +593,7 @@ function editClipSubmit() {
 
     document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
     document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
-    document.getElementById("clip-" + editClipIDInput.innerHtml + "-tags").innerText = editClipTagsInput;
+    document.getElementById("clip-" + editClipIDInput + "-tags").innerText = editClipTagsInput;
 
     createNewBSAlert("Clip Metadata Edited", "Success");
 
