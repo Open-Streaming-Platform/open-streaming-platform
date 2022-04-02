@@ -234,7 +234,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             return True, redirectID
     return False, None
 
-def changeClipMetadata(clipID, name, description):
+def changeClipMetadata(clipID, name, description, clipTags):
     # TODO Add Webhook for Clip Metadata Change
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
@@ -244,6 +244,22 @@ def changeClipMetadata(clipID, name, description):
 
             clipQuery.clipName = system.strip_html(name)
             clipQuery.description = system.strip_html(description)
+
+            if clipTags != None:
+                videoTagString = clipTags
+                tagArray = system.parseTags(videoTagString)
+                existingTagArray = RecordedVideo.clip_tags.query.filter_by(videoID=clipID).all()
+
+                for currentTag in existingTagArray:
+                    if currentTag.name not in tagArray:
+                        db.session.delete(currentTag)
+                    else:
+                        tagArray.remove(currentTag.name)
+                db.session.commit()
+                for currentTag in tagArray:
+                    newTag = RecordedVideo.clip_tags(currentTag, clipID, current_user.id)
+                    db.session.add(newTag)
+                    db.session.commit()
 
             db.session.commit()
             system.newLog(6, "Clip Metadata Changed - ID #" + str(clipID))

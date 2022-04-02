@@ -132,6 +132,13 @@
             </div>
           </div>
         </div>
+        <div class="streamCard-tags row mt-2 g-0">
+          <div class="col-12">
+                {% for tag in clip.id | get_clipTags %}
+                  <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                {% endfor %}
+          </div>
+      </div>
     </div>
 
 </li>

@@ -1492,7 +1492,7 @@ var tagify_videoTags = new Tagify(videoTags, {
 </div>
 {% endmacro %}
 
-{% macro edit_clip_metadata(clip) %}
+{% macro edit_clip_metadata(clip, maxTags=4, maxTagLength=12) %}
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1511,6 +1511,10 @@ var tagify_videoTags = new Tagify(videoTags, {
             <label for="description" class="col-form-label"><b>Description</b></label>
             <textarea class="form-control" name="description" id="description" value="" maxlength="2048">{{clip.description}}</textarea>
           </div>
+          <div class="form-group">
+              <label for="clipTags" class="col-form-label"><b>Clip Tags</b></label>
+              <input type="basic" id="videoTags" name="videoTags" class="form-control boxShadow" value="{{clip.id | get_clipTags_csv}}">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1520,6 +1524,20 @@ var tagify_videoTags = new Tagify(videoTags, {
     </div>
   </div>
 </div>
+<script>
+// The DOM element you wish to replace with Tagify
+var clipTags = document.getElementById('clipTags');
+
+// initialize Tagify on the above input node reference
+var tagify_clipTags = new Tagify(clipTags, {
+  originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+  maxTags: {{maxTags}},
+  pattern: /^.{0,{{ maxTagLength }}}$/,
+  texts: {
+    duplicate: "Duplicates are not allowed"
+  }
+})
+</script>
 {% endmacro %}
 
 {% macro edit_clip_metadata_userchannels() %}

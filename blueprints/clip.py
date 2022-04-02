@@ -120,7 +120,11 @@ def delete_clip_page(clipID):
 @login_required
 def clip_change_page(clipID):
 
-    result = videoFunc.changeClipMetadata(int(clipID), request.form['newVidName'], request.form['description'])
+    clipTags = None
+    if 'clipTags' in request.form:
+        clipTags = request.form['clipTags']
+
+    result = videoFunc.changeClipMetadata(int(clipID), request.form['newVidName'], request.form['description'], clipTags)
 
     if result is True:
         flash("Updated Clip Metadata","success")

@@ -55,6 +55,8 @@ def init(context):
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
     context.jinja_env.filters['get_channelPrivateStatus'] = get_channelPrivateStatus
     context.jinja_env.filters['get_channelName'] = get_channelName
+    context.jinja_env.filters['get_clipTags'] = get_clipTags
+    context.jinja_env.filters['get_clipTags_csv'] = get_clipTags_csv
     context.jinja_env.filters['get_videoTags'] = get_videoTags
     context.jinja_env.filters['get_videoTags_csv'] = get_videoTags_csv
     context.jinja_env.filters['get_videoComments'] = get_videoComments
@@ -354,6 +356,19 @@ def get_videoDate(videoID):
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
     return commentsQuery
+
+def get_clipTags(clipId):
+    tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
+    return tagQuery
+
+def get_clipTags_csv(clipId):
+    tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    tagString = ",".join(tagArray)
+    return tagString
+
 
 def get_videoTags(videoId):
     tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
