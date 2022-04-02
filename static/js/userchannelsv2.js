@@ -976,7 +976,7 @@ function editClipMetadataModal(clipID) {
 
    var clipName = document.getElementById('clipName-' + clipID).innerText;
    var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
-   var clipTags = document.getElementById('clip-' + clipID + '-tags');
+   var clipTags = document.getElementById('clip-' + clipID + '-tags').innerText;
 
    $("#editClipID").val(clipID);
    $("#editClipName").val(clipName);
@@ -986,7 +986,7 @@ function editClipMetadataModal(clipID) {
    var doc = easymdeClipEditor.codemirror.getDoc();
    doc.setValue(doc.getValue());
 
-   document.getElementById('editClipTags').value = clipTags.value;
+   document.getElementById('editClipTags').value = clipTags;
 
    openModal('clipEditModal');
 }
