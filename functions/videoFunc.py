@@ -248,7 +248,7 @@ def changeClipMetadata(clipID, name, description, clipTags):
             if clipTags != None:
                 videoTagString = clipTags
                 tagArray = system.parseTags(videoTagString)
-                existingTagArray = RecordedVideo.clip_tags.query.filter_by(videoID=clipID).all()
+                existingTagArray = RecordedVideo.clip_tags.query.filter_by(clipID=clipID).all()
 
                 for currentTag in existingTagArray:
                     if currentTag.name not in tagArray:
