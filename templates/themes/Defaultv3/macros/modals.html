@@ -1577,7 +1577,12 @@ var tagify_clipTags = new Tagify(clipTags, {
             <label for="description" class="col-form-label"><b>Description</b></label>
             <textarea class="form-control" name="description" id="clipEditDescription" value="" maxlength="2048"></textarea>
           </div>
-            <input type="hidden" id="editClipID">
+          <div class="form-group">
+              <label for="clipTags" class="col-form-label"><b>Clip Tags</b></label>
+              <input type="basic" id="editClipTags" name="clipTags" class="form-control boxShadow" value="">
+          </div>
+          <br>
+          <input type="hidden" id="editClipID">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

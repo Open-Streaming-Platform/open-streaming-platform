@@ -47,6 +47,22 @@ def editVideoSocketIO(message):
         videoQuery = cachedDbCalls.getVideo(videoID)
         if videoQuery != None:
             if current_user.has_role('Admin') or videoQuery.owningUser == current_user.id:
+                if 'videoTags' in message:
+                    videoTagString = message['videoTags']
+                    tagArray = system.parseTags(videoTagString)
+                    existingTagArray = RecordedVideo.video_tags.query.filter_by(videoID=videoID).all()
+
+                    for currentTag in existingTagArray:
+                        if currentTag.name not in tagArray:
+                            db.session.delete(currentTag)
+                        else:
+                            tagArray.remove(currentTag.name)
+                    db.session.commit()
+                    for currentTag in tagArray:
+                        newTag = RecordedVideo.video_tags(currentTag, videoID, current_user.id)
+                        db.session.add(newTag)
+                        db.session.commit()
+
                 result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
                 if result is True:
                     db.session.commit()
@@ -197,7 +213,11 @@ def changeClipMetadataSocketIO(message):
         clipName = message['clipName']
         clipDescription = message['clipDescription']
 
-        result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription)
+        clipTags = None
+        if clipTags in message:
+            clipTags = message['clipTags']
+
+        result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription, clipTags)
 
         if result is True:
             db.session.commit()

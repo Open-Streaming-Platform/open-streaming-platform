@@ -462,6 +462,7 @@ function editVideoSubmit() {
     var editVideoTopicInput = document.getElementById("editVideoTopic");
     var editVideoDescriptionInput = document.getElementById("editVideoDescription");
     var editVideoAllowCommentsInput = document.getElementById("editVideoAllowComments");
+    var editVideoTagsListInput = document.getElementById("editvideoTags");
     var videoID = editVideoIDInput.value;
 
     var topicInputText = editVideoTopicInput.options[editVideoTopicInput.selectedIndex].text;
@@ -473,6 +474,7 @@ function editVideoSubmit() {
     document.getElementById("vidTopicText-" + videoID).innerText = topicInputText;
     document.getElementById("vidDescription-" + videoID).innerText = videoDescription;
     document.getElementById("vidAllowComments-" + videoID).innerText = editVideoAllowCommentsInput.checked;
+    document.getElementById('video-' + videoID + '-tags').innerText = editVideoTagsListInput.value;
 
     editVideoDescriptionInput.value = "";
     easymdeVideoEditor.value("");
@@ -484,7 +486,7 @@ function editVideoSubmit() {
         allowComments = "True";
     }
 
-    socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments });
+    socket.emit('editVideo', {videoID: videoID, videoName: editVideoNameInput.value, videoTopic: editVideoTopicInput.value, videoDescription: videoDescription, videoAllowComments: allowComments, videoTags: editVideoTagsListInput.value });
     createNewBSAlert("Video Metadata Edited", "Success");
 }
 
@@ -580,6 +582,7 @@ function editClipSubmit() {
     var editClipIDInput = document.getElementById("editClipID").value;
     var editClipNameInput = document.getElementById("editClipName").value;
     var editClipDescriptionInput = document.getElementById("clipEditDescription");
+    var editClipTagsInput = document.getElementById('editClipTags').value;
 
     var clipDescription = easymdeClipEditor.value();
 
@@ -590,10 +593,11 @@ function editClipSubmit() {
 
     document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
     document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
+    document.getElementById("clip-" + editClipIDInput.innerHtml + "-tags").innerText = editClipTagsInput;
 
     createNewBSAlert("Clip Metadata Edited", "Success");
 
-    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription});
+    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription, clipTags: editClipTagsInput});
 }
 
 function deleteClip() {
@@ -972,6 +976,7 @@ function editClipMetadataModal(clipID) {
 
    var clipName = document.getElementById('clipName-' + clipID).innerText;
    var clipDescription = document.getElementById('clipDescription-' + clipID).innerText;
+   var clipTags = document.getElementById('clip-' + clipID + '-tags');
 
    $("#editClipID").val(clipID);
    $("#editClipName").val(clipName);
@@ -980,6 +985,9 @@ function editClipMetadataModal(clipID) {
    easymdeClipEditor.value(clipDescription);
    var doc = easymdeClipEditor.codemirror.getDoc();
    doc.setValue(doc.getValue());
+
+   document.getElementById('editClipTags').value = clipTags;
+
    openModal('clipEditModal');
 }
 
