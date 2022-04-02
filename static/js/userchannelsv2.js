@@ -91,6 +91,7 @@ $(document).on("click", ".videoEditModalButton", function () {
    var videoTopic = document.getElementById('vidTopic-' + videoID).innerText;
    var videoDescription = document.getElementById('vidDescription-' + videoID).innerText;
    var videoAllowComments = document.getElementById('vidAllowComments-' + videoID).innerText;
+   var videoTagsCSV = document.getElementById('video-' + videoID + '-tags').innerText
 
 
    $("#editVideoID").val(videoID);
@@ -105,6 +106,8 @@ $(document).on("click", ".videoEditModalButton", function () {
        videoAllowCommentCheckBox.checked = false;
        videoAllowCommentCheckBox.parentElement.classList.add("off");
    }
+
+   document.getElementById('editvideoTags').value = videoTagsCSV;
 
    $("#editVideoTopic").val(videoTopic);
 
