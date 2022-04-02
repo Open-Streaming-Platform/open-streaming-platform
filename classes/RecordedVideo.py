@@ -179,9 +179,9 @@ class clip_tags(db.Model):
     clipID = db.Column(db.Integer,db.ForeignKey('Clips.id'))
     taggedByUser = db.Column(db.Integer)
 
-    def __init__(self, tagName, videoID, userID):
+    def __init__(self, tagName, clipID, userID):
         self.tagName = tagName
-        self.clipID = videoID
+        self.clipID = clipID
         self.taggedByUser = userID
 
     def __repr__(self):
