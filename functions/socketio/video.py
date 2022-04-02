@@ -214,7 +214,7 @@ def changeClipMetadataSocketIO(message):
         clipDescription = message['clipDescription']
 
         clipTags = None
-        if clipTags in message:
+        if 'clipTags' in message:
             clipTags = message['clipTags']
 
         result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription, clipTags)
