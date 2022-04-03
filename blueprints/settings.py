@@ -165,7 +165,7 @@ def user_delete_own_account():
         logout_user()
     else:
         flash('Invalid Deletion Request', 'error')
-    return redirect(url_for("main_page"))
+    return redirect(url_for("root.main_page"))
 
 
 @settings_bp.route('/user/addInviteCode')
