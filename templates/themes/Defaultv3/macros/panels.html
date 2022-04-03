@@ -287,7 +287,7 @@
 
         var panelDiv = document.getElementById('featured-stream-{{ channel.id }}');
 
-        $.getJSON('/apiv1/channel/' + channelLocation + '/streams', function(data) {
+        $.getJSON('/apiv1/channel/{{channel.channelLoc}}/streams', function(data) {
             var streamList = data['results'];
 
             if (streamList.length > 0) {
