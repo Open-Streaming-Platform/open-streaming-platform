@@ -51,6 +51,10 @@ body {
     color: var(--font-color) !important;
 }
 
+.alert {
+    margin-bottom: 0;
+}
+
 .badge {
     color: white;
 }
