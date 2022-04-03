@@ -360,7 +360,7 @@ def admin_page():
                            Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.totalViewers).all()
         streamHistory = Stream.Stream.query.filter_by(active=False)\
             .with_entities(Stream.Stream.id, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp,
-                           Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.totalViewers).all()
+                           Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.totalViewers).order_by(Stream.Stream.endTimeStamp.desc()).limit(100)
         topicsList = cachedDbCalls.getAllTopics()
         rtmpServers = settings.rtmpServer.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
