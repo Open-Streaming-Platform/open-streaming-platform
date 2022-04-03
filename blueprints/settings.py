@@ -318,6 +318,9 @@ def admin_page():
                             flash("User Disabled")
                         else:
                             userQuery.active = True
+                            deletionFlagQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userID).all()
+                            for flag in deletionFlagQuery:
+                                db.session.delete(flag)
                             system.newLog(1, "User " + current_user.username + " Enabled User " + userQuery.username)
                             flash("User Enabled")
                         db.session.commit()
