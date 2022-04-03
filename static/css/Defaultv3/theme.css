@@ -280,6 +280,11 @@ table tbody tr {
     color: var(--font-color);
 }
 
+.toast-body {
+    background-color: var(--box2-background);
+    border-radius: 0 0 6px 6px;
+}
+
 .uiBar {
     background-color: var(--navbar-background);
     box-shadow: var(--box-shadow);
