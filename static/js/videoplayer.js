@@ -2,6 +2,8 @@
 var conn_options = {'sync disconnect on unload':true};
 var socket = io();
 
+var easymdeVideoEditor = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description")});
+
 socket.on('connect', function () {
     console.log('Connected to SocketIO');
     socket.emit('getUpvoteTotal', {loc: videoID, vidType: 'video'});
