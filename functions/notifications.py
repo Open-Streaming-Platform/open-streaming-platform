@@ -24,5 +24,4 @@ def sendAdminNotification(message, link, image):
         notificationID = sendNotification(message, link, image, admin.id)
         notificationArray.append(notificationID)
     db.session.commit()
-    db.session.close()
     return notificationArray
