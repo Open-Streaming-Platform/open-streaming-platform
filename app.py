@@ -526,7 +526,8 @@ def inject_sysSettings():
 
     sysSettings = cachedDbCalls.getSystemSettings()
     allowRegistration = config.allowRegistration
-    return dict(sysSettings=sysSettings, allowRegistration=allowRegistration)
+    restartRequired = globalvars.restartRequired
+    return dict(sysSettings=sysSettings, allowRegistration=allowRegistration, restartRequired=restartRequired)
 
 @app.context_processor
 def inject_ownedChannels():

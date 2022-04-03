@@ -567,6 +567,11 @@ def admin_page():
             #    flash("Invalid Server Address/IP", "error")
             #    return redirect(url_for(".admin_page", page="settings"))
 
+            if sysSettings.smtpSendAs != smtpSendAs or sysSettings.smtpAddress != smtpAddress or sysSettings.smtpPort != smtpPort\
+                    or sysSettings.smtpUsername != smtpUser or sysSettings.smtpPassword != smtpPassword or sysSettings.smtpTLS != smtpTLS or sysSettings.smtpSSL != smtpSSL:
+
+                globalvars.restartRequired = True
+
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
             sysSettings.siteAddress = serverAddress
@@ -852,7 +857,7 @@ def admin_page():
                     api_base_url=provider.api_base_url,
                     client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                 )
-
+                globalvars.restartRequired = True
                 flash("OAuth Provider Added", "success")
 
             else:
@@ -903,7 +908,7 @@ def admin_page():
                         api_base_url=provider.api_base_url,
                         client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                     )
-
+                    globalvars.restartRequired = True
                     flash("OAuth Provider Updated","success")
                 else:
                     flash("OAuth Provider Does Not Exist", "error")
@@ -927,6 +932,7 @@ def admin_page():
                     db.session.commit()
                 db.session.delete(oAuthProviderQuery)
                 db.session.commit()
+                globalvars.restartRequired = True
                 flash("OAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
             else:
                 flash("Invalid OAuth Object","error")
@@ -1636,6 +1642,8 @@ def initialSetup():
                 # Import Theme Data into Theme Dictionary
                 with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
                     globalvars.themeData = json.load(f)
+
+                globalvars.restartRequired = True
 
         else:
             flash('Passwords do not match')

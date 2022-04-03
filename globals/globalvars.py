@@ -42,3 +42,6 @@ ejabberdServerHttpBindFQDN = None
 recaptchaEnabled = False
 RECAPTCHA_PUBLIC_KEY = ''
 RECAPTCHA_PRIVATE_KEY = ''
+
+# Restart Required Variable
+restartRequired = False
