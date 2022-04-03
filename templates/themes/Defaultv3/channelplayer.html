@@ -256,6 +256,10 @@
               // Disconnect from SocketIO
               socket.emit('removeViewer', {data: channelLocation});
               socket.close();
+              // Terminate Video Player to Speed up Page Load
+              player.pause();
+              player.reset();
+
         });
     </script>
 
