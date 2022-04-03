@@ -16,7 +16,7 @@ OSP-Core: Adds Periodic Checks to Check if a Video exists in a correct state (No
 OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #440
 OSP-Core: Fixed an Issue when OSP will attempt to keep adding the default Topic "Other", even after deletion - #407
 OSP-Core: Fixed an issue where Webhook tests would fail if no Video Recording Existed on a server - #442
-OSP-Core: Updates Pillow to 8.3.2 to fix CVE-2021-34552
+OSP-Core: Updates Pillow to 9.0. to fix various CVEs
 OSP-Core: Added Message Moderation / Deleting of Chat Messages
 OSP-Core: Added well known keyboard shortcuts for videoJS player to play/pause, seek and adjust volume
 OSP-Core: Adds User to User Messaging/Mail
