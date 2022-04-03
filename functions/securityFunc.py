@@ -14,7 +14,7 @@ from classes import apikey
 
 from globals import globalvars
 
-from functions import cache, system, channelFunc
+from functions import cache, system, channelFunc, notifications
 
 log = logging.getLogger('app.functions.securityFunctions')
 
@@ -87,6 +87,7 @@ def flag_delete_user(userID):
     if userQuery is not None:
         userQuery.active = False
         existingFlag = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        notifications.sendAdminNotification('User ' + userQuery.username + ' has queued their account for deletion.  The account will be deleted in 48 from ' + str(datetime.datetime.now()))
         if existingFlag is None:
             newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
             db.session.add(newUserFlag)
