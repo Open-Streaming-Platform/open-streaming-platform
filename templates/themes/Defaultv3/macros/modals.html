@@ -2236,3 +2236,31 @@ var tagify_clipTags = new Tagify(clipTags, {
   </div>
 </div>
 {% endmacro %}
+
+{% macro delete_own_user_modal() %}
+<div class="modal fade" id="ownUserDeleteModal" tabindex="-1" role="dialog" aria-labelledby="ownUserDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form action="/settings/user/deleteSelf" id="deleteOwnUserForm" method="post">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ownUserDeleteModalTitle">Confirm Account Deletion</h5>
+            <div class="float-end">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <h5>Are you sure you want to delete your account and all associated data?</h5><br>
+            <h6>On confirmation, accounts will be scheduled for deletion 48 hours after the request.</h6>
+
+            <label for="userDeleteConfirm" class="form-label">To Confirm, Enter your username:</label>
+            <input type="text" class="form-control" name="usernameDeleteConfirmation" id="userDeleteConfirm" value="" pattern="{{ current_user.username }}" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+            <button id="deleteAccountButton" type="submit" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}

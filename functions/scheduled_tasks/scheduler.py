@@ -15,6 +15,8 @@ def setup_periodic_tasks(sender, **kwargs):
     """
     video_tasks.setup_video_tasks(sender, **kwargs)
     message_tasks.setup_message_tasks(sender, **kwargs)
+    message_tasks.setup_security_tasks(sender, **kwargs)
+
 
 
 

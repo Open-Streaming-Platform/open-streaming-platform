@@ -82,13 +82,32 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.close()
     return False
 
+def flag_delete_user(userID):
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery is not None:
+        userQuery.active = False
+        existingFlag = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        if existingFlag is None:
+            newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
+            db.session.add(newUserFlag)
+            db.session.commit()
+        return True
+    db.session.commit()
+    db.session.close()
+    return False
+
 
 def delete_user(userID):
     """
     Deletes Channel Data, Comments, Videos, Clips, and Userdata for a given userID
     """
     userQuery = Sec.User.query.filter_by(id=userID).first()
-    if userQuery != None:
+    if userQuery is not None:
+
+        userFlaggedForDeletionQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        if userFlaggedForDeletionQuery is not None:
+            db.session.delete(userFlaggedForDeletionQuery)
+
         channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
         username = userQuery.username
 

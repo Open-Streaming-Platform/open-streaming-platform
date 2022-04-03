@@ -150,16 +150,21 @@ def subscription_page():
     return render_template(themes.checkOverride('subscriptions.html'), channelSubList=channelSubList)
 
 
-@settings_bp.route('/user/deleteSelf')
+@settings_bp.route('/user/deleteSelf', methods=['POST'])
 @login_required
 def user_delete_own_account():
     """
     Endpoint to allow user to delete own account and all associated data.
     Not to be called directly without confirmation UI
     """
-    securityFunc.delete_user(current_user.id)
-    flash('Account and Associated Data Deleted', 'error')
-    logout_user()
+    userConfirmation = request.form['usernameDeleteConfirmation']
+
+    if userConfirmation == current_user.username:
+        securityFunc.flag_delete_user(current_user.id)
+        flash('Account and Associated Data Scheduled for Deletion', 'error')
+        logout_user()
+    else:
+        flash('Invalid Deletion Request', 'error')
     return redirect(url_for("main_page"))
 
 

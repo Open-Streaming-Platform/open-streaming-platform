@@ -93,6 +93,7 @@ def init(context):
     context.jinja_env.filters['get_channelWebhooks'] = get_channelWebhooks
     context.jinja_env.filters['get_channelVideos'] = get_channelVideos
     context.jinja_env.filters['get_channelClips'] = get_channelClips
+    context.jinja_env.filters['get_flaggedForDeletion'] = get_flaggedForDeletion
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -665,3 +666,10 @@ def get_channelClips(channelID):
         .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
                      RecordedVideo.Clips.length, RecordedVideo.Clips.views, RecordedVideo.Clips.description, RecordedVideo.Clips.published, RecordedVideo.Clips.parentVideo).all()
     return clipQuery
+
+def get_flaggedForDeletion(userID):
+    flagQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=int(userID)).first()
+    if flagQuery != None:
+        return str(flagQuery.timestamp)
+    else:
+        return ''

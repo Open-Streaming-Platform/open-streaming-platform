@@ -708,6 +708,7 @@
                         <th>Provider</th>
                         <th>Active</th>
                         <th>Roles</th>
+                        <th>Deletion Flag</th>
                         <th>Options</th>
                     </tr>
                 </thead>
@@ -726,6 +727,7 @@
                             <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="bi bi-x"></i></a></span><br>
                         {% endfor %}
                       </td>
+                       <td><span class="badge badge-danger">{{ user.id | get_flaggedForDeletion | normalize_date }}</span></td>
                       <td>
                         <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Add Role</button>
                         <div class="dropdown-menu">

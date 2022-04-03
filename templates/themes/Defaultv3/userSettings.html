@@ -3,6 +3,7 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
 {% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
 
 
 {% block head %}
@@ -17,6 +18,10 @@
 
 {% block body %}
     {{ panels.user_settings_panel(current_user, channelUsage, sysSettings, socialNetworkList) }}
+{% endblock %}
+
+{% block modals %}
+    {{ modals.delete_own_user_modal() }}
 {% endblock %}
 
 {% block scripts %}

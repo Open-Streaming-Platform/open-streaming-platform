@@ -177,3 +177,13 @@ class Guest(db.Model):
         self.UUID = UUID
         self.last_active_at = datetime.datetime.utcnow()
         self.last_active_ip = current_login_ip
+
+class UsersFlaggedForDeletion(db.Model):
+    __tablename__ = "UsersFlaggedForDeletion"
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.ForeignKey(User.id))
+    timestamp = db.Column(db.DateTime)
+
+    def __init__(self, userID):
+        self.userID = userID
+        self.timestamp = datetime.datetime.now() + datetime.timedelta(days=2)
