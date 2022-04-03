@@ -14,7 +14,7 @@ from classes import apikey
 
 from globals import globalvars
 
-from functions import cache, system
+from functions import cache, system, channelFunc
 
 log = logging.getLogger('app.functions.securityFunctions')
 
@@ -112,23 +112,7 @@ def delete_user(userID):
 
         # Delete Channels and all Channel Data
         for channel in channelQuery:
-            videoQuery = channel.recordedVideo
-            for video in videoQuery:
-                video.remove()
-                for clip in video.clips:
-                    for upvotes in clip:
-                        db.session.delete(upvotes)
-                    clip.remove()
-                    db.session.delete(clip)
-                for upvote in video.upvotes:
-                    db.session.delete(upvote)
-                for comment in video.comments:
-                    db.session.delete(comment)
-                vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
-                for view in vidViews:
-                    db.session.delete(view)
-                db.session.delete(video)
-            db.session.delete(channel)
+            channelFunc.delete_channel(channel.id)
 
         # Clear All Role Entries for a User Prior to Deletion
         from app import user_datastore
