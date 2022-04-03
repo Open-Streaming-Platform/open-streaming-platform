@@ -2253,7 +2253,7 @@ var tagify_clipTags = new Tagify(clipTags, {
             <h6>On confirmation, accounts will be scheduled for deletion 48 hours after the request.</h6>
 
             <label for="userDeleteConfirm" class="form-label">To Confirm, Enter your username:</label>
-            <input type="text" class="form-control" name="usernameDeleteConfirmation" id="userDeleteConfirm" value="" pattern="{{ current_user.username }}" required>
+            <input type="text" class="form-control" name="usernameDeleteConfirmation" id="userDeleteConfirm" value="" pattern="{{ current_user.username }}" required oninvalid="this.setCustomValidity('Username Does Not Match')" oninput="this.setCustomValidity('')">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
