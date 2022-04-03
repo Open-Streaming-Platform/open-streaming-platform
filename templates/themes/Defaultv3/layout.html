@@ -169,7 +169,7 @@
 
     <div class="content">
       {% if current_user.is_authenticated %}
-        {% current_user.has_role('Admin') %}
+        {% if current_user.has_role('Admin') %}
             {% if restartRequed == True %}
                 <div class="alert alert-info text-center" role="alert">
                   <i class="fas fa-exclamation-triangle"></i> The OSP Server requires a restart due to a configuration change.  To prevent issues, please restart the osp.target service! <i class="fas fa-exclamation-triangle"></i>
