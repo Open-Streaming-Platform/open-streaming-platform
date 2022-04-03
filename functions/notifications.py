@@ -14,10 +14,15 @@ def sendNotification(message, toUserID):
     return newNotification.notificationID
 
 def sendAdminNotification(message):
-    roleIDQuery = Sec.Role.query.filter_by(name='Admin').first()
-    query_user_role = Sec.roles_users.query(Sec.roles_users.role_id == roleIDQuery.id).all()
+    adminList = []
+    userQuery = Sec.User.query.all()
+    for user in userQuery:
+        if user.has_role('Admin'):
+            adminList.append(user)
     notificationArray = []
-    for entry in query_user_role:
-        notificationID = sendNotification(message, entry.user_id)
+    for entry in adminList:
+        notificationID = sendNotification(message, entry.id)
         notificationArray.append(notificationID)
+    db.session.commit()
+    db.session.close()
     return notificationArray
