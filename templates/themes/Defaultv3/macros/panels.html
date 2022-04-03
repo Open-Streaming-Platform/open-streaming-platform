@@ -179,7 +179,7 @@
 <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
 <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
 
-<div class="featured-stream-container insetBoxShadow">
+<div id="featured-stream-{{ channel.id }}" class="featured-stream-container insetBoxShadow">
   <h4 class="textShadow"><b>{{ title }}</b></h4>
   <div class="row">
     <div class="col-sm-12 col-md-3">
@@ -279,6 +279,56 @@
            window.open("/view/{{ channel.channelLoc }}","_self")
        }
    });
+
+   function monitor_vid_{{ channel.id }}(vidplayer){
+
+        videoJSObj = vidplayer;
+        currentReadyState = videoJSObj.readyState();
+
+        var panelDiv = document.getElementById('featured-stream-{{ channel.id }}');
+
+        $.getJSON('/apiv1/channel/' + channelLocation + '/streams', function(data) {
+            var streamList = data['results'];
+
+            if (streamList.length > 0) {
+
+                panelDiv.style.display = "block";
+
+                if (currentReadyState <= 2) {
+                    try {
+                        videoJSObj.reset();
+                        videoJSObj.src({{ channel | getLiveStreamURL }});
+                        videoJSObj.pause();
+                        videoJSObj.trigger('loadstart');
+                        videoJSObj.play();
+                    } catch (e) {
+                        console.log("OSP tried restarting the stream but had an issue:" + e)
+                    }
+                }
+
+            } else {
+                try {
+                    videoJSObj.pause();
+                    videoJSObj.reset();
+                    panelDiv.style.display = "none";
+                    disableTheaterMode();
+
+                } catch(e) {
+                    console.log("OSP tried restarting the stream but had an issue:" + e)
+                }
+            }
+        });
+    }
+
+    // Execute the Video Monitor Script on Page Load
+    $(document).ready( function () {
+        monitor_vid_{{ channel.id }}(player{{ channel.id }});
+    });
+
+    // Set the monitor video script to execute every 10s
+    setInterval(function() {
+        monitor_vid_{{ channel.id }}(player{{ channel.id }});
+    }, 10000);
 </script>
 {% endmacro %}
 
