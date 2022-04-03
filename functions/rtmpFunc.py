@@ -5,6 +5,8 @@ import datetime
 import logging
 import pathlib
 
+from celery import states
+from celery.exceptions import Ignore
 from flask import Blueprint, request, redirect, current_app, abort
 
 from classes.shared import db, celery
@@ -284,7 +286,15 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
 
             fileName = pathlibPath.name
 
-            videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
+            results = videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
+
+            # If File does not exist in expected destination, Raise Task Failure
+            if results == False:
+                self.update_state(
+                    state=states.FAILURE,
+                    meta='FFMPEG Processing Failure'
+                )
+                raise Ignore()
 
             videoPath = path.replace('/var/www/pending/', requestedChannel.channelLoc + '/')
             imagePath = videoPath.replace('.flv','.png')

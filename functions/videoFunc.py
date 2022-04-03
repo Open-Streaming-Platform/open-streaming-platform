@@ -438,6 +438,10 @@ def processStreamVideo(path, channelLoc):
 
     processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', inputPath, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
 
+    destinationFilePath = pathlib.Path(destinationPath)
+    if destinationFilePath.is_file() == False:
+        return False
+
     channelID = cachedDbCalls.getChannelIDFromLocation(channelLoc)
 
     cache.delete_memoized(cachedDbCalls.getChannelVideos, channelID)
