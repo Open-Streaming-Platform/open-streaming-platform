@@ -275,6 +275,15 @@
         }
     });
 
+    var videoMaxHeight = document.getElementById("video{{channel.id}}").style.maxHeight;
+    player{{ channel.id }}.on('fullscreenchange', function (elm, data) {
+        if (player{{ channel.id }}.isFullscreen()) {
+            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = '100vh';
+        } else {
+            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = videoMaxHeight;
+        }
+    });
+
     function monitor_vid_{{ channel.id }}(vidplayer){
         videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
