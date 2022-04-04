@@ -227,7 +227,29 @@
             "bLengthChange": false,
             "bFilter": false,
         });
-    } );
+        $('#usersTable').DataTable({
+            'order': [[2, "asc"]],
+            'stateSave': true,
+            'columnDefs': [
+                { 'searchable': false, 'targets': [0, 1, 8, 9] },
+                { 'orderable': false, 'targets': [0, 1, 8, 9] }
+            ]
+        });
+        $('#channelsTable').DataTable({
+            'order': [[2, "asc"]],
+            'columnDefs': [
+                { 'searchable': false, 'targets': [0, 1, 7, 12] },
+                { 'orderable': false, 'targets': [0, 1, 12] }
+            ]
+        });
+        $('#streamsTable').DataTable({
+            'order': [[2, "asc"]],
+            'columnDefs': [
+                { 'searchable': false, 'targets': [0, 1, 6, 7, 8] },
+                { 'orderable': false, 'targets': [0, 1, 8] }
+            ]
+        });
+    });
 </script>
 
 <script>
