@@ -1,7 +1,7 @@
 {% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
 
 {% macro live_stream_card(stream) %}
-<li id="streamCard-{{stream.linkedChannel}}" class="streamCard item">
+<li class="streamCard item">
         <div class="d-none list_streamName">{{ stream.streamName }}</div>
         <div class="d-none list_streamOwner">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</div>
         <div class="d-none list_streamViewers">{{stream.currentViewers}}</div>
