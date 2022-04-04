@@ -288,6 +288,7 @@
         videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
         var panelDiv = document.getElementById('featured-stream-{{ channel.id }}');
+        var streamCardLi = document.getElementById('streamCard-{{ channel.id }}');
         $.getJSON('/apiv1/channel/{{channel.channelLoc}}/streams', function(data) {
             var streamList = data['results'];
             if (streamList.length > 0) {
@@ -308,6 +309,7 @@
                     videoJSObj.pause();
                     videoJSObj.reset();
                     panelDiv.style.display = "none";
+                    streamCardLi.style.display = "none";
                 } catch(e) {
                     console.log("OSP tried restarting the stream but had an issue:" + e)
                 }
