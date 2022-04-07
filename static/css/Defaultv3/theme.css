@@ -791,6 +791,15 @@ table tbody tr {
     box-shadow: none;
 }
 
+#logTable_filter,
+#streamHistoryTable_filter,
+#usersTable_filter,
+#channelsTable_filter,
+#streamsTable_filter {
+   float: right !important;
+}
+
+
 .box1-fill {
     background-color: var(--box1-background);
 }
