@@ -221,7 +221,6 @@
 </div>
 
 <script>
-
     // Generate HLS Tokens
     {% if current_user.is_authenticated %}
         var hls_user = "{{ current_user.username }}"
@@ -229,7 +228,6 @@
         var hls_user = "Guest"
     {% endif %}
     var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
-
     // Initialize Stream Player
     videojs.Hls.xhr.beforeRequest = (options) => {
         options.headers = {
@@ -237,7 +235,6 @@
         };
         return options;
     };
-
     var player{{ channel.id }} = videojs('video{{ channel.id }}', {
         autoplay: true,
         errorDisplay: false,
@@ -262,38 +259,39 @@
             reloadSourceOnError: {}
         }
     });
-
     qualityLevels = player{{ channel.id }}.qualityLevels();
     httpSelector = player{{ channel.id }}.httpSourceSelector();
 
     player{{ channel.id }}.ready(function() {
-           this.src({
-                   src: '{{ channel | getLiveStreamURL }}',
-                   type: 'application/x-mpegURL'
-           });
-   });
-   player{{ channel.id }}.play();
+        this.src({
+            src: '{{ channel | getLiveStreamURL }}',
+            type: 'application/x-mpegURL'
+        });
+    });
+    player{{ channel.id }}.play();  
+    player{{ channel.id }}.on('click', function(evt) {
+        if (evt.target.tagName === 'VIDEO') {
+            window.open("/view/{{ channel.channelLoc }}","_self")
+        }
+    });
 
-   player{{ channel.id }}.on('click', function(evt) {
-       if (evt.target.tagName === 'VIDEO') {
-           window.open("/view/{{ channel.channelLoc }}","_self")
-       }
-   });
+    var videoMaxHeight = document.getElementById("video{{channel.id}}").style.maxHeight;
+    player{{ channel.id }}.on('fullscreenchange', function (elm, data) {
+        if (player{{ channel.id }}.isFullscreen()) {
+            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = '100vh';
+        } else {
+            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = videoMaxHeight;
+        }
+    });
 
-   function monitor_vid_{{ channel.id }}(vidplayer){
-
+    function monitor_vid_{{ channel.id }}(vidplayer){
         videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
-
         var panelDiv = document.getElementById('featured-stream-{{ channel.id }}');
-
         $.getJSON('/apiv1/channel/{{channel.channelLoc}}/streams', function(data) {
             var streamList = data['results'];
-
             if (streamList.length > 0) {
-
                 panelDiv.style.display = "block";
-
                 if (currentReadyState <= 2) {
                     try {
                         videoJSObj.reset();
@@ -305,7 +303,6 @@
                         console.log("OSP tried restarting the stream but had an issue:" + e)
                     }
                 }
-
             } else {
                 try {
                     videoJSObj.pause();
@@ -320,13 +317,11 @@
 
     // Execute the Video Monitor Script on Page Load
     $(document).ready( function () {
-        monitor_vid_{{ channel.id }}(player{{ channel.id }});
+        setInterval(function () {
+            monitor_vid_{{ channel.id }} (player{{ channel.id }});
+        }, 10000);
     });
 
-    // Set the monitor video script to execute every 10s
-    setInterval(function() {
-        monitor_vid_{{ channel.id }}(player{{ channel.id }});
-    }, 10000);
 </script>
 {% endmacro %}
 
