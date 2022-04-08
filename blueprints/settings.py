@@ -267,9 +267,6 @@ def admin_page():
 
                         flash("User " + str(userQuery.username) + " Deleted")
 
-                        db.session.delete(userQuery)
-                        db.session.commit()
-
                         return redirect(url_for('.admin_page', page="users"))
 
                 elif setting == "userRole":

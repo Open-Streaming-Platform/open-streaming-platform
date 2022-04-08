@@ -4,7 +4,7 @@ import datetime
 import bleach
 import logging
 
-from classes.shared import db, limiter
+from classes.shared import db, limiter, cache
 from classes import Channel
 from classes import Sec
 from classes import invites
@@ -14,7 +14,7 @@ from classes import apikey
 
 from globals import globalvars
 
-from functions import cache, system, channelFunc, notifications
+from functions import cache as cachefunc, system, channelFunc, notifications, cachedDbCalls
 
 log = logging.getLogger('app.functions.securityFunctions')
 
@@ -27,7 +27,7 @@ def check_isValidChannelViewer(channelID):
             return True
 
         # Verify if a Cached Entry Exists
-        cachedResult = cache.checkInviteCache(channelID)
+        cachedResult = cachefunc.checkInviteCache(channelID)
         if cachedResult is True:
             return True
         else:
@@ -142,6 +142,9 @@ def delete_user(userID):
 
         db.session.delete(userQuery)
         db.session.commit()
+
+        cache.delete_memoized(cachedDbCalls.getUser, int(userID))
+
         log.warning({"level": "warning", "message": "User Deleted - " + username})
         system.newLog(1, "User " + current_user.username + " deleted User " + username)
         return True
