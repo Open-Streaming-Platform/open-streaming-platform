@@ -193,10 +193,12 @@ class static_page(db.Model):
     __tablename__ = "static_page"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256), unique=True)
+    iconClass = db.Column(db.String(256))
     content = db.Column(db.Text)
 
-    def __init__(self, name):
+    def __init__(self, name, icon):
         self.name = name
+        self.icon = icon
 
     def __repr__(self):
         return '<id %r>' % self.id

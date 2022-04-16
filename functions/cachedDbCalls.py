@@ -354,3 +354,13 @@ def getUserPanel(panelId):
 def getChannelPanel(panelId):
     panelQuery = panel.channelPanel.query.filter_by(id=panelId).first()
     return panelQuery
+
+@cache.memoize(timeout=1200)
+def getStaticPages():
+    staticPageQuery = settings.static_page.query.all()
+    return staticPageQuery
+
+@cache.memoize(timeout=1200)
+def getStaticPage(pageName):
+    staticPageQuery = settings.static_page.query.filter_by(name=pageName).first()
+    return staticPageQuery

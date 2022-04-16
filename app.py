@@ -546,6 +546,11 @@ def inject_topics():
     topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name, topics.topics.iconClass).all()
     return dict(uploadTopics=topicQuery)
 
+@app.context_processor
+def inject_static_pages():
+    static_pages = cachedDbCalls.getStaticPages()
+    return dict(static_pages=static_pages)
+
 app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
 # Flask Signal Handlers.
