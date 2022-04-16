@@ -364,7 +364,7 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
 @root_bp.route('/p/<static_page>')
 def render_staticPage(static_page):
     sanitized_page_string = re.sub(r'[^a-zA-Z0-9]+', '', static_page)
-    staticPageQuery = cachedDbCalls.getStaticPage(sanitized_page_string.lower())
+    staticPageQuery = cachedDbCalls.getStaticPage(sanitized_page_string)
     if staticPageQuery is not None:
         return render_template(themes.checkOverride('static_page.html'), content=staticPageQuery.content)
 
