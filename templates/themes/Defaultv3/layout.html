@@ -163,7 +163,7 @@
         <!--{{ coreui.ui_sidebar_item("Videos", "/video", "bi bi-camera-video-fill") }}-->
         <!--{{ coreui.ui_sidebar_item("Clips", "/clip", "bi bi-scissors") }}-->
         {% for page in static_pages %}
-            {{ coreui.ui_sidebar_item(page.name, "/p/" + page.name, page.iconClass) }}
+            {{ coreui.ui_sidebar_item(page.title, "/p/" + page.name, page.iconClass) }}
         {% endfor %}
     </div>
 </div>

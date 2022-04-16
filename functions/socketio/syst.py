@@ -496,13 +496,14 @@ def add_edit_static_page(message):
         if current_user.has_role('Admin'):
             if 'type' in message:
                 pageName = message['pageName']
+                pageTitle = message['pageTitle']
                 pageIcon = message['pageIcon']
                 pageContent = message['pageContent']
 
                 if message['type'] == 'new':
                     existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
                     if existingPageCheck is None:
-                        newPage = settings.static_page(pageName, pageIcon)
+                        newPage = settings.static_page(pageName, pageIcon, pageTitle)
                         newPage.content = pageContent
                         db.session.add(newPage)
                     db.session.commit()
@@ -522,6 +523,7 @@ def add_edit_static_page(message):
                             updatingPageCheck.name = pageName
                             updatingPageCheck.iconClass = pageIcon
                             updatingPageCheck.content = pageContent
+                            updatingPageCheck.title = pageTitle
                     db.session.commit()
                     db.session.close()
                     cache.delete_memoized('getStaticPages')

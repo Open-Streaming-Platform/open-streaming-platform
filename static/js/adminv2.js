@@ -582,11 +582,12 @@ function saveStaticPage() {
     easymde_new_staticpage.codemirror.save();
     var pageName = document.getElementById('pageName').value;
     var pageIcon = document.getElementById('pageIcon').value;
+    var pageTitle = document.getElementById('pageTitle').value;
     var pageContent = document.getElementById('pageContent').value;
     var existingPageId = document.getElementById('editPageId').value;
     if ((existingPageId == null) || (existingPageId === '')) {
-        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, type: 'new'});
+        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, pageTitle: pageTitle, type: 'new'});
     } else {
-        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, type: 'edit', pageId: existingPageId});
+        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, pageTitle: pageTitle, type: 'edit', pageId: existingPageId});
     }
 }
