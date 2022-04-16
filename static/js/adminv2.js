@@ -579,6 +579,7 @@ function RemoveFrontPageLayoutPanel(callingElm) {
 }
 
 function saveStaticPage() {
+    easymde_new_staticpage.codemirror.save();
     var pageName = document.getElementById('pageName').value;
     var pageIcon = document.getElementById('pageIcon').value;
     var pageContent = document.getElementById('pageContent').value;
