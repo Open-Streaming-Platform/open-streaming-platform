@@ -507,9 +507,11 @@ def add_edit_static_page(message):
                         db.session.add(existingPageCheck)
                     db.session.commit()
                     db.session.close()
+                    cache.delete_memoized('getStaticPages')
 
                 elif message['type'] == 'edit':
                     updatingPageCheck = settings.static_page.query.filter_by(name=int(message['pageId'])).first()
+                    oldname = updatingPageCheck.name
                     if updatingPageCheck is not None:
                         existingPageName = False
                         if updatingPageCheck.name != pageName:
@@ -522,4 +524,6 @@ def add_edit_static_page(message):
                             updatingPageCheck.content = pageContent
                     db.session.commit()
                     db.session.close()
+                    cache.delete_memoized('getStaticPages')
+                    cache.delete_memoized('getStaticPages', 'oldname')
     return 'OK'
