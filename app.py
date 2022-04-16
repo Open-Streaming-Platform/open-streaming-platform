@@ -548,8 +548,7 @@ def inject_topics():
 
 @app.context_processor
 def inject_static_pages():
-    static_pages = cachedDbCalls.getStaticPages()
-    return dict(static_pages=static_pages)
+    return dict(static_pages=cachedDbCalls.getStaticPages())
 
 app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers"})
 #----------------------------------------------------------------------------#
