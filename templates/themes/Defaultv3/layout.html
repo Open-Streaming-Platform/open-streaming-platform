@@ -162,6 +162,9 @@
         {{ coreui.ui_sidebar_item("Streamers", "/streamer", "bi-people-fill") }}
         <!--{{ coreui.ui_sidebar_item("Videos", "/video", "bi bi-camera-video-fill") }}-->
         <!--{{ coreui.ui_sidebar_item("Clips", "/clip", "bi bi-scissors") }}-->
+        {% for page in static_pages %}
+            {{ coreui.ui_sidebar_item(page.name, "/" + page.name, page.iconClass) }}
+        {% endfor %}
     </div>
 </div>
 

@@ -974,29 +974,35 @@
 </div>
 {% endmacro %}
 
-{% macro terms_settings_panel(sysSettings) %}
+{% macro staticPage_settings_panel(static_pages) %}
 <div class="info-panel-box system-terms-settings-box">
     <div class="info-panel-box-header boxShadow textShadow">
-        <b>Terms & Conditions / Privacy </b>
+        <b>Static Pages</b>
     </div>
     <div class="info-panel-box-body boxShadow">
-        <div class="row">
-            <div class="col-md-6 col-12">
-                <label for="settings-termsconditions-input" class="form-label">Terms and Conditions</label>
-                <textarea class="form-control boxShadow" name="termsSettings" id="settings-termsconditions-input" maxlength="2048">{{sysSettings.terms}}</textarea>
-                <script>
-                    var easymde_terms = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("settings-termsconditions-input") });
-                </script>
-            </div>
-            <div class="col-md-6 col-12">
-                <label for="settings-privacy-input" class="form-label">Privacy</label>
-                <textarea class="form-control boxShadow" name="privacySettings" id="settings-privacy-input" maxlength="2048">{{sysSettings.privacy}}</textarea>
-                <script>
-                    var easymde_privacy = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("settings-privacy-input") });
-                </script>
-            </div>
+        <div class="admin-staticpage-servers">
+            <table class="table table-borderless align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Icon</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in static_pages %}
+                        <tr>
+                            <td>{{ page.name }}</td>
+                            <td><span class="shadow {{ page.iconClass }}"></span> {{ page.iconClass }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editStaticPage('{{ page.id }}');"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteStaticPageModal('{{ page.id }}');"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
 {% endmacro %}
