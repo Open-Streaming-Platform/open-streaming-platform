@@ -2297,10 +2297,11 @@ var tagify_clipTags = new Tagify(clipTags, {
             <label for="pageContent" class="form-label">Page Content</label>
             <textarea class="form-control boxShadow" id="pageContent" name="pageContent" required></textarea>
         </div>
+        <input type="hidden" id="editPageId" name="pageId">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-        <button id="saveStaticPageButton" type="submit" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+        <button id="saveStaticPageButton" type="submit" class="btn btn-success" data-bs-dismiss="modal" onclick="saveStaticPage();">Save</button>
       </div>
     </div>
   </div>

@@ -489,3 +489,37 @@ def remove_server_from_hub(message):
                     db.session.commit()
             db.session.close()
     return 'OK'
+
+@socketio.on('addEditStaticPage')
+def add_edit_static_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'type' in message:
+                pageName = message['pageName']
+                pageIcon = message['pageIcon']
+                pageContent = message['pageContent']
+
+                if message['type'] == 'new':
+                    existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
+                    if existingPageCheck is None:
+                        newPage = settings.static_page(pageName, pageIcon)
+                        newPage.content = pageContent
+                        db.session.add(existingPageCheck)
+                    db.session.commit()
+                    db.session.close()
+
+                elif message['type'] == 'edit':
+                    updatingPageCheck = settings.static_page.query.filter_by(name=int(message['pageId'])).first()
+                    if updatingPageCheck is not None:
+                        existingPageName = False
+                        if updatingPageCheck.name != pageName:
+                            existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
+                            if existingPageCheck != None:
+                                existingPageName = True
+                        if existingPageName == False:
+                            updatingPageCheck.name = pageName
+                            updatingPageCheck.iconClass = pageIcon
+                            updatingPageCheck.content = pageContent
+                    db.session.commit()
+                    db.session.close()
+    return 'OK'

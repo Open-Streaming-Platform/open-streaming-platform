@@ -577,3 +577,15 @@ function RemoveFrontPageLayoutPanel(callingElm) {
     var listElm = callingElm.parentElement.parentElement;
     listElm.parentNode.removeChild(listElm);
 }
+
+function saveStaticPage() {
+    var pageName = document.getElementById('pageName').value;
+    var pageIcon = document.getElementById('pageIcon').value;
+    var pageContent = document.getElementById('pageContent').value;
+    var existingPageId = document.getElementById('editPageId').value;
+    if ((existingPageId == null) || (existingPageId === '')) {
+        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, type: 'new'});
+    } else {
+        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, type: 'edit', pageId: existingPageId});
+    }
+}
