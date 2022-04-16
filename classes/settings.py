@@ -188,3 +188,15 @@ class oAuthProvider(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class static_page(db.Model):
+    __tablename__ = "static_page"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256), unique=True)
+    content = db.Column(db.Text)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return '<id %r>' % self.id

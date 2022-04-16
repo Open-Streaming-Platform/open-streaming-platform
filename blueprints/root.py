@@ -3,6 +3,7 @@ import hashlib
 from flask import Blueprint, request, url_for, render_template, redirect, current_app, send_from_directory, abort, flash, Response
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
+import re
 
 from classes.shared import db
 from classes import Sec
@@ -358,3 +359,14 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
     proxyAddress = sysSettings.proxyFQDN
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + '/live-adapt/' + channelLoc + '/' + file)
+
+# Static Page Redirect
+@root_bp.route('<static_page>')
+def render_staticPage(static_page):
+    sanitized_page_string = re.sub(r'[^a-zA-Z0-9]+', '', static_page)
+
+    staticPageQuery = settings.static_page.query.filter_by(name=sanitized_page_string.lower()).first()
+    if staticPageQuery is not None:
+        return render_template(themes.checkOverride('static_page.html'), content=staticPageQuery.content)
+
+    return redirect(url_for('page_not_found', e="404"))
