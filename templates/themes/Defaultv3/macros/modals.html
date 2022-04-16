@@ -2273,3 +2273,36 @@ var tagify_clipTags = new Tagify(clipTags, {
   </div>
 </div>
 {% endmacro %}
+
+{% macro new_static_page_modal() %}
+<div class="modal fade" id="NewStaticPageModal" tabindex="-1" role="dialog" aria-labelledby="NewStaticPageModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="NewStaticPageModalTitle">New/Edit Static Page</h5>
+        <div class="float-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="form-group mb-2">
+            <label for="pageName" class="form-label">Page Name</label>
+            <input type="text" class="form-control boxShadow" id="pageName" name="pageName" required>
+        </div>
+        <div class="form-group mb-2">
+            <label for="pageIcon" class="form-label">Icon</label>
+            <input type="text" class="form-control boxShadow" id="pageIcon" name="pageIcon" required>
+        </div>
+        <div class="form-group mb-2">
+            <label for="pageContent" class="form-label">Page Content</label>
+            <textarea class="form-control boxShadow" id="pageContent" name="pageContent" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+        <button id="deleteAccountButton" type="submit" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
