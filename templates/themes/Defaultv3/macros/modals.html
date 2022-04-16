@@ -2285,23 +2285,25 @@ var tagify_clipTags = new Tagify(clipTags, {
         </div>
       </div>
       <div class="modal-body">
-        <div class="form-group mb-2">
-            <label for="pageTitle" class="form-label">Page Title</label>
-            <input type="text" class="form-control boxShadow" id="pageTitle" name="pageTitle" required>
-        </div>
-        <div class="form-group mb-2">
-            <label for="pageName" class="form-label">Page URL</label>
-            <input type="text" class="form-control boxShadow" id="pageName" name="pageName" pattern="[A-Za-z0-9]*" required>
-        </div>
-        <div class="form-group mb-2">
-            <label for="pageIcon" class="form-label">Icon</label>
-            <input type="text" class="form-control boxShadow" id="pageIcon" name="pageIcon" required>
-        </div>
-        <div class="form-group mb-2">
-            <label for="pageContent" class="form-label">Page Content</label>
-            <textarea class="form-control boxShadow" id="pageContent" name="pageContent" required></textarea>
-        </div>
-        <input type="hidden" id="editPageId" name="pageId">
+        <form id="static_page_form">
+            <div class="form-group mb-2">
+                <label for="pageTitle" class="form-label">Page Title</label>
+                <input type="text" class="form-control boxShadow" id="pageTitle" name="pageTitle" required>
+            </div>
+            <div class="form-group mb-2">
+                <label for="pageName" class="form-label">Page URL</label>
+                <input type="text" class="form-control boxShadow" id="pageName" name="pageName" pattern="[A-Za-z0-9]*" required>
+            </div>
+            <div class="form-group mb-2">
+                <label for="pageIcon" class="form-label">Icon</label>
+                <input type="text" class="form-control boxShadow" id="pageIcon" name="pageIcon" required>
+            </div>
+            <div class="form-group mb-2">
+                <label for="pageContent" class="form-label">Page Content</label>
+                <textarea class="form-control boxShadow" id="pageContent" name="pageContent" required></textarea>
+            </div>
+            <input type="hidden" id="editPageId" name="pageId">
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>

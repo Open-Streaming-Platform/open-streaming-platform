@@ -579,15 +579,33 @@ function RemoveFrontPageLayoutPanel(callingElm) {
 }
 
 function saveStaticPage() {
+    formSection = document.getElementById('static_page_form');
+
     easymde_new_staticpage.codemirror.save();
-    var pageName = document.getElementById('pageName').value;
-    var pageIcon = document.getElementById('pageIcon').value;
-    var pageTitle = document.getElementById('pageTitle').value;
-    var pageContent = document.getElementById('pageContent').value;
+    var pageNameDiv = document.getElementById('pageName');
+    var pageIconDiv = document.getElementById('pageIcon');
+    var pageTitleDiv = document.getElementById('pageTitle');
+    var pageContentDiv = document.getElementById('pageContent');
     var existingPageId = document.getElementById('editPageId').value;
-    if ((existingPageId == null) || (existingPageId === '')) {
-        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, pageTitle: pageTitle, type: 'new'});
-    } else {
-        socket.emit('addEditStaticPage',  {pageName: pageName, pageIcon: pageIcon, pageContent: pageContent, pageTitle: pageTitle, type: 'edit', pageId: existingPageId});
+
+    if (pageNameDiv.checkValidity() && pageIconDiv.checkValidity() && pageTitleDiv.checkValidity() && pageContentDiv.checkValidity()) {
+        if ((existingPageId == null) || (existingPageId === '')) {
+            socket.emit('addEditStaticPage', {
+                pageName: pageNameDiv.value,
+                pageIcon: pageIconDiv.value,
+                pageContent: pageContentDiv.value,
+                pageTitle: pageTitleDiv.value,
+                type: 'new'
+            });
+        } else {
+            socket.emit('addEditStaticPage', {
+                pageName: pageNameDiv.value,
+                pageIcon: pageIconDiv.value,
+                pageContent: pageContentDiv.value,
+                pageTitle: pageTitleDiv.value,
+                type: 'edit',
+                pageId: existingPageId
+            });
+        }
     }
 }
