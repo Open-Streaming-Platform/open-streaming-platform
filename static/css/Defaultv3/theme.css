@@ -148,7 +148,7 @@ table tbody tr {
 
 }
 
-.pagination li {
+.panel-pagination li {
     padding: 5px 10px;
     margin: 0 2px;
     background-color: dimgray;
@@ -158,7 +158,7 @@ table tbody tr {
     text-shadow: var(--text-shadow);
 }
 
-.pagination .active {
+.panel-pagination .active {
     background-color: lightslategray;
 }
 
