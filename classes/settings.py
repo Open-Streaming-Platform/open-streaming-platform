@@ -198,7 +198,7 @@ class static_page(db.Model):
 
     def __init__(self, name, icon):
         self.name = name
-        self.icon = icon
+        self.iconClass = icon
 
     def __repr__(self):
         return '<id %r>' % self.id
