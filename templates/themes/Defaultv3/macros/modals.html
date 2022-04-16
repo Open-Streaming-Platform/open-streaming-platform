@@ -2275,7 +2275,7 @@ var tagify_clipTags = new Tagify(clipTags, {
 {% endmacro %}
 
 {% macro new_static_page_modal() %}
-<div class="modal fade" id="NewStaticPageModal" tabindex="-1" role="dialog" aria-labelledby="NewStaticPageModalTitle" aria-hidden="true">
+<div class="modal modal-xl fade" id="NewStaticPageModal" tabindex="-1" role="dialog" aria-labelledby="NewStaticPageModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -2305,4 +2305,7 @@ var tagify_clipTags = new Tagify(clipTags, {
     </div>
   </div>
 </div>
+<script>
+    var easymde_new_staticpage = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("pageContent") });
+</script>
 {% endmacro %}
