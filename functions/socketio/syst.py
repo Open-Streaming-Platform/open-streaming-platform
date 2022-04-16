@@ -529,3 +529,18 @@ def add_edit_static_page(message):
                     cache.delete_memoized('getStaticPages')
                     cache.delete_memoized('getStaticPages', oldname)
     return 'OK'
+
+@socketio.on('deleteStaticPage')
+def add_edit_static_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'pageId' in message:
+                pageQuery = settings.static_page.query.filter_by(id=int(message['pageId'])).first()
+                if pageQuery != None:
+                    oldName = pageQuery.name
+                    db.session.delete(pageQuery)
+                    db.session.commit()
+                    cache.delete_memoized('getStaticPages')
+                    cache.delete_memoized('getStaticPages', oldName)
+                db.session.close()
+    return 'OK'
