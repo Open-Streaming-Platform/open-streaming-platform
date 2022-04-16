@@ -369,4 +369,4 @@ def render_staticPage(static_page):
     if staticPageQuery is not None:
         return render_template(themes.checkOverride('static_page.html'), content=staticPageQuery.content)
 
-    return redirect(url_for('page_not_found', e="404"))
+    return redirect(url_for('errorhandler_bp.page_not_found', e="404"))
