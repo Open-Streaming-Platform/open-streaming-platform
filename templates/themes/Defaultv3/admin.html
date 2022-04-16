@@ -38,7 +38,7 @@
         </ul>
     </div>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+        <div class="tab-pane fade {% if page == None or page == 'dash' %}show active{% endif %} w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
           <div class="row mt-4 mx-4">
             <div class="col-12 col-md-auto">
                 {{ admin.osp_info_box(sysSettings.version) }}
@@ -69,7 +69,7 @@
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="tab-pane fade {% if page == 'settings' %}show active{% endif %} w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
           <form id="system-settings" enctype=multipart/form-data method="post" action="/settings/admin">
               <div class="row mt-2 mx-2">
                 <div class="col-12">
@@ -108,70 +108,70 @@
               <input type="hidden" value="system" id="settingType" name="settingType">
           </form>
         </div>
-        <div class="tab-pane fade w-100" id="oauth" role="tabpanel" aria-labelledby="oauth-tab">
+        <div class="tab-pane fade {% if page == 'oauth' %}show active{% endif %} w-100" id="oauth" role="tabpanel" aria-labelledby="oauth-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.oauth_panel(oAuthProvidersList) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="rtmp" role="tabpanel" aria-labelledby="rtmp-tab">
+        <div class="tab-pane fade {% if page == 'osprtmp' %}show active{% endif %} w-100" id="rtmp" role="tabpanel" aria-labelledby="rtmp-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.rtmp_settings_panel(rtmpServers) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="edge" role="tabpanel" aria-labelledby="edge-tab">
+        <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %} w-100" id="edge" role="tabpanel" aria-labelledby="edge-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.edge_settings_panel(edgeNodes) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
+        <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %} w-100" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.webhooks_settings_panel(globalHooks) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="stickers" role="tabpanel" aria-labelledby="stickers-tab">
+        <div class="tab-pane fade {% if page == 'stickers' %}show active{% endif %} w-100" id="stickers" role="tabpanel" aria-labelledby="stickers-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.stickers_settings_panel(globalStickers) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="users" role="tabpanel" aria-labelledby="users-tab">
+        <div class="tab-pane fade {% if page == 'users' %}show active{% endif %} w-100" id="users" role="tabpanel" aria-labelledby="users-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.users_settings_panel(userList) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="topics" role="tabpanel" aria-labelledby="topics-tab">
+        <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %} w-100" id="topics" role="tabpanel" aria-labelledby="topics-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.topics_settings_panel(topicsList) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="channels" role="tabpanel" aria-labelledby="channels-tab">
+        <div class="tab-pane fade {% if page == 'channels' %}show active{% endif %} w-100" id="channels" role="tabpanel" aria-labelledby="channels-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.channels_settings_panel(channelList) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="streams" role="tabpanel" aria-labelledby="streams-tab">
+        <div class="tab-pane fade {% if page == 'streams' %}show active{% endif %} w-100" id="streams" role="tabpanel" aria-labelledby="streams-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.streams_settings_panel(streamList) }}
             </div>
           </div>
         </div>
-        <div class="tab-pane fade w-100" id="scheduler" role="tabpanel" aria-labelledby="scheduler-tab">
+        <div class="tab-pane fade {% if page == 'scheduler' %}show active{% endif %} w-100" id="scheduler" role="tabpanel" aria-labelledby="scheduler-tab">
           <div class="row mt-2 mx-2">
             <div class="col-12">
                 {{ admin.scheduler_settings_panel(schedulerList) }}
