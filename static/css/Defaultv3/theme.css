@@ -310,6 +310,10 @@ table tbody tr {
   z-index: 90;
 }
 
+.tab-pane {
+    display: none;
+}
+
 .navbar a {
   text-decoration: none;
   color: inherit;
