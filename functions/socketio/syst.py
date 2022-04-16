@@ -504,7 +504,7 @@ def add_edit_static_page(message):
                     if existingPageCheck is None:
                         newPage = settings.static_page(pageName, pageIcon)
                         newPage.content = pageContent
-                        db.session.add(existingPageCheck)
+                        db.session.add(newPage)
                     db.session.commit()
                     db.session.close()
                     cache.delete_memoized('getStaticPages')
@@ -525,5 +525,5 @@ def add_edit_static_page(message):
                     db.session.commit()
                     db.session.close()
                     cache.delete_memoized('getStaticPages')
-                    cache.delete_memoized('getStaticPages', 'oldname')
+                    cache.delete_memoized('getStaticPages', oldname)
     return 'OK'
