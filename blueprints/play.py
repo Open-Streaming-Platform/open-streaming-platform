@@ -187,6 +187,13 @@ def vid_change_page(videoID):
         if 'allowComments' in request.form:
             allowComments = True
 
+        if 'modalv3' in request.form:
+            videoPublished = False
+            if 'publishVideo' in request.form:
+                videoPublished = True
+            videoQuery.published = videoPublished
+            db.session.commit()
+
         result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
         cache.delete_memoized(cachedDbCalls.getVideo, videoID)
 

@@ -1423,6 +1423,15 @@
               </div>
             </div>
           </div>
+          <div class="form-group row mt-3">
+            <div class="col-8">
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="publishVideoSelect"><b>Publish Video</b></label>
+                <input class="form-check-input boxShadow" type="checkbox" name="publishVideo" id="publishVideoSelect" {% if video.published == True %} checked {% endif %}>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="modalv3" value="1">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary boxShadow" data-bs-dismiss="modal">Close</button>
