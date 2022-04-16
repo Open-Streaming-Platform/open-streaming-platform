@@ -579,7 +579,7 @@ function RemoveFrontPageLayoutPanel(callingElm) {
 }
 
 function saveStaticPage() {
-    formSection = document.getElementById('static_page_form');
+    var formSection = document.getElementById('static_page_form');
 
     easymde_new_staticpage.codemirror.save();
     var pageNameDiv = document.getElementById('pageName');
@@ -607,5 +607,21 @@ function saveStaticPage() {
                 pageId: existingPageId
             });
         }
+    } else {
+        createNewBSAlert('Invalid Input', 'Error');
     }
+}
+
+function deleteStaticPageModal(pageId) {
+    document.getElementById('deleteStaticPageId').value = pageId;
+    openModal('deleteStaticPageModal');
+}
+
+function deleteStaticPage() {
+    var pageId = document.getElementById('deleteStaticPageId').value;
+    var pageTableDiv = document.getElementById('admin-staticpage-' + pageId);
+    pageTableDiv.parentNode.removeChild(pageTableDiv);
+    socket.emit('deleteStaticPage', {pageId: pageId});
+    createNewBSAlert('Static Page Deleted', 'Success');
+    document.getElementById('deleteStaticPageId').value = '';
 }
