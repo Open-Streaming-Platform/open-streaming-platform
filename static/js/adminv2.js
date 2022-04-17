@@ -621,6 +621,7 @@ function saveStaticPage() {
         if (pageContentDiv.checkValidity() === false) {
             pageContentDiv.setCustomValidity('Field is Required');
         }
+        createNewBSAlert('Invalid Options', 'Error')
     }
 }
 
