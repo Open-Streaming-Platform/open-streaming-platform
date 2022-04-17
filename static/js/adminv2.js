@@ -612,6 +612,7 @@ function saveStaticPage() {
             document.getElementById('admin-staticpage-icon-' + existingPageId).innerHTML = pageIconDiv.value;
             document.getElementById('admin-staticpage-title-' + existingPageId).innerHTML = pageTitleDiv.value;
             document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value;
+            document.getElementById('admin-staticpage-iconimg-' + existingPageId).classList = "shadow " + pageIconDiv.value;
 
             createNewBSAlert('Static Page Updated', 'Success');
         }
