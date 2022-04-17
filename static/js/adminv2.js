@@ -625,8 +625,30 @@ function saveStaticPage() {
             pageContentDiv.setCustomValidity('Field is Required');
             pageContentDiv.reportValidity()
         }
-        createNewBSAlert('Invalid Options', 'Error')
     }
+}
+
+function editStaticPage(pageId) {
+    var pageNameDiv = document.getElementById('pageName');
+    var pageIconDiv = document.getElementById('pageIcon');
+    var pageTitleDiv = document.getElementById('pageTitle');
+    var pageContentDiv = document.getElementById('pageContent');
+
+    var data_pageName = document.getElementById('admin-staticpage-name-' + pageId).innerHTML;
+    var data_pageIcon = document.getElementById('admin-staticpage-icon-' + pageId).innerHTML;
+    var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
+    var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
+
+    pageNameDiv.value = data_pageName;
+    pageIconDiv.value = data_pageIcon;
+    pageTitleDiv.value = data_pageTitle;
+    pageContentDiv.value = data_pageContent;
+
+    easymde_new_staticpage.codemirror.refresh();
+
+    document.getElementById('editPageId').value = pageId;
+
+    openModal('NewStaticPageModal');
 }
 
 function deleteStaticPageModal(pageId) {

@@ -996,9 +996,10 @@
                 <tbody>
                     {% for page in static_pages %}
                         <tr id="admin-staticpage-{{ page.id }}">
-                            <td>{{ page.title }}</td>
-                            <td>/p/{{ page.name }}</td>
-                            <td><span class="shadow {{ page.iconClass }}"></span> {{ page.iconClass }}</td>
+                            <td id="admin-staticpage-title-{{ page.id }}">{{ page.title }}</td>
+                            <td>/p/{{ page.name }}<span id="admin-staticpage-name-{{ page.id }}" class="d-none">{{ page.name }}</span></td>
+                            <td><span class="shadow {{ page.iconClass }}"></span> <span id="admin-staticpage-icon-{{ page.id }}">{{ page.iconClass }}</span></td>
+                            <td class="d-none" id="admin-static-content-{{ page.id }}">{{ page.content }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editStaticPage('{{ page.id }}');"><i class="fas fa-edit"></i></button>
                                 <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteStaticPageModal('{{ page.id }}');"><i class="fas fa-trash"></i></button>
