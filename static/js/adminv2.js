@@ -607,7 +607,7 @@ function saveStaticPage() {
                 pageIcon: pageIconDiv.value,
                 pageContent: pageContentDiv.value,
                 pageTitle: pageTitleDiv.value,
-                pageTopBar: pageTopBarSelectDiv.value,
+                pageTopBar: pageTopBarSelectDiv.checked,
                 type: 'new'
             });
             createNewBSAlert('New Static Page Saved', 'Success');
@@ -617,7 +617,7 @@ function saveStaticPage() {
                 pageIcon: pageIconDiv.value,
                 pageContent: pageContentDiv.value,
                 pageTitle: pageTitleDiv.value,
-                pageTopBar: pageTopBarSelectDiv.value,
+                pageTopBar: pageTopBarSelectDiv.checked,
                 type: 'edit',
                 pageId: existingPageId
             });
@@ -626,7 +626,7 @@ function saveStaticPage() {
             document.getElementById('admin-staticpage-icon-' + existingPageId).innerHTML = pageIconDiv.value;
             document.getElementById('admin-staticpage-title-' + existingPageId).innerHTML = pageTitleDiv.value;
             document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value;
-            document.getElementById('admin-staticpage-topbar-' + existingPageId).innerHTML = pageTopBarSelectDiv.value;
+            document.getElementById('admin-staticpage-topbar-' + existingPageId).innerHTML = pageTopBarSelectDiv.checked;
             document.getElementById('admin-staticpage-iconimg-' + existingPageId).classList = "textShadow " + pageIconDiv.value;
 
             createNewBSAlert('Static Page Updated', 'Success');
@@ -664,7 +664,7 @@ function editStaticPage(pageId) {
     var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
     var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
 
-    if (document.getElementById('admin-staticpage-topbar-' + pageId).value === true) {
+    if (document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === true) {
         pageTopBarDiv.checked = true;
     }
 
