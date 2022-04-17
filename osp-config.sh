@@ -151,7 +151,7 @@ install_nginx_core() {
           echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip" >> $OSPLOG 2>&1
           echo 20 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
-          sudo wget -q "http://www.zlib.net/zlib-1.2.11.tar.gz" >> $OSPLOG 2>&1
+          sudo wget -q "http://www.zlib.net/zlib-1.2.12.tar.gz" >> $OSPLOG 2>&1
           echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" >> $OSPLOG 2>&1
           echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
