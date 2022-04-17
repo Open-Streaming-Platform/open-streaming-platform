@@ -508,7 +508,7 @@ def add_edit_static_page(message):
                         db.session.add(newPage)
                     db.session.commit()
                     db.session.close()
-                    cache.delete_memoized('getStaticPages')
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
 
                 elif message['type'] == 'edit':
                     updatingPageCheck = settings.static_page.query.filter_by(name=int(message['pageId'])).first()
