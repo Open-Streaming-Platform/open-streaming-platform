@@ -578,6 +578,18 @@ function RemoveFrontPageLayoutPanel(callingElm) {
     listElm.parentNode.removeChild(listElm);
 }
 
+function openNewStaticPageModal() {
+    document.getElementById('pageName').value = '';
+    document.getElementById('pageIcon').value = '';
+    document.getElementById('pageTitle').value = '';
+    document.getElementById('pageContent').value = '';
+    easymde_new_staticpage.codemirror.setValue('');
+    easymde_new_staticpage.codemirror.refresh();
+
+    document.getElementById('editPageId').value = '';
+    openModal('NewStaticPageModal');
+}
+
 function saveStaticPage() {
     var formSection = document.getElementById('static_page_form');
 
