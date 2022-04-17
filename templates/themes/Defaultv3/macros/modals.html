@@ -2294,7 +2294,7 @@ var tagify_clipTags = new Tagify(clipTags, {
                 <label for="pageName" class="form-label">Page URL</label>
                 <div class="input-group">
                     <span class="input-group-text" id="basic-addon1">/p/</span>
-                    <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required>
+                    <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required><br>
                     <small>Alpha-Numeric Values, No Spaces</small>
                 </div>
             </div>
@@ -2318,6 +2318,7 @@ var tagify_clipTags = new Tagify(clipTags, {
 </div>
 <script>
     var easymde_new_staticpage = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("pageContent") });
+    $('#pageIcon').iconpicker({hideOnSelect: true});
 </script>
 {% endmacro %}
 
