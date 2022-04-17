@@ -2292,7 +2292,11 @@ var tagify_clipTags = new Tagify(clipTags, {
             </div>
             <div class="form-group mb-2">
                 <label for="pageName" class="form-label">Page URL</label>
-                <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">/p/</span>
+                    <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required>
+                    <small>Alpha-Numeric Values, No Spaces</small>
+                </div>
             </div>
             <div class="form-group mb-2">
                 <label for="pageIcon" class="form-label">Icon</label>
