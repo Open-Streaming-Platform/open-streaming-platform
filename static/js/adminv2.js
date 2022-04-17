@@ -662,7 +662,7 @@ function editStaticPage(pageId) {
     var data_pageName = document.getElementById('admin-staticpage-name-' + pageId).innerHTML;
     var data_pageIcon = document.getElementById('admin-staticpage-icon-' + pageId).innerHTML;
     var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
-    var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
+    var data_pageContent = document.getElementById('admin-staticpage-content-' + pageId).innerHTML;
 
     if (document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === 'true' || document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === 'True' ) {
         pageTopBarDiv.checked = true;
