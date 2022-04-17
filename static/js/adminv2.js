@@ -625,7 +625,7 @@ function saveStaticPage() {
             document.getElementById('admin-staticpage-name-' + existingPageId).innerHTML = pageNameDiv.value;
             document.getElementById('admin-staticpage-icon-' + existingPageId).innerHTML = pageIconDiv.value;
             document.getElementById('admin-staticpage-title-' + existingPageId).innerHTML = pageTitleDiv.value;
-            document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value;
+            document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value.toString().charAt(0).toUpperCase() + pageContentDiv.value.toString().slice(1);
             document.getElementById('admin-staticpage-topbar-' + existingPageId).innerHTML = pageTopBarSelectDiv.checked;
             document.getElementById('admin-staticpage-iconimg-' + existingPageId).classList = "textShadow " + pageIconDiv.value;
 
@@ -664,8 +664,10 @@ function editStaticPage(pageId) {
     var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
     var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
 
-    if (document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === true) {
+    if (document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === 'true' || document.getElementById('admin-staticpage-topbar-' + pageId).innerHTML === 'True' ) {
         pageTopBarDiv.checked = true;
+    } else {
+        pageTopBarDiv.checked = false;
     }
 
     pageNameDiv.value = data_pageName;
