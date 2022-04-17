@@ -607,6 +607,12 @@ function saveStaticPage() {
                 type: 'edit',
                 pageId: existingPageId
             });
+
+            document.getElementById('admin-staticpage-name-' + existingPageId).innerHTML = pageNameDiv.value;
+            document.getElementById('admin-staticpage-icon-' + existingPageId).innerHTML = pageIconDiv.value;
+            document.getElementById('admin-staticpage-title-' + existingPageId).innerHTML = pageTitleDiv.value;
+            document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value;
+
             createNewBSAlert('Static Page Updated', 'Success');
         }
         hideModal('NewStaticPageModal');
