@@ -499,12 +499,14 @@ def add_edit_static_page(message):
                 pageTitle = message['pageTitle']
                 pageIcon = message['pageIcon']
                 pageContent = message['pageContent']
+                pageTopBar = message['pageTopBar']
 
                 if message['type'] == 'new':
                     existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
                     if existingPageCheck is None:
                         newPage = settings.static_page(pageName, pageIcon, pageTitle)
                         newPage.content = pageContent
+                        newPage.isTopBar = pageTopBar
                         db.session.add(newPage)
                     db.session.commit()
                     db.session.close()
@@ -524,6 +526,7 @@ def add_edit_static_page(message):
                             updatingPageCheck.iconClass = pageIcon
                             updatingPageCheck.content = pageContent
                             updatingPageCheck.title = pageTitle
+                            updatingPageCheck.isTopBar = pageTopBar
                     db.session.commit()
                     db.session.close()
                     cache.delete_memoized(cachedDbCalls.getStaticPages)

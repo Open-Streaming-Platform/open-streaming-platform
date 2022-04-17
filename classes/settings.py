@@ -196,11 +196,13 @@ class static_page(db.Model):
     title = db.Column(db.String(256))
     iconClass = db.Column(db.String(256))
     content = db.Column(db.Text)
+    isTopBar = db.Column(db.Boolean)
 
     def __init__(self, url, icon, title):
         self.name = url
         self.title = title
         self.iconClass = icon
+        self.isTopBar = False
 
     def __repr__(self):
         return '<id %r>' % self.id

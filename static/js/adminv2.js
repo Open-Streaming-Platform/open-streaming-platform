@@ -598,6 +598,7 @@ function saveStaticPage() {
     var pageTitleDiv = document.getElementById('pageTitle');
     var pageContentDiv = document.getElementById('pageContent');
     var existingPageId = document.getElementById('editPageId').value;
+    var pageTopBarSelectDiv = document.getElementById('pageTopBarSelect');
 
     if (pageNameDiv.checkValidity() && pageIconDiv.checkValidity() && pageTitleDiv.checkValidity() && pageContentDiv.checkValidity()) {
         if ((existingPageId == null) || (existingPageId === '')) {
@@ -606,6 +607,7 @@ function saveStaticPage() {
                 pageIcon: pageIconDiv.value,
                 pageContent: pageContentDiv.value,
                 pageTitle: pageTitleDiv.value,
+                pageTopBar: pageTopBarSelectDiv.value,
                 type: 'new'
             });
             createNewBSAlert('New Static Page Saved', 'Success');
@@ -615,6 +617,7 @@ function saveStaticPage() {
                 pageIcon: pageIconDiv.value,
                 pageContent: pageContentDiv.value,
                 pageTitle: pageTitleDiv.value,
+                pageTopBar: pageTopBarSelectDiv.value,
                 type: 'edit',
                 pageId: existingPageId
             });
@@ -623,7 +626,8 @@ function saveStaticPage() {
             document.getElementById('admin-staticpage-icon-' + existingPageId).innerHTML = pageIconDiv.value;
             document.getElementById('admin-staticpage-title-' + existingPageId).innerHTML = pageTitleDiv.value;
             document.getElementById('admin-static-content-' + existingPageId).innerHTML = pageContentDiv.value;
-            document.getElementById('admin-staticpage-iconimg-' + existingPageId).classList = "shadow " + pageIconDiv.value;
+            document.getElementById('admin-staticpage-topbar-' + existingPageId).innerHTML = pageTopBarSelectDiv.value;
+            document.getElementById('admin-staticpage-iconimg-' + existingPageId).classList = "textShadow " + pageIconDiv.value;
 
             createNewBSAlert('Static Page Updated', 'Success');
         }
@@ -653,11 +657,16 @@ function editStaticPage(pageId) {
     var pageIconDiv = document.getElementById('pageIcon');
     var pageTitleDiv = document.getElementById('pageTitle');
     var pageContentDiv = document.getElementById('pageContent');
+    var pageTopBarDiv = document.getElementById('pageTopBarSelect');
 
     var data_pageName = document.getElementById('admin-staticpage-name-' + pageId).innerHTML;
     var data_pageIcon = document.getElementById('admin-staticpage-icon-' + pageId).innerHTML;
     var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
     var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
+
+    if (document.getElementById('admin-staticpage-topbar-' + existingPageId).value === true) {
+        pageTopBarDiv.checked = true;
+    }
 
     pageNameDiv.value = data_pageName;
     pageIconDiv.value = data_pageIcon;

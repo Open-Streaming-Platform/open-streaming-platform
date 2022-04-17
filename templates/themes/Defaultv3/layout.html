@@ -147,6 +147,14 @@
           <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></a>
         </li>
 
+        {% for page in static_pages %}
+            {% if page.isTopBar == True %}
+            <li class="nav-item">
+                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow {{ page.iconClass }}"></i></a>
+            </li>
+            {% endif %}
+        {% endif %}
+
         <li class="nav-item">
           <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill bs-icon"></i></a>
         </li>
@@ -163,7 +171,9 @@
         <!--{{ coreui.ui_sidebar_item("Videos", "/video", "bi bi-camera-video-fill") }}-->
         <!--{{ coreui.ui_sidebar_item("Clips", "/clip", "bi bi-scissors") }}-->
         {% for page in static_pages %}
+            {% if page.isTopBar == False %}
             {{ coreui.ui_sidebar_item(page.title, "/p/" + page.name, page.iconClass) }}
+            {% endif %}
         {% endfor %}
     </div>
 </div>
