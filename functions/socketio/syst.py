@@ -511,7 +511,7 @@ def add_edit_static_page(message):
                     cache.delete_memoized(cachedDbCalls.getStaticPages)
 
                 elif message['type'] == 'edit':
-                    updatingPageCheck = settings.static_page.query.filter_by(name=int(message['pageId'])).first()
+                    updatingPageCheck = settings.static_page.query.filter_by(id=int(message['pageId'])).first()
                     oldname = updatingPageCheck.name
                     if updatingPageCheck is not None:
                         existingPageName = False
