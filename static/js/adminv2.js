@@ -607,6 +607,7 @@ function saveStaticPage() {
                 pageId: existingPageId
             });
         }
+        hideModal('NewStaticPageModal');
     } else {
         createNewBSAlert('Invalid Input', 'Error');
     }

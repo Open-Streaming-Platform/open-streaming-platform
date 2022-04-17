@@ -63,6 +63,10 @@ function openModal(modalID) {
     $('#' + modalID).modal('show')
 }
 
+function hideModal(modalID) {
+    $('#' + modalID).modal('hide')
+}
+
 function map(arrayLike, fn) {
     var ret = [], i = -1, len = arrayLike.length;
     while (++i < len) ret[i] = fn(arrayLike[i]);
