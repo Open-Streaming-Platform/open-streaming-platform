@@ -609,7 +609,18 @@ function saveStaticPage() {
         }
         hideModal('NewStaticPageModal');
     } else {
-        createNewBSAlert('Invalid Input', 'Error');
+        if (pageNameDiv.checkValidity() === false) {
+            pageNameDiv.setCustomValidity('URL must contain only AlphaNumeric Characters without Spaces');
+        }
+        if (pageIconDiv.checkValidity() === false) {
+            pageIconDiv.setCustomValidity('Field is Required');
+        }
+        if (pageTitleDiv.checkValidity() === false) {
+            pageTitleDiv.setCustomValidity('Field is Required');
+        }
+        if (pageContentDiv.checkValidity() === false) {
+            pageContentDiv.setCustomValidity('Field is Required');
+        }
     }
 }
 
