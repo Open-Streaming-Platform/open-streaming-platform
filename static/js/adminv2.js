@@ -642,7 +642,7 @@ function editStaticPage(pageId) {
     pageNameDiv.value = data_pageName;
     pageIconDiv.value = data_pageIcon;
     pageTitleDiv.value = data_pageTitle;
-    pageContentDiv.value = data_pageContent;
+    easymde_new_staticpage.setValue(data_pageContent);
 
     easymde_new_staticpage.codemirror.refresh();
 
