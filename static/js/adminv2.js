@@ -597,6 +597,7 @@ function saveStaticPage() {
                 pageTitle: pageTitleDiv.value,
                 type: 'new'
             });
+            createNewBSAlert('New Static Page Saved', 'Success');
         } else {
             socket.emit('addEditStaticPage', {
                 pageName: pageNameDiv.value,
@@ -606,6 +607,7 @@ function saveStaticPage() {
                 type: 'edit',
                 pageId: existingPageId
             });
+            createNewBSAlert('Static Page Updated', 'Success');
         }
         hideModal('NewStaticPageModal');
     } else {

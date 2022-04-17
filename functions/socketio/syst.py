@@ -531,7 +531,7 @@ def add_edit_static_page(message):
     return 'OK'
 
 @socketio.on('deleteStaticPage')
-def add_edit_static_page(message):
+def delete_static_page(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
             if 'pageId' in message:
