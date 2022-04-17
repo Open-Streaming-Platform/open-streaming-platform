@@ -526,8 +526,8 @@ def add_edit_static_page(message):
                             updatingPageCheck.title = pageTitle
                     db.session.commit()
                     db.session.close()
-                    cache.delete_memoized('getStaticPages')
-                    cache.delete_memoized('getStaticPages', oldname)
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
+                    cache.delete_memoized(cachedDbCalls.getStaticPage, oldname)
     return 'OK'
 
 @socketio.on('deleteStaticPage')
@@ -540,7 +540,7 @@ def add_edit_static_page(message):
                     oldName = pageQuery.name
                     db.session.delete(pageQuery)
                     db.session.commit()
-                    cache.delete_memoized('getStaticPages')
-                    cache.delete_memoized('getStaticPages', oldName)
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
+                    cache.delete_memoized(cachedDbCalls.getStaticPage, oldName)
                 db.session.close()
     return 'OK'
