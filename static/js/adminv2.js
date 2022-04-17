@@ -611,15 +611,19 @@ function saveStaticPage() {
     } else {
         if (pageNameDiv.checkValidity() === false) {
             pageNameDiv.setCustomValidity('URL must contain only AlphaNumeric Characters without Spaces');
+            pageNameDiv.reportValidity()
         }
         if (pageIconDiv.checkValidity() === false) {
             pageIconDiv.setCustomValidity('Field is Required');
+            pageIconDiv.reportValidity()
         }
         if (pageTitleDiv.checkValidity() === false) {
             pageTitleDiv.setCustomValidity('Field is Required');
+            pageTitleDiv.reportValidity()
         }
         if (pageContentDiv.checkValidity() === false) {
             pageContentDiv.setCustomValidity('Field is Required');
+            pageContentDiv.reportValidity()
         }
         createNewBSAlert('Invalid Options', 'Error')
     }
