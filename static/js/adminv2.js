@@ -664,7 +664,7 @@ function editStaticPage(pageId) {
     var data_pageTitle = document.getElementById('admin-staticpage-title-' + pageId).innerHTML;
     var data_pageContent = document.getElementById('admin-static-content-' + pageId).innerHTML;
 
-    if (document.getElementById('admin-staticpage-topbar-' + existingPageId).value === true) {
+    if (document.getElementById('admin-staticpage-topbar-' + pageId).value === true) {
         pageTopBarDiv.checked = true;
     }
 
