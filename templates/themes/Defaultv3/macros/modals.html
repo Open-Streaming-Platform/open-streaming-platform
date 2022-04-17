@@ -2294,13 +2294,14 @@ var tagify_clipTags = new Tagify(clipTags, {
                 <label for="pageName" class="form-label">Page URL</label>
                 <div class="input-group">
                     <span class="input-group-text" id="basic-addon1">/p/</span>
-                    <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required><br>
-                    <small>Alpha-Numeric Values, No Spaces</small>
+                    <input type="text" class="form-control boxShadow" id="pageName" name="pageName" onkeydown="this.setCustomValidity('');" pattern="[A-Za-z0-9]*" required>
                 </div>
+                <small>Alpha-Numeric Values, No Spaces</small>
             </div>
             <div class="form-group mb-2">
                 <label for="pageIcon" class="form-label">Icon</label>
-                <input type="text" class="form-control boxShadow" id="pageIcon" name="pageIcon" onkeydown="this.setCustomValidity('');" required>
+                <input type="text" class="form-control boxShadow" id="pageIcon" name="pageIcon" onkeydown="this.setCustomValidity('');" required><br>
+                <small>Font Awesome Full Class Name - <a href="https://fontawesome.com/v5/search?m=free" target="_blank">Search</a></small>
             </div>
             <div class="form-group mb-2">
                 <label for="pageContent" class="form-label">Page Content</label>
@@ -2318,7 +2319,6 @@ var tagify_clipTags = new Tagify(clipTags, {
 </div>
 <script>
     var easymde_new_staticpage = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("pageContent") });
-    $('#pageIcon').iconpicker({hideOnSelect: true});
 </script>
 {% endmacro %}
 
