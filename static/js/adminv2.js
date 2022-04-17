@@ -584,10 +584,9 @@ function openNewStaticPageModal() {
     document.getElementById('pageTitle').value = '';
     document.getElementById('pageContent').value = '';
     easymde_new_staticpage.codemirror.setValue('');
-    easymde_new_staticpage.codemirror.refresh();
-
     document.getElementById('editPageId').value = '';
     openModal('NewStaticPageModal');
+    easymde_new_staticpage.codemirror.refresh();
 }
 
 function saveStaticPage() {
