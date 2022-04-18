@@ -4,3 +4,4 @@ gevent==20.9.0
 gevent-websocket==0.10.1
 requests==2.20.0
 redis==3.5.3
+MarkupSafe==1.1.0
