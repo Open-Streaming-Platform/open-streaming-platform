@@ -419,6 +419,13 @@ table tbody tr {
     border: 0 solid black;
 }
 
+.fa-nav-icon {
+    font-size: 2em;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 6px;
+}
+
 .bs-icon {
   font-size: 2em;
   margin-left: 10px;

@@ -150,7 +150,7 @@
         {% for page in static_pages %}
             {% if page.isTopBar == True %}
             <li class="nav-item">
-                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow {{ page.iconClass }}"></i></a>
+                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow fa-nav-icon {{ page.iconClass }}"></i></a>
             </li>
             {% endif %}
         {% endfor %}
