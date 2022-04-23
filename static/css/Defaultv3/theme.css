@@ -441,6 +441,10 @@ table tbody tr {
     display: inline;
 }
 
+.navbar-collapse {
+    background-color: var(--navbar-background);
+}
+
 .dropdown-menu {
     color: var(--font-color);
     background-color: var(--box2-background);
