@@ -415,7 +415,7 @@
             </div>
           </div>
         </div>
-        {% if video.description != None %}
+        {% if video.description != None and video.description != "None" or video.description != "" %}
         <div class="video-description py-4">{{ video.description | markdown }}</div>
         {% endif %}
     </div>
@@ -799,7 +799,7 @@
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
           {% endfor %}
       </div>
-      {% if clip.description != None %}
+      {% if clip.description != None and clip.description != "None" or clip.description != "" %}
       <div class="video-description py-4">{{ clip.description | markdown }}</div>
       {% endif %}
     </div>
