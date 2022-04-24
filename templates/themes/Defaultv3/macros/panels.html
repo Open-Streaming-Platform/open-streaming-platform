@@ -140,7 +140,7 @@
         pagination: true
     };
     var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-    if (list_{{ listClass }}.items.length < 10) {
+    if (list_{{ listClass }}.items.length <= 10) {
         document.getElementById('paging_{{ listClass }}').style.display = "none";
     }
     list_{{ listClass }}.on('updated', function(list) {
