@@ -552,11 +552,6 @@ def admin_page():
                     db.session.add(newWord)
                     db.session.commit()
 
-            if 'termsSettings' in request.form:
-                sysSettings.terms = request.form['termSettings']
-            if 'privacySettings' in request.form:
-                sysSettings.privacy = request.form['privacySettings']
-
             systemLogo = None
             if 'photo' in request.files:
                 file = request.files['photo']
