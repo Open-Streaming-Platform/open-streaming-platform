@@ -462,8 +462,8 @@ def add_server_to_hub(message):
         if current_user.has_role('Admin'):
             sysSettings = cachedDbCalls.getSystemSettings()
             r = requests.post(sysSettings.hubURL + '/api/server', data={'address': sysSettings.siteAddress,
-                                                        'protocol': sysSettings.siteProtocol,
-                                                        'port': 80})
+                                                                        'protocol': sysSettings.siteProtocol
+                                                                        })
             if r.status_code == 200:
                 results = r.json()
                 hubQuery = hub.hub.query.all()
