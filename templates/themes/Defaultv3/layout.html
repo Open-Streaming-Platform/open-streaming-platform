@@ -87,37 +87,6 @@
           </ul>
         </div>
 
-        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
-            <a href="/channel">
-                <i class="textShadow bi bi-tv-fill bs-icon"></i>
-                <span class="ms-2">Channels</span>
-            </a>
-        </li>
-        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
-            <a href="/topic">
-                <i class="textShadow bi bi-hash bs-icon"></i>
-                <span class="ms-2">Topics</span>
-            </a>
-        </li>
-
-        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
-            <a href="/streamer">
-                <i class="textShadow bi bi-hash bs-icon"></i>
-                <span class="ms-2">Streamers</span>
-            </a>
-        </li>
-
-        {% for page in static_pages %}
-            {% if page.isTopBar == False %}
-                <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
-                    <a href="/p/{{ page.name }}" title="{{ page.title }}">
-                        <i class="textShadow {{ page.iconClass}}"></i>
-                        <span class="ms-2">{{ page.title }}</span>
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-
         <!--Begin Authenticated User Navbar Options-->
         {% if current_user.is_authenticated %}
         <!--Authenticated User Dropdown Menu-->
@@ -142,12 +111,10 @@
               </ul>
             </li>
 
-
         {% if sysSettings.allowUploads == True %}
             {% if current_user.has_role('Uploader') %}
                 <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill bs-icon"></i></a>
-                    <span class="d-lg-none ms-2">Upload</span>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill bs-icon"></i><span class="d-lg-none ms-2">Upload</span></a>
                 </li>
             {% endif %}
         {% endif %}
@@ -157,8 +124,8 @@
               {% if messageCount > 0 %}
                   <span class="messagesIndicator" id="MessagesCountNav">{% if messageCount < 10 %}{{messageCount}}{% else %}9+{% endif %}</span>
               {% endif %}
+                <span class="d-lg-none ms-2">Messages</span>
             </a>
-            <span class="d-lg-none ms-2">Messages</span>
         </li>
 
         <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
@@ -167,8 +134,8 @@
               {% if notifications | count > 0 %}
                   <span class="messagesIndicator" id="MessagesCountNav">{% if notifications | count < 10 %}{{ notifications | count }}{% else %}9+{% endif %}</span>
               {% endif %}
+              <span class="d-lg-none ms-2">Notifications</span>
             </a>
-            <span class="d-lg-none ms-2">Notifications</span>
         </li>
         {% endif %}
 
@@ -178,23 +145,52 @@
         </li>
         {% endif %}
 
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/channel">
+                <i class="textShadow bi bi-tv-fill bs-icon"></i>
+                <span class="ms-2">Channels</span>
+            </a>
+        </li>
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/topic">
+                <i class="textShadow bi bi-hash bs-icon"></i>
+                <span class="ms-2">Topics</span>
+            </a>
+        </li>
+
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/streamer">
+                <i class="textShadow bi-people-fill bs-icon"></i>
+                <span class="ms-2">Streamers</span>
+            </a>
+        </li>
+
+        {% for page in static_pages %}
+            {% if page.isTopBar == False %}
+                <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+                    <a href="/p/{{ page.name }}" title="{{ page.title }}">
+                        <i class="textShadow {{ page.iconClass}}"></i>
+                        <span class="ms-2">{{ page.title }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
         <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
-          <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></a>
-          <span class="d-lg-none ms-2">Toggle Dark Mode</span>
+          <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i><span class="d-lg-none ms-2">Toggle Dark Mode</span></a>
         </li>
 
         {% for page in static_pages %}
             {% if page.isTopBar == True %}
             <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
-                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow fa-nav-icon {{ page.iconClass }}"></i></a>
-                <span class="d-lg-none ms-2">{{ page.title }}</span>
+                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow fa-nav-icon {{ page.iconClass }}"></i><span class="d-lg-none ms-2">{{ page.title }}</span></a>
+
             </li>
             {% endif %}
         {% endfor %}
 
         <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
-          <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill bs-icon"></i></a>
-          <span class="d-lg-none ms-2">About</span>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill bs-icon"></i><span class="d-lg-none ms-2">About</span></a>
         </li>
 
       </ul>
