@@ -147,9 +147,14 @@
 </script>
 {% endmacro %}
 
-{% macro clips_panel(clipsList, title="Clips", heightOverride=False, justification="start", shadow=True) %}
+{% macro clips_panel(clipsList, title="Clips", order=0, heightOverride=False, justification="start", shadow=True) %}
 {%- set listClass = '' | generateRandomString %}
 <div id="{{ listClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+  <div style="float: right;">
+    <span class="mx-1">Sort by:</span>
+    <span class="sort mx-1" data-sort="list-clipName"><a href="#">Name</a></span>
+    <span class="sort {% if order == 0 %} desc {% endif %} mx-1" data-sort="list-clipViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
+  </div>
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }} list" style="width:100%">
       {% for clip in clipsList %}
@@ -162,7 +167,7 @@
 </div>
 <script>
     list_{{ listClass }}_options = {
-        valueNames: ['list_clipName', 'list_clipViews', 'list_clipLength', 'list_clipTopic'],
+        valueNames: ['list-clipName', 'list-clipViews', 'list-clipLength', 'list-clipTopic'],
         page: 10,
         pagination: true
     };
