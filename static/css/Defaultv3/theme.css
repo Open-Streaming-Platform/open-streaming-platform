@@ -1361,9 +1361,13 @@ video.vjs-tech {
     pointer-events: none;
 }
 
-@media only screen and (max-width: 1130px) {
+@media only screen and (max-width: 991px) {
     :root {
         --left-sidebar-width: 0;
+    }
+
+    .content {
+        width: 100vh;
     }
 
     .topNavbar .siteTitle {
