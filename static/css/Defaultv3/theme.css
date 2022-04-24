@@ -935,6 +935,15 @@ table tbody tr {
   font-size: 1.25em;
 }
 
+.sort.asc::after {
+  content: "\002B06";
+  padding-left: 3px;
+}
+.sort.desc::after {
+  content: "\002B07";
+  padding-left: 3px;
+}
+
 @media (min-width: 1200px) {
     #mainContentPanel{
         width: calc(100% - var(--side-panel-width));

@@ -532,6 +532,12 @@ def admin_page():
             if 'smtpSSL' in request.form:
                 smtpSSL = True
 
+            if 'smtpEncryption' in request.form:
+                if request.form['smtpEncryption'] == 'tls':
+                    smtpTLS = True
+                elif request.form['smtpEncryption'] == 'ssl':
+                    smtpSSL = True
+
             if 'enableProtection' in request.form:
                 protectionEnabled = True
             if 'maintenanceMode' in request.form:
@@ -551,11 +557,6 @@ def admin_page():
                     newWord = banList.chatBannedWords(currentWord)
                     db.session.add(newWord)
                     db.session.commit()
-
-            if 'termsSettings' in request.form:
-                sysSettings.terms = request.form['termSettings']
-            if 'privacySettings' in request.form:
-                sysSettings.privacy = request.form['privacySettings']
 
             systemLogo = None
             if 'photo' in request.files:

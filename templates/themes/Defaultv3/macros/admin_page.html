@@ -706,6 +706,7 @@
                         <th>Email</th>
                         <th>Auth Type</th>
                         <th>Provider</th>
+                        <th>Confirmation Date</th>
                         <th>Active</th>
                         <th>Roles</th>
                         <th>Deletion Flag</th>
@@ -721,6 +722,7 @@
                       <td>{{user.email}}</td>
                       <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                       <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
+                      <td>{{user.confirmed_at}}</td>
                        <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
                       <td>
                         {% for role in user.roles %}
