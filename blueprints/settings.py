@@ -532,6 +532,12 @@ def admin_page():
             if 'smtpSSL' in request.form:
                 smtpSSL = True
 
+            if 'smtpEncryption' in request.form:
+                if request.form['smtpEncryption'] == 'tls':
+                    smtpTLS = True
+                elif request.form['smtpEncryption'] == 'ssl':
+                    smtpSSL = True
+
             if 'enableProtection' in request.form:
                 protectionEnabled = True
             if 'maintenanceMode' in request.form:
