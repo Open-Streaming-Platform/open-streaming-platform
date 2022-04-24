@@ -29,7 +29,7 @@
         {{ panels.channels_panel(userChannels) }}
     {% endif %}
     {% if recordedVids %}
-        {{ panels.videos_panel(recordedVids) }}
+        {{ panels.videos_panel(recordedVids, order=1) }}
     {% endif %}
     {% if clipsList %}
         {{ panels.clips_panel(clipsList) }}
