@@ -54,7 +54,7 @@
         <!--Search Bar-->
         <div class="searchBox my-md-2">
             <i class="searchIcon bi bi-search"></i>
-            <input id="systemSearchInput" class="insetBoxShadow" type="text" placeholder="Search...">
+            <input id="systemSearchInput" class="insetBoxShadow w-75" type="text" placeholder="Search...">
             <i id="searchClearIcon" class="searchClear fas fa-times" onclick="clearSearch();"></i>
         </div>
         <div id="searchResults" class="searchResults" style="display:none;">
@@ -114,14 +114,14 @@
 
         {% if sysSettings.allowUploads == True %}
             {% if current_user.has_role('Uploader') %}
-                <li class="nav-item mx-md-3 my-md-2">
+                <li class="nav-item mx-md-3 my-md-1">
                     <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill bs-icon"></i></a>
+                    <span class="d-lg-none ms-2">Upload</span>
                 </li>
-                <span class="d-lg-none ms-2">Upload</span>
             {% endif %}
         {% endif %}
 
-        <li class="nav-item mx-md-3 my-md-2">
+        <li class="nav-item mx-md-3 my-md-1">
             <a href="/messages"><i class="textShadow bi bi-envelope-fill bs-icon"></i>
               {% if messageCount > 0 %}
                   <span class="messagesIndicator" id="MessagesCountNav">{% if messageCount < 10 %}{{messageCount}}{% else %}9+{% endif %}</span>
@@ -130,7 +130,7 @@
             <span class="d-lg-none ms-2">Messages</span>
         </li>
 
-        <li class="nav-item mx-md-3 my-md-2">
+        <li class="nav-item mx-md-3 my-md-1">
             <a href="/notifications">
               <i class="textShadow bi bi-bell-fill bs-icon"></i>
               {% if notifications | count > 0 %}
@@ -142,27 +142,26 @@
         {% endif %}
 
         {% if current_user.is_authenticated == False %}
-        <li class="nav-item mx-md-3 my-md-2">
-          <a class="btn loginButton shadow textShadow" href="/login">Log In</a>
+        <li class="nav-item mx-md-3 my-md-1">
+          <a class="btn loginButton shadow textShadow w-100" href="/login">Log In</a>
         </li>
-        <span class="d-lg-none ms-2">Log In</span>
         {% endif %}
 
-        <li class="nav-item mx-md-3 my-md-2">
+        <li class="nav-item mx-md-3 my-md-1">
           <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i></a>
           <span class="d-lg-none ms-2">Toggle Dark Mode</span>
         </li>
 
         {% for page in static_pages %}
             {% if page.isTopBar == True %}
-            <li class="nav-item mx-md-3 my-md-2">
+            <li class="nav-item mx-md-3 my-md-1">
                 <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow fa-nav-icon {{ page.iconClass }}"></i></a>
                 <span class="d-lg-none ms-2">{{ page.title }}</span>
             </li>
             {% endif %}
         {% endfor %}
 
-        <li class="nav-item mx-md-3 my-md-2">
+        <li class="nav-item mx-md-3 my-md-1">
           <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill bs-icon"></i></a>
           <span class="d-lg-none ms-2">About</span>
         </li>
