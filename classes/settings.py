@@ -59,7 +59,7 @@ class settings(db.Model):
         self.sortMainBy = 0
         self.systemTheme = "Defaultv3"
         self.version = version
-        self.systemLogo = "/static/img/logo.png"
+        self.systemLogo = "/static/img/nav-logo.png"
         self.systemLogoLight = "/static/img/logo-light.png"
         self.serverMessageTitle = "Server Message"
         self.serverMessage = ""
