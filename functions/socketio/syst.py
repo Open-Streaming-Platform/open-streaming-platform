@@ -460,7 +460,8 @@ def update_hub_url(message):
 def add_server_to_hub(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
-            sysSettings = cachedDbCalls.getSystemSettings()
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubEnabled = True
             r = requests.post(sysSettings.hubURL + '/api/server', data={'address': sysSettings.siteAddress,
                                                                         'protocol': sysSettings.siteProtocol
                                                                         })
@@ -480,7 +481,8 @@ def add_server_to_hub(message):
 def remove_server_from_hub(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
-            sysSettings = cachedDbCalls.getSystemSettings()
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubEnabled = False
             hubQuery = hub.hub.query.first()
             if hubQuery != None:
                 r = requests.delete(sysSettings.hubURL + '/api/server', data={'id': hubQuery.hubUUID, 'token': hubQuery.hubToken})
