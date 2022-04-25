@@ -99,7 +99,7 @@ class settings(db.Model):
             'protectionEnabled': self.protectionEnabled,
             'adaptiveStreaming': self.adaptiveStreaming,
             'maintenanceMode': self.maintenanceMode,
-            'hubEnabled': str(self.hubEnabled),
+            'hubEnabled': self.hubEnabled,
             'hubURL': self.hubURL,
             'maxVideoRetention': self.maxVideoRetention
         }
