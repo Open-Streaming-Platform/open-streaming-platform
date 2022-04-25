@@ -32,12 +32,12 @@
                     {{ panels.live_streams_panel(panelStreamList, title=panelItem.header) }}
                 {% endif %}
             {% elif panelItem.type == 2  %}
-                {% set panelVideoList = getPanelVideoList(panelItem.order, 16) %}
+                {% set panelVideoList = getPanelVideoList(panelItem.order, 100) %}
                 {% if panelVideoList != [] %}
                     {{ panels.videos_panel(panelVideoList, title=panelItem.header, order=panelItem.order) }}
                 {% endif %}
             {% elif panelItem.type == 3  %}
-                {% set panelClipList = getPanelClipList(panelItem.order, 16) %}
+                {% set panelClipList = getPanelClipList(panelItem.order, 100) %}
                 {% if clipList != [] %}
                     {{ panels.clips_panel(panelClipList, title=panelItem.header) }}
                 {% endif %}
