@@ -3,6 +3,7 @@ import os
 import time
 import shutil
 import requests
+import logging
 from flask import abort, current_app
 from flask_socketio import emit
 from flask_security import current_user
@@ -30,6 +31,8 @@ from app import user_datastore
 from app import ejabberd
 
 from conf import config
+
+log = logging.getLogger('app.functions.socketio.syst')
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -475,6 +478,8 @@ def add_server_to_hub(message):
                 db.session.add(newHub)
                 db.session.commit()
                 db.session.close()
+            else:
+                log.error({"level": "error", "message": "Add Server To Hub Failed with Status Code: " + str(r.status_code)})
     return 'OK'
 
 @socketio.on('deleteServerFromHub')
@@ -489,6 +494,8 @@ def remove_server_from_hub(message):
                 if r.status_code == 200:
                     db.session.delete(hubQuery)
                     db.session.commit()
+                else:
+                    log.error({"level": "error", "message": "Remove Server From Hub Failed with Status Code: " + str(r.status_code)})
             db.session.close()
     return 'OK'
 
