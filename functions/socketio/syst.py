@@ -466,7 +466,7 @@ def add_server_to_hub(message):
             sysSettings = settings.settings.query.first()
             sysSettings.hubEnabled = True
             r = requests.post(sysSettings.hubURL + '/api/server', data={'address': sysSettings.siteAddress,
-                                                                        'protocol': sysSettings.siteProtocol
+                                                                        'protocol': sysSettings.siteProtocol[:-3]
                                                                         })
             if r.status_code == 200:
                 results = r.json()
