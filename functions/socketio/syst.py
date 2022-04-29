@@ -474,7 +474,7 @@ def add_server_to_hub(message):
                 for hubentry in hubQuery:
                     db.session.delete(hubentry)
                     db.session.commit()
-                newHub = hub.hub(results['serverUUID'], results['token'])
+                newHub = hub.hub(results['results']['serverUUID'], results['results']['token'])
                 db.session.add(newHub)
                 db.session.commit()
                 db.session.close()
