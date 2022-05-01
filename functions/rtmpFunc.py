@@ -9,7 +9,7 @@ from celery import states
 from celery.exceptions import Ignore
 from flask import Blueprint, request, redirect, current_app, abort
 
-from classes.shared import db, celery
+from classes.shared import db, celery, cache
 from classes import Sec
 from classes import RecordedVideo
 from classes import subscriptions
@@ -289,11 +289,11 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             fileName = pathlibPath.name
 
             pendingVideo.videoLocation = pendingPath
+
+            channelTuple = (requestedChannel.id, requestedChannel.channelLoc)
             db.session.commit()
 
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation=pendingPath, pending=True).first()
-
-            results = videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
+            results = videoFunc.processStreamVideo(fileName, channelTuple[1])
 
             # If File does not exist in expected destination, Raise Task Failure
             if results == False:
@@ -303,7 +303,13 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
                 )
                 raise Ignore()
 
-            videoPath = path.replace('/var/www/pending/', requestedChannel.channelLoc + '/')
+            requestedChannel = cachedDbCalls.getChannelByLoc(requestedChannel.channelLoc)
+
+            cache.delete_memoized(cachedDbCalls.getChannelVideos, requestedChannel.id)
+
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation=pendingPath, pending=True).first()
+
+            videoPath = path.replace('/var/www/pending/', channelTuple[1] + '/')
             imagePath = videoPath.replace('.flv','.png')
             gifPath = videoPath.replace('.flv', '.gif')
             videoPath = videoPath.replace('.flv','.mp4')

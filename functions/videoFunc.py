@@ -442,10 +442,6 @@ def processStreamVideo(path, channelLoc):
     if destinationFilePath.is_file() == False:
         return False
 
-    channelID = cachedDbCalls.getChannelIDFromLocation(channelLoc)
-
-    cache.delete_memoized(cachedDbCalls.getChannelVideos, channelID)
-
     oldFilePath = pathlib.Path(inputPath)
     oldFilePath.unlink()
 
