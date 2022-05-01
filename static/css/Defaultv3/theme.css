@@ -1370,6 +1370,10 @@ video.vjs-tech {
     pointer-events: none;
 }
 
+.vjs-theater-mode-control-open, .vjs-theater-mode-control-close {
+    display: inline-block !important;
+}
+
 @media only screen and (max-width: 991px) {
     :root {
         --left-sidebar-width: 0;
@@ -1392,7 +1396,7 @@ video.vjs-tech {
     }
 
     .vjs-theater-mode-control-open, .vjs-theater-mode-control-close {
-        display: none;
+        display: none !important;
     }
 
 }
