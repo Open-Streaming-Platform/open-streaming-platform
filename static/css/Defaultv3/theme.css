@@ -1391,4 +1391,8 @@ video.vjs-tech {
         width: 210px;
     }
 
+    .vjs-theater-mode-control-open, .vjs-theater-mode-control-close {
+        display: none;
+    }
+
 }
