@@ -4,7 +4,7 @@ from celery.result import AsyncResult
 import datetime
 import logging
 from classes.shared import celery, db
-from classes import RecordedVideo, Channel, settings, subscriptions, notifications
+from classes import RecordedVideo, Channel, settings, subscriptions, notifications, Stream
 
 from functions import videoFunc, cachedDbCalls, templateFilters, subsFunc, system
 from functions.scheduled_tasks import message_tasks
@@ -15,6 +15,7 @@ def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_thumbnails.s(), name='Check Video Thumbnails')
     sender.add_periodic_task(3600, check_video_retention.s(), name='Check Video Retention and Cleanup')
     sender.add_periodic_task(21600, check_video_published_exists.s(), name='Check Video Health')
+    sender.add_periodic_task(3600, reprocess_stuck_videos.s(), name='Reprocess Stuck Videos')
 
 @celery.task(bind=True)
 def delete_video(self, videoID):
@@ -109,6 +110,26 @@ def check_video_published_exists(self):
                       "message": "Unhealthy Video Object Identified and Removed.  Removed: " + str(vidId)})
             count = count + 1
     return "Video Health Check Performed.  Removed " + str(count) + " video objects"
+
+@celery.task(bind=True)
+def reprocess_stuck_videos(self):
+    """
+    Reprocesses videos which are still pending=True, but stream has ended
+    """
+    count = 0
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=False, pending=True).all()
+    for video in videoQuery:
+        if video.videoLocation != '' and video.get_video_exists():
+            streamQuery = Stream.Stream.query.filter_by(id=video.originalStreamID).first()
+            if streamQuery is None:
+                channelQuery = Channel.Channel.query.filter_by(id=video.channelID).first()
+                results = subtask('functions.rtmpFunc.rtmp_rec_Complete_handler',
+                                  args=(channelQuery.channelLoc, video.videoLocation), kwargs={'pendingVideoID': video.id}).apply_async()
+                log.info({"level": "warning", "taskID": self.request.id.__str__(),
+                          "message": "Reprocessing Stuck Video ID: " + video.id + ", Path: " + video.videoLocation})
+                count = count + 1
+    return "Performed Video Reprocessing.  Count: " + str(count)
+
 
 @celery.task(bind=True)
 def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId):

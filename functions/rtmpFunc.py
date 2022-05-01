@@ -267,7 +267,7 @@ def rtmp_user_deauth_check(key, ipaddress):
         return returnMessage
 
 @celery.task(bind=True, max_retries=20)
-def rtmp_rec_Complete_handler(self, channelLoc, path):
+def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
     try:
         sysSettings = cachedDbCalls.getSystemSettings()
 
@@ -276,8 +276,10 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
         requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
 
         if requestedChannel is not None:
-
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
+            if pendingVideoID != None:
+                pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, id=pendingVideoID, pending=True).first()
+            else:
+                pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation="", pending=True).first()
 
             pendingPath = path.replace('/tmp/', current_app.config['WEB_ROOT'] + 'pending/')
             pathlibPath = pathlib.Path(pendingPath)
@@ -285,6 +287,11 @@ def rtmp_rec_Complete_handler(self, channelLoc, path):
                 time.sleep(2)
 
             fileName = pathlibPath.name
+
+            pendingVideo.videoLocation = pendingPath
+            db.session.commit()
+
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation=pendingPath, pending=True).first()
 
             results = videoFunc.processStreamVideo(fileName, requestedChannel.channelLoc)
 
