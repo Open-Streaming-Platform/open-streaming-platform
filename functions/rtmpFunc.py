@@ -164,7 +164,7 @@ def rtmp_record_auth_check(channelLoc):
 
 
         if channelRequest.record is True and sysSettings.allowRecording is True and userQuery.has_role("Recorder"):
-            existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True).all()
+            existingRecordingQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, pending=True, videoLocation="").all()
             if existingRecordingQuery:
                 for recording in existingRecordingQuery:
                     db.session.delete(recording)
