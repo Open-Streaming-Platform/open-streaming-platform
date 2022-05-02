@@ -225,13 +225,13 @@ def rtmp_user_deauth_check(key, ipaddress):
                 wasRecorded = True
                 recordingID = pendingVideo.id
 
-                db.session.commit()
+                #db.session.commit()
 
                 streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
                 for upvote in streamUpvotes:
                     newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
                     db.session.add(newVideoUpvote)
-                db.session.commit()
+                #db.session.commit()
 
             topicName = "Unknown"
             topicQuery = topics.topics.query.filter_by(id=stream.topic).first()
@@ -241,7 +241,7 @@ def rtmp_user_deauth_check(key, ipaddress):
             newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
                                                   stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
             db.session.add(newStreamHistory)
-            db.session.commit()
+            #db.session.commit()
 
             if channelRequest.imageLocation is None:
                 channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
@@ -258,10 +258,12 @@ def rtmp_user_deauth_check(key, ipaddress):
                        streamtopic=templateFilters.get_topicName(stream.topic),
                        streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + str(channelRequest.channelLoc) + ".png"))
         returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': True, 'channelLoc': channelRequest.channelLoc, 'ipAddress': str(ipaddress), 'message': 'Success - Stream Closed'}
+        db.session.commit()
         db.session.close()
         return returnMessage
     else:
         returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'ipAddress': str(ipaddress), 'message': 'Failed - No Stream Listed Under Key'}
+        db.session.commit()
         db.session.close()
         return returnMessage
 
