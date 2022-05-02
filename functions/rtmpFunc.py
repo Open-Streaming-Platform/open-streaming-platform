@@ -212,6 +212,11 @@ def rtmp_user_deauth_check(key, ipaddress):
             endTimestamp = datetime.datetime.utcnow()
             length = (endTimestamp - stream.startTimestamp).total_seconds()
 
+            stream.endTimeStamp = currentTime
+            stream.active = False
+            stream.pending = False
+            stream.complete = True
+
             if pendingVideo is not None:
                 pendingVideo.length = length
                 pendingVideo.channelName = stream.streamName
@@ -236,12 +241,6 @@ def rtmp_user_deauth_check(key, ipaddress):
             newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
                                                   stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
             db.session.add(newStreamHistory)
-            db.session.commit()
-
-            stream.endTimeStamp = currentTime
-            stream.active = False
-            stream.pending = False
-            stream.complete = True
             db.session.commit()
 
             if channelRequest.imageLocation is None:
