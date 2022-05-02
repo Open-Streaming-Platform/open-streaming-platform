@@ -197,75 +197,79 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     currentTime = datetime.datetime.utcnow()
 
+    closingStreamId = []
     authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).all()
-
-    #channelRequest = Channel.Channel.query.filter_by(streamKey=key).first()
-    channelRequest = cachedDbCalls.getChannelByStreamKey(key)
-
     if authedStream is not []:
         for stream in authedStream:
-
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", originalStreamID=stream.id).first()
-
-            wasRecorded = False
-            recordingID = None
-            endTimestamp = datetime.datetime.utcnow()
-            length = (endTimestamp - stream.startTimestamp).total_seconds()
-
+            closingStreamId.append(stream.id)
             stream.endTimeStamp = currentTime
             stream.active = False
             stream.pending = False
             stream.complete = True
+    db.session.commit()
 
-            if pendingVideo is not None:
-                pendingVideo.length = length
-                pendingVideo.channelName = stream.streamName
-                pendingVideo.views = stream.totalViewers
-                pendingVideo.topic = stream.topic
-                wasRecorded = True
-                recordingID = pendingVideo.id
+    channelRequest = cachedDbCalls.getChannelByStreamKey(key)
 
+    for streamId in closingStreamId:
+        authedStream = Stream.Stream.query.filter_by(id=streamId).all()
+        if authedStream is not []:
+            for stream in authedStream:
+                wasRecorded = False
+                recordingID = None
+                endTimestamp = datetime.datetime.utcnow()
+                length = (endTimestamp - stream.startTimestamp).total_seconds()
+
+                pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", originalStreamID=stream.id).first()
+
+                if pendingVideo is not None:
+                    pendingVideo.length = length
+                    pendingVideo.channelName = stream.streamName
+                    pendingVideo.views = stream.totalViewers
+                    pendingVideo.topic = stream.topic
+                    wasRecorded = True
+                    recordingID = pendingVideo.id
+
+                    #db.session.commit()
+
+                    streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
+                    for upvote in streamUpvotes:
+                        newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
+                        db.session.add(newVideoUpvote)
+                    #db.session.commit()
+
+                topicName = "Unknown"
+                topicQuery = topics.topics.query.filter_by(id=stream.topic).first()
+                if topicQuery is not None:
+                    topicName = topicQuery.name
+
+                newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
+                                                      stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
+                db.session.add(newStreamHistory)
                 #db.session.commit()
 
-                streamUpvotes = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).all()
-                for upvote in streamUpvotes:
-                    newVideoUpvote = upvotes.videoUpvotes(upvote.userID, pendingVideo.id)
-                    db.session.add(newVideoUpvote)
-                #db.session.commit()
+                if channelRequest.imageLocation is None:
+                    channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+                else:
+                    channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
 
-            topicName = "Unknown"
-            topicQuery = topics.topics.query.filter_by(id=stream.topic).first()
-            if topicQuery is not None:
-                topicName = topicQuery.name
-
-            newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
-                                                  stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
-            db.session.add(newStreamHistory)
-            #db.session.commit()
-
-            if channelRequest.imageLocation is None:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
-            else:
-                channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + channelRequest.imageLocation)
-
-            message_tasks.send_webhook.delay(channelRequest.id, 1, channelname=channelRequest.channelName,
-                       channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
-                       channeltopic=channelRequest.topic,
-                       channelimage=channelImage, streamer=templateFilters.get_userName(channelRequest.owningUser),
-                       channeldescription=str(channelRequest.description),
-                       streamname=stream.streamName,
-                       streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
-                       streamtopic=templateFilters.get_topicName(stream.topic),
-                       streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + str(channelRequest.channelLoc) + ".png"))
-        returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': True, 'channelLoc': channelRequest.channelLoc, 'ipAddress': str(ipaddress), 'message': 'Success - Stream Closed'}
-        db.session.commit()
-        db.session.close()
-        return returnMessage
-    else:
-        returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'ipAddress': str(ipaddress), 'message': 'Failed - No Stream Listed Under Key'}
-        db.session.commit()
-        db.session.close()
-        return returnMessage
+                message_tasks.send_webhook.delay(channelRequest.id, 1, channelname=channelRequest.channelName,
+                           channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelRequest.id)),
+                           channeltopic=channelRequest.topic,
+                           channelimage=channelImage, streamer=templateFilters.get_userName(channelRequest.owningUser),
+                           channeldescription=str(channelRequest.description),
+                           streamname=stream.streamName,
+                           streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + channelRequest.channelLoc),
+                           streamtopic=templateFilters.get_topicName(stream.topic),
+                           streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + str(channelRequest.channelLoc) + ".png"))
+            returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': True, 'channelLoc': channelRequest.channelLoc, 'ipAddress': str(ipaddress), 'message': 'Success - Stream Closed'}
+            db.session.commit()
+            db.session.close()
+            return returnMessage
+        else:
+            returnMessage = {'time': str(currentTime), 'request': 'StreamClose', 'success': False, 'channelLoc': None, 'ipAddress': str(ipaddress), 'message': 'Failed - No Stream Listed Under Key'}
+            db.session.commit()
+            db.session.close()
+            return returnMessage
 
 @celery.task(bind=True, max_retries=20)
 def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
