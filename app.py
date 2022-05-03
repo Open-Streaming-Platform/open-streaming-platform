@@ -132,6 +132,7 @@ app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 app.config['broker_url'] = RedisURL
 app.config['result_backend'] = RedisURL
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 9765625
 
 #----------------------------------------------------------------------------#
 # Set Logging Configuration
