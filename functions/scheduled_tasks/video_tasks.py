@@ -148,7 +148,7 @@ def process_ingest_folder(self):
                                   args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
                                   kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc})
                                   ).apply_async()
-    return "Complete - " + str(channel)
+    return "Complete - " + str(videosProcessed)
 
 @celery.task(bind=True)
 def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId, sourcePath=None):
