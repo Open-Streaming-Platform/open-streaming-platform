@@ -134,18 +134,20 @@ def reprocess_stuck_videos(self):
 @celery.task(bind=True)
 def process_ingest_folder(self):
     channelFolders = glob.glob("/var/www/ingest/*/")
+    videosProcessed = []
     for i in range(len(channelFolders)):
-        channelLoc = channelFolders[i].replace('/','')
+        channelLoc = channelFolders[i].replace('/var/www/ingest/','')
 
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
             pendingFiles = glob.glob("/var/www/ingest/" + channelLoc + "/*.mp4")
             for file in pendingFiles:
+                videosProcessed.append(file)
                 results = subtask('functions.video_tasks.process_video_upload',
                                   args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
                                   kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc})
                                   ).apply_async()
-    return "Complete - " + str(channelFolders)
+    return "Complete - " + str(videosProcessed)
 
 @celery.task(bind=True)
 def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId, sourcePath=None):
