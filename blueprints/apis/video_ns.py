@@ -1,5 +1,6 @@
 from flask_restplus import Api, Resource, reqparse, Namespace
 from flask import request
+import werkzeug
 from os import path, remove
 
 from classes import RecordedVideo
@@ -21,6 +22,14 @@ videoParserPut.add_argument('topicID', type=int)
 videoSearchPost = reqparse.RequestParser()
 videoSearchPost.add_argument('term', type=str, required=True)
 
+file_upload = reqparse.RequestParser()
+file_upload.add_argument('video_file',
+                         type=werkzeug.datastructures.FileStorage,
+                         location='files',
+                         required=True,
+                         help='MP4 file')
+file_upload.add_argument('channelId', type=int, required=True)
+
 @api.route('/')
 class api_1_ListVideos(Resource):
     def get(self):
@@ -31,6 +40,30 @@ class api_1_ListVideos(Resource):
         db.session.commit()
         return {'results': [ob.serialize() for ob in videoList if ob.channel.private is False]}
 
+    @api.expect(file_upload)
+    @api.expect(videoParserPut)
+    @api.doc(security='apikey')
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def post(self):
+        """
+        Upload a Video to a Channel via API
+        """
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    args = file_upload.parse_args()
+                    if args['video_file'].mimetype == 'video/mp4':
+                        destination = '/var/www/videos/temp/'
+                        if not os.path.exists(destination):
+                            os.makedirs(destination)
+                        mp4_file = '%s%s' % (destination, 'custom_file_name.xls')
+                        args['video_file'].save(mp4_file)
+                    else:
+                        db.session.commit()
+                        abort(400)
+                    db.session.commit()
+                    return {'status': 'Done'}
 
 @api.route('/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
