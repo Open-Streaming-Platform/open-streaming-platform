@@ -58,7 +58,13 @@ class api_1_ListVideos(Resource):
                         if not os.path.exists(destination):
                             os.makedirs(destination)
                         mp4_file = '%s%s' % (destination, 'custom_file_name.xls')
-                        args['video_file'].save(mp4_file)
+                        with open(destination, "bw") as f:
+                            chunk_size = 4096
+                            while True:
+                                chunk = args['video_file'].stream.read(chunk_size)
+                                if len(chunk) == 0:
+                                    return
+                                f.write(chunk)
                     else:
                         db.session.commit()
                         abort(400)
