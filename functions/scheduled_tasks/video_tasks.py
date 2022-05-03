@@ -1,6 +1,6 @@
 from celery.canvas import subtask
 from celery.result import AsyncResult
-
+import glob
 import datetime
 import logging
 from classes.shared import celery, db
@@ -16,6 +16,7 @@ def setup_video_tasks(sender, **kwargs):
     sender.add_periodic_task(3600, check_video_retention.s(), name='Check Video Retention and Cleanup')
     sender.add_periodic_task(21600, check_video_published_exists.s(), name='Check Video Health')
     sender.add_periodic_task(3600, reprocess_stuck_videos.s(), name='Reprocess Stuck Videos')
+    sender.add_periodic_task(3600, process_ingest_folder.s(), name="Process Folder Ingest")
 
 @celery.task(bind=True)
 def delete_video(self, videoID):
@@ -130,9 +131,24 @@ def reprocess_stuck_videos(self):
                 count = count + 1
     return "Performed Video Reprocessing.  Count: " + str(count)
 
+@celery.task(bind=True)
+def process_ingest_folder(self):
+    channelFolders = glob.glob("/var/www/ingest/*/")
+    for i in range(len(channelFolders)):
+        channelLoc = channelFolders[i].replace('/','')
+
+        channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+        if channelQuery != None:
+            pendingFiles = glob.glob("/var/www/ingest/" + channelLoc + "/*.mp4")
+            for file in pendingFiles:
+                results = subtask('functions.video_tasks.process_video_upload',
+                                  args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
+                                  kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc + '/' + file})
+                                  ).apply_async()
+    return "Complete"
 
 @celery.task(bind=True)
-def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId):
+def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, channelId, sourcePath=None):
     """
     Processes Video Upload following user submittal
     """
@@ -140,9 +156,10 @@ def process_video_upload(self, videoFilename, thumbnailFilename, topic, videoTit
 
     #ChannelQuery = Channel.Channel.query.filter_by(id=channelId).first()
     ChannelQuery = cachedDbCalls.getChannel(channelId)
-
-    results = videoFunc.processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription,
-                                           ChannelQuery)
+    if sourcePath != None:
+        results = videoFunc.processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery, sourcePath=sourcePath)
+    else:
+        results = videoFunc.processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery)
 
     if results[0] == "Success":
         newVideo = results[1]
