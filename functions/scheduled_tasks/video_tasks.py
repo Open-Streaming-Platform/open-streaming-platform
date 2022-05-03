@@ -3,6 +3,8 @@ from celery.result import AsyncResult
 import glob
 import datetime
 import logging
+from flask import current_app
+
 from classes.shared import celery, db
 from classes import RecordedVideo, Channel, settings, subscriptions, notifications, Stream
 
@@ -133,20 +135,21 @@ def reprocess_stuck_videos(self):
 
 @celery.task(bind=True)
 def process_ingest_folder(self):
-    channelFolders = glob.glob("/var/www/ingest/*/")
+    vidRoot = current_app.config['WEB_ROOT']
+    channelFolders = glob.glob(vidRoot + "/ingest/*/")
     videosProcessed = []
-    channel = []
     for channelFolder in channelFolders:
-        channelLoc = channelFolder.replace('/var/www/ingest/','')[:-1]
-        channel.append(channelLoc)
+        channelLoc = channelFolder.replace(vidRoot + '/ingest/','')[:-1]
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
-            pendingFiles = glob.glob("/var/www/ingest/" + channelLoc + "/*.mp4")
+            pendingFiles = glob.glob(vidRoot + "/ingest/" + channelLoc + "/*.mp4")
             for file in pendingFiles:
+                filename = file.replace(vidRoot + '/ingest/' + channelLoc + '/', '')
+
                 videosProcessed.append(file)
                 results = subtask('functions.scheduled_tasks.video_tasks.process_video_upload',
-                                  args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
-                                  kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc})
+                                  args=(filename, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
+                                  kwargs=({'sourcePath': vidRoot + '/ingest/' + channelLoc})
                                   ).apply_async()
     return "Complete - " + str(videosProcessed)
 
