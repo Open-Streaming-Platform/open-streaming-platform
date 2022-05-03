@@ -348,7 +348,7 @@ def setVideoThumbnail(videoID, timeStamp):
     else:
         return False
 
-def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery):
+def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery, sourcePath=None):
     currentTime = datetime.datetime.utcnow()
 
     videoPublishState = ChannelQuery.autoPublish
@@ -369,7 +369,9 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
                               "File Upload Failed - OSError - Unable to Create Directory - Channel:" + ChannelQuery.channelLoc)
                 db.session.close()
                 return ("Error", "Error uploading video - Unable to create directory")
-        shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + videoFilename, videoPath)
+        if sourcePath is None:
+            sourcePath = current_app.config['VIDEO_UPLOAD_TEMPFOLDER']
+        shutil.move(sourcePath + '/' + videoFilename, videoPath)
     else:
         db.session.close()
         return ("Error", "Error uploading video - Couldn't move video file")
