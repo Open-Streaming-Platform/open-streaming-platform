@@ -137,7 +137,7 @@ def process_ingest_folder(self):
     videosProcessed = []
     channel = []
     for channelFolder in channelFolders:
-        channelLoc = channelFolder.replace('/var/www/ingest/','')
+        channelLoc = channelFolder.replace('/var/www/ingest/','')[:-1]
         channel.append(channelLoc)
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
