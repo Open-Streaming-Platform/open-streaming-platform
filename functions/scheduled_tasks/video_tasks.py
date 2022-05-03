@@ -135,9 +135,10 @@ def reprocess_stuck_videos(self):
 def process_ingest_folder(self):
     channelFolders = glob.glob("/var/www/ingest/*/")
     videosProcessed = []
+    channel = []
     for i in range(len(channelFolders)):
         channelLoc = channelFolders[i].replace('/var/www/ingest/','')
-
+        channel.append(channelLoc)
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
             pendingFiles = glob.glob("/var/www/ingest/" + channelLoc + "/*.mp4")
