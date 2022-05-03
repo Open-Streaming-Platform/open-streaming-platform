@@ -44,6 +44,7 @@ from functions import system
 from functions import themes
 from functions import cachedDbCalls
 from functions import securityFunc
+from functions.scheduled_tasks import video_tasks, security_tasks, message_tasks
 
 from globals import globalvars
 
@@ -1015,6 +1016,24 @@ def admin_page():
 @roles_required('Admin')
 def createtestask():
     result = system.testCelery.apply_async(countdown=1)
+    return str(result)
+
+@settings_bp.route('/admin/run_task/<task>')
+@login_required
+@roles_required('Admin')
+def run_task(task):
+    if task == 'process_ingest':
+        result = video_tasks.process_ingest_folder.delay()
+    elif task == 'reprocess_stuck_videos':
+        result = video_tasks.reprocess_stuck_videos.delay()
+    elif task == 'check_video_published_exists':
+        result = video_tasks.check_video_published_exists.delay()
+    elif task == 'check_video_retention':
+        result = video_tasks.check_video_retention.delay()
+    elif task == 'check_video_thumbnails':
+        result = video_tasks.check_video_thumbnails.delay()
+    else:
+        result = False
     return str(result)
 
 @settings_bp.route('/admin/rtmpstat/<node>')
