@@ -143,7 +143,7 @@ def process_ingest_folder(self):
             for file in pendingFiles:
                 results = subtask('functions.video_tasks.process_video_upload',
                                   args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
-                                  kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc + '/' + file})
+                                  kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc})
                                   ).apply_async()
     return "Complete"
 
