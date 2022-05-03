@@ -52,8 +52,9 @@ class api_1_ListVideos(Resource):
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey is not None:
                 if requestAPIKey.isValid():
-                    args = file_upload.parse_args()
-                    if args['video_file'].mimetype == 'video/mp4':
+                    #args = file_upload.parse_args()
+                    #if args['video_file'].mimetype == 'video/mp4':
+                    if 'video_file' in request.files:
                         destination = '/var/www/videos/temp/'
                         if not os.path.exists(destination):
                             os.makedirs(destination)
@@ -61,7 +62,7 @@ class api_1_ListVideos(Resource):
                         with open(destination, "bw") as f:
                             chunk_size = 4096
                             while True:
-                                chunk = args['video_file'].stream.read(chunk_size)
+                                chunk = file.stream.read(chunk_size)
                                 if len(chunk) == 0:
                                     return
                                 f.write(chunk)
