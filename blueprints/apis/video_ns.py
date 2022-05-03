@@ -55,16 +55,6 @@ class api_1_ListVideos(Resource):
                     args = file_upload.parse_args()
                     if args['video_file'].mimetype == 'video/mp4':
                         destination = '/var/www/videos/temp/'
-                        if not os.path.exists(destination):
-                            os.makedirs(destination)
-                        mp4_file = '%s%s' % (destination, 'custom_file_name.xls')
-                        with open(destination, "bw") as f:
-                            chunk_size = 4096
-                            while True:
-                                chunk = args['video_file'].stream.read(chunk_size)
-                                if len(chunk) == 0:
-                                    return
-                                f.write(chunk)
                     else:
                         db.session.commit()
                         abort(400)
