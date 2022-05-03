@@ -124,7 +124,7 @@ def reprocess_stuck_videos(self):
             streamQuery = Stream.Stream.query.filter_by(id=video.originalStreamID).first()
             if streamQuery is None:
                 channelQuery = Channel.Channel.query.filter_by(id=video.channelID).first()
-                results = subtask('functions.rtmpFunc.rtmp_rec_Complete_handler',
+                results = subtask('functions.scheduled_tasks.rtmpFunc.rtmp_rec_Complete_handler',
                                   args=(channelQuery.channelLoc, video.videoLocation), kwargs={'pendingVideoID': video.id}).apply_async()
                 log.info({"level": "warning", "taskID": self.request.id.__str__(),
                           "message": "Reprocessing Stuck Video ID: " + video.id + ", Path: " + video.videoLocation})
@@ -144,7 +144,7 @@ def process_ingest_folder(self):
             pendingFiles = glob.glob("/var/www/ingest/" + channelLoc + "/*.mp4")
             for file in pendingFiles:
                 videosProcessed.append(file)
-                results = subtask('functions.video_tasks.process_video_upload',
+                results = subtask('functions.scheduled_tasks.video_tasks.process_video_upload',
                                   args=(file, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
                                   kwargs=({'sourcePath': '/var/www/ingest/' + channelLoc})
                                   ).apply_async()
