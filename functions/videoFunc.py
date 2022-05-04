@@ -4,6 +4,7 @@ import shutil
 import logging
 import datetime
 import pathlib
+import uuid
 
 from flask import flash, current_app
 from flask_security import current_user
@@ -356,7 +357,8 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     newVideo = RecordedVideo.RecordedVideo(ChannelQuery.owningUser, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
                                            "", currentTime, ChannelQuery.allowComments, videoPublishState)
 
-    videoLoc = ChannelQuery.channelLoc + "/" + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
+    newFileNameGUID = uuid.uuid4()
+    videoLoc = ChannelQuery.channelLoc + "/" + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
     videoPath = videos_root + videoLoc
 
@@ -379,7 +381,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     newVideo.videoLocation = videoLoc
 
     if thumbnailFilename != "":
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + thumbnailFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + videoFilename.rsplit(".", 1)[-1]
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + videoFilename.rsplit(".", 1)[-1]
 
         thumbnailPath = videos_root + thumbnailLoc
         try:
@@ -388,13 +390,13 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
             pass
         newVideo.thumbnailLocation = thumbnailLoc
     else:
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        thumbnailLoc = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
 
         subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1',
                          videos_root + thumbnailLoc])
         newVideo.thumbnailLocation = thumbnailLoc
 
-    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + videoFilename.rsplit(".", 1)[0] + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
     gifresult = subprocess.call(
         ['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', videos_root + videoLoc, '-filter_complex',
          '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1',
