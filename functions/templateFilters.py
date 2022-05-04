@@ -502,13 +502,25 @@ def getChannelPanelArg(panelId, arg):
 
 def getPanelStreamList(order, limitTo):
     if order == 0:
-        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
+        activeStreams = Stream.Stream.query.filter_by(active=True)\
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active)\
+            .order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
     elif order == 1:
-        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.startTimestamp.desc()).limit(limitTo)
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(Stream.Stream.startTimestamp.desc()).limit(limitTo)
     elif order == 2:
-        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(func.random()).limit(limitTo)
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(func.random()).limit(limitTo)
     else:
-        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(Stream.Stream.currentViewers.desc()).limit(limitTo)
     return activeStreams
 
 def getPanelVideoList(order, limitTo):

@@ -34,7 +34,10 @@ def main_page():
 
     else:
         sysSettings = cachedDbCalls.getSystemSettings()
-        activeStreams = Stream.Stream.query.filter_by(active=True).order_by(Stream.Stream.currentViewers).all()
+        activeStreams = Stream.Stream.query.filter_by(active=True)\
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                          Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active)\
+            .order_by(Stream.Stream.currentViewers).all()
 
         recordedQuery = None
         clipQuery = None

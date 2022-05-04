@@ -55,7 +55,7 @@
                         {{ panels.text_panel(panelItem.header, panelItem.content) }}
                     {% elif panelItem.type == 1  %}
                         {% set panelStreamList = getPanelStreamList(panelItem.order, 16) %}
-                        {% if streamList != [] %}
+                        {% if panelStreamList != [] %}
                             {{ panels.live_streams_panel(panelStreamList, title=panelItem.header) }}
                         {% endif %}
                     {% elif panelItem.type == 2  %}
@@ -65,7 +65,7 @@
                         {% endif %}
                     {% elif panelItem.type == 3  %}
                         {% set panelClipList = getPanelClipList(panelItem.order, 16) %}
-                        {% if clipList != [] %}
+                        {% if panelClipList != [] %}
                             {{ panels.clips_panel(panelClipList, title=panelItem.header) }}
                         {% endif %}
                     {% elif panelItem.type == 4  %}

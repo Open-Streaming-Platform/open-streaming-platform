@@ -2,46 +2,45 @@
 
 {% macro live_stream_card(stream) %}
 <li class="streamCard item">
-        <div class="d-none list_streamName">{{ stream.streamName }}</div>
-        <div class="d-none list_streamOwner">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</div>
-        <div class="d-none list_streamViewers">{{stream.currentViewers}}</div>
-        <div class="d-none list_streamTopic">{{stream.topic | get_topicName }}</div>
-        <div class="streamCard-badges">
-            {% if stream.linkedChannel | get_channelProtected %}
-                {{ core_ui.protected_badge() }}
-            {% endif %}
-            {{ core_ui.live_badge() }}
-            {{ core_ui.live_views_badge(stream.currentViewers) }}
-        </div>
-        <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
-          <img class="streamCard-thumb boxShadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{ stream.linkedChannel | get_channelLocationFromID }}.png">
-        </a>
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-              <div class="col-2">
-                <a href="/streamer/{{stream.linkedChannel | channeltoOwnerID}}">
-                  <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ stream.linkedChannel | channeltoOwnerID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
-                </a>
-              </div>
-              <div class="col-10">
-                <div class="card-body">
-                  <p class="card-text textShadow">
-                    <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName }}</a></b><br>
-                    <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | get_channelName }}">{{ stream.linkedChannel | get_channelName  }}</a><br>
-                    <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName }}</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="streamCard-tags row g-0">
-                <div class="col-12">
-                      {% for tag in stream.linkedChannel | get_channelTags %}
-                        <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
-                      {% endfor %}
-                </div>
-            </div>
-        </div>
+    <div class="d-none list_streamName">{{ stream.streamName }}</div>
+    <div class="d-none list_streamOwner">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</div>
+    <div class="d-none list_streamViewers">{{stream.currentViewers}}</div>
+    <div class="d-none list_streamTopic">{{stream.topic | get_topicName }}</div>
+    <div class="streamCard-badges">
+        {% if stream.linkedChannel | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+        {% endif %}
+        {{ core_ui.live_badge() }}
+        {{ core_ui.live_views_badge(stream.currentViewers) }}
+    </div>
+    <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
+      <img class="streamCard-thumb boxShadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{ stream.linkedChannel | get_channelLocationFromID }}.png">
     </a>
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-2">
+            <a href="/streamer/{{stream.linkedChannel | channeltoOwnerID}}">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ stream.linkedChannel | channeltoOwnerID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+            </a>
+          </div>
+          <div class="col-10">
+            <div class="card-body">
+              <p class="card-text textShadow">
+                <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName }}</a></b><br>
+                <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | get_channelName }}">{{ stream.linkedChannel | get_channelName  }}</a><br>
+                <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="streamCard-tags row g-0">
+            <div class="col-12">
+                  {% for tag in stream.linkedChannel | get_channelTags %}
+                    <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+                  {% endfor %}
+            </div>
+        </div>
+    </div>
 </li>
 {% endmacro %}
 
