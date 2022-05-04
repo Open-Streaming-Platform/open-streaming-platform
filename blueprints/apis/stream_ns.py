@@ -4,6 +4,8 @@ from flask import request
 from classes import Stream
 from classes import apikey
 from classes import topics
+from classes import settings
+from classes import upvotes
 from classes.shared import db
 
 from functions import cachedDbCalls
@@ -23,9 +25,48 @@ class api_1_ListStreams(Resource):
         """
              Returns a List of All Active Streams
         """
-        streamList = Stream.Stream.query.filter_by(active=True).all()
+        results = []
+        sysSettings = cachedDbCalls.getSystemSettings()
+
+        streamList = Stream.Stream.query.filter_by(active=True).\
+            with_entities(Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp,
+                          Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
+                          Stream.Stream.currentViewers, Stream.Stream.active, Stream.Stream.rtmpServer).all()
+        for stream in streamList:
+            channelQuery = cachedDbCalls.getChannel(stream.linkedChannel)
+            if channelQuery.private != True:
+                rtmpQuery = settings.rtmpServer.query.filter_by(id=stream.rtmpServer).first()
+                upvotesQueryCount = upvotes.streamUpvotes.query.filter_by(streamID=stream.id).count()
+
+                streamURL = ''
+                if sysSettings.adaptiveStreaming is True:
+                    streamURL = '/live-adapt/' + channelQuery.channelLoc + '.m3u8'
+                else:
+                    streamURL = '/live/' + channelQuery.channelLoc + '/index.m3u8'
+
+                entry = {
+                    'id': stream.id,
+                    'uuid': stream.uuid,
+                    'startTimestamp': str(stream.startTimestamp),
+                    'channelID': stream.linkedChannel,
+                    'channelEndpointID': channelQuery.channelLoc,
+                    'owningUser': channelQuery.owningUser,
+                    'streamPage': '/view/' + channelQuery.channelLoc + '/',
+                    'streamURL': streamURL,
+                    'streamName': stream.streamName,
+                    'thumbnail': '/stream-thumb/' + channelQuery.channelLoc + '.png',
+                    'gifLocation': '/stream-thumb/' + channelQuery.channelLoc + '.gif',
+                    'topic': stream.topic,
+                    'rtmpServer': rtmpQuery.address,
+                    'currentViewers': stream.currentViewers,
+                    'totalViewers': stream.currentViewers,
+                    'active': stream.active,
+                    'upvotes': upvotesQueryCount
+                }
+                results.append(entry)
+
         db.session.commit()
-        return {'results': [ob.serialize() for ob in streamList if ob.channel.private is False]}
+        return {'results': results}
 
 
 @api.route('/<int:streamID>')
