@@ -3,6 +3,7 @@ from celery.result import AsyncResult
 import glob
 import datetime
 import logging
+import os
 from flask import current_app
 
 from classes.shared import celery, db
@@ -61,8 +62,7 @@ def check_video_thumbnails(self):
     """
     Validates that all Recorded Videos Contain Thumbnails
     """
-    recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, thumbnailLocation=None).with_entities(
-        RecordedVideo.RecordedVideo.id).all()
+    recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, thumbnailLocation=None).with_entities(RecordedVideo.RecordedVideo.id).all()
     videosUpdated = []
     for video in recordedVideoQuery:
         results = videoFunc.setVideoThumbnail(video.id, 0)
@@ -136,6 +136,11 @@ def reprocess_stuck_videos(self):
 @celery.task(bind=True)
 def process_ingest_folder(self):
     vidRoot = current_app.config['WEB_ROOT']
+    if not os.path.isdir(vidRoot + '/ingest'):
+        try:
+            os.mkdir(vidRoot + '/ingest')
+        except:
+            return 'Fail: Ingest Folder Does Not Exist and Can Not Create'
     channelFolders = glob.glob(vidRoot + "/ingest/*/")
     videosProcessed = []
     for channelFolder in channelFolders:
