@@ -29,6 +29,7 @@
             {% elif panelItem.type == 1  %}
                 {% set panelStreamList = getPanelStreamList(panelItem.order, 16) %}
                 {% if panelStreamList != [] %}
+                    {{ panelStreamList }}
                     {{ panels.live_streams_panel(panelStreamList, title=panelItem.header) }}
                 {% endif %}
             {% elif panelItem.type == 2  %}
