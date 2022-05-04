@@ -23,7 +23,8 @@ class api_1_ListStreams(Resource):
         """
              Returns a List of All Active Streams
         """
-        streamList = Stream.Stream.query.filter_by(active=True).load_only('id').all()
+        #streamList = Stream.Stream.query.filter_by(active=True).load_only('id').all()
+        streamList = Stream.Stream.query.filter(Stream.Stream.active == True).load_only('id').all()
         db.session.commit()
         return {'results': [ob.serialize() for ob in streamList if ob.channel.private is False]}
 
