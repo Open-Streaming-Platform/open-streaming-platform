@@ -357,7 +357,7 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     newVideo = RecordedVideo.RecordedVideo(ChannelQuery.owningUser, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
                                            "", currentTime, ChannelQuery.allowComments, videoPublishState)
 
-    newFileNameGUID = uuid.uuid4()
+    newFileNameGUID = str(uuid.uuid4())
     videoLoc = ChannelQuery.channelLoc + "/" + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
     videoPath = videos_root + videoLoc
