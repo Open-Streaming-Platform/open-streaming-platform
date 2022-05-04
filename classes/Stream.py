@@ -2,6 +2,8 @@ from .shared import db
 from .settings import settings
 from uuid import uuid4
 
+from functions import cachedDbCalls
+
 import datetime
 
 class Stream(db.Model):
@@ -51,7 +53,7 @@ class Stream(db.Model):
         db.session.commit()
 
     def serialize(self):
-        sysSettings = settings.query.first()
+        sysSettings = cachedDbCalls.getSystemSettings()
         streamURL = ''
         if sysSettings.adaptiveStreaming is True:
             streamURL = '/live-adapt/' + self.channel.channelLoc + '.m3u8'
