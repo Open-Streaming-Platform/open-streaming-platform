@@ -435,6 +435,21 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     else:
         return ("Failure", "Video File Missing")
 
+def processFLVUpload(path):
+    destinationPath = path.replace('flv','mp4')
+
+    processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', path, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
+
+    destinationFilePath = pathlib.Path(destinationPath)
+    if destinationFilePath.is_file() == False:
+        return False
+
+    oldFilePath = pathlib.Path(path)
+    oldFilePath.unlink()
+
+    return True
+
+
 def processStreamVideo(path, channelLoc):
 
     inputPath = globalvars.videoRoot + 'pending/' + path

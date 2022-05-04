@@ -147,6 +147,7 @@ def process_ingest_folder(self):
         channelLoc = channelFolder.replace(vidRoot + '/ingest/','')[:-1]
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
+            # Process MP4 Files
             pendingFiles = glob.glob(vidRoot + "/ingest/" + channelLoc + "/*.mp4")
             for file in pendingFiles:
                 filename = file.replace(vidRoot + '/ingest/' + channelLoc + '/', '')
@@ -156,6 +157,20 @@ def process_ingest_folder(self):
                                   args=(filename, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
                                   kwargs=({'sourcePath': vidRoot + '/ingest/' + channelLoc})
                                   ).apply_async()
+
+            # Process FLV Files
+            pendingFiles = glob.glob(vidRoot + "/ingest/" + channelLoc + "/*.flv")
+            for file in pendingFiles:
+                videoFunc.processFLVUpload(file)
+
+                filename = file.replace(vidRoot + '/ingest/' + channelLoc + '/', '').replace('.flv', '.mp4')
+
+                videosProcessed.append(file)
+                results = subtask('functions.scheduled_tasks.video_tasks.process_video_upload',
+                                  args=(filename, '', channelQuery.topic, str(datetime.datetime.now()), '', channelQuery.id),
+                                  kwargs=({'sourcePath': vidRoot + '/ingest/' + channelLoc})
+                                  ).apply_async()
+
     return "Complete - " + str(videosProcessed)
 
 @celery.task(bind=True)
