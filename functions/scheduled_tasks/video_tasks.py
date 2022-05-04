@@ -123,8 +123,8 @@ def reprocess_stuck_videos(self):
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=False, pending=True).all()
     for video in videoQuery:
         if video.videoLocation != '' and video.get_video_exists():
-            streamQuery = Stream.Stream.query.filter_by(id=video.originalStreamID).first()
-            if streamQuery is None:
+            streamQuery = Stream.Stream.query.filter_by(id=video.originalStreamID, active=False, complete=True, pending=False).first()
+            if streamQuery is not None:
                 channelQuery = Channel.Channel.query.filter_by(id=video.channelID).first()
                 results = subtask('functions.scheduled_tasks.rtmpFunc.rtmp_rec_Complete_handler',
                                   args=(channelQuery.channelLoc, video.videoLocation), kwargs={'pendingVideoID': video.id}).apply_async()
