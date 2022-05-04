@@ -534,7 +534,7 @@ def getPanelVideoList(order, limitTo):
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, Channel.Channel.protected,
                            Channel.Channel.channelName.label('ChanName')) \
-            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo)
+            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo).all()
     elif order == 1:
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
@@ -545,7 +545,7 @@ def getPanelVideoList(order, limitTo):
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, Channel.Channel.protected,
                            Channel.Channel.channelName.label('ChanName')) \
-            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo)
+            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo).all()
     elif order == 2:
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
@@ -556,7 +556,7 @@ def getPanelVideoList(order, limitTo):
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, Channel.Channel.protected,
                            Channel.Channel.channelName.label('ChanName')) \
-            .order_by(func.random()).limit(limitTo)
+            .order_by(func.random()).limit(limitTo).all()
     else:
         recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
             .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
@@ -567,7 +567,7 @@ def getPanelVideoList(order, limitTo):
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, Channel.Channel.protected,
                            Channel.Channel.channelName.label('ChanName')) \
-            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo)
+            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo).all()
     return recordedQuery
 
 def getPanelClipList(order, limitTo):
@@ -581,7 +581,7 @@ def getPanelClipList(order, limitTo):
                            RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
-            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo)
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo).all()
     elif order == 1:
         clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
             .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
@@ -592,7 +592,7 @@ def getPanelClipList(order, limitTo):
                            RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
-            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo)
+            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo).all()
     elif order == 2:
         clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
             .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
@@ -603,7 +603,7 @@ def getPanelClipList(order, limitTo):
                            Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic,
                            RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation,
                            RecordedVideo.Clips.parentVideo) \
-            .order_by(func.random()).limit(limitTo)
+            .order_by(func.random()).limit(limitTo).all()
     else:
         clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
             .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
@@ -614,7 +614,7 @@ def getPanelClipList(order, limitTo):
                            RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
                            RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
                            Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
-            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo)
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo).all()
     return clipQuery
 
 def orderVideoBy(videoList, orderById):
