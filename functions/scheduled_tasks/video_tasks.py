@@ -77,10 +77,10 @@ def check_video_retention(self):
     Checks if Server Retention or Channel Retention of Videos has been met and delete videos exceeding the lower of the two
     """
     currentTime = datetime.datetime.utcnow()
-    sysSettings = settings.settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     videoCount = 0
     if sysSettings != None:
-        channelQuery = Channel.Channel.query.all()
+        channelQuery = Channel.Channel.query.with_entities(Channel.Channel.id, Channel.Channel.maxVideoRetention).all()
         for channel in channelQuery:
             if sysSettings.maxVideoRetention > 0 or channel.maxVideoRetention > 0:
                 setRetentionArray = []
@@ -89,7 +89,9 @@ def check_video_retention(self):
                 if channel.maxVideoRetention > 0:
                     setRetentionArray.append(channel.maxVideoRetention)
                 setRetention = min(setRetentionArray)
-                for video in channel.recordedVideo:
+                VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelQuery.id)\
+                    .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.videoDate).all()
+                for video in VideoQuery:
                     if currentTime - datetime.timedelta(days=setRetention) > video.videoDate:
                         results = subtask('functions.scheduled_tasks.video_tasks.delete_video', args=(video.id, )).apply_async()
                         videoCount = videoCount + 1
