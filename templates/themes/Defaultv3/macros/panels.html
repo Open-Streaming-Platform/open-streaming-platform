@@ -192,31 +192,31 @@
 </script>
 {% endmacro %}
 
-{% macro featured_streamer_panel(stream, channel, panelContent, title="Featured Stream") %}
+{% macro featured_streamer_panel(stream, panelContent, title="Featured Stream") %}
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
 <script src="/static/vendor/videojs/js/video.js"></script>
 <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
 <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
 
-<div id="featured-stream-{{ channel.id }}" class="featured-stream-container insetBoxShadow">
+<div id="featured-stream-{{ stream.linkedChannel }}" class="featured-stream-container insetBoxShadow">
   <h4 class="textShadow"><b>{{ title }}</b></h4>
   <div class="row">
     <div class="col-sm-12 col-md-3">
-        {{ live_stream(channel, videoDivID=channel.id, muted=True) }}
+        {{ live_stream(stream.linkedChannel | get_Channel, videoDivID=stream.linkedChannel, muted=True) }}
     </div>
     <div class="col-sm-12 col-md-9">
       <div class="ms-4">
         <div class="card mb-3" style="max-width: 540px;">
           <div class="row g-0">
             <div class="col-2">
-              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channel.owningUser | get_pictureLocation}}"  onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ stream.linkedChannel | channeltoOwnerID | get_pictureLocation}}"  onerror="this.src='/static/img/user2.png';" alt="Username Picture">
             </div>
             <div class="col-10">
               <div class="card-body">
                 <p class="card-text textShadow">
                   <b>{{ stream.streamName}}</b><br>
-                     {{ channel.owningUser | get_userName }}<br>
+                     {{ stream.linkedChannel | channeltoOwnerID | get_userName }}<br>
                      {{ stream.topic | get_topicName}}
                 </p>
                 <span class="live-badge boxShadow textShadow"><b>Live</b></span>
@@ -226,7 +226,7 @@
           </div>
           <div class="streamCard-tags row g-0">
             <div class="col-12">
-                  {% for tag in channel.id | get_channelTags %}
+                  {% for tag in stream.linkedChannel | get_channelTags %}
                     <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
                   {% endfor %}
             </div>

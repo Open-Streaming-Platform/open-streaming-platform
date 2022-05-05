@@ -94,6 +94,7 @@ def init(context):
     context.jinja_env.filters['get_channelVideos'] = get_channelVideos
     context.jinja_env.filters['get_channelClips'] = get_channelClips
     context.jinja_env.filters['get_flaggedForDeletion'] = get_flaggedForDeletion
+    context.jinja_env.filters['get_channelData'] = get_channelData
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -463,7 +464,10 @@ def getPanel(panelId, panelType):
     return panel
 
 def getLiveStream(channelId):
-    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId, active=True).first()
+    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId, active=True) \
+        .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers,
+                       Stream.Stream.topic, Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp,
+                       Stream.Stream.totalViewers, Stream.Stream.active).first()
     return liveStreamQuery
 
 def getLiveStreamURL(channel):
@@ -685,3 +689,7 @@ def get_flaggedForDeletion(userID):
         return str(flagQuery.timestamp)
     else:
         return ''
+
+def get_channelData(channelID):
+    channelQuery = cachedDbCalls.getChannel(int(channelID))
+    return channelQuery
