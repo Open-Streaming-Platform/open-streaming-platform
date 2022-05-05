@@ -127,7 +127,7 @@ def reprocess_stuck_videos(self):
         if video.videoLocation != '' and video.get_video_exists():
             streamQuery = Stream.Stream.query.filter_by(id=video.originalStreamID, active=False, complete=True, pending=False).first()
             if streamQuery is not None:
-                channelQuery = Channel.Channel.query.filter_by(id=video.channelID).first()
+                channelQuery = cachedDbCalls.getChannel(video.channelID)
                 results = subtask('functions.scheduled_tasks.rtmpFunc.rtmp_rec_Complete_handler',
                                   args=(channelQuery.channelLoc, video.videoLocation), kwargs={'pendingVideoID': video.id}).apply_async()
                 log.info({"level": "warning", "taskID": self.request.id.__str__(),
@@ -173,6 +173,8 @@ def process_ingest_folder(self):
                                   kwargs=({'sourcePath': vidRoot + '/ingest/' + channelLoc})
                                   ).apply_async()
 
+    log.info({"level": "info", "taskID": self.request.id.__str__(),
+              "message": "Processed Video Uploads - Path: " + str(videosProcessed)})
     return "Complete - " + str(videosProcessed)
 
 @celery.task(bind=True)
