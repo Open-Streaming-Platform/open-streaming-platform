@@ -543,7 +543,7 @@ def inject_ownedChannels():
 
 @app.context_processor
 def inject_topics():
-    topicQuery = topics.topics.query.with_entities(topics.topics.id, topics.topics.name, topics.topics.iconClass).all()
+    topicQuery = cachedDbCalls.getAllTopics()
     return dict(uploadTopics=topicQuery)
 
 @app.context_processor

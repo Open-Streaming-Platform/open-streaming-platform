@@ -265,7 +265,7 @@ class api_1_GetRestreams(Resource):
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey is not None:
                 if requestAPIKey.isValid():
-                    channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).with_entities(Channel.Channel.id).first()
 
         else:
             # Perform RTMP IP Authorization Check
@@ -273,10 +273,11 @@ class api_1_GetRestreams(Resource):
             if authorized[0] is False:
                 return {'results': {'message': "Unauthorized RTMP Server or Missing User API Key - " + authorized[1]}}, 400
 
-            channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+            channelData = cachedDbCalls.getChannelByLoc(channelEndpointID)
 
         if channelData is not None:
-            restreamDestinations = channelData.restreamDestinations
+            restreamDestinationQuery = Channel.restreamDestinations.query.filter_by(channel=channelData.id).all()
+            restreamDestinations = restreamDestinationQuery
             db.session.commit()
             return {'results': [ob.serialize() for ob in restreamDestinations]}
 
