@@ -255,7 +255,7 @@
         };
         return options;
     };
-    var player{{ channel.id }} = videojs('video{{ channel.id }}', {
+    var player{{ stream.linkedChannel }} = videojs('video{{ stream.linkedChannel }}', {
         autoplay: true,
         errorDisplay: false,
         liveui: true,
@@ -279,43 +279,43 @@
             reloadSourceOnError: {}
         }
     });
-    qualityLevels = player{{ channel.id }}.qualityLevels();
-    httpSelector = player{{ channel.id }}.httpSourceSelector();
+    qualityLevels = player{{ stream.linkedChannel }}.qualityLevels();
+    httpSelector = player{{ stream.linkedChannel }}.httpSourceSelector();
 
-    player{{ channel.id }}.ready(function() {
+    player{{ stream.linkedChannel  }}.ready(function() {
         this.src({
-            src: '{{ channel | getLiveStreamURL }}',
+            src: '{{ stream.linkedChannel | get_channelData | getLiveStreamURL }}',
             type: 'application/x-mpegURL'
         });
     });
-    player{{ channel.id }}.play();  
-    player{{ channel.id }}.on('click', function(evt) {
+    player{{ stream.linkedChannel  }}.play();
+    player{{ stream.linkedChannel  }}.on('click', function(evt) {
         if (evt.target.tagName === 'VIDEO') {
-            window.open("/view/{{ channel.channelLoc }}","_self")
+            window.open("/view/{{ stream.linkedChannel | get_channelLocationFromID }}","_self")
         }
     });
 
-    var videoMaxHeight = document.getElementById("video{{channel.id}}").style.maxHeight;
-    player{{ channel.id }}.on('fullscreenchange', function (elm, data) {
-        if (player{{ channel.id }}.isFullscreen()) {
-            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = '100vh';
+    var videoMaxHeight = document.getElementById("video{{stream.linkedChannel}}").style.maxHeight;
+    player{{ stream.linkedChannel }}.on('fullscreenchange', function (elm, data) {
+        if (player{{ stream.linkedChannel }}.isFullscreen()) {
+            document.getElementById("video{{stream.linkedChannel}}_html5_api").style.maxHeight = '100vh';
         } else {
-            document.getElementById("video{{channel.id}}_html5_api").style.maxHeight = videoMaxHeight;
+            document.getElementById("video{{stream.linkedChannel}}_html5_api").style.maxHeight = videoMaxHeight;
         }
     });
 
-    function monitor_vid_{{ channel.id }}(vidplayer){
+    function monitor_vid_{{ stream.linkedChannel }}(vidplayer){
         videoJSObj = vidplayer;
         currentReadyState = videoJSObj.readyState();
-        var panelDiv = document.getElementById('featured-stream-{{ channel.id }}');
-        $.getJSON('/apiv1/channel/{{channel.channelLoc}}/streams', function(data) {
+        var panelDiv = document.getElementById('featured-stream-{{ stream.linkedChannel }}');
+        $.getJSON('/apiv1/channel/{{stream.linkedChannel | get_channelLocationFromID }}/streams', function(data) {
             var streamList = data['results'];
             if (streamList.length > 0) {
                 panelDiv.style.display = "block";
                 if (currentReadyState <= 2) {
                     try {
                         videoJSObj.reset();
-                        videoJSObj.src('{{ channel | getLiveStreamURL }}');
+                        videoJSObj.src('{{ stream.linkedChannel | get_channelData | getLiveStreamURL }}');
                         videoJSObj.pause();
                         videoJSObj.trigger('loadstart');
                         videoJSObj.play();
@@ -338,7 +338,7 @@
     // Execute the Video Monitor Script on Page Load
     $(document).ready( function () {
         setInterval(function () {
-            monitor_vid_{{ channel.id }} (player{{ channel.id }});
+            monitor_vid_{{ stream.linkedChannel  }} (player{{ stream.linkedChannel  }});
         }, 10000);
     });
 
