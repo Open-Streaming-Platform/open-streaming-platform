@@ -176,7 +176,7 @@
         var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
 
         // Initialize Stream Player
-        videojs.Hls.xhr.beforeRequest = (options) => {
+        videojs.Vhs.xhr.beforeRequest = (options) => {
             options.headers = {
                 "X-Token-Session": hls_token
             };
