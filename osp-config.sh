@@ -242,6 +242,7 @@ install_nginx_core() {
   sudo mkdir -p "$web_root/keys" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/keys-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/pending" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/ingest" >> $OSPLOG 2>&1
 
   s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
   if test $s3DriveMount -eq 0
@@ -477,6 +478,7 @@ install_osp() {
   sudo mkdir -p "$web_root/keys" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/keys-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/pending" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/ingest" >> $OSPLOG 2>&1
 
   s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
   if test $s3DriveMount -eq 0
