@@ -49,7 +49,7 @@
 {% macro topics_panel(topicList, title="Topics" ) %}
 <div class="topics-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="topicList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="topicList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-between" style="width:100%">
   {% for topic in topicList %}
     {{ cards.topic_card(topic) }}
   {% endfor %}
@@ -60,7 +60,7 @@
 {% macro streamer_panel(streamerList, title="Streamers" ) %}
 <div class="streamer-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="streamerList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="streamerList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-between" style="width:100%">
   {% for streamer in streamerList %}
     {{ cards.streamer_card(streamer) }}
   {% endfor %}
@@ -71,7 +71,7 @@
 {% macro users_panel(streamerList, title="Users" ) %}
 <div class="streamer-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="userList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%">
+  <ul id="userList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-between" style="width:100%">
     {% for user in userList %}
       {{ cards.user_card(user) }}
     {% endfor %}
@@ -83,7 +83,7 @@
 {%- set listClass = '' | generateRandomString %}
 <div id="{{ listClass }}" class="channels-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
-  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-start list" style="width:100%">
+  <ul id="channelList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-between list" style="width:100%">
   {% for channel in channelList %}
       {% if channel.id | is_channelObjVisible %}
         {{ cards.channel_card(channel) }}
@@ -124,7 +124,7 @@
       <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
     </div>
   </div>
-  <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }} list" style="width:100%">
+  <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-between list" style="width:100%">
       {% for video in videoList | orderVideoBy(order) %}
           {% if video.channelID | is_channelObjVisible %}
             {{ cards.video_card(video) }}
@@ -165,7 +165,7 @@
       <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order==1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
     </div>
   </div>
-  <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-{{ justification }} list" style="width:100%">
+  <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-between list" style="width:100%">
       {% for clip in clipsList %}
           {% if clip.parentVideo | videotoChannelID | is_channelObjVisible %}
             {{ cards.clip_card(clip) }}
