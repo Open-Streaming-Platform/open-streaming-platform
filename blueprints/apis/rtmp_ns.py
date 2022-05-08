@@ -22,7 +22,8 @@ def checkRTMPAuthIP(requestData):
     else:
         requestIP = requestData.environ['HTTP_X_FORWARDED_FOR']
 
-    authorizedRTMPServers = settings.rtmpServer.query.all()
+    authorizedRTMPServers = settings.rtmpServer.query\
+        .with_entities(settings.rtmpServer.id, settings.rtmpServer.active, settings.rtmpServer.address).all()
 
     receivedIP = requestIP
     ipList = requestIP.split(',')
