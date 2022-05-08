@@ -211,7 +211,11 @@ def rtmp_user_deauth_check(key, ipaddress):
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
 
     for streamId in closingStreamId:
-        authedStream = Stream.Stream.query.filter_by(id=streamId).all()
+        authedStream = Stream.Stream.query.filter_by(id=streamId)\
+            .with_entities(Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.linkedChannel,
+                           Stream.Stream.streamKey, Stream.Stream.streamName, Stream.Stream.topic, Stream.Stream.currentViewers, Stream.Stream.totalViewers,
+                           Stream.Stream.active, Stream.Stream.pending, Stream.Stream.complete, Stream.Stream.complete, Stream.Stream.recordedVideoId,
+                           Stream.Stream.rtmpServer).all()
         if authedStream is not []:
             for stream in authedStream:
                 wasRecorded = False
@@ -242,8 +246,10 @@ def rtmp_user_deauth_check(key, ipaddress):
                 if topicQuery is not None:
                     topicName = topicQuery.name
 
-                newStreamHistory = logs.streamHistory(stream.uuid, stream.channel.owningUser, stream.channel.owner.username, stream.linkedChannel, stream.channel.channelName, stream.streamName,
-                                                      stream.startTimestamp, endTimestamp, stream.totalViewers, stream.get_upvotes(), wasRecorded, stream.topic, topicName, recordingID)
+                channelOwnerUserName = templateFilters.get_userName(channelRequest.owningUser)
+
+                newStreamHistory = logs.streamHistory(stream.uuid, channelRequest.owningUser, channelOwnerUserName, stream.linkedChannel, channelRequest.channelName, stream.streamName,
+                                                      stream.startTimestamp, endTimestamp, stream.totalViewers, templateFilters.get_Stream_Upvotes_Filter(stream.id), wasRecorded, stream.topic, topicName, recordingID)
                 db.session.add(newStreamHistory)
                 #db.session.commit()
 
