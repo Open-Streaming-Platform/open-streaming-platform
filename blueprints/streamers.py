@@ -49,14 +49,21 @@ def streamers_view_page(userID):
     streamerQuery = Sec.User.query.filter_by(id=userID).first()
     if streamerQuery is not None:
         if streamerQuery.has_role('Streamer'):
-            userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
-
+            userChannels = cachedDbCalls.getChannelByOwnerId(userID)
+            channelIds = []
+            for channel in userChannels:
+                channelIds.append(channel.id)
             streams = []
 
-            for channel in userChannels:
-                for stream in channel.stream:
-                    if stream.active is True:
-                        streams.append(stream)
+            streams = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.linkedChannel.in_(channelIds))\
+                .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                               Stream.Stream.streamName, Stream.Stream.totalViewers, Stream.Stream.startTimestamp,
+                               Stream.Stream.uuid, Stream.Stream.active).all()
+
+            #for channel in userChannels:
+            #    for stream in channel.stream:
+            #        if stream.active is True:
+            #            streams.append(stream)
 
             recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False, published=True).all()
 
