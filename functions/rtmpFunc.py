@@ -197,7 +197,10 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     currentTime = datetime.datetime.utcnow()
 
-    closingStreamId = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).with_entities(Stream.Stream.id).all()
+    closingStreams = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).with_entities(Stream.Stream.id, Stream.Stream.uuid).all()
+    closingStreamIds = []
+    for stream in closingStreams:
+        closingStreamIds.append(stream.id)
     authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).update(dict(endTimeStamp=currentTime, active=False, pending=False, complete=True))
     #if authedStream is not []:
     #    for stream in authedStream:
@@ -210,7 +213,7 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
 
-    for streamId in closingStreamId:
+    for streamId in closingStreamIds:
         authedStream = Stream.Stream.query.filter_by(id=streamId)\
             .with_entities(Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.linkedChannel,
                            Stream.Stream.streamKey, Stream.Stream.streamName, Stream.Stream.topic, Stream.Stream.currentViewers, Stream.Stream.totalViewers,
