@@ -197,15 +197,15 @@ def rtmp_user_deauth_check(key, ipaddress):
 
     currentTime = datetime.datetime.utcnow()
 
-    closingStreamId = []
-    authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).all()
-    if authedStream is not []:
-        for stream in authedStream:
-            closingStreamId.append(stream.id)
-            stream.endTimeStamp = currentTime
-            stream.active = False
-            stream.pending = False
-            stream.complete = True
+    closingStreamId = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).with_entities(Stream.Stream.id).all()
+    authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).update(dict(endTimeStamp=currentTime, active=False, pending=False, complete=True))
+    #if authedStream is not []:
+    #    for stream in authedStream:
+    #        closingStreamId.append(stream.id)
+    #        stream.endTimeStamp = currentTime
+    #        stream.active = False
+    #        stream.pending = False
+    #        stream.complete = True
     db.session.commit()
 
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
@@ -223,7 +223,7 @@ def rtmp_user_deauth_check(key, ipaddress):
                 endTimestamp = datetime.datetime.utcnow()
                 length = (endTimestamp - stream.startTimestamp).total_seconds()
 
-                pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, videoLocation="", originalStreamID=stream.id).first()
+                pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelRequest.id, originalStreamID=stream.id).first()
 
                 if pendingVideo is not None:
                     pendingVideo.length = length
