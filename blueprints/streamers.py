@@ -49,7 +49,7 @@ def streamers_view_page(userID):
     streamerQuery = Sec.User.query.filter_by(id=userID).first()
     if streamerQuery is not None:
         if streamerQuery.has_role('Streamer'):
-            userChannels = cachedDbCalls.getChannelByOwnerId(userID)
+            userChannels = cachedDbCalls.getChanneslByOwnerId(userID)
             channelIds = []
             for channel in userChannels:
                 channelIds.append(channel.id)
