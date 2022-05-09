@@ -208,6 +208,16 @@ def getVideo(videoID):
                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).first()
     return recordedVid
 
+def getAllVideoByOwnerId(ownerId):
+    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(owningUser=ownerId, pending=False, published=True). \
+        with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.videoDate,
+                      RecordedVideo.RecordedVideo.owningUser, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.channelID,
+                      RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                      RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                      RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                      RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+    return recordedVid
+
 @cache.memoize(timeout=60)
 def getVideoCommentCount(videoID):
     videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
@@ -262,9 +272,9 @@ def searchVideos(term):
 def getClipChannelID(clipID):
     ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
     if ClipQuery is not None:
-        RecordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=ClipQuery.parentVideo).first()
+        RecordedVideoQuery = getVideo(ClipQuery.parentVideo)
         if RecordedVideo is not None:
-            ChannelQuery = Channel.Channel.query.filter_by(id=RecordedVideoQuery.channelID).first()
+            ChannelQuery = getChannel(RecordedVideoQuery.channelID)
             if ChannelQuery is not None:
                 return ChannelQuery.id
     return None
@@ -277,6 +287,26 @@ def getAllClipsForChannel_View(channelID):
         clipQuery = RecordedVideo.Clips.query.filter_by(parentVideo=vid.id, published=True).all()
         clipList = clipList + clipQuery
     return clipList
+
+@cache.memoize(timeout=60)
+def getAllClipsForUser(userId):
+    videoQuery = getAllVideoByOwnerId(userId)
+    videoIds = []
+    for video in videoQuery:
+        videoIds.append(video.id)
+
+    clips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.published == True, RecordedVideo.Clips.parentVideo.in_(videoIds)) \
+        .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+        .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+        .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+        .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid,
+                       RecordedVideo.Clips.thumbnailLocation,
+                       Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                       Channel.Channel.protected, Channel.Channel.channelName,
+                       RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation,
+                       RecordedVideo.Clips.parentVideo, RecordedVideo.Clips.description,
+                       RecordedVideo.Clips.published).all()
+    return clips
 
 @cache.memoize(timeout=120)
 def searchClips(term):

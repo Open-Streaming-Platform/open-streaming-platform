@@ -53,28 +53,18 @@ def streamers_view_page(userID):
             channelIds = []
             for channel in userChannels:
                 channelIds.append(channel.id)
-            streams = []
 
             streams = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.linkedChannel.in_(channelIds))\
                 .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
                                Stream.Stream.streamName, Stream.Stream.totalViewers, Stream.Stream.startTimestamp,
                                Stream.Stream.uuid, Stream.Stream.active).all()
 
-            #for channel in userChannels:
-            #    for stream in channel.stream:
-            #        if stream.active is True:
-            #            streams.append(stream)
-
-            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False, published=True).all()
+            recordedVideoQuery = cachedDbCalls.getAllVideoByOwnerId(userID)
 
             # Sort Video to Show Newest First
             recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-            clipsList = []
-            for vid in recordedVideoQuery:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
+            clipsList = cachedDbCalls.getAllClipsForUser(userID)
 
             clipsList.sort(key=lambda x: x.views, reverse=True)
 
