@@ -247,19 +247,18 @@
 
         // Disconnect XMPP on Page Unload
         $(window).bind('beforeunload', function(){
+              // Terminate Video Player to Speed up Page Load
+              player.pause();
+              player.reset();
               // Leave Room First
               exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
               // Execute XMPP Disconnection Process
               //connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
               connection.flush();
               connection.disconnect();
-              // Disconnect from SocketIO
+             // Disconnect from SocketIO
               socket.emit('removeViewer', {data: channelLocation});
               socket.close();
-              // Terminate Video Player to Speed up Page Load
-              player.pause();
-              player.reset();
-
         });
     </script>
 

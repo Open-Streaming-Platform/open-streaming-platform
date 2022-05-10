@@ -202,13 +202,7 @@ def rtmp_user_deauth_check(key, ipaddress):
     for stream in closingStreams:
         closingStreamIds.append(stream.id)
     authedStream = Stream.Stream.query.filter_by(active=True, complete=False, streamKey=key).update(dict(endTimeStamp=currentTime, active=False, pending=False, complete=True))
-    #if authedStream is not []:
-    #    for stream in authedStream:
-    #        closingStreamId.append(stream.id)
-    #        stream.endTimeStamp = currentTime
-    #        stream.active = False
-    #        stream.pending = False
-    #        stream.complete = True
+
     db.session.commit()
 
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
