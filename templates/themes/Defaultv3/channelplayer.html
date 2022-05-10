@@ -250,6 +250,10 @@
               // Terminate Video Player to Speed up Page Load
               player.pause();
               player.reset();
+              // Clear all SetIntervals
+              for (var i = 1; i < 99999; i++) {
+                  window.clearInterval(i);
+              }
               // Leave Room First
               exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
               // Execute XMPP Disconnection Process
