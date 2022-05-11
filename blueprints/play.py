@@ -191,7 +191,7 @@ def vid_change_page(videoID):
             videoPublished = False
             if 'publishVideo' in request.form:
                 videoPublished = True
-            videoQuery.published = videoPublished
+            videoUpdateQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoQuery.id).update(dict(published=videoPublished))
             db.session.commit()
 
         result = videoFunc.changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments)
