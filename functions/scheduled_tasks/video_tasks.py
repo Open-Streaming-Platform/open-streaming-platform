@@ -89,7 +89,7 @@ def check_video_retention(self):
                 if channel.maxVideoRetention > 0:
                     setRetentionArray.append(channel.maxVideoRetention)
                 setRetention = min(setRetentionArray)
-                VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelQuery.id)\
+                VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channel.id)\
                     .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.videoDate).all()
                 for video in VideoQuery:
                     if currentTime - datetime.timedelta(days=setRetention) > video.videoDate:
