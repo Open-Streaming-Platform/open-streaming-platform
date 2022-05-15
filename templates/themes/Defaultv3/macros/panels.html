@@ -111,8 +111,8 @@
 {% endmacro %}
 
 {% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start", shadow=True) %}
-{%- set listClass = '' | generateRandomString %}
-<div id="{{ listClass }}" class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+{%- set videoListClass = '' | generateRandomString %}
+<div id="{{ videoListClass }}" class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <div class="row pb-4 mb-2">
     <div class="col-12 col-lg-7 px-0 align-items-start">
       <span class="h3 textShadow"><b>{{ title }}</b></span>
@@ -131,38 +131,37 @@
           {% endif %}
       {% endfor %}
   </ul>
-  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+  <ul id="paging_{{ videoListClass }}" class="pagination justify-content-center panel-pagination"></ul>
 </div>
 <script>
-    list_{{ listClass }}_options = {
+    list_{{ videoListClass }}_options = {
         valueNames: ['list-videoName', 'list-videoViews', 'list-videoDate', 'list-videoTopic'],
-        page: 10,
+        page: 15,
         pagination: true
     };
-    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-    if (list_{{ listClass }}.items.length <= 10) {
-        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    var list_{{ videoListClass }} = new List('{{videoListClass}}', list_{{ videoListClass }}_options);
+    if (list_{{ videoListClass }}.items.length <= 10) {
+        document.getElementById('paging_{{ videoListClass }}').style.display = "none";
     }
-    list_{{ listClass }}.on('updated', function(list) {
+    list_{{ videoListClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
-        document.getElementById('{{ listClass }}').scrollIntoView();
+        document.getElementById('{{ videoListClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
 
 {% macro clips_panel(clipsList, title="Clips", order=0, heightOverride=False, justification="start", shadow=True) %}
-{%- set listClass = '' | generateRandomString %}
-<div id="{{ listClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+{%- set clipListClass = '' | generateRandomString %}
+<div id="{{ clipListClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <div class="row pb-4 mb-2">
     <div class="col-12 col-lg-7 px-0 align-items-start">
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
       <span class="mr-1">Sort:</span>
-      <span class="sort mr-1" data-sort="list-videoName"><a href="#">Name</a></span>
-      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-videoViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
-      <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order==1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
+      <span class="sort mr-1" data-sort="list-clipName"><a href="#">Name</a></span>
+      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-clipViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
     </div>
   </div>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
@@ -172,22 +171,22 @@
           {% endif %}
       {% endfor %}
   </ul>
-  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+  <ul id="paging_{{ clipListClass }}" class="pagination justify-content-center panel-pagination"></ul>
 </div>
 <script>
-    list_{{ listClass }}_options = {
-        valueNames: ['list-clipName', 'list-clipViews', 'list-clipLength', 'list-clipTopic'],
+    list_{{ clipListClass }}_options = {
+        valueNames: ['list-clipName', 'list-clipViews'],
         page: 10,
         pagination: true
     };
-    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-    if (list_{{ listClass }}.items.length < 10) {
-        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    var list_{{ clipListClass }} = new List('{{clipListClass}}', list_{{ clipListClass }}_options);
+    if (list_{{ clipListClass }}.items.length <= 10) {
+        document.getElementById('paging_{{ clipListClass }}').style.display = "none";
     }
-    list_{{ listClass }}.on('updated', function(list) {
+    list_{{ clipListClass }}.on('updated', function (list) {
         lazyLoadInstance.update();
         resetGifHover();
-        document.getElementById('{{ listClass }}').scrollIntoView();
+        document.getElementById('{{ clipListClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
@@ -397,7 +396,7 @@
             {% endfor %}
         </div>
         <div class="channelButtons">
-          <a href="/view/{{ channelData.channelLoc }}" class="btn btn-primary boxShadow textShadow me-2"><b>View Live Channel</b></a>
+          <a href="/view/{{ channelData.channelLoc }}" class="btn btn-primary boxShadow textShadow me-2"><b>Live Channel</b></a>
         {% if current_user.is_authenticated %}
             <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{channelData.id}}")'>{% if subState == True %}<i class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
         {% else %}
@@ -1759,15 +1758,24 @@
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Messages</b>
-      <span class="float-end textShadow">
-        <span id="selectedMessages" class="me-4" style="display: none;">
-          <button class="btn btn-sm btn-primary boxShadow" onclick="markCheckedMessageAsRead();"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
-          <button class="btn btn-sm btn-danger boxShadow" onclick="deleteSelectedMessage();"><i class="fas fa-trash"></i> Delete Selected</button>
+        <span class="float-end textShadow dropdown">
+            <a class="dropdown-toggle mx-2" href="#" id="messageMenuDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="messageMenuDropdownLink">
+                <li class="my-2 mx-2">
+                    <a href="#" onclick="markAllMessagesAsRead();"><i class="fas fa-envelope-open-text"></i> Mark all as read</a>
+                </li>
+                <li class="my-2 mx-2">
+                    <a href="#" onclick="openModal('messageBanListModal');"><i class="fas fa-user-shield"></i> Blocked users</a>
+                </li>
+            </ul>
         </span>
-        <button class="btn btn-sm btn-primary boxShadow" onclick="markAllMessagesAsRead();"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
-        <button type="button" class="btn btn-sm btn-success boxShadow" onclick="openNewMessageModal();"><i class="fas fa-paper-plane"></i> New Message</button>
-        <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="openModal('messageBanListModal');"><i class="fas fa-user-shield"></i></button>
-      </span>
+        <span id="selectedMessages" class="float-end mx-2" style="display: none;">
+          <span class="mx-2" data-toggle="tooltip" title="Mark selected as read" onclick="markCheckedMessageAsRead();"><a href="#"><i class="fas fa-envelope-open-text"></i></a></span>
+          <span class="mx-2" data-toggle="tooltip" title="Delete seleted" onclick="deleteSelectedMessage();"><a href="#"><i class="fas fa-trash"></i></a></span>
+        </span>
+        <span class="float-end mx-2" data-toggle="tooltip" title="New message" onclick="openNewMessageModal();"><a href="#"><i class="fas fa-paper-plane"></i></a></span>
     </div>
     <div class="info-panel-box-body boxShadow">
       <table id="messageTable" class="table table-sm">
@@ -1833,39 +1841,41 @@
 {% endmacro %}
 
 {% macro notificaitons_panel(notificationList) %}
-    <div class="info-panel-box system-appearance-box">
-        <div class="info-panel-box-header boxShadow textShadow">
-        <b>Notifications</b>
-        <span class="float-end textShadow">
-            <button type="button" class="btn btn-sm btn-success boxShadow" onclick="clearAllListNotifications();">Mark all as read</button>
-        </span>
-        </div>
-        <div class="info-panel-box-body boxShadow">
-            <ul class="notificationCardList">
-                {% if notificationList != [] %}
-                  {% for entry in notificationList %}
-                  <li class="notification-box my-2" id="notificationList-{{entry.notificationID}}">
+    <div class="row info-panel-box system-appearance-box justify-content-center">
+        <div class="col-lg-6 col-md-12 col-sm-12">
+            <div class="info-panel-box-header boxShadow textShadow">
+            <b>Notifications</b>
+            <span class="float-end textShadow">
+                <button type="button" class="btn btn-sm btn-success boxShadow" onclick="clearAllListNotifications();">Mark all as read</button>
+            </span>
+            </div>
+            <div class="info-panel-box-body boxShadow">
+                <ul class="notificationCardList">
+                    {% if notificationList != [] %}
+                      {% for entry in notificationList %}
+                      <li class="notification-box my-2" id="notificationList-{{entry.notificationID}}">
+                        <div class="row">
+                          <div class="col-auto {% if entry.read == False %}unreadItemIndicator{% endif %}">
+                            <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                          </div>
+                          <div class="col-lg-11 col-sm-11 col-11">
+                            <span class="float-end"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                            <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
+                            <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
+                          </div>
+                        </div>
+                      </li>
+                      {% endfor %}
+                    {% endif %}
+                  <li class="notification-box" id="notificationList-empty" {% if notificationList != [] and notificationList != None %} style="display:none;" {% endif %}>
                     <div class="row">
-                      <div class="col-auto {% if entry.read == False %}unreadItemIndicator{% endif %}">
-                        <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
-                      </div>
-                      <div class="col-lg-11 col-sm-11 col-11">
-                        <span class="float-end"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
-                        <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
-                        <small class="text-primary">{{entry.timestamp|normalize_date}}</small>
+                      <div class="col-lg-12 col-sm-12 col-12">
+                        <div>No Notifications</div>
                       </div>
                     </div>
-                  </li>
-                  {% endfor %}
-                {% endif %}
-              <li class="notification-box" id="notificationList-empty" {% if notificationList != [] and notificationList != None %} style="display:none;" {% endif %}>
-                <div class="row">
-                  <div class="col-lg-12 col-sm-12 col-12">
-                    <div>No Notifications</div>
-                  </div>
-                </div>
-             </li>
-            </ul>
+                 </li>
+                </ul>
+            </div>
         </div>
     </div>
 {% endmacro %}

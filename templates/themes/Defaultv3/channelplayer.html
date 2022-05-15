@@ -427,6 +427,20 @@
         })
     </script>
 
+    <script>
+        const video = document.querySelector('video');
+        video.addEventListener('play', (event) => {
+            var cookieVolume = getCookie('ospvolume');
+            if (!(cookieVolume == null)) {
+                player.volume(cookieVolume);
+            }
+        });
+
+        video.addEventListener('volumechange', (event) => {
+            var currentVolume = player.volume();
+            setCookie('ospvolume', currentVolume, 365);
+        });
+    </script>
 
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
@@ -455,7 +469,7 @@
 
         function disableTheaterMode() {
             document.getElementById("nav").style.display = 'block';
-            document.getElementById("leftnav").style.display = 'block';
+            document.getElementById("leftnav").style.removeProperty('display');
             document.getElementById("vidControls").style.display = 'block';
             document.getElementById("video").style.maxHeight = videoMaxHeight;
             document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
