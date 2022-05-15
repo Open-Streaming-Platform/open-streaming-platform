@@ -469,7 +469,7 @@
 
         function disableTheaterMode() {
             document.getElementById("nav").style.display = 'block';
-            document.getElementById("leftnav").style.display = 'block';
+            document.getElementById("leftnav").style.removeProperty('display');
             document.getElementById("vidControls").style.display = 'block';
             document.getElementById("video").style.maxHeight = videoMaxHeight;
             document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
