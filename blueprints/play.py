@@ -40,7 +40,7 @@ def view_vid_page(videoID):
 
         if recordedVid.published is False:
             if current_user.is_authenticated:
-                if current_user != recordedVid.owningUser and current_user.has_role('Admin') is False:
+                if current_user.id != recordedVid.owningUser and current_user.has_role('Admin') is False:
                     flash("No Such Video at URL", "error")
                     return redirect(url_for("root.main_page"))
             else:
