@@ -1758,15 +1758,24 @@
 <div class="info-panel-box system-appearance-box">
     <div class="info-panel-box-header boxShadow textShadow">
         <b>Messages</b>
-      <span class="float-end textShadow">
-        <span id="selectedMessages" class="me-4" style="display: none;">
-          <button class="btn btn-sm btn-primary boxShadow" onclick="markCheckedMessageAsRead();"><i class="fas fa-envelope-open-text"></i> Mark Selected as Read</button>
-          <button class="btn btn-sm btn-danger boxShadow" onclick="deleteSelectedMessage();"><i class="fas fa-trash"></i> Delete Selected</button>
+        <span class="float-end textShadow dropdown">
+            <a class="dropdown-toggle mx-2" href="#" id="messageMenuDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="messageMenuDropdownLink">
+                <li class="my-2 mx-2">
+                    <a href="#" onclick="markAllMessagesAsRead();"><i class="fas fa-envelope-open-text"></i> Mark all as read</a>
+                </li>
+                <li class="my-2 mx-2">
+                    <a href="#" onclick="openModal('messageBanListModal');"><i class="fas fa-user-shield"></i> Blocked users</a>
+                </li>
+            </ul>
         </span>
-        <button class="btn btn-sm btn-primary boxShadow" onclick="markAllMessagesAsRead();"><i class="fas fa-envelope-open-text"></i> Mark All as Read</button>
-        <button type="button" class="btn btn-sm btn-success boxShadow" onclick="openNewMessageModal();"><i class="fas fa-paper-plane"></i> New Message</button>
-        <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="openModal('messageBanListModal');"><i class="fas fa-user-shield"></i></button>
-      </span>
+        <span id="selectedMessages" class="float-end mx-2" style="display: none;">
+          <span class="mx-2" data-toggle="tooltip" title="Mark selected as read" onclick="markCheckedMessageAsRead();"><a href="#"><i class="fas fa-envelope-open-text"></i></a></span>
+          <span class="mx-2" data-toggle="tooltip" title="Delete seleted" onclick="deleteSelectedMessage();"><a href="#"><i class="fas fa-trash"></i></a></span>
+        </span>
+        <span class="float-end mx-2" data-toggle="tooltip" title="New message" onclick="openNewMessageModal();"><a href="#"><i class="fas fa-paper-plane"></i></a></span>
     </div>
     <div class="info-panel-box-body boxShadow">
       <table id="messageTable" class="table table-sm">
