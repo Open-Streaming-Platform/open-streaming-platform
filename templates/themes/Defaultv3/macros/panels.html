@@ -111,8 +111,8 @@
 {% endmacro %}
 
 {% macro videos_panel(videoList, title="Videos", order=0, heightOverride=False, justification="start", shadow=True) %}
-{%- set listClass = '' | generateRandomString %}
-<div id="{{ listClass }}" class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+{%- set videoListClass = '' | generateRandomString %}
+<div id="{{ videoListClass }}" class="videos-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <div class="row pb-4 mb-2">
     <div class="col-12 col-lg-7 px-0 align-items-start">
       <span class="h3 textShadow"><b>{{ title }}</b></span>
@@ -131,38 +131,37 @@
           {% endif %}
       {% endfor %}
   </ul>
-  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+  <ul id="paging_{{ videoListClass }}" class="pagination justify-content-center panel-pagination"></ul>
 </div>
 <script>
-    list_{{ listClass }}_options = {
+    list_{{ videoListClass }}_options = {
         valueNames: ['list-videoName', 'list-videoViews', 'list-videoDate', 'list-videoTopic'],
         page: 10,
         pagination: true
     };
-    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-    if (list_{{ listClass }}.items.length <= 10) {
-        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    var list_{{ videoListClass }} = new List('{{videoListClass}}', list_{{ videoListClass }}_options);
+    if (list_{{ videoListClass }}.items.length <= 10) {
+        document.getElementById('paging_{{ videoListClass }}').style.display = "none";
     }
-    list_{{ listClass }}.on('updated', function(list) {
+    list_{{ videoListClass }}.on('updated', function(list) {
         lazyLoadInstance.update();
         resetGifHover();
-        document.getElementById('{{ listClass }}').scrollIntoView();
+        document.getElementById('{{ videoListClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
 
 {% macro clips_panel(clipsList, title="Clips", order=0, heightOverride=False, justification="start", shadow=True) %}
-{%- set listClass = '' | generateRandomString %}
-<div id="{{ listClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
+{%- set clipListClass = '' | generateRandomString %}
+<div id="{{ clipListClass }}" class="clips-container {% if shadow == True %}boxShadow{% endif %} {% if heightOverride == True %}h-100{% endif %}">
   <div class="row pb-4 mb-2">
     <div class="col-12 col-lg-7 px-0 align-items-start">
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
       <span class="mr-1">Sort:</span>
-      <span class="sort mr-1" data-sort="list-videoName"><a href="#">Name</a></span>
-      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-videoViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
-      <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order==1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
+      <span class="sort mr-1" data-sort="list-clipName"><a href="#">Name</a></span>
+      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-clipViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
     </div>
   </div>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
@@ -172,22 +171,22 @@
           {% endif %}
       {% endfor %}
   </ul>
-  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+  <ul id="paging_{{ clipListClass }}" class="pagination justify-content-center panel-pagination"></ul>
 </div>
 <script>
-    list_{{ listClass }}_options = {
-        valueNames: ['list-clipName', 'list-clipViews', 'list-clipLength', 'list-clipTopic'],
+    list_{{ clipListClass }}_options = {
+        valueNames: ['list-clipName', 'list-clipViews'],
         page: 10,
         pagination: true
     };
-    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
-    if (list_{{ listClass }}.items.length < 10) {
-        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    var list_{{ clipListClass }} = new List('{{clipListClass}}', list_{{ clipListClass }}_options);
+    if (list_{{ clipListClass }}.items.length <= 10) {
+        document.getElementById('paging_{{ clipListClass }}').style.display = "none";
     }
-    list_{{ listClass }}.on('updated', function(list) {
+    list_{{ clipListClass }}.on('updated', function (list) {
         lazyLoadInstance.update();
         resetGifHover();
-        document.getElementById('{{ listClass }}').scrollIntoView();
+        document.getElementById('{{ clipListClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
