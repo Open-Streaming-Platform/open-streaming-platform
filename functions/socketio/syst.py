@@ -26,6 +26,7 @@ from functions import cachedDbCalls
 from functions import topicsFunc
 from functions import videoFunc
 from functions import channelFunc
+from functions.scheduled_tasks import video_tasks
 
 from app import user_datastore
 from app import ejabberd
@@ -555,4 +556,21 @@ def delete_static_page(message):
                     cache.delete_memoized(cachedDbCalls.getStaticPages)
                     cache.delete_memoized(cachedDbCalls.getStaticPage, oldName)
                 db.session.close()
+    return 'OK'
+
+@socketio.on('call_celery_task')
+def call_celery_task(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'task' in message:
+                if message['task'] == "process_ingest_folder":
+                    video_tasks.process_ingest_folder.delay()
+                elif message['task'] == "check_video_published_exists":
+                    video_tasks.check_video_published_exists.delay()
+                elif message['task'] == "check_video_retention":
+                    video_tasks.check_video_retention.delay()
+                elif message['task'] == "reprocess_stuck_videos":
+                    video_tasks.reprocess_stuck_videos.delay()
+                elif message['task'] == "check_video_thumbnails":
+                    video_tasks.check_video_thumbnails.delay()
     return 'OK'

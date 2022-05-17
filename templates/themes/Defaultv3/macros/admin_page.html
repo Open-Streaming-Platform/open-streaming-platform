@@ -444,6 +444,37 @@
 {% endmacro %}
 
 {% macro scheduler_settings_panel(schedulerList) %}
+    <h3>Manual Tasks</h3>
+    <table class="table table-borderless mb-2">
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Process Ingest Folders</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('process_ingest_folder');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Check All Published Videos to Ensure They Exist</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_video_published_exists');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Check Video Retention</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_video_retention');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Reprocess Stuck Videos</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('reprocess_stuck_videos');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Check Videos and Generate Needed Thumbnails</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_video_thumbnails');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table align-middle">
         <thead>
             <tr>

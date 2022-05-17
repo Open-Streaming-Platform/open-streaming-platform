@@ -695,3 +695,8 @@ function deleteStaticPage() {
     createNewBSAlert('Static Page Deleted', 'Success');
     document.getElementById('deleteStaticPageId').value = '';
 }
+
+function call_celery_task(taskname) {
+    socket.emit('execute_celery_task',{task: taskname});
+    createNewBSAlert('Task Request Sent', 'success');
+}

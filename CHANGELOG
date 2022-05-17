@@ -49,6 +49,7 @@ OSP-Core: Upgrades Zlib to 1.2.12 / Fixes Invalid Download URL on Install
 OSP-Core: Adds Playback Speed Rates to Video Playback (.25x, .5x, 1x, 1.5x, 2x)
 OSP-Core: Adds startTime Argument to Clip Player playback, similar to how Video Playback works
 OSP-Core: Additional Database Query Optimization and Caching
+OSP-Core: Added Scheduled Folder Video Ingest under /var/www/ingest/<Channel Location UUID>
 OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 OSP-RTMP: Moves all Live Stream Playback to use HLS Encryption and Moves Channel Protection to use Key Authorization Validation
