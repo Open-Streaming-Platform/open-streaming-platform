@@ -21,7 +21,10 @@ from classes import panel
 from functions import system
 from functions import cachedDbCalls
 
-from conf import config
+try:
+    from conf import config
+except:
+    from app import config
 
 log = logging.getLogger('app.functions.database')
 

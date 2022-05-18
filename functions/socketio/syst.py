@@ -31,7 +31,10 @@ from functions.scheduled_tasks import video_tasks
 from app import user_datastore
 from app import ejabberd
 
-from conf import config
+try:
+    from conf import config
+except:
+    from app import config
 
 log = logging.getLogger('app.functions.socketio.syst')
 
