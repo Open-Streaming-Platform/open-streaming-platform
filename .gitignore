@@ -6,3 +6,4 @@ celerybeat-schedule.db
 TODO
 /migrations/
 /db/
+/docker-build
