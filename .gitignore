@@ -5,3 +5,4 @@ celerybeat-schedule.db
 /venv/
 TODO
 /migrations/
+/db/
