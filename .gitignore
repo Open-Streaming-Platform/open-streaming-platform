@@ -7,3 +7,4 @@ TODO
 /migrations/
 /db/
 /docker-build
+.env
