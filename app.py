@@ -39,7 +39,47 @@ sys.path.append('./classes')
 #----------------------------------------------------------------------------#
 # Configuration Imports
 #----------------------------------------------------------------------------#
-from conf import config
+try:
+    from conf import config
+
+except:
+    from dotenv import load_dotenv
+
+    class configObj:
+        pass
+
+    load_dotenv()
+    config = configObj()
+
+    config.dbLocation = os.getenv('OSP_CORE_DB')
+    config.redisHost = os.getenv('OSP_REDIS_HOST')
+    config.redisPort = os.getenv('OSP_REDIS_PORT')
+    config.redisPassword = os.getenv('OSP_REDIS_PASSWORD')
+    config.secretKey = os.getenv('OSP_CORE_SECRETKEY')
+    config.passwordSalt = os.getenv('OSP_CORE_PASSWORD_SALT')
+    config.allowRegistration = os.getenv('OSP_CORE_ALLOWREGISTRATION')
+    config.requireEmailRegistration = os.getenv('OSP_CORE_REQUIREEMAILREGISTRATION')
+    config.debugMode = os.getenv('OSP_CORE_DEBUG')
+    config.log_level = os.getenv('OSP_CORE_LOGLEVEL')
+    config.ejabberdAdmin = os.getenv('OSP_EJABBERD_ADMIN')
+    config.ejabberdPass = os.getenv('OSP_EJABBERD_PASSWORD')
+    config.ejabberdHost = os.getenv('OSP_EJABBERD_RPCHOST')
+
+    if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
+        config.ejabberdServer = os.getenv('OSP_EJABBERD_BOSHHOST')
+    if os.getenv('OSP_RECAPTCHA_ENABLED') is not None:
+        config.RECAPTCHA_ENABLED = os.getenv('OSP_RECAPTCHA_ENABLED')
+    if os.getenv('OSP_RECAPTCHA_SITEKEY') is not None:
+        config.RECAPTCHA_SITE_KEY = os.getenv('OSP_RECAPTCHA_SITEKEY')
+    if os.getenv('OSP_RECAPTCHA_SECRETKEY') is not None:
+        config.RECAPTCHA_SECRET_KEY = os.getenv('OSP_RECAPTCHA_SECRETKEY')
+
+    if os.getenv('OSP_SENTRYIO_ENABLED') is not None:
+        config.sentryIO_Enabled = os.getenv('OSP_SENTRYIO_ENABLED')
+    if os.getenv('OSP_SENTRYIO_DSN') is not None:
+        config.sentryIO_DSN = os.getenv('OSP_SENTRYIO_DSN')
+    if os.getenv('OSP_SENTRYIO_ENVIRONMENT') is not None:
+        config.sentryIO_Environment = os.getenv('OSP_SENTRYIO_ENVIRONMENT')
 
 #----------------------------------------------------------------------------#
 # Global Vars Imports
