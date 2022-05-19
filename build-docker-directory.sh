@@ -1,3 +1,4 @@
+# Create Docker Build Directory
 mkdir -p docker-build
 mkdir -p docker-build/osp-core
 mkdir -p docker-build/osp-rtmp
