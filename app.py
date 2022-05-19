@@ -67,7 +67,7 @@ except:
 
     if os.getenv('OSP_EJABBERD_RPCHOST') is not None:
         config.ejabberdServer = os.getenv('OSP_EJABBERD_RPCHOST')
-    if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
+    if os.getenv('OSP_EJABBERD_BOSHDOMAIN') is not None:
         config.ejabberdServerHttpBindFQDN = os.getenv('OSP_EJABBERD_BOSHDOMAIN')
     if os.getenv('OSP_RECAPTCHA_ENABLED') is not None:
         config.RECAPTCHA_ENABLED = os.getenv('OSP_RECAPTCHA_ENABLED').lower() in ('true', '1', 't')
