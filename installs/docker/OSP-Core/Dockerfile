@@ -74,7 +74,7 @@ RUN apk add --no-cache bash
 
 # Build from Local Directory
 RUN mkdir -p /opt/osp
-COPY . /opt/osp
+COPY ./ /opt/osp
 
 # Make OSP Install Directory
 # RUN mv /tmp/flask-nginx-rtmp-manager /opt/osp/

@@ -55,7 +55,7 @@ RUN apk add --no-cache bash
 
 # Build from Local Directory
 RUN mkdir -p /opt/osp-rtmp
-COPY . /opt/osp-rtmp
+COPY ./ /opt/osp-rtmp
 
 # Make OSP Install Directory
 #RUN mkdir -p /opt/osp-rtmp
