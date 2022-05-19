@@ -63,10 +63,12 @@ except:
     config.log_level = os.getenv('OSP_CORE_LOGLEVEL')
     config.ejabberdAdmin = os.getenv('OSP_EJABBERD_ADMIN')
     config.ejabberdPass = os.getenv('OSP_EJABBERD_PASSWORD')
-    config.ejabberdHost = os.getenv('OSP_EJABBERD_RPCHOST')
+    config.ejabberdHost = os.getenv('OSP_EJABBERD_ADMINDOMAIN')
 
     if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
-        config.ejabberdServer = os.getenv('OSP_EJABBERD_BOSHHOST')
+        config.ejabberdServer = os.getenv('OSP_EJABBERD_RPCHOST')
+    if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
+        config.ejabberdServerHttpBindFQDN = os.getenv('OSP_EJABBERD_BOSHDOMAIN')
     if os.getenv('OSP_RECAPTCHA_ENABLED') is not None:
         config.RECAPTCHA_ENABLED = os.getenv('OSP_RECAPTCHA_ENABLED').lower() in ('true', '1', 't')
     if os.getenv('OSP_RECAPTCHA_SITEKEY') is not None:
