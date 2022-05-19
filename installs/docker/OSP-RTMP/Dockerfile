@@ -23,11 +23,11 @@ EXPOSE 1935/tcp
 RUN apt update
 RUN apt install -y wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git
 
-RUN apt install -y --no-cache tzdata
+RUN apt install -y tzdata
 
 ENV TZ=$DEFAULT_TZ
 
-RUN apt install -y --no-cache bash
+RUN apt install -y bash
 
 # Download OSP from Repo
 #RUN cd /tmp && \
