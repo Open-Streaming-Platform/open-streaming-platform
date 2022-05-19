@@ -23,7 +23,8 @@ EXPOSE 1935/tcp
 RUN apt update
 RUN apt install -y wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git
 
-RUN apt install -y tzdata
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get -y install tzdata
 
 ENV TZ=$DEFAULT_TZ
 
