@@ -35,5 +35,12 @@ cd /
 echo 'Fixing OSP Permissions Post Migration'
 chown -R www-data:www-data /opt/osp
 
-echo 'Starting OSP'
-supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord.conf
+EXPORT DEFAULT_OSP_CORE_TYPE
+
+echo "Starting OSP-$DEFAULT_OSP_CORE_TYPE"
+case "$DEFAULT_OSP_CORE_TYPE" in
+ celery) supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord-celery.conf ;;
+ beat) supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord-celery-beat.conf ;;
+ core) supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord.conf ;;
+    *) supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord.conf ;;
+esac
