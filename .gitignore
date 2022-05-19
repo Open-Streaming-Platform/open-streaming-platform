@@ -1,4 +1,5 @@
 *.pyc
+.idea/
 config.py
 celerybeat-schedule.db
 .vscode/
