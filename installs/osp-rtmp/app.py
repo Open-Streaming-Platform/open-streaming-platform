@@ -6,6 +6,7 @@ monkey.patch_all(thread=True)
 
 import sys
 import logging
+import os
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash
@@ -30,6 +31,9 @@ except:
 
     load_dotenv()
     config = configObj()
+    config.ospCoreAPI = os.getenv('OSP_API_HOST')
+    config.secretKey = os.getenv('OSP_RTMP_SECRETKEY')
+    config.debugMode = os.getenv('OSP_RTMP_DEBUG').lower() in ('true', '1', 't')
 
 #----------------------------------------------------------------------------#
 # Global Vars Imports
