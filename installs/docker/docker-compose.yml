@@ -8,7 +8,7 @@ networks:
 
 services:
   osp_ejabberd:
-    build: ./Ejabberd
+    build: ./osp-ejabberd
     restart: unless-stopped
 
     mem_limit: 256m
@@ -41,7 +41,7 @@ services:
       - web
 
   osp_core:
-    build: ./OSP-Core
+    build: ./osp-core
     restart: unless-stopped
 
     mem_limit: 2048m
@@ -86,7 +86,7 @@ services:
     entrypoint: ["/opt/osp/setup/wait-for-it.sh", "osp_db:3306", "-t", "60", "--", "/opt/osp/docker-files.d/entrypoint.sh"]
 
   osp_rtmp:
-    build: ./OSP-RTMP
+    build: ./osp-rtmp
     restart: unless-stopped
     mem_limit: 2048m
     memswap_limit: 2304m
