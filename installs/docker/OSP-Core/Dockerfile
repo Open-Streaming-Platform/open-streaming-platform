@@ -103,6 +103,10 @@ RUN cd /tmp && \
   wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
+# Inline Patch NGINX-RTMP
+RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch \
+RUN cd /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
+
 RUN cd /tmp && \
   wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
   tar xxf master.tar.gz
@@ -111,9 +115,6 @@ RUN cd /tmp && \
     wget -q "http://www.zlib.net/zlib-1.2.12.tar.gz" && \
     tar xfz zlib-1.2.12.tar.gz
 
-# Inline Patch NGINX-RTMP
-RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch && \
-    patch -s -p 1 < 1158.patch
 
 # Compile NGINX with the NGINX-RTMP Module
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
