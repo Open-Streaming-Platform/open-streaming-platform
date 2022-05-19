@@ -9,6 +9,11 @@ echo 'Setting up Directories'
   mkdir -p /var/www/videos && \
   mkdir -p /var/www/live-adapt && \
   mkdir -p /var/www/stream-thumb && \
+  mkdir -p /var/www/images  && \
+  mkdir -p /var/www/keys && \
+  mkdir -p /var/www/keys-adapt && \
+  mkdir -p /var/www/pending && \
+  mkdir -p /var/www/ingest && \
   mkdir -p /var/log/gunicorn && \
   mkdir -p /var/log/osp && \
   chown -R www-data:www-data /var/www && \
@@ -16,16 +21,12 @@ echo 'Setting up Directories'
   chown -R www-data:www-data /var/log/osp
 echo 'Setting up OSP Configuration'
 
-export OSPCOREAPI
-export FLASK_SECRET
-echo "debugMode=False" >> /opt/osp-rtmp/conf/config.py
-echo "ospCoreAPI=\"$OSPCOREAPI\"" >> /opt/osp-rtmp/conf/config.py
-echo "secretKey=\"$FLASK_SECRET\"" >> /opt/osp-rtmp/conf/config.py
-
-chown -R www-data:www-data /opt/osp-rtmp/conf/config.py
+export OSP_API_HOST
+export OSP_RTMP_SECRETKEY
+export OSP_RTMP_DEBUG
 
 echo 'Fixing OSP Permissions Post Migration'
 chown -R www-data:www-data /opt/osp-rtmp
 
 echo 'Starting OSP'
-supervisord --nodaemon --configuration /opt/osp-rtmp/supervisord.conf
+supervisord --nodaemon --configuration /opt/osp-rtmp/docker-files.d/supervisord.conf

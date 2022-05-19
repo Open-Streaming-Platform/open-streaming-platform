@@ -70,15 +70,19 @@ RUN apk add --no-cache bash
 #  rm flask-nginx-rtmp-manager-${OSP_VERSION}.tar.gz
 
 # Clone Branch Instead
-RUN cd /tmp && git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git && cd flask-nginx-rtmp-manager && git checkout ${OSP_GIT_BRANCH}
+#RUN cd /tmp && git clone https://gitlab.com/Deamos/flask-nginx-rtmp-manager.git && cd flask-nginx-rtmp-manager && git checkout ${OSP_GIT_BRANCH}
+
+# Build from Local Directory
+RUN mkdir -p /opt/osp
+COPY . /opt/osp
 
 # Make OSP Install Directory
-RUN mv /tmp/flask-nginx-rtmp-manager /opt/osp/
+# RUN mv /tmp/flask-nginx-rtmp-manager /opt/osp/
 
 # Transfer OSP Docker Files
-COPY docker-files.d/entrypoint.sh /opt/osp/setup/
-COPY docker-files.d/supervisord.conf /opt/osp/setup
-COPY docker-files.d/wait-for-it.sh /opt/osp/setup
+# COPY docker-files.d/entrypoint.sh /opt/osp/setup/
+# COPY docker-files.d/supervisord.conf /opt/osp/setup
+# COPY docker-files.d/wait-for-it.sh /opt/osp/setup
 
 # Create the www-data user
 RUN set -x ; \
@@ -159,7 +163,7 @@ RUN apk add ffmpeg
 RUN apk add dialog
 
 # Setup Wait-For-It Script
-RUN chmod +x /opt/osp/setup/wait-for-it.sh
+RUN chmod +x /opt/osp/docker-files.d/wait-for-it.sh
 
 # Install Supervisor
 RUN apk add supervisor
@@ -170,5 +174,5 @@ EXPOSE 80
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/conf"]
 
 RUN chmod +x /opt/osp/osp-config.sh
-RUN chmod +x /opt/osp/setup/entrypoint.sh
-ENTRYPOINT ["/bin/sh","-c", "/opt/osp/setup/entrypoint.sh"]
+RUN chmod +x /opt/osp/docker-files.d/entrypoint.sh
+ENTRYPOINT ["/bin/sh","-c", "/opt/osp/docker-files.d/entrypoint.sh"]

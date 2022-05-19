@@ -22,7 +22,6 @@ mkdir -p /var/www && \
   chown -R www-data:www-data /var/log/gunicorn
 echo 'Setting up OSP Configuration'
 
-chown -R www-data:www-data /opt/osp/conf/config.py
 echo 'Performing DB Migrations'
 cd /opt/osp
 
@@ -37,4 +36,4 @@ echo 'Fixing OSP Permissions Post Migration'
 chown -R www-data:www-data /opt/osp
 
 echo 'Starting OSP'
-supervisord --nodaemon --configuration /opt/osp/setup/supervisord.conf
+supervisord --nodaemon --configuration /opt/osp/docker-files.d/supervisord.conf

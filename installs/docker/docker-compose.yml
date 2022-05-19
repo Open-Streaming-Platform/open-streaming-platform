@@ -83,7 +83,7 @@ services:
       - osp_db
       - osp_redis
       - osp_ejabberd
-    entrypoint: ["/opt/osp/setup/wait-for-it.sh", "osp_db:3306", "-t", "60", "--", "/opt/osp/setup/entrypoint.sh"]
+    entrypoint: ["/opt/osp/setup/wait-for-it.sh", "osp_db:3306", "-t", "60", "--", "/opt/osp/docker-files.d/entrypoint.sh"]
 
   osp_rtmp:
     build: ./OSP-RTMP
