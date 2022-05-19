@@ -20,8 +20,8 @@ ENV OSP_RTMP_DEBUG=$DEFAULT_DEBUG
 EXPOSE 1935/tcp
 
 # Get initial dependancies
-RUN apk update
-RUN apk add alpine-sdk \
+RUN apt update
+RUN apt install -y alpine-sdk \
   pcre-dev \
   libressl-dev \
   openssl-dev \
@@ -37,11 +37,11 @@ RUN apk add alpine-sdk \
   jpeg-dev \
   zlib-dev
 
-RUN apk add --no-cache tzdata
+RUN apt install -y --no-cache tzdata
 
 ENV TZ=$DEFAULT_TZ
 
-RUN apk add --no-cache bash
+RUN apt install -y --no-cache bash
 
 # Download OSP from Repo
 #RUN cd /tmp && \
@@ -122,7 +122,7 @@ RUN chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket
 RUN chown -R www-data:www-data /repo/*
 
 # Install Python, Gunicorn, and uWSGI
-RUN apk add python3 \
+RUN apt install -y python3 \
   py3-pip \
   py3-setuptools \
   python3-dev \
@@ -137,13 +137,13 @@ RUN pip3 install -r /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/requi
 RUN pip3 install cryptography==3.3.2
 
 # Setup FFMPEG for recordings and Thumbnails
-RUN apk add ffmpeg
+RUN apt install -y ffmpeg
 
 # Add Dialog (used in osp-config.sh)
-RUN apk add dialog
+RUN apt install -y dialog
 
 # Install Supervisor
-RUN apk add supervisor
+RUN apt install -y supervisor
 RUN mkdir -p /var/log/supervisor
 
 EXPOSE 1935

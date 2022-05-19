@@ -40,8 +40,8 @@ EXPOSE 80/tcp
 EXPOSE 443/tcp
 
 # Get initial dependancies
-RUN apk update
-RUN apk add alpine-sdk \
+RUN apt update
+RUN apt install -y alpine-sdk \
   pcre-dev \
   libressl-dev \
   openssl-dev \
@@ -57,11 +57,11 @@ RUN apk add alpine-sdk \
   jpeg-dev \
   zlib-dev
 
-RUN apk add --no-cache tzdata
+RUN apt install -y --no-cache tzdata
 
 ENV TZ=$DEFAULT_TZ
 
-RUN apk add --no-cache bash
+RUN apt install -y --no-cache bash
 
 # Download OSP from Repo
 #RUN cd /tmp && \
@@ -143,7 +143,7 @@ RUN cp /opt/osp/installs/nginx-core/osp-custom-*.conf /usr/local/nginx/conf/cust
 
 
 # Install Python, Gunicorn, and uWSGI
-RUN apk add python3 \
+RUN apt install-y python3 \
   py3-pip \
   py3-setuptools \
   python3-dev \
@@ -158,16 +158,16 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r /opt/osp/setup/requirements.txt
 
 # Setup FFMPEG for recordings and Thumbnails
-RUN apk add ffmpeg
+RUN apt install -y ffmpeg
 
 # Add Dialog (used in osp-config.sh)
-RUN apk add dialog
+RUN apt install -y dialog
 
 # Setup Wait-For-It Script
 RUN chmod +x /opt/osp/docker-files.d/wait-for-it.sh
 
 # Install Supervisor
-RUN apk add supervisor
+RUN apt install -y supervisor
 RUN mkdir -p /var/log/supervisor
 
 EXPOSE 80
