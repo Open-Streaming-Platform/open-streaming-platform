@@ -21,21 +21,7 @@ EXPOSE 1935/tcp
 
 # Get initial dependancies
 RUN apt update
-RUN apt install -y alpine-sdk \
-  pcre-dev \
-  libressl-dev \
-  openssl-dev \
-  libffi-dev \
-  wget \
-  git \
-  linux-headers \
-  zlib-dev \
-  postgresql-dev \
-  gcc \
-  libgcc \
-  musl-dev \
-  jpeg-dev \
-  zlib-dev
+RUN apt install -y wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git
 
 RUN apt install -y --no-cache tzdata
 
@@ -122,12 +108,7 @@ RUN chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket
 RUN chown -R www-data:www-data /repo/*
 
 # Install Python, Gunicorn, and uWSGI
-RUN apt install -y python3 \
-  py3-pip \
-  py3-setuptools \
-  python3-dev \
-  py3-gunicorn \
-  uwsgi-python3
+RUN apt install -y python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools
 
 # Upgrade PIP
 RUN pip3 install --upgrade pip
