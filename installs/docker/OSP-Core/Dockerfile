@@ -156,6 +156,5 @@ EXPOSE 80
 
 VOLUME ["/var/www", "/usr/local/nginx/conf", "/opt/osp/conf"]
 
-RUN chmod +x /opt/osp/osp-config.sh
 RUN chmod +x /opt/osp/docker-files.d/entrypoint.sh
 ENTRYPOINT ["/bin/sh","-c", "/opt/osp/docker-files.d/entrypoint.sh"]
