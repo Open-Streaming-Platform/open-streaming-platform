@@ -65,7 +65,7 @@ except:
     config.ejabberdPass = os.getenv('OSP_EJABBERD_PASSWORD')
     config.ejabberdHost = os.getenv('OSP_EJABBERD_ADMINDOMAIN')
 
-    if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
+    if os.getenv('OSP_EJABBERD_RPCHOST') is not None:
         config.ejabberdServer = os.getenv('OSP_EJABBERD_RPCHOST')
     if os.getenv('OSP_EJABBERD_BOSHHOST') is not None:
         config.ejabberdServerHttpBindFQDN = os.getenv('OSP_EJABBERD_BOSHDOMAIN')
