@@ -46,7 +46,7 @@ COPY ./ /opt/osp-rtmp
 
 # Make OSP Install Directory
 #RUN mkdir -p /opt/osp-rtmp
-#RUN cp -R /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/* /opt/osp-rtmp/
+#RUN cp -R /opt/osp-rtmp/installs/osp-rtmp/* /opt/osp-rtmp/
 
 # Transfer OSP Docker Files
 #COPY docker-files.d/entrypoint.sh /opt/osp-rtmp
@@ -99,12 +99,12 @@ RUN mkdir /usr/local/nginx/conf/servers
 RUN mkdir /usr/local/nginx/conf/services
 RUN mkdir /usr/local/nginx/conf/custom
 RUN mkdir /opt/osp-rtmp/rtmpsocket
-RUN cp /repo/flask-nginx-rtmp-manager/installs/nginx-core/nginx.conf /usr/local/nginx/conf/
-RUN cp /repo/flask-nginx-rtmp-manager/installs/nginx-core/mime.types /usr/local/nginx/conf/
-RUN cp /repo/flask-nginx-rtmp-manager/installs/nginx-core/osp-custom-*.conf /usr/local/nginx/conf/custom
-RUN cp /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/nginx/custom/* /usr/local/nginx/conf/custom
-RUN cp /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/nginx/servers/* /usr/local/nginx/conf/servers
-RUN cp /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
+RUN cp /opt/osp-rtmp/installs/nginx-core/nginx.conf /usr/local/nginx/conf/
+RUN cp /opt/osp-rtmp/installs/nginx-core/mime.types /usr/local/nginx/conf/
+RUN cp /opt/osp-rtmp/installs/nginx-core/osp-custom-*.conf /usr/local/nginx/conf/custom
+RUN cp /opt/osp-rtmp/setup/nginx/custom/* /usr/local/nginx/conf/custom
+RUN cp /opt/osp-rtmp/setup/nginx/servers/* /usr/local/nginx/conf/servers
+RUN cp /opt/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
 RUN chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket
 RUN chown -R www-data:www-data /repo/*
 
@@ -115,7 +115,7 @@ RUN apt install -y python3 python3-pip uwsgi-plugin-python3 python3-dev python3-
 RUN pip3 install --upgrade pip
 
 # Install OSP Dependancies
-RUN pip3 install -r /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/requirements.txt
+RUN pip3 install -r /opt/osp-rtmp/setup/requirements.txt
 RUN pip3 install cryptography==3.3.2
 
 # Setup FFMPEG for recordings and Thumbnails
