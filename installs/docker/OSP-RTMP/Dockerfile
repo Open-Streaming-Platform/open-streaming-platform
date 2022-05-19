@@ -61,17 +61,17 @@ COPY ./ /opt/osp-rtmp
 RUN chown -R www-data:www-data /opt/osp-rtmp
 
 # Download NGINX
-RUN cd /repo && \
+RUN cd /tmp && \
   wget https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
   tar zxf nginx-${NGINX_VERSION}.tar.gz && \
   rm nginx-${NGINX_VERSION}.tar.gz
 
 # Download the NGINX-RTMP Module
-RUN cd /repo && \
+RUN cd /tmp && \
   wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
-RUN cd /repo && \
+RUN cd /tmp && \
   wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
   tar xxf master.tar.gz
 
@@ -92,7 +92,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-zlib=../zlib-1.2.12 && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
-RUN rm -rf /repo/nginx-${NGINX_VERSION}
+RUN rm -rf /tmp/nginx-${NGINX_VERSION}
 
 # Configure NGINX
 RUN mkdir /usr/local/nginx/conf/servers
