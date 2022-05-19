@@ -1,4 +1,4 @@
-FROM ubuntu:20:04
+FROM ubuntu:20.04
 MAINTAINER David Lockwood
 
 ARG OSP_VERSION=0.9.0
