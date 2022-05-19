@@ -19,7 +19,17 @@ sys.path.append(cwp)
 #----------------------------------------------------------------------------#
 # Configuration Imports
 #----------------------------------------------------------------------------#
-from conf import config
+try:
+    from conf import config
+
+except:
+    from dotenv import load_dotenv
+
+    class configObj:
+        pass
+
+    load_dotenv()
+    config = configObj()
 
 #----------------------------------------------------------------------------#
 # Global Vars Imports
