@@ -14,6 +14,11 @@ cp -R installs/docker/docker-compose.yml $BUILDDIR/
 # Copy Drone CI build file
 cp -R installs/docker/.drone.yml $BUILDDIR
 
+# Copy README and Other Info
+cp -R installs/docker/*.MD $BUILDDIR
+cp -R installs/docker/ATTRIBUTION $BUILDDIR
+cp -R installs/docker/LICENSE $BUILDDIR
+
 # Build OSP-Core $BUILDDIR Directory
 mkdir -p $BUILDDIR/osp-core/installs
 
