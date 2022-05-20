@@ -9,6 +9,7 @@ networks:
 services:
   osp_ejabberd:
     build: ./osp-ejabberd
+    # image: deamos/osp-ejabberd
     restart: unless-stopped
 
     mem_limit: 256m
@@ -39,6 +40,7 @@ services:
 
   osp_core:
     build: ./osp-core
+    # image: deamos/osp-core
     restart: unless-stopped
 
     mem_limit: 2048m
@@ -84,6 +86,7 @@ services:
 
   osp_celery:
     build: ./osp-core
+    # image: deamos/osp-core
     restart: unless-stopped
 
     mem_limit: 2048m
@@ -121,6 +124,7 @@ services:
 
   osp_celery_beat:
     build: ./osp-core
+    # image: deamos/osp-core
     restart: unless-stopped
 
     mem_limit: 2048m
@@ -158,6 +162,7 @@ services:
 
   osp_rtmp:
     build: ./osp-rtmp
+    # image: deamos/osp-rtmp
     restart: unless-stopped
     mem_limit: 2048m
     memswap_limit: 2304m
