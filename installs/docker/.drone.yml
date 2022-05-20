@@ -4,7 +4,6 @@ name: pre-build
 trigger:
   branch:
     - 0.9.x
-    - nightly
   event:
     - push
 
