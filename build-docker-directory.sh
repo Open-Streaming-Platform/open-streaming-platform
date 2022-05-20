@@ -11,6 +11,9 @@ mkdir -p $BUILDDIR/osp-ejabberd
 # Copy docker-compose
 cp -R installs/docker/docker-compose.yml $BUILDDIR/
 
+# Copy Drone CI build file
+cp -R installs/docker/.drone.yml $BUILDDIR
+
 # Build OSP-Core $BUILDDIR Directory
 mkdir -p $BUILDDIR/osp-core/installs
 
