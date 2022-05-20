@@ -11,7 +11,7 @@ steps:
 - name: build-nightly-core
   image: plugins/docker
   settings:
-    dockerfile: ./osp-core/Dockerfile
+    context: ./osp-core
     username:
       from_secret: docker_username
     password:
@@ -24,7 +24,7 @@ steps:
 - name: build-nightly-rtmp
   image: plugins/docker
   settings:
-    dockerfile: ./osp-rtmp/Dockerfile
+    context: ./osp-rtmp
     username:
       from_secret: docker_username
     password:
@@ -37,7 +37,7 @@ steps:
 - name: build-nightly-ejabberd
   image: plugins/docker
   settings:
-    dockerfile: ./osp-ejabberd/Dockerfile
+    context: ./osp-ejabberd
     username:
       from_secret: docker_username
     password:
