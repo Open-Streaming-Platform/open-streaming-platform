@@ -1,0 +1,50 @@
+kind: pipeline
+name: pre-build
+
+trigger:
+  branch:
+    - 0.9.x
+    - nightly
+  event:
+    - push
+
+steps:
+- name: build-nightly-core
+  image: plugins/docker
+  settings:
+    dockerfile: ./osp-core/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-core
+    tags: nightly
+  when:
+    event:
+      - push
+- name: build-nightly-rtmp
+  image: plugins/docker
+  settings:
+    dockerfile: ./osp-rtmp/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-rtmp
+    tags: nightly
+  when:
+    event:
+      - push
+- name: build-nightly-ejabberd
+  image: plugins/docker
+  settings:
+    dockerfile: ./osp-ejabberd/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-ejabberd
+    tags: nightly
+  when:
+    event:
+      - push
