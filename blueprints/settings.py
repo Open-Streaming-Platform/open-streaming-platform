@@ -1588,8 +1588,6 @@ def initialSetup():
                 with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
                     globalvars.themeData = json.load(f)
 
-                globalvars.restartRequired = True
-
         else:
             flash('Passwords do not match')
             return redirect(url_for('root.main_page'))
