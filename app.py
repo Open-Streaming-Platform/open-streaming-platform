@@ -64,6 +64,12 @@ except:
     config.ejabberdAdmin = os.getenv('OSP_EJABBERD_ADMIN')
     config.ejabberdPass = os.getenv('OSP_EJABBERD_PASSWORD')
     config.ejabberdHost = os.getenv('OSP_EJABBERD_ADMINDOMAIN')
+    config.smtpSendAs = os.getenv('OSP_SMTP_SENDAS')
+    config.smtpServerAddress = os.getenv('OSP_SMTP_SERVERADDRESS')
+    config.smtpServerPort = os.getenv('OSP_SMTP_SERVERPORT')
+    config.smtpEncryption = os.getenv('OSP_SMTP_ENCRYPTION')
+    config.smtpUsername = os.getenv('OSP_SMTP_USERNAME')
+    config.smtpPassword = os.getenv('OSP_SMTP_PASSWORD')
 
     if os.getenv('OSP_EJABBERD_RPCHOST') is not None:
         config.ejabberdServer = os.getenv('OSP_EJABBERD_RPCHOST')
