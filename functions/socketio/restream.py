@@ -5,10 +5,13 @@ from flask_security import current_user
 from classes.shared import db, socketio
 from classes import Channel
 
+from functions import cachedDbCalls
+
 @socketio.on('newRestream')
 def newRestream(message):
     restreamChannel = message['restreamChannelID']
-    channelQuery = Channel.Channel.query.filter_by(id=int(restreamChannel)).first()
+    #channelQuery = Channel.Channel.query.filter_by(id=int(restreamChannel)).first()
+    channelQuery = cachedDbCalls.getChannel(int(restreamChannel))
     if channelQuery is not None:
         if channelQuery.owningUser == current_user.id:
             restreamName = message['name']

@@ -12,7 +12,7 @@ class RecordedVideo(db.Model):
     owningUser = db.Column(db.Integer,db.ForeignKey('user.id'))
     channelName = db.Column(db.String(255))
     channelID = db.Column(db.Integer,db.ForeignKey('Channel.id'))
-    description = db.Column(db.String(2048))
+    description = db.Column(db.String(4096))
     topic = db.Column(db.Integer)
     views = db.Column(db.Integer)
     length = db.Column(db.Float)
@@ -26,6 +26,7 @@ class RecordedVideo(db.Model):
     upvotes = db.relationship('videoUpvotes', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     comments = db.relationship('videoComments', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
     clips = db.relationship('Clips', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
+    tags = db.relationship('video_tags', backref='recordedVideo', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, owningUser, channelID, channelName, topic, views, videoLocation, videoDate, allowComments, published):
         self.uuid = str(uuid4())
@@ -42,6 +43,15 @@ class RecordedVideo(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def get_video_exists(self):
+        videos_root = globalvars.videoRoot + 'videos/'
+        filePath = videos_root + self.videoLocation
+
+        if filePath != videos_root:
+            if os.path.exists(filePath):
+                return True
+        return False
 
     def get_upvotes(self):
         return len(self.upvotes)
@@ -63,6 +73,7 @@ class RecordedVideo(db.Model):
             'thumbnailLocation': '/videos/' + self.thumbnailLocation,
             'gifLocation': '/videos/' + self.gifLocation,
             'ClipIDs': [obj.id for obj in self.clips],
+            'tags': [obj.id for obj in self.tags],
         }
 
     def remove(self):
@@ -81,6 +92,21 @@ class RecordedVideo(db.Model):
                 if os.path.exists(gifLocation):
                     os.remove(gifLocation)
 
+class video_tags(db.Model):
+    __tablename__ = "video_tags"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    videoID = db.Column(db.Integer,db.ForeignKey('RecordedVideo.id'))
+    taggedByUser = db.Column(db.Integer)
+
+    def __init__(self, tagName, videoID, userID):
+        self.name = tagName
+        self.videoID = videoID
+        self.taggedByUser = userID
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
 class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
@@ -97,6 +123,7 @@ class Clips(db.Model):
     gifLocation = db.Column(db.String(255))
     published = db.Column(db.Boolean)
     upvotes = db.relationship('clipUpvotes', backref='clip', cascade="all, delete-orphan", lazy="joined")
+    tags = db.relationship('clip_tags', backref='clip', cascade="all, delete-orphan", lazy="joined")
 
     def __init__(self, parentVideo, videoLocation, startTime, endTime, clipName, description):
         self.uuid = str(uuid4())
@@ -144,3 +171,18 @@ class Clips(db.Model):
                     os.remove(thumbnailPath)
                 if os.path.exists(gifLocation):
                     os.remove(gifLocation)
+
+class clip_tags(db.Model):
+    __tablename__ = "clip_tags"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    clipID = db.Column(db.Integer,db.ForeignKey('Clips.id'))
+    taggedByUser = db.Column(db.Integer)
+
+    def __init__(self, tagName, clipID, userID):
+        self.name = tagName
+        self.clipID = clipID
+        self.taggedByUser = userID
+
+    def __repr__(self):
+        return '<id %r>' % self.id

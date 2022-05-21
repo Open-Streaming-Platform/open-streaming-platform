@@ -9,56 +9,64 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card my-5 shadow text-left">
-                    <h5 class="card-header text-white bg-dark mb-3">
-                        Register
-                    </h5>
-                    <div class="card-body">
-                        <div>
-                            {{fields_errors(register_user_form.username,register_user_form.email,register_user_form.password)}}
-                            <form action="{{ url_for_security('register') }}" onsubmit="return validateForm();" method="POST" name="register_user_form">
-                                {% for provider in SystemOAuthProviders %}
-                                <div class="my-2">
-                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
-                                        {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
-                                        {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
-                                        {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
-                                        Register With {{provider.friendlyName}}
-                                    </a>
-                                </div>
-                                {% endfor %}
-                                {% if SystemOAuthProviders != [] %}
-                                <hr>
-                                {% endif %}
-                              {{ register_user_form.hidden_tag() }}
-                                <b><i class="fas fa-user-circle"></i> Username</b><br>
-                              {{ render_field(register_user_form.username, class_="form-control", autocomplete="off") }}
-                                <b><i class="far fa-envelope"></i> Email Address</b><br>
-                              {{ render_field(register_user_form.email, class_="form-control", autocomplete="off") }}
-                                <b><i class="fas fa-key"></i> Password</b><br>
-                              {{ render_field(register_user_form.password, class_="form-control", autocomplete="off") }}
-                              {% if register_user_form.password_confirm %}
-                                <b><i class="fas fa-key"></i> Confirm Password</b><br>
-                                {{ render_field(register_user_form.password_confirm, class_="form-control") }}
-                              {% endif %}
-                              {% if recaptchaEnabled %}
-                                  {% for error in register_user_form.recaptcha.errors %}
-                                    {{ error }}
-                                  {% endfor %}
-                                  {{ register_user_form.recaptcha }}
-                              {% endif %}
-                              <br>
-                              {{ render_field(register_user_form.submit, class_="form-control") }}
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="login-box">
+    <div class="branding d-flex justify-content-center">
+        <div class="circular_image">
+            <img src="{{sysSettings.systemLogo}}">
         </div>
     </div>
+    <h2 class="title">Register</h2>
+    {{fields_errors(register_user_form.username,register_user_form.email,register_user_form.password)}}
+    <form action="{{ url_for_security('register') }}" onsubmit="return validateForm();" method="POST" name="register_user_form">
+    {{ register_user_form.hidden_tag() }}
+        <div class="user-box">
+            <input autocomplete="off" id="username" name="username" required="" type="text" value="">
+            <label for="username"><i class="fas fa-user-circle"></i> Username</label>
+        </div>
+        <div class="user-box">
+            <input autocomplete="off" id="email" name="email" required="" type="email" value="">
+            <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        </div>
+        <div class="user-box">
+            <input autocomplete="off" id="password" name="password" required="" type="password" value="">
+            <label><i class="fas fa-key"></i> Password</label>
+        </div>
+        {% if register_user_form.password_confirm %}
+        <div class="user-box">
+            <input autocomplete="off" id="password_confirm" name="password_confirm" required="" type="password" value="">
+            <label><i class="fas fa-key"></i> Confirm Password</label>
+        </div>
+        {% endif %}
+        {% if recaptchaEnabled %}
+            {% for error in register_user_form.recaptcha.errors %}
+                {{ error }}
+            {% endfor %}
+            {{ register_user_form.recaptcha }}
+        {% endif %}<br>
+        <small class="hint d-flex justify-content-around">
+            <a href="/login">Login</a>
+        </small>
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Register">
+        </div>
+    </form>
+    {% if SystemOAuthProviders != [] %}
+        <hr>
+        {% for provider in SystemOAuthProviders %}
+            <div class="my-2 d-grid gap-2">
+                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block boxShadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                    {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
+                    {{provider.friendlyName}}
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
 
 <script type="text/javascript" charset="utf-8">
     var conn_options = {

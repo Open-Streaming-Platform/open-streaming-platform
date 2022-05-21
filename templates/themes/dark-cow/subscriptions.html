@@ -33,15 +33,15 @@
                 </thead>
                 <tbody>
                 {% for sub in channelSubList %}
-                    <tr id="chanSub-{{sub.channel.id}}">
+                    <tr id="chanSub-{{sub.channelID}}">
                         <td>
-                            <i class="px-2 fas fa-podcast "></i><a href="/channel/{{sub.channel.id}}/">{{sub.channel.channelName}}</a>
+                            <i class="px-2 fas fa-podcast "></i><a href="/channel/{{sub.channelID}}/">{{sub.channelID | get_channelName}}</a>
                         </td>
                         <td>
-                            <i class="fas fa-user mr-2"></i><a href="/streamer/{{sub.channel.owner.id}}/">{{sub.channel.owner.username}}</a>
+                            <i class="fas fa-user mr-2"></i><a href="/streamer/{{sub.channelID | channeltoOwnerID}}/">{{sub.channelID | channeltoOwnerID | get_userName}}</a>
                         </td>
                         <td>
-                            <i class="fas fa-hashtag mr-2"></i><a href="/topic/{{sub.channel.topic}}/">{{sub.channel.topic | get_topicName}}</a>
+                            <i class="fas fa-hashtag mr-2"></i><a href="/topic/{{sub.channelID | get_channelTopic }}/">{{sub.channelID | get_channelTopic | get_topicName}}</a>
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger mb-2" onclick='deleteChannelSub("{{sub.channelID}}")'><i class="fas fa-trash-alt"></i></button>

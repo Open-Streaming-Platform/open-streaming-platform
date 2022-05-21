@@ -2,8 +2,8 @@ from flask import flash, current_app
 from flask_wtf import RecaptchaField
 from flask_security.forms import RegisterForm, StringField, Required,ConfirmRegisterForm,ForgotPasswordForm, LoginForm, validators
 from flask_security import UserMixin, RoleMixin
+from email_validator import validate_email, caching_resolver
 from .shared import db
-from classes import Sec
 from globals import globalvars
 
 import datetime
@@ -11,6 +11,9 @@ import datetime
 class ExtendedRegisterForm(RegisterForm):
     username = StringField('username', [validators.Regexp("['\w']+"), Required()])
     email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
+
+    resolver = caching_resolver(timeout=10)
+
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -24,11 +27,16 @@ class ExtendedRegisterForm(RegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
+        if validate_email(self.email.data.strip(), dns_resolver=self.resolver) is False:
+            success = False
         return success
 
 class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
     username = StringField('username', [validators.Regexp("['\w']+"), Required()])
     email = StringField('email', [validators.Regexp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')])
+
+    resolver = caching_resolver(timeout=10)
+
     if globalvars.recaptchaEnabled is True:
         recaptcha = RecaptchaField()
 
@@ -42,17 +50,19 @@ class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
         if db.session.query(User).filter(User.email == self.email.data.strip()).first():
             self.email.errors.append("Email address already taken")
             success = False
+        if validate_email(self.email.data.strip(), dns_resolver=self.resolver) is False:
+            success = False
         return success
 
 class OSPLoginForm(LoginForm):
 
     def validate(self):
         isvalid = False
-        userQuery = Sec.User.query.filter_by(username=self.email.data.strip(), authType=0).first()
+        userQuery = User.query.filter_by(username=self.email.data.strip(), authType=0).first()
         if userQuery is not None:
             isvalid = True
         if isvalid is False:
-            userQuery = Sec.User.query.filter_by(email=self.email.data.strip(), authType=0).first()
+            userQuery = User.query.filter_by(email=self.email.data.strip(), authType=0).first()
             if userQuery is not None:
                 isvalid = True
         if isvalid is True:
@@ -99,8 +109,13 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     invites = db.relationship('invitedViewer', backref='user', lazy="dynamic")
     channels = db.relationship('Channel', backref='owner', lazy="dynamic")
+    messageBanList = db.relationship('messageBanList', backref='owner', cascade="all, delete-orphan", lazy="dynamic")
     notifications = db.relationship('userNotification', backref='user', lazy="dynamic")
     subscriptions = db.relationship('channelSubs', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+    socialNetworks = db.relationship('UserSocial', backref='user', cascade="all, delete-orphan", lazy="dynamic")
+    emailVideo = db.Column(db.Boolean)
+    emailStream = db.Column(db.Boolean)
+    emailMessage = db.Column(db.Boolean)
 
     def serialize(self):
         return {
@@ -112,6 +127,18 @@ class User(db.Model, UserMixin):
             'channels': [obj.channelLoc for obj in self.channels],
             'page': '/profile/' + str(self.username) + '/'
         }
+
+class UserSocial(db.Model):
+    __tablename__ = "UserSocial"
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.ForeignKey(User.id))
+    socialType = db.Column(db.String(128))
+    url = db.Column(db.String(512))
+
+    def __init__(self, userID, socialType, url):
+        self.userID = userID
+        self.socialType = socialType
+        self.url = url
 
 class OAuth2Token(db.Model):
     __tablename__ = "OAuth2Token"
@@ -150,3 +177,13 @@ class Guest(db.Model):
         self.UUID = UUID
         self.last_active_at = datetime.datetime.utcnow()
         self.last_active_ip = current_login_ip
+
+class UsersFlaggedForDeletion(db.Model):
+    __tablename__ = "UsersFlaggedForDeletion"
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.ForeignKey(User.id))
+    timestamp = db.Column(db.DateTime)
+
+    def __init__(self, userID):
+        self.userID = userID
+        self.timestamp = datetime.datetime.now() + datetime.timedelta(days=2)

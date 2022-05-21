@@ -7,6 +7,7 @@ from classes import subscriptions
 
 from functions import themes
 from functions import cachedDbCalls
+from functions import securityFunc
 
 channels_bp = Blueprint('channel', __name__, url_prefix='/channel')
 
@@ -28,13 +29,25 @@ def channels_page():
 @channels_bp.route('/<int:chanID>/')
 def channel_view_page(chanID):
     chanID = int(chanID)
-
-    #channelData = Channel.Channel.query.filter_by(id=chanID).first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelData = cachedDbCalls.getChannel(chanID)
 
     if channelData is not None:
 
-        openStreams = Stream.Stream.query.filter_by(linkedChannel=chanID).all()
+        if channelData.private:
+            if current_user.is_authenticated:
+                if current_user.id != channelData.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Channel", "error")
+                    return redirect(url_for("root.main_page"))
+            else:
+                flash("No Such Channel", "error")
+                return redirect(url_for("root.main_page"))
+
+        if channelData.protected and sysSettings.protectionEnabled:
+            if not securityFunc.check_isValidChannelViewer(channelData.id):
+                return render_template(themes.checkOverride('channelProtectionAuth.html'))
+
+        openStreams = Stream.Stream.query.filter_by(active=True, linkedChannel=chanID).all()
 
         recordedVids = cachedDbCalls.getAllVideo_View(chanID)
 
@@ -67,9 +80,10 @@ def channel_view_link_page(channelLoc):
 # Allow a direct link to any open stream for a channel
 @channels_bp.route('/<loc>/stream')
 def channel_stream_link_page(loc):
-    requestedChannel = Channel.Channel.query.filter_by(id=int(loc)).first()
+    #requestedChannel = Channel.Channel.query.filter_by(id=int(loc)).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(loc)
     if requestedChannel is not None:
-        openStreamQuery = Stream.Stream.query.filter_by(linkedChannel=requestedChannel.id).first()
+        openStreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=requestedChannel.id).first()
         if openStreamQuery is not None:
             return redirect(url_for("view_page", loc=requestedChannel.channelLoc))
         else:

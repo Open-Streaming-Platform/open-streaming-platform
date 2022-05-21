@@ -1,21 +1,38 @@
 from urllib.parse import urlparse
 import time
+import datetime
 import os
+import pytz
+import random
+import string
+
+from flask_security import current_user
+from sqlalchemy import func
+import hashlib
 
 from globals import globalvars
 
 from classes import Sec
 from classes import comments
+from classes import panel
+from classes import Stream
+from classes import settings
+from classes import RecordedVideo
+from classes import Channel
+from classes import invites
+from classes import webhook
 
 from functions import votes
 from functions import cachedDbCalls
 
 def init(context):
+    context.jinja_env.filters['generateRandomString'] = generateRandomString
     context.jinja_env.filters['normalize_uuid'] = normalize_uuid
     context.jinja_env.filters['normalize_urlroot'] = normalize_urlroot
     context.jinja_env.filters['normalize_url'] = normalize_url
     context.jinja_env.filters['normalize_date'] = normalize_date
     context.jinja_env.filters['limit_title'] = limit_title
+    context.jinja_env.filters['limit_title20'] = limit_title20
     context.jinja_env.filters['format_kbps'] = format_kbps
     context.jinja_env.filters['hms_format'] = hms_format
     context.jinja_env.filters['get_topicName'] = get_topicName
@@ -36,8 +53,15 @@ def init(context):
     context.jinja_env.filters['uuid_to_username'] = uuid_to_username
     context.jinja_env.filters['format_keyType'] = format_keyType
     context.jinja_env.filters['get_channelLiveStatus'] = get_channelLiveStatus
+    context.jinja_env.filters['get_channelPrivateStatus'] = get_channelPrivateStatus
     context.jinja_env.filters['get_channelName'] = get_channelName
+    context.jinja_env.filters['get_clipTags'] = get_clipTags
+    context.jinja_env.filters['get_clipTags_csv'] = get_clipTags_csv
+    context.jinja_env.filters['get_videoTags'] = get_videoTags
+    context.jinja_env.filters['get_videoTags_csv'] = get_videoTags_csv
     context.jinja_env.filters['get_videoComments'] = get_videoComments
+    context.jinja_env.filters['get_channelTags'] = get_channelTags
+    context.jinja_env.filters['get_channelTags_csv'] = get_channelTags_csv
     context.jinja_env.filters['get_channelProtected'] = get_channelProtected
     context.jinja_env.filters['get_channelLocationFromID'] = get_channelLocationFromID
     context.jinja_env.filters['channeltoOwnerID'] = channeltoOwnerID
@@ -45,10 +69,41 @@ def init(context):
     context.jinja_env.filters['get_channelTopic'] = get_channelTopic
     context.jinja_env.filters['get_videoTopic'] = get_videoTopic
     context.jinja_env.filters['get_videoDate'] = get_videoDate
+    context.jinja_env.filters['get_channelPicture'] = get_channelPicture
+    context.jinja_env.filters['is_channelObjVisible'] = is_channelObjVisible
+    context.jinja_env.filters['localize_time'] = localize_time
+    context.jinja_env.filters['epoch_to_datetime'] = epoch_to_datetime
+    context.jinja_env.filters['convert_mins'] = convert_mins
+    context.jinja_env.filters['globalPanelIdToPanelName'] = globalPanelIdToPanelName
+    context.jinja_env.filters['channelPanelIdToPanelName'] = channelPanelIdToPanelName
+    context.jinja_env.filters['panelOrderIdToPanelOrderName'] = panelOrderIdToPanelOrderName
+    context.jinja_env.filters['panelTypeIdToPanelTypeName'] = panelTypeIdToPanelTypeName
+    context.jinja_env.filters['getLiveStream'] = getLiveStream
+    context.jinja_env.filters['getLiveStreamURL'] = getLiveStreamURL
+    context.jinja_env.filters['getGlobalPanelArg'] = getGlobalPanelArg
+    context.jinja_env.filters['getPanel'] = getPanel
+    context.jinja_env.filters['orderVideoBy'] = orderVideoBy
+    context.jinja_env.filters['getPanelStreamList'] = getPanelStreamList
+    context.jinja_env.filters['getPanelVideoList'] = getPanelVideoList
+    context.jinja_env.filters['getPanelClipList'] = getPanelClipList
+    context.jinja_env.filters['generatePlaybackAuthToken'] = generatePlaybackAuthToken
+    context.jinja_env.filters['get_channelInviteCodes'] = get_channelInviteCodes
+    context.jinja_env.filters['get_channelInvitedUsers'] = get_channelInvitedUsers
+    context.jinja_env.filters['get_channelRestreamDestinations'] = get_channelRestreamDestinations
+    context.jinja_env.filters['get_channelWebhooks'] = get_channelWebhooks
+    context.jinja_env.filters['get_channelVideos'] = get_channelVideos
+    context.jinja_env.filters['get_channelClips'] = get_channelClips
+    context.jinja_env.filters['get_flaggedForDeletion'] = get_flaggedForDeletion
+    context.jinja_env.filters['get_channelData'] = get_channelData
 
 #----------------------------------------------------------------------------#
 # Template Filters
 #----------------------------------------------------------------------------#
+
+def generateRandomString(x):
+    letters = string.ascii_lowercase
+    randomString = (''.join(random.choice(letters) for i in range(10)))
+    return randomString
 
 def normalize_uuid(uuidstr):
     return uuidstr.replace("-", "")
@@ -77,11 +132,17 @@ def normalize_url(urlString):
     return str(reparsedString)
 
 def normalize_date(dateStr):
-    return str(dateStr)[:19]
+    return str(dateStr)[:16]
 
 def limit_title(titleStr):
     if len(titleStr) > 40:
         return titleStr[:37] + "..."
+    else:
+        return titleStr
+
+def limit_title20(titleStr):
+    if len(titleStr) > 20:
+        return titleStr[:17] + "..."
     else:
         return titleStr
 
@@ -157,6 +218,16 @@ def get_pictureLocation(userID):
 def channeltoOwnerID(channelID):
     channelObj = cachedDbCalls.getChannel(channelID)
     return channelObj.owningUser
+
+def get_channelPrivateStatus(channelID):
+    channelObj = cachedDbCalls.getChannel(channelID)
+    if channelObj is not None:
+        if channelObj.private is False:
+            return False
+        else:
+            return True
+    return True
+
 
 def get_channelTopic(channelID):
     channelObj = cachedDbCalls.getChannel(channelID)
@@ -268,8 +339,13 @@ def get_channelName(channelID):
     return channelQuery.channelName
 
 def get_channelProtected(channelID):
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelQuery = cachedDbCalls.getChannel(channelID)
-    return channelQuery.protected
+    protected = False
+    if channelQuery != None:
+        if channelQuery.protected is True and sysSettings.protectionEnabled is True:
+            protected = True
+    return protected
 
 def get_channelLocationFromID(channelID):
     channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
@@ -282,3 +358,338 @@ def get_videoDate(videoID):
 def get_videoComments(videoID):
     commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
     return commentsQuery
+
+def get_clipTags(clipId):
+    tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
+    return tagQuery
+
+def get_clipTags_csv(clipId):
+    tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    tagString = ",".join(tagArray)
+    return tagString
+
+
+def get_videoTags(videoId):
+    tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
+    return tagQuery
+
+def get_videoTags_csv(videoId):
+    tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    tagString = ",".join(tagArray)
+    return tagString
+
+def get_channelTags(channelId):
+    tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
+    return tagQuery
+
+def get_channelTags_csv(channelId):
+    tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
+    tagArray = []
+    for tag in tagQuery:
+        tagArray.append(tag.name)
+    tagString = ",".join(tagArray)
+    return tagString
+
+def get_channelPicture(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    return channelQuery.imageLocation
+
+def is_channelObjVisible(channelID):
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    visible=False
+    if channelQuery != None:
+        if channelQuery.private:
+            if current_user.is_authenticated:
+                if current_user.id == channelQuery.owningUser or current_user.has_role('Admin'):
+                    visible = True
+        else:
+            visible = True
+    return visible
+
+
+def localize_time(timeObj):
+    sysSettings = cachedDbCalls.getSystemSettings()
+    localtz = pytz.timezone(sysSettings.serverTimeZone)
+    localized_datetime = localtz.localize(timeObj)
+    return localized_datetime
+
+def epoch_to_datetime(timestamp):
+    if timestamp is None:
+        return "N/A"
+    return datetime.datetime.fromtimestamp(timestamp)
+
+def convert_mins(timestamp):
+    if timestamp is not None:
+        minutes = round(timestamp / 60)
+        return minutes
+    else:
+        return "?"
+
+def globalPanelIdToPanelName(panelId):
+
+    panelQuery = cachedDbCalls.getGlobalPanel(panelId)
+    if panelQuery is not None:
+        return panelQuery.name
+    else:
+        return "Unknown Panel ID # " + panelId
+
+def channelPanelIdToPanelName(panelId):
+
+    panelQuery = cachedDbCalls.getChannelPanel(panelId)
+    if panelQuery is not None:
+        return panelQuery.name
+    else:
+        return "Unknown Panel ID # " + panelId
+
+def panelTypeIdToPanelTypeName(panelType):
+    panelTypeMap = {0: "Text/Markdown", 1: "Live Stream List", 2: "Video List", 3: "Clip List", 4: "Topic List", 5: "Channel List", 6: "Featured Live Stream"}
+    return panelTypeMap[panelType]
+
+def panelOrderIdToPanelOrderName(panelOrder):
+    panelOrderMap = {0: "Most Views / Live Viewers", 1: "Most Recent", 2: "Random"}
+    return panelOrderMap[panelOrder]
+
+def getPanel(panelId, panelType):
+    panel = None
+    if panelType == 0:
+        panel = cachedDbCalls.getGlobalPanel(panelId)
+    elif panelType == 2:
+        panel = cachedDbCalls.getChannelPanel(panelId)
+    return panel
+
+def getLiveStream(channelId):
+    liveStreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelId, active=True) \
+        .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers,
+                       Stream.Stream.topic, Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp,
+                       Stream.Stream.totalViewers, Stream.Stream.active).first()
+    return liveStreamQuery
+
+def getLiveStreamURL(channel):
+    sysSettings = cachedDbCalls.getSystemSettings()
+
+    # Stream URL Generation
+    streamURL = ''
+    edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
+    if sysSettings.proxyFQDN != None:
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/proxy-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/proxy/' + channel.channelLoc + '/index.m3u8'
+    elif edgeQuery != []:
+        # Handle Selecting the Node using Round Robin Logic
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/edge-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/edge/' + channel.channelLoc + '/index.m3u8'
+    else:
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = '/live-adapt/' + channel.channelLoc + '.m3u8'
+        else:
+            streamURL = '/live/' + channel.channelLoc + '/index.m3u8'
+    return streamURL
+
+def getGlobalPanelArg(panelId, arg):
+    panel = cachedDbCalls.getGlobalPanel(panelId)
+    result = getattr(panel, arg)
+    return result
+
+def getChannelPanelArg(panelId, arg):
+    panel = cachedDbCalls.getChannelPanel(panelId)
+    result = getattr(panel, arg)
+    return result
+
+def getPanelStreamList(order, limitTo):
+    if order == 0:
+        activeStreams = Stream.Stream.query.filter_by(active=True)\
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active)\
+            .order_by(Stream.Stream.currentViewers.desc()).limit(limitTo).all()
+    elif order == 1:
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(Stream.Stream.startTimestamp.desc()).limit(limitTo).all()
+    elif order == 2:
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(func.random()).limit(limitTo).all()
+    else:
+        activeStreams = Stream.Stream.query.filter_by(active=True) \
+            .with_entities(Stream.Stream.streamName, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                           Stream.Stream.id, Stream.Stream.uuid, Stream.Stream.startTimestamp, Stream.Stream.totalViewers, Stream.Stream.active) \
+            .order_by(Stream.Stream.currentViewers.desc()).limit(limitTo).all()
+    return activeStreams
+
+def getPanelVideoList(order, limitTo):
+    if order == 0:
+        recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
+            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
+            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
+                           RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, Channel.Channel.protected,
+                           Channel.Channel.channelName.label('ChanName')) \
+            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo).all()
+    elif order == 1:
+        recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
+            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
+            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
+                           RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, Channel.Channel.protected,
+                           Channel.Channel.channelName.label('ChanName')) \
+            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo).all()
+    elif order == 2:
+        recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
+            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
+            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
+                           RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, Channel.Channel.protected,
+                           Channel.Channel.channelName.label('ChanName')) \
+            .order_by(func.random()).limit(limitTo).all()
+    else:
+        recordedQuery = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True) \
+            .join(Channel.Channel, RecordedVideo.RecordedVideo.channelID == Channel.Channel.id) \
+            .join(Sec.User, RecordedVideo.RecordedVideo.owningUser == Sec.User.id) \
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length,
+                           RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, Channel.Channel.protected,
+                           Channel.Channel.channelName.label('ChanName')) \
+            .order_by(RecordedVideo.RecordedVideo.views.desc()).limit(limitTo).all()
+    return recordedQuery
+
+def getPanelClipList(order, limitTo):
+    if order == 0:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo).all()
+    elif order == 1:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.RecordedVideo.videoDate.desc()).limit(limitTo).all()
+    elif order == 2:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation, Channel.Channel.owningUser,
+                           RecordedVideo.Clips.views, RecordedVideo.Clips.length, RecordedVideo.Clips.clipName,
+                           Channel.Channel.protected, Channel.Channel.channelName, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.videoDate, Sec.User.pictureLocation,
+                           RecordedVideo.Clips.parentVideo) \
+            .order_by(func.random()).limit(limitTo).all()
+    else:
+        clipQuery = RecordedVideo.Clips.query.filter_by(published=True) \
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           RecordedVideo.Clips.clipName, Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, RecordedVideo.RecordedVideo.videoDate,
+                           Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo) \
+            .order_by(RecordedVideo.Clips.views.desc()).limit(limitTo).all()
+    return clipQuery
+
+def orderVideoBy(videoList, orderById):
+    # Most Views
+    if orderById == 0:
+        return sorted(videoList, key=lambda x: x.views, reverse=True)
+    # Most Recent
+    elif orderById == 1:
+        return sorted(videoList, key=lambda x: x.videoDate, reverse=True)
+    # Random
+    elif orderById == 2:
+        itemList = []
+        for item in videoList:
+            itemList.append(item)
+        random.shuffle(itemList)
+        return itemList
+    # Fallback Most Views
+    else:
+        return sorted(videoList, key=lambda x: x.views, reverse=True)
+
+def generatePlaybackAuthToken(channelLoc):
+    validationToken = "NA"
+    if current_user.is_authenticated:
+        if current_user.authType == 0:
+            validationToken = hashlib.sha256(
+                (current_user.username + channelLoc + current_user.password).encode('utf-8')).hexdigest()
+        else:
+            validationToken = hashlib.sha256(
+                (current_user.username + channelLoc + current_user.oAuthID).encode('utf-8')).hexdigest()
+    return validationToken
+
+def get_channelInviteCodes(channelID):
+    codeQuery = invites.inviteCode.query.filter_by(channelID=channelID).all()
+    return codeQuery
+
+def get_channelInvitedUsers(channelID):
+    inviteQuery = invites.invitedViewer.query.filter_by(channelID=channelID).all()
+    return inviteQuery
+
+def get_channelRestreamDestinations(channelID):
+    restreamDestQuery = Channel.restreamDestinations.query.filter_by(channel=channelID).all()
+    return restreamDestQuery
+
+def get_channelWebhooks(channelID):
+    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID).all()
+    return webhookQuery
+
+def get_channelVideos(channelID):
+    videosQuery = cachedDbCalls.getChannelVideos(channelID)
+    return videosQuery
+
+def get_channelClips(channelID):
+    channelVideos = get_channelVideos(channelID)
+
+    videoIDList = []
+    for video in channelVideos:
+        if video.id not in videoIDList:
+            videoIDList.append(video.id)
+
+    clipQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.parentVideo.in_(videoIDList))\
+        .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.gifLocation, RecordedVideo.Clips.thumbnailLocation, RecordedVideo.Clips.clipName, RecordedVideo.Clips.videoLocation,
+                     RecordedVideo.Clips.length, RecordedVideo.Clips.views, RecordedVideo.Clips.description, RecordedVideo.Clips.published, RecordedVideo.Clips.parentVideo).all()
+    return clipQuery
+
+def get_flaggedForDeletion(userID):
+    flagQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=int(userID)).first()
+    if flagQuery != None:
+        return str(flagQuery.timestamp)
+    else:
+        return ''
+
+def get_channelData(channelID):
+    channelQuery = cachedDbCalls.getChannel(int(channelID))
+    return channelQuery

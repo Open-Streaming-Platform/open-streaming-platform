@@ -1,0 +1,265 @@
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as coreui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="manifest" href="/static/site.webmanifest">
+
+    <script src="/static/vendor/jquery/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
+    <script src="/static/vendor/popper/js/popper.min.js"></script>
+    <script src="/static/vendor/easymde/js/easymde.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+    <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
+    <script src="/static/vendor/listjs/js/list.min.js"></script>
+
+
+    <link rel="stylesheet" href="/static/vendor/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/vendor/easymde/css/easymde.min.css">
+    <link rel="stylesheet" href="/static/vendor/dropzone/css/basic.min.css" />
+    <link rel="stylesheet" href="/static/vendor/dropzone/css/dropzone.min.css" />
+    <link rel="stylesheet" href="/static/css/shared.css">
+    <link rel="stylesheet" href="/static/css/Defaultv3/theme.css">
+    <link rel="stylesheet" href="/static/css/Defaultv3/animation.css">
+
+
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+<!--Navbar-->
+<nav id="nav" class="navbar navbar-expand-lg">
+  <div class="container-fluid g-0 g-lg-1">
+
+    <a class="navbar-brand ms-1" href="/">
+      <img class="logo" src="{{sysSettings.systemLogo}}">
+      <span class="navbar-title">{{sysSettings.siteName}}</span>
+    </a>
+
+    <button class="navbar-toggler boxShadow me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="fas fa-bars"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <!--Search Bar-->
+        <div class="searchBox my-2 my-lg-0">
+            <i class="searchIcon bi bi-search"></i>
+            <input id="systemSearchInput" class="insetBoxShadow w-75" type="text" placeholder="Search..." autocomplete="off">
+            <i id="searchClearIcon" class="searchClear fas fa-times" onclick="clearSearch();"></i>
+        </div>
+        <div id="searchResults" class="searchResults" style="display:none;">
+          <ul id="searchResultList" class="list-group list-group-flush">
+              <li id="searchResultsGroup-Channels" class="searchResults-Group"><b><i class="bi bi-tv-fill textShadow me-2"></i> Channels</b> <hr>
+                  <ul id="searchResultsList-Channels">
+                  </ul>
+                  <ul id="searchResults-Channels-ShowMore" style="display:none;"><a class="ms-auto" id="searchResults-Channels-ShowMore-link" href="#"><div class="boxShadow textShadow badge badge-success">Show More</div></a></ul>
+              </li>
+              <li id="searchResultsGroup-Streams" class="searchResults-Group"><b><i class="bi bi-tv-fill textShadow me-2"></i> Streams</b> <hr>
+                  <ul id="searchResultsList-Streams">
+                  </ul>
+                  <ul id="searchResults-Streams-ShowMore" style="display:none;"><a class="ms-auto" id="searchResults-Streams-ShowMore-link" href="#"><div class="boxShadow textShadow badge badge-success">Show More</div></a></ul>
+              </li>
+              <li id="searchResultsGroup-Videos" class="searchResults-Group"><b><i class="bi bi-play-circle-fill textShadow me-2"></i> Videos</b> <hr>
+                  <ul id="searchResultsList-Videos">
+                  </ul>
+                  <ul id="searchResults-Videos-ShowMore" style="display:none;"><a class="ms-auto" id="searchResults-Videos-ShowMore-link" href="#"><div class="boxShadow textShadow badge badge-success">Show More</div></a></ul>
+              </li>
+              <li id="searchResultsGroup-Clips" class="searchResults-Group"><b><i class="bi bi-scissors textShadow me-2"></i> Clips</b> <hr>
+                  <ul id="searchResultsList-Clips">
+                  </ul>
+                  <ul id="searchResults-Clips-ShowMore" style="display:none;"><a class="ms-auto" id="searchResults-Clips-ShowMore-link" href="#"><div class="boxShadow textShadow badge badge-success">Show More</div></a></ul>
+              </li>
+              <li id="searchResultsGroup-Users" class="searchResults-Group"><b><i class="bi bi-people-fill textShadow me-2"></i> Users</b> <hr>
+                  <ul id="searchResultsList-Users">
+                  </ul>
+                  <ul id="searchResults-Users-ShowMore" style="display:none;"><a class="ms-auto" id="searchResults-Users-ShowMore-link" href="#"><div class="boxShadow textShadow badge badge-success">Show More</div></a></ul>
+              </li>
+          </ul>
+        </div>
+
+        <!--Begin Authenticated User Navbar Options-->
+        {% if current_user.is_authenticated %}
+        <!--Authenticated User Dropdown Menu-->
+            <li class="nav-item dropdown mx-3 mx-lg-0 my-2 my-lg-0">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="userImage boxShadow" src="/images/{{current_user.pictureLocation}}" alt="Username Picture" onerror="this.src='/static/img/user2.png';">
+              </a>
+              <span class="d-lg-none ms-2">{{ current_user.username }}</span>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              {% if current_user.has_role('Streamer') %}
+                <li><a href="/settings/channels" class="dropdown-item my-1 my-lg-0"><span class="bi bi-tv-fill"></span> <b>My Channels</b></a></li>
+              {% endif %}
+              {% if current_user.has_role('Streamer') or current_user.has_role('Admin') %}
+                <li><a href="/settings/api" class="dropdown-item my-1 my-lg-0"><span class="bi bi-key-fill"></span> <b>API Keys</b></a></li>
+              {% endif %}
+                <li><a href="/settings/user/subscriptions" class="dropdown-item my-1 my-lg-0"><span class="bi bi-star-fill"></span> <b>Subscriptions</b></a></li>
+                <li><a href="/settings/user" class="dropdown-item my-1 my-lg-0"><span class="bi bi-gear-fill"></span> <b>Settings</b></a></li>
+              {% if current_user.has_role('Admin') %}
+                <li><a href="/settings/admin" class="dropdown-item my-1 my-lg-0"><span class="bi bi-server"></span> <b>Admin</b></a></li>
+              {% endif %}
+                <li><a href="/logout" class="dropdown-item my-1 my-lg-0"><span class="bi bi-box-arrow-right"></span> <b>Logout</b></a></li>
+              </ul>
+            </li>
+
+        {% if sysSettings.allowUploads == True %}
+            {% if current_user.has_role('Uploader') %}
+                <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#uploadModal"><i class="textShadow bi bi-cloud-arrow-up-fill bs-icon"></i><span class="d-lg-none ms-2" style="position: relative; top: -4px;">Upload</span></a>
+                </li>
+            {% endif %}
+        {% endif %}
+
+        <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/messages"><i class="textShadow bi bi-envelope-fill bs-icon"></i>
+              {% if messageCount > 0 %}
+                  <span class="messagesIndicator" id="MessagesCountNav">{% if messageCount < 10 %}{{messageCount}}{% else %}9+{% endif %}</span>
+              {% endif %}
+                <span class="d-lg-none ms-2" style="position: relative; top: -4px;">Messages</span>
+            </a>
+        </li>
+
+        <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/notifications">
+              <i class="textShadow bi bi-bell-fill bs-icon"></i>
+              {% if notifications | count > 0 %}
+                  <span class="messagesIndicator" id="MessagesCountNav">{% if notifications | count < 10 %}{{ notifications | count }}{% else %}9+{% endif %}</span>
+              {% endif %}
+              <span class="d-lg-none ms-2" style="position: relative; top: -4px;">Notifications</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if current_user.is_authenticated == False %}
+        <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+          <a class="btn loginButton shadow textShadow w-100" href="/login">Log In</a>
+        </li>
+        {% endif %}
+
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/channel">
+                <i class="textShadow bi bi-tv-fill bs-icon"></i>
+                <span class="ms-2" style="position: relative; top: -4px;">Channels</span>
+            </a>
+        </li>
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/topic">
+                <i class="textShadow bi bi-hash bs-icon"></i>
+                <span class="ms-2" style="position: relative; top: -4px;">Topics</span>
+            </a>
+        </li>
+
+        <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+            <a href="/streamer">
+                <i class="textShadow bi-people-fill bs-icon"></i>
+                <span class="ms-2" style="position: relative; top: -4px;">Streamers</span>
+            </a>
+        </li>
+
+        {% for page in static_pages %}
+            {% if page.isTopBar == False %}
+                <li class="nav-item d-lg-none mx-3 my-1 mx-lg-0 my-lg-0">
+                    <a href="/p/{{ page.name }}" title="{{ page.title }}">
+                        <i class="textShadow {{ page.iconClass}} bs-icon"></i>
+                        <span class="ms-2" style="position: relative; top: -4px;">{{ page.title }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+          <a href="#" onclick="toggleDarkMode();"><i id="darkModeIcon" class="textShadow bi bi-brightness-alt-low bs-icon"></i><span class="d-lg-none ms-2" style="position: relative; top: -4px;">Toggle Dark Mode</span></a>
+        </li>
+
+        {% for page in static_pages %}
+            {% if page.isTopBar == True %}
+            <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+                <a href="/p/{{ page.name }}" title="{{ page.title }}"><i class="textShadow fa-nav-icon {{ page.iconClass }}"></i><span class="d-lg-none ms-2" style="position: relative; top: -4px;">{{ page.title }}</span></a>
+
+            </li>
+            {% endif %}
+        {% endfor %}
+
+        <li class="nav-item mx-3 my-1 mx-lg-0 my-lg-0">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="textShadow bi bi-info-circle-fill bs-icon"></i><span class="d-lg-none ms-2" style="position: relative; top: -4px;">About</span></a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+<div id="leftnav" class="uiBar sideNavbar">
+    <div class="sideIcons">
+        {{ coreui.ui_sidebar_item("Channels", "/channel", "bi bi-tv-fill") }}
+        {{ coreui.ui_sidebar_item("Topics", "/topic", "bi bi-hash") }}
+        {{ coreui.ui_sidebar_item("Streamers", "/streamer", "bi-people-fill") }}
+        <!--{{ coreui.ui_sidebar_item("Videos", "/video", "bi bi-camera-video-fill") }}-->
+        <!--{{ coreui.ui_sidebar_item("Clips", "/clip", "bi bi-scissors") }}-->
+        {% for page in static_pages %}
+            {% if page.isTopBar == False %}
+            {{ coreui.ui_sidebar_item(page.title, "/p/" + page.name, page.iconClass) }}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+    {{ coreui.toast_box(messages) }}
+
+    <div class="content">
+      {% if current_user.is_authenticated %}
+        {% if current_user.has_role('Admin') %}
+            {% if restartRequired == True %}
+                <div class="alert alert-info text-center" role="alert">
+                  <i class="fas fa-exclamation-triangle"></i> The OSP Server requires a restart due to a configuration change.  To prevent issues, please restart the osp.target service! <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            {% endif %}
+        {% endif %}
+      {% endif %}
+      {% block body %}
+      {% endblock %}
+    </div>
+
+    <!-- Global UI Modal Location Start-->
+    {{ modals.osp_systeminfo_modal(sysSettings.version) }}
+
+    <!--Upload Video Modal-->
+    {{ modals.osp_videoupload_modal(uploadTopics, ownedChannels) }}
+
+    {% block modals %}
+    {% endblock %}
+
+    <script>
+        var maxVideoUploadFileSize = 4096; // In Megabytes
+        var maxThumbnailUploadFileSize = 8; // In Megabytes
+
+        {% if current_user.is_authenticated %}
+        var notificationCount = {{ notifications | count }};
+        {% endif %}
+    </script>
+
+    <script>
+        // Establish SocketIO Connection
+        var conn_options = {
+          'sync disconnect on unload': true
+        };
+        var socket = io();
+    </script>
+
+    <script type="text/javascript" src="/static/js/core.js"></script>
+    <script type="text/javascript" src="/static/js/ui.js"></script>
+    <script type="text/javascript" src="/static/js/osp-uploads.js"></script>
+
+    {% block scripts %}
+    {% endblock %}
+
+    </body>
+</html>

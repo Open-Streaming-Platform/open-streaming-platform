@@ -5,18 +5,12 @@ class settings(db.Model):
     siteName = db.Column(db.String(255))
     siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
-    smtpAddress = db.Column(db.String(255))
-    smtpPort = db.Column(db.Integer)
-    smtpTLS = db.Column(db.Boolean)
-    smtpSSL = db.Column(db.Boolean)
-    smtpUsername = db.Column(db.String(255))
-    smtpPassword = db.Column(db.String(255))
-    smtpSendAs = db.Column(db.String(255))
+    serverTimeZone = db.Column(db.String(255))
     allowRecording = db.Column(db.Boolean)
     allowUploads = db.Column(db.Boolean)
+    allowRestream = db.Column(db.Boolean)
     protectionEnabled = db.Column(db.Boolean)
     adaptiveStreaming = db.Column(db.Boolean)
-    background = db.Column(db.String(255))
     showEmptyTables = db.Column(db.Boolean)
     allowComments = db.Column(db.Boolean)
     systemTheme = db.Column(db.String(255))
@@ -27,40 +21,44 @@ class settings(db.Model):
     serverMessageTitle = db.Column(db.String(256))
     serverMessage = db.Column(db.String(8192))
     maxClipLength = db.Column(db.Integer)
+    limitMaxChannels = db.Column(db.Integer)
     proxyFQDN = db.Column(db.String(2048))
     maintenanceMode = db.Column(db.Boolean)
     buildEdgeOnRestart = db.Column(db.Boolean)
-    allowRegistration = db.Column(db.Boolean) # Moved to config.py
-    requireConfirmedEmail = db.Column(db.Boolean) # Moved to config.py
+    hubUUID = db.Column(db.String(255))
+    hubEnabled = db.Column(db.Boolean)
+    hubURL = db.Column(db.String(255))
+    maxVideoRetention = db.Column(db.Integer)
 
-    def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
+    def __init__(self, siteName, siteProtocol, siteAddress, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
         self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
-        self.smtpAddress = smtpAddress
-        self.smtpPort = smtpPort
-        self.smtpTLS = smtpTLS
-        self.smtpSSL = smtpSSL
-        self.smtpUsername = smtpUsername
-        self.smtpPassword = smtpPassword
-        self.smtpSendAs = smtpSendAs
+        self.serverTimeZone = "UTC"
         self.allowRecording = allowRecording
         self.allowUploads = allowUploads
+        self.allowRestream = True
         self.adaptiveStreaming = adaptiveStreaming
         self.showEmptyTables = showEmptyTables
         self.allowComments = allowComments
         self.sortMainBy = 0
-        self.background = "Ash"
-        self.systemTheme = "Defaultv2"
+        self.systemTheme = "Defaultv3"
         self.version = version
-        self.systemLogo = "/static/img/logo.png"
+        self.systemLogo = "/static/img/nav-logo.png"
+        self.systemLogoLight = "/static/img/logo-light.png"
         self.serverMessageTitle = "Server Message"
         self.serverMessage = ""
         self.restreamMaxBitrate = 3500
         self.maxClipLength = 90
+        self.limitMaxChannels = 0
         self.buildEdgeOnRestart = True
         self.protectionEnabled = False
         self.maintenanceMode = False
+        self.hubEnabled = False
+        self.hubURL = "https://hub.openstreamingplatform.com"
+        self.maxVideoRetention = 0
+        #self.terms = ''
+        #self.privacy = ''
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -70,19 +68,24 @@ class settings(db.Model):
             'siteName': self.siteName,
             'siteProtocol': self.siteProtocol,
             'siteAddress': self.siteAddress,
+            'serverTimeZone': self.serverTimeZone,
             'siteURI': self.siteProtocol + self.siteAddress,
             'siteLogo': self.systemLogo,
             'serverMessageTitle': self.serverMessageTitle,
             'serverMessage': self.serverMessage,
             'allowRecording': self.allowRecording,
             'allowUploads': self.allowUploads,
+            'allowRestream' : self.allowRestream,
             'allowComments': self.allowComments,
             'version': self.version,
             'restreamMaxBitRate': self.restreamMaxBitrate,
             'maxClipLength': self.maxClipLength,
             'protectionEnabled': self.protectionEnabled,
             'adaptiveStreaming': self.adaptiveStreaming,
-            'maintenanceMode': self.maintenanceMode
+            'maintenanceMode': self.maintenanceMode,
+            'hubEnabled': self.hubEnabled,
+            'hubURL': self.hubURL,
+            'maxVideoRetention': self.maxVideoRetention
         }
 
 class edgeStreamer(db.Model):
@@ -169,6 +172,24 @@ class oAuthProvider(db.Model):
         self.id_value = id_value
         self.username_value = username_value
         self.email_value = email_value
+
+    def __repr__(self):
+        return '<id %r>' % self.id
+
+class static_page(db.Model):
+    __tablename__ = "static_page"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256), unique=True)
+    title = db.Column(db.String(256))
+    iconClass = db.Column(db.String(256))
+    content = db.Column(db.Text)
+    isTopBar = db.Column(db.Boolean)
+
+    def __init__(self, url, icon, title):
+        self.name = url
+        self.title = title
+        self.iconClass = icon
+        self.isTopBar = False
 
     def __repr__(self):
         return '<id %r>' % self.id

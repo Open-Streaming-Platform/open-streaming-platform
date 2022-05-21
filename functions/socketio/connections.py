@@ -12,6 +12,7 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import xmpp
 from functions import cachedDbCalls
+from functions.scheduled_tasks import message_tasks
 
 from functions.socketio.stream import handle_viewer_total_request
 
@@ -29,7 +30,7 @@ def handle_new_viewer(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    stream = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
@@ -63,14 +64,14 @@ def handle_new_viewer(streamData):
         else:
             pictureLocation = '/images/' + pictureLocation
 
-        webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+        message_tasks.send_webhook.delay(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName, streamurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/view/" + requestedChannel.channelLoc),
                    streamtopic=templateFilters.get_topicName(streamTopic), streamimage=(sysSettings.siteProtocol + sysSettings.siteAddress + "/stream-thumb/" + requestedChannel.channelLoc + ".png"),
                    user=current_user.username, userpicture=(sysSettings.siteProtocol + sysSettings.siteAddress + str(pictureLocation)))
     else:
-        webhookFunc.runWebhook(requestedChannel.id, 2, channelname=requestedChannel.channelName,
+        message_tasks.send_webhook.delay(requestedChannel.id, 2, channelname=requestedChannel.channelName,
                    channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(requestedChannel.id)),
                    channeltopic=requestedChannel.topic, channelimage=channelImage, streamer=templateFilters.get_userName(requestedChannel.owningUser),
                    channeldescription=str(requestedChannel.description), streamname=streamName,
@@ -91,7 +92,7 @@ def handle_add_usercount(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    streamData = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     requestedChannel.views = requestedChannel.views + 1
     if streamData is not None:
@@ -113,7 +114,7 @@ def handle_leaving_viewer(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
-    stream = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+    stream = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 

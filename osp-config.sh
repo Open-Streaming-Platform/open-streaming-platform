@@ -42,6 +42,88 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+config_smtp() {
+  smtpSendAs=""
+  smtpServerAddress=""
+  smtpServerPort=""
+  smtpUsername=""
+  smtpPassword=""
+  smtpEncryption=""
+exec 3>&1
+  # Store data to $VALUES variable
+dialog --separate-widget $'\n' --ok-label "Save" \
+          --title "Configure SMTP Settings" \
+          --form "Please Configure your SMTP Settings (Required)" \
+20 70 0 \
+        "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
+        "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
+        "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
+        "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
+        "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
+2>&1 1>&3 | {
+  read -r smtpSendAs
+  read -r smtpServerAddress
+  read -r smtpServerPort
+  read -r smtpUsername
+  read -r smtpPassword
+
+cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
+)
+
+choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty )
+smtpEncryption=""
+case choice in
+
+  1)
+    smtpEncryption="none"
+    ;;
+
+  2)
+    smtpEncryption="tls"
+    ;;
+
+  3)
+    smtpEncryption="ssl"
+    ;;
+
+  *)
+    smtpEncryption="none"
+    ;;
+esac
+sudo sed -i "s/sendAs@email.com/$smtpSendAs/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtp.email.com/$smtpServerAddress/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpServerPort=25/smtpServerPort=$smtpServerPort/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpUsername=\"\"/smtpUsername=\"$smtpUsername\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpPassword=\"\"/smtpPassword=\"$smtpPassword\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpEncryption=\"none\"/smtpEncryption=\"$smtpEncryption\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+
+}
+exec 3>&-
+
+}
+
+reset_nginx() {
+  if cd /usr/local/nginx/conf
+  then
+    echo 5 | dialog --title "Reset Nginx Configuration" --gauge "Stopping Nginx-OSP" 10 70 0
+    sudo systemctl stop nginx-osp
+    sudo systemctl disable nginx-osp
+    echo 20 | dialog --title "Reset Nginx Configuration" --gauge "Backing up Existing Conf" 10 70 0
+    sudo mkdir /tmp/nginxbak >> $OSPLOG 2>&1
+    sudo cp -R /usr/local/nginx/conf /tmp/nginxbak >> $OSPLOG 2>&1
+    cd /
+    echo 30 | dialog --title "Reset Nginx Configuration" --gauge "Removing Previous Nginx Instance" 10 70 0
+    sudo rm -rf /usr/local/nginx >> $OSPLOG 2>&1
+    echo 50 | dialog --title "Reset Nginx Configuration" --gauge "Rebuilding Nginx from Source" 10 70 0
+    install_nginx_core
+    echo 75 | dialog --title "Reset Nginx Configuration" --gauge "Restoring Nginx Conf" 10 70 0
+    sudo cp -R /tmp/nginxbak/conf/* /usr/local/nginx/conf/ >> $OSPLOG 2>&1
+    echo 90 | dialog --title "Reset Nginx Configuration" --gauge "Restarting Nginx-OSP" 10 70 0
+    sudo systemctl stop nginx-osp
+    sudo systemctl start nginx-osp
+  fi
+}
+
 reset_ejabberd() {
   echo 5 | dialog --title "Reset eJabberd Configuration" --gauge "Stopping eJabberd" 10 70 0
   sudo systemctl stop ejabberd >> $OSPLOG 2>&1
@@ -115,8 +197,8 @@ install_ffmpeg() {
   #Setup FFMPEG for recordings and Thumbnails
   echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
-  echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
+  #sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
+  #echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   sudo apt-get update >> $OSPLOG 2>&1
   echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
@@ -151,18 +233,31 @@ install_nginx_core() {
           echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip" >> $OSPLOG 2>&1
           echo 20 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
-          sudo wget -q "http://www.zlib.net/zlib-1.2.11.tar.gz" >> $OSPLOG 2>&1
+          sudo wget -q "http://www.zlib.net/zlib-1.2.12.tar.gz" >> $OSPLOG 2>&1
           echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" >> $OSPLOG 2>&1
           echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
           sudo tar xfz nginx-1.17.3.tar.gz >> $OSPLOG 2>&1
           sudo unzip -qq -o v1.2.1.zip >> $OSPLOG 2>&1
-          sudo tar xfz zlib-1.2.11.tar.gz >> $OSPLOG 2>&1
+          sudo tar xfz zlib-1.2.12.tar.gz >> $OSPLOG 2>&1
           sudo tar xfz master.tar.gz >> $OSPLOG 2>&1
+
+          # Apply Any Precompile Nginx-RTMP Patches
+          echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
+          if cd nginx-rtmp-module-1.2.1
+          then
+            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch >> $OSPLOG 2>&1
+            sudo patch -s -p 1 < 1158.patch
+            cd ..
+          else
+              echo "Unable to Access Nginx-RTMP Module Source"
+              exit 1
+          fi
+
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-1.17.3
           then
-                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.11 --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
+                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.12 --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
                   echo 50 | dialog --title "Installing Nginx-Core" --gauge "Installing Nginx" 10 70 0
                   sudo make install >> $OSPLOG 2>&1
           else
@@ -204,6 +299,10 @@ install_nginx_core() {
   sudo mkdir -p "$web_root/videos" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/keys" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/keys-adapt" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/pending" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/ingest" >> $OSPLOG 2>&1
 
   s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
   if test $s3DriveMount -eq 0
@@ -369,10 +468,15 @@ install_ejabberd() {
   sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
-  user_input=$(\
-  dialog --nocancel --title "Setting up eJabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
+  # If we don't have the site address, prompt the user
+  if [ -z "$OSP_EJABBERD_SITE_ADDRESS" ]; then
+    user_input=$(\
+    dialog --nocancel --title "Setting up eJabberd" \
+           --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+    3>&1 1>&2 2>&3 3>&-)
+  else
+    user_input="$OSP_EJABBERD_SITE_ADDRESS"
+  fi
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
@@ -431,6 +535,10 @@ install_osp() {
   sudo mkdir -p "$web_root/images/stickers" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/live-adapt" >> $OSPLOG 2>&1
   sudo mkdir -p "$web_root/stream-thumb" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/keys" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/keys-adapt" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/pending" >> $OSPLOG 2>&1
+  sudo mkdir -p "$web_root/ingest" >> $OSPLOG 2>&1
 
   s3DriveMount=$(mount | grep -iE "/var/www/videos" | grep s3fs | wc -l)
   if test $s3DriveMount -eq 0
@@ -441,6 +549,16 @@ install_osp() {
 
   sudo chown -R "$http_user:$http_user" /opt/osp >> $OSPLOG 2>&1
   sudo chown -R "$http_user:$http_user" /opt/osp/.git >> $OSPLOG 2>&1
+
+  # Copy Initial Favicons
+  sudo cp $DIR/static/android-chrome-192x192.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/android-chrome-512x512.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/apple-touch-icon.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon.ico $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon-16x16.png $web_root/images/ >> $OSPLOG 2>&1
+  sudo cp $DIR/static/favicon-32x32.png  $web_root/images/ >> $OSPLOG 2>&1
+
+  install_celery
 
   # Setup Logrotate
   echo 90 | dialog --title "Installing OSP" --gauge "Setting Up Log Rotation" 10 70 0
@@ -456,6 +574,47 @@ install_osp() {
           echo "Unable to setup logrotate" >> $OSPLOG 2>&1
       fi
   fi
+}
+
+install_celery() {
+  # Setup Celery
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery" 10 70 0
+  sudo mkdir /var/log/celery >> $OSPLOG 2>&1
+  sudo chown -R www-data:www-data /var/log/celery >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/osp-celery.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/celery /etc/default/celery >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery >> $OSPLOG 2>&1
+}
+
+install_celery_beat() {
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery Beat" 10 70 0
+  sudo cp -rf $DIR/setup/celery/osp-celery-beat.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery-beat >> $OSPLOG 2>&1
+}
+
+install_celery_flower() {
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting Up Celery Flower" 10 70 0
+  sudo pip3 install flower >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/osp-celery-flower.service /etc/systemd/system >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/setup/celery/celery-flower /etc/default/celery-flower >> $OSPLOG 2>&1
+  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 )
+  sed -i "s/CHANGEME/$ADMINPASS/" /etc/default/celery-flower >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-celery-flower >> $OSPLOG 2>&1
+  result=$(echo "OSP-Celery-Flower Install Completed! \n\nVisit http://FQDN:5572 to configure\n\nUsername: Admin \nPassword: $ADMINPASS \n\nYou can change the password by editing the /etc/default/celery-flower file")
+        display_result "Install OSP-Celery-Flower"
+}
+
+upgrade_celery() {
+  install_celery
+  sudo systemctl restart osp-celery >> $OSPLOG 2>&1
+}
+
+upgrade_celery_beat() {
+  install_celery_beat
+  sudo systemctl restart osp-celery-beat >> $OSPLOG 2>&1
 }
 
 upgrade_osp() {
@@ -543,6 +702,8 @@ install_menu() {
       "4" "Install OSP-Edge" \
       "5" "Install OSP-Proxy" \
       "6" "Install eJabberd" \
+      "7" "Install Celery Beat" \
+      "8" "Install Celery Flower" \
       2>&1 1>&3)
     exit_status=$?
     exec 3>&-
@@ -577,6 +738,10 @@ install_menu() {
         echo 65 | dialog --title "Installing OSP" --gauge "Setting Up Configuration Files" 10 70 0
         sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
         sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py >> $OSPLOG 2>&1
+        config_smtp
+        echo 70 | dialog --title "Installing OSP" --gauge "Setting up Celery" 10 70 0
+        install_celery
+        install_celery_beat
         echo 75 | dialog --title "Installing OSP" --gauge "Setting up ejabberd" 10 70 0
         generate_ejabberd_admin
         echo 80 | dialog --title "Installing OSP" --gauge "Installing MySQL" 10 70 0
@@ -588,6 +753,9 @@ install_menu() {
         upgrade_db
         echo 95 | dialog --title "Installing OSP" --gauge "Starting OSP-RTMP" 10 70 0
         sudo systemctl start osp-rtmp >> $OSPLOG 2>&1
+        echo 95 | dialog --title "Installing OSP" --gauge "Starting Celery" 10 70 0
+        sudo systemctl start osp-celery >> $OSPLOG 2>&1
+        sudo systemctl start osp-celery-beat >> $OSPLOG 2>&1
         result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
         display_result "Install OSP"
         ;;
@@ -596,6 +764,8 @@ install_menu() {
         install_nginx_core
         echo 60 | dialog --title "Installing OSP" --gauge "Installing OSP Core" 10 70 0
         install_osp
+        echo 70 | dialog --title "Installing OSP" --gauge "Setting Celery" 10 70 0
+        install_celery
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         ;;
@@ -633,6 +803,19 @@ install_menu() {
         echo 90 | dialog --title "Installing OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         ;;
+      7 )
+        echo 50 | dialog --title "Installing OSP" --gauge "Setting up Celery Beat"
+        install_celery_beat
+        echo 75 | dialog --title "Installing OSP" --gauge "Starting Celery Beat" 10 70 0
+        sudo systemctl start osp-celery
+        sudo systemctl start osp-celery-beat
+        ;;
+      8 )
+        echo 50 | dialog --title "Installing OSP" --gauge "Setting up Celery Flower"
+        install_celery_flower
+        echo 75 | dialog --title "Installing OSP" --gauge "Starting Celery Flower" 10 70 0
+        sudo systemctl start osp-celery
+        sudo systemctl start osp-celery-beat
     esac
   done
 }
@@ -682,14 +865,15 @@ upgrade_menu() {
         upgrade_rtmp
         echo 30 | dialog --title "Upgrade OSP" --gauge "Upgrading ejabberd" 10 70 0
         upgrade_ejabberd
-        echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
-        upgrade_db
         echo 50 | dialog --title "Upgrade OSP" --gauge "Restarting ejabberd" 10 70 0
         sudo systemctl restart ejabberd >> $OSPLOG 2>&1
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 85 | dialog --title "Upgrade OSP" --gauge "Restarting OSP Core" 10 70 0
         sudo systemctl restart osp.target >> $OSPLOG 2>&1
+        echo 90 | dialog --title "Installing OSP" --gauge "Upgrading Celery" 10 70 0
+        upgrade_celery
+        upgrade_celery_beat
         echo 95 | dialog --title "Upgrade OSP" --gauge "Restarting OSP-RTMP" 10 70 0
         sudo systemctl restart osp-rtmp >> $OSPLOG 2>&1
         result=$(echo "OSP - Single Server Upgrade Completed!")
@@ -700,12 +884,12 @@ upgrade_menu() {
         upgrade_osp
         echo 15 | dialog --title "Upgrade OSP" --gauge "Upgrade Nginx-OSP" 10 70 0
         upgrade_nginxcore
-        echo 40 | dialog --title "Upgrade OSP" --gauge "Upgrading Database" 10 70 0
-        upgrade_db
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
         echo 85 | dialog --title "Upgrade OSP" --gauge "Restarting OSP Core" 10 70 0
         sudo systemctl restart osp.target >> $OSPLOG 2>&1
+        echo 90 | dialog --title "Installing OSP" --gauge "Upgrading Celery" 10 70 0
+        upgrade_celery
         result=$(echo "OSP - Core Upgrade Completed!")
         display_result "Upgrade OSP"
         ;;
@@ -761,7 +945,7 @@ upgrade_menu() {
 ##########################################################
 # Start Main Script Execution
 ##########################################################
-sudo mkdir /var/log/osp/ >> /dev/null
+sudo mkdir -p /var/log/osp/ >> /dev/null
 if [ $# -eq 0 ]
   then
     while true; do

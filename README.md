@@ -1,6 +1,36 @@
-# Open Streaming Platform
 
-[![N|Solid](https://i.imgur.com/WyrOl6y.png)](https://i.imgur.com/WyrOl6y.png)
+<div align="center">
+<h1 align="center">Open Streaming Platform</h1>
+  <a href="https://github.com/github_username/repo_name">
+    <img src="https://i.imgur.com/WBA40Yc.png" alt="Logo" width="128">
+  </a>
+</div>
+<br>
+<div align="center">
+    Open-Source Video Streaming for Everyone
+    <br />
+    <a href="https://wiki.openstreamingplatform.com"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://demo.openstreamingplatform.com">View Demo</a>
+    ·
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/issues/new">Report Bug</a>
+    ·
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/issues/new">Request Feature</a>
+</div>
+<br>
+<div align="center">
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/releases"><img src="https://img.shields.io/badge/dynamic/json?color=blue&label=release&query=%24%5B0%5D.tag_name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108%2Freleases"></a>
+    <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/v/deamos/openstreamingplatform/latest?color=blue&label=docker%20version"></a>
+    <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/pulls/deamos/openstreamingplatform"></a>
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager"><img src="https://img.shields.io/badge/dynamic/json?color=green&logo=gitlab&label=stars&query=%24.star_count&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108"></a>
+    <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange"></a>
+</div>
+
+<div align="center">
+    <a href="https://discord.gg/Jp5rzbD"><img src="https://img.shields.io/discord/543114856941879296"></a>
+    <a href="https://opencollective.com/open-streaming-platform"><img src="https://img.shields.io/opencollective/all/open-streaming-platform"></a>
+</div>
 
 ## Overview:
 
@@ -8,11 +38,13 @@
 
 OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.tv, and Youtube Live.
 
+[![N|Solid](https://i.imgur.com/ptwGESB.jpg)](https://i.imgur.com/ptwGESB.jpg)
+
 ## Features:
  - RTMP Streaming from an input source like Open Broadcast Software (OBS).
  - Multiple Channels per User, allowing a single user to broadcast multiple streams at the same time without needing multiple accounts.
- - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/rEvqMPq.png)](https://i.imgur.com/rEvqMPq.png)
- - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/p5EV7nu.png)](https://i.imgur.com/p5EV7nu.png)
+ - Video Stream Recording and On-Demand Playback. [![N|Solid](https://i.imgur.com/6Pd0Mtc.jpg)](https://i.imgur.com/6Pd0Mtc.jpg)
+ - Per Channel Real-Time Chat for Video Streams. [![N|Solid](https://i.imgur.com/PlOtzhe.jpg)](https://i.imgur.com/PlOtzhe.jpg)
  - Manual Video Uploading of MP4s that are sourced outside of OSP
  - Video Clipping - Create Shorter Videos of Notable Moments
  - Real-Time Chat Moderation by Channel Owners (Banning/Unbanning)
@@ -29,7 +61,11 @@ Installation Instructions may be found at the [OSP Wiki Page](https://wiki.opens
 
 Docker
 ----
-Docker Files can be found at the [Open Streaming Platform Docker Repository](https://gitlab.com/Deamos/open-streaming-platform-docker) as they become available.
+Docker Images can be found at the following locations:
+- [OSP-Core (Core, Celery, Beat)](https://hub.docker.com/repository/docker/deamos/osp-core)
+- [OSP-RTMP](https://hub.docker.com/repository/docker/deamos/osp-rtmp)
+- [OSP-Ejabberd](https://hub.docker.com/repository/docker/deamos/osp-ejabberd)
+- [Beta 6 and earlier](https://gitlab.com/Deamos/open-streaming-platform-docker)
 
 Attribution
 ----

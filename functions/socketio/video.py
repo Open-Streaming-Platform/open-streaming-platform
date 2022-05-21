@@ -6,6 +6,8 @@ from classes import RecordedVideo
 from classes import settings
 from classes import notifications
 from classes import subscriptions
+from classes import comments
+from classes import upvotes
 
 from functions import system
 from functions import webhookFunc
@@ -13,6 +15,7 @@ from functions import templateFilters
 from functions import videoFunc
 from functions import subsFunc
 from functions import cachedDbCalls
+from functions.scheduled_tasks import video_tasks, message_tasks
 
 from app import r
 
@@ -20,19 +23,15 @@ from app import r
 def deleteVideoSocketIO(message):
     if current_user.is_authenticated:
         videoID = int(message['videoID'])
-        result = videoFunc.deleteVideo(videoID)
-        if result is True:
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery.owningUser == current_user.id:
+            result = video_tasks.delete_video.delay(videoID)
             db.session.commit()
             db.session.close()
             return 'OK'
-        else:
-            db.session.commit()
-            db.session.close()
-            return abort(500)
-    else:
-        db.session.commit()
-        db.session.close()
-        return abort(401)
+    db.session.commit()
+    db.session.close()
+    return abort(401)
 
 @socketio.on('editVideo')
 def editVideoSocketIO(message):
@@ -45,11 +44,38 @@ def editVideoSocketIO(message):
         if message['videoAllowComments'] == "True" or message['videoAllowComments'] == True:
             videoAllowComments = True
 
-        result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
-        if result is True:
-            db.session.commit()
-            db.session.close()
-            return 'OK'
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery != None:
+            if current_user.has_role('Admin') or videoQuery.owningUser == current_user.id:
+                if 'videoTags' in message:
+                    videoTagString = message['videoTags']
+                    tagArray = system.parseTags(videoTagString)
+                    existingTagArray = RecordedVideo.video_tags.query.filter_by(videoID=videoID).all()
+
+                    for currentTag in existingTagArray:
+                        if currentTag.name not in tagArray:
+                            db.session.delete(currentTag)
+                        else:
+                            tagArray.remove(currentTag.name)
+                    db.session.commit()
+                    for currentTag in tagArray:
+                        newTag = RecordedVideo.video_tags(currentTag, videoID, current_user.id)
+                        db.session.add(newTag)
+                        db.session.commit()
+
+                result = videoFunc.changeVideoMetadata(videoID, videoName, videoTopic, videoDescription, videoAllowComments)
+                if result is True:
+                    db.session.commit()
+                    db.session.close()
+                    return 'OK'
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return abort(500)
+            else:
+                db.session.commit()
+                db.session.close()
+                return abort(403)
         else:
             db.session.commit()
             db.session.close()
@@ -67,19 +93,16 @@ def createclipSocketIO(message):
         clipDescription = message['clipDescription']
         startTime = float(message['clipStart'])
         stopTime = float(message['clipStop'])
-        result = videoFunc.createClip(videoID, startTime, stopTime, clipName, clipDescription)
-        if result[0] is True:
+        videoQuery = cachedDbCalls.getVideo(videoID)
+        if videoQuery.owningUser == current_user.id:
+            result = video_tasks.create_video_clip.delay(videoID, startTime, stopTime, clipName, clipDescription)
             db.session.commit()
             db.session.close()
             return 'OK'
         else:
             db.session.commit()
             db.session.close()
-            return abort(500)
-    else:
-        db.session.commit()
-        db.session.close()
-        return abort(401)
+            return abort(401)
 
 @socketio.on('moveVideo')
 def moveVideoSocketIO(message):
@@ -118,7 +141,7 @@ def togglePublishedSocketIO(message):
 
             if newState is True:
 
-                webhookFunc.runWebhook(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
+                message_tasks.send_webhook.delay(videoQuery.channel.id, 6, channelname=videoQuery.channel.channelName,
                            channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(videoQuery.channel.id)),
                            channeltopic=templateFilters.get_topicName(videoQuery.channel.topic),
                            channelimage=channelImage, streamer=templateFilters.get_userName(videoQuery.channel.owningUser),
@@ -138,7 +161,7 @@ def togglePublishedSocketIO(message):
                 subsFunc.processSubscriptions(videoQuery.channel.id, sysSettings.siteName + " - " + videoQuery.channel.channelName + " has posted a new video", "<html><body><img src='" +
                                      sysSettings.siteProtocol + sysSettings.siteAddress + sysSettings.systemLogo + "'><p>Channel " + videoQuery.channel.channelName + " has posted a new video titled <u>" +
                                      videoQuery.channelName + "</u> to the channel.</p><p>Click this link to watch<br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/play/" +
-                                     str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>")
+                                     str(videoQuery.id) + "'>" + videoQuery.channelName + "</a></p>", "video")
 
             db.session.commit()
             db.session.close()
@@ -190,7 +213,11 @@ def changeClipMetadataSocketIO(message):
         clipName = message['clipName']
         clipDescription = message['clipDescription']
 
-        result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription)
+        clipTags = None
+        if 'clipTags' in message:
+            clipTags = message['clipTags']
+
+        result = videoFunc.changeClipMetadata(clipID, clipName, clipDescription, clipTags)
 
         if result is True:
             db.session.commit()
@@ -209,18 +236,34 @@ def changeClipMetadataSocketIO(message):
 def deleteClipSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message['clipID'])
-
-        result = videoFunc.deleteClip(clipID)
-
-        if result is True:
+        clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
+        if clipQuery.recordedVideo.owningUser == current_user.id:
+            result = video_tasks.delete_video_clip.delay(clipID)
             db.session.commit()
             db.session.close()
             return 'OK'
         else:
             db.session.commit()
             db.session.close()
-            return abort(500)
+            return abort(401)
     else:
         db.session.commit()
         db.session.close()
         return abort(401)
+
+@socketio.on('deleteVideoComment')
+def deleteVideoCommentSocketIO(message):
+    commentID = int(message['commentID'])
+    commentQuery = comments.videoComments.query.filter_by(id=commentID).first()
+    if commentQuery is not None:
+        recordedVid = cachedDbCalls.getVideo(commentQuery.videoID)
+        if current_user.has_role('Admin') or recordedVid.owningUser == current_user.id or commentQuery.userID == current_user.id:
+            upvoteQuery = upvotes.commentUpvotes.query.filter_by(commentID=commentQuery.id).all()
+            for vote in upvoteQuery:
+                db.session.delete(vote)
+            db.session.delete(commentQuery)
+            db.session.commit()
+            system.newLog(4, "Video Comment Deleted by " + current_user.username + "to Video ID #" + str(recordedVid.id))
+    db.session.commit()
+    db.session.close()
+    return 'OK'

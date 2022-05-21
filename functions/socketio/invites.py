@@ -7,6 +7,8 @@ from classes import Channel
 from classes import invites
 from classes import Sec
 
+from functions import cachedDbCalls
+
 @socketio.on('generateInviteCode')
 def generateInviteCode(message):
     selectedInviteCode = str(message['inviteCode'])
@@ -39,7 +41,8 @@ def generateInviteCode(message):
 def deleteInviteCode(message):
     code = message['code']
     codeQuery = invites.inviteCode.query.filter_by(code=code).first()
-    channelQuery = Channel.Channel.query.filter_by(id=codeQuery.channelID).first()
+    #channelQuery = Channel.Channel.query.filter_by(id=codeQuery.channelID).first()
+    channelQuery = cachedDbCalls.getChannel(codeQuery.channelID)
     if codeQuery is not None:
         if (channelQuery.owningUser is current_user.id) or (current_user.has_role('Admin')):
             channelID = channelQuery.id
@@ -85,7 +88,8 @@ def addUserChannelInvite(message):
 def deleteInvitedUser(message):
     inviteID = int(message['inviteID'])
     inviteIDQuery = invites.invitedViewer.query.filter_by(id=inviteID).first()
-    channelQuery = Channel.Channel.query.filter_by(id=inviteIDQuery.channelID).first()
+    #channelQuery = Channel.Channel.query.filter_by(id=inviteIDQuery.channelID).first()
+    channelQuery = cachedDbCalls.getChannel(inviteIDQuery.channelID)
     if inviteIDQuery is not None:
         if (channelQuery.owningUser is current_user.id) or (current_user.has_role('Admin')):
             db.session.delete(inviteIDQuery)

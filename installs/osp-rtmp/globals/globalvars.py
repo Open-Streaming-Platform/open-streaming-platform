@@ -1,4 +1,4 @@
-version = "0.8.5"
+version = "0.9.0"
 appDBVersion = 0.70
 
 videoRoot = "/var/www/"

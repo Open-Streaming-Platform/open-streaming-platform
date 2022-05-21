@@ -24,7 +24,7 @@ def toggleRTMPServer(message):
         return abort(401)
 
 @socketio.on('toggleHideOSPRTMP')
-def toggleRTMPServer(message):
+def toggleHideRTMPServer(message):
     if current_user.has_role('Admin'):
         rtmpID = int(message['rtmpID'])
         rtmpQuery = settings.rtmpServer.query.filter_by(id=rtmpID).first()

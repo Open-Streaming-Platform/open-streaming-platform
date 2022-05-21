@@ -4,6 +4,8 @@ from classes.settings import settings
 from classes import Channel
 from classes.Sec import User
 
+from functions import cachedDbCalls
+
 from app import ejabberd
 
 from globals.globalvars import room_config
@@ -17,7 +19,7 @@ def sanityCheck():
     return True
 
 def buildMissingRooms():
-    sysSettings = settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id)\
         .with_entities(Channel.Channel.channelLoc, User.uuid.label('userUUID'))
     for channel in channelQuery:
@@ -35,7 +37,7 @@ def buildMissingRooms():
     return True
 
 def verifyExistingRooms():
-    sysSettings = settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     log.info({"level": "info", "message": "Verifying existing ejabberd Rooms"})
     channelQuery = Channel.Channel.query.join(User, Channel.Channel.owningUser == User.id) \
         .with_entities(Channel.Channel.channelLoc, Channel.Channel.xmppToken, Channel.Channel.protected, User.uuid.label('userUUID'))
@@ -71,7 +73,7 @@ def verifyExistingRooms():
 
 
 def cleanInvalidRooms():
-    sysSettings = settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     xmppChannels = ejabberd.muc_online_rooms('global')
 
     roomList = []
@@ -79,22 +81,21 @@ def cleanInvalidRooms():
     if 'rooms' in xmppChannels:
         for room in xmppChannels['rooms']:
             roomName = room['room'].replace('@conference.' + sysSettings.siteAddress,"")
-            existingChannels = Channel.Channel.query.filter_by(channelLoc=roomName).first()
+            existingChannels = cachedDbCalls.getChannelByLoc(roomName)
             if existingChannels is None:
                 ejabberd.destroy_room(roomName, 'conference.' + sysSettings.siteAddress)
                 count = count + 1
     log.info({"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)})
 
 def getChannelCounts(channelLoc):
-    sysSettings = settings.query.first()
-
+    sysSettings = cachedDbCalls.getSystemSettings()
     roomOccupantsJSON = ejabberd.get_room_occupants_number(channelLoc, "conference." + sysSettings.siteAddress)
     currentViewers = roomOccupantsJSON['occupants']
 
     return currentViewers
 
 def getChannelAffiliations(channelLoc):
-    sysSettings = settings.query.first()
+    sysSettings = cachedDbCalls.getSystemSettings()
     roomAffiliationJSON = ejabberd.get_room_affiliations(channelLoc, 'conference.' + sysSettings.siteAddress)
     userList = {}
     for entry in roomAffiliationJSON['affiliations']:

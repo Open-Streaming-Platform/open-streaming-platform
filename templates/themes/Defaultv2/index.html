@@ -39,7 +39,7 @@
     </div>
     <div class="row mx-1">
         <ul id="streamList" class="itemList d-flex flex-wrap justify-content-start" style="width:100%"><!--Manually Defined Due to Mobile Strangeness-->
-            {% for stream in streamList %}
+            {% for stream in streamList if stream.channel.showHome == True%}
             <li class="displayCard mx-4 my-3">
               <a href="/view/{{stream.channel.channelLoc}}/">
                 <div class="displayCard-thumbnail zoom">
