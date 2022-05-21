@@ -61,7 +61,11 @@ Installation Instructions may be found at the [OSP Wiki Page](https://wiki.opens
 
 Docker
 ----
-Docker Files can be found at the [Open Streaming Platform Docker Repository](https://gitlab.com/Deamos/open-streaming-platform-docker) as they become available.
+Docker Images can be found at the following locations:
+- [OSP-Core (Core, Celery, Beat)](https://hub.docker.com/repository/docker/deamos/osp-core)
+- [OSP-RTMP](https://hub.docker.com/repository/docker/deamos/osp-rtmp)
+- [OSP-Ejabberd](https://hub.docker.com/repository/docker/deamos/osp-ejabberd)
+- [Beta 6 and earlier](https://gitlab.com/Deamos/open-streaming-platform-docker)
 
 Attribution
 ----

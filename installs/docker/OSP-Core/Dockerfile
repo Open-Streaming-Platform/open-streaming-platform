@@ -80,6 +80,7 @@ RUN apt install -y bash
 # Build from Local Directory
 RUN mkdir -p /opt/osp
 COPY ./ /opt/osp
+RUN ls /opt/osp
 
 # Make OSP Install Directory
 # RUN mv /tmp/flask-nginx-rtmp-manager /opt/osp/
@@ -109,7 +110,7 @@ RUN cd /tmp && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
 # Inline Patch NGINX-RTMP
-RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch
+RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION}/1158.patch
 RUN cd /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
 
 RUN cd /tmp && \
