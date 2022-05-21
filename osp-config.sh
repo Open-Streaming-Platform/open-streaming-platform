@@ -42,6 +42,66 @@ display_result() {
     --msgbox "$result" 20 70
 }
 
+config_smtp() {
+  smtpSendAs=""
+  smtpServerAddress=""
+  smtpServerPort=""
+  smtpUsername=""
+  smtpPassword=""
+  smtpEncryption=""
+exec 3>&1
+  # Store data to $VALUES variable
+dialog --separate-widget $'\n' --ok-label "Save" \
+          --title "Configure SMTP Settings" \
+          --form "Please Configure your SMTP Settings (Required)" \
+20 70 0 \
+        "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
+        "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
+        "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
+        "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
+        "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
+2>&1 1>&3 | {
+  read -r smtpSendAs
+  read -r smtpServerAddress
+  read -r smtpServerPort
+  read -r smtpUsername
+  read -r smtpPassword
+
+cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
+)
+
+choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty )
+smtpEncryption=""
+case choice in
+
+  1)
+    smtpEncryption="none"
+    ;;
+
+  2)
+    smtpEncryption="tls"
+    ;;
+
+  3)
+    smtpEncryption="ssl"
+    ;;
+
+  *)
+    smtpEncryption="none"
+    ;;
+esac
+sudo sed -i "s/sendAs@email.com/$smtpSendAs/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtp.email.com/$smtpServerAddress/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpServerPort=25/smtpServerPort=$smtpServerPort/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpUsername=\"\"/smtpUsername=\"$smtpUsername\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpPassword=\"\"/smtpPassword=\"$smtpPassword\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+sudo sed -i "s/smtpEncryption=\"none\"/smtpEncryption=\"$smtpEncryption\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+
+}
+exec 3>&-
+
+}
+
 reset_nginx() {
   if cd /usr/local/nginx/conf
   then
@@ -678,6 +738,7 @@ install_menu() {
         echo 65 | dialog --title "Installing OSP" --gauge "Setting Up Configuration Files" 10 70 0
         sudo cp /opt/osp-rtmp/conf/config.py.dist /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
         sudo cp /opt/osp/conf/config.py.dist /opt/osp/conf/config.py >> $OSPLOG 2>&1
+        config_smtp
         echo 70 | dialog --title "Installing OSP" --gauge "Setting up Celery" 10 70 0
         install_celery
         install_celery_beat
