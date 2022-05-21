@@ -24,3 +24,26 @@ class userNotification(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+class userMessage(db.Model):
+    __tablename__ = "userMessage"
+    id = db.Column(db.Integer, primary_key=True)
+    messageID = db.Column(db.String(255), unique=True)
+    timestamp = db.Column(db.DateTime)
+    subject = db.Column(db.String(1024))
+    message = db.Column(db.String(10240))
+    fromUserID = db.Column(db.Integer)
+    toUserID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    read = db.Column(db.Boolean)
+
+    def __init__(self, subject, message, fromUserID, toUserID):
+        self.messageID = str(uuid4())
+        self.timestamp = datetime.utcnow()
+        self.subject = subject
+        self.message = message
+        self.fromUserID = fromUserID
+        self.toUserID = toUserID
+        self.read = False
+
+    def __repr__(self):
+        return '<id %r>' % self.id

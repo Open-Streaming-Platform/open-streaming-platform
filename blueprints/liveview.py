@@ -14,6 +14,7 @@ from classes import Stream
 from classes import Sec
 from classes import banList
 from classes import stickers
+from classes import panel
 
 from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
@@ -34,13 +35,25 @@ def view_page(loc):
     elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
         xmppserver = ejabberdServer
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+    #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(loc)
     if requestedChannel is not None:
+
+        if requestedChannel.private:
+            if current_user.is_authenticated:
+                if current_user.id != requestedChannel.owningUser and current_user.has_role('Admin') is False:
+                    flash("No Such Stream at URL", "error")
+                    return redirect(url_for("root.main_page"))
+            else:
+                flash("No Such Stream at URL", "error")
+                return redirect(url_for("root.main_page"))
+
         if requestedChannel.protected and sysSettings.protectionEnabled:
             if not securityFunc.check_isValidChannelViewer(requestedChannel.id):
                 return render_template(themes.checkOverride('channelProtectionAuth.html'))
+
             # Reload due to detached session during Valid User Check:
-            requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
+            requestedChannel = cachedDbCalls.getChannelByLoc(loc)
 
 
         # Pull ejabberd Chat Options for Room
@@ -55,7 +68,12 @@ def view_page(loc):
         for bannedWord in bannedWordQuery:
             bannedWordArray.append(bannedWord.word)
 
-        streamData = Stream.Stream.query.filter_by(streamKey=requestedChannel.streamKey).first()
+        channelBannedMessagesQuery = banList.chatBannedMessages.query.filter_by(channelLoc=requestedChannel.channelLoc).all()
+        bannedMessagesList = []
+        for bannedMessage in channelBannedMessagesQuery:
+            bannedMessagesList.append(bannedMessage.msgID)
+
+        streamData = Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey).first()
 
         # Stream URL Generation
         streamURL = ''
@@ -77,7 +95,7 @@ def view_page(loc):
             else:
                 streamURL = '/live/' + requestedChannel.channelLoc + '/index.m3u8'
 
-        topicList = topics.topics.query.all()
+        topicList = cachedDbCalls.getAllTopics()
         chatOnly = request.args.get("chatOnly")
 
         # Grab List of Stickers for Chat
@@ -145,13 +163,11 @@ def view_page(loc):
                         return(redirect(url_for("root.main_page")))
 
                 return render_template(themes.checkOverride('chatpopout.html'), stream=streamData, streamURL=streamURL, sysSettings=sysSettings, channel=requestedChannel, hideBar=hideBar, guestUser=guestUser,
-                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
+                                       xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray, bannedMessages=bannedMessagesList)
             else:
                 flash("Chat is Not Enabled For This Stream","error")
 
         isEmbedded = request.args.get("embedded")
-
-        #requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
 
         if isEmbedded is None or isEmbedded == "False" or isEmbedded == "false":
 
@@ -175,12 +191,15 @@ def view_page(loc):
             else:
                 rtmpURI = 'rtmp://' + sysSettings.siteAddress + ":1935/" + endpoint + "/" + requestedChannel.channelLoc
 
-            clipsList = []
-            for vid in requestedChannel.recordedVideo:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
+            clipsList = cachedDbCalls.getAllClipsForChannel_View(requestedChannel.id)
+            #for vid in requestedChannel.recordedVideo:
+            #    for clip in vid.clips:
+            #        if clip.published is True:
+            #            clipsList.append(clip)
             clipsList.sort(key=lambda x: x.views, reverse=True)
+
+            videoList = cachedDbCalls.getAllVideo_View(requestedChannel.id)
+            videoList.sort(key=lambda x: x.views, reverse=True)
 
             subState = False
             if current_user.is_authenticated:
@@ -188,8 +207,12 @@ def view_page(loc):
                 if chanSubQuery is not None:
                     subState = True
 
-            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList,
-                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList, bannedWords=bannedWordArray)
+            channelPanelList = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelType=2, panelLocationId=requestedChannel.id).all()
+            channelPanelListSorted = sorted(channelPanelList, key=lambda x: x.panelOrder)
+
+            return render_template(themes.checkOverride('channelplayer.html'), stream=streamData, streamURL=streamURL, topics=topicList, channel=requestedChannel, clipsList=clipsList, videoList=videoList,
+                                   subState=subState, secureHash=secureHash, rtmpURI=rtmpURI, xmppserver=xmppserver, stickerList=stickerList, stickerSelectorList=stickerSelectorList,
+                                   bannedWords=bannedWordArray, bannedMessages=bannedMessagesList, channelPanelList=channelPanelListSorted)
         else:
             isAutoPlay = request.args.get("autoplay")
             if isAutoPlay is None:

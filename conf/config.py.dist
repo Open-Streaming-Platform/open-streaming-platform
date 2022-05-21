@@ -13,6 +13,15 @@ secretKey="CHANGEME"
 # Password Salt Value
 passwordSalt="CHANGEME"
 
+# Email Settings
+smtpSendAs="sendAs@email.com"
+smtpServerAddress="smtp.email.com"
+smtpServerPort=25
+smtpUsername=""
+smtpPassword=""
+# SMTP Encryption Options are ['none', 'tls', 'ssl']
+smtpEncryption="none"
+
 # Allow Users to Register with the OSP Server
 allowRegistration=True
 

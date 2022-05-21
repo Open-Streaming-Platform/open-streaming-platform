@@ -1,0 +1,27 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Subscriptions</title>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="subscriptions-container">
+    {{ panels.subscriptions_panel(channelSubList) }}
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+function deleteChannelSub(chanID) {
+    socket.emit('toggleChannelSubscription', { channelID: chanID });
+    var row = document.getElementById('chanSub-' + chanID);
+    row.parentNode.removeChild(row);
+}
+</script>
+
+{% endblock %}

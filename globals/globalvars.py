@@ -1,5 +1,5 @@
-version = "0.8.18"
-appDBVersion = 0.75
+version = "0.9.0"
+appDBVersion = 0.80
 processUUID = None
 
 RedisURL = None
@@ -42,3 +42,6 @@ ejabberdServerHttpBindFQDN = None
 recaptchaEnabled = False
 RECAPTCHA_PUBLIC_KEY = ''
 RECAPTCHA_PRIVATE_KEY = ''
+
+# Restart Required Variable
+restartRequired = False

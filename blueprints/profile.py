@@ -26,7 +26,8 @@ def profile_view_page(username):
 
         for channel in userChannels:
             for stream in channel.stream:
-                streams.append(stream)
+                if stream.active is True:
+                    streams.append(stream)
 
         recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userQuery.id, pending=False, published=True).all()
 

@@ -1,0 +1,397 @@
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+
+{% macro live_stream_card(stream) %}
+<li class="streamCard item">
+    <div class="d-none list_streamName">{{ stream.streamName }}</div>
+    <div class="d-none list_streamOwner">{{stream.linkedChannel | channeltoOwnerID | get_userName}}</div>
+    <div class="d-none list_streamViewers">{{stream.currentViewers}}</div>
+    <div class="d-none list_streamTopic">{{stream.topic | get_topicName }}</div>
+    <div class="streamCard-badges">
+        {% if stream.linkedChannel | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+        {% endif %}
+        {{ core_ui.live_badge() }}
+        {{ core_ui.live_views_badge(stream.currentViewers) }}
+    </div>
+    <a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}/">
+      <img class="streamCard-thumb boxShadow gif lazy" {% if stream.linkedChannel | get_channelProtected and sysSettings.protectionEnabled %} src="/static/img/video-locked.jpg" onerror="this.src='/static/img/video-locked.jpg';" {% else %} src="/static/img/video-placeholder.jpg" onerror="this.src='/static/img/video-placeholder.jpg';" {% endif %} data-src="/stream-thumb/{{ stream.linkedChannel | get_channelLocationFromID }}.png">
+    </a>
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-2">
+            <a href="/streamer/{{stream.linkedChannel | channeltoOwnerID}}">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ stream.linkedChannel | channeltoOwnerID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+            </a>
+          </div>
+          <div class="col-10">
+            <div class="card-body">
+              <p class="card-text textShadow">
+                <b><a href="/view/{{ stream.linkedChannel | get_channelLocationFromID }}" data-toggle="tooltip" title="{{ stream.streamName }}">{{ stream.streamName }}</a></b><br>
+                <a href="/channel/{{stream.linkedChannel}}" data-toggle="tooltip" title="{{ stream.linkedChannel | get_channelName }}">{{ stream.linkedChannel | get_channelName  }}</a><br>
+                <a href="/topic/{{stream.topic}}" data-toggle="tooltip" title="{{ stream.topic | get_topicName }}">{{ stream.topic | get_topicName }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="streamCard-tags row g-0">
+            <div class="col-12">
+                  {% for tag in stream.linkedChannel | get_channelTags %}
+                    <span class="badge rounded-pill bg-primary boxShadow">{{ tag.name }}</span>
+                  {% endfor %}
+            </div>
+        </div>
+    </div>
+</li>
+{% endmacro %}
+
+{% macro video_card(video) %}
+<li class="streamCard item">
+  
+  <div class="streamCard-thumbnail-container zoom {% if video.gifLocation != None %}gifhover{% endif %}">
+      <div class="d-none list-videoName">{{ video.channelName }}</div>
+      <div class="d-none list-videoViews">{{ video.views }}</div>
+      <div class="d-none list-videoDate">{{ video.videoDate }}</div>
+      <div class="d-none list-videoTopic">{{ video.topic | get_topicName }}</div>
+      <div class="streamCard-badges">
+          {% if video.channelID | get_channelProtected %}
+          {{ core_ui.protected_badge() }}
+          {% endif %}
+          {{ core_ui.views_badge(video.views) }}
+          {{ core_ui.length_badge(video.length) }}
+      </div>
+      <div class="streamCard-date">
+        {{ core_ui.date_badge(video.videoDate) }}
+      </div>
+      <a href="/play/{{video.id}}">
+        <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+      </a>
+  </div>
+  <div class="card mb-3" style="max-width: 540px;">
+      <div class="row g-0">
+        <div class="col-2">
+          <a href="/streamer/{{video.owningUser}}">
+            <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{video.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+          </a>
+        </div>
+        <div class="col-10">
+          <div class="card-body">
+            <p class="card-text textShadow">
+              <a href="/play/{{video.id}}" data-toggle="tooltip" title="{{ video.channelName }}"><b>{{ video.channelName }}</b></a><br>
+              <a href="/channel/{{video.channelID}}" data-toggle="tooltip" title="{{ video.channelID | get_channelName }}">{{ video.channelID | get_channelName }}</a><br>
+              <a href="/topic/{{video.topic}}" data-toggle="tooltip" title="{{ video.topic | get_topicName }}">{{ video.topic | get_topicName }}</a><br>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="streamCard-tags row mt-2 g-0">
+          <div class="col-12">
+                {% for tag in video.id | get_videoTags %}
+                  <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                {% endfor %}
+          </div>
+      </div>
+  </div>
+
+</li>
+{% endmacro %}
+
+{% macro clip_card(clip) %}
+<li class="streamCard item">
+  
+    <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
+        <div class="d-none list-clipName">{{ clip.clipName }}</div>
+        <div class="d-none list-clipViews">{{ clip.views }}</div>
+        <div class="d-none list-clipLength">{{ clip.length }}</div>
+        <div class="d-none list-clipTopic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
+        <div class="streamCard-badges">
+            {% if clip.parentVideo | videotoChannelID | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+            {% endif %}
+            {{ core_ui.views_badge(clip.views) }}
+            {{ core_ui.length_badge(clip.length) }}
+        </div>
+        <a href="/clip/{{clip.id}}">
+          <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+        </a>
+    </div>
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+          <div class="col-2">
+            <a href="/streamer/{{clip.parentVideo | videotoChannelID | channeltoOwnerID}}">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ clip.parentVideo | videotoChannelID | channeltoOwnerID  | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            </a>
+          </div>
+          <div class="col-10">
+            <div class="card-body">
+              <p class="card-text textShadow">
+                <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName }}</a></b><br>
+                <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName  }}</a><br>
+                <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="streamCard-tags row mt-2 g-0">
+          <div class="col-12">
+                {% for tag in clip.id | get_clipTags %}
+                  <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
+                {% endfor %}
+          </div>
+      </div>
+    </div>
+
+</li>
+{% endmacro %}
+
+{% macro topic_card(topic) %}
+  <li class="topicCard item">
+    <a href="/topic/{{topic.id}}/">
+      <div class="topicImg"><img class="lazy zoom" src="/images/{{topic.iconClass}}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ topic.name }}"></div>
+    </a>
+      <div class="topicName mt-2"><a href="/topic/{{topic.id}}/" data-toggle="tooltip" title="{{topic.name}}"><b>{{ topic.name | limit_title20 }}</b></a></div>
+  </li>
+    
+{% endmacro %}
+
+{% macro streamer_card(streamerInfo) %}
+    <a href="/streamer/{{ streamerInfo.id }}">
+        <li class="streamer-avatar">
+          <img class="shadow zoom" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+          <div class="username m-t2"><b>{{ streamerInfo.username }}</b></div>
+        </li>
+    </a>
+{% endmacro %}
+
+{% macro user_card(userInfo) %}
+<a href="/profile/{{ userInfo.username }}">
+  <li class="streamer-avatar">
+    <img class="shadow zoom" src="/images/{{ userInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+    <div class="username m-t2"><b>{{ userInfo.username }}</b></div>
+  </li>
+</a>
+{% endmacro %}
+
+{% macro channel_card(channelData) %}
+<li class="channelCard item">
+    <div class="d-none list_channelName">{{channelData.channelName}}</div>
+    <div class="d-none list_channelOwner">{{ channelData.owningUser | get_userName }}</div>
+    <div class="zoom">
+        <div class="channelCard-badges">
+        {% if channelData.id | get_channelLiveStatus %}
+            {{ core_ui.live_badge() }}
+        {% endif %}
+        {% if channelData.id | get_channelProtected %}
+            {{ core_ui.protected_badge() }}
+        {% endif %}
+        {% if channelData.private %}
+            {{ core_ui.private_badge() }}
+        {% endif %}
+        {{ core_ui.views_badge(channelData.views) }}
+        </div>
+        <a href="/channel/{{channelData.id}}/">
+          <div class="channelImg"><img class="lazy" src="/images/{{ channelData.imageLocation }}" onerror="this.src='/static/img/video-placeholder.jpg';" alt="{{ channelData.name }}"></div>
+        </a>
+    </div>
+    <div class="channelMetadata mt-2">
+        <div class="row">
+            <!-- <div class="col-3">
+                <img class="mt-2 userImage boxShadow img-fluid rounded-circle" src="/images/{{ channelData.owningUser | get_pictureLocation }}" alt="{{ channelData.channelName }} Picture" onerror="this.src='/static/img/user2.png';">
+            </div> -->
+            <div class="col">
+                <div class="channelName mt-2">
+                  <b><a href="/channel/{{channelData.id}}/" data-toggle="tooltop" title="{{channelData.channelName}}">{{ channelData.channelName | limit_title20 }}</a></b>
+                </div>
+                <div class="channelOwner">
+                  <b><a href="/streamer/{{channelData.owningUser}}/">{{ channelData.owningUser | get_userName }}</a></b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</li>
+{% endmacro %}
+
+{% macro comment_card(comment) %}
+<div class="comment" id="vidComment-{{ comment.id }}">
+  <div class="row gx-0">
+    <div class="comment-avatar col-auto mx-1 mt-2">
+        <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+    </div>
+    <div class="col mt-2">
+      <div class="comment-header">
+        <span><b><a href="/profile/{{ comment.userID | get_userName }}">{{ comment.userID | get_userName }}</a></b></span>
+        <span class="float-end me-2"><i class="bi bi-calendar-date"></i> {{ comment.timestamp | normalize_date }}</span>
+      </div>
+      <div class="row my-2">
+        <div class="col-11">
+          <span>{{ comment.comment | markdown }}</span>
+        </div>
+        <div class="col-1">
+          <span class="float-end me-2">
+            {% if check_isCommentUpvoted(comment.id) %}
+                <button id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                    class="fas fa-thumbs-up"></i>
+            {% else %} <button type="button" id="commentUpvoteButton-{{comment.id}}" type="button" class="btn btn-outline-success" onclick="changeUpvote('comment',{{comment.id}});"> <i id="commentUpvoteIcon-{{comment.id}}"
+                      class="far fa-thumbs-up"></i>
+            {% endif %}
+                <span id="upvoteTotalComments-{{comment.id}}">{{comment.upvotes|length}}</span></button>
+            {% if video.owningUser == current_user.id or current_user.has_role('Admin') or comment.userID == current_user.id %}
+            <button type="button" data-id="{{comment.id}}" class="deleteComment btn btn-danger shadow" onclick="confirmDeleteComment('{{ comment.id }}');">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro user_settings_video_card(video) %}
+<li id="video-{{video.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
+    <div class="row">
+        <div class="col-12">
+            <a class="btn btn-sm btn-dark boxShadow w-100" href="/play/{{video.id}}"><span id="vidName-{{video.id}}">{{video.channelName}}</span></a>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-auto pt-1">
+        <div class="mb-2" style="width:270px;">
+          <img class="boxShadow {% if video.gifLocation != None %}gif{% endif %} lazy" id="videoThumb-{{video.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{video.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;border-radius:6px;">
+        </div>
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success boxShadow videoThumbnailUploadModalButton" onclick="uploadThumbnailModal('{{video.id}}','video');">Upload Thumbnail</button>
+        </div>
+        <div class="mt-2">
+          <button class="videoMoveModalButton btn btn-primary boxShadow" onclick="moveVideoModal('{{video.id}}');" data-toggle="tooltip" data-placement="top" title="Move Video"><i class="fas fa-arrow-circle-right"></i></button>
+          <button class="btn btn-primary boxShadow" onclick="openClipModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Create Clip"><i class="fas fa-cut"></i></button>
+          <button class="videoEditModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoEditModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Edit Metadata"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-primary boxShadow" data-bs-toggle="modal" onclick="openSSModal('{{video.id}}', '/videos/{{video.videoLocation}}');" data-toggle="tooltip" data-placement="top" title="Set Thumbnail"><i class="fas fa-camera"></i></button>
+          <button class="videoShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-videoid="{{video.id}}" data-toggle="tooltip" data-placement="top" title="Share Video"><i class="fas fa-share-alt"></i></button>
+          <button class="videoDeleteModalButton btn btn-danger boxShadow" onclick="openVideoDeleteModal('{{ video.id }}');" data-toggle="tooltip" data-placement="top" title="Delete Video"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="col mt-1">
+        <div class="mb-1">
+            <div class="btn-group boxShadow" role="group">
+              <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
+              <span id="vidTopicText-{{video.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{video.topic|get_topicName}}</span>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-calendar"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.videoDate|normalize_date}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-danger noClickButton min-35"><i class="fas fa-clock"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.length|hms_format}}</button>
+            </div>
+        </div>
+        <span id="vidTopic-{{video.id}}" class="d-none">{{video.topic}}</span>
+        <span id="vidDescription-{{video.id}}" class="d-none">{{video.description}}</span>
+        <span id="vidAllowComments-{{video.id}}" class="d-none">{{video.allowComments}}</span>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-users"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{video.views}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-thumbs-up"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ video.id | get_Video_Upvotes }}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-comment-alt"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ video.id | get_Video_Comments }}</button>
+            </div>
+        </div>
+        <div class="form-group row mt-3">
+            <div class="col-12">
+                <div class="form-check form-switch">
+                  <label for="published-{{video.id}}"><b>Published?</b></label>
+                  <input class="form-check-input" type="checkbox" id="published-{{video.id}}" name="publishedSelect" onchange="togglePublished('{{video.id}}')" {% if video.published == True %} checked {% endif %}>
+                </div>
+            </div>
+        </div>
+        <div class="d-none" id="video-{{ video.id }}-tags">{{ video.id | get_videoTags_csv }}</div>
+      </div>
+    </div>
+</li>
+{% endmacro %}
+
+{% macro user_settings_clip_card(clip) %}
+<li id="clip-{{clip.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
+    <div class="row">
+        <div class="col-12">
+            <button type="button" class="btn btn-sm btn-dark boxShadow noClickButton w-100">
+                <a href="/clip/{{clip.id}}"><span id="clipName-{{clip.id}}">{{clip.clipName}}</span></a>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-auto pt-1">
+        <div class="mb-2" style="width:270px;">
+          <img class="boxShadow {% if clip.gifLocation != None %}gif{% endif %} lazy" id="clipThumb-{{clip.id}}" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';" style="max-width:100%;max-height:100%;">
+        </div>
+        <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success boxShadow videoThumbnailUploadModalButton" onclick="uploadThumbnailModal('{{clip.id}}','clip');">Upload Thumbnail</button>
+        </div>
+        <div class="mt-2">
+          <button class="clipEditModalButton btn btn-primary boxShadow" onclick="editClipMetadataModal('{{ clip.id }}');"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.parentVideo}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
+          <button class="clipShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
+          <button class="clipDeleteModalButton btn btn-danger boxShadow" onclick="deleteClipModal('{{clip.id}}');"><i class="fas fa-trash-alt"></i></button>
+        </div>
+      </div>
+      <div class="col mt-2">
+        <div class="mb-1">
+            <div class="btn-group boxShadow" role="group">
+              <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
+              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_videoTopic |get_topicName}}</span>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-calendar"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_videoDate |normalize_date}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-danger noClickButton min-35"><i class="fas fa-clock"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.length|hms_format}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-users"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.views}}</button>
+            </div>
+        </div>
+        <div class="my-1">
+            <div class="btn-group boxShadow" role="group">
+              <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="far fa-thumbs-up"></i></button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{ clip.id | get_Clip_Upvotes }}</button>
+            </div>
+        </div>
+        <span id="clipDescription-{{clip.id}}" class="d-none">{{clip.description}}</span>
+        <div class="form-group row mt-3">
+            <div class="col-12">
+                <div class="form-check form-switch">
+                  <label for="clipPublished-{{clip.id}}"><b>Published?</b></label>
+                  <input class="form-check-input" type="checkbox" id="clipPublished-{{clip.id}}" name="publishedSelect" onchange="togglePublishedClip('{{clip.id}}')" {% if clip.published == True %} checked {% endif %}>
+                </div>
+            </div>
+        </div>
+        <div class="d-none" id="clip-{{ clip.id }}-tags">{{ clip.id | get_clipTags_csv }}</div>
+      </div>
+    </div>
+</li>
+{% endmacro %}

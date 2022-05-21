@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 7.14.3 <http://videojs.com/>
+ * Video.js 7.18.1 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/main/LICENSE>
@@ -16,50 +16,104 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.videojs = factory());
 }(this, (function () { 'use strict';
 
-  var version$5 = "7.14.3";
+  var version$5 = "7.18.1";
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  /**
+   * An Object that contains lifecycle hooks as keys which point to an array
+   * of functions that are run when a lifecycle is triggered
+   *
+   * @private
+   */
+  var hooks_ = {};
+  /**
+   * Get a list of hooks for a specific lifecycle
+   *
+   * @param  {string} type
+   *         the lifecyle to get hooks from
+   *
+   * @param  {Function|Function[]} [fn]
+   *         Optionally add a hook (or hooks) to the lifecycle that your are getting.
+   *
+   * @return {Array}
+   *         an array of hooks, or an empty array if there are none.
+   */
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
+  var hooks = function hooks(type, fn) {
+    hooks_[type] = hooks_[type] || [];
 
-  var win;
-
-  if (typeof window !== "undefined") {
-    win = window;
-  } else if (typeof commonjsGlobal !== "undefined") {
-    win = commonjsGlobal;
-  } else if (typeof self !== "undefined") {
-    win = self;
-  } else {
-    win = {};
-  }
-
-  var window_1 = win;
-
-  var minDoc = {};
-
-  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal : typeof window !== 'undefined' ? window : {};
-  var doccy;
-
-  if (typeof document !== 'undefined') {
-    doccy = document;
-  } else {
-    doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
-
-    if (!doccy) {
-      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
+    if (fn) {
+      hooks_[type] = hooks_[type].concat(fn);
     }
-  }
 
-  var document_1 = doccy;
+    return hooks_[type];
+  };
+  /**
+   * Add a function hook to a specific videojs lifecycle.
+   *
+   * @param {string} type
+   *        the lifecycle to hook the function to.
+   *
+   * @param {Function|Function[]}
+   *        The function or array of functions to attach.
+   */
+
+
+  var hook = function hook(type, fn) {
+    hooks(type, fn);
+  };
+  /**
+   * Remove a hook from a specific videojs lifecycle.
+   *
+   * @param  {string} type
+   *         the lifecycle that the function hooked to
+   *
+   * @param  {Function} fn
+   *         The hooked function to remove
+   *
+   * @return {boolean}
+   *         The function that was removed or undef
+   */
+
+
+  var removeHook = function removeHook(type, fn) {
+    var index = hooks(type).indexOf(fn);
+
+    if (index <= -1) {
+      return false;
+    }
+
+    hooks_[type] = hooks_[type].slice();
+    hooks_[type].splice(index, 1);
+    return true;
+  };
+  /**
+   * Add a function hook that will only run once to a specific videojs lifecycle.
+   *
+   * @param {string} type
+   *        the lifecycle to hook the function to.
+   *
+   * @param {Function|Function[]}
+   *        The function or array of functions to attach.
+   */
+
+
+  var hookOnce = function hookOnce(type, fn) {
+    hooks(type, [].concat(fn).map(function (original) {
+      var wrapper = function wrapper() {
+        removeHook(type, wrapper);
+        return original.apply(void 0, arguments);
+      };
+
+      return wrapper;
+    }));
+  };
 
   /**
    * @file fullscreen-api.js
    * @module fullscreen-api
    * @private
    */
+
   /**
    * Store the browser-specific methods for the fullscreen API.
    *
@@ -67,7 +121,6 @@
    * @see [Specification]{@link https://fullscreen.spec.whatwg.org}
    * @see [Map Approach From Screenfull.js]{@link https://github.com/sindresorhus/screenfull.js}
    */
-
   var FullscreenApi = {
     prefixed: true
   }; // browser API methods
@@ -81,7 +134,7 @@
 
   for (var i = 0; i < apiMap.length; i++) {
     // check for exitFullscreen function
-    if (apiMap[i][1] in document_1) {
+    if (apiMap[i][1] in document) {
       browserApi = apiMap[i];
       break;
     }
@@ -100,7 +153,7 @@
    * @file create-logger.js
    * @module create-logger
    */
-
+  // This is the private tracking variable for the logging history.
   var history = [];
   /**
    * Log messages to the console and history based on the type of message
@@ -135,19 +188,19 @@
       // still be stored in history.
 
 
-      if (!window_1.console) {
+      if (!window.console) {
         return;
       } // Was setting these once outside of this function, but containing them
       // in the function makes it easier to test cases where console doesn't exist
       // when the module is executed.
 
 
-      var fn = window_1.console[type];
+      var fn = window.console[type];
 
       if (!fn && type === 'debug') {
         // Certain browsers don't have support for console.debug. For those, we
         // should default to the closest comparable log.
-        fn = window_1.console.info || window_1.console.log;
+        fn = window.console.info || window.console.log;
       } // Bail out if there's no console or if this type is not allowed by the
       // current logging level.
 
@@ -156,7 +209,7 @@
         return;
       }
 
-      fn[Array.isArray(args) ? 'apply' : 'call'](window_1.console, args);
+      fn[Array.isArray(args) ? 'apply' : 'call'](window.console, args);
     };
   };
 
@@ -388,6 +441,12 @@
   var log$1 = createLogger$1('VIDEOJS');
   var createLogger = log$1.createLogger;
 
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
   var _extends_1 = createCommonjsModule(function (module) {
     function _extends() {
       module.exports = _extends = Object.assign || function (target) {
@@ -558,6 +617,7 @@
    * @file computed-style.js
    * @module computed-style
    */
+
   /**
    * A safe getComputedStyle.
    *
@@ -574,17 +634,16 @@
    *
    * @see      https://bugzilla.mozilla.org/show_bug.cgi?id=548397
    */
-
   function computedStyle(el, prop) {
     if (!el || !prop) {
       return '';
     }
 
-    if (typeof window_1.getComputedStyle === 'function') {
+    if (typeof window.getComputedStyle === 'function') {
       var computedStyleValue;
 
       try {
-        computedStyleValue = window_1.getComputedStyle(el);
+        computedStyleValue = window.getComputedStyle(el);
       } catch (e) {
         return '';
       }
@@ -599,7 +658,7 @@
    * @file browser.js
    * @module browser
    */
-  var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
+  var USER_AGENT = window.navigator && window.navigator.userAgent || '';
   var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
   var appleWebkitVersion = webkitVersionMap ? parseFloat(webkitVersionMap.pop()) : null;
   /**
@@ -766,7 +825,7 @@
    * @type {Boolean}
    */
 
-  var TOUCH_ENABLED = Boolean(isReal() && ('ontouchstart' in window_1 || window_1.navigator.maxTouchPoints || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch));
+  var TOUCH_ENABLED = Boolean(isReal() && ('ontouchstart' in window || window.navigator.maxTouchPoints || window.DocumentTouch && window.document instanceof window.DocumentTouch));
   /**
    * Whether or not this device is an iPad.
    *
@@ -897,7 +956,7 @@
 
   function isReal() {
     // Both document and window will never be undefined thanks to `global`.
-    return document_1 === window_1.document;
+    return document === window.document;
   }
   /**
    * Determines, via duck typing, whether or not a value is a DOM element.
@@ -924,7 +983,7 @@
     // We need a try/catch here because Safari will throw errors when attempting
     // to get either `parent` or `self`
     try {
-      return window_1.parent !== window_1.self;
+      return window.parent !== window.self;
     } catch (x) {
       return true;
     }
@@ -943,14 +1002,14 @@
   function createQuerier(method) {
     return function (selector, context) {
       if (!isNonBlankString(selector)) {
-        return document_1[method](null);
+        return document[method](null);
       }
 
       if (isNonBlankString(context)) {
-        context = document_1.querySelector(context);
+        context = document.querySelector(context);
       }
 
-      var ctx = isEl(context) ? context : document_1;
+      var ctx = isEl(context) ? context : document;
       return ctx[method] && ctx[method](selector);
     };
   }
@@ -987,7 +1046,7 @@
       attributes = {};
     }
 
-    var el = document_1.createElement(tagName);
+    var el = document.createElement(tagName);
     Object.getOwnPropertyNames(properties).forEach(function (propName) {
       var val = properties[propName]; // See #2176
       // We originally were accepting both properties and attributes in the
@@ -1305,9 +1364,9 @@
    */
 
   function blockTextSelection() {
-    document_1.body.focus();
+    document.body.focus();
 
-    document_1.onselectstart = function () {
+    document.onselectstart = function () {
       return false;
     };
   }
@@ -1316,7 +1375,7 @@
    */
 
   function unblockTextSelection() {
-    document_1.onselectstart = function () {
+    document.onselectstart = function () {
       return true;
     };
   }
@@ -1402,7 +1461,7 @@
     var left = 0;
     var top = 0;
 
-    while (el.offsetParent && el !== document_1[FullscreenApi.fullscreenElement]) {
+    while (el.offsetParent && el !== document[FullscreenApi.fullscreenElement]) {
       left += el.offsetLeft;
       top += el.offsetTop;
       el = el.offsetParent;
@@ -1576,7 +1635,7 @@
       }
 
       if (typeof value === 'string' && /\S/.test(value)) {
-        return document_1.createTextNode(value);
+        return document.createTextNode(value);
       }
     }).filter(function (value) {
       return value;
@@ -1756,9 +1815,9 @@
       return;
     }
 
-    var vids = Array.prototype.slice.call(document_1.getElementsByTagName('video'));
-    var audios = Array.prototype.slice.call(document_1.getElementsByTagName('audio'));
-    var divs = Array.prototype.slice.call(document_1.getElementsByTagName('video-js'));
+    var vids = Array.prototype.slice.call(document.getElementsByTagName('video'));
+    var audios = Array.prototype.slice.call(document.getElementsByTagName('audio'));
+    var divs = Array.prototype.slice.call(document.getElementsByTagName('video-js'));
     var mediaEls = vids.concat(audios, divs); // Check if any media elements exist
 
     if (mediaEls && mediaEls.length > 0) {
@@ -1809,7 +1868,7 @@
       videojs$1 = vjs;
     }
 
-    window_1.setTimeout(autoSetup, wait);
+    window.setTimeout(autoSetup, wait);
   }
   /**
    * Used to set the internal tracking of window loaded state to true.
@@ -1820,11 +1879,11 @@
 
   function setWindowLoaded() {
     _windowLoaded = true;
-    window_1.removeEventListener('load', setWindowLoaded);
+    window.removeEventListener('load', setWindowLoaded);
   }
 
   if (isReal()) {
-    if (document_1.readyState === 'complete') {
+    if (document.readyState === 'complete') {
       setWindowLoaded();
     } else {
       /**
@@ -1835,7 +1894,7 @@
        *
        * @listens load
        */
-      window_1.addEventListener('load', setWindowLoaded);
+      window.addEventListener('load', setWindowLoaded);
     }
   }
 
@@ -1843,6 +1902,7 @@
    * @file stylesheet.js
    * @module stylesheet
    */
+
   /**
    * Create a DOM syle element given a className for it.
    *
@@ -1852,9 +1912,8 @@
    * @return {Element}
    *         The element that was created.
    */
-
   var createStyleElement = function createStyleElement(className) {
-    var style = document_1.createElement('style');
+    var style = document.createElement('style');
     style.className = className;
     return style;
   };
@@ -1911,10 +1970,10 @@
    */
   var FakeWeakMap;
 
-  if (!window_1.WeakMap) {
+  if (!window.WeakMap) {
     FakeWeakMap = /*#__PURE__*/function () {
       function FakeWeakMap() {
-        this.vdata = 'vdata' + Math.floor(window_1.performance && window_1.performance.now() || Date.now());
+        this.vdata = 'vdata' + Math.floor(window.performance && window.performance.now() || Date.now());
         this.data = {};
       }
 
@@ -1973,7 +2032,7 @@
    */
 
 
-  var DomData = window_1.WeakMap ? new WeakMap() : new FakeWeakMap();
+  var DomData = window.WeakMap ? new WeakMap() : new FakeWeakMap();
 
   /**
    * @file events.js. An Event System (John Resig - Secrets of a JS Ninja http://jsninja.com/)
@@ -2078,7 +2137,7 @@
 
 
     if (!event || !event.isPropagationStopped || !event.isImmediatePropagationStopped) {
-      var old = event || window_1.event;
+      var old = event || window.event;
       event = {}; // Clone the old object so that we can modify the values event = {};
       // IE8 Doesn't like when you mess with native event properties
       // Firefox returns false for event.hasOwnProperty('type') and other props
@@ -2100,7 +2159,7 @@
 
 
       if (!event.target) {
-        event.target = event.srcElement || document_1;
+        event.target = event.srcElement || document;
       } // Handle which other element the event is related to
 
 
@@ -2145,8 +2204,8 @@
       event.isImmediatePropagationStopped = returnFalse; // Handle mouse position
 
       if (event.clientX !== null && event.clientX !== undefined) {
-        var doc = document_1.documentElement;
-        var body = document_1.body;
+        var doc = document.documentElement;
+        var body = document.body;
         event.pageX = event.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0);
         event.pageY = event.clientY + (doc && doc.scrollTop || body && body.scrollTop || 0) - (doc && doc.clientTop || body && body.clientTop || 0);
       } // Handle key presses
@@ -2185,8 +2244,8 @@
             _supportsPassive = true;
           }
         });
-        window_1.addEventListener('test', null, opts);
-        window_1.removeEventListener('test', null, opts);
+        window.addEventListener('test', null, opts);
+        window.removeEventListener('test', null, opts);
       } catch (e) {// disregard
       }
     }
@@ -2547,10 +2606,10 @@
    */
 
   var throttle = function throttle(fn, wait) {
-    var last = window_1.performance.now();
+    var last = window.performance.now();
 
     var throttled = function throttled() {
-      var now = window_1.performance.now();
+      var now = window.performance.now();
 
       if (now - last >= wait) {
         fn.apply(void 0, arguments);
@@ -2589,7 +2648,7 @@
 
   var debounce = function debounce(func, wait, immediate, context) {
     if (context === void 0) {
-      context = window_1;
+      context = window;
     }
 
     var timeout;
@@ -2831,8 +2890,8 @@
 
     var oldTimeout = map.get(type);
     map["delete"](type);
-    window_1.clearTimeout(oldTimeout);
-    var timeout = window_1.setTimeout(function () {
+    window.clearTimeout(oldTimeout);
+    var timeout = window.setTimeout(function () {
       // if we cleared out all timeouts for the current target, delete its map
       if (map.size === 0) {
         map = null;
@@ -3389,7 +3448,12 @@
 
     target.on('dispose', function () {
       target.off();
-      window_1.setTimeout(function () {
+      [target, target.el_, target.eventBusEl_].forEach(function (val) {
+        if (val && DomData.has(val)) {
+          DomData["delete"](val);
+        }
+      });
+      window.setTimeout(function () {
         target.eventBusEl_ = null;
       }, 0);
     });
@@ -3647,7 +3711,7 @@
     return MapSham;
   }();
 
-  var Map$1 = window_1.Map ? window_1.Map : MapSham;
+  var Map$1 = window.Map ? window.Map : MapSham;
 
   var SetSham = /*#__PURE__*/function () {
     function SetSham() {
@@ -3680,7 +3744,202 @@
     return SetSham;
   }();
 
-  var Set = window_1.Set ? window_1.Set : SetSham;
+  var Set = window.Set ? window.Set : SetSham;
+
+  var keycode = createCommonjsModule(function (module, exports) {
+    // Source: http://jsfiddle.net/vWx8V/
+    // http://stackoverflow.com/questions/5603195/full-list-of-javascript-keycodes
+
+    /**
+     * Conenience method returns corresponding value for given keyName or keyCode.
+     *
+     * @param {Mixed} keyCode {Number} or keyName {String}
+     * @return {Mixed}
+     * @api public
+     */
+    function keyCode(searchInput) {
+      // Keyboard Events
+      if (searchInput && 'object' === typeof searchInput) {
+        var hasKeyCode = searchInput.which || searchInput.keyCode || searchInput.charCode;
+        if (hasKeyCode) searchInput = hasKeyCode;
+      } // Numbers
+
+
+      if ('number' === typeof searchInput) return names[searchInput]; // Everything else (cast to string)
+
+      var search = String(searchInput); // check codes
+
+      var foundNamedKey = codes[search.toLowerCase()];
+      if (foundNamedKey) return foundNamedKey; // check aliases
+
+      var foundNamedKey = aliases[search.toLowerCase()];
+      if (foundNamedKey) return foundNamedKey; // weird character?
+
+      if (search.length === 1) return search.charCodeAt(0);
+      return undefined;
+    }
+    /**
+     * Compares a keyboard event with a given keyCode or keyName.
+     *
+     * @param {Event} event Keyboard event that should be tested
+     * @param {Mixed} keyCode {Number} or keyName {String}
+     * @return {Boolean}
+     * @api public
+     */
+
+
+    keyCode.isEventKey = function isEventKey(event, nameOrCode) {
+      if (event && 'object' === typeof event) {
+        var keyCode = event.which || event.keyCode || event.charCode;
+
+        if (keyCode === null || keyCode === undefined) {
+          return false;
+        }
+
+        if (typeof nameOrCode === 'string') {
+          // check codes
+          var foundNamedKey = codes[nameOrCode.toLowerCase()];
+
+          if (foundNamedKey) {
+            return foundNamedKey === keyCode;
+          } // check aliases
+
+
+          var foundNamedKey = aliases[nameOrCode.toLowerCase()];
+
+          if (foundNamedKey) {
+            return foundNamedKey === keyCode;
+          }
+        } else if (typeof nameOrCode === 'number') {
+          return nameOrCode === keyCode;
+        }
+
+        return false;
+      }
+    };
+
+    exports = module.exports = keyCode;
+    /**
+     * Get by name
+     *
+     *   exports.code['enter'] // => 13
+     */
+
+    var codes = exports.code = exports.codes = {
+      'backspace': 8,
+      'tab': 9,
+      'enter': 13,
+      'shift': 16,
+      'ctrl': 17,
+      'alt': 18,
+      'pause/break': 19,
+      'caps lock': 20,
+      'esc': 27,
+      'space': 32,
+      'page up': 33,
+      'page down': 34,
+      'end': 35,
+      'home': 36,
+      'left': 37,
+      'up': 38,
+      'right': 39,
+      'down': 40,
+      'insert': 45,
+      'delete': 46,
+      'command': 91,
+      'left command': 91,
+      'right command': 93,
+      'numpad *': 106,
+      'numpad +': 107,
+      'numpad -': 109,
+      'numpad .': 110,
+      'numpad /': 111,
+      'num lock': 144,
+      'scroll lock': 145,
+      'my computer': 182,
+      'my calculator': 183,
+      ';': 186,
+      '=': 187,
+      ',': 188,
+      '-': 189,
+      '.': 190,
+      '/': 191,
+      '`': 192,
+      '[': 219,
+      '\\': 220,
+      ']': 221,
+      "'": 222
+    }; // Helper aliases
+
+    var aliases = exports.aliases = {
+      'windows': 91,
+      '⇧': 16,
+      '⌥': 18,
+      '⌃': 17,
+      '⌘': 91,
+      'ctl': 17,
+      'control': 17,
+      'option': 18,
+      'pause': 19,
+      'break': 19,
+      'caps': 20,
+      'return': 13,
+      'escape': 27,
+      'spc': 32,
+      'spacebar': 32,
+      'pgup': 33,
+      'pgdn': 34,
+      'ins': 45,
+      'del': 46,
+      'cmd': 91
+    };
+    /*!
+     * Programatically add the following
+     */
+    // lower case chars
+
+    for (i = 97; i < 123; i++) {
+      codes[String.fromCharCode(i)] = i - 32;
+    } // numbers
+
+
+    for (var i = 48; i < 58; i++) {
+      codes[i - 48] = i;
+    } // function keys
+
+
+    for (i = 1; i < 13; i++) {
+      codes['f' + i] = i + 111;
+    } // numpad keys
+
+
+    for (i = 0; i < 10; i++) {
+      codes['numpad ' + i] = i + 96;
+    }
+    /**
+     * Get by code
+     *
+     *   exports.name[13] // => 'Enter'
+     */
+
+
+    var names = exports.names = exports.title = {}; // title for backward compat
+    // Create reverse mapping
+
+    for (i in codes) {
+      names[codes[i]] = i;
+    } // Add aliases
+
+
+    for (var alias in aliases) {
+      codes[alias] = aliases[alias];
+    }
+  });
+  keycode.code;
+  keycode.codes;
+  keycode.aliases;
+  keycode.names;
+  keycode.title;
 
   /**
    * Player Component - Base class for all UI objects
@@ -3840,10 +4099,6 @@
         // Remove element from DOM
         if (this.el_.parentNode) {
           this.el_.parentNode.removeChild(this.el_);
-        }
-
-        if (DomData.has(this.el_)) {
-          DomData["delete"](this.el_);
         }
 
         this.el_ = null;
@@ -4878,8 +5133,11 @@
     _proto.handleKeyDown = function handleKeyDown(event) {
       if (this.player_) {
         // We only stop propagation here because we want unhandled events to fall
-        // back to the browser.
-        event.stopPropagation();
+        // back to the browser. Exclude Tab for focus trapping.
+        if (!keycode.isEventKey(event, 'Tab')) {
+          event.stopPropagation();
+        }
+
         this.player_.handleKeyDown(event);
       }
     }
@@ -4932,7 +5190,7 @@
             pageY: event.touches[0].pageY
           }; // Record start time so we can detect a tap vs. "touch and hold"
 
-          touchStart = window_1.performance.now(); // Reset couldBeTap tracking
+          touchStart = window.performance.now(); // Reset couldBeTap tracking
 
           couldBeTap = true;
         }
@@ -4968,7 +5226,7 @@
 
         if (couldBeTap === true) {
           // Measure how long the touch lasted
-          var touchTime = window_1.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
+          var touchTime = window.performance.now() - touchStart; // Make sure the touch was less than the threshold to be considered a tap
 
           if (touchTime < touchTimeThreshold) {
             // Don't let browser turn this into a click
@@ -5084,7 +5342,7 @@
       var timeoutId;
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      timeoutId = window_1.setTimeout(function () {
+      timeoutId = window.setTimeout(function () {
         if (_this2.setTimeoutIds_.has(timeoutId)) {
           _this2.setTimeoutIds_["delete"](timeoutId);
         }
@@ -5114,7 +5372,7 @@
     _proto.clearTimeout = function clearTimeout(timeoutId) {
       if (this.setTimeoutIds_.has(timeoutId)) {
         this.setTimeoutIds_["delete"](timeoutId);
-        window_1.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId);
       }
 
       return timeoutId;
@@ -5144,7 +5402,7 @@
     _proto.setInterval = function setInterval(fn, interval) {
       fn = bind(this, fn);
       this.clearTimersOnDispose_();
-      var intervalId = window_1.setInterval(fn, interval);
+      var intervalId = window.setInterval(fn, interval);
       this.setIntervalIds_.add(intervalId);
       return intervalId;
     }
@@ -5168,7 +5426,7 @@
     _proto.clearInterval = function clearInterval(intervalId) {
       if (this.setIntervalIds_.has(intervalId)) {
         this.setIntervalIds_["delete"](intervalId);
-        window_1.clearInterval(intervalId);
+        window.clearInterval(intervalId);
       }
 
       return intervalId;
@@ -5213,7 +5471,7 @@
 
       var id;
       fn = bind(this, fn);
-      id = window_1.requestAnimationFrame(function () {
+      id = window.requestAnimationFrame(function () {
         if (_this3.rafIds_.has(id)) {
           _this3.rafIds_["delete"](id);
         }
@@ -5298,7 +5556,7 @@
 
       if (this.rafIds_.has(id)) {
         this.rafIds_["delete"](id);
-        window_1.cancelAnimationFrame(id);
+        window.cancelAnimationFrame(id);
       }
 
       return id;
@@ -5415,11 +5673,6 @@
      *
      * @return {Component}
      *         The `Component` that got registered under the given name.
-     *
-     * @deprecated In `videojs` 6 this will not return `Component`s that were not
-     *             registered using {@link Component.registerComponent}. Currently we
-     *             check the global `videojs` object for a `Component` name and
-     *             return that if it exists.
      */
     ;
 
@@ -5443,7 +5696,7 @@
    */
 
 
-  Component$1.prototype.supportsRaf_ = typeof window_1.requestAnimationFrame === 'function' && typeof window_1.cancelAnimationFrame === 'function';
+  Component$1.prototype.supportsRaf_ = typeof window.requestAnimationFrame === 'function' && typeof window.cancelAnimationFrame === 'function';
   Component$1.registerComponent('Component', Component$1);
 
   function _assertThisInitialized(self) {
@@ -5562,8 +5815,10 @@
 
 
   function createTimeRangesObj(ranges) {
+    var timeRangesObj;
+
     if (ranges === undefined || ranges.length === 0) {
-      return {
+      timeRangesObj = {
         length: 0,
         start: function start() {
           throw new Error('This TimeRanges object is empty');
@@ -5572,13 +5827,21 @@
           throw new Error('This TimeRanges object is empty');
         }
       };
+    } else {
+      timeRangesObj = {
+        length: ranges.length,
+        start: getRange.bind(null, 'start', 0, ranges),
+        end: getRange.bind(null, 'end', 1, ranges)
+      };
     }
 
-    return {
-      length: ranges.length,
-      start: getRange.bind(null, 'start', 0, ranges),
-      end: getRange.bind(null, 'end', 1, ranges)
-    };
+    if (window.Symbol && window.Symbol.iterator) {
+      timeRangesObj[window.Symbol.iterator] = function () {
+        return (ranges || []).values();
+      };
+    }
+
+    return timeRangesObj;
   }
   /**
    * Create a `TimeRange` object which mimics an
@@ -5902,201 +6165,6 @@
     jsonToTextTracks: jsonToTextTracks,
     trackToJson_: trackToJson_
   };
-
-  var keycode = createCommonjsModule(function (module, exports) {
-    // Source: http://jsfiddle.net/vWx8V/
-    // http://stackoverflow.com/questions/5603195/full-list-of-javascript-keycodes
-
-    /**
-     * Conenience method returns corresponding value for given keyName or keyCode.
-     *
-     * @param {Mixed} keyCode {Number} or keyName {String}
-     * @return {Mixed}
-     * @api public
-     */
-    function keyCode(searchInput) {
-      // Keyboard Events
-      if (searchInput && 'object' === typeof searchInput) {
-        var hasKeyCode = searchInput.which || searchInput.keyCode || searchInput.charCode;
-        if (hasKeyCode) searchInput = hasKeyCode;
-      } // Numbers
-
-
-      if ('number' === typeof searchInput) return names[searchInput]; // Everything else (cast to string)
-
-      var search = String(searchInput); // check codes
-
-      var foundNamedKey = codes[search.toLowerCase()];
-      if (foundNamedKey) return foundNamedKey; // check aliases
-
-      var foundNamedKey = aliases[search.toLowerCase()];
-      if (foundNamedKey) return foundNamedKey; // weird character?
-
-      if (search.length === 1) return search.charCodeAt(0);
-      return undefined;
-    }
-    /**
-     * Compares a keyboard event with a given keyCode or keyName.
-     *
-     * @param {Event} event Keyboard event that should be tested
-     * @param {Mixed} keyCode {Number} or keyName {String}
-     * @return {Boolean}
-     * @api public
-     */
-
-
-    keyCode.isEventKey = function isEventKey(event, nameOrCode) {
-      if (event && 'object' === typeof event) {
-        var keyCode = event.which || event.keyCode || event.charCode;
-
-        if (keyCode === null || keyCode === undefined) {
-          return false;
-        }
-
-        if (typeof nameOrCode === 'string') {
-          // check codes
-          var foundNamedKey = codes[nameOrCode.toLowerCase()];
-
-          if (foundNamedKey) {
-            return foundNamedKey === keyCode;
-          } // check aliases
-
-
-          var foundNamedKey = aliases[nameOrCode.toLowerCase()];
-
-          if (foundNamedKey) {
-            return foundNamedKey === keyCode;
-          }
-        } else if (typeof nameOrCode === 'number') {
-          return nameOrCode === keyCode;
-        }
-
-        return false;
-      }
-    };
-
-    exports = module.exports = keyCode;
-    /**
-     * Get by name
-     *
-     *   exports.code['enter'] // => 13
-     */
-
-    var codes = exports.code = exports.codes = {
-      'backspace': 8,
-      'tab': 9,
-      'enter': 13,
-      'shift': 16,
-      'ctrl': 17,
-      'alt': 18,
-      'pause/break': 19,
-      'caps lock': 20,
-      'esc': 27,
-      'space': 32,
-      'page up': 33,
-      'page down': 34,
-      'end': 35,
-      'home': 36,
-      'left': 37,
-      'up': 38,
-      'right': 39,
-      'down': 40,
-      'insert': 45,
-      'delete': 46,
-      'command': 91,
-      'left command': 91,
-      'right command': 93,
-      'numpad *': 106,
-      'numpad +': 107,
-      'numpad -': 109,
-      'numpad .': 110,
-      'numpad /': 111,
-      'num lock': 144,
-      'scroll lock': 145,
-      'my computer': 182,
-      'my calculator': 183,
-      ';': 186,
-      '=': 187,
-      ',': 188,
-      '-': 189,
-      '.': 190,
-      '/': 191,
-      '`': 192,
-      '[': 219,
-      '\\': 220,
-      ']': 221,
-      "'": 222
-    }; // Helper aliases
-
-    var aliases = exports.aliases = {
-      'windows': 91,
-      '⇧': 16,
-      '⌥': 18,
-      '⌃': 17,
-      '⌘': 91,
-      'ctl': 17,
-      'control': 17,
-      'option': 18,
-      'pause': 19,
-      'break': 19,
-      'caps': 20,
-      'return': 13,
-      'escape': 27,
-      'spc': 32,
-      'spacebar': 32,
-      'pgup': 33,
-      'pgdn': 34,
-      'ins': 45,
-      'del': 46,
-      'cmd': 91
-    };
-    /*!
-     * Programatically add the following
-     */
-    // lower case chars
-
-    for (i = 97; i < 123; i++) {
-      codes[String.fromCharCode(i)] = i - 32;
-    } // numbers
-
-
-    for (var i = 48; i < 58; i++) {
-      codes[i - 48] = i;
-    } // function keys
-
-
-    for (i = 1; i < 13; i++) {
-      codes['f' + i] = i + 111;
-    } // numpad keys
-
-
-    for (i = 0; i < 10; i++) {
-      codes['numpad ' + i] = i + 96;
-    }
-    /**
-     * Get by code
-     *
-     *   exports.name[13] // => 'Enter'
-     */
-
-
-    var names = exports.names = exports.title = {}; // title for backward compat
-    // Create reverse mapping
-
-    for (i in codes) {
-      names[codes[i]] = i;
-    } // Add aliases
-
-
-    for (var alias in aliases) {
-      codes[alias] = aliases[alias];
-    }
-  });
-  keycode.code;
-  keycode.codes;
-  keycode.aliases;
-  keycode.names;
-  keycode.title;
 
   var MODAL_CLASS_NAME = 'vjs-modal-dialog';
   /**
@@ -6534,7 +6602,7 @@
     ;
 
     _proto.conditionalFocus_ = function conditionalFocus_() {
-      var activeEl = document_1.activeElement;
+      var activeEl = document.activeElement;
       var playerEl = this.player_.el_;
       this.previouslyActiveEl_ = null;
 
@@ -6589,7 +6657,7 @@
         }
       }
 
-      if (document_1.activeElement === this.el_) {
+      if (document.activeElement === this.el_) {
         focusIndex = 0;
       }
 
@@ -6611,7 +6679,7 @@
     _proto.focusableEls_ = function focusableEls_() {
       var allChildren = this.el_.querySelectorAll('*');
       return Array.prototype.filter.call(allChildren, function (child) {
-        return (child instanceof window_1.HTMLAnchorElement || child instanceof window_1.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window_1.HTMLInputElement || child instanceof window_1.HTMLSelectElement || child instanceof window_1.HTMLTextAreaElement || child instanceof window_1.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window_1.HTMLIFrameElement || child instanceof window_1.HTMLObjectElement || child instanceof window_1.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
+        return (child instanceof window.HTMLAnchorElement || child instanceof window.HTMLAreaElement) && child.hasAttribute('href') || (child instanceof window.HTMLInputElement || child instanceof window.HTMLSelectElement || child instanceof window.HTMLTextAreaElement || child instanceof window.HTMLButtonElement) && !child.hasAttribute('disabled') || child instanceof window.HTMLIFrameElement || child instanceof window.HTMLObjectElement || child instanceof window.HTMLEmbedElement || child.hasAttribute('tabindex') && child.getAttribute('tabindex') !== -1 || child.hasAttribute('contenteditable');
       });
     };
 
@@ -7596,6 +7664,7 @@
    * @file url.js
    * @module url
    */
+
   /**
    * @typedef {Object} url:URLObject
    *
@@ -7631,12 +7700,11 @@
    * @return   {url:URLObject}
    *           An object of url details
    */
-
   var parseUrl = function parseUrl(url) {
     // This entire method can be replace with URL once we are able to drop IE11
     var props = ['protocol', 'hostname', 'port', 'pathname', 'search', 'hash', 'host']; // add the url to an anchor and let the browser parse the URL
 
-    var a = document_1.createElement('a');
+    var a = document.createElement('a');
     a.href = url; // Copy the specific URL properties to a new object
     // This is also needed for IE because the anchor loses its
     // properties when it's removed from the dom
@@ -7658,13 +7726,13 @@
     }
 
     if (!details.protocol) {
-      details.protocol = window_1.location.protocol;
+      details.protocol = window.location.protocol;
     }
     /* istanbul ignore if */
 
 
     if (!details.host) {
-      details.host = window_1.location.host;
+      details.host = window.location.host;
     }
 
     return details;
@@ -7687,7 +7755,7 @@
     if (!url.match(/^https?:\/\//)) {
       // Convert to absolute URL. Flash hosted off-site needs an absolute URL.
       // add the url to an anchor and let the browser parse the URL
-      var a = document_1.createElement('a');
+      var a = document.createElement('a');
       a.href = url;
       url = a.href;
     }
@@ -7741,7 +7809,7 @@
 
   var isCrossOrigin = function isCrossOrigin(url, winLoc) {
     if (winLoc === void 0) {
-      winLoc = window_1.location;
+      winLoc = window.location;
     }
 
     var urlInfo = parseUrl(url); // IE8 protocol relative urls will return ':' for protocol
@@ -7761,6 +7829,20 @@
     isCrossOrigin: isCrossOrigin
   });
 
+  var win;
+
+  if (typeof window !== "undefined") {
+    win = window;
+  } else if (typeof commonjsGlobal !== "undefined") {
+    win = commonjsGlobal;
+  } else if (typeof self !== "undefined") {
+    win = self;
+  } else {
+    win = {};
+  }
+
+  var window_1 = win;
+
   var isFunction_1 = isFunction;
   var toString = Object.prototype.toString;
 
@@ -7774,6 +7856,66 @@
     fn === window.setTimeout || fn === window.alert || fn === window.confirm || fn === window.prompt);
   }
 
+  var httpResponseHandler = function httpResponseHandler(callback, decodeResponseBody) {
+    if (decodeResponseBody === void 0) {
+      decodeResponseBody = false;
+    }
+
+    return function (err, response, responseBody) {
+      // if the XHR failed, return that error
+      if (err) {
+        callback(err);
+        return;
+      } // if the HTTP status code is 4xx or 5xx, the request also failed
+
+
+      if (response.statusCode >= 400 && response.statusCode <= 599) {
+        var cause = responseBody;
+
+        if (decodeResponseBody) {
+          if (window_1.TextDecoder) {
+            var charset = getCharset(response.headers && response.headers['content-type']);
+
+            try {
+              cause = new TextDecoder(charset).decode(responseBody);
+            } catch (e) {}
+          } else {
+            cause = String.fromCharCode.apply(null, new Uint8Array(responseBody));
+          }
+        }
+
+        callback({
+          cause: cause
+        });
+        return;
+      } // otherwise, request succeeded
+
+
+      callback(null, responseBody);
+    };
+  };
+
+  function getCharset(contentTypeHeader) {
+    if (contentTypeHeader === void 0) {
+      contentTypeHeader = '';
+    }
+
+    return contentTypeHeader.toLowerCase().split(';').reduce(function (charset, contentType) {
+      var _contentType$split = contentType.split('='),
+          type = _contentType$split[0],
+          value = _contentType$split[1];
+
+      if (type.trim() === 'charset') {
+        return value.trim();
+      }
+
+      return charset;
+    }, 'utf-8');
+  }
+
+  var httpHandler = httpResponseHandler;
+
+  createXHR.httpHandler = httpHandler;
   /**
    * @license
    * slighly modified parse-headers 2.0.2 <https://github.com/kesla/parse-headers/>
@@ -7781,7 +7923,6 @@
    * Available under the MIT license
    * <https://github.com/kesla/parse-headers/blob/master/LICENCE>
    */
-
 
   var parseHeaders = function parseHeaders(headers) {
     var result = {};
@@ -7806,7 +7947,7 @@
     return result;
   };
 
-  var xhr = createXHR; // Allow use of default import syntax in TypeScript
+  var lib = createXHR; // Allow use of default import syntax in TypeScript
 
   var default_1 = createXHR;
   createXHR.XMLHttpRequest = window_1.XMLHttpRequest || noop$1;
@@ -8062,7 +8203,7 @@
   }
 
   function noop$1() {}
-  xhr["default"] = default_1;
+  lib["default"] = default_1;
 
   /**
    * Takes a webvtt file contents and parses it into cues
@@ -8077,7 +8218,7 @@
    */
 
   var parseCues = function parseCues(srcContent, track) {
-    var parser = new window_1.WebVTT.Parser(window_1, window_1.vttjs, window_1.WebVTT.StringDecoder());
+    var parser = new window.WebVTT.Parser(window, window.vttjs, window.WebVTT.StringDecoder());
     var errors = [];
 
     parser.oncue = function (cue) {
@@ -8098,16 +8239,16 @@
     parser.parse(srcContent);
 
     if (errors.length > 0) {
-      if (window_1.console && window_1.console.groupCollapsed) {
-        window_1.console.groupCollapsed("Text Track parsing errors for " + track.src);
+      if (window.console && window.console.groupCollapsed) {
+        window.console.groupCollapsed("Text Track parsing errors for " + track.src);
       }
 
       errors.forEach(function (error) {
         return log$1.error(error);
       });
 
-      if (window_1.console && window_1.console.groupEnd) {
-        window_1.console.groupEnd();
+      if (window.console && window.console.groupEnd) {
+        window.console.groupEnd();
       }
     }
 
@@ -8142,7 +8283,7 @@
       opts.withCredentials = withCredentials;
     }
 
-    xhr(opts, bind(this, function (err, response, responseBody) {
+    lib(opts, bind(this, function (err, response, responseBody) {
       if (err) {
         return log$1.error(err, response);
       }
@@ -8150,7 +8291,7 @@
       track.loaded_ = true; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
       // NOTE: this is only used for the alt/video.novtt.js build
 
-      if (typeof window_1.WebVTT !== 'function') {
+      if (typeof window.WebVTT !== 'function') {
         if (track.tech_) {
           // to prevent use before define eslint error, we define loadHandler
           // as a let here
@@ -8435,8 +8576,8 @@
     _proto.addCue = function addCue(originalCue) {
       var cue = originalCue;
 
-      if (window_1.vttjs && !(originalCue instanceof window_1.vttjs.VTTCue)) {
-        cue = new window_1.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
+      if (window.vttjs && !(originalCue instanceof window.vttjs.VTTCue)) {
+        cue = new window.vttjs.VTTCue(originalCue.startTime, originalCue.endTime, originalCue.text);
 
         for (var prop in originalCue) {
           if (!(prop in cue)) {
@@ -8724,7 +8865,7 @@
      *
      * @param {string} [options.srclang='']
      *        A valid two character language code. An alternative, but deprioritized
-     *        vesion of `options.language`
+     *        version of `options.language`
      *
      * @param {string} [options.src]
      *        A url to TextTrack cues.
@@ -8849,6 +8990,23 @@
   REMOTE.names = Object.keys(REMOTE);
   NORMAL.names = Object.keys(NORMAL);
   ALL.names = [].concat(REMOTE.names).concat(NORMAL.names);
+
+  var minDoc = {};
+
+  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal : typeof window !== 'undefined' ? window : {};
+  var doccy;
+
+  if (typeof document !== 'undefined') {
+    doccy = document;
+  } else {
+    doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
+
+    if (!doccy) {
+      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
+    }
+  }
+
+  var document_1 = doccy;
 
   /**
    * Copyright 2013 vtt.js Contributors
@@ -11361,14 +11519,14 @@
     _proto.addWebVttScript_ = function addWebVttScript_() {
       var _this5 = this;
 
-      if (window_1.WebVTT) {
+      if (window.WebVTT) {
         return;
       } // Initially, Tech.el_ is a child of a dummy-div wait until the Component system
       // signals that the Tech is ready at which point Tech.el_ is part of the DOM
       // before inserting the WebVTT script
 
 
-      if (document_1.body.contains(this.el())) {
+      if (document.body.contains(this.el())) {
         // load via require if available and vtt.js script location was not passed in
         // as an option. novtt builds will turn the above require call into an empty object
         // which will cause this if check to always fail.
@@ -11379,7 +11537,7 @@
         // passed in
 
 
-        var script = document_1.createElement('script');
+        var script = document.createElement('script');
         script.src = this.options_['vtt.js'] || 'https://vjs.zencdn.net/vttjs/0.14.1/vtt.min.js';
 
         script.onload = function () {
@@ -11408,7 +11566,7 @@
         }); // but have not loaded yet and we set it to true before the inject so that
         // we don't overwrite the injected window.WebVTT if it loads right away
 
-        window_1.WebVTT = true;
+        window.WebVTT = true;
         this.el().parentNode.appendChild(script);
       } else {
         this.ready(this.addWebVttScript_);
@@ -11623,7 +11781,7 @@
     ;
 
     _proto.requestPictureInPicture = function requestPictureInPicture() {
-      var PromiseClass = this.options_.Promise || window_1.Promise;
+      var PromiseClass = this.options_.Promise || window.Promise;
 
       if (PromiseClass) {
         return PromiseClass.reject();
@@ -11822,9 +11980,9 @@
 
       name = toTitleCase$1(name);
 
-      if (window_1 && window_1.videojs && window_1.videojs[name]) {
+      if (window && window.videojs && window.videojs[name]) {
         log$1.warn("The " + name + " tech was added to the videojs object when it should be registered using videojs.registerTech(name, tech)");
-        return window_1.videojs[name];
+        return window.videojs[name];
       }
     };
 
@@ -12827,7 +12985,7 @@
 
     var _proto = ClickableComponent.prototype;
 
-    _proto.createEl = function createEl(tag, props, attributes) {
+    _proto.createEl = function createEl$1(tag, props, attributes) {
       if (tag === void 0) {
         tag = 'div';
       }
@@ -12841,7 +12999,6 @@
       }
 
       props = assign({
-        innerHTML: '<span aria-hidden="true" class="vjs-icon-placeholder"></span>',
         className: this.buildCSSClass(),
         tabIndex: 0
       }, props);
@@ -12855,9 +13012,12 @@
         role: 'button'
       }, attributes);
       this.tabIndex_ = props.tabIndex;
-
-      var el = _Component.prototype.createEl.call(this, tag, props, attributes);
-
+      var el = createEl(tag, props, attributes);
+      el.appendChild(createEl('span', {
+        className: 'vjs-icon-placeholder'
+      }, {
+        'aria-hidden': true
+      }));
       this.createControlTextEl(el);
       return el;
     };
@@ -13290,9 +13450,9 @@
 
         player.on('fullscreenchange', updateDisplayHandler);
         player.on('playerresize', updateDisplayHandler);
-        window_1.addEventListener('orientationchange', updateDisplayHandler);
+        window.addEventListener('orientationchange', updateDisplayHandler);
         player.on('dispose', function () {
-          return window_1.removeEventListener('orientationchange', updateDisplayHandler);
+          return window.removeEventListener('orientationchange', updateDisplayHandler);
         });
         var tracks = this.options_.playerOptions.tracks || [];
 
@@ -13393,6 +13553,7 @@
       return _Component.prototype.createEl.call(this, 'div', {
         className: 'vjs-text-track-display'
       }, {
+        'translate': 'yes',
         'aria-live': 'off',
         'aria-atomic': 'true'
       });
@@ -13403,8 +13564,8 @@
     ;
 
     _proto.clearDisplay = function clearDisplay() {
-      if (typeof window_1.WebVTT === 'function') {
-        window_1.WebVTT.processCues(window_1, [], this.el_);
+      if (typeof window.WebVTT === 'function') {
+        window.WebVTT.processCues(window, [], this.el_);
       }
     }
     /**
@@ -13530,7 +13691,7 @@
         }
 
         if (overrides.fontPercent && overrides.fontPercent !== 1) {
-          var fontSize = window_1.parseFloat(cueDiv.style.fontSize);
+          var fontSize = window.parseFloat(cueDiv.style.fontSize);
           cueDiv.style.fontSize = fontSize * overrides.fontPercent + 'px';
           cueDiv.style.height = 'auto';
           cueDiv.style.top = 'auto';
@@ -13558,7 +13719,7 @@
         tracks = [tracks];
       }
 
-      if (typeof window_1.WebVTT !== 'function' || tracks.every(function (track) {
+      if (typeof window.WebVTT !== 'function' || tracks.every(function (track) {
         return !track.activeCues;
       })) {
         return;
@@ -13575,7 +13736,7 @@
       } // removes all cues before it processes new ones
 
 
-      window_1.WebVTT.processCues(window_1, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
+      window.WebVTT.processCues(window, cues, this.el_); // add unique class to each language text track & add settings styling if necessary
 
       for (var _i2 = 0; _i2 < tracks.length; ++_i2) {
         var _track2 = tracks[_i2];
@@ -13584,6 +13745,10 @@
           var cueEl = _track2.activeCues[_j].displayState;
           addClass(cueEl, 'vjs-text-track-cue');
           addClass(cueEl, 'vjs-text-track-cue-' + (_track2.language ? _track2.language : _i2));
+
+          if (_track2.language) {
+            setAttribute(cueEl, 'lang', _track2.language);
+          }
         }
 
         if (this.player_.textTrackSettings) {
@@ -13623,7 +13788,7 @@
       var playerType = this.localize(isAudio ? 'Audio Player' : 'Video Player');
       var controlText = createEl('span', {
         className: 'vjs-control-text',
-        innerHTML: this.localize('{1} is loading.', [playerType])
+        textContent: this.localize('{1} is loading.', [playerType])
       });
 
       var el = _Component.prototype.createEl.call(this, 'div', {
@@ -13671,7 +13836,7 @@
      * @return {Element}
      *         The element that gets created.
      */
-    _proto.createEl = function createEl(tag, props, attributes) {
+    _proto.createEl = function createEl$1(tag, props, attributes) {
       if (props === void 0) {
         props = {};
       }
@@ -13682,7 +13847,6 @@
 
       tag = 'button';
       props = assign({
-        innerHTML: '<span aria-hidden="true" class="vjs-icon-placeholder"></span>',
         className: this.buildCSSClass()
       }, props); // Add attributes for button element
 
@@ -13690,7 +13854,14 @@
         // Necessary since the default button type is "submit"
         type: 'button'
       }, attributes);
-      var el = Component$1.prototype.createEl.call(this, tag, props, attributes);
+
+      var el = createEl(tag, props, attributes);
+
+      el.appendChild(createEl('span', {
+        className: 'vjs-icon-placeholder'
+      }, {
+        'aria-hidden': true
+      }));
       this.createControlTextEl(el);
       return el;
     }
@@ -14289,10 +14460,16 @@
       var className = this.buildCSSClass();
 
       var el = _Component.prototype.createEl.call(this, 'div', {
-        className: className + " vjs-time-control vjs-control",
-        innerHTML: "<span class=\"vjs-control-text\" role=\"presentation\">" + this.localize(this.labelText_) + "\xA0</span>"
+        className: className + " vjs-time-control vjs-control"
       });
 
+      var span = createEl('span', {
+        className: 'vjs-control-text',
+        textContent: this.localize(this.labelText_) + "\xA0"
+      }, {
+        role: 'presentation'
+      });
+      el.appendChild(span);
       this.contentEl_ = createEl('span', {
         className: className + "-display"
       }, {
@@ -14349,7 +14526,7 @@
           log$1.warn('TimeDisplay#updateTextnode_: Prevented replacement of text node element since it was no longer a child of this node. Appending a new node instead.');
         }
 
-        _this2.textNode_ = document_1.createTextNode(_this2.formattedTime_);
+        _this2.textNode_ = document.createTextNode(_this2.formattedTime_);
 
         if (!_this2.textNode_) {
           return;
@@ -14589,15 +14766,24 @@
      *         The element that was created.
      */
     _proto.createEl = function createEl() {
-      return _Component.prototype.createEl.call(this, 'div', {
-        className: 'vjs-time-control vjs-time-divider',
-        innerHTML: '<div><span>/</span></div>'
+      var el = _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-time-control vjs-time-divider'
       }, {
         // this element and its contents can be hidden from assistive techs since
         // it is made extraneous by the announcement of the control text
         // for the current time and duration displays
         'aria-hidden': true
       });
+
+      var div = _Component.prototype.createEl.call(this, 'div');
+
+      var span = _Component.prototype.createEl.call(this, 'span', {
+        textContent: '/'
+      });
+
+      div.appendChild(span);
+      el.appendChild(div);
+      return el;
     };
 
     return TimeDivider;
@@ -14658,9 +14844,12 @@
     _proto.createEl = function createEl$1() {
       var el = _TimeDisplay.prototype.createEl.call(this);
 
-      el.insertBefore(createEl('span', {}, {
-        'aria-hidden': true
-      }, '-'), this.contentEl_);
+      if (this.options_.displayNegative !== false) {
+        el.insertBefore(createEl('span', {}, {
+          'aria-hidden': true
+        }, '-'), this.contentEl_);
+      }
+
       return el;
     }
     /**
@@ -14763,11 +14952,15 @@
       });
 
       this.contentEl_ = createEl('div', {
-        className: 'vjs-live-display',
-        innerHTML: "<span class=\"vjs-control-text\">" + this.localize('Stream Type') + "\xA0</span>" + this.localize('LIVE')
+        className: 'vjs-live-display'
       }, {
         'aria-live': 'off'
       });
+      this.contentEl_.appendChild(createEl('span', {
+        className: 'vjs-control-text',
+        textContent: this.localize('Stream Type') + "\xA0"
+      }));
+      this.contentEl_.appendChild(document.createTextNode(this.localize('LIVE')));
       el.appendChild(this.contentEl_);
       return el;
     };
@@ -14853,7 +15046,7 @@
 
       this.textEl_ = createEl('span', {
         className: 'vjs-seek-to-live-text',
-        innerHTML: this.localize('LIVE')
+        textContent: this.localize('LIVE')
       }, {
         'aria-hidden': 'true'
       });
@@ -15133,7 +15326,7 @@
       this.on(doc, 'mouseup', this.handleMouseUp_);
       this.on(doc, 'touchmove', this.handleMouseMove_);
       this.on(doc, 'touchend', this.handleMouseUp_);
-      this.handleMouseMove(event);
+      this.handleMouseMove(event, true);
     }
     /**
      * Handle the `mousemove`, `touchmove`, and `mousedown` events on this `Slider`.
@@ -15144,6 +15337,7 @@
      * @param {EventTarget~Event} event
      *        `mousedown`, `mousemove`, `touchstart`, or `touchmove` event that triggered
      *        this function
+     * @param {boolean} mouseDown this is a flag that should be set to true if `handleMouseMove` is called directly. It allows us to skip things that should not happen if coming from mouse down but should happen on regular mouse move handler. Defaults to false.
      *
      * @listens mousemove
      * @listens touchmove
@@ -15379,7 +15573,7 @@
       var loadedText = createEl('span', {
         textContent: this.localize('Loaded')
       });
-      var separator = document_1.createTextNode(': ');
+      var separator = document.createTextNode(': ');
       this.percentageEl_ = createEl('span', {
         className: 'vjs-control-text-loaded-percentage',
         textContent: '0%'
@@ -15863,13 +16057,13 @@
       this.on(this.player_, ['ended', 'pause', 'waiting'], this.disableIntervalHandler_); // we don't need to update the play progress if the document is hidden,
       // also, this causes the CPU to spike and eventually crash the page on IE11.
 
-      if ('hidden' in document_1 && 'visibilityState' in document_1) {
-        this.on(document_1, 'visibilitychange', this.toggleVisibility_);
+      if ('hidden' in document && 'visibilityState' in document) {
+        this.on(document, 'visibilitychange', this.toggleVisibility_);
       }
     };
 
     _proto.toggleVisibility_ = function toggleVisibility_(e) {
-      if (document_1.visibilityState === 'hidden') {
+      if (document.visibilityState === 'hidden') {
         this.cancelNamedAnimationFrame('SeekBar#update');
         this.cancelNamedAnimationFrame('Slider#update');
         this.disableInterval_(e);
@@ -15936,7 +16130,7 @@
       var _this3 = this;
 
       // ignore updates while the tab is hidden
-      if (document_1.visibilityState === 'hidden') {
+      if (document.visibilityState === 'hidden') {
         return;
       }
 
@@ -16046,7 +16240,6 @@
 
 
       event.stopPropagation();
-      this.player_.scrubbing(true);
       this.videoWasPlaying = !this.player_.paused();
       this.player_.pause();
 
@@ -16057,14 +16250,23 @@
      *
      * @param {EventTarget~Event} event
      *        The `mousemove` event that caused this to run.
+     * @param {boolean} mouseDown this is a flag that should be set to true if `handleMouseMove` is called directly. It allows us to skip things that should not happen if coming from mouse down but should happen on regular mouse move handler. Defaults to false
      *
      * @listens mousemove
      */
     ;
 
-    _proto.handleMouseMove = function handleMouseMove(event) {
+    _proto.handleMouseMove = function handleMouseMove(event, mouseDown) {
+      if (mouseDown === void 0) {
+        mouseDown = false;
+      }
+
       if (!isSingleLeftClick(event)) {
         return;
+      }
+
+      if (!mouseDown && !this.player_.scrubbing()) {
+        this.player_.scrubbing(true);
       }
 
       var newTime;
@@ -16280,8 +16482,8 @@
       this.off(this.player_, ['ended', 'pause', 'waiting'], this.disableIntervalHandler_); // we don't need to update the play progress if the document is hidden,
       // also, this causes the CPU to spike and eventually crash the page on IE11.
 
-      if ('hidden' in document_1 && 'visibilityState' in document_1) {
-        this.off(document_1, 'visibilitychange', this.toggleVisibility_);
+      if ('hidden' in document && 'visibilityState' in document) {
+        this.off(document, 'visibilitychange', this.toggleVisibility_);
       }
 
       _Slider.prototype.dispose.call(this);
@@ -16621,7 +16823,7 @@
     ;
 
     _proto.handlePictureInPictureEnabledChange = function handlePictureInPictureEnabledChange() {
-      if (document_1.pictureInPictureEnabled && this.player_.disablePictureInPicture() === false) {
+      if (document.pictureInPictureEnabled && this.player_.disablePictureInPicture() === false) {
         this.enable();
       } else {
         this.disable();
@@ -16709,7 +16911,7 @@
         return _this.handleFullscreenChange(e);
       });
 
-      if (document_1[player.fsApi_.fullscreenEnabled] === false) {
+      if (document[player.fsApi_.fullscreenEnabled] === false) {
         _this.disable();
       }
 
@@ -16829,10 +17031,14 @@
      *         The element that was created.
      */
     _proto.createEl = function createEl() {
-      return _Component.prototype.createEl.call(this, 'div', {
-        className: 'vjs-volume-level',
-        innerHTML: '<span class="vjs-control-text"></span>'
+      var el = _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-volume-level'
       });
+
+      el.appendChild(_Component.prototype.createEl.call(this, 'span', {
+        className: 'vjs-control-text'
+      }));
+      return el;
     };
 
     return VolumeLevel;
@@ -17817,7 +18023,7 @@
 
     _proto.handleMouseOver = function handleMouseOver(event) {
       this.addClass('vjs-hover');
-      on(document_1, 'keyup', this.handleKeyPressHandler_);
+      on(document, 'keyup', this.handleKeyPressHandler_);
     }
     /**
      * This gets called when a `VolumePanel` gains hover via a `mouseout` event.
@@ -17833,7 +18039,7 @@
 
     _proto.handleMouseOut = function handleMouseOut(event) {
       this.removeClass('vjs-hover');
-      off(document_1, 'keyup', this.handleKeyPressHandler_);
+      off(document, 'keyup', this.handleKeyPressHandler_);
     }
     /**
      * Handles `keyup` event on the document or `keydown` event on the `VolumePanel`,
@@ -18033,7 +18239,7 @@
     ;
 
     _proto.handleBlur = function handleBlur(event) {
-      var relatedTarget = event.relatedTarget || document_1.activeElement; // Close menu popup when a user clicks outside the menu
+      var relatedTarget = event.relatedTarget || document.activeElement; // Close menu popup when a user clicks outside the menu
 
       if (!this.children().some(function (element) {
         return element.el() === relatedTarget;
@@ -18232,7 +18438,7 @@
 
         _this.menu.show();
 
-        on(document_1, 'keyup', _this.handleMenuKeyUp_);
+        on(document, 'keyup', _this.handleMenuKeyUp_);
       });
 
       _this.on('mouseleave', function (e) {
@@ -18304,7 +18510,7 @@
       if (this.options_.title) {
         var titleEl = createEl('li', {
           className: 'vjs-menu-title',
-          innerHTML: toTitleCase$1(this.options_.title),
+          textContent: toTitleCase$1(this.options_.title),
           tabIndex: -1
         });
         var titleComponent = new Component$1(this.player_, {
@@ -18450,7 +18656,7 @@
 
     _proto.handleMouseLeave = function handleMouseLeave(event) {
       this.removeClass('vjs-hover');
-      off(document_1, 'keyup', this.handleMenuKeyUp_);
+      off(document, 'keyup', this.handleMenuKeyUp_);
     }
     /**
      * Set the focus to the actual button, not to this element
@@ -18743,14 +18949,21 @@
 
     var _proto = MenuItem.prototype;
 
-    _proto.createEl = function createEl(type, props, attrs) {
+    _proto.createEl = function createEl$1(type, props, attrs) {
       // The control is textual, not just an icon
       this.nonIconControl = true;
-      return _ClickableComponent.prototype.createEl.call(this, 'li', assign({
+
+      var el = _ClickableComponent.prototype.createEl.call(this, 'li', assign({
         className: 'vjs-menu-item',
-        innerHTML: "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label) + "</span>",
         tabIndex: -1
-      }, props), attrs);
+      }, props), attrs); // swap icon with menu item text.
+
+
+      el.replaceChild(createEl('span', {
+        className: 'vjs-menu-item-text',
+        textContent: this.localize(this.options_.label)
+      }), el.querySelector('.vjs-icon-placeholder'));
+      return el;
     }
     /**
      * Ignore keys which are used by the menu, but pass any other ones up. See
@@ -18887,16 +19100,16 @@
         var event;
 
         _this.on(['tap', 'click'], function () {
-          if (typeof window_1.Event !== 'object') {
+          if (typeof window.Event !== 'object') {
             // Android 2.3 throws an Illegal Constructor error for window.Event
             try {
-              event = new window_1.Event('change');
+              event = new window.Event('change');
             } catch (err) {// continue regardless of error
             }
           }
 
           if (!event) {
-            event = document_1.createEvent('Event');
+            event = document.createEvent('Event');
             event.initEvent('change', true, true);
           }
 
@@ -19813,18 +20026,24 @@
 
     var _proto = SubsCapsMenuItem.prototype;
 
-    _proto.createEl = function createEl(type, props, attrs) {
-      var innerHTML = "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label);
+    _proto.createEl = function createEl$1(type, props, attrs) {
+      var el = _TextTrackMenuItem.prototype.createEl.call(this, type, props, attrs);
+
+      var parentSpan = el.querySelector('.vjs-menu-item-text');
 
       if (this.options_.track.kind === 'captions') {
-        innerHTML += "\n        <span aria-hidden=\"true\" class=\"vjs-icon-placeholder\"></span>\n        <span class=\"vjs-control-text\"> " + this.localize('Captions') + "</span>\n      ";
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-icon-placeholder'
+        }, {
+          'aria-hidden': true
+        }));
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-control-text',
+          // space added as the text will visually flow with the
+          // label
+          textContent: " " + this.localize('Captions')
+        }));
       }
-
-      innerHTML += '</span>';
-
-      var el = _TextTrackMenuItem.prototype.createEl.call(this, type, assign({
-        innerHTML: innerHTML
-      }, props), attrs);
 
       return el;
     };
@@ -19974,18 +20193,22 @@
 
     var _proto = AudioTrackMenuItem.prototype;
 
-    _proto.createEl = function createEl(type, props, attrs) {
-      var innerHTML = "<span class=\"vjs-menu-item-text\">" + this.localize(this.options_.label);
+    _proto.createEl = function createEl$1(type, props, attrs) {
+      var el = _MenuItem.prototype.createEl.call(this, type, props, attrs);
+
+      var parentSpan = el.querySelector('.vjs-menu-item-text');
 
       if (this.options_.track.kind === 'main-desc') {
-        innerHTML += "\n        <span aria-hidden=\"true\" class=\"vjs-icon-placeholder\"></span>\n        <span class=\"vjs-control-text\"> " + this.localize('Descriptions') + "</span>\n      ";
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-icon-placeholder'
+        }, {
+          'aria-hidden': true
+        }));
+        parentSpan.appendChild(createEl('span', {
+          className: 'vjs-control-text',
+          textContent: ' ' + this.localize('Descriptions')
+        }));
       }
-
-      innerHTML += '</span>';
-
-      var el = _MenuItem.prototype.createEl.call(this, type, assign({
-        innerHTML: innerHTML
-      }, props), attrs);
 
       return el;
     }
@@ -20007,7 +20230,21 @@
       // off for us.
 
 
-      this.track.enabled = true;
+      this.track.enabled = true; // when native audio tracks are used, we want to make sure that other tracks are turned off
+
+      if (this.player_.tech_.featuresNativeAudioTracks) {
+        var tracks = this.player_.audioTracks();
+
+        for (var i = 0; i < tracks.length; i++) {
+          var track = tracks[i]; // skip the current track since we enabled it above
+
+          if (track === this.track) {
+            continue;
+          }
+
+          track.enabled = track === this.track;
+        }
+      }
     }
     /**
      * Handle any {@link AudioTrack} change.
@@ -20263,7 +20500,7 @@
       this.labelEl_ = createEl('div', {
         className: 'vjs-playback-rate-value',
         id: this.labelElId_,
-        innerHTML: '1x'
+        textContent: '1x'
       });
       el.appendChild(this.labelEl_);
       return el;
@@ -20332,18 +20569,11 @@
     _proto.handleClick = function handleClick(event) {
       // select next rate option
       var currentRate = this.player().playbackRate();
-      var rates = this.playbackRates(); // this will select first one if the last one currently selected
+      var rates = this.playbackRates();
+      var currentIndex = rates.indexOf(currentRate); // this get the next rate and it will select first one if the last one currently selected
 
-      var newRate = rates[0];
-
-      for (var i = 0; i < rates.length; i++) {
-        if (rates[i] > currentRate) {
-          newRate = rates[i];
-          break;
-        }
-      }
-
-      this.player().playbackRate(newRate);
+      var newIndex = (currentIndex + 1) % rates.length;
+      this.player().playbackRate(rates[newIndex]);
     }
     /**
      * On playbackrateschange, update the menu to account for the new items.
@@ -20408,7 +20638,7 @@
 
     _proto.updateLabel = function updateLabel(event) {
       if (this.playbackRateSupported()) {
-        this.labelEl_.innerHTML = this.player().playbackRate() + 'x';
+        this.labelEl_.textContent = this.player().playbackRate() + 'x';
       }
     };
 
@@ -20458,10 +20688,24 @@
      */
     ;
 
-    _proto.createEl = function createEl() {
-      return _Component.prototype.createEl.call(this, 'div', {
-        className: this.buildCSSClass()
-      });
+    _proto.createEl = function createEl(tag, props, attributes) {
+      if (tag === void 0) {
+        tag = 'div';
+      }
+
+      if (props === void 0) {
+        props = {};
+      }
+
+      if (attributes === void 0) {
+        attributes = {};
+      }
+
+      if (!props.className) {
+        props.className = this.buildCSSClass();
+      }
+
+      return _Component.prototype.createEl.call(this, tag, props, attributes);
     };
 
     return Spacer;
@@ -20502,14 +20746,12 @@
     ;
 
     _proto.createEl = function createEl() {
-      var el = _Spacer.prototype.createEl.call(this, {
-        className: this.buildCSSClass()
-      }); // No-flex/table-cell mode requires there be some content
-      // in the cell to fill the remaining space of the table.
-
-
-      el.innerHTML = "\xA0";
-      return el;
+      return _Spacer.prototype.createEl.call(this, 'div', {
+        className: this.buildCSSClass(),
+        // No-flex/table-cell mode requires there be some content
+        // in the cell to fill the remaining space of the table.
+        textContent: "\xA0"
+      });
     };
 
     return CustomControlSpacer;
@@ -20559,7 +20801,7 @@
     children: ['playToggle', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'seekToLive', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subsCapsButton', 'audioTrackButton', 'fullscreenToggle']
   };
 
-  if ('exitPictureInPicture' in document_1) {
+  if ('exitPictureInPicture' in document) {
     ControlBar.prototype.options_.children.splice(ControlBar.prototype.options_.children.length - 1, 0, 'pictureInPictureToggle');
   }
 
@@ -21072,7 +21314,7 @@
       var values;
 
       try {
-        values = JSON.parse(window_1.localStorage.getItem(LOCAL_STORAGE_KEY$1));
+        values = JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY$1));
       } catch (err) {
         log$1.warn(err);
       }
@@ -21095,9 +21337,9 @@
 
       try {
         if (Object.keys(values).length) {
-          window_1.localStorage.setItem(LOCAL_STORAGE_KEY$1, JSON.stringify(values));
+          window.localStorage.setItem(LOCAL_STORAGE_KEY$1, JSON.stringify(values));
         } else {
-          window_1.localStorage.removeItem(LOCAL_STORAGE_KEY$1);
+          window.localStorage.removeItem(LOCAL_STORAGE_KEY$1);
         }
       } catch (err) {
         log$1.warn(err);
@@ -21176,7 +21418,7 @@
     function ResizeManager(player, options) {
       var _this;
 
-      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window_1.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
+      var RESIZE_OBSERVER_AVAILABLE = options.ResizeObserver || window.ResizeObserver; // if `null` was passed, we want to disable the ResizeObserver
 
       if (options.ResizeObserver === null) {
         RESIZE_OBSERVER_AVAILABLE = false;
@@ -21188,7 +21430,7 @@
         reportTouchActivity: false
       }, options);
       _this = _Component.call(this, player, options_) || this;
-      _this.ResizeObserver = options.ResizeObserver || window_1.ResizeObserver;
+      _this.ResizeObserver = options.ResizeObserver || window.ResizeObserver;
       _this.loadListener_ = null;
       _this.resizeObserver_ = null;
       _this.debouncedHandler_ = debounce(function () {
@@ -21293,7 +21535,7 @@
   Component$1.registerComponent('ResizeManager', ResizeManager);
 
   var defaults = {
-    trackingThreshold: 30,
+    trackingThreshold: 20,
     liveTolerance: 15
   };
   /*
@@ -21316,7 +21558,7 @@
      * @param {Object} [options]
      *        The key/value store of player options.
      *
-     * @param {number} [options.trackingThreshold=30]
+     * @param {number} [options.trackingThreshold=20]
      *        Number of seconds of live window (seekableEnd - seekableStart) that
      *        media needs to have before the liveui will be shown.
      *
@@ -21367,15 +21609,15 @@
       // may not have the proper values for things like seekableEnd until then
 
 
-      _this.one(_this.player_, 'canplay', function () {
+      _this.on(_this.player_, 'canplay', function () {
         return _this.toggleTracking();
       }); // we don't need to track live playback if the document is hidden,
       // also, tracking when the document is hidden can
       // cause the CPU to spike and eventually crash the page on IE11.
 
 
-      if (IE_VERSION && 'hidden' in document_1 && 'visibilityState' in document_1) {
-        _this.on(document_1, 'visibilitychange', _this.handleVisibilityChange_);
+      if (IE_VERSION && 'hidden' in document && 'visibilityState' in document) {
+        _this.on(document, 'visibilitychange', _this.handleVisibilityChange_);
       }
 
       return _this;
@@ -21392,7 +21634,7 @@
         return;
       }
 
-      if (document_1.hidden) {
+      if (document.hidden) {
         this.stopTracking();
       } else {
         this.startTracking();
@@ -21411,7 +21653,7 @@
         return;
       }
 
-      var newTime = Number(window_1.performance.now().toFixed(4));
+      var newTime = Number(window.performance.now().toFixed(4));
       var deltaTime = this.lastTime_ === -1 ? 0 : (newTime - this.lastTime_) / 1000;
       this.lastTime_ = newTime;
       this.pastSeekEnd_ = this.pastSeekEnd() + deltaTime;
@@ -21724,7 +21966,7 @@
     ;
 
     _proto.dispose = function dispose() {
-      this.off(document_1, 'visibilitychange', this.handleVisibilityChange_);
+      this.off(document, 'visibilitychange', this.handleVisibilityChange_);
       this.stopTracking();
 
       _Component.prototype.dispose.call(this);
@@ -21813,11 +22055,11 @@
     },
     set: function set(v) {
       // make a dummy node to use innerHTML on
-      var dummy = document_1.createElement(this.nodeName.toLowerCase()); // set innerHTML to the value provided
+      var dummy = document.createElement(this.nodeName.toLowerCase()); // set innerHTML to the value provided
 
       dummy.innerHTML = v; // make a document fragment to hold the nodes from dummy
 
-      var docFrag = document_1.createDocumentFragment(); // copy all of the nodes created by the innerHTML on dummy
+      var docFrag = document.createDocumentFragment(); // copy all of the nodes created by the innerHTML on dummy
       // to the document fragment
 
       while (dummy.childNodes.length) {
@@ -21828,7 +22070,7 @@
       this.innerText = ''; // now we add all of that html in one by appending the
       // document fragment. This is how innerHTML does it.
 
-      window_1.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
+      window.Element.prototype.appendChild.call(this, docFrag); // then return the result that innerHTML's setter would
 
       return this.innerHTML;
     }
@@ -21855,7 +22097,7 @@
   };
 
   var getInnerHTMLDescriptor = function getInnerHTMLDescriptor(tech) {
-    return getDescriptor([tech.el(), window_1.HTMLMediaElement.prototype, window_1.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
+    return getDescriptor([tech.el(), window.HTMLMediaElement.prototype, window.Element.prototype, innerHTMLDescriptorPolyfill], 'innerHTML');
   };
   /**
    * Patches browser internal functions so that we can tell synchronously
@@ -21934,19 +22176,19 @@
   var srcDescriptorPolyfill = Object.defineProperty({}, 'src', {
     get: function get() {
       if (this.hasAttribute('src')) {
-        return getAbsoluteURL(window_1.Element.prototype.getAttribute.call(this, 'src'));
+        return getAbsoluteURL(window.Element.prototype.getAttribute.call(this, 'src'));
       }
 
       return '';
     },
     set: function set(v) {
-      window_1.Element.prototype.setAttribute.call(this, 'src', v);
+      window.Element.prototype.setAttribute.call(this, 'src', v);
       return v;
     }
   });
 
   var getSrcDescriptor = function getSrcDescriptor(tech) {
-    return getDescriptor([tech.el(), window_1.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
+    return getDescriptor([tech.el(), window.HTMLMediaElement.prototype, srcDescriptorPolyfill], 'src');
   };
   /**
    * setup `sourceset` handling on the `Html5` tech. This function
@@ -22447,7 +22689,7 @@
           Html5.disposeMediaElement(el);
           el = clone;
         } else {
-          el = document_1.createElement('video'); // determine if native controls should be used
+          el = document.createElement('video'); // determine if native controls should be used
 
           var tagAttributes = this.options_.tag && getAttributes(this.options_.tag);
           var attributes = mergeOptions$3({}, tagAttributes);
@@ -22710,7 +22952,11 @@
       var endFn = function endFn() {
         this.trigger('fullscreenchange', {
           isFullscreen: false
-        });
+        }); // Safari will sometimes set contols on the videoelement when existing fullscreen.
+
+        if (this.el_.controls && !this.options_.nativeControlsForTouch && this.controls()) {
+          this.el_.controls = false;
+        }
       };
 
       var beginFn = function beginFn() {
@@ -22742,7 +22988,7 @@
 
     _proto.supportsFullScreen = function supportsFullScreen() {
       if (typeof this.el_.webkitEnterFullScreen === 'function') {
-        var userAgent = window_1.navigator && window_1.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
+        var userAgent = window.navigator && window.navigator.userAgent || ''; // Seems to be broken in Chromium/Chrome && Safari in Leopard
 
         if (/Android/.test(userAgent) || !/Chrome|Mac OS X 10.5/.test(userAgent)) {
           return true;
@@ -22929,7 +23175,7 @@
         return _Tech.prototype.createRemoteTextTrack.call(this, options);
       }
 
-      var htmlTrackElement = document_1.createElement('track');
+      var htmlTrackElement = document.createElement('track');
 
       if (options.kind) {
         htmlTrackElement.kind = options.kind;
@@ -23025,10 +23271,10 @@
         videoPlaybackQuality.totalVideoFrames = this.el().webkitDecodedFrameCount;
       }
 
-      if (window_1.performance && typeof window_1.performance.now === 'function') {
-        videoPlaybackQuality.creationTime = window_1.performance.now();
-      } else if (window_1.performance && window_1.performance.timing && typeof window_1.performance.timing.navigationStart === 'number') {
-        videoPlaybackQuality.creationTime = window_1.Date.now() - window_1.performance.timing.navigationStart;
+      if (window.performance && typeof window.performance.now === 'function') {
+        videoPlaybackQuality.creationTime = window.performance.now();
+      } else if (window.performance && window.performance.timing && typeof window.performance.timing.navigationStart === 'number') {
+        videoPlaybackQuality.creationTime = window.Date.now() - window.performance.timing.navigationStart;
       }
 
       return videoPlaybackQuality;
@@ -23052,8 +23298,8 @@
       return;
     }
 
-    var video = document_1.createElement('video');
-    var track = document_1.createElement('track');
+    var video = document.createElement('video');
+    var track = document.createElement('track');
     track.kind = 'captions';
     track.srclang = 'en';
     track.label = 'English';
@@ -23120,7 +23366,23 @@
     try {
       var volume = Html5.TEST_VID.volume;
       Html5.TEST_VID.volume = volume / 2 + 0.1;
-      return volume !== Html5.TEST_VID.volume;
+      var canControl = volume !== Html5.TEST_VID.volume; // With the introduction of iOS 15, there are cases where the volume is read as
+      // changed but reverts back to its original state at the start of the next tick.
+      // To determine whether volume can be controlled on iOS,
+      // a timeout is set and the volume is checked asynchronously.
+      // Since `features` doesn't currently work asynchronously, the value is manually set.
+
+      if (canControl && IS_IOS) {
+        window.setTimeout(function () {
+          if (Html5 && Html5.prototype) {
+            Html5.prototype.featuresVolumeControl = volume !== Html5.TEST_VID.volume;
+          }
+        }); // default iOS to false, which will be updated in the timeout above.
+
+        return false;
+      }
+
+      return canControl;
     } catch (e) {
       return false;
     }
@@ -23195,19 +23457,19 @@
     try {
       var noop = function noop() {};
 
-      Object.defineProperty(document_1.createElement('video'), 'src', {
+      Object.defineProperty(document.createElement('video'), 'src', {
         get: noop,
         set: noop
       });
-      Object.defineProperty(document_1.createElement('audio'), 'src', {
+      Object.defineProperty(document.createElement('audio'), 'src', {
         get: noop,
         set: noop
       });
-      Object.defineProperty(document_1.createElement('video'), 'innerHTML', {
+      Object.defineProperty(document.createElement('video'), 'innerHTML', {
         get: noop,
         set: noop
       });
-      Object.defineProperty(document_1.createElement('audio'), 'innerHTML', {
+      Object.defineProperty(document.createElement('audio'), 'innerHTML', {
         get: noop,
         set: noop
       });
@@ -23314,13 +23576,14 @@
    * @default {@link Html5.supportsNativeAudioTracks}
    */
 
-  [['featuresVolumeControl', 'canControlVolume'], ['featuresMuteControl', 'canMuteVolume'], ['featuresPlaybackRate', 'canControlPlaybackRate'], ['featuresSourceset', 'canOverrideAttributes'], ['featuresNativeTextTracks', 'supportsNativeTextTracks'], ['featuresNativeVideoTracks', 'supportsNativeVideoTracks'], ['featuresNativeAudioTracks', 'supportsNativeAudioTracks']].forEach(function (_ref) {
+  [['featuresMuteControl', 'canMuteVolume'], ['featuresPlaybackRate', 'canControlPlaybackRate'], ['featuresSourceset', 'canOverrideAttributes'], ['featuresNativeTextTracks', 'supportsNativeTextTracks'], ['featuresNativeVideoTracks', 'supportsNativeVideoTracks'], ['featuresNativeAudioTracks', 'supportsNativeAudioTracks']].forEach(function (_ref) {
     var key = _ref[0],
         fn = _ref[1];
     defineLazyProperty(Html5.prototype, key, function () {
       return Html5[fn]();
     }, true);
   });
+  Html5.prototype.featuresVolumeControl = Html5.canControlVolume();
   /**
    * Boolean indicating whether the `HTML5` tech currently supports the media element
    * moving in the DOM. iOS breaks if you move the media element, so this is set this to
@@ -24210,7 +24473,7 @@
    */
 
   /**
-   * Retrigger the `stalled` event that was triggered by the {@link Tech}.
+   * Retrigger the `loadedmetadata` event that was triggered by the {@link Tech}.
    *
    * @private
    * @method Player#handleTechLoadedmetadata_
@@ -24539,7 +24802,7 @@
       // our isFullscreen method is updated properly for internal components as well as external.
 
       if (_this.fsApi_.requestFullscreen) {
-        on(document_1, _this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
+        on(document, _this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
 
         _this.on(_this.fsApi_.fullscreenchange, _this.boundDocumentFullscreenChange_);
       }
@@ -24673,8 +24936,8 @@
 
       this.off('dispose'); // Make sure all player-specific document listeners are unbound. This is
 
-      off(document_1, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_);
-      off(document_1, 'keydown', this.boundFullWindowOnEscKey_);
+      off(document, this.fsApi_.fullscreenchange, this.boundDocumentFullscreenChange_);
+      off(document, 'keydown', this.boundFullWindowOnEscKey_);
 
       if (this.styleEl_ && this.styleEl_.parentNode) {
         this.styleEl_.parentNode.removeChild(this.styleEl_);
@@ -24750,7 +25013,7 @@
 
       if (divEmbed) {
         el = this.el_ = tag;
-        tag = this.tag = document_1.createElement('video');
+        tag = this.tag = document.createElement('video');
 
         while (el.children.length) {
           tag.appendChild(el.firstChild);
@@ -24824,7 +25087,7 @@
       // of the player in a way that's still overrideable by CSS, just like the
       // video element
 
-      if (window_1.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
+      if (window.VIDEOJS_NO_DYNAMIC_STYLE !== true) {
         this.styleEl_ = createStyleElement('vjs-styles-dimensions');
         var defaultsStyleEl = $('.vjs-styles-defaults');
         var head = $('head');
@@ -24869,6 +25132,7 @@
       // if it's been set to something different to the doc
 
       this.el_.setAttribute('lang', this.language_);
+      this.el_.setAttribute('translate', 'no');
       this.el_ = el;
       return el;
     }
@@ -25090,7 +25354,7 @@
     ;
 
     _proto.updateStyleEl_ = function updateStyleEl_() {
-      if (window_1.VIDEOJS_NO_DYNAMIC_STYLE === true) {
+      if (window.VIDEOJS_NO_DYNAMIC_STYLE === true) {
         var _width = typeof this.width_ === 'number' ? this.width_ : this.options_.width;
 
         var _height = typeof this.height_ === 'number' ? this.height_ : this.options_.height;
@@ -25410,13 +25674,8 @@
 
     _proto.addTechControlsListeners_ = function addTechControlsListeners_() {
       // Make sure to remove all the previous listeners in case we are called multiple times.
-      this.removeTechControlsListeners_(); // Some browsers (Chrome & IE) don't trigger a click on a flash swf, but do
-      // trigger mousedown/up.
-      // http://stackoverflow.com/questions/1444562/javascript-onclick-event-over-flash-object
-      // TODO: Is this needed for any techs other than Flash?
-      // Any touch events are set to block the mousedown event from happening
-
-      this.on(this.tech_, 'mouseup', this.boundHandleTechClick_);
+      this.removeTechControlsListeners_();
+      this.on(this.tech_, 'click', this.boundHandleTechClick_);
       this.on(this.tech_, 'dblclick', this.boundHandleTechDoubleClick_); // If the controls were hidden we don't want that to change without a tap event
       // so we'll check if the controls were already showing before reporting user
       // activity
@@ -25443,7 +25702,7 @@
       this.off(this.tech_, 'touchstart', this.boundHandleTechTouchStart_);
       this.off(this.tech_, 'touchmove', this.boundHandleTechTouchMove_);
       this.off(this.tech_, 'touchend', this.boundHandleTechTouchEnd_);
-      this.off(this.tech_, 'mouseup', this.boundHandleTechClick_);
+      this.off(this.tech_, 'click', this.boundHandleTechClick_);
       this.off(this.tech_, 'dblclick', this.boundHandleTechDoubleClick_);
     }
     /**
@@ -26066,26 +26325,26 @@
      * @param {EventTarget~Event} event
      *        the event that caused this function to trigger
      *
-     * @listens Tech#mouseup
+     * @listens Tech#click
      * @private
      */
     ;
 
     _proto.handleTechClick_ = function handleTechClick_(event) {
-      if (!isSingleLeftClick(event)) {
-        return;
-      } // When controls are disabled a click should not toggle playback because
+      // When controls are disabled a click should not toggle playback because
       // the click is considered a control
-
-
       if (!this.controls_) {
         return;
       }
 
-      if (this.paused()) {
-        silencePromise(this.play());
-      } else {
-        this.pause();
+      if (this.options_ === undefined || this.options_.userActions === undefined || this.options_.userActions.click === undefined || this.options_.userActions.click !== false) {
+        if (this.options_ !== undefined && this.options_.userActions !== undefined && typeof this.options_.userActions.click === 'function') {
+          this.options_.userActions.click.call(this, event);
+        } else if (this.paused()) {
+          silencePromise(this.play());
+        } else {
+          this.pause();
+        }
       }
     }
     /**
@@ -26221,7 +26480,7 @@
       }
 
       var el = this.el();
-      var isFs = document_1[this.fsApi_.fullscreenElement] === el;
+      var isFs = document[this.fsApi_.fullscreenElement] === el;
 
       if (!isFs && el.matches) {
         isFs = el.matches(':' + this.fsApi_.fullscreen);
@@ -26247,9 +26506,14 @@
     ;
 
     _proto.handleTechFullscreenChange_ = function handleTechFullscreenChange_(event, data) {
+      var _this9 = this;
+
       if (data) {
         if (data.nativeIOSFullscreen) {
-          this.toggleClass('vjs-ios-native-fs');
+          this.addClass('vjs-ios-native-fs');
+          this.tech_.one('webkitendfullscreen', function () {
+            _this9.removeClass('vjs-ios-native-fs');
+          });
         }
 
         this.isFullscreen(data.isFullscreen);
@@ -26471,13 +26735,13 @@
     ;
 
     _proto.play = function play() {
-      var _this9 = this;
+      var _this10 = this;
 
-      var PromiseClass = this.options_.Promise || window_1.Promise;
+      var PromiseClass = this.options_.Promise || window.Promise;
 
       if (PromiseClass) {
         return new PromiseClass(function (resolve) {
-          _this9.play_(resolve);
+          _this10.play_(resolve);
         });
       }
 
@@ -26495,7 +26759,7 @@
     ;
 
     _proto.play_ = function play_(callback) {
-      var _this10 = this;
+      var _this11 = this;
 
       if (callback === void 0) {
         callback = silencePromise;
@@ -26513,7 +26777,7 @@
 
       if (!this.isReady_ || !isSrcReady) {
         this.waitToPlay_ = function (e) {
-          _this10.play_();
+          _this11.play_();
         };
 
         this.one(['ready', 'loadstart'], this.waitToPlay_); // if we are in Safari, there is a high chance that loadstart will trigger after the gesture timeperiod
@@ -26995,7 +27259,7 @@
     ;
 
     _proto.requestFullscreen = function requestFullscreen(fullscreenOptions) {
-      var PromiseClass = this.options_.Promise || window_1.Promise;
+      var PromiseClass = this.options_.Promise || window.Promise;
 
       if (PromiseClass) {
         var self = this;
@@ -27030,7 +27294,7 @@
     };
 
     _proto.requestFullscreenHelper_ = function requestFullscreenHelper_(fullscreenOptions) {
-      var _this11 = this;
+      var _this12 = this;
 
       var fsOptions; // Only pass fullscreen options to requestFullscreen in spec-compliant browsers.
       // Use defaults or player configured option unless passed directly to this method.
@@ -27055,9 +27319,9 @@
 
         if (promise) {
           promise.then(function () {
-            return _this11.isFullscreen(true);
+            return _this12.isFullscreen(true);
           }, function () {
-            return _this11.isFullscreen(false);
+            return _this12.isFullscreen(false);
           });
         }
 
@@ -27080,7 +27344,7 @@
     ;
 
     _proto.exitFullscreen = function exitFullscreen() {
-      var PromiseClass = this.options_.Promise || window_1.Promise;
+      var PromiseClass = this.options_.Promise || window.Promise;
 
       if (PromiseClass) {
         var self = this;
@@ -27116,16 +27380,16 @@
     };
 
     _proto.exitFullscreenHelper_ = function exitFullscreenHelper_() {
-      var _this12 = this;
+      var _this13 = this;
 
       if (this.fsApi_.requestFullscreen) {
-        var promise = document_1[this.fsApi_.exitFullscreen]();
+        var promise = document[this.fsApi_.exitFullscreen]();
 
         if (promise) {
           // we're splitting the promise here, so, we want to catch the
           // potential error so that this chain doesn't have unhandled errors
           silencePromise(promise.then(function () {
-            return _this12.isFullscreen(false);
+            return _this13.isFullscreen(false);
           }));
         }
 
@@ -27148,13 +27412,13 @@
       this.isFullscreen(true);
       this.isFullWindow = true; // Storing original doc overflow value to return to when fullscreen is off
 
-      this.docOrigOverflow = document_1.documentElement.style.overflow; // Add listener for esc key to exit fullscreen
+      this.docOrigOverflow = document.documentElement.style.overflow; // Add listener for esc key to exit fullscreen
 
-      on(document_1, 'keydown', this.boundFullWindowOnEscKey_); // Hide any scroll bars
+      on(document, 'keydown', this.boundFullWindowOnEscKey_); // Hide any scroll bars
 
-      document_1.documentElement.style.overflow = 'hidden'; // Apply fullscreen styles
+      document.documentElement.style.overflow = 'hidden'; // Apply fullscreen styles
 
-      addClass(document_1.body, 'vjs-full-window');
+      addClass(document.body, 'vjs-full-window');
       /**
        * @event Player#enterFullWindow
        * @type {EventTarget~Event}
@@ -27192,11 +27456,11 @@
     _proto.exitFullWindow = function exitFullWindow() {
       this.isFullscreen(false);
       this.isFullWindow = false;
-      off(document_1, 'keydown', this.boundFullWindowOnEscKey_); // Unhide scroll bars.
+      off(document, 'keydown', this.boundFullWindowOnEscKey_); // Unhide scroll bars.
 
-      document_1.documentElement.style.overflow = this.docOrigOverflow; // Remove fullscreen styles
+      document.documentElement.style.overflow = this.docOrigOverflow; // Remove fullscreen styles
 
-      removeClass(document_1.body, 'vjs-full-window'); // Resize the box, controller, and poster to original sizes
+      removeClass(document.body, 'vjs-full-window'); // Resize the box, controller, and poster to original sizes
       // this.positionAll();
 
       /**
@@ -27261,7 +27525,7 @@
     ;
 
     _proto.requestPictureInPicture = function requestPictureInPicture() {
-      if ('pictureInPictureEnabled' in document_1 && this.disablePictureInPicture() === false) {
+      if ('pictureInPictureEnabled' in document && this.disablePictureInPicture() === false) {
         /**
          * This event fires when the player enters picture in picture mode
          *
@@ -27284,14 +27548,14 @@
     ;
 
     _proto.exitPictureInPicture = function exitPictureInPicture() {
-      if ('pictureInPictureEnabled' in document_1) {
+      if ('pictureInPictureEnabled' in document) {
         /**
          * This event fires when the player leaves picture in picture mode
          *
          * @event Player#leavepictureinpicture
          * @type {EventTarget~Event}
          */
-        return document_1.exitPictureInPicture();
+        return document.exitPictureInPicture();
       }
     }
     /**
@@ -27381,7 +27645,7 @@
         event.stopPropagation();
         var FSToggle = Component$1.getComponent('FullscreenToggle');
 
-        if (document_1[this.fsApi_.fullscreenEnabled] !== false) {
+        if (document[this.fsApi_.fullscreenEnabled] !== false) {
           FSToggle.prototype.handleClick.call(this, event);
         }
       } else if (muteKey.call(this, event)) {
@@ -27453,7 +27717,7 @@
     ;
 
     _proto.selectSource = function selectSource(sources) {
-      var _this13 = this;
+      var _this14 = this;
 
       // Get only the techs specified in `techOrder` that exist and are supported by the
       // current platform
@@ -27501,7 +27765,7 @@
         var techName = _ref2[0],
             tech = _ref2[1];
 
-        if (tech.canPlaySource(source, _this13.options_[techName.toLowerCase()])) {
+        if (tech.canPlaySource(source, _this14.options_[techName.toLowerCase()])) {
           return {
             source: source,
             tech: techName
@@ -27541,7 +27805,7 @@
     ;
 
     _proto.handleSrc_ = function handleSrc_(source, isRetry) {
-      var _this14 = this;
+      var _this15 = this;
 
       // getter usage
       if (typeof source === 'undefined') {
@@ -27580,25 +27844,25 @@
       this.updateSourceCaches_(sources[0]); // middlewareSource is the source after it has been changed by middleware
 
       setSource(this, sources[0], function (middlewareSource, mws) {
-        _this14.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
+        _this15.middleware_ = mws; // since sourceSet is async we have to update the cache again after we select a source since
         // the source that is selected could be out of order from the cache update above this callback.
 
         if (!isRetry) {
-          _this14.cache_.sources = sources;
+          _this15.cache_.sources = sources;
         }
 
-        _this14.updateSourceCaches_(middlewareSource);
+        _this15.updateSourceCaches_(middlewareSource);
 
-        var err = _this14.src_(middlewareSource);
+        var err = _this15.src_(middlewareSource);
 
         if (err) {
           if (sources.length > 1) {
-            return _this14.handleSrc_(sources.slice(1));
+            return _this15.handleSrc_(sources.slice(1));
           }
 
-          _this14.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
+          _this15.changingSrc_ = false; // We need to wrap this in a timeout to give folks a chance to add error event handlers
 
-          _this14.setTimeout(function () {
+          _this15.setTimeout(function () {
             this.error({
               code: 4,
               message: this.localize(this.options_.notSupportedMessage)
@@ -27607,33 +27871,33 @@
           // this needs a better comment about why this is needed
 
 
-          _this14.triggerReady();
+          _this15.triggerReady();
 
           return;
         }
 
-        setTech(mws, _this14.tech_);
+        setTech(mws, _this15.tech_);
       }); // Try another available source if this one fails before playback.
 
       if (this.options_.retryOnError && sources.length > 1) {
         var retry = function retry() {
           // Remove the error modal
-          _this14.error(null);
+          _this15.error(null);
 
-          _this14.handleSrc_(sources.slice(1), true);
+          _this15.handleSrc_(sources.slice(1), true);
         };
 
         var stopListeningForErrors = function stopListeningForErrors() {
-          _this14.off('error', retry);
+          _this15.off('error', retry);
         };
 
         this.one('error', retry);
         this.one('playing', stopListeningForErrors);
 
         this.resetRetryOnError_ = function () {
-          _this14.off('error', retry);
+          _this15.off('error', retry);
 
-          _this14.off('playing', stopListeningForErrors);
+          _this15.off('playing', stopListeningForErrors);
         };
       }
     }
@@ -27673,7 +27937,7 @@
     ;
 
     _proto.src_ = function src_(source) {
-      var _this15 = this;
+      var _this16 = this;
 
       var sourceTech = this.selectSource([source]);
 
@@ -27686,7 +27950,7 @@
 
         this.loadTech_(sourceTech.tech, sourceTech.source);
         this.tech_.ready(function () {
-          _this15.changingSrc_ = false;
+          _this16.changingSrc_ = false;
         });
         return false;
       } // wait until the tech is ready to set the source
@@ -27724,16 +27988,16 @@
     ;
 
     _proto.reset = function reset() {
-      var _this16 = this;
+      var _this17 = this;
 
-      var PromiseClass = this.options_.Promise || window_1.Promise;
+      var PromiseClass = this.options_.Promise || window.Promise;
 
       if (this.paused() || !PromiseClass) {
         this.doReset_();
       } else {
         var playPromise = this.play();
         silencePromise(playPromise.then(function () {
-          return _this16.doReset_();
+          return _this17.doReset_();
         }));
       }
     };
@@ -28167,11 +28431,25 @@
     ;
 
     _proto.error = function error(err) {
+      var _this18 = this;
+
       if (err === undefined) {
         return this.error_ || null;
-      } // Suppress the first error message for no compatible source until
-      // user interaction
+      } // allow hooks to modify error object
 
+
+      hooks('beforeerror').forEach(function (hookFunction) {
+        var newErr = hookFunction(_this18, err);
+
+        if (!(isObject$1(newErr) && !Array.isArray(newErr) || typeof newErr === 'string' || typeof newErr === 'number' || newErr === null)) {
+          _this18.log.error('please return a value that MediaError expects in beforeerror hooks');
+
+          return;
+        }
+
+        err = newErr;
+      }); // Suppress the first error message for no compatible source until
+      // user interaction
 
       if (this.options_.suppressNotSupportedError && err && err.code === 4) {
         var triggerSuppressedError = function triggerSuppressedError() {
@@ -28209,7 +28487,11 @@
        * @type {EventTarget~Event}
        */
 
-      this.trigger('error');
+      this.trigger('error'); // notify hooks of the per player error
+
+      hooks('error').forEach(function (hookFunction) {
+        return hookFunction(_this18, _this18.error_);
+      });
       return;
     }
     /**
@@ -28340,7 +28622,10 @@
 
       if (controlBar && !IS_IOS && !IS_ANDROID) {
         controlBar.on('mouseenter', function (event) {
-          this.player().cache_.inactivityTimeout = this.player().options_.inactivityTimeout;
+          if (this.player().options_.inactivityTimeout !== 0) {
+            this.player().cache_.inactivityTimeout = this.player().options_.inactivityTimeout;
+          }
+
           this.player().options_.inactivityTimeout = 0;
         });
         controlBar.on('mouseleave', function (event) {
@@ -28681,14 +28966,14 @@
     ;
 
     _proto.createModal = function createModal(content, options) {
-      var _this17 = this;
+      var _this19 = this;
 
       options = options || {};
       options.content = content || '';
       var modal = new ModalDialog(this, options);
       this.addChild(modal);
       modal.on('dispose', function () {
-        _this17.removeChild(modal);
+        _this19.removeChild(modal);
       });
       modal.open();
       return modal;
@@ -28919,7 +29204,7 @@
     ;
 
     _proto.loadMedia = function loadMedia(media, ready) {
-      var _this18 = this;
+      var _this20 = this;
 
       if (!media || typeof media !== 'object') {
         return;
@@ -28951,7 +29236,7 @@
 
       if (Array.isArray(textTracks)) {
         textTracks.forEach(function (tt) {
-          return _this18.addRemoteTextTrack(tt, false);
+          return _this20.addRemoteTextTrack(tt, false);
         });
       }
 
@@ -29070,7 +29355,7 @@
     ;
 
     _proto.flexNotSupported_ = function flexNotSupported_() {
-      var elem = document_1.createElement('i'); // Note: We don't actually use flexBasis (or flexOrder), but it's one of the more
+      var elem = document.createElement('i'); // Note: We don't actually use flexBasis (or flexOrder), but it's one of the more
       // common flex features that we can rely on when checking for flex support.
 
       return !('flexBasis' in elem.style || 'webkitFlexBasis' in elem.style || 'mozFlexBasis' in elem.style || 'msFlexBasis' in elem.style || // IE10-specific (2012 flex spec), available for completeness
@@ -29237,7 +29522,7 @@
    */
 
   Player.players = {};
-  var navigator = window_1.navigator;
+  var navigator = window.navigator;
   /*
    * Player instance options, surfaced using options
    * options = Player.prototype.options_
@@ -30223,7 +30508,7 @@
     }
 
     options = options || {};
-    videojs.hooks('beforesetup').forEach(function (hookFunction) {
+    hooks('beforesetup').forEach(function (hookFunction) {
       var opts = hookFunction(el, mergeOptions$3(options));
 
       if (!isObject$1(opts) || Array.isArray(opts)) {
@@ -30237,105 +30522,19 @@
 
     var PlayerComponent = Component$1.getComponent('Player');
     player = new PlayerComponent(el, options, ready);
-    videojs.hooks('setup').forEach(function (hookFunction) {
+    hooks('setup').forEach(function (hookFunction) {
       return hookFunction(player);
     });
     return player;
   }
-  /**
-   * An Object that contains lifecycle hooks as keys which point to an array
-   * of functions that are run when a lifecycle is triggered
-   *
-   * @private
-   */
 
+  videojs.hooks_ = hooks_;
+  videojs.hooks = hooks;
+  videojs.hook = hook;
+  videojs.hookOnce = hookOnce;
+  videojs.removeHook = removeHook; // Add default styles
 
-  videojs.hooks_ = {};
-  /**
-   * Get a list of hooks for a specific lifecycle
-   *
-   * @param  {string} type
-   *         the lifecyle to get hooks from
-   *
-   * @param  {Function|Function[]} [fn]
-   *         Optionally add a hook (or hooks) to the lifecycle that your are getting.
-   *
-   * @return {Array}
-   *         an array of hooks, or an empty array if there are none.
-   */
-
-  videojs.hooks = function (type, fn) {
-    videojs.hooks_[type] = videojs.hooks_[type] || [];
-
-    if (fn) {
-      videojs.hooks_[type] = videojs.hooks_[type].concat(fn);
-    }
-
-    return videojs.hooks_[type];
-  };
-  /**
-   * Add a function hook to a specific videojs lifecycle.
-   *
-   * @param {string} type
-   *        the lifecycle to hook the function to.
-   *
-   * @param {Function|Function[]}
-   *        The function or array of functions to attach.
-   */
-
-
-  videojs.hook = function (type, fn) {
-    videojs.hooks(type, fn);
-  };
-  /**
-   * Add a function hook that will only run once to a specific videojs lifecycle.
-   *
-   * @param {string} type
-   *        the lifecycle to hook the function to.
-   *
-   * @param {Function|Function[]}
-   *        The function or array of functions to attach.
-   */
-
-
-  videojs.hookOnce = function (type, fn) {
-    videojs.hooks(type, [].concat(fn).map(function (original) {
-      var wrapper = function wrapper() {
-        videojs.removeHook(type, wrapper);
-        return original.apply(void 0, arguments);
-      };
-
-      return wrapper;
-    }));
-  };
-  /**
-   * Remove a hook from a specific videojs lifecycle.
-   *
-   * @param  {string} type
-   *         the lifecycle that the function hooked to
-   *
-   * @param  {Function} fn
-   *         The hooked function to remove
-   *
-   * @return {boolean}
-   *         The function that was removed or undef
-   */
-
-
-  videojs.removeHook = function (type, fn) {
-    var index = videojs.hooks(type).indexOf(fn);
-
-    if (index <= -1) {
-      return false;
-    }
-
-    videojs.hooks_[type] = videojs.hooks_[type].slice();
-    videojs.hooks_[type].splice(index, 1);
-    return true;
-  }; // Add default styles
-
-
-  if (window_1.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
+  if (window.VIDEOJS_NO_DYNAMIC_STYLE !== true && isReal()) {
     var style = $('.vjs-styles-defaults');
 
     if (!style) {
@@ -30589,7 +30788,7 @@
    * @see      https://github.com/Raynos/xhr
    */
 
-  videojs.xhr = xhr;
+  videojs.xhr = lib;
   videojs.TextTrack = TextTrack;
   videojs.AudioTrack = AudioTrack;
   videojs.VideoTrack = VideoTrack;
@@ -30803,21 +31002,21 @@
 
 
     if (/^data:/.test(baseUrl)) {
-      baseUrl = window_1.location && window_1.location.href || '';
+      baseUrl = window.location && window.location.href || '';
     } // IE11 supports URL but not the URL constructor
     // feature detect the behavior we want
 
 
-    var nativeURL = typeof window_1.URL === 'function';
+    var nativeURL = typeof window.URL === 'function';
     var protocolLess = /^\/\//.test(baseUrl); // remove location if window.location isn't available (i.e. we're in node)
     // and if baseUrl isn't an absolute url
 
-    var removeLocation = !window_1.location && !/\/\//i.test(baseUrl); // if the base URL is relative then combine with the current location
+    var removeLocation = !window.location && !/\/\//i.test(baseUrl); // if the base URL is relative then combine with the current location
 
     if (nativeURL) {
-      baseUrl = new window_1.URL(baseUrl, window_1.location || DEFAULT_LOCATION);
+      baseUrl = new window.URL(baseUrl, window.location || DEFAULT_LOCATION);
     } else if (!/\/\//i.test(baseUrl)) {
-      baseUrl = urlToolkit.buildAbsoluteURL(window_1.location && window_1.location.href || '', baseUrl);
+      baseUrl = urlToolkit.buildAbsoluteURL(window.location && window.location.href || '', baseUrl);
     }
 
     if (nativeURL) {
@@ -30958,7 +31157,7 @@
   }();
 
   var atob = function atob(s) {
-    return window_1.atob ? window_1.atob(s) : Buffer.from(s, 'base64').toString('binary');
+    return window.atob ? window.atob(s) : Buffer.from(s, 'base64').toString('binary');
   };
 
   function decodeB64ToUint8Array(b64Text) {
@@ -32686,7 +32885,7 @@
       codecString = '';
     }
 
-    return window_1.MediaSource && window_1.MediaSource.isTypeSupported && window_1.MediaSource.isTypeSupported(getMimeForCodec(codecString)) || false;
+    return window.MediaSource && window.MediaSource.isTypeSupported && window.MediaSource.isTypeSupported(getMimeForCodec(codecString)) || false;
   };
   var muxerSupportsCodec = function muxerSupportsCodec(codecString) {
     if (codecString === void 0) {
@@ -32747,1042 +32946,243 @@
     return null;
   };
 
-  var entityMap = {
-    lt: '<',
-    gt: '>',
-    amp: '&',
-    quot: '"',
-    apos: "'",
-    Agrave: "À",
-    Aacute: "Á",
-    Acirc: "Â",
-    Atilde: "Ã",
-    Auml: "Ä",
-    Aring: "Å",
-    AElig: "Æ",
-    Ccedil: "Ç",
-    Egrave: "È",
-    Eacute: "É",
-    Ecirc: "Ê",
-    Euml: "Ë",
-    Igrave: "Ì",
-    Iacute: "Í",
-    Icirc: "Î",
-    Iuml: "Ï",
-    ETH: "Ð",
-    Ntilde: "Ñ",
-    Ograve: "Ò",
-    Oacute: "Ó",
-    Ocirc: "Ô",
-    Otilde: "Õ",
-    Ouml: "Ö",
-    Oslash: "Ø",
-    Ugrave: "Ù",
-    Uacute: "Ú",
-    Ucirc: "Û",
-    Uuml: "Ü",
-    Yacute: "Ý",
-    THORN: "Þ",
-    szlig: "ß",
-    agrave: "à",
-    aacute: "á",
-    acirc: "â",
-    atilde: "ã",
-    auml: "ä",
-    aring: "å",
-    aelig: "æ",
-    ccedil: "ç",
-    egrave: "è",
-    eacute: "é",
-    ecirc: "ê",
-    euml: "ë",
-    igrave: "ì",
-    iacute: "í",
-    icirc: "î",
-    iuml: "ï",
-    eth: "ð",
-    ntilde: "ñ",
-    ograve: "ò",
-    oacute: "ó",
-    ocirc: "ô",
-    otilde: "õ",
-    ouml: "ö",
-    oslash: "ø",
-    ugrave: "ù",
-    uacute: "ú",
-    ucirc: "û",
-    uuml: "ü",
-    yacute: "ý",
-    thorn: "þ",
-    yuml: "ÿ",
-    nbsp: "\xA0",
-    iexcl: "¡",
-    cent: "¢",
-    pound: "£",
-    curren: "¤",
-    yen: "¥",
-    brvbar: "¦",
-    sect: "§",
-    uml: "¨",
-    copy: "©",
-    ordf: "ª",
-    laquo: "«",
-    not: "¬",
-    shy: "­­",
-    reg: "®",
-    macr: "¯",
-    deg: "°",
-    plusmn: "±",
-    sup2: "²",
-    sup3: "³",
-    acute: "´",
-    micro: "µ",
-    para: "¶",
-    middot: "·",
-    cedil: "¸",
-    sup1: "¹",
-    ordm: "º",
-    raquo: "»",
-    frac14: "¼",
-    frac12: "½",
-    frac34: "¾",
-    iquest: "¿",
-    times: "×",
-    divide: "÷",
-    forall: "∀",
-    part: "∂",
-    exist: "∃",
-    empty: "∅",
-    nabla: "∇",
-    isin: "∈",
-    notin: "∉",
-    ni: "∋",
-    prod: "∏",
-    sum: "∑",
-    minus: "−",
-    lowast: "∗",
-    radic: "√",
-    prop: "∝",
-    infin: "∞",
-    ang: "∠",
-    and: "∧",
-    or: "∨",
-    cap: "∩",
-    cup: "∪",
-    'int': "∫",
-    there4: "∴",
-    sim: "∼",
-    cong: "≅",
-    asymp: "≈",
-    ne: "≠",
-    equiv: "≡",
-    le: "≤",
-    ge: "≥",
-    sub: "⊂",
-    sup: "⊃",
-    nsub: "⊄",
-    sube: "⊆",
-    supe: "⊇",
-    oplus: "⊕",
-    otimes: "⊗",
-    perp: "⊥",
-    sdot: "⋅",
-    Alpha: "Α",
-    Beta: "Β",
-    Gamma: "Γ",
-    Delta: "Δ",
-    Epsilon: "Ε",
-    Zeta: "Ζ",
-    Eta: "Η",
-    Theta: "Θ",
-    Iota: "Ι",
-    Kappa: "Κ",
-    Lambda: "Λ",
-    Mu: "Μ",
-    Nu: "Ν",
-    Xi: "Ξ",
-    Omicron: "Ο",
-    Pi: "Π",
-    Rho: "Ρ",
-    Sigma: "Σ",
-    Tau: "Τ",
-    Upsilon: "Υ",
-    Phi: "Φ",
-    Chi: "Χ",
-    Psi: "Ψ",
-    Omega: "Ω",
-    alpha: "α",
-    beta: "β",
-    gamma: "γ",
-    delta: "δ",
-    epsilon: "ε",
-    zeta: "ζ",
-    eta: "η",
-    theta: "θ",
-    iota: "ι",
-    kappa: "κ",
-    lambda: "λ",
-    mu: "μ",
-    nu: "ν",
-    xi: "ξ",
-    omicron: "ο",
-    pi: "π",
-    rho: "ρ",
-    sigmaf: "ς",
-    sigma: "σ",
-    tau: "τ",
-    upsilon: "υ",
-    phi: "φ",
-    chi: "χ",
-    psi: "ψ",
-    omega: "ω",
-    thetasym: "ϑ",
-    upsih: "ϒ",
-    piv: "ϖ",
-    OElig: "Œ",
-    oelig: "œ",
-    Scaron: "Š",
-    scaron: "š",
-    Yuml: "Ÿ",
-    fnof: "ƒ",
-    circ: "ˆ",
-    tilde: "˜",
-    ensp: " ",
-    emsp: " ",
-    thinsp: " ",
-    zwnj: "‌",
-    zwj: "‍",
-    lrm: "‎",
-    rlm: "‏",
-    ndash: "–",
-    mdash: "—",
-    lsquo: "‘",
-    rsquo: "’",
-    sbquo: "‚",
-    ldquo: "“",
-    rdquo: "”",
-    bdquo: "„",
-    dagger: "†",
-    Dagger: "‡",
-    bull: "•",
-    hellip: "…",
-    permil: "‰",
-    prime: "′",
-    Prime: "″",
-    lsaquo: "‹",
-    rsaquo: "›",
-    oline: "‾",
-    euro: "€",
-    trade: "™",
-    larr: "←",
-    uarr: "↑",
-    rarr: "→",
-    darr: "↓",
-    harr: "↔",
-    crarr: "↵",
-    lceil: "⌈",
-    rceil: "⌉",
-    lfloor: "⌊",
-    rfloor: "⌋",
-    loz: "◊",
-    spades: "♠",
-    clubs: "♣",
-    hearts: "♥",
-    diams: "♦"
-  };
-  var entities = {
-    entityMap: entityMap
-  };
-
-  //[4]   	NameStartChar	   ::=   	":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
-  //[4a]   	NameChar	   ::=   	NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
-  //[5]   	Name	   ::=   	NameStartChar (NameChar)*
-  var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/; //\u10000-\uEFFFF
-
-  var nameChar = new RegExp("[\\-\\.0-9" + nameStartChar.source.slice(1, -1) + "\\u00B7\\u0300-\\u036F\\u203F-\\u2040]");
-  var tagNamePattern = new RegExp('^' + nameStartChar.source + nameChar.source + '*(?:\:' + nameStartChar.source + nameChar.source + '*)?$'); //var tagNamePattern = /^[a-zA-Z_][\w\-\.]*(?:\:[a-zA-Z_][\w\-\.]*)?$/
-  //var handlers = 'resolveEntity,getExternalSubset,characters,endDocument,endElement,endPrefixMapping,ignorableWhitespace,processingInstruction,setDocumentLocator,skippedEntity,startDocument,startElement,startPrefixMapping,notationDecl,unparsedEntityDecl,error,fatalError,warning,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,comment,endCDATA,endDTD,endEntity,startCDATA,startDTD,startEntity'.split(',')
-  //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
-  //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
-
-  var S_TAG = 0; //tag name offerring
-
-  var S_ATTR = 1; //attr name offerring 
-
-  var S_ATTR_SPACE = 2; //attr name end and space offer
-
-  var S_EQ = 3; //=space?
-
-  var S_ATTR_NOQUOT_VALUE = 4; //attr value(no quot value only)
-
-  var S_ATTR_END = 5; //attr value end and no space(quot end)
-
-  var S_TAG_SPACE = 6; //(attr value end || tag end ) && (space offer)
-
-  var S_TAG_CLOSE = 7; //closed el<el />
-
   /**
-   * Creates an error that will not be caught by XMLReader aka the SAX parser.
+   * Loops through all supported media groups in master and calls the provided
+   * callback for each group
    *
-   * @param {string} message
-   * @param {any?} locator Optional, can provide details about the location in the source
-   * @constructor
+   * @param {Object} master
+   *        The parsed master manifest object
+   * @param {string[]} groups
+   *        The media groups to call the callback for
+   * @param {Function} callback
+   *        Callback to call for each media group
    */
-
-  function ParseError(message, locator) {
-    this.message = message;
-    this.locator = locator;
-    if (Error.captureStackTrace) Error.captureStackTrace(this, ParseError);
-  }
-
-  ParseError.prototype = new Error();
-  ParseError.prototype.name = ParseError.name;
-
-  function XMLReader() {}
-
-  XMLReader.prototype = {
-    parse: function parse(source, defaultNSMap, entityMap) {
-      var domBuilder = this.domBuilder;
-      domBuilder.startDocument();
-
-      _copy(defaultNSMap, defaultNSMap = {});
-
-      _parse(source, defaultNSMap, entityMap, domBuilder, this.errorHandler);
-
-      domBuilder.endDocument();
-    }
+  var forEachMediaGroup$1 = function forEachMediaGroup(master, groups, callback) {
+    groups.forEach(function (mediaType) {
+      for (var groupKey in master.mediaGroups[mediaType]) {
+        for (var labelKey in master.mediaGroups[mediaType][groupKey]) {
+          var mediaProperties = master.mediaGroups[mediaType][groupKey][labelKey];
+          callback(mediaProperties, mediaType, groupKey, labelKey);
+        }
+      }
+    });
   };
 
-  function _parse(source, defaultNSMapCopy, entityMap, domBuilder, errorHandler) {
-    function fixedFromCharCode(code) {
-      // String.prototype.fromCharCode does not supports
-      // > 2 bytes unicode chars directly
-      if (code > 0xffff) {
-        code -= 0x10000;
-        var surrogate1 = 0xd800 + (code >> 10),
-            surrogate2 = 0xdc00 + (code & 0x3ff);
-        return String.fromCharCode(surrogate1, surrogate2);
-      } else {
-        return String.fromCharCode(code);
-      }
+  /**
+   * "Shallow freezes" an object to render it immutable.
+   * Uses `Object.freeze` if available,
+   * otherwise the immutability is only in the type.
+   *
+   * Is used to create "enum like" objects.
+   *
+   * @template T
+   * @param {T} object the object to freeze
+   * @param {Pick<ObjectConstructor, 'freeze'> = Object} oc `Object` by default,
+   * 				allows to inject custom object constructor for tests
+   * @returns {Readonly<T>}
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
+   */
+
+  function freeze(object, oc) {
+    if (oc === undefined) {
+      oc = Object;
     }
 
-    function entityReplacer(a) {
-      var k = a.slice(1, -1);
-
-      if (k in entityMap) {
-        return entityMap[k];
-      } else if (k.charAt(0) === '#') {
-        return fixedFromCharCode(parseInt(k.substr(1).replace('x', '0x')));
-      } else {
-        errorHandler.error('entity not found:' + a);
-        return a;
-      }
-    }
-
-    function appendText(end) {
-      //has some bugs
-      if (end > start) {
-        var xt = source.substring(start, end).replace(/&#?\w+;/g, entityReplacer);
-        locator && position(start);
-        domBuilder.characters(xt, 0, end - start);
-        start = end;
-      }
-    }
-
-    function position(p, m) {
-      while (p >= lineEnd && (m = linePattern.exec(source))) {
-        lineStart = m.index;
-        lineEnd = lineStart + m[0].length;
-        locator.lineNumber++; //console.log('line++:',locator,startPos,endPos)
-      }
-
-      locator.columnNumber = p - lineStart + 1;
-    }
-
-    var lineStart = 0;
-    var lineEnd = 0;
-    var linePattern = /.*(?:\r\n?|\n)|.*$/g;
-    var locator = domBuilder.locator;
-    var parseStack = [{
-      currentNSMap: defaultNSMapCopy
-    }];
-    var closeMap = {};
-    var start = 0;
-
-    while (true) {
-      try {
-        var tagStart = source.indexOf('<', start);
-
-        if (tagStart < 0) {
-          if (!source.substr(start).match(/^\s*$/)) {
-            var doc = domBuilder.doc;
-            var text = doc.createTextNode(source.substr(start));
-            doc.appendChild(text);
-            domBuilder.currentElement = text;
-          }
-
-          return;
-        }
-
-        if (tagStart > start) {
-          appendText(tagStart);
-        }
-
-        switch (source.charAt(tagStart + 1)) {
-          case '/':
-            var end = source.indexOf('>', tagStart + 3);
-            var tagName = source.substring(tagStart + 2, end);
-            var config = parseStack.pop();
-
-            if (end < 0) {
-              tagName = source.substring(tagStart + 2).replace(/[\s<].*/, ''); //console.error('#@@@@@@'+tagName)
-
-              errorHandler.error("end tag name: " + tagName + ' is not complete:' + config.tagName);
-              end = tagStart + 1 + tagName.length;
-            } else if (tagName.match(/\s</)) {
-              tagName = tagName.replace(/[\s<].*/, '');
-              errorHandler.error("end tag name: " + tagName + ' maybe not complete');
-              end = tagStart + 1 + tagName.length;
-            } //console.error(parseStack.length,parseStack)
-            //console.error(config);
-
-
-            var localNSMap = config.localNSMap;
-            var endMatch = config.tagName == tagName;
-            var endIgnoreCaseMach = endMatch || config.tagName && config.tagName.toLowerCase() == tagName.toLowerCase();
-
-            if (endIgnoreCaseMach) {
-              domBuilder.endElement(config.uri, config.localName, tagName);
-
-              if (localNSMap) {
-                for (var prefix in localNSMap) {
-                  domBuilder.endPrefixMapping(prefix);
-                }
-              }
-
-              if (!endMatch) {
-                errorHandler.fatalError("end tag name: " + tagName + ' is not match the current start tagName:' + config.tagName); // No known test case
-              }
-            } else {
-              parseStack.push(config);
-            }
-
-            end++;
-            break;
-          // end elment
-
-          case '?':
-            // <?...?>
-            locator && position(tagStart);
-            end = parseInstruction(source, tagStart, domBuilder);
-            break;
-
-          case '!':
-            // <!doctype,<![CDATA,<!--
-            locator && position(tagStart);
-            end = parseDCC(source, tagStart, domBuilder, errorHandler);
-            break;
-
-          default:
-            locator && position(tagStart);
-            var el = new ElementAttributes();
-            var currentNSMap = parseStack[parseStack.length - 1].currentNSMap; //elStartEnd
-
-            var end = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
-            var len = el.length;
-
-            if (!el.closed && fixSelfClosed(source, end, el.tagName, closeMap)) {
-              el.closed = true;
-
-              if (!entityMap.nbsp) {
-                errorHandler.warning('unclosed xml attribute');
-              }
-            }
-
-            if (locator && len) {
-              var locator2 = copyLocator(locator, {}); //try{//attribute position fixed
-
-              for (var i = 0; i < len; i++) {
-                var a = el[i];
-                position(a.offset);
-                a.locator = copyLocator(locator, {});
-              } //}catch(e){console.error('@@@@@'+e)}
-
-
-              domBuilder.locator = locator2;
-
-              if (appendElement(el, domBuilder, currentNSMap)) {
-                parseStack.push(el);
-              }
-
-              domBuilder.locator = locator;
-            } else {
-              if (appendElement(el, domBuilder, currentNSMap)) {
-                parseStack.push(el);
-              }
-            }
-
-            if (el.uri === 'http://www.w3.org/1999/xhtml' && !el.closed) {
-              end = parseHtmlSpecialContent(source, end, el.tagName, entityReplacer, domBuilder);
-            } else {
-              end++;
-            }
-
-        }
-      } catch (e) {
-        if (e instanceof ParseError) {
-          throw e;
-        }
-
-        errorHandler.error('element parse error: ' + e);
-        end = -1;
-      }
-
-      if (end > start) {
-        start = end;
-      } else {
-        //TODO: 这里有可能sax回退，有位置错误风险
-        appendText(Math.max(tagStart, start) + 1);
-      }
-    }
-  }
-
-  function copyLocator(f, t) {
-    t.lineNumber = f.lineNumber;
-    t.columnNumber = f.columnNumber;
-    return t;
+    return oc && typeof oc.freeze === 'function' ? oc.freeze(object) : object;
   }
   /**
-   * @see #appendElement(source,elStartEnd,el,selfClosed,entityReplacer,domBuilder,parseStack);
-   * @return end of the elementStartPart(end of elementEndPart for selfClosed el)
+   * All mime types that are allowed as input to `DOMParser.parseFromString`
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString#Argument02 MDN
+   * @see https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#domparsersupportedtype WHATWG HTML Spec
+   * @see DOMParser.prototype.parseFromString
    */
 
 
-  function parseElementStartPart(source, start, el, currentNSMap, entityReplacer, errorHandler) {
+  var MIME_TYPE = freeze({
     /**
-     * @param {string} qname
-     * @param {string} value
-     * @param {number} startIndex
+     * `text/html`, the only mime type that triggers treating an XML document as HTML.
+     *
+     * @see DOMParser.SupportedType.isHTML
+     * @see https://www.iana.org/assignments/media-types/text/html IANA MimeType registration
+     * @see https://en.wikipedia.org/wiki/HTML Wikipedia
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString MDN
+     * @see https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-domparser-parsefromstring WHATWG HTML Spec
      */
-    function addAttribute(qname, value, startIndex) {
-      if (qname in el.attributeNames) errorHandler.fatalError('Attribute ' + qname + ' redefined');
-      el.addValue(qname, value, startIndex);
-    }
+    HTML: 'text/html',
 
-    var attrName;
-    var value;
-    var p = ++start;
-    var s = S_TAG; //status
+    /**
+     * Helper method to check a mime type if it indicates an HTML document
+     *
+     * @param {string} [value]
+     * @returns {boolean}
+     *
+     * @see https://www.iana.org/assignments/media-types/text/html IANA MimeType registration
+     * @see https://en.wikipedia.org/wiki/HTML Wikipedia
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parseFromString MDN
+     * @see https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-domparser-parsefromstring 	 */
+    isHTML: function isHTML(value) {
+      return value === MIME_TYPE.HTML;
+    },
 
-    while (true) {
-      var c = source.charAt(p);
+    /**
+     * `application/xml`, the standard mime type for XML documents.
+     *
+     * @see https://www.iana.org/assignments/media-types/application/xml IANA MimeType registration
+     * @see https://tools.ietf.org/html/rfc7303#section-9.1 RFC 7303
+     * @see https://en.wikipedia.org/wiki/XML_and_MIME Wikipedia
+     */
+    XML_APPLICATION: 'application/xml',
 
-      switch (c) {
-        case '=':
-          if (s === S_ATTR) {
-            //attrName
-            attrName = source.slice(start, p);
-            s = S_EQ;
-          } else if (s === S_ATTR_SPACE) {
-            s = S_EQ;
-          } else {
-            //fatalError: equal must after attrName or space after attrName
-            throw new Error('attribute equal must after attrName'); // No known test case
-          }
+    /**
+     * `text/html`, an alias for `application/xml`.
+     *
+     * @see https://tools.ietf.org/html/rfc7303#section-9.2 RFC 7303
+     * @see https://www.iana.org/assignments/media-types/text/xml IANA MimeType registration
+     * @see https://en.wikipedia.org/wiki/XML_and_MIME Wikipedia
+     */
+    XML_TEXT: 'text/xml',
 
-          break;
+    /**
+     * `application/xhtml+xml`, indicates an XML document that has the default HTML namespace,
+     * but is parsed as an XML document.
+     *
+     * @see https://www.iana.org/assignments/media-types/application/xhtml+xml IANA MimeType registration
+     * @see https://dom.spec.whatwg.org/#dom-domimplementation-createdocument WHATWG DOM Spec
+     * @see https://en.wikipedia.org/wiki/XHTML Wikipedia
+     */
+    XML_XHTML_APPLICATION: 'application/xhtml+xml',
 
-        case '\'':
-        case '"':
-          if (s === S_EQ || s === S_ATTR //|| s == S_ATTR_SPACE
-          ) {
-              //equal
-              if (s === S_ATTR) {
-                errorHandler.warning('attribute value must after "="');
-                attrName = source.slice(start, p);
-              }
+    /**
+     * `image/svg+xml`,
+     *
+     * @see https://www.iana.org/assignments/media-types/image/svg+xml IANA MimeType registration
+     * @see https://www.w3.org/TR/SVG11/ W3C SVG 1.1
+     * @see https://en.wikipedia.org/wiki/Scalable_Vector_Graphics Wikipedia
+     */
+    XML_SVG_IMAGE: 'image/svg+xml'
+  });
+  /**
+   * Namespaces that are used in this code base.
+   *
+   * @see http://www.w3.org/TR/REC-xml-names
+   */
 
-              start = p + 1;
-              p = source.indexOf(c, start);
+  var NAMESPACE$3 = freeze({
+    /**
+     * The XHTML namespace.
+     *
+     * @see http://www.w3.org/1999/xhtml
+     */
+    HTML: 'http://www.w3.org/1999/xhtml',
 
-              if (p > 0) {
-                value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
-                addAttribute(attrName, value, start - 1);
-                s = S_ATTR_END;
-              } else {
-                //fatalError: no end quot match
-                throw new Error('attribute value no end \'' + c + '\' match');
-              }
-            } else if (s == S_ATTR_NOQUOT_VALUE) {
-            value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer); //console.log(attrName,value,start,p)
+    /**
+     * Checks if `uri` equals `NAMESPACE.HTML`.
+     *
+     * @param {string} [uri]
+     *
+     * @see NAMESPACE.HTML
+     */
+    isHTML: function isHTML(uri) {
+      return uri === NAMESPACE$3.HTML;
+    },
 
-            addAttribute(attrName, value, start); //console.dir(el)
+    /**
+     * The SVG namespace.
+     *
+     * @see http://www.w3.org/2000/svg
+     */
+    SVG: 'http://www.w3.org/2000/svg',
 
-            errorHandler.warning('attribute "' + attrName + '" missed start quot(' + c + ')!!');
-            start = p + 1;
-            s = S_ATTR_END;
-          } else {
-            //fatalError: no equal before
-            throw new Error('attribute value must after "="'); // No known test case
-          }
+    /**
+     * The `xml:` namespace.
+     *
+     * @see http://www.w3.org/XML/1998/namespace
+     */
+    XML: 'http://www.w3.org/XML/1998/namespace',
 
-          break;
+    /**
+     * The `xmlns:` namespace
+     *
+     * @see https://www.w3.org/2000/xmlns/
+     */
+    XMLNS: 'http://www.w3.org/2000/xmlns/'
+  });
+  var freeze_1 = freeze;
+  var MIME_TYPE_1 = MIME_TYPE;
+  var NAMESPACE_1 = NAMESPACE$3;
+  var conventions = {
+    freeze: freeze_1,
+    MIME_TYPE: MIME_TYPE_1,
+    NAMESPACE: NAMESPACE_1
+  };
 
-        case '/':
-          switch (s) {
-            case S_TAG:
-              el.setTagName(source.slice(start, p));
+  var NAMESPACE$2 = conventions.NAMESPACE;
+  /**
+   * A prerequisite for `[].filter`, to drop elements that are empty
+   * @param {string} input
+   * @returns {boolean}
+   */
 
-            case S_ATTR_END:
-            case S_TAG_SPACE:
-            case S_TAG_CLOSE:
-              s = S_TAG_CLOSE;
-              el.closed = true;
-
-            case S_ATTR_NOQUOT_VALUE:
-            case S_ATTR:
-            case S_ATTR_SPACE:
-              break;
-            //case S_EQ:
-
-            default:
-              throw new Error("attribute invalid close char('/')");
-            // No known test case
-          }
-
-          break;
-
-        case '':
-          //end document
-          errorHandler.error('unexpected end of input');
-
-          if (s == S_TAG) {
-            el.setTagName(source.slice(start, p));
-          }
-
-          return p;
-
-        case '>':
-          switch (s) {
-            case S_TAG:
-              el.setTagName(source.slice(start, p));
-
-            case S_ATTR_END:
-            case S_TAG_SPACE:
-            case S_TAG_CLOSE:
-              break;
-            //normal
-
-            case S_ATTR_NOQUOT_VALUE: //Compatible state
-
-            case S_ATTR:
-              value = source.slice(start, p);
-
-              if (value.slice(-1) === '/') {
-                el.closed = true;
-                value = value.slice(0, -1);
-              }
-
-            case S_ATTR_SPACE:
-              if (s === S_ATTR_SPACE) {
-                value = attrName;
-              }
-
-              if (s == S_ATTR_NOQUOT_VALUE) {
-                errorHandler.warning('attribute "' + value + '" missed quot(")!');
-                addAttribute(attrName, value.replace(/&#?\w+;/g, entityReplacer), start);
-              } else {
-                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !value.match(/^(?:disabled|checked|selected)$/i)) {
-                  errorHandler.warning('attribute "' + value + '" missed value!! "' + value + '" instead!!');
-                }
-
-                addAttribute(value, value, start);
-              }
-
-              break;
-
-            case S_EQ:
-              throw new Error('attribute value missed!!');
-          } //			console.log(tagName,tagNamePattern,tagNamePattern.test(tagName))
-
-
-          return p;
-
-        /*xml space '\x20' | #x9 | #xD | #xA; */
-
-        case "\x80":
-          c = ' ';
-
-        default:
-          if (c <= ' ') {
-            //space
-            switch (s) {
-              case S_TAG:
-                el.setTagName(source.slice(start, p)); //tagName
-
-                s = S_TAG_SPACE;
-                break;
-
-              case S_ATTR:
-                attrName = source.slice(start, p);
-                s = S_ATTR_SPACE;
-                break;
-
-              case S_ATTR_NOQUOT_VALUE:
-                var value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
-                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
-                addAttribute(attrName, value, start);
-
-              case S_ATTR_END:
-                s = S_TAG_SPACE;
-                break;
-              //case S_TAG_SPACE:
-              //case S_EQ:
-              //case S_ATTR_SPACE:
-              //	void();break;
-              //case S_TAG_CLOSE:
-              //ignore warning
-            }
-          } else {
-            //not space
-            //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
-            //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
-            switch (s) {
-              //case S_TAG:void();break;
-              //case S_ATTR:void();break;
-              //case S_ATTR_NOQUOT_VALUE:void();break;
-              case S_ATTR_SPACE:
-                el.tagName;
-
-                if (currentNSMap[''] !== 'http://www.w3.org/1999/xhtml' || !attrName.match(/^(?:disabled|checked|selected)$/i)) {
-                  errorHandler.warning('attribute "' + attrName + '" missed value!! "' + attrName + '" instead2!!');
-                }
-
-                addAttribute(attrName, attrName, start);
-                start = p;
-                s = S_ATTR;
-                break;
-
-              case S_ATTR_END:
-                errorHandler.warning('attribute space is required"' + attrName + '"!!');
-
-              case S_TAG_SPACE:
-                s = S_ATTR;
-                start = p;
-                break;
-
-              case S_EQ:
-                s = S_ATTR_NOQUOT_VALUE;
-                start = p;
-                break;
-
-              case S_TAG_CLOSE:
-                throw new Error("elements closed character '/' and '>' must be connected to");
-            }
-          }
-
-      } //end outer switch
-      //console.log('p++',p)
-
-
-      p++;
-    }
+  function notEmptyString(input) {
+    return input !== '';
   }
   /**
-   * @return true if has new namespace define
+   * @see https://infra.spec.whatwg.org/#split-on-ascii-whitespace
+   * @see https://infra.spec.whatwg.org/#ascii-whitespace
+   *
+   * @param {string} input
+   * @returns {string[]} (can be empty)
    */
 
 
-  function appendElement(el, domBuilder, currentNSMap) {
-    var tagName = el.tagName;
-    var localNSMap = null; //var currentNSMap = parseStack[parseStack.length-1].currentNSMap;
-
-    var i = el.length;
-
-    while (i--) {
-      var a = el[i];
-      var qName = a.qName;
-      var value = a.value;
-      var nsp = qName.indexOf(':');
-
-      if (nsp > 0) {
-        var prefix = a.prefix = qName.slice(0, nsp);
-        var localName = qName.slice(nsp + 1);
-        var nsPrefix = prefix === 'xmlns' && localName;
-      } else {
-        localName = qName;
-        prefix = null;
-        nsPrefix = qName === 'xmlns' && '';
-      } //can not set prefix,because prefix !== ''
-
-
-      a.localName = localName; //prefix == null for no ns prefix attribute 
-
-      if (nsPrefix !== false) {
-        //hack!!
-        if (localNSMap == null) {
-          localNSMap = {}; //console.log(currentNSMap,0)
-
-          _copy(currentNSMap, currentNSMap = {}); //console.log(currentNSMap,1)
-
-        }
-
-        currentNSMap[nsPrefix] = localNSMap[nsPrefix] = value;
-        a.uri = 'http://www.w3.org/2000/xmlns/';
-        domBuilder.startPrefixMapping(nsPrefix, value);
-      }
-    }
-
-    var i = el.length;
-
-    while (i--) {
-      a = el[i];
-      var prefix = a.prefix;
-
-      if (prefix) {
-        //no prefix attribute has no namespace
-        if (prefix === 'xml') {
-          a.uri = 'http://www.w3.org/XML/1998/namespace';
-        }
-
-        if (prefix !== 'xmlns') {
-          a.uri = currentNSMap[prefix || '']; //{console.log('###'+a.qName,domBuilder.locator.systemId+'',currentNSMap,a.uri)}
-        }
-      }
-    }
-
-    var nsp = tagName.indexOf(':');
-
-    if (nsp > 0) {
-      prefix = el.prefix = tagName.slice(0, nsp);
-      localName = el.localName = tagName.slice(nsp + 1);
-    } else {
-      prefix = null; //important!!
-
-      localName = el.localName = tagName;
-    } //no prefix element has default namespace
-
-
-    var ns = el.uri = currentNSMap[prefix || ''];
-    domBuilder.startElement(ns, localName, tagName, el); //endPrefixMapping and startPrefixMapping have not any help for dom builder
-    //localNSMap = null
-
-    if (el.closed) {
-      domBuilder.endElement(ns, localName, tagName);
-
-      if (localNSMap) {
-        for (prefix in localNSMap) {
-          domBuilder.endPrefixMapping(prefix);
-        }
-      }
-    } else {
-      el.currentNSMap = currentNSMap;
-      el.localNSMap = localNSMap; //parseStack.push(el);
-
-      return true;
-    }
+  function splitOnASCIIWhitespace(input) {
+    // U+0009 TAB, U+000A LF, U+000C FF, U+000D CR, U+0020 SPACE
+    return input ? input.split(/[\t\n\f\r ]+/).filter(notEmptyString) : [];
   }
-
-  function parseHtmlSpecialContent(source, elStartEnd, tagName, entityReplacer, domBuilder) {
-    if (/^(?:script|textarea)$/i.test(tagName)) {
-      var elEndStart = source.indexOf('</' + tagName + '>', elStartEnd);
-      var text = source.substring(elStartEnd + 1, elEndStart);
-
-      if (/[&<]/.test(text)) {
-        if (/^script$/i.test(tagName)) {
-          //if(!/\]\]>/.test(text)){
-          //lexHandler.startCDATA();
-          domBuilder.characters(text, 0, text.length); //lexHandler.endCDATA();
-
-          return elEndStart; //}
-        } //}else{//text area
+  /**
+   * Adds element as a key to current if it is not already present.
+   *
+   * @param {Record<string, boolean | undefined>} current
+   * @param {string} element
+   * @returns {Record<string, boolean | undefined>}
+   */
 
 
-        text = text.replace(/&#?\w+;/g, entityReplacer);
-        domBuilder.characters(text, 0, text.length);
-        return elEndStart; //}
-      }
+  function orderedSetReducer(current, element) {
+    if (!current.hasOwnProperty(element)) {
+      current[element] = true;
     }
 
-    return elStartEnd + 1;
+    return current;
   }
+  /**
+   * @see https://infra.spec.whatwg.org/#ordered-set
+   * @param {string} input
+   * @returns {string[]}
+   */
 
-  function fixSelfClosed(source, elStartEnd, tagName, closeMap) {
-    //if(tagName in closeMap){
-    var pos = closeMap[tagName];
 
-    if (pos == null) {
-      //console.log(tagName)
-      pos = source.lastIndexOf('</' + tagName + '>');
-
-      if (pos < elStartEnd) {
-        //忘记闭合
-        pos = source.lastIndexOf('</' + tagName);
-      }
-
-      closeMap[tagName] = pos;
-    }
-
-    return pos < elStartEnd; //} 
+  function toOrderedSet(input) {
+    if (!input) return [];
+    var list = splitOnASCIIWhitespace(input);
+    return Object.keys(list.reduce(orderedSetReducer, {}));
   }
+  /**
+   * Uses `list.indexOf` to implement something like `Array.prototype.includes`,
+   * which we can not rely on being available.
+   *
+   * @param {any[]} list
+   * @returns {function(any): boolean}
+   */
 
-  function _copy(source, target) {
-    for (var n in source) {
-      target[n] = source[n];
-    }
+
+  function arrayIncludes(list) {
+    return function (element) {
+      return list && list.indexOf(element) !== -1;
+    };
   }
-
-  function parseDCC(source, start, domBuilder, errorHandler) {
-    //sure start with '<!'
-    var next = source.charAt(start + 2);
-
-    switch (next) {
-      case '-':
-        if (source.charAt(start + 3) === '-') {
-          var end = source.indexOf('-->', start + 4); //append comment source.substring(4,end)//<!--
-
-          if (end > start) {
-            domBuilder.comment(source, start + 4, end - start - 4);
-            return end + 3;
-          } else {
-            errorHandler.error("Unclosed comment");
-            return -1;
-          }
-        } else {
-          //error
-          return -1;
-        }
-
-      default:
-        if (source.substr(start + 3, 6) == 'CDATA[') {
-          var end = source.indexOf(']]>', start + 9);
-          domBuilder.startCDATA();
-          domBuilder.characters(source, start + 9, end - start - 9);
-          domBuilder.endCDATA();
-          return end + 3;
-        } //<!DOCTYPE
-        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId) 
-
-
-        var matchs = split(source, start);
-        var len = matchs.length;
-
-        if (len > 1 && /!doctype/i.test(matchs[0][0])) {
-          var name = matchs[1][0];
-          var pubid = false;
-          var sysid = false;
-
-          if (len > 3) {
-            if (/^public$/i.test(matchs[2][0])) {
-              pubid = matchs[3][0];
-              sysid = len > 4 && matchs[4][0];
-            } else if (/^system$/i.test(matchs[2][0])) {
-              sysid = matchs[3][0];
-            }
-          }
-
-          var lastMatch = matchs[len - 1];
-          domBuilder.startDTD(name, pubid, sysid);
-          domBuilder.endDTD();
-          return lastMatch.index + lastMatch[0].length;
-        }
-
-    }
-
-    return -1;
-  }
-
-  function parseInstruction(source, start, domBuilder) {
-    var end = source.indexOf('?>', start);
-
-    if (end) {
-      var match = source.substring(start, end).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
-
-      if (match) {
-        match[0].length;
-        domBuilder.processingInstruction(match[1], match[2]);
-        return end + 2;
-      } else {
-        //error
-        return -1;
-      }
-    }
-
-    return -1;
-  }
-
-  function ElementAttributes() {
-    this.attributeNames = {};
-  }
-
-  ElementAttributes.prototype = {
-    setTagName: function setTagName(tagName) {
-      if (!tagNamePattern.test(tagName)) {
-        throw new Error('invalid tagName:' + tagName);
-      }
-
-      this.tagName = tagName;
-    },
-    addValue: function addValue(qName, value, offset) {
-      if (!tagNamePattern.test(qName)) {
-        throw new Error('invalid attribute:' + qName);
-      }
-
-      this.attributeNames[qName] = this.length;
-      this[this.length++] = {
-        qName: qName,
-        value: value,
-        offset: offset
-      };
-    },
-    length: 0,
-    getLocalName: function getLocalName(i) {
-      return this[i].localName;
-    },
-    getLocator: function getLocator(i) {
-      return this[i].locator;
-    },
-    getQName: function getQName(i) {
-      return this[i].qName;
-    },
-    getURI: function getURI(i) {
-      return this[i].uri;
-    },
-    getValue: function getValue(i) {
-      return this[i].value;
-    } //	,getIndex:function(uri, localName)){
-    //		if(localName){
-    //			
-    //		}else{
-    //			var qName = uri
-    //		}
-    //	},
-    //	getValue:function(){return this.getValue(this.getIndex.apply(this,arguments))},
-    //	getType:function(uri,localName){}
-    //	getType:function(i){},
-
-  };
-
-  function split(source, start) {
-    var match;
-    var buf = [];
-    var reg = /'[^']+'|"[^"]+"|[^\s<>\/=]+=?|(\/?\s*>|<)/g;
-    reg.lastIndex = start;
-    reg.exec(source); //skip <
-
-    while (match = reg.exec(source)) {
-      buf.push(match);
-      if (match[1]) return buf;
-    }
-  }
-
-  var XMLReader_1 = XMLReader;
-  var ParseError_1 = ParseError;
-  var sax = {
-    XMLReader: XMLReader_1,
-    ParseError: ParseError_1
-  };
 
   function copy(src, dest) {
     for (var p in src) {
@@ -33808,14 +33208,13 @@
 
     if (pt.constructor != Class) {
       if (typeof Class != 'function') {
-        console.error("unknow Class:" + Class);
+        console.error("unknown Class:" + Class);
       }
 
       pt.constructor = Class;
     }
-  }
+  } // Node Types
 
-  var htmlns = 'http://www.w3.org/1999/xhtml'; // Node Types
 
   var NodeType = {};
   var ELEMENT_NODE = NodeType.ELEMENT_NODE = 1;
@@ -33935,8 +33334,13 @@
 
   _extends(LiveNodeList, NodeList);
   /**
-   * 
-   * Objects implementing the NamedNodeMap interface are used to represent collections of nodes that can be accessed by name. Note that NamedNodeMap does not inherit from NodeList; NamedNodeMaps are not maintained in any particular order. Objects contained in an object implementing NamedNodeMap may also be accessed by an ordinal index, but this is simply to allow convenient enumeration of the contents of a NamedNodeMap, and does not imply that the DOM specifies an order to these Nodes.
+   * Objects implementing the NamedNodeMap interface are used
+   * to represent collections of nodes that can be accessed by name.
+   * Note that NamedNodeMap does not inherit from NodeList;
+   * NamedNodeMaps are not maintained in any particular order.
+   * Objects contained in an object implementing NamedNodeMap may also be accessed by an ordinal index,
+   * but this is simply to allow convenient enumeration of the contents of a NamedNodeMap,
+   * and does not imply that the DOM specifies an order to these Nodes.
    * NamedNodeMap objects in the DOM are live.
    * used for attributes or DocumentType entities 
    */
@@ -34081,41 +33485,70 @@
     }
   };
   /**
-   * @see http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-102161490
+   * The DOMImplementation interface represents an object providing methods
+   * which are not dependent on any particular document.
+   * Such an object is returned by the `Document.implementation` property.
+   *
+   * __The individual methods describe the differences compared to the specs.__
+   *
+   * @constructor
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation MDN
+   * @see https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-102161490 DOM Level 1 Core (Initial)
+   * @see https://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-102161490 DOM Level 2 Core
+   * @see https://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-102161490 DOM Level 3 Core
+   * @see https://dom.spec.whatwg.org/#domimplementation DOM Living Standard
    */
 
-  function DOMImplementation(
-  /* Object */
-  features) {
-    this._features = {};
+  function DOMImplementation$1() {}
 
-    if (features) {
-      for (var feature in features) {
-        this._features = features[feature];
-      }
-    }
-  }
-  DOMImplementation.prototype = {
-    hasFeature: function hasFeature(
-    /* string */
-    feature,
-    /* string */
-    version) {
-      var versions = this._features[feature.toLowerCase()];
-
-      if (versions && (!version || version in versions)) {
-        return true;
-      } else {
-        return false;
-      }
+  DOMImplementation$1.prototype = {
+    /**
+     * The DOMImplementation.hasFeature() method returns a Boolean flag indicating if a given feature is supported.
+     * The different implementations fairly diverged in what kind of features were reported.
+     * The latest version of the spec settled to force this method to always return true, where the functionality was accurate and in use.
+     *
+     * @deprecated It is deprecated and modern browsers return true in all cases.
+     *
+     * @param {string} feature
+     * @param {string} [version]
+     * @returns {boolean} always true
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation/hasFeature MDN
+     * @see https://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-5CED94D7 DOM Level 1 Core
+     * @see https://dom.spec.whatwg.org/#dom-domimplementation-hasfeature DOM Living Standard
+     */
+    hasFeature: function hasFeature(feature, version) {
+      return true;
     },
-    // Introduced in DOM Level 2:
+
+    /**
+     * Creates an XML Document object of the specified type with its document element.
+     *
+     * __It behaves slightly different from the description in the living standard__:
+     * - There is no interface/class `XMLDocument`, it returns a `Document` instance.
+     * - `contentType`, `encoding`, `mode`, `origin`, `url` fields are currently not declared.
+     * - this implementation is not validating names or qualified names
+     *   (when parsing XML strings, the SAX parser takes care of that)
+     *
+     * @param {string|null} namespaceURI
+     * @param {string} qualifiedName
+     * @param {DocumentType=null} doctype
+     * @returns {Document}
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation/createDocument MDN
+     * @see https://www.w3.org/TR/DOM-Level-2-Core/core.html#Level-2-Core-DOM-createDocument DOM Level 2 Core (initial)
+     * @see https://dom.spec.whatwg.org/#dom-domimplementation-createdocument  DOM Level 2 Core
+     *
+     * @see https://dom.spec.whatwg.org/#validate-and-extract DOM: Validate and extract
+     * @see https://www.w3.org/TR/xml/#NT-NameStartChar XML Spec: Names
+     * @see https://www.w3.org/TR/xml-names/#ns-qualnames XML Namespaces: Qualified names
+     */
     createDocument: function createDocument(namespaceURI, qualifiedName, doctype) {
-      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR,WRONG_DOCUMENT_ERR
       var doc = new Document();
       doc.implementation = this;
       doc.childNodes = new NodeList();
-      doc.doctype = doctype;
+      doc.doctype = doctype || null;
 
       if (doctype) {
         doc.appendChild(doctype);
@@ -34128,19 +33561,34 @@
 
       return doc;
     },
-    // Introduced in DOM Level 2:
+
+    /**
+     * Returns a doctype, with the given `qualifiedName`, `publicId`, and `systemId`.
+     *
+     * __This behavior is slightly different from the in the specs__:
+     * - this implementation is not validating names or qualified names
+     *   (when parsing XML strings, the SAX parser takes care of that)
+     *
+     * @param {string} qualifiedName
+     * @param {string} [publicId]
+     * @param {string} [systemId]
+     * @returns {DocumentType} which can either be used with `DOMImplementation.createDocument` upon document creation
+     * 				  or can be put into the document via methods like `Node.insertBefore()` or `Node.replaceChild()`
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMImplementation/createDocumentType MDN
+     * @see https://www.w3.org/TR/DOM-Level-2-Core/core.html#Level-2-Core-DOM-createDocType DOM Level 2 Core
+     * @see https://dom.spec.whatwg.org/#dom-domimplementation-createdocumenttype DOM Living Standard
+     *
+     * @see https://dom.spec.whatwg.org/#validate-and-extract DOM: Validate and extract
+     * @see https://www.w3.org/TR/xml/#NT-NameStartChar XML Spec: Names
+     * @see https://www.w3.org/TR/xml-names/#ns-qualnames XML Namespaces: Qualified names
+     */
     createDocumentType: function createDocumentType(qualifiedName, publicId, systemId) {
-      // raises:INVALID_CHARACTER_ERR,NAMESPACE_ERR
       var node = new DocumentType();
       node.name = qualifiedName;
       node.nodeName = qualifiedName;
-      node.publicId = publicId;
-      node.systemId = systemId; // Introduced in DOM Level 2:
-      //readonly attribute DOMString        internalSubset;
-      //TODO:..
-      //  readonly attribute NamedNodeMap     entities;
-      //  readonly attribute NamedNodeMap     notations;
-
+      node.publicId = publicId || '';
+      node.systemId = systemId || '';
       return node;
     }
   };
@@ -34211,6 +33659,21 @@
     hasAttributes: function hasAttributes() {
       return this.attributes.length > 0;
     },
+
+    /**
+     * Look up the prefix associated to the given namespace URI, starting from this node.
+     * **The default namespace declarations are ignored by this method.**
+     * See Namespace Prefix Lookup for details on the algorithm used by this method.
+     *
+     * _Note: The implementation seems to be incomplete when compared to the algorithm described in the specs._
+     *
+     * @param {string | null} namespaceURI
+     * @returns {string | null}
+     * @see https://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-lookupNamespacePrefix
+     * @see https://www.w3.org/TR/DOM-Level-3-Core/namespaces-algorithms.html#lookupNamespacePrefixAlgo
+     * @see https://dom.spec.whatwg.org/#dom-node-lookupprefix
+     * @see https://github.com/xmldom/xmldom/issues/322
+     */
     lookupPrefix: function lookupPrefix(namespaceURI) {
       var el = this;
 
@@ -34286,7 +33749,7 @@
     doc && doc._inc++;
     var ns = newAttr.namespaceURI;
 
-    if (ns == 'http://www.w3.org/2000/xmlns/') {
+    if (ns === NAMESPACE$2.XMLNS) {
       //update namespace
       el._nsMap[newAttr.prefix ? newAttr.localName : ''] = newAttr.value;
     }
@@ -34296,7 +33759,7 @@
     doc && doc._inc++;
     var ns = newAttr.namespaceURI;
 
-    if (ns == 'http://www.w3.org/2000/xmlns/') {
+    if (ns === NAMESPACE$2.XMLNS) {
       //update namespace
       delete el._nsMap[newAttr.prefix ? newAttr.localName : ''];
     }
@@ -34440,11 +33903,18 @@
     //implementation : null,
     nodeName: '#document',
     nodeType: DOCUMENT_NODE,
+
+    /**
+     * The DocumentType node of the document.
+     *
+     * @readonly
+     * @type DocumentType
+     */
     doctype: null,
     documentElement: null,
     _inc: 1,
     insertBefore: function insertBefore(newChild, refChild) {
-      //raises 
+      //raises
       if (newChild.nodeType == DOCUMENT_FRAGMENT_NODE) {
         var child = newChild.firstChild;
 
@@ -34489,18 +33959,50 @@
 
       return rtv;
     },
-    getElementsByClassName: function getElementsByClassName(className) {
-      var pattern = new RegExp("(^|\\s)" + className + "(\\s|$)");
+
+    /**
+     * The `getElementsByClassName` method of `Document` interface returns an array-like object
+     * of all child elements which have **all** of the given class name(s).
+     *
+     * Returns an empty list if `classeNames` is an empty string or only contains HTML white space characters.
+     *
+     *
+     * Warning: This is a live LiveNodeList.
+     * Changes in the DOM will reflect in the array as the changes occur.
+     * If an element selected by this array no longer qualifies for the selector,
+     * it will automatically be removed. Be aware of this for iteration purposes.
+     *
+     * @param {string} classNames is a string representing the class name(s) to match; multiple class names are separated by (ASCII-)whitespace
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName
+     * @see https://dom.spec.whatwg.org/#concept-getelementsbyclassname
+     */
+    getElementsByClassName: function getElementsByClassName(classNames) {
+      var classNamesSet = toOrderedSet(classNames);
       return new LiveNodeList(this, function (base) {
         var ls = [];
 
-        _visitNode(base.documentElement, function (node) {
-          if (node !== base && node.nodeType == ELEMENT_NODE) {
-            if (pattern.test(node.getAttribute('class'))) {
-              ls.push(node);
+        if (classNamesSet.length > 0) {
+          _visitNode(base.documentElement, function (node) {
+            if (node !== base && node.nodeType === ELEMENT_NODE) {
+              var nodeClassNames = node.getAttribute('class'); // can be null if the attribute does not exist
+
+              if (nodeClassNames) {
+                // before splitting and iterating just compare them for the most common case
+                var matches = classNames === nodeClassNames;
+
+                if (!matches) {
+                  var nodeClassNamesSet = toOrderedSet(nodeClassNames);
+                  matches = classNamesSet.every(arrayIncludes(nodeClassNamesSet));
+                }
+
+                if (matches) {
+                  ls.push(node);
+                }
+              }
             }
-          }
-        });
+          });
+        }
 
         return ls;
       });
@@ -34511,6 +34013,7 @@
       node.ownerDocument = this;
       node.nodeName = tagName;
       node.tagName = tagName;
+      node.localName = tagName;
       node.childNodes = new NodeList();
       var attrs = node.attributes = new NamedNodeMap();
       attrs._ownerElement = node;
@@ -34808,9 +34311,9 @@
 
   _extends(ProcessingInstruction, Node);
 
-  function XMLSerializer() {}
+  function XMLSerializer$1() {}
 
-  XMLSerializer.prototype.serializeToString = function (node, isHtml, nodeFilter) {
+  XMLSerializer$1.prototype.serializeToString = function (node, isHtml, nodeFilter) {
     return nodeSerializeToString.call(node, isHtml, nodeFilter);
   };
 
@@ -34843,37 +34346,51 @@
 
   function needNamespaceDefine(node, isHTML, visibleNamespaces) {
     var prefix = node.prefix || '';
-    var uri = node.namespaceURI;
+    var uri = node.namespaceURI; // According to [Namespaces in XML 1.0](https://www.w3.org/TR/REC-xml-names/#ns-using) ,
+    // and more specifically https://www.w3.org/TR/REC-xml-names/#nsc-NoPrefixUndecl :
+    // > In a namespace declaration for a prefix [...], the attribute value MUST NOT be empty.
+    // in a similar manner [Namespaces in XML 1.1](https://www.w3.org/TR/xml-names11/#ns-using)
+    // and more specifically https://www.w3.org/TR/xml-names11/#nsc-NSDeclared :
+    // > [...] Furthermore, the attribute value [...] must not be an empty string.
+    // so serializing empty namespace value like xmlns:ds="" would produce an invalid XML document.
 
-    if (!prefix && !uri) {
+    if (!uri) {
       return false;
     }
 
-    if (prefix === "xml" && uri === "http://www.w3.org/XML/1998/namespace" || uri == 'http://www.w3.org/2000/xmlns/') {
+    if (prefix === "xml" && uri === NAMESPACE$2.XML || uri === NAMESPACE$2.XMLNS) {
       return false;
     }
 
-    var i = visibleNamespaces.length; //console.log('@@@@',node.tagName,prefix,uri,visibleNamespaces)
+    var i = visibleNamespaces.length;
 
     while (i--) {
       var ns = visibleNamespaces[i]; // get namespace prefix
-      //console.log(node.nodeType,node.tagName,ns.prefix,prefix)
 
-      if (ns.prefix == prefix) {
-        return ns.namespace != uri;
+      if (ns.prefix === prefix) {
+        return ns.namespace !== uri;
       }
-    } //console.log(isHTML,uri,prefix=='')
-    //if(isHTML && prefix ==null && uri == 'http://www.w3.org/1999/xhtml'){
-    //	return false;
-    //}
-    //node.flag = '11111'
-    //console.error(3,true,node.flag,node.prefix,node.namespaceURI)
-
+    }
 
     return true;
   }
+  /**
+   * Well-formed constraint: No < in Attribute Values
+   * The replacement text of any entity referred to directly or indirectly in an attribute value must not contain a <.
+   * @see https://www.w3.org/TR/xml/#CleanAttrVals
+   * @see https://www.w3.org/TR/xml/#NT-AttValue
+   */
+
+
+  function addSerializedAttribute(buf, qualifiedName, value) {
+    buf.push(' ', qualifiedName, '="', value.replace(/[<&"]/g, _xmlEncoder), '"');
+  }
 
   function serializeToString(node, buf, isHTML, nodeFilter, visibleNamespaces) {
+    if (!visibleNamespaces) {
+      visibleNamespaces = [];
+    }
+
     if (nodeFilter) {
       node = nodeFilter(node);
 
@@ -34890,14 +34407,51 @@
 
     switch (node.nodeType) {
       case ELEMENT_NODE:
-        if (!visibleNamespaces) visibleNamespaces = [];
-        visibleNamespaces.length;
         var attrs = node.attributes;
         var len = attrs.length;
         var child = node.firstChild;
         var nodeName = node.tagName;
-        isHTML = htmlns === node.namespaceURI || isHTML;
-        buf.push('<', nodeName);
+        isHTML = NAMESPACE$2.isHTML(node.namespaceURI) || isHTML;
+        var prefixedNodeName = nodeName;
+
+        if (!isHTML && !node.prefix && node.namespaceURI) {
+          var defaultNS; // lookup current default ns from `xmlns` attribute
+
+          for (var ai = 0; ai < attrs.length; ai++) {
+            if (attrs.item(ai).name === 'xmlns') {
+              defaultNS = attrs.item(ai).value;
+              break;
+            }
+          }
+
+          if (!defaultNS) {
+            // lookup current default ns in visibleNamespaces
+            for (var nsi = visibleNamespaces.length - 1; nsi >= 0; nsi--) {
+              var namespace = visibleNamespaces[nsi];
+
+              if (namespace.prefix === '' && namespace.namespace === node.namespaceURI) {
+                defaultNS = namespace.namespace;
+                break;
+              }
+            }
+          }
+
+          if (defaultNS !== node.namespaceURI) {
+            for (var nsi = visibleNamespaces.length - 1; nsi >= 0; nsi--) {
+              var namespace = visibleNamespaces[nsi];
+
+              if (namespace.namespace === node.namespaceURI) {
+                if (namespace.prefix) {
+                  prefixedNodeName = namespace.prefix + ':' + nodeName;
+                }
+
+                break;
+              }
+            }
+          }
+        }
+
+        buf.push('<', prefixedNodeName);
 
         for (var i = 0; i < len; i++) {
           // add namespaces for attributes
@@ -34922,8 +34476,7 @@
           if (needNamespaceDefine(attr, isHTML, visibleNamespaces)) {
             var prefix = attr.prefix || '';
             var uri = attr.namespaceURI;
-            var ns = prefix ? ' xmlns:' + prefix : " xmlns";
-            buf.push(ns, '="', uri, '"');
+            addSerializedAttribute(buf, prefix ? 'xmlns:' + prefix : "xmlns", uri);
             visibleNamespaces.push({
               prefix: prefix,
               namespace: uri
@@ -34934,11 +34487,10 @@
         } // add namespace for current node		
 
 
-        if (needNamespaceDefine(node, isHTML, visibleNamespaces)) {
+        if (nodeName === prefixedNodeName && needNamespaceDefine(node, isHTML, visibleNamespaces)) {
           var prefix = node.prefix || '';
           var uri = node.namespaceURI;
-          var ns = prefix ? ' xmlns:' + prefix : " xmlns";
-          buf.push(ns, '="', uri, '"');
+          addSerializedAttribute(buf, prefix ? 'xmlns:' + prefix : "xmlns", uri);
           visibleNamespaces.push({
             prefix: prefix,
             namespace: uri
@@ -34953,19 +34505,19 @@
               if (child.data) {
                 buf.push(child.data);
               } else {
-                serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+                serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces.slice());
               }
 
               child = child.nextSibling;
             }
           } else {
             while (child) {
-              serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+              serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces.slice());
               child = child.nextSibling;
             }
           }
 
-          buf.push('</', nodeName, '>');
+          buf.push('</', prefixedNodeName, '>');
         } else {
           buf.push('/>');
         } // remove added visible namespaces
@@ -34979,14 +34531,14 @@
         var child = node.firstChild;
 
         while (child) {
-          serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces);
+          serializeToString(child, buf, isHTML, nodeFilter, visibleNamespaces.slice());
           child = child.nextSibling;
         }
 
         return;
 
       case ATTRIBUTE_NODE:
-        return buf.push(' ', node.name, '="', node.value.replace(/[&"]/g, _xmlEncoder), '"');
+        return addSerializedAttribute(buf, node.name, node.value);
 
       case TEXT_NODE:
         /**
@@ -35212,7 +34764,6 @@
               break;
 
             default:
-              //TODO:
               this.data = data;
               this.value = data;
               this.nodeValue = data;
@@ -35229,311 +34780,1399 @@
   } //if(typeof require == 'function'){
 
 
-  var Node_1 = Node;
+  var DocumentType_1 = DocumentType;
   var DOMException_1 = DOMException;
-  var DOMImplementation_1 = DOMImplementation;
-  var XMLSerializer_1 = XMLSerializer; //}
+  var DOMImplementation_1$1 = DOMImplementation$1;
+  var Element_1 = Element;
+  var Node_1 = Node;
+  var NodeList_1 = NodeList;
+  var XMLSerializer_1 = XMLSerializer$1; //}
 
   var dom = {
-    Node: Node_1,
+    DocumentType: DocumentType_1,
     DOMException: DOMException_1,
-    DOMImplementation: DOMImplementation_1,
+    DOMImplementation: DOMImplementation_1$1,
+    Element: Element_1,
+    Node: Node_1,
+    NodeList: NodeList_1,
     XMLSerializer: XMLSerializer_1
   };
 
-  var domParser = createCommonjsModule(function (module, exports) {
-    function DOMParser(options) {
-      this.options = options || {
-        locator: {}
-      };
-    }
-
-    DOMParser.prototype.parseFromString = function (source, mimeType) {
-      var options = this.options;
-      var sax = new XMLReader();
-      var domBuilder = options.domBuilder || new DOMHandler(); //contentHandler and LexicalHandler
-
-      var errorHandler = options.errorHandler;
-      var locator = options.locator;
-      var defaultNSMap = options.xmlns || {};
-      var isHTML = /\/x?html?$/.test(mimeType); //mimeType.toLowerCase().indexOf('html') > -1;
-
-      var entityMap = isHTML ? entities.entityMap : {
-        'lt': '<',
-        'gt': '>',
-        'amp': '&',
-        'quot': '"',
-        'apos': "'"
-      };
-
-      if (locator) {
-        domBuilder.setDocumentLocator(locator);
-      }
-
-      sax.errorHandler = buildErrorHandler(errorHandler, domBuilder, locator);
-      sax.domBuilder = options.domBuilder || domBuilder;
-
-      if (isHTML) {
-        defaultNSMap[''] = 'http://www.w3.org/1999/xhtml';
-      }
-
-      defaultNSMap.xml = defaultNSMap.xml || 'http://www.w3.org/XML/1998/namespace';
-
-      if (source && typeof source === 'string') {
-        sax.parse(source, defaultNSMap, entityMap);
-      } else {
-        sax.errorHandler.error("invalid doc source");
-      }
-
-      return domBuilder.doc;
-    };
-
-    function buildErrorHandler(errorImpl, domBuilder, locator) {
-      if (!errorImpl) {
-        if (domBuilder instanceof DOMHandler) {
-          return domBuilder;
-        }
-
-        errorImpl = domBuilder;
-      }
-
-      var errorHandler = {};
-      var isCallback = errorImpl instanceof Function;
-      locator = locator || {};
-
-      function build(key) {
-        var fn = errorImpl[key];
-
-        if (!fn && isCallback) {
-          fn = errorImpl.length == 2 ? function (msg) {
-            errorImpl(key, msg);
-          } : errorImpl;
-        }
-
-        errorHandler[key] = fn && function (msg) {
-          fn('[xmldom ' + key + ']\t' + msg + _locator(locator));
-        } || function () {};
-      }
-
-      build('warning');
-      build('error');
-      build('fatalError');
-      return errorHandler;
-    } //console.log('#\n\n\n\n\n\n\n####')
-
+  var entities = createCommonjsModule(function (module, exports) {
+    var freeze = conventions.freeze;
     /**
-     * +ContentHandler+ErrorHandler
-     * +LexicalHandler+EntityResolver2
-     * -DeclHandler-DTDHandler
+     * The entities that are predefined in every XML document.
      *
-     * DefaultHandler:EntityResolver, DTDHandler, ContentHandler, ErrorHandler
-     * DefaultHandler2:DefaultHandler,LexicalHandler, DeclHandler, EntityResolver2
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/helpers/DefaultHandler.html
+     * @see https://www.w3.org/TR/2006/REC-xml11-20060816/#sec-predefined-ent W3C XML 1.1
+     * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-predefined-ent W3C XML 1.0
+     * @see https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML Wikipedia
      */
 
-
-    function DOMHandler() {
-      this.cdata = false;
-    }
-
-    function position(locator, node) {
-      node.lineNumber = locator.lineNumber;
-      node.columnNumber = locator.columnNumber;
-    }
-    /**
-     * @see org.xml.sax.ContentHandler#startDocument
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html
-     */
-
-
-    DOMHandler.prototype = {
-      startDocument: function startDocument() {
-        this.doc = new DOMImplementation().createDocument(null, null, null);
-
-        if (this.locator) {
-          this.doc.documentURI = this.locator.systemId;
-        }
-      },
-      startElement: function startElement(namespaceURI, localName, qName, attrs) {
-        var doc = this.doc;
-        var el = doc.createElementNS(namespaceURI, qName || localName);
-        var len = attrs.length;
-        appendElement(this, el);
-        this.currentElement = el;
-        this.locator && position(this.locator, el);
-
-        for (var i = 0; i < len; i++) {
-          var namespaceURI = attrs.getURI(i);
-          var value = attrs.getValue(i);
-          var qName = attrs.getQName(i);
-          var attr = doc.createAttributeNS(namespaceURI, qName);
-          this.locator && position(attrs.getLocator(i), attr);
-          attr.value = attr.nodeValue = value;
-          el.setAttributeNode(attr);
-        }
-      },
-      endElement: function endElement(namespaceURI, localName, qName) {
-        var current = this.currentElement;
-        current.tagName;
-        this.currentElement = current.parentNode;
-      },
-      startPrefixMapping: function startPrefixMapping(prefix, uri) {},
-      endPrefixMapping: function endPrefixMapping(prefix) {},
-      processingInstruction: function processingInstruction(target, data) {
-        var ins = this.doc.createProcessingInstruction(target, data);
-        this.locator && position(this.locator, ins);
-        appendElement(this, ins);
-      },
-      ignorableWhitespace: function ignorableWhitespace(ch, start, length) {},
-      characters: function characters(chars, start, length) {
-        chars = _toString.apply(this, arguments); //console.log(chars)
-
-        if (chars) {
-          if (this.cdata) {
-            var charNode = this.doc.createCDATASection(chars);
-          } else {
-            var charNode = this.doc.createTextNode(chars);
-          }
-
-          if (this.currentElement) {
-            this.currentElement.appendChild(charNode);
-          } else if (/^\s*$/.test(chars)) {
-            this.doc.appendChild(charNode); //process xml
-          }
-
-          this.locator && position(this.locator, charNode);
-        }
-      },
-      skippedEntity: function skippedEntity(name) {},
-      endDocument: function endDocument() {
-        this.doc.normalize();
-      },
-      setDocumentLocator: function setDocumentLocator(locator) {
-        if (this.locator = locator) {
-          // && !('lineNumber' in locator)){
-          locator.lineNumber = 0;
-        }
-      },
-      //LexicalHandler
-      comment: function comment(chars, start, length) {
-        chars = _toString.apply(this, arguments);
-        var comm = this.doc.createComment(chars);
-        this.locator && position(this.locator, comm);
-        appendElement(this, comm);
-      },
-      startCDATA: function startCDATA() {
-        //used in characters() methods
-        this.cdata = true;
-      },
-      endCDATA: function endCDATA() {
-        this.cdata = false;
-      },
-      startDTD: function startDTD(name, publicId, systemId) {
-        var impl = this.doc.implementation;
-
-        if (impl && impl.createDocumentType) {
-          var dt = impl.createDocumentType(name, publicId, systemId);
-          this.locator && position(this.locator, dt);
-          appendElement(this, dt);
-        }
-      },
-
-      /**
-       * @see org.xml.sax.ErrorHandler
-       * @link http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html
-       */
-      warning: function warning(error) {
-        console.warn('[xmldom warning]\t' + error, _locator(this.locator));
-      },
-      error: function error(_error) {
-        console.error('[xmldom error]\t' + _error, _locator(this.locator));
-      },
-      fatalError: function fatalError(error) {
-        throw new ParseError(error, this.locator);
-      }
-    };
-
-    function _locator(l) {
-      if (l) {
-        return '\n@' + (l.systemId || '') + '#[line:' + l.lineNumber + ',col:' + l.columnNumber + ']';
-      }
-    }
-
-    function _toString(chars, start, length) {
-      if (typeof chars == 'string') {
-        return chars.substr(start, length);
-      } else {
-        //java sax connect width xmldom on rhino(what about: "? && !(chars instanceof String)")
-        if (chars.length >= start + length || start) {
-          return new java.lang.String(chars, start, length) + '';
-        }
-
-        return chars;
-      }
-    }
-    /*
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html
-     * used method of org.xml.sax.ext.LexicalHandler:
-     *  #comment(chars, start, length)
-     *  #startCDATA()
-     *  #endCDATA()
-     *  #startDTD(name, publicId, systemId)
-     *
-     *
-     * IGNORED method of org.xml.sax.ext.LexicalHandler:
-     *  #endDTD()
-     *  #startEntity(name)
-     *  #endEntity(name)
-     *
-     *
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/DeclHandler.html
-     * IGNORED method of org.xml.sax.ext.DeclHandler
-     * 	#attributeDecl(eName, aName, type, mode, value)
-     *  #elementDecl(name, model)
-     *  #externalEntityDecl(name, publicId, systemId)
-     *  #internalEntityDecl(name, value)
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/EntityResolver2.html
-     * IGNORED method of org.xml.sax.EntityResolver2
-     *  #resolveEntity(String name,String publicId,String baseURI,String systemId)
-     *  #resolveEntity(publicId, systemId)
-     *  #getExternalSubset(name, baseURI)
-     * @link http://www.saxproject.org/apidoc/org/xml/sax/DTDHandler.html
-     * IGNORED method of org.xml.sax.DTDHandler
-     *  #notationDecl(name, publicId, systemId) {};
-     *  #unparsedEntityDecl(name, publicId, systemId, notationName) {};
-     */
-
-
-    "endDTD,startEntity,endEntity,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,resolveEntity,getExternalSubset,notationDecl,unparsedEntityDecl".replace(/\w+/g, function (key) {
-      DOMHandler.prototype[key] = function () {
-        return null;
-      };
+    exports.XML_ENTITIES = freeze({
+      amp: '&',
+      apos: "'",
+      gt: '>',
+      lt: '<',
+      quot: '"'
     });
-    /* Private static helpers treated below as private instance methods, so don't need to add these to the public API; we might use a Relator to also get rid of non-standard public properties */
+    /**
+     * A map of currently 241 entities that are detected in an HTML document.
+     * They contain all entries from `XML_ENTITIES`.
+     *
+     * @see XML_ENTITIES
+     * @see DOMParser.parseFromString
+     * @see DOMImplementation.prototype.createHTMLDocument
+     * @see https://html.spec.whatwg.org/#named-character-references WHATWG HTML(5) Spec
+     * @see https://www.w3.org/TR/xml-entity-names/ W3C XML Entity Names
+     * @see https://www.w3.org/TR/html4/sgml/entities.html W3C HTML4/SGML
+     * @see https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Character_entity_references_in_HTML Wikipedia (HTML)
+     * @see https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Entities_representing_special_characters_in_XHTML Wikpedia (XHTML)
+     */
 
-    function appendElement(hander, node) {
-      if (!hander.currentElement) {
-        hander.doc.appendChild(node);
-      } else {
-        hander.currentElement.appendChild(node);
-      }
-    } //appendChild and setAttributeNS are preformance key
-    //if(typeof require == 'function'){
+    exports.HTML_ENTITIES = freeze({
+      lt: '<',
+      gt: '>',
+      amp: '&',
+      quot: '"',
+      apos: "'",
+      Agrave: "À",
+      Aacute: "Á",
+      Acirc: "Â",
+      Atilde: "Ã",
+      Auml: "Ä",
+      Aring: "Å",
+      AElig: "Æ",
+      Ccedil: "Ç",
+      Egrave: "È",
+      Eacute: "É",
+      Ecirc: "Ê",
+      Euml: "Ë",
+      Igrave: "Ì",
+      Iacute: "Í",
+      Icirc: "Î",
+      Iuml: "Ï",
+      ETH: "Ð",
+      Ntilde: "Ñ",
+      Ograve: "Ò",
+      Oacute: "Ó",
+      Ocirc: "Ô",
+      Otilde: "Õ",
+      Ouml: "Ö",
+      Oslash: "Ø",
+      Ugrave: "Ù",
+      Uacute: "Ú",
+      Ucirc: "Û",
+      Uuml: "Ü",
+      Yacute: "Ý",
+      THORN: "Þ",
+      szlig: "ß",
+      agrave: "à",
+      aacute: "á",
+      acirc: "â",
+      atilde: "ã",
+      auml: "ä",
+      aring: "å",
+      aelig: "æ",
+      ccedil: "ç",
+      egrave: "è",
+      eacute: "é",
+      ecirc: "ê",
+      euml: "ë",
+      igrave: "ì",
+      iacute: "í",
+      icirc: "î",
+      iuml: "ï",
+      eth: "ð",
+      ntilde: "ñ",
+      ograve: "ò",
+      oacute: "ó",
+      ocirc: "ô",
+      otilde: "õ",
+      ouml: "ö",
+      oslash: "ø",
+      ugrave: "ù",
+      uacute: "ú",
+      ucirc: "û",
+      uuml: "ü",
+      yacute: "ý",
+      thorn: "þ",
+      yuml: "ÿ",
+      nbsp: "\xA0",
+      iexcl: "¡",
+      cent: "¢",
+      pound: "£",
+      curren: "¤",
+      yen: "¥",
+      brvbar: "¦",
+      sect: "§",
+      uml: "¨",
+      copy: "©",
+      ordf: "ª",
+      laquo: "«",
+      not: "¬",
+      shy: "­­",
+      reg: "®",
+      macr: "¯",
+      deg: "°",
+      plusmn: "±",
+      sup2: "²",
+      sup3: "³",
+      acute: "´",
+      micro: "µ",
+      para: "¶",
+      middot: "·",
+      cedil: "¸",
+      sup1: "¹",
+      ordm: "º",
+      raquo: "»",
+      frac14: "¼",
+      frac12: "½",
+      frac34: "¾",
+      iquest: "¿",
+      times: "×",
+      divide: "÷",
+      forall: "∀",
+      part: "∂",
+      exist: "∃",
+      empty: "∅",
+      nabla: "∇",
+      isin: "∈",
+      notin: "∉",
+      ni: "∋",
+      prod: "∏",
+      sum: "∑",
+      minus: "−",
+      lowast: "∗",
+      radic: "√",
+      prop: "∝",
+      infin: "∞",
+      ang: "∠",
+      and: "∧",
+      or: "∨",
+      cap: "∩",
+      cup: "∪",
+      'int': "∫",
+      there4: "∴",
+      sim: "∼",
+      cong: "≅",
+      asymp: "≈",
+      ne: "≠",
+      equiv: "≡",
+      le: "≤",
+      ge: "≥",
+      sub: "⊂",
+      sup: "⊃",
+      nsub: "⊄",
+      sube: "⊆",
+      supe: "⊇",
+      oplus: "⊕",
+      otimes: "⊗",
+      perp: "⊥",
+      sdot: "⋅",
+      Alpha: "Α",
+      Beta: "Β",
+      Gamma: "Γ",
+      Delta: "Δ",
+      Epsilon: "Ε",
+      Zeta: "Ζ",
+      Eta: "Η",
+      Theta: "Θ",
+      Iota: "Ι",
+      Kappa: "Κ",
+      Lambda: "Λ",
+      Mu: "Μ",
+      Nu: "Ν",
+      Xi: "Ξ",
+      Omicron: "Ο",
+      Pi: "Π",
+      Rho: "Ρ",
+      Sigma: "Σ",
+      Tau: "Τ",
+      Upsilon: "Υ",
+      Phi: "Φ",
+      Chi: "Χ",
+      Psi: "Ψ",
+      Omega: "Ω",
+      alpha: "α",
+      beta: "β",
+      gamma: "γ",
+      delta: "δ",
+      epsilon: "ε",
+      zeta: "ζ",
+      eta: "η",
+      theta: "θ",
+      iota: "ι",
+      kappa: "κ",
+      lambda: "λ",
+      mu: "μ",
+      nu: "ν",
+      xi: "ξ",
+      omicron: "ο",
+      pi: "π",
+      rho: "ρ",
+      sigmaf: "ς",
+      sigma: "σ",
+      tau: "τ",
+      upsilon: "υ",
+      phi: "φ",
+      chi: "χ",
+      psi: "ψ",
+      omega: "ω",
+      thetasym: "ϑ",
+      upsih: "ϒ",
+      piv: "ϖ",
+      OElig: "Œ",
+      oelig: "œ",
+      Scaron: "Š",
+      scaron: "š",
+      Yuml: "Ÿ",
+      fnof: "ƒ",
+      circ: "ˆ",
+      tilde: "˜",
+      ensp: " ",
+      emsp: " ",
+      thinsp: " ",
+      zwnj: "‌",
+      zwj: "‍",
+      lrm: "‎",
+      rlm: "‏",
+      ndash: "–",
+      mdash: "—",
+      lsquo: "‘",
+      rsquo: "’",
+      sbquo: "‚",
+      ldquo: "“",
+      rdquo: "”",
+      bdquo: "„",
+      dagger: "†",
+      Dagger: "‡",
+      bull: "•",
+      hellip: "…",
+      permil: "‰",
+      prime: "′",
+      Prime: "″",
+      lsaquo: "‹",
+      rsaquo: "›",
+      oline: "‾",
+      euro: "€",
+      trade: "™",
+      larr: "←",
+      uarr: "↑",
+      rarr: "→",
+      darr: "↓",
+      harr: "↔",
+      crarr: "↵",
+      lceil: "⌈",
+      rceil: "⌉",
+      lfloor: "⌊",
+      rfloor: "⌋",
+      loz: "◊",
+      spades: "♠",
+      clubs: "♣",
+      hearts: "♥",
+      diams: "♦"
+    });
+    /**
+     * @deprecated use `HTML_ENTITIES` instead
+     * @see HTML_ENTITIES
+     */
 
-
-    var XMLReader = sax.XMLReader;
-    var ParseError = sax.ParseError;
-    var DOMImplementation = exports.DOMImplementation = dom.DOMImplementation;
-    exports.XMLSerializer = dom.XMLSerializer;
-    exports.DOMParser = DOMParser;
-    exports.__DOMHandler = DOMHandler; //}
+    exports.entityMap = exports.HTML_ENTITIES;
   });
-  domParser.DOMImplementation;
-  domParser.XMLSerializer;
-  var domParser_3 = domParser.DOMParser;
-  domParser.__DOMHandler;
+  entities.XML_ENTITIES;
+  entities.HTML_ENTITIES;
+  entities.entityMap;
 
-  /*! @name mpd-parser @version 0.17.0 @license Apache-2.0 */
+  var NAMESPACE$1 = conventions.NAMESPACE; //[4]   	NameStartChar	   ::=   	":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+  //[4a]   	NameChar	   ::=   	NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
+  //[5]   	Name	   ::=   	NameStartChar (NameChar)*
+
+  var nameStartChar = /[A-Z_a-z\xC0-\xD6\xD8-\xF6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/; //\u10000-\uEFFFF
+
+  var nameChar = new RegExp("[\\-\\.0-9" + nameStartChar.source.slice(1, -1) + "\\u00B7\\u0300-\\u036F\\u203F-\\u2040]");
+  var tagNamePattern = new RegExp('^' + nameStartChar.source + nameChar.source + '*(?:\:' + nameStartChar.source + nameChar.source + '*)?$'); //var tagNamePattern = /^[a-zA-Z_][\w\-\.]*(?:\:[a-zA-Z_][\w\-\.]*)?$/
+  //var handlers = 'resolveEntity,getExternalSubset,characters,endDocument,endElement,endPrefixMapping,ignorableWhitespace,processingInstruction,setDocumentLocator,skippedEntity,startDocument,startElement,startPrefixMapping,notationDecl,unparsedEntityDecl,error,fatalError,warning,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,comment,endCDATA,endDTD,endEntity,startCDATA,startDTD,startEntity'.split(',')
+  //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+  //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+
+  var S_TAG = 0; //tag name offerring
+
+  var S_ATTR = 1; //attr name offerring 
+
+  var S_ATTR_SPACE = 2; //attr name end and space offer
+
+  var S_EQ = 3; //=space?
+
+  var S_ATTR_NOQUOT_VALUE = 4; //attr value(no quot value only)
+
+  var S_ATTR_END = 5; //attr value end and no space(quot end)
+
+  var S_TAG_SPACE = 6; //(attr value end || tag end ) && (space offer)
+
+  var S_TAG_CLOSE = 7; //closed el<el />
+
+  /**
+   * Creates an error that will not be caught by XMLReader aka the SAX parser.
+   *
+   * @param {string} message
+   * @param {any?} locator Optional, can provide details about the location in the source
+   * @constructor
+   */
+
+  function ParseError$1(message, locator) {
+    this.message = message;
+    this.locator = locator;
+    if (Error.captureStackTrace) Error.captureStackTrace(this, ParseError$1);
+  }
+
+  ParseError$1.prototype = new Error();
+  ParseError$1.prototype.name = ParseError$1.name;
+
+  function XMLReader$1() {}
+
+  XMLReader$1.prototype = {
+    parse: function parse(source, defaultNSMap, entityMap) {
+      var domBuilder = this.domBuilder;
+      domBuilder.startDocument();
+
+      _copy(defaultNSMap, defaultNSMap = {});
+
+      _parse(source, defaultNSMap, entityMap, domBuilder, this.errorHandler);
+
+      domBuilder.endDocument();
+    }
+  };
+
+  function _parse(source, defaultNSMapCopy, entityMap, domBuilder, errorHandler) {
+    function fixedFromCharCode(code) {
+      // String.prototype.fromCharCode does not supports
+      // > 2 bytes unicode chars directly
+      if (code > 0xffff) {
+        code -= 0x10000;
+        var surrogate1 = 0xd800 + (code >> 10),
+            surrogate2 = 0xdc00 + (code & 0x3ff);
+        return String.fromCharCode(surrogate1, surrogate2);
+      } else {
+        return String.fromCharCode(code);
+      }
+    }
+
+    function entityReplacer(a) {
+      var k = a.slice(1, -1);
+
+      if (k in entityMap) {
+        return entityMap[k];
+      } else if (k.charAt(0) === '#') {
+        return fixedFromCharCode(parseInt(k.substr(1).replace('x', '0x')));
+      } else {
+        errorHandler.error('entity not found:' + a);
+        return a;
+      }
+    }
+
+    function appendText(end) {
+      //has some bugs
+      if (end > start) {
+        var xt = source.substring(start, end).replace(/&#?\w+;/g, entityReplacer);
+        locator && position(start);
+        domBuilder.characters(xt, 0, end - start);
+        start = end;
+      }
+    }
+
+    function position(p, m) {
+      while (p >= lineEnd && (m = linePattern.exec(source))) {
+        lineStart = m.index;
+        lineEnd = lineStart + m[0].length;
+        locator.lineNumber++; //console.log('line++:',locator,startPos,endPos)
+      }
+
+      locator.columnNumber = p - lineStart + 1;
+    }
+
+    var lineStart = 0;
+    var lineEnd = 0;
+    var linePattern = /.*(?:\r\n?|\n)|.*$/g;
+    var locator = domBuilder.locator;
+    var parseStack = [{
+      currentNSMap: defaultNSMapCopy
+    }];
+    var closeMap = {};
+    var start = 0;
+
+    while (true) {
+      try {
+        var tagStart = source.indexOf('<', start);
+
+        if (tagStart < 0) {
+          if (!source.substr(start).match(/^\s*$/)) {
+            var doc = domBuilder.doc;
+            var text = doc.createTextNode(source.substr(start));
+            doc.appendChild(text);
+            domBuilder.currentElement = text;
+          }
+
+          return;
+        }
+
+        if (tagStart > start) {
+          appendText(tagStart);
+        }
+
+        switch (source.charAt(tagStart + 1)) {
+          case '/':
+            var end = source.indexOf('>', tagStart + 3);
+            var tagName = source.substring(tagStart + 2, end).replace(/[ \t\n\r]+$/g, '');
+            var config = parseStack.pop();
+
+            if (end < 0) {
+              tagName = source.substring(tagStart + 2).replace(/[\s<].*/, '');
+              errorHandler.error("end tag name: " + tagName + ' is not complete:' + config.tagName);
+              end = tagStart + 1 + tagName.length;
+            } else if (tagName.match(/\s</)) {
+              tagName = tagName.replace(/[\s<].*/, '');
+              errorHandler.error("end tag name: " + tagName + ' maybe not complete');
+              end = tagStart + 1 + tagName.length;
+            }
+
+            var localNSMap = config.localNSMap;
+            var endMatch = config.tagName == tagName;
+            var endIgnoreCaseMach = endMatch || config.tagName && config.tagName.toLowerCase() == tagName.toLowerCase();
+
+            if (endIgnoreCaseMach) {
+              domBuilder.endElement(config.uri, config.localName, tagName);
+
+              if (localNSMap) {
+                for (var prefix in localNSMap) {
+                  domBuilder.endPrefixMapping(prefix);
+                }
+              }
+
+              if (!endMatch) {
+                errorHandler.fatalError("end tag name: " + tagName + ' is not match the current start tagName:' + config.tagName); // No known test case
+              }
+            } else {
+              parseStack.push(config);
+            }
+
+            end++;
+            break;
+          // end elment
+
+          case '?':
+            // <?...?>
+            locator && position(tagStart);
+            end = parseInstruction(source, tagStart, domBuilder);
+            break;
+
+          case '!':
+            // <!doctype,<![CDATA,<!--
+            locator && position(tagStart);
+            end = parseDCC(source, tagStart, domBuilder, errorHandler);
+            break;
+
+          default:
+            locator && position(tagStart);
+            var el = new ElementAttributes();
+            var currentNSMap = parseStack[parseStack.length - 1].currentNSMap; //elStartEnd
+
+            var end = parseElementStartPart(source, tagStart, el, currentNSMap, entityReplacer, errorHandler);
+            var len = el.length;
+
+            if (!el.closed && fixSelfClosed(source, end, el.tagName, closeMap)) {
+              el.closed = true;
+
+              if (!entityMap.nbsp) {
+                errorHandler.warning('unclosed xml attribute');
+              }
+            }
+
+            if (locator && len) {
+              var locator2 = copyLocator(locator, {}); //try{//attribute position fixed
+
+              for (var i = 0; i < len; i++) {
+                var a = el[i];
+                position(a.offset);
+                a.locator = copyLocator(locator, {});
+              }
+
+              domBuilder.locator = locator2;
+
+              if (appendElement$1(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+
+              domBuilder.locator = locator;
+            } else {
+              if (appendElement$1(el, domBuilder, currentNSMap)) {
+                parseStack.push(el);
+              }
+            }
+
+            if (NAMESPACE$1.isHTML(el.uri) && !el.closed) {
+              end = parseHtmlSpecialContent(source, end, el.tagName, entityReplacer, domBuilder);
+            } else {
+              end++;
+            }
+
+        }
+      } catch (e) {
+        if (e instanceof ParseError$1) {
+          throw e;
+        }
+
+        errorHandler.error('element parse error: ' + e);
+        end = -1;
+      }
+
+      if (end > start) {
+        start = end;
+      } else {
+        //TODO: 这里有可能sax回退，有位置错误风险
+        appendText(Math.max(tagStart, start) + 1);
+      }
+    }
+  }
+
+  function copyLocator(f, t) {
+    t.lineNumber = f.lineNumber;
+    t.columnNumber = f.columnNumber;
+    return t;
+  }
+  /**
+   * @see #appendElement(source,elStartEnd,el,selfClosed,entityReplacer,domBuilder,parseStack);
+   * @return end of the elementStartPart(end of elementEndPart for selfClosed el)
+   */
+
+
+  function parseElementStartPart(source, start, el, currentNSMap, entityReplacer, errorHandler) {
+    /**
+     * @param {string} qname
+     * @param {string} value
+     * @param {number} startIndex
+     */
+    function addAttribute(qname, value, startIndex) {
+      if (el.attributeNames.hasOwnProperty(qname)) {
+        errorHandler.fatalError('Attribute ' + qname + ' redefined');
+      }
+
+      el.addValue(qname, value, startIndex);
+    }
+
+    var attrName;
+    var value;
+    var p = ++start;
+    var s = S_TAG; //status
+
+    while (true) {
+      var c = source.charAt(p);
+
+      switch (c) {
+        case '=':
+          if (s === S_ATTR) {
+            //attrName
+            attrName = source.slice(start, p);
+            s = S_EQ;
+          } else if (s === S_ATTR_SPACE) {
+            s = S_EQ;
+          } else {
+            //fatalError: equal must after attrName or space after attrName
+            throw new Error('attribute equal must after attrName'); // No known test case
+          }
+
+          break;
+
+        case '\'':
+        case '"':
+          if (s === S_EQ || s === S_ATTR //|| s == S_ATTR_SPACE
+          ) {
+              //equal
+              if (s === S_ATTR) {
+                errorHandler.warning('attribute value must after "="');
+                attrName = source.slice(start, p);
+              }
+
+              start = p + 1;
+              p = source.indexOf(c, start);
+
+              if (p > 0) {
+                value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                addAttribute(attrName, value, start - 1);
+                s = S_ATTR_END;
+              } else {
+                //fatalError: no end quot match
+                throw new Error('attribute value no end \'' + c + '\' match');
+              }
+            } else if (s == S_ATTR_NOQUOT_VALUE) {
+            value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer); //console.log(attrName,value,start,p)
+
+            addAttribute(attrName, value, start); //console.dir(el)
+
+            errorHandler.warning('attribute "' + attrName + '" missed start quot(' + c + ')!!');
+            start = p + 1;
+            s = S_ATTR_END;
+          } else {
+            //fatalError: no equal before
+            throw new Error('attribute value must after "="'); // No known test case
+          }
+
+          break;
+
+        case '/':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              s = S_TAG_CLOSE;
+              el.closed = true;
+
+            case S_ATTR_NOQUOT_VALUE:
+            case S_ATTR:
+            case S_ATTR_SPACE:
+              break;
+            //case S_EQ:
+
+            default:
+              throw new Error("attribute invalid close char('/')");
+            // No known test case
+          }
+
+          break;
+
+        case '':
+          //end document
+          errorHandler.error('unexpected end of input');
+
+          if (s == S_TAG) {
+            el.setTagName(source.slice(start, p));
+          }
+
+          return p;
+
+        case '>':
+          switch (s) {
+            case S_TAG:
+              el.setTagName(source.slice(start, p));
+
+            case S_ATTR_END:
+            case S_TAG_SPACE:
+            case S_TAG_CLOSE:
+              break;
+            //normal
+
+            case S_ATTR_NOQUOT_VALUE: //Compatible state
+
+            case S_ATTR:
+              value = source.slice(start, p);
+
+              if (value.slice(-1) === '/') {
+                el.closed = true;
+                value = value.slice(0, -1);
+              }
+
+            case S_ATTR_SPACE:
+              if (s === S_ATTR_SPACE) {
+                value = attrName;
+              }
+
+              if (s == S_ATTR_NOQUOT_VALUE) {
+                errorHandler.warning('attribute "' + value + '" missed quot(")!');
+                addAttribute(attrName, value.replace(/&#?\w+;/g, entityReplacer), start);
+              } else {
+                if (!NAMESPACE$1.isHTML(currentNSMap['']) || !value.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + value + '" missed value!! "' + value + '" instead!!');
+                }
+
+                addAttribute(value, value, start);
+              }
+
+              break;
+
+            case S_EQ:
+              throw new Error('attribute value missed!!');
+          } //			console.log(tagName,tagNamePattern,tagNamePattern.test(tagName))
+
+
+          return p;
+
+        /*xml space '\x20' | #x9 | #xD | #xA; */
+
+        case "\x80":
+          c = ' ';
+
+        default:
+          if (c <= ' ') {
+            //space
+            switch (s) {
+              case S_TAG:
+                el.setTagName(source.slice(start, p)); //tagName
+
+                s = S_TAG_SPACE;
+                break;
+
+              case S_ATTR:
+                attrName = source.slice(start, p);
+                s = S_ATTR_SPACE;
+                break;
+
+              case S_ATTR_NOQUOT_VALUE:
+                var value = source.slice(start, p).replace(/&#?\w+;/g, entityReplacer);
+                errorHandler.warning('attribute "' + value + '" missed quot(")!!');
+                addAttribute(attrName, value, start);
+
+              case S_ATTR_END:
+                s = S_TAG_SPACE;
+                break;
+              //case S_TAG_SPACE:
+              //case S_EQ:
+              //case S_ATTR_SPACE:
+              //	void();break;
+              //case S_TAG_CLOSE:
+              //ignore warning
+            }
+          } else {
+            //not space
+            //S_TAG,	S_ATTR,	S_EQ,	S_ATTR_NOQUOT_VALUE
+            //S_ATTR_SPACE,	S_ATTR_END,	S_TAG_SPACE, S_TAG_CLOSE
+            switch (s) {
+              //case S_TAG:void();break;
+              //case S_ATTR:void();break;
+              //case S_ATTR_NOQUOT_VALUE:void();break;
+              case S_ATTR_SPACE:
+                el.tagName;
+
+                if (!NAMESPACE$1.isHTML(currentNSMap['']) || !attrName.match(/^(?:disabled|checked|selected)$/i)) {
+                  errorHandler.warning('attribute "' + attrName + '" missed value!! "' + attrName + '" instead2!!');
+                }
+
+                addAttribute(attrName, attrName, start);
+                start = p;
+                s = S_ATTR;
+                break;
+
+              case S_ATTR_END:
+                errorHandler.warning('attribute space is required"' + attrName + '"!!');
+
+              case S_TAG_SPACE:
+                s = S_ATTR;
+                start = p;
+                break;
+
+              case S_EQ:
+                s = S_ATTR_NOQUOT_VALUE;
+                start = p;
+                break;
+
+              case S_TAG_CLOSE:
+                throw new Error("elements closed character '/' and '>' must be connected to");
+            }
+          }
+
+      } //end outer switch
+      //console.log('p++',p)
+
+
+      p++;
+    }
+  }
+  /**
+   * @return true if has new namespace define
+   */
+
+
+  function appendElement$1(el, domBuilder, currentNSMap) {
+    var tagName = el.tagName;
+    var localNSMap = null; //var currentNSMap = parseStack[parseStack.length-1].currentNSMap;
+
+    var i = el.length;
+
+    while (i--) {
+      var a = el[i];
+      var qName = a.qName;
+      var value = a.value;
+      var nsp = qName.indexOf(':');
+
+      if (nsp > 0) {
+        var prefix = a.prefix = qName.slice(0, nsp);
+        var localName = qName.slice(nsp + 1);
+        var nsPrefix = prefix === 'xmlns' && localName;
+      } else {
+        localName = qName;
+        prefix = null;
+        nsPrefix = qName === 'xmlns' && '';
+      } //can not set prefix,because prefix !== ''
+
+
+      a.localName = localName; //prefix == null for no ns prefix attribute 
+
+      if (nsPrefix !== false) {
+        //hack!!
+        if (localNSMap == null) {
+          localNSMap = {}; //console.log(currentNSMap,0)
+
+          _copy(currentNSMap, currentNSMap = {}); //console.log(currentNSMap,1)
+
+        }
+
+        currentNSMap[nsPrefix] = localNSMap[nsPrefix] = value;
+        a.uri = NAMESPACE$1.XMLNS;
+        domBuilder.startPrefixMapping(nsPrefix, value);
+      }
+    }
+
+    var i = el.length;
+
+    while (i--) {
+      a = el[i];
+      var prefix = a.prefix;
+
+      if (prefix) {
+        //no prefix attribute has no namespace
+        if (prefix === 'xml') {
+          a.uri = NAMESPACE$1.XML;
+        }
+
+        if (prefix !== 'xmlns') {
+          a.uri = currentNSMap[prefix || '']; //{console.log('###'+a.qName,domBuilder.locator.systemId+'',currentNSMap,a.uri)}
+        }
+      }
+    }
+
+    var nsp = tagName.indexOf(':');
+
+    if (nsp > 0) {
+      prefix = el.prefix = tagName.slice(0, nsp);
+      localName = el.localName = tagName.slice(nsp + 1);
+    } else {
+      prefix = null; //important!!
+
+      localName = el.localName = tagName;
+    } //no prefix element has default namespace
+
+
+    var ns = el.uri = currentNSMap[prefix || ''];
+    domBuilder.startElement(ns, localName, tagName, el); //endPrefixMapping and startPrefixMapping have not any help for dom builder
+    //localNSMap = null
+
+    if (el.closed) {
+      domBuilder.endElement(ns, localName, tagName);
+
+      if (localNSMap) {
+        for (prefix in localNSMap) {
+          domBuilder.endPrefixMapping(prefix);
+        }
+      }
+    } else {
+      el.currentNSMap = currentNSMap;
+      el.localNSMap = localNSMap; //parseStack.push(el);
+
+      return true;
+    }
+  }
+
+  function parseHtmlSpecialContent(source, elStartEnd, tagName, entityReplacer, domBuilder) {
+    if (/^(?:script|textarea)$/i.test(tagName)) {
+      var elEndStart = source.indexOf('</' + tagName + '>', elStartEnd);
+      var text = source.substring(elStartEnd + 1, elEndStart);
+
+      if (/[&<]/.test(text)) {
+        if (/^script$/i.test(tagName)) {
+          //if(!/\]\]>/.test(text)){
+          //lexHandler.startCDATA();
+          domBuilder.characters(text, 0, text.length); //lexHandler.endCDATA();
+
+          return elEndStart; //}
+        } //}else{//text area
+
+
+        text = text.replace(/&#?\w+;/g, entityReplacer);
+        domBuilder.characters(text, 0, text.length);
+        return elEndStart; //}
+      }
+    }
+
+    return elStartEnd + 1;
+  }
+
+  function fixSelfClosed(source, elStartEnd, tagName, closeMap) {
+    //if(tagName in closeMap){
+    var pos = closeMap[tagName];
+
+    if (pos == null) {
+      //console.log(tagName)
+      pos = source.lastIndexOf('</' + tagName + '>');
+
+      if (pos < elStartEnd) {
+        //忘记闭合
+        pos = source.lastIndexOf('</' + tagName);
+      }
+
+      closeMap[tagName] = pos;
+    }
+
+    return pos < elStartEnd; //} 
+  }
+
+  function _copy(source, target) {
+    for (var n in source) {
+      target[n] = source[n];
+    }
+  }
+
+  function parseDCC(source, start, domBuilder, errorHandler) {
+    //sure start with '<!'
+    var next = source.charAt(start + 2);
+
+    switch (next) {
+      case '-':
+        if (source.charAt(start + 3) === '-') {
+          var end = source.indexOf('-->', start + 4); //append comment source.substring(4,end)//<!--
+
+          if (end > start) {
+            domBuilder.comment(source, start + 4, end - start - 4);
+            return end + 3;
+          } else {
+            errorHandler.error("Unclosed comment");
+            return -1;
+          }
+        } else {
+          //error
+          return -1;
+        }
+
+      default:
+        if (source.substr(start + 3, 6) == 'CDATA[') {
+          var end = source.indexOf(']]>', start + 9);
+          domBuilder.startCDATA();
+          domBuilder.characters(source, start + 9, end - start - 9);
+          domBuilder.endCDATA();
+          return end + 3;
+        } //<!DOCTYPE
+        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId) 
+
+
+        var matchs = split(source, start);
+        var len = matchs.length;
+
+        if (len > 1 && /!doctype/i.test(matchs[0][0])) {
+          var name = matchs[1][0];
+          var pubid = false;
+          var sysid = false;
+
+          if (len > 3) {
+            if (/^public$/i.test(matchs[2][0])) {
+              pubid = matchs[3][0];
+              sysid = len > 4 && matchs[4][0];
+            } else if (/^system$/i.test(matchs[2][0])) {
+              sysid = matchs[3][0];
+            }
+          }
+
+          var lastMatch = matchs[len - 1];
+          domBuilder.startDTD(name, pubid, sysid);
+          domBuilder.endDTD();
+          return lastMatch.index + lastMatch[0].length;
+        }
+
+    }
+
+    return -1;
+  }
+
+  function parseInstruction(source, start, domBuilder) {
+    var end = source.indexOf('?>', start);
+
+    if (end) {
+      var match = source.substring(start, end).match(/^<\?(\S*)\s*([\s\S]*?)\s*$/);
+
+      if (match) {
+        match[0].length;
+        domBuilder.processingInstruction(match[1], match[2]);
+        return end + 2;
+      } else {
+        //error
+        return -1;
+      }
+    }
+
+    return -1;
+  }
+
+  function ElementAttributes() {
+    this.attributeNames = {};
+  }
+
+  ElementAttributes.prototype = {
+    setTagName: function setTagName(tagName) {
+      if (!tagNamePattern.test(tagName)) {
+        throw new Error('invalid tagName:' + tagName);
+      }
+
+      this.tagName = tagName;
+    },
+    addValue: function addValue(qName, value, offset) {
+      if (!tagNamePattern.test(qName)) {
+        throw new Error('invalid attribute:' + qName);
+      }
+
+      this.attributeNames[qName] = this.length;
+      this[this.length++] = {
+        qName: qName,
+        value: value,
+        offset: offset
+      };
+    },
+    length: 0,
+    getLocalName: function getLocalName(i) {
+      return this[i].localName;
+    },
+    getLocator: function getLocator(i) {
+      return this[i].locator;
+    },
+    getQName: function getQName(i) {
+      return this[i].qName;
+    },
+    getURI: function getURI(i) {
+      return this[i].uri;
+    },
+    getValue: function getValue(i) {
+      return this[i].value;
+    } //	,getIndex:function(uri, localName)){
+    //		if(localName){
+    //			
+    //		}else{
+    //			var qName = uri
+    //		}
+    //	},
+    //	getValue:function(){return this.getValue(this.getIndex.apply(this,arguments))},
+    //	getType:function(uri,localName){}
+    //	getType:function(i){},
+
+  };
+
+  function split(source, start) {
+    var match;
+    var buf = [];
+    var reg = /'[^']+'|"[^"]+"|[^\s<>\/=]+=?|(\/?\s*>|<)/g;
+    reg.lastIndex = start;
+    reg.exec(source); //skip <
+
+    while (match = reg.exec(source)) {
+      buf.push(match);
+      if (match[1]) return buf;
+    }
+  }
+
+  var XMLReader_1 = XMLReader$1;
+  var ParseError_1 = ParseError$1;
+  var sax = {
+    XMLReader: XMLReader_1,
+    ParseError: ParseError_1
+  };
+
+  var DOMImplementation = dom.DOMImplementation;
+  var NAMESPACE = conventions.NAMESPACE;
+  var ParseError = sax.ParseError;
+  var XMLReader = sax.XMLReader;
+
+  function DOMParser$1(options) {
+    this.options = options || {
+      locator: {}
+    };
+  }
+
+  DOMParser$1.prototype.parseFromString = function (source, mimeType) {
+    var options = this.options;
+    var sax = new XMLReader();
+    var domBuilder = options.domBuilder || new DOMHandler(); //contentHandler and LexicalHandler
+
+    var errorHandler = options.errorHandler;
+    var locator = options.locator;
+    var defaultNSMap = options.xmlns || {};
+    var isHTML = /\/x?html?$/.test(mimeType); //mimeType.toLowerCase().indexOf('html') > -1;
+
+    var entityMap = isHTML ? entities.HTML_ENTITIES : entities.XML_ENTITIES;
+
+    if (locator) {
+      domBuilder.setDocumentLocator(locator);
+    }
+
+    sax.errorHandler = buildErrorHandler(errorHandler, domBuilder, locator);
+    sax.domBuilder = options.domBuilder || domBuilder;
+
+    if (isHTML) {
+      defaultNSMap[''] = NAMESPACE.HTML;
+    }
+
+    defaultNSMap.xml = defaultNSMap.xml || NAMESPACE.XML;
+
+    if (source && typeof source === 'string') {
+      sax.parse(source, defaultNSMap, entityMap);
+    } else {
+      sax.errorHandler.error("invalid doc source");
+    }
+
+    return domBuilder.doc;
+  };
+
+  function buildErrorHandler(errorImpl, domBuilder, locator) {
+    if (!errorImpl) {
+      if (domBuilder instanceof DOMHandler) {
+        return domBuilder;
+      }
+
+      errorImpl = domBuilder;
+    }
+
+    var errorHandler = {};
+    var isCallback = errorImpl instanceof Function;
+    locator = locator || {};
+
+    function build(key) {
+      var fn = errorImpl[key];
+
+      if (!fn && isCallback) {
+        fn = errorImpl.length == 2 ? function (msg) {
+          errorImpl(key, msg);
+        } : errorImpl;
+      }
+
+      errorHandler[key] = fn && function (msg) {
+        fn('[xmldom ' + key + ']\t' + msg + _locator(locator));
+      } || function () {};
+    }
+
+    build('warning');
+    build('error');
+    build('fatalError');
+    return errorHandler;
+  } //console.log('#\n\n\n\n\n\n\n####')
+
+  /**
+   * +ContentHandler+ErrorHandler
+   * +LexicalHandler+EntityResolver2
+   * -DeclHandler-DTDHandler
+   *
+   * DefaultHandler:EntityResolver, DTDHandler, ContentHandler, ErrorHandler
+   * DefaultHandler2:DefaultHandler,LexicalHandler, DeclHandler, EntityResolver2
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/helpers/DefaultHandler.html
+   */
+
+
+  function DOMHandler() {
+    this.cdata = false;
+  }
+
+  function position(locator, node) {
+    node.lineNumber = locator.lineNumber;
+    node.columnNumber = locator.columnNumber;
+  }
+  /**
+   * @see org.xml.sax.ContentHandler#startDocument
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/ContentHandler.html
+   */
+
+
+  DOMHandler.prototype = {
+    startDocument: function startDocument() {
+      this.doc = new DOMImplementation().createDocument(null, null, null);
+
+      if (this.locator) {
+        this.doc.documentURI = this.locator.systemId;
+      }
+    },
+    startElement: function startElement(namespaceURI, localName, qName, attrs) {
+      var doc = this.doc;
+      var el = doc.createElementNS(namespaceURI, qName || localName);
+      var len = attrs.length;
+      appendElement(this, el);
+      this.currentElement = el;
+      this.locator && position(this.locator, el);
+
+      for (var i = 0; i < len; i++) {
+        var namespaceURI = attrs.getURI(i);
+        var value = attrs.getValue(i);
+        var qName = attrs.getQName(i);
+        var attr = doc.createAttributeNS(namespaceURI, qName);
+        this.locator && position(attrs.getLocator(i), attr);
+        attr.value = attr.nodeValue = value;
+        el.setAttributeNode(attr);
+      }
+    },
+    endElement: function endElement(namespaceURI, localName, qName) {
+      var current = this.currentElement;
+      current.tagName;
+      this.currentElement = current.parentNode;
+    },
+    startPrefixMapping: function startPrefixMapping(prefix, uri) {},
+    endPrefixMapping: function endPrefixMapping(prefix) {},
+    processingInstruction: function processingInstruction(target, data) {
+      var ins = this.doc.createProcessingInstruction(target, data);
+      this.locator && position(this.locator, ins);
+      appendElement(this, ins);
+    },
+    ignorableWhitespace: function ignorableWhitespace(ch, start, length) {},
+    characters: function characters(chars, start, length) {
+      chars = _toString.apply(this, arguments); //console.log(chars)
+
+      if (chars) {
+        if (this.cdata) {
+          var charNode = this.doc.createCDATASection(chars);
+        } else {
+          var charNode = this.doc.createTextNode(chars);
+        }
+
+        if (this.currentElement) {
+          this.currentElement.appendChild(charNode);
+        } else if (/^\s*$/.test(chars)) {
+          this.doc.appendChild(charNode); //process xml
+        }
+
+        this.locator && position(this.locator, charNode);
+      }
+    },
+    skippedEntity: function skippedEntity(name) {},
+    endDocument: function endDocument() {
+      this.doc.normalize();
+    },
+    setDocumentLocator: function setDocumentLocator(locator) {
+      if (this.locator = locator) {
+        // && !('lineNumber' in locator)){
+        locator.lineNumber = 0;
+      }
+    },
+    //LexicalHandler
+    comment: function comment(chars, start, length) {
+      chars = _toString.apply(this, arguments);
+      var comm = this.doc.createComment(chars);
+      this.locator && position(this.locator, comm);
+      appendElement(this, comm);
+    },
+    startCDATA: function startCDATA() {
+      //used in characters() methods
+      this.cdata = true;
+    },
+    endCDATA: function endCDATA() {
+      this.cdata = false;
+    },
+    startDTD: function startDTD(name, publicId, systemId) {
+      var impl = this.doc.implementation;
+
+      if (impl && impl.createDocumentType) {
+        var dt = impl.createDocumentType(name, publicId, systemId);
+        this.locator && position(this.locator, dt);
+        appendElement(this, dt);
+        this.doc.doctype = dt;
+      }
+    },
+
+    /**
+     * @see org.xml.sax.ErrorHandler
+     * @link http://www.saxproject.org/apidoc/org/xml/sax/ErrorHandler.html
+     */
+    warning: function warning(error) {
+      console.warn('[xmldom warning]\t' + error, _locator(this.locator));
+    },
+    error: function error(_error) {
+      console.error('[xmldom error]\t' + _error, _locator(this.locator));
+    },
+    fatalError: function fatalError(error) {
+      throw new ParseError(error, this.locator);
+    }
+  };
+
+  function _locator(l) {
+    if (l) {
+      return '\n@' + (l.systemId || '') + '#[line:' + l.lineNumber + ',col:' + l.columnNumber + ']';
+    }
+  }
+
+  function _toString(chars, start, length) {
+    if (typeof chars == 'string') {
+      return chars.substr(start, length);
+    } else {
+      //java sax connect width xmldom on rhino(what about: "? && !(chars instanceof String)")
+      if (chars.length >= start + length || start) {
+        return new java.lang.String(chars, start, length) + '';
+      }
+
+      return chars;
+    }
+  }
+  /*
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/LexicalHandler.html
+   * used method of org.xml.sax.ext.LexicalHandler:
+   *  #comment(chars, start, length)
+   *  #startCDATA()
+   *  #endCDATA()
+   *  #startDTD(name, publicId, systemId)
+   *
+   *
+   * IGNORED method of org.xml.sax.ext.LexicalHandler:
+   *  #endDTD()
+   *  #startEntity(name)
+   *  #endEntity(name)
+   *
+   *
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/DeclHandler.html
+   * IGNORED method of org.xml.sax.ext.DeclHandler
+   * 	#attributeDecl(eName, aName, type, mode, value)
+   *  #elementDecl(name, model)
+   *  #externalEntityDecl(name, publicId, systemId)
+   *  #internalEntityDecl(name, value)
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/ext/EntityResolver2.html
+   * IGNORED method of org.xml.sax.EntityResolver2
+   *  #resolveEntity(String name,String publicId,String baseURI,String systemId)
+   *  #resolveEntity(publicId, systemId)
+   *  #getExternalSubset(name, baseURI)
+   * @link http://www.saxproject.org/apidoc/org/xml/sax/DTDHandler.html
+   * IGNORED method of org.xml.sax.DTDHandler
+   *  #notationDecl(name, publicId, systemId) {};
+   *  #unparsedEntityDecl(name, publicId, systemId, notationName) {};
+   */
+
+
+  "endDTD,startEntity,endEntity,attributeDecl,elementDecl,externalEntityDecl,internalEntityDecl,resolveEntity,getExternalSubset,notationDecl,unparsedEntityDecl".replace(/\w+/g, function (key) {
+    DOMHandler.prototype[key] = function () {
+      return null;
+    };
+  });
+  /* Private static helpers treated below as private instance methods, so don't need to add these to the public API; we might use a Relator to also get rid of non-standard public properties */
+
+  function appendElement(hander, node) {
+    if (!hander.currentElement) {
+      hander.doc.appendChild(node);
+    } else {
+      hander.currentElement.appendChild(node);
+    }
+  } //appendChild and setAttributeNS are preformance key
+
+
+  var __DOMHandler = DOMHandler;
+  var DOMParser_1 = DOMParser$1;
+  /**
+   * @deprecated Import/require from main entry point instead
+   */
+
+  var DOMImplementation_1 = dom.DOMImplementation;
+  /**
+   * @deprecated Import/require from main entry point instead
+   */
+
+  var XMLSerializer = dom.XMLSerializer;
+  var domParser = {
+    __DOMHandler: __DOMHandler,
+    DOMParser: DOMParser_1,
+    DOMImplementation: DOMImplementation_1,
+    XMLSerializer: XMLSerializer
+  };
+
+  var DOMParser = domParser.DOMParser;
+
+  /*! @name mpd-parser @version 0.21.0 @license Apache-2.0 */
 
   var isObject = function isObject(obj) {
     return !!obj && typeof obj === 'object';
@@ -35607,6 +36246,45 @@
       return a;
     }, []);
   };
+  /**
+   * Returns the first index that satisfies the matching function, or -1 if not found.
+   *
+   * Only necessary because of IE11 support.
+   *
+   * @param {Array} list - the list to search through
+   * @param {Function} matchingFunction - the matching function
+   *
+   * @return {number} the matching index or -1 if not found
+   */
+
+
+  var findIndex = function findIndex(list, matchingFunction) {
+    for (var i = 0; i < list.length; i++) {
+      if (matchingFunction(list[i])) {
+        return i;
+      }
+    }
+
+    return -1;
+  };
+  /**
+   * Returns a union of the included lists provided each element can be identified by a key.
+   *
+   * @param {Array} list - list of lists to get the union of
+   * @param {Function} keyFunction - the function to use as a key for each element
+   *
+   * @return {Array} the union of the arrays
+   */
+
+
+  var union = function union(lists, keyFunction) {
+    return values(lists.reduce(function (acc, list) {
+      list.forEach(function (el) {
+        acc[keyFunction(el)] = el;
+      });
+      return acc;
+    }, {}));
+  };
 
   var errors = {
     INVALID_NUMBER_OF_PERIOD: 'INVALID_NUMBER_OF_PERIOD',
@@ -35659,13 +36337,35 @@
 
     if (range || indexRange) {
       var rangeStr = range ? range : indexRange;
-      var ranges = rangeStr.split('-');
-      var startRange = parseInt(ranges[0], 10);
-      var endRange = parseInt(ranges[1], 10); // byterange should be inclusive according to
+      var ranges = rangeStr.split('-'); // default to parsing this as a BigInt if possible
+
+      var startRange = window.BigInt ? window.BigInt(ranges[0]) : parseInt(ranges[0], 10);
+      var endRange = window.BigInt ? window.BigInt(ranges[1]) : parseInt(ranges[1], 10); // convert back to a number if less than MAX_SAFE_INTEGER
+
+      if (startRange < Number.MAX_SAFE_INTEGER && typeof startRange === 'bigint') {
+        startRange = Number(startRange);
+      }
+
+      if (endRange < Number.MAX_SAFE_INTEGER && typeof endRange === 'bigint') {
+        endRange = Number(endRange);
+      }
+
+      var length;
+
+      if (typeof endRange === 'bigint' || typeof startRange === 'bigint') {
+        length = window.BigInt(endRange) - window.BigInt(startRange) + window.BigInt(1);
+      } else {
+        length = endRange - startRange + 1;
+      }
+
+      if (typeof length === 'bigint' && length < Number.MAX_SAFE_INTEGER) {
+        length = Number(length);
+      } // byterange should be inclusive according to
       // RFC 2616, Clause 14.35.1
 
+
       segment.byterange = {
-        length: endRange - startRange + 1,
+        length: length,
         offset: startRange
       };
     }
@@ -35676,7 +36376,14 @@
   var byteRangeToString = function byteRangeToString(byterange) {
     // `endRange` is one less than `offset + length` because the HTTP range
     // header uses inclusive ranges
-    var endRange = byterange.offset + byterange.length - 1;
+    var endRange;
+
+    if (typeof byterange.offset === 'bigint' || typeof byterange.length === 'bigint') {
+      endRange = window.BigInt(byterange.offset) + window.BigInt(byterange.length) - window.BigInt(1);
+    } else {
+      endRange = byterange.offset + byterange.length - 1;
+    }
+
     return byterange.offset + "-" + endRange;
   };
   /**
@@ -35721,11 +36428,28 @@
       var duration = attributes.duration,
           _attributes$timescale = attributes.timescale,
           timescale = _attributes$timescale === void 0 ? 1 : _attributes$timescale,
-          sourceDuration = attributes.sourceDuration;
+          sourceDuration = attributes.sourceDuration,
+          periodDuration = attributes.periodDuration;
       var endNumber = parseEndNumber(attributes.endNumber);
+      var segmentDuration = duration / timescale;
+
+      if (typeof endNumber === 'number') {
+        return {
+          start: 0,
+          end: endNumber
+        };
+      }
+
+      if (typeof periodDuration === 'number') {
+        return {
+          start: 0,
+          end: periodDuration / segmentDuration
+        };
+      }
+
       return {
         start: 0,
-        end: typeof endNumber === 'number' ? endNumber : Math.ceil(sourceDuration / (duration / timescale))
+        end: sourceDuration / segmentDuration
       };
     },
 
@@ -35744,15 +36468,20 @@
           _attributes$timescale2 = attributes.timescale,
           timescale = _attributes$timescale2 === void 0 ? 1 : _attributes$timescale2,
           duration = attributes.duration,
-          _attributes$start = attributes.start,
-          start = _attributes$start === void 0 ? 0 : _attributes$start,
+          _attributes$periodSta = attributes.periodStart,
+          periodStart = _attributes$periodSta === void 0 ? 0 : _attributes$periodSta,
           _attributes$minimumUp = attributes.minimumUpdatePeriod,
           minimumUpdatePeriod = _attributes$minimumUp === void 0 ? 0 : _attributes$minimumUp,
           _attributes$timeShift = attributes.timeShiftBufferDepth,
           timeShiftBufferDepth = _attributes$timeShift === void 0 ? Infinity : _attributes$timeShift;
-      var endNumber = parseEndNumber(attributes.endNumber);
-      var now = (NOW + clientOffset) / 1000;
-      var periodStartWC = availabilityStartTime + start;
+      var endNumber = parseEndNumber(attributes.endNumber); // clientOffset is passed in at the top level of mpd-parser and is an offset calculated
+      // after retrieving UTC server time.
+
+      var now = (NOW + clientOffset) / 1000; // WC stands for Wall Clock.
+      // Convert the period start time to EPOCH.
+
+      var periodStartWC = availabilityStartTime + periodStart; // Period end in EPOCH is manifest's retrieval time + time until next update.
+
       var periodEndWC = now + minimumUpdatePeriod;
       var periodDuration = periodEndWC - periodStartWC;
       var segmentCount = Math.ceil(periodDuration * timescale / duration);
@@ -35789,18 +36518,18 @@
    */
 
   var toSegments = function toSegments(attributes) {
-    return function (number, index) {
+    return function (number) {
       var duration = attributes.duration,
           _attributes$timescale3 = attributes.timescale,
           timescale = _attributes$timescale3 === void 0 ? 1 : _attributes$timescale3,
-          periodIndex = attributes.periodIndex,
+          periodStart = attributes.periodStart,
           _attributes$startNumb = attributes.startNumber,
           startNumber = _attributes$startNumb === void 0 ? 1 : _attributes$startNumb;
       return {
         number: startNumber + number,
         duration: duration / timescale,
-        timeline: periodIndex,
-        time: index * duration
+        timeline: periodStart,
+        time: number * duration
       };
     };
   };
@@ -35817,11 +36546,11 @@
 
 
   var parseByDuration = function parseByDuration(attributes) {
-    var _attributes$type = attributes.type,
-        type = _attributes$type === void 0 ? 'static' : _attributes$type,
+    var type = attributes.type,
         duration = attributes.duration,
         _attributes$timescale4 = attributes.timescale,
         timescale = _attributes$timescale4 === void 0 ? 1 : _attributes$timescale4,
+        periodDuration = attributes.periodDuration,
         sourceDuration = attributes.sourceDuration;
 
     var _segmentRange$type = segmentRange[type](attributes),
@@ -35831,9 +36560,11 @@
     var segments = range(start, end).map(toSegments(attributes));
 
     if (type === 'static') {
-      var index = segments.length - 1; // final segment may be less than full segment duration
+      var index = segments.length - 1; // section is either a period or the full source
 
-      segments[index].duration = sourceDuration - duration / timescale * index;
+      var sectionDuration = typeof periodDuration === 'number' ? periodDuration : sourceDuration; // final segment may be less than full segment duration
+
+      segments[index].duration = sectionDuration - duration / timescale * index;
     }
 
     return segments;
@@ -35857,6 +36588,10 @@
         sourceDuration = attributes.sourceDuration,
         _attributes$indexRang = attributes.indexRange,
         indexRange = _attributes$indexRang === void 0 ? '' : _attributes$indexRang,
+        periodStart = attributes.periodStart,
+        presentationTime = attributes.presentationTime,
+        _attributes$number = attributes.number,
+        number = _attributes$number === void 0 ? 0 : _attributes$number,
         duration = attributes.duration; // base url is required for SegmentBase to work, per spec (Section 5.3.9.2.1)
 
     if (!baseUrl) {
@@ -35885,11 +36620,15 @@
       }
     } else if (sourceDuration) {
       segment.duration = sourceDuration;
-      segment.timeline = 0;
-    } // This is used for mediaSequence
+      segment.timeline = periodStart;
+    } // If presentation time is provided, these segments are being generated by SIDX
+    // references, and should use the time provided. For the general case of SegmentBase,
+    // there should only be one segment in the period, so its presentation time is the same
+    // as its period start.
 
 
-    segment.number = 0;
+    segment.presentationTime = presentationTime || periodStart;
+    segment.number = number;
     return [segment];
   };
   /**
@@ -35905,9 +36644,9 @@
    */
 
 
-  var addSidxSegmentsToPlaylist = function addSidxSegmentsToPlaylist(playlist, sidx, baseUrl) {
+  var addSidxSegmentsToPlaylist$1 = function addSidxSegmentsToPlaylist(playlist, sidx, baseUrl) {
     // Retain init segment information
-    var initSegment = playlist.sidx.map ? playlist.sidx.map : null; // Retain source duration from initial master manifest parsing
+    var initSegment = playlist.sidx.map ? playlist.sidx.map : null; // Retain source duration from initial main manifest parsing
 
     var sourceDuration = playlist.sidx.duration; // Retain source timeline
 
@@ -35920,9 +36659,19 @@
     var mediaReferences = sidx.references.filter(function (r) {
       return r.referenceType !== 1;
     });
-    var segments = []; // firstOffset is the offset from the end of the sidx box
+    var segments = [];
+    var type = playlist.endList ? 'static' : 'dynamic';
+    var periodStart = playlist.sidx.timeline;
+    var presentationTime = periodStart;
+    var number = playlist.mediaSequence || 0; // firstOffset is the offset from the end of the sidx box
 
-    var startIndex = sidxEnd + sidx.firstOffset;
+    var startIndex; // eslint-disable-next-line
+
+    if (typeof sidx.firstOffset === 'bigint') {
+      startIndex = window.BigInt(sidxEnd) + sidx.firstOffset;
+    } else {
+      startIndex = sidxEnd + sidx.firstOffset;
+    }
 
     for (var i = 0; i < mediaReferences.length; i++) {
       var reference = sidx.references[i]; // size of the referenced (sub)segment
@@ -35932,17 +36681,26 @@
 
       var duration = reference.subsegmentDuration; // should be an inclusive range
 
-      var endIndex = startIndex + size - 1;
+      var endIndex = void 0; // eslint-disable-next-line
+
+      if (typeof startIndex === 'bigint') {
+        endIndex = startIndex + window.BigInt(size) - window.BigInt(1);
+      } else {
+        endIndex = startIndex + size - 1;
+      }
+
       var indexRange = startIndex + "-" + endIndex;
       var attributes = {
         baseUrl: baseUrl,
         timescale: timescale,
         timeline: timeline,
-        // this is used in parseByDuration
-        periodIndex: timeline,
+        periodStart: periodStart,
+        presentationTime: presentationTime,
+        number: number,
         duration: duration,
         sourceDuration: sourceDuration,
-        indexRange: indexRange
+        indexRange: indexRange,
+        type: type
       };
       var segment = segmentsFromBase(attributes)[0];
 
@@ -35951,11 +36709,260 @@
       }
 
       segments.push(segment);
-      startIndex += size;
+
+      if (typeof startIndex === 'bigint') {
+        startIndex += window.BigInt(size);
+      } else {
+        startIndex += size;
+      }
+
+      presentationTime += duration / timescale;
+      number++;
     }
 
     playlist.segments = segments;
     return playlist;
+  };
+
+  var SUPPORTED_MEDIA_TYPES = ['AUDIO', 'SUBTITLES']; // allow one 60fps frame as leniency (arbitrarily chosen)
+
+  var TIME_FUDGE = 1 / 60;
+  /**
+   * Given a list of timelineStarts, combines, dedupes, and sorts them.
+   *
+   * @param {TimelineStart[]} timelineStarts - list of timeline starts
+   *
+   * @return {TimelineStart[]} the combined and deduped timeline starts
+   */
+
+  var getUniqueTimelineStarts = function getUniqueTimelineStarts(timelineStarts) {
+    return union(timelineStarts, function (_ref) {
+      var timeline = _ref.timeline;
+      return timeline;
+    }).sort(function (a, b) {
+      return a.timeline > b.timeline ? 1 : -1;
+    });
+  };
+  /**
+   * Finds the playlist with the matching NAME attribute.
+   *
+   * @param {Array} playlists - playlists to search through
+   * @param {string} name - the NAME attribute to search for
+   *
+   * @return {Object|null} the matching playlist object, or null
+   */
+
+
+  var findPlaylistWithName = function findPlaylistWithName(playlists, name) {
+    for (var i = 0; i < playlists.length; i++) {
+      if (playlists[i].attributes.NAME === name) {
+        return playlists[i];
+      }
+    }
+
+    return null;
+  };
+  /**
+   * Gets a flattened array of media group playlists.
+   *
+   * @param {Object} manifest - the main manifest object
+   *
+   * @return {Array} the media group playlists
+   */
+
+
+  var getMediaGroupPlaylists = function getMediaGroupPlaylists(manifest) {
+    var mediaGroupPlaylists = [];
+    forEachMediaGroup$1(manifest, SUPPORTED_MEDIA_TYPES, function (properties, type, group, label) {
+      mediaGroupPlaylists = mediaGroupPlaylists.concat(properties.playlists || []);
+    });
+    return mediaGroupPlaylists;
+  };
+  /**
+   * Updates the playlist's media sequence numbers.
+   *
+   * @param {Object} config - options object
+   * @param {Object} config.playlist - the playlist to update
+   * @param {number} config.mediaSequence - the mediaSequence number to start with
+   */
+
+
+  var updateMediaSequenceForPlaylist = function updateMediaSequenceForPlaylist(_ref2) {
+    var playlist = _ref2.playlist,
+        mediaSequence = _ref2.mediaSequence;
+    playlist.mediaSequence = mediaSequence;
+    playlist.segments.forEach(function (segment, index) {
+      segment.number = playlist.mediaSequence + index;
+    });
+  };
+  /**
+   * Updates the media and discontinuity sequence numbers of newPlaylists given oldPlaylists
+   * and a complete list of timeline starts.
+   *
+   * If no matching playlist is found, only the discontinuity sequence number of the playlist
+   * will be updated.
+   *
+   * Since early available timelines are not supported, at least one segment must be present.
+   *
+   * @param {Object} config - options object
+   * @param {Object[]} oldPlaylists - the old playlists to use as a reference
+   * @param {Object[]} newPlaylists - the new playlists to update
+   * @param {Object} timelineStarts - all timelineStarts seen in the stream to this point
+   */
+
+
+  var updateSequenceNumbers = function updateSequenceNumbers(_ref3) {
+    var oldPlaylists = _ref3.oldPlaylists,
+        newPlaylists = _ref3.newPlaylists,
+        timelineStarts = _ref3.timelineStarts;
+    newPlaylists.forEach(function (playlist) {
+      playlist.discontinuitySequence = findIndex(timelineStarts, function (_ref4) {
+        var timeline = _ref4.timeline;
+        return timeline === playlist.timeline;
+      }); // Playlists NAMEs come from DASH Representation IDs, which are mandatory
+      // (see ISO_23009-1-2012 5.3.5.2).
+      //
+      // If the same Representation existed in a prior Period, it will retain the same NAME.
+
+      var oldPlaylist = findPlaylistWithName(oldPlaylists, playlist.attributes.NAME);
+
+      if (!oldPlaylist) {
+        // Since this is a new playlist, the media sequence values can start from 0 without
+        // consequence.
+        return;
+      } // TODO better support for live SIDX
+      //
+      // As of this writing, mpd-parser does not support multiperiod SIDX (in live or VOD).
+      // This is evident by a playlist only having a single SIDX reference. In a multiperiod
+      // playlist there would need to be multiple SIDX references. In addition, live SIDX is
+      // not supported when the SIDX properties change on refreshes.
+      //
+      // In the future, if support needs to be added, the merging logic here can be called
+      // after SIDX references are resolved. For now, exit early to prevent exceptions being
+      // thrown due to undefined references.
+
+
+      if (playlist.sidx) {
+        return;
+      } // Since we don't yet support early available timelines, we don't need to support
+      // playlists with no segments.
+
+
+      var firstNewSegment = playlist.segments[0];
+      var oldMatchingSegmentIndex = findIndex(oldPlaylist.segments, function (oldSegment) {
+        return Math.abs(oldSegment.presentationTime - firstNewSegment.presentationTime) < TIME_FUDGE;
+      }); // No matching segment from the old playlist means the entire playlist was refreshed.
+      // In this case the media sequence should account for this update, and the new segments
+      // should be marked as discontinuous from the prior content, since the last prior
+      // timeline was removed.
+
+      if (oldMatchingSegmentIndex === -1) {
+        updateMediaSequenceForPlaylist({
+          playlist: playlist,
+          mediaSequence: oldPlaylist.mediaSequence + oldPlaylist.segments.length
+        });
+        playlist.segments[0].discontinuity = true;
+        playlist.discontinuityStarts.unshift(0); // No matching segment does not necessarily mean there's missing content.
+        //
+        // If the new playlist's timeline is the same as the last seen segment's timeline,
+        // then a discontinuity can be added to identify that there's potentially missing
+        // content. If there's no missing content, the discontinuity should still be rather
+        // harmless. It's possible that if segment durations are accurate enough, that the
+        // existence of a gap can be determined using the presentation times and durations,
+        // but if the segment timing info is off, it may introduce more problems than simply
+        // adding the discontinuity.
+        //
+        // If the new playlist's timeline is different from the last seen segment's timeline,
+        // then a discontinuity can be added to identify that this is the first seen segment
+        // of a new timeline. However, the logic at the start of this function that
+        // determined the disconinuity sequence by timeline index is now off by one (the
+        // discontinuity of the newest timeline hasn't yet fallen off the manifest...since
+        // we added it), so the disconinuity sequence must be decremented.
+        //
+        // A period may also have a duration of zero, so the case of no segments is handled
+        // here even though we don't yet support early available periods.
+
+        if (!oldPlaylist.segments.length && playlist.timeline > oldPlaylist.timeline || oldPlaylist.segments.length && playlist.timeline > oldPlaylist.segments[oldPlaylist.segments.length - 1].timeline) {
+          playlist.discontinuitySequence--;
+        }
+
+        return;
+      } // If the first segment matched with a prior segment on a discontinuity (it's matching
+      // on the first segment of a period), then the discontinuitySequence shouldn't be the
+      // timeline's matching one, but instead should be the one prior, and the first segment
+      // of the new manifest should be marked with a discontinuity.
+      //
+      // The reason for this special case is that discontinuity sequence shows how many
+      // discontinuities have fallen off of the playlist, and discontinuities are marked on
+      // the first segment of a new "timeline." Because of this, while DASH will retain that
+      // Period while the "timeline" exists, HLS keeps track of it via the discontinuity
+      // sequence, and that first segment is an indicator, but can be removed before that
+      // timeline is gone.
+
+
+      var oldMatchingSegment = oldPlaylist.segments[oldMatchingSegmentIndex];
+
+      if (oldMatchingSegment.discontinuity && !firstNewSegment.discontinuity) {
+        firstNewSegment.discontinuity = true;
+        playlist.discontinuityStarts.unshift(0);
+        playlist.discontinuitySequence--;
+      }
+
+      updateMediaSequenceForPlaylist({
+        playlist: playlist,
+        mediaSequence: oldPlaylist.segments[oldMatchingSegmentIndex].number
+      });
+    });
+  };
+  /**
+   * Given an old parsed manifest object and a new parsed manifest object, updates the
+   * sequence and timing values within the new manifest to ensure that it lines up with the
+   * old.
+   *
+   * @param {Array} oldManifest - the old main manifest object
+   * @param {Array} newManifest - the new main manifest object
+   *
+   * @return {Object} the updated new manifest object
+   */
+
+
+  var positionManifestOnTimeline = function positionManifestOnTimeline(_ref5) {
+    var oldManifest = _ref5.oldManifest,
+        newManifest = _ref5.newManifest; // Starting from v4.1.2 of the IOP, section 4.4.3.3 states:
+    //
+    // "MPD@availabilityStartTime and Period@start shall not be changed over MPD updates."
+    //
+    // This was added from https://github.com/Dash-Industry-Forum/DASH-IF-IOP/issues/160
+    //
+    // Because of this change, and the difficulty of supporting periods with changing start
+    // times, periods with changing start times are not supported. This makes the logic much
+    // simpler, since periods with the same start time can be considerred the same period
+    // across refreshes.
+    //
+    // To give an example as to the difficulty of handling periods where the start time may
+    // change, if a single period manifest is refreshed with another manifest with a single
+    // period, and both the start and end times are increased, then the only way to determine
+    // if it's a new period or an old one that has changed is to look through the segments of
+    // each playlist and determine the presentation time bounds to find a match. In addition,
+    // if the period start changed to exceed the old period end, then there would be no
+    // match, and it would not be possible to determine whether the refreshed period is a new
+    // one or the old one.
+
+    var oldPlaylists = oldManifest.playlists.concat(getMediaGroupPlaylists(oldManifest));
+    var newPlaylists = newManifest.playlists.concat(getMediaGroupPlaylists(newManifest)); // Save all seen timelineStarts to the new manifest. Although this potentially means that
+    // there's a "memory leak" in that it will never stop growing, in reality, only a couple
+    // of properties are saved for each seen Period. Even long running live streams won't
+    // generate too many Periods, unless the stream is watched for decades. In the future,
+    // this can be optimized by mapping to discontinuity sequence numbers for each timeline,
+    // but it may not become an issue, and the additional info can be useful for debugging.
+
+    newManifest.timelineStarts = getUniqueTimelineStarts([oldManifest.timelineStarts, newManifest.timelineStarts]);
+    updateSequenceNumbers({
+      oldPlaylists: oldPlaylists,
+      newPlaylists: newPlaylists,
+      timelineStarts: newManifest.timelineStarts
+    });
+    return newManifest;
   };
 
   var generateSidxKey = function generateSidxKey(sidx) {
@@ -35967,42 +36974,52 @@
       // assuming playlist IDs are the same across periods
       // TODO: handle multiperiod where representation sets are not the same
       // across periods
-      var name = playlist.attributes.id + (playlist.attributes.lang || ''); // Periods after first
+      var name = playlist.attributes.id + (playlist.attributes.lang || '');
 
-      if (acc[name]) {
-        var _acc$name$segments; // first segment of subsequent periods signal a discontinuity
+      if (!acc[name]) {
+        // First Period
+        acc[name] = playlist;
+        acc[name].attributes.timelineStarts = [];
+      } else {
+        // Subsequent Periods
+        if (playlist.segments) {
+          var _acc$name$segments; // first segment of subsequent periods signal a discontinuity
 
 
-        if (playlist.segments[0]) {
-          playlist.segments[0].discontinuity = true;
-        }
+          if (playlist.segments[0]) {
+            playlist.segments[0].discontinuity = true;
+          }
 
-        (_acc$name$segments = acc[name].segments).push.apply(_acc$name$segments, playlist.segments); // bubble up contentProtection, this assumes all DRM content
+          (_acc$name$segments = acc[name].segments).push.apply(_acc$name$segments, playlist.segments);
+        } // bubble up contentProtection, this assumes all DRM content
         // has the same contentProtection
 
 
         if (playlist.attributes.contentProtection) {
           acc[name].attributes.contentProtection = playlist.attributes.contentProtection;
         }
-      } else {
-        // first Period
-        acc[name] = playlist;
       }
 
+      acc[name].attributes.timelineStarts.push({
+        // Although they represent the same number, it's important to have both to make it
+        // compatible with HLS potentially having a similar attribute.
+        start: playlist.attributes.periodStart,
+        timeline: playlist.attributes.periodStart
+      });
       return acc;
     }, {}));
     return mergedPlaylists.map(function (playlist) {
-      playlist.discontinuityStarts = findIndexes(playlist.segments, 'discontinuity');
+      playlist.discontinuityStarts = findIndexes(playlist.segments || [], 'discontinuity');
       return playlist;
     });
   };
 
-  var addSidxSegmentsToPlaylist$1 = function addSidxSegmentsToPlaylist$1(playlist, sidxMapping) {
+  var addSidxSegmentsToPlaylist = function addSidxSegmentsToPlaylist(playlist, sidxMapping) {
     var sidxKey = generateSidxKey(playlist.sidx);
     var sidxMatch = sidxKey && sidxMapping[sidxKey] && sidxMapping[sidxKey].sidx;
 
     if (sidxMatch) {
-      addSidxSegmentsToPlaylist(playlist, sidxMatch, playlist.sidx.resolvedUri);
+      addSidxSegmentsToPlaylist$1(playlist, sidxMatch, playlist.sidx.resolvedUri);
     }
 
     return playlist;
@@ -36018,7 +37035,7 @@
     }
 
     for (var i in playlists) {
-      playlists[i] = addSidxSegmentsToPlaylist$1(playlists[i], sidxMapping);
+      playlists[i] = addSidxSegmentsToPlaylist(playlists[i], sidxMapping);
     }
 
     return playlists;
@@ -36029,7 +37046,10 @@
 
     var attributes = _ref.attributes,
         segments = _ref.segments,
-        sidx = _ref.sidx;
+        sidx = _ref.sidx,
+        mediaSequence = _ref.mediaSequence,
+        discontinuitySequence = _ref.discontinuitySequence,
+        discontinuityStarts = _ref.discontinuityStarts;
     var playlist = {
       attributes: (_attributes = {
         NAME: attributes.id,
@@ -36037,12 +37057,15 @@
         CODECS: attributes.codecs
       }, _attributes['PROGRAM-ID'] = 1, _attributes),
       uri: '',
-      endList: (attributes.type || 'static') === 'static',
-      timeline: attributes.periodIndex,
+      endList: attributes.type === 'static',
+      timeline: attributes.periodStart,
       resolvedUri: '',
       targetDuration: attributes.duration,
-      segments: segments,
-      mediaSequence: segments.length ? segments[0].number : 1
+      discontinuitySequence: discontinuitySequence,
+      discontinuityStarts: discontinuityStarts,
+      timelineStarts: attributes.timelineStarts,
+      mediaSequence: mediaSequence,
+      segments: segments
     };
 
     if (attributes.contentProtection) {
@@ -36065,13 +37088,16 @@
     var _m3u8Attributes;
 
     var attributes = _ref2.attributes,
-        segments = _ref2.segments;
+        segments = _ref2.segments,
+        mediaSequence = _ref2.mediaSequence,
+        discontinuityStarts = _ref2.discontinuityStarts,
+        discontinuitySequence = _ref2.discontinuitySequence;
 
     if (typeof segments === 'undefined') {
       // vtt tracks may use single file in BaseURL
       segments = [{
         uri: attributes.baseUrl,
-        timeline: attributes.periodIndex,
+        timeline: attributes.periodStart,
         resolvedUri: attributes.baseUrl || '',
         duration: attributes.sourceDuration,
         number: 0
@@ -36092,12 +37118,15 @@
     return {
       attributes: m3u8Attributes,
       uri: '',
-      endList: (attributes.type || 'static') === 'static',
-      timeline: attributes.periodIndex,
+      endList: attributes.type === 'static',
+      timeline: attributes.periodStart,
       resolvedUri: attributes.baseUrl || '',
       targetDuration: attributes.duration,
-      segments: segments,
-      mediaSequence: segments.length ? segments[0].number : 1
+      timelineStarts: attributes.timelineStarts,
+      discontinuityStarts: discontinuityStarts,
+      discontinuitySequence: discontinuitySequence,
+      mediaSequence: mediaSequence,
+      segments: segments
     };
   };
 
@@ -36131,7 +37160,7 @@
         };
       }
 
-      var formatted = addSidxSegmentsToPlaylist$1(formatAudioPlaylist(playlist, isAudioOnly), sidxMapping);
+      var formatted = addSidxSegmentsToPlaylist(formatAudioPlaylist(playlist, isAudioOnly), sidxMapping);
       a[label].playlists.push(formatted);
 
       if (typeof mainPlaylist === 'undefined' && role === 'main') {
@@ -36168,7 +37197,7 @@
         };
       }
 
-      a[label].playlists.push(addSidxSegmentsToPlaylist$1(formatVttPlaylist(playlist), sidxMapping));
+      a[label].playlists.push(addSidxSegmentsToPlaylist(formatVttPlaylist(playlist), sidxMapping));
       return a;
     }, {});
   };
@@ -36210,7 +37239,8 @@
 
     var attributes = _ref3.attributes,
         segments = _ref3.segments,
-        sidx = _ref3.sidx;
+        sidx = _ref3.sidx,
+        discontinuityStarts = _ref3.discontinuityStarts;
     var playlist = {
       attributes: (_attributes2 = {
         NAME: attributes.id,
@@ -36224,12 +37254,13 @@
         BANDWIDTH: attributes.bandwidth
       }, _attributes2['PROGRAM-ID'] = 1, _attributes2),
       uri: '',
-      endList: (attributes.type || 'static') === 'static',
-      timeline: attributes.periodIndex,
+      endList: attributes.type === 'static',
+      timeline: attributes.periodStart,
       resolvedUri: '',
       targetDuration: attributes.duration,
-      segments: segments,
-      mediaSequence: segments.length ? segments[0].number : 1
+      discontinuityStarts: discontinuityStarts,
+      timelineStarts: attributes.timelineStarts,
+      segments: segments
     };
 
     if (attributes.contentProtection) {
@@ -36257,32 +37288,104 @@
     var attributes = _ref6.attributes;
     return attributes.mimeType === 'text/vtt' || attributes.contentType === 'text';
   };
+  /**
+   * Contains start and timeline properties denoting a timeline start. For DASH, these will
+   * be the same number.
+   *
+   * @typedef {Object} TimelineStart
+   * @property {number} start - the start time of the timeline
+   * @property {number} timeline - the timeline number
+   */
 
-  var toM3u8 = function toM3u8(dashPlaylists, locations, sidxMapping) {
+  /**
+   * Adds appropriate media and discontinuity sequence values to the segments and playlists.
+   *
+   * Throughout mpd-parser, the `number` attribute is used in relation to `startNumber`, a
+   * DASH specific attribute used in constructing segment URI's from templates. However, from
+   * an HLS perspective, the `number` attribute on a segment would be its `mediaSequence`
+   * value, which should start at the original media sequence value (or 0) and increment by 1
+   * for each segment thereafter. Since DASH's `startNumber` values are independent per
+   * period, it doesn't make sense to use it for `number`. Instead, assume everything starts
+   * from a 0 mediaSequence value and increment from there.
+   *
+   * Note that VHS currently doesn't use the `number` property, but it can be helpful for
+   * debugging and making sense of the manifest.
+   *
+   * For live playlists, to account for values increasing in manifests when periods are
+   * removed on refreshes, merging logic should be used to update the numbers to their
+   * appropriate values (to ensure they're sequential and increasing).
+   *
+   * @param {Object[]} playlists - the playlists to update
+   * @param {TimelineStart[]} timelineStarts - the timeline starts for the manifest
+   */
+
+
+  var addMediaSequenceValues = function addMediaSequenceValues(playlists, timelineStarts) {
+    // increment all segments sequentially
+    playlists.forEach(function (playlist) {
+      playlist.mediaSequence = 0;
+      playlist.discontinuitySequence = findIndex(timelineStarts, function (_ref7) {
+        var timeline = _ref7.timeline;
+        return timeline === playlist.timeline;
+      });
+
+      if (!playlist.segments) {
+        return;
+      }
+
+      playlist.segments.forEach(function (segment, index) {
+        segment.number = index;
+      });
+    });
+  };
+  /**
+   * Given a media group object, flattens all playlists within the media group into a single
+   * array.
+   *
+   * @param {Object} mediaGroupObject - the media group object
+   *
+   * @return {Object[]}
+   *         The media group playlists
+   */
+
+
+  var flattenMediaGroupPlaylists = function flattenMediaGroupPlaylists(mediaGroupObject) {
+    if (!mediaGroupObject) {
+      return [];
+    }
+
+    return Object.keys(mediaGroupObject).reduce(function (acc, label) {
+      var labelContents = mediaGroupObject[label];
+      return acc.concat(labelContents.playlists);
+    }, []);
+  };
+
+  var toM3u8 = function toM3u8(_ref8) {
     var _mediaGroups;
 
-    if (sidxMapping === void 0) {
-      sidxMapping = {};
-    }
+    var dashPlaylists = _ref8.dashPlaylists,
+        locations = _ref8.locations,
+        _ref8$sidxMapping = _ref8.sidxMapping,
+        sidxMapping = _ref8$sidxMapping === void 0 ? {} : _ref8$sidxMapping,
+        previousManifest = _ref8.previousManifest;
 
     if (!dashPlaylists.length) {
       return {};
-    } // grab all master attributes
+    } // grab all main manifest attributes
 
 
     var _dashPlaylists$0$attr = dashPlaylists[0].attributes,
         duration = _dashPlaylists$0$attr.sourceDuration,
-        _dashPlaylists$0$attr2 = _dashPlaylists$0$attr.type,
-        type = _dashPlaylists$0$attr2 === void 0 ? 'static' : _dashPlaylists$0$attr2,
+        type = _dashPlaylists$0$attr.type,
         suggestedPresentationDelay = _dashPlaylists$0$attr.suggestedPresentationDelay,
         minimumUpdatePeriod = _dashPlaylists$0$attr.minimumUpdatePeriod;
     var videoPlaylists = mergeDiscontiguousPlaylists(dashPlaylists.filter(videoOnly)).map(formatVideoPlaylist);
     var audioPlaylists = mergeDiscontiguousPlaylists(dashPlaylists.filter(audioOnly));
-    var vttPlaylists = dashPlaylists.filter(vttOnly);
+    var vttPlaylists = mergeDiscontiguousPlaylists(dashPlaylists.filter(vttOnly));
     var captions = dashPlaylists.map(function (playlist) {
       return playlist.attributes.captionServices;
     }).filter(Boolean);
-    var master = {
+    var manifest = {
       allowCache: true,
       discontinuityStarts: [],
       segments: [],
@@ -36297,32 +37400,48 @@
     };
 
     if (minimumUpdatePeriod >= 0) {
-      master.minimumUpdatePeriod = minimumUpdatePeriod * 1000;
+      manifest.minimumUpdatePeriod = minimumUpdatePeriod * 1000;
     }
 
     if (locations) {
-      master.locations = locations;
+      manifest.locations = locations;
     }
 
     if (type === 'dynamic') {
-      master.suggestedPresentationDelay = suggestedPresentationDelay;
+      manifest.suggestedPresentationDelay = suggestedPresentationDelay;
     }
 
-    var isAudioOnly = master.playlists.length === 0;
+    var isAudioOnly = manifest.playlists.length === 0;
+    var organizedAudioGroup = audioPlaylists.length ? organizeAudioPlaylists(audioPlaylists, sidxMapping, isAudioOnly) : null;
+    var organizedVttGroup = vttPlaylists.length ? organizeVttPlaylists(vttPlaylists, sidxMapping) : null;
+    var formattedPlaylists = videoPlaylists.concat(flattenMediaGroupPlaylists(organizedAudioGroup), flattenMediaGroupPlaylists(organizedVttGroup));
+    var playlistTimelineStarts = formattedPlaylists.map(function (_ref9) {
+      var timelineStarts = _ref9.timelineStarts;
+      return timelineStarts;
+    });
+    manifest.timelineStarts = getUniqueTimelineStarts(playlistTimelineStarts);
+    addMediaSequenceValues(formattedPlaylists, manifest.timelineStarts);
 
-    if (audioPlaylists.length) {
-      master.mediaGroups.AUDIO.audio = organizeAudioPlaylists(audioPlaylists, sidxMapping, isAudioOnly);
+    if (organizedAudioGroup) {
+      manifest.mediaGroups.AUDIO.audio = organizedAudioGroup;
     }
 
-    if (vttPlaylists.length) {
-      master.mediaGroups.SUBTITLES.subs = organizeVttPlaylists(vttPlaylists, sidxMapping);
+    if (organizedVttGroup) {
+      manifest.mediaGroups.SUBTITLES.subs = organizedVttGroup;
     }
 
     if (captions.length) {
-      master.mediaGroups['CLOSED-CAPTIONS'].cc = organizeCaptionServices(captions);
+      manifest.mediaGroups['CLOSED-CAPTIONS'].cc = organizeCaptionServices(captions);
     }
 
-    return master;
+    if (previousManifest) {
+      return positionManifestOnTimeline({
+        oldManifest: previousManifest,
+        newManifest: manifest
+      });
+    }
+
+    return manifest;
   };
   /**
    * Calculates the R (repetition) value for a live stream (for the final segment
@@ -36347,12 +37466,12 @@
         availabilityStartTime = attributes.availabilityStartTime,
         _attributes$timescale = attributes.timescale,
         timescale = _attributes$timescale === void 0 ? 1 : _attributes$timescale,
-        _attributes$start = attributes.start,
-        start = _attributes$start === void 0 ? 0 : _attributes$start,
+        _attributes$periodSta = attributes.periodStart,
+        periodStart = _attributes$periodSta === void 0 ? 0 : _attributes$periodSta,
         _attributes$minimumUp = attributes.minimumUpdatePeriod,
         minimumUpdatePeriod = _attributes$minimumUp === void 0 ? 0 : _attributes$minimumUp;
     var now = (NOW + clientOffset) / 1000;
-    var periodStartWC = availabilityStartTime + start;
+    var periodStartWC = availabilityStartTime + periodStart;
     var periodEndWC = now + minimumUpdatePeriod;
     var periodDuration = periodEndWC - periodStartWC;
     return Math.ceil((periodDuration * timescale - time) / duration);
@@ -36373,8 +37492,7 @@
 
 
   var parseByTimeline = function parseByTimeline(attributes, segmentTimeline) {
-    var _attributes$type = attributes.type,
-        type = _attributes$type === void 0 ? 'static' : _attributes$type,
+    var type = attributes.type,
         _attributes$minimumUp2 = attributes.minimumUpdatePeriod,
         minimumUpdatePeriod = _attributes$minimumUp2 === void 0 ? 0 : _attributes$minimumUp2,
         _attributes$media = attributes.media,
@@ -36384,7 +37502,7 @@
         timescale = _attributes$timescale2 === void 0 ? 1 : _attributes$timescale2,
         _attributes$startNumb = attributes.startNumber,
         startNumber = _attributes$startNumb === void 0 ? 1 : _attributes$startNumb,
-        timeline = attributes.periodIndex;
+        timeline = attributes.periodStart;
     var segments = [];
     var time = -1;
 
@@ -36576,7 +37694,7 @@
         number: attributes.startNumber || 1,
         duration: attributes.sourceDuration,
         time: 0,
-        timeline: attributes.periodIndex
+        timeline: attributes.periodStart
       }];
     }
 
@@ -36619,20 +37737,24 @@
     return segments.map(function (segment) {
       templateValues.Number = segment.number;
       templateValues.Time = segment.time;
-      var uri = constructTemplateUrl(attributes.media || '', templateValues);
+      var uri = constructTemplateUrl(attributes.media || '', templateValues); // See DASH spec section 5.3.9.2.2
+      // - if timescale isn't present on any level, default to 1.
+
+      var timescale = attributes.timescale || 1; // - if presentationTimeOffset isn't present on any level, default to 0
+
+      var presentationTimeOffset = attributes.presentationTimeOffset || 0;
+      var presentationTime = // Even if the @t attribute is not specified for the segment, segment.time is
+      // calculated in mpd-parser prior to this, so it's assumed to be available.
+      attributes.periodStart + (segment.time - presentationTimeOffset) / timescale;
       var map = {
         uri: uri,
         timeline: segment.timeline,
         duration: segment.duration,
         resolvedUri: resolveUrl$1(attributes.baseUrl || '', uri),
         map: mapSegment,
-        number: segment.number
+        number: segment.number,
+        presentationTime: presentationTime
       };
-
-      if (attributes.presentationTimeOffset) {
-        map.presentationTimeOffset = attributes.presentationTimeOffset;
-      }
-
       return map;
     });
   };
@@ -36684,7 +37806,8 @@
   var segmentsFromList = function segmentsFromList(attributes, segmentTimeline) {
     var duration = attributes.duration,
         _attributes$segmentUr = attributes.segmentUrls,
-        segmentUrls = _attributes$segmentUr === void 0 ? [] : _attributes$segmentUr; // Per spec (5.3.9.2.1) no way to determine segment duration OR
+        segmentUrls = _attributes$segmentUr === void 0 ? [] : _attributes$segmentUr,
+        periodStart = attributes.periodStart; // Per spec (5.3.9.2.1) no way to determine segment duration OR
     // if both SegmentTimeline and @duration are defined, it is outside of spec.
 
     if (!duration && !segmentTimeline || duration && segmentTimeline) {
@@ -36706,10 +37829,16 @@
 
     var segments = segmentTimeInfo.map(function (segmentTime, index) {
       if (segmentUrlMap[index]) {
-        var segment = segmentUrlMap[index];
+        var segment = segmentUrlMap[index]; // See DASH spec section 5.3.9.2.2
+        // - if timescale isn't present on any level, default to 1.
+
+        var timescale = attributes.timescale || 1; // - if presentationTimeOffset isn't present on any level, default to 0
+
+        var presentationTimeOffset = attributes.presentationTimeOffset || 0;
         segment.timeline = segmentTime.timeline;
         segment.duration = segmentTime.duration;
         segment.number = segmentTime.number;
+        segment.presentationTime = periodStart + (segmentTime.time - presentationTimeOffset) / timescale;
         return segment;
       } // Since we're mapping we should get rid of any blank segments (in case
       // the given SegmentTimeline is handling for more elements than we have
@@ -36730,10 +37859,6 @@
     if (segmentInfo.template) {
       segmentsFn = segmentsFromTemplate;
       segmentAttributes = merge(attributes, segmentInfo.template);
-
-      if (segmentInfo.template.presentationTimeOffset) {
-        segmentAttributes.presentationTimeOffset = segmentInfo.template.presentationTimeOffset / segmentInfo.template.timescale;
-      }
     } else if (segmentInfo.base) {
       segmentsFn = segmentsFromBase;
       segmentAttributes = merge(attributes, segmentInfo.base);
@@ -36750,7 +37875,7 @@
       return segmentsInfo;
     }
 
-    var segments = segmentsFn(segmentAttributes, segmentInfo.timeline); // The @duration attribute will be used to determin the playlist's targetDuration which
+    var segments = segmentsFn(segmentAttributes, segmentInfo.segmentTimeline); // The @duration attribute will be used to determin the playlist's targetDuration which
     // must be in seconds. Since we've generated the segment list, we no longer need
     // @duration to be in @timescale units, so we can convert it here.
 
@@ -37129,7 +38254,7 @@
    * @typedef {Object} SegmentInformation
    * @property {Object|undefined} template
    *           Contains the attributes for the SegmentTemplate node
-   * @property {Object[]|undefined} timeline
+   * @property {Object[]|undefined} segmentTimeline
    *           Contains a list of atrributes for each S node within the SegmentTimeline node
    * @property {Object|undefined} list
    *           Contains the attributes for the SegmentList node
@@ -37180,7 +38305,7 @@
 
     var segmentInfo = {
       template: template,
-      timeline: segmentTimeline && findChildren(segmentTimeline, 'S').map(function (s) {
+      segmentTimeline: segmentTimeline && findChildren(segmentTimeline, 'S').map(function (s) {
         return parseAttributes(s);
       }),
       list: segmentList && merge(parseAttributes(segmentList), {
@@ -37288,7 +38413,7 @@
   var parseCaptionServiceMetadata = function parseCaptionServiceMetadata(service) {
     // 608 captions
     if (service.schemeIdUri === 'urn:scte:dash:cc:cea-608:2015') {
-      var values = service.value.split(';');
+      var values = typeof service.value !== 'string' ? [] : service.value.split(';');
       return values.map(function (value) {
         var channel;
         var language; // default language to value
@@ -37310,7 +38435,7 @@
         };
       });
     } else if (service.schemeIdUri === 'urn:scte:dash:cc:cea-708:2015') {
-      var _values = service.value.split(';');
+      var _values = typeof service.value !== 'string' ? [] : service.value.split(';');
 
       return _values.map(function (value) {
         var flags = {
@@ -37435,15 +38560,25 @@
     };
   };
   /**
-   * Maps an Period node to a list of Representation inforamtion objects for all
-   * AdaptationSet nodes contained within the Period
+   * Contains all period information for mapping nodes onto adaptation sets.
+   *
+   * @typedef {Object} PeriodInformation
+   * @property {Node} period.node
+   *           Period node from the mpd
+   * @property {Object} period.attributes
+   *           Parsed period attributes from node plus any added
+   */
+
+  /**
+   * Maps a PeriodInformation object to a list of Representation information objects for all
+   * AdaptationSet nodes contained within the Period.
    *
    * @name toAdaptationSetsCallback
    * @function
-   * @param {Node} period
-   *        Period node from the mpd
-   * @param {number} periodIndex
-   *        Index of the Period within the mpd
+   * @param {PeriodInformation} period
+   *        Period object containing necessary period information
+   * @param {number} periodStart
+   *        Start time of the Period within the mpd
    * @return {RepresentationInformation[]}
    *         List of objects containing Representaion information
    */
@@ -37463,18 +38598,76 @@
 
   var toAdaptationSets = function toAdaptationSets(mpdAttributes, mpdBaseUrls) {
     return function (period, index) {
-      var periodBaseUrls = buildBaseUrls(mpdBaseUrls, findChildren(period, 'BaseURL'));
-      var periodAtt = parseAttributes(period);
-      var parsedPeriodId = parseInt(periodAtt.id, 10); // fallback to mapping index if Period@id is not a number
-
-      var periodIndex = window_1.isNaN(parsedPeriodId) ? index : parsedPeriodId;
+      var periodBaseUrls = buildBaseUrls(mpdBaseUrls, findChildren(period.node, 'BaseURL'));
       var periodAttributes = merge(mpdAttributes, {
-        periodIndex: periodIndex
+        periodStart: period.attributes.start
       });
-      var adaptationSets = findChildren(period, 'AdaptationSet');
-      var periodSegmentInfo = getSegmentInformation(period);
+
+      if (typeof period.attributes.duration === 'number') {
+        periodAttributes.periodDuration = period.attributes.duration;
+      }
+
+      var adaptationSets = findChildren(period.node, 'AdaptationSet');
+      var periodSegmentInfo = getSegmentInformation(period.node);
       return flatten(adaptationSets.map(toRepresentations(periodAttributes, periodBaseUrls, periodSegmentInfo)));
     };
+  };
+  /**
+   * Gets Period@start property for a given period.
+   *
+   * @param {Object} options
+   *        Options object
+   * @param {Object} options.attributes
+   *        Period attributes
+   * @param {Object} [options.priorPeriodAttributes]
+   *        Prior period attributes (if prior period is available)
+   * @param {string} options.mpdType
+   *        The MPD@type these periods came from
+   * @return {number|null}
+   *         The period start, or null if it's an early available period or error
+   */
+
+
+  var getPeriodStart = function getPeriodStart(_ref) {
+    var attributes = _ref.attributes,
+        priorPeriodAttributes = _ref.priorPeriodAttributes,
+        mpdType = _ref.mpdType; // Summary of period start time calculation from DASH spec section 5.3.2.1
+    //
+    // A period's start is the first period's start + time elapsed after playing all
+    // prior periods to this one. Periods continue one after the other in time (without
+    // gaps) until the end of the presentation.
+    //
+    // The value of Period@start should be:
+    // 1. if Period@start is present: value of Period@start
+    // 2. if previous period exists and it has @duration: previous Period@start +
+    //    previous Period@duration
+    // 3. if this is first period and MPD@type is 'static': 0
+    // 4. in all other cases, consider the period an "early available period" (note: not
+    //    currently supported)
+    // (1)
+
+    if (typeof attributes.start === 'number') {
+      return attributes.start;
+    } // (2)
+
+
+    if (priorPeriodAttributes && typeof priorPeriodAttributes.start === 'number' && typeof priorPeriodAttributes.duration === 'number') {
+      return priorPeriodAttributes.start + priorPeriodAttributes.duration;
+    } // (3)
+
+
+    if (!priorPeriodAttributes && mpdType === 'static') {
+      return 0;
+    } // (4)
+    // There is currently no logic for calculating the Period@start value if there is
+    // no Period@start or prior Period@start and Period@duration available. This is not made
+    // explicit by the DASH interop guidelines or the DASH spec, however, since there's
+    // nothing about any other resolution strategies, it's implied. Thus, this case should
+    // be considered an early available period, or error, and null should suffice for both
+    // of those cases.
+
+
+    return null;
   };
   /**
    * Traverses the mpd xml tree to generate a list of Representation information objects
@@ -37507,15 +38700,17 @@
         NOW = _options$NOW === void 0 ? Date.now() : _options$NOW,
         _options$clientOffset = _options.clientOffset,
         clientOffset = _options$clientOffset === void 0 ? 0 : _options$clientOffset;
-    var periods = findChildren(mpd, 'Period');
+    var periodNodes = findChildren(mpd, 'Period');
 
-    if (!periods.length) {
+    if (!periodNodes.length) {
       throw new Error(errors.INVALID_NUMBER_OF_PERIOD);
     }
 
     var locations = findChildren(mpd, 'Location');
     var mpdAttributes = parseAttributes(mpd);
-    var mpdBaseUrls = buildBaseUrls([manifestUri], findChildren(mpd, 'BaseURL'));
+    var mpdBaseUrls = buildBaseUrls([manifestUri], findChildren(mpd, 'BaseURL')); // See DASH spec section 5.3.1.2, Semantics of MPD element. Default type to 'static'.
+
+    mpdAttributes.type = mpdAttributes.type || 'static';
     mpdAttributes.sourceDuration = mpdAttributes.mediaPresentationDuration || 0;
     mpdAttributes.NOW = NOW;
     mpdAttributes.clientOffset = clientOffset;
@@ -37524,6 +38719,26 @@
       mpdAttributes.locations = locations.map(getContent);
     }
 
+    var periods = []; // Since toAdaptationSets acts on individual periods right now, the simplest approach to
+    // adding properties that require looking at prior periods is to parse attributes and add
+    // missing ones before toAdaptationSets is called. If more such properties are added, it
+    // may be better to refactor toAdaptationSets.
+
+    periodNodes.forEach(function (node, index) {
+      var attributes = parseAttributes(node); // Use the last modified prior period, as it may contain added information necessary
+      // for this period.
+
+      var priorPeriod = periods[index - 1];
+      attributes.start = getPeriodStart({
+        attributes: attributes,
+        priorPeriodAttributes: priorPeriod ? priorPeriod.attributes : null,
+        mpdType: mpdAttributes.type
+      });
+      periods.push({
+        node: node,
+        attributes: attributes
+      });
+    });
     return {
       locations: mpdAttributes.locations,
       representationInfo: flatten(periods.map(toAdaptationSets(mpdAttributes, mpdBaseUrls)))
@@ -37535,7 +38750,7 @@
       throw new Error(errors.DASH_EMPTY_MANIFEST);
     }
 
-    var parser = new domParser_3();
+    var parser = new DOMParser();
     var xml;
     var mpd;
 
@@ -37598,6 +38813,19 @@
 
     return attributes;
   };
+  /*
+   * Given a DASH manifest string and options, parses the DASH manifest into an object in the
+   * form outputed by m3u8-parser and accepted by videojs/http-streaming.
+   *
+   * For live DASH manifests, if `previousManifest` is provided in options, then the newly
+   * parsed DASH manifest will have its media sequence and discontinuity sequence values
+   * updated to reflect its position relative to the prior manifest.
+   *
+   * @param {string} manifestString - the DASH manifest as a string
+   * @param {options} [options] - any options
+   *
+   * @return {Object} the manifest object
+   */
 
   var parse = function parse(manifestString, options) {
     if (options === void 0) {
@@ -37606,7 +38834,12 @@
 
     var parsedManifestInfo = inheritAttributes(stringToMpdXml(manifestString), options);
     var playlists = toPlaylists(parsedManifestInfo.representationInfo);
-    return toM3u8(playlists, parsedManifestInfo.locations, options.sidxMapping);
+    return toM3u8({
+      dashPlaylists: playlists,
+      locations: parsedManifestInfo.locations,
+      sidxMapping: options.sidxMapping,
+      previousManifest: options.previousManifest
+    });
   };
   /**
    * Parses the manifest for a UTCTiming node, returning the nodes attributes if found
@@ -37623,6 +38856,30 @@
   };
 
   var MAX_UINT32 = Math.pow(2, 32);
+
+  var getUint64$1 = function getUint64(uint8) {
+    var dv = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
+    var value;
+
+    if (dv.getBigUint64) {
+      value = dv.getBigUint64(0);
+
+      if (value < Number.MAX_SAFE_INTEGER) {
+        return Number(value);
+      }
+
+      return value;
+    }
+
+    return dv.getUint32(0) * MAX_UINT32 + dv.getUint32(4);
+  };
+
+  var numbers = {
+    getUint64: getUint64$1,
+    MAX_UINT32: MAX_UINT32
+  };
+
+  var getUint64 = numbers.getUint64;
 
   var parseSidx = function parseSidx(data) {
     var view = new DataView(data.buffer, data.byteOffset, data.byteLength),
@@ -37641,8 +38898,8 @@
       i += 8;
     } else {
       // read 64 bits
-      result.earliestPresentationTime = view.getUint32(i) * MAX_UINT32 + view.getUint32(i + 4);
-      result.firstOffset = view.getUint32(i + 8) * MAX_UINT32 + view.getUint32(i + 12);
+      result.earliestPresentationTime = getUint64(data.subarray(i));
+      result.firstOffset = getUint64(data.subarray(i + 8));
       i += 16;
     }
 
@@ -37667,6 +38924,7 @@
 
   var parseSidx_1 = parseSidx;
 
+  // const log2 = Math.log2 ? Math.log2 : (x) => (Math.log(x) / Math.log(2));
   // we used to do this with log2 but BigInt does not support builtin math
   // Math.ceil(log2(x));
 
@@ -37698,7 +38956,7 @@
 
     return new Uint8Array(bytes && bytes.buffer || bytes, bytes && bytes.byteOffset || 0, bytes && bytes.byteLength || 0);
   };
-  var BigInt = window_1.BigInt || Number;
+  var BigInt = window.BigInt || Number;
   var BYTE_TABLE = [BigInt('0x1'), BigInt('0x100'), BigInt('0x10000'), BigInt('0x1000000'), BigInt('0x100000000'), BigInt('0x10000000000'), BigInt('0x1000000000000'), BigInt('0x100000000000000'), BigInt('0x10000000000000000')];
   var bytesToNumber = function bytesToNumber(bytes, _temp) {
     var _ref = _temp === void 0 ? {} : _temp,
@@ -38312,8 +39570,12 @@
     'mp4': toUint8([0x66, 0x74, 0x79, 0x70]),
     // "styp" string literal in hex
     'fmp4': toUint8([0x73, 0x74, 0x79, 0x70]),
-    // "ftyp" string literal in hex
-    'mov': toUint8([0x66, 0x74, 0x79, 0x70, 0x71, 0x74])
+    // "ftypqt" string literal in hex
+    'mov': toUint8([0x66, 0x74, 0x79, 0x70, 0x71, 0x74]),
+    // moov string literal in hex
+    'moov': toUint8([0x6D, 0x6F, 0x6F, 0x76]),
+    // moof string literal in hex
+    'moof': toUint8([0x6D, 0x6F, 0x6F, 0x66])
   };
   var _isLikely = {
     aac: function aac(bytes) {
@@ -38341,11 +39603,28 @@
       return bytesMatch(docType, CONSTANTS.matroska);
     },
     mp4: function mp4(bytes) {
-      return !_isLikely['3gp'](bytes) && !_isLikely.mov(bytes) && (bytesMatch(bytes, CONSTANTS.mp4, {
+      // if this file is another base media file format, it is not mp4
+      if (_isLikely['3gp'](bytes) || _isLikely.mov(bytes)) {
+        return false;
+      } // if this file starts with a ftyp or styp box its mp4
+
+
+      if (bytesMatch(bytes, CONSTANTS.mp4, {
         offset: 4
       }) || bytesMatch(bytes, CONSTANTS.fmp4, {
         offset: 4
-      }));
+      })) {
+        return true;
+      } // if this file starts with a moof/moov box its mp4
+
+
+      if (bytesMatch(bytes, CONSTANTS.moof, {
+        offset: 4
+      }) || bytesMatch(bytes, CONSTANTS.moov, {
+        offset: 4
+      })) {
+        return true;
+      }
     },
     mov: function mov(bytes) {
       return bytesMatch(bytes, CONSTANTS.mov, {
@@ -38507,7 +39786,7 @@
   };
   var clock_1 = clock.ONE_SECOND_IN_TS;
 
-  /*! @name @videojs/http-streaming @version 2.9.2 @license Apache-2.0 */
+  /*! @name @videojs/http-streaming @version 2.13.1 @license Apache-2.0 */
   /**
    * @file resolve-url.js - Handling how URLs are resolved and manipulated
    */
@@ -38822,6 +40101,49 @@
     return a.end(a.length - 1);
   };
   /**
+   * A utility function to add up the amount of time in a timeRange
+   * after a specified startTime.
+   * ie:[[0, 10], [20, 40], [50, 60]] with a startTime 0
+   *     would return 40 as there are 40s seconds after 0 in the timeRange
+   *
+   * @param {TimeRange} range
+   *        The range to check against
+   * @param {number} startTime
+   *        The time in the time range that you should start counting from
+   *
+   * @return {number}
+   *          The number of seconds in the buffer passed the specified time.
+   */
+
+
+  var timeAheadOf = function timeAheadOf(range, startTime) {
+    var time = 0;
+
+    if (!range || !range.length) {
+      return time;
+    }
+
+    for (var i = 0; i < range.length; i++) {
+      var start = range.start(i);
+      var end = range.end(i); // startTime is after this range entirely
+
+      if (startTime > end) {
+        continue;
+      } // startTime is within this range
+
+
+      if (startTime > start && startTime <= end) {
+        time += end - startTime;
+        continue;
+      } // startTime is before this range.
+
+
+      time += end - start;
+    }
+
+    return time;
+  };
+  /**
    * @file playlist.js
    *
    * Playlist related utilities.
@@ -38830,6 +40152,41 @@
 
   var createTimeRange = videojs.createTimeRange;
   /**
+   * Get the duration of a segment, with special cases for
+   * llhls segments that do not have a duration yet.
+   *
+   * @param {Object} playlist
+   *        the playlist that the segment belongs to.
+   * @param {Object} segment
+   *        the segment to get a duration for.
+   *
+   * @return {number}
+   *          the segment duration
+   */
+
+  var segmentDurationWithParts = function segmentDurationWithParts(playlist, segment) {
+    // if this isn't a preload segment
+    // then we will have a segment duration that is accurate.
+    if (!segment.preload) {
+      return segment.duration;
+    } // otherwise we have to add up parts and preload hints
+    // to get an up to date duration.
+
+
+    var result = 0;
+    (segment.parts || []).forEach(function (p) {
+      result += p.duration;
+    }); // for preload hints we have to use partTargetDuration
+    // as they won't even have a duration yet.
+
+    (segment.preloadHints || []).forEach(function (p) {
+      if (p.type === 'PART') {
+        result += playlist.partTargetDuration;
+      }
+    });
+    return result;
+  };
+  /**
    * A function to get a combined list of parts and segments with durations
    * and indexes.
    *
@@ -38837,6 +40194,7 @@
    *
    * @return {Array} The part/segment list.
    */
+
 
   var getPartsAndSegments = function getPartsAndSegments(playlist) {
     return (playlist.segments || []).reduce(function (acc, segment, si) {
@@ -38961,7 +40319,7 @@
         };
       }
 
-      result += segment.duration;
+      result += segmentDurationWithParts(playlist, segment);
 
       if (typeof segment.start !== 'undefined') {
         return {
@@ -39001,7 +40359,7 @@
         };
       }
 
-      result += segment.duration;
+      result += segmentDurationWithParts(playlist, segment);
 
       if (typeof segment.end !== 'undefined') {
         return {
@@ -39100,7 +40458,7 @@
 
 
       if (!playlist.endList) {
-        return window_1.Infinity;
+        return window.Infinity;
       }
     } // calculate the total duration based on the segment durations
 
@@ -39183,15 +40541,15 @@
     }
 
     expired = expired || 0;
-    var lastSegmentTime = intervalDuration(playlist, playlist.mediaSequence + playlist.segments.length, expired);
+    var lastSegmentEndTime = intervalDuration(playlist, playlist.mediaSequence + playlist.segments.length, expired);
 
     if (useSafeLiveEnd) {
       liveEdgePadding = typeof liveEdgePadding === 'number' ? liveEdgePadding : liveEdgeDelay(null, playlist);
-      lastSegmentTime -= liveEdgePadding;
+      lastSegmentEndTime -= liveEdgePadding;
     } // don't return a time less than zero
 
 
-    return Math.max(0, lastSegmentTime);
+    return Math.max(0, lastSegmentEndTime);
   };
   /**
     * Calculates the interval of time that is currently seekable in a
@@ -39243,7 +40601,8 @@
         currentTime = _ref4.currentTime,
         startingSegmentIndex = _ref4.startingSegmentIndex,
         startingPartIndex = _ref4.startingPartIndex,
-        startTime = _ref4.startTime;
+        startTime = _ref4.startTime,
+        experimentalExactManifestTimings = _ref4.experimentalExactManifestTimings;
     var time = currentTime - startTime;
     var partsAndSegments = getPartsAndSegments(playlist);
     var startIndex = 0;
@@ -39270,20 +40629,26 @@
       if (startIndex > 0) {
         for (var _i2 = startIndex - 1; _i2 >= 0; _i2--) {
           var _partAndSegment = partsAndSegments[_i2];
-          time += _partAndSegment.duration; // TODO: consider not using TIME_FUDGE_FACTOR at all here
+          time += _partAndSegment.duration;
 
-          if (time + TIME_FUDGE_FACTOR > 0) {
-            return {
-              partIndex: _partAndSegment.partIndex,
-              segmentIndex: _partAndSegment.segmentIndex,
-              startTime: startTime - sumDurations({
-                defaultDuration: playlist.targetDuration,
-                durationList: partsAndSegments,
-                startIndex: startIndex,
-                endIndex: _i2
-              })
-            };
+          if (experimentalExactManifestTimings) {
+            if (time < 0) {
+              continue;
+            }
+          } else if (time + TIME_FUDGE_FACTOR <= 0) {
+            continue;
           }
+
+          return {
+            partIndex: _partAndSegment.partIndex,
+            segmentIndex: _partAndSegment.segmentIndex,
+            startTime: startTime - sumDurations({
+              defaultDuration: playlist.targetDuration,
+              durationList: partsAndSegments,
+              startIndex: startIndex,
+              endIndex: _i2
+            })
+          };
         }
       } // We were unable to find a good segment within the playlist
       // so select the first segment
@@ -39319,20 +40684,26 @@
 
     for (var _i4 = startIndex; _i4 < partsAndSegments.length; _i4++) {
       var _partAndSegment2 = partsAndSegments[_i4];
-      time -= _partAndSegment2.duration; // TODO: consider not using TIME_FUDGE_FACTOR at all here
+      time -= _partAndSegment2.duration;
 
-      if (time - TIME_FUDGE_FACTOR < 0) {
-        return {
-          partIndex: _partAndSegment2.partIndex,
-          segmentIndex: _partAndSegment2.segmentIndex,
-          startTime: startTime + sumDurations({
-            defaultDuration: playlist.targetDuration,
-            durationList: partsAndSegments,
-            startIndex: startIndex,
-            endIndex: _i4
-          })
-        };
+      if (experimentalExactManifestTimings) {
+        if (time > 0) {
+          continue;
+        }
+      } else if (time - TIME_FUDGE_FACTOR >= 0) {
+        continue;
       }
+
+      return {
+        partIndex: _partAndSegment2.partIndex,
+        segmentIndex: _partAndSegment2.segmentIndex,
+        startTime: startTime + sumDurations({
+          defaultDuration: playlist.targetDuration,
+          durationList: partsAndSegments,
+          startIndex: startIndex,
+          endIndex: _i4
+        })
+      };
     } // We are out of possible candidates so load the last one...
 
 
@@ -39598,7 +40969,8 @@
     estimateSegmentRequestTime: estimateSegmentRequestTime,
     isLowestEnabledRendition: isLowestEnabledRendition,
     isAudioOnly: isAudioOnly,
-    playlistMatch: playlistMatch
+    playlistMatch: playlistMatch,
+    segmentDurationWithParts: segmentDurationWithParts
   };
   var log = videojs.log;
 
@@ -39843,8 +41215,8 @@
         'CLOSED-CAPTIONS': {},
         'SUBTITLES': {}
       },
-      uri: window_1.location.href,
-      resolvedUri: window_1.location.href,
+      uri: window.location.href,
+      resolvedUri: window.location.href,
       playlists: [{
         uri: uri,
         id: id,
@@ -39884,10 +41256,24 @@
       }
     }
 
+    var audioOnlyMaster = isAudioOnly(master);
     forEachMediaGroup(master, function (properties, mediaType, groupKey, labelKey) {
-      var groupId = "placeholder-uri-" + mediaType + "-" + groupKey + "-" + labelKey;
+      var groupId = "placeholder-uri-" + mediaType + "-" + groupKey + "-" + labelKey; // add a playlist array under properties
 
       if (!properties.playlists || !properties.playlists.length) {
+        // If the manifest is audio only and this media group does not have a uri, check
+        // if the media group is located in the main list of playlists. If it is, don't add
+        // placeholder properties as it shouldn't be considered an alternate audio track.
+        if (audioOnlyMaster && mediaType === 'AUDIO' && !properties.uri) {
+          for (var _i = 0; _i < master.playlists.length; _i++) {
+            var p = master.playlists[_i];
+
+            if (p.attributes && p.attributes.AUDIO && p.attributes.AUDIO === groupKey) {
+              return;
+            }
+          }
+        }
+
         properties.playlists = [_extends_1({}, properties)];
       }
 
@@ -39924,13 +41310,13 @@
       EventTarget$1 = videojs.EventTarget;
 
   var addLLHLSQueryDirectives = function addLLHLSQueryDirectives(uri, media) {
-    if (media.endList) {
+    if (media.endList || !media.serverControl) {
       return uri;
     }
 
-    var query = [];
+    var parameters = {};
 
-    if (media.serverControl && media.serverControl.canBlockReload) {
+    if (media.serverControl.canBlockReload) {
       var preloadSegment = media.preloadSegment; // next msn is a zero based value, length is not.
 
       var nextMSN = media.mediaSequence + media.segments.length; // If preload segment has parts then it is likely
@@ -39946,7 +41332,8 @@
 
         if (nextPart > -1 && nextPart !== parts.length - 1) {
           // add existing parts to our preload hints
-          query.push("_HLS_part=" + nextPart);
+          // eslint-disable-next-line
+          parameters._HLS_part = nextPart;
         } // this if statement makes sure that we request the msn
         // of the preload segment if:
         // 1. the preload segment had parts (and was not yet a full segment)
@@ -39962,20 +41349,30 @@
           nextMSN--;
         }
       } // add _HLS_msn= in front of any _HLS_part query
+      // eslint-disable-next-line
 
 
-      query.unshift("_HLS_msn=" + nextMSN);
+      parameters._HLS_msn = nextMSN;
     }
 
     if (media.serverControl && media.serverControl.canSkipUntil) {
       // add _HLS_skip= infront of all other queries.
-      query.unshift('_HLS_skip=' + (media.serverControl.canSkipDateranges ? 'v2' : 'YES'));
+      // eslint-disable-next-line
+      parameters._HLS_skip = media.serverControl.canSkipDateranges ? 'v2' : 'YES';
     }
 
-    query.forEach(function (str, i) {
-      var symbol = i === 0 ? '?' : '&';
-      uri += "" + symbol + str;
-    });
+    if (Object.keys(parameters).length) {
+      var parsedUri = new window.URL(uri);
+      ['_HLS_skip', '_HLS_msn', '_HLS_part'].forEach(function (name) {
+        if (!parameters.hasOwnProperty(name)) {
+          return;
+        }
+
+        parsedUri.searchParams.set(name, parameters[name]);
+      });
+      uri = parsedUri.toString();
+    }
+
     return uri;
   };
   /**
@@ -40144,7 +41541,7 @@
 
 
   var isPlaylistUnchanged = function isPlaylistUnchanged(a, b) {
-    return a === b || a.segments && b.segments && a.segments.length === b.segments.length && a.endList === b.endList && a.mediaSequence === b.mediaSequence;
+    return a === b || a.segments && b.segments && a.segments.length === b.segments.length && a.endList === b.endList && a.mediaSequence === b.mediaSequence && a.preloadSegment === b.preloadSegment;
   };
   /**
     * Returns a new master playlist that is the result of merging an
@@ -40242,7 +41639,8 @@
 
 
   var refreshDelay = function refreshDelay(media, update) {
-    var lastSegment = media.segments[media.segments.length - 1];
+    var segments = media.segments || [];
+    var lastSegment = segments[segments.length - 1];
     var lastPart = lastSegment && lastSegment.parts && lastSegment.parts[lastSegment.parts.length - 1];
     var lastDuration = lastPart && lastPart.duration || lastSegment && lastSegment.duration;
 
@@ -40294,7 +41692,12 @@
       var vhsOptions = vhs.options_;
       _this.customTagParsers = vhsOptions && vhsOptions.customTagParsers || [];
       _this.customTagMappers = vhsOptions && vhsOptions.customTagMappers || [];
-      _this.experimentalLLHLS = vhsOptions && vhsOptions.experimentalLLHLS || false; // initialize the loader state
+      _this.experimentalLLHLS = vhsOptions && vhsOptions.experimentalLLHLS || false; // force experimentalLLHLS for IE 11
+
+      if (videojs.browser.IE_VERSION) {
+        _this.experimentalLLHLS = false;
+      } // initialize the loader state
+
 
       _this.state = 'HAVE_NOTHING'; // live playlist staleness timeout
 
@@ -40399,8 +41802,6 @@
     ;
 
     _proto.haveMetadata = function haveMetadata(_ref4) {
-      var _this4 = this;
-
       var playlistString = _ref4.playlistString,
           playlistObject = _ref4.playlistObject,
           url = _ref4.url,
@@ -40421,22 +41822,16 @@
 
       var update = updateMaster$1(this.master, playlist);
       this.targetDuration = playlist.partTargetDuration || playlist.targetDuration;
+      this.pendingMedia_ = null;
 
       if (update) {
         this.master = update;
         this.media_ = this.master.playlists[id];
       } else {
         this.trigger('playlistunchanged');
-      } // refresh live playlists after a target duration passes
-
-
-      if (!this.media().endList) {
-        window_1.clearTimeout(this.mediaUpdateTimeout);
-        this.mediaUpdateTimeout = window_1.setTimeout(function () {
-          _this4.trigger('mediaupdatetimeout');
-        }, refreshDelay(this.media(), !!update));
       }
 
+      this.updateMediaUpdateTimeout_(refreshDelay(this.media(), !!update));
       this.trigger('loadedplaylist');
     }
     /**
@@ -40447,8 +41842,8 @@
     _proto.dispose = function dispose() {
       this.trigger('dispose');
       this.stopRequest();
-      window_1.clearTimeout(this.mediaUpdateTimeout);
-      window_1.clearTimeout(this.finalRenditionTimeout);
+      window.clearTimeout(this.mediaUpdateTimeout);
+      window.clearTimeout(this.finalRenditionTimeout);
       this.off();
     };
 
@@ -40477,7 +41872,7 @@
     ;
 
     _proto.media = function media(playlist, shouldDelay) {
-      var _this5 = this; // getter
+      var _this4 = this; // getter
 
 
       if (!playlist) {
@@ -40499,11 +41894,11 @@
         playlist = this.master.playlists[playlist];
       }
 
-      window_1.clearTimeout(this.finalRenditionTimeout);
+      window.clearTimeout(this.finalRenditionTimeout);
 
       if (shouldDelay) {
         var delay = (playlist.partTargetDuration || playlist.targetDuration) / 2 * 1000 || 5 * 1000;
-        this.finalRenditionTimeout = window_1.setTimeout(this.media.bind(this, playlist, false), delay);
+        this.finalRenditionTimeout = window.setTimeout(this.media.bind(this, playlist, false), delay);
         return;
       }
 
@@ -40540,8 +41935,14 @@
         }
 
         return;
-      } // switching to the active playlist is a no-op
+      } // We update/set the timeout here so that live playlists
+      // that are not a media change will "start" the loader as expected.
+      // We expect that this function will start the media update timeout
+      // cycle again. This also prevents a playlist switch failure from
+      // causing us to stall during live.
 
+
+      this.updateMediaUpdateTimeout_(refreshDelay(playlist, true)); // switching to the active playlist is a no-op
 
       if (!mediaChange) {
         return;
@@ -40566,23 +41967,24 @@
         this.trigger('mediachanging');
       }
 
+      this.pendingMedia_ = playlist;
       this.request = this.vhs_.xhr({
         uri: playlist.resolvedUri,
         withCredentials: this.withCredentials
       }, function (error, req) {
         // disposed
-        if (!_this5.request) {
+        if (!_this4.request) {
           return;
         }
 
         playlist.lastRequest = Date.now();
-        playlist.resolvedUri = resolveManifestRedirect(_this5.handleManifestRedirects, playlist.resolvedUri, req);
+        playlist.resolvedUri = resolveManifestRedirect(_this4.handleManifestRedirects, playlist.resolvedUri, req);
 
         if (error) {
-          return _this5.playlistRequestError(_this5.request, playlist, startingState);
+          return _this4.playlistRequestError(_this4.request, playlist, startingState);
         }
 
-        _this5.haveMetadata({
+        _this4.haveMetadata({
           playlistString: req.responseText,
           url: playlist.uri,
           id: playlist.id
@@ -40590,9 +41992,9 @@
 
 
         if (startingState === 'HAVE_MASTER') {
-          _this5.trigger('loadedmetadata');
+          _this4.trigger('loadedmetadata');
         } else {
-          _this5.trigger('mediachange');
+          _this4.trigger('mediachange');
         }
       });
     }
@@ -40602,8 +42004,12 @@
     ;
 
     _proto.pause = function pause() {
+      if (this.mediaUpdateTimeout) {
+        window.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      }
+
       this.stopRequest();
-      window_1.clearTimeout(this.mediaUpdateTimeout);
 
       if (this.state === 'HAVE_NOTHING') {
         // If we pause the loader before any data has been retrieved, its as if we never
@@ -40631,15 +42037,21 @@
     ;
 
     _proto.load = function load(shouldDelay) {
-      var _this6 = this;
+      var _this5 = this;
 
-      window_1.clearTimeout(this.mediaUpdateTimeout);
+      if (this.mediaUpdateTimeout) {
+        window.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      }
+
       var media = this.media();
 
       if (shouldDelay) {
         var delay = media ? (media.partTargetDuration || media.targetDuration) / 2 * 1000 : 5 * 1000;
-        this.mediaUpdateTimeout = window_1.setTimeout(function () {
-          return _this6.load();
+        this.mediaUpdateTimeout = window.setTimeout(function () {
+          _this5.mediaUpdateTimeout = null;
+
+          _this5.load();
         }, delay);
         return;
       }
@@ -40654,6 +42066,28 @@
       } else {
         this.trigger('loadedplaylist');
       }
+    };
+
+    _proto.updateMediaUpdateTimeout_ = function updateMediaUpdateTimeout_(delay) {
+      var _this6 = this;
+
+      if (this.mediaUpdateTimeout) {
+        window.clearTimeout(this.mediaUpdateTimeout);
+        this.mediaUpdateTimeout = null;
+      } // we only have use mediaupdatetimeout for live playlists.
+
+
+      if (!this.media() || this.media().endList) {
+        return;
+      }
+
+      this.mediaUpdateTimeout = window.setTimeout(function () {
+        _this6.mediaUpdateTimeout = null;
+
+        _this6.trigger('mediaupdatetimeout');
+
+        _this6.updateMediaUpdateTimeout_(delay);
+      }, delay);
     }
     /**
      * start loading of the playlist
@@ -40669,7 +42103,7 @@
         // in the case of an entirely constructed manifest object (meaning there's no actual
         // manifest on a server), default the uri to the page's href
         if (!this.src.uri) {
-          this.src.uri = window_1.location.href;
+          this.src.uri = window.location.href;
         } // resolvedUri is added on internally after the initial request. Since there's no
         // request for pre-resolved manifests, add on resolvedUri here.
 
@@ -40782,7 +42216,7 @@
       // default used.
 
 
-      var uri = this.srcUri() || window_1.location.href;
+      var uri = this.srcUri() || window.location.href;
       this.master = masterForMedia(manifest, uri);
       this.haveMetadata({
         playlistObject: manifest,
@@ -40887,8 +42321,15 @@
   var byterangeStr = function byterangeStr(byterange) {
     // `byterangeEnd` is one less than `offset + length` because the HTTP range
     // header uses inclusive ranges
-    var byterangeEnd = byterange.offset + byterange.length - 1;
+    var byterangeEnd;
     var byterangeStart = byterange.offset;
+
+    if (typeof byterange.offset === 'bigint' || typeof byterange.length === 'bigint') {
+      byterangeEnd = window.BigInt(byterange.offset) + window.BigInt(byterange.length) - window.BigInt(1);
+    } else {
+      byterangeEnd = byterange.offset + byterange.length - 1;
+    }
+
     return 'bytes=' + byterangeStart + '-' + byterangeEnd;
   };
   /**
@@ -41595,14 +43036,16 @@
     var masterXml = _ref.masterXml,
         srcUrl = _ref.srcUrl,
         clientOffset = _ref.clientOffset,
-        sidxMapping = _ref.sidxMapping;
-    var master = parse(masterXml, {
+        sidxMapping = _ref.sidxMapping,
+        previousManifest = _ref.previousManifest;
+    var manifest = parse(masterXml, {
       manifestUri: srcUrl,
       clientOffset: clientOffset,
-      sidxMapping: sidxMapping
+      sidxMapping: sidxMapping,
+      previousManifest: previousManifest
     });
-    addPropertiesToMaster(master, srcUrl);
-    return master;
+    addPropertiesToMaster(manifest, srcUrl);
+    return manifest;
   };
   /**
    * Returns a new master manifest that is the result of merging an updated master manifest
@@ -41623,7 +43066,8 @@
     var update = mergeOptions(oldMaster, {
       // These are top level properties that can be updated
       duration: newMaster.duration,
-      minimumUpdatePeriod: newMaster.minimumUpdatePeriod
+      minimumUpdatePeriod: newMaster.minimumUpdatePeriod,
+      timelineStarts: newMaster.timelineStarts
     }); // First update the playlists in playlist list
 
     for (var i = 0; i < newMaster.playlists.length; i++) {
@@ -41633,7 +43077,7 @@
         var sidxKey = generateSidxKey(playlist.sidx); // add sidx segments to the playlist if we have all the sidx info already
 
         if (sidxMapping && sidxMapping[sidxKey] && sidxMapping[sidxKey].sidx) {
-          addSidxSegmentsToPlaylist(playlist, sidxMapping[sidxKey].sidx, playlist.sidx.resolvedUri);
+          addSidxSegmentsToPlaylist$1(playlist, sidxMapping[sidxKey].sidx, playlist.sidx.resolvedUri);
         }
       }
 
@@ -41832,7 +43276,7 @@
 
       if (!playlist.sidx || !sidxKey || this.masterPlaylistLoader_.sidxMapping_[sidxKey]) {
         // keep this function async
-        this.mediaRequest_ = window_1.setTimeout(function () {
+        this.mediaRequest_ = window.setTimeout(function () {
           return cb(false);
         }, 0);
         return;
@@ -41862,7 +43306,7 @@
           sidxInfo: playlist.sidx,
           sidx: sidx
         };
-        addSidxSegmentsToPlaylist(playlist, sidx, playlist.sidx.resolvedUri);
+        addSidxSegmentsToPlaylist$1(playlist, sidx, playlist.sidx.resolvedUri);
         return cb(true);
       };
 
@@ -41914,9 +43358,9 @@
       this.trigger('dispose');
       this.stopRequest();
       this.loadedPlaylists_ = {};
-      window_1.clearTimeout(this.minimumUpdatePeriodTimeout_);
-      window_1.clearTimeout(this.mediaRequest_);
-      window_1.clearTimeout(this.mediaUpdateTimeout);
+      window.clearTimeout(this.minimumUpdatePeriodTimeout_);
+      window.clearTimeout(this.mediaRequest_);
+      window.clearTimeout(this.mediaUpdateTimeout);
       this.mediaUpdateTimeout = null;
       this.mediaRequest_ = null;
       this.minimumUpdatePeriodTimeout_ = null;
@@ -42023,11 +43467,11 @@
       }
 
       this.stopRequest();
-      window_1.clearTimeout(this.mediaUpdateTimeout);
+      window.clearTimeout(this.mediaUpdateTimeout);
       this.mediaUpdateTimeout = null;
 
       if (this.isMaster_) {
-        window_1.clearTimeout(this.masterPlaylistLoader_.minimumUpdatePeriodTimeout_);
+        window.clearTimeout(this.masterPlaylistLoader_.minimumUpdatePeriodTimeout_);
         this.masterPlaylistLoader_.minimumUpdatePeriodTimeout_ = null;
       }
 
@@ -42041,13 +43485,13 @@
     _proto.load = function load(isFinalRendition) {
       var _this4 = this;
 
-      window_1.clearTimeout(this.mediaUpdateTimeout);
+      window.clearTimeout(this.mediaUpdateTimeout);
       this.mediaUpdateTimeout = null;
       var media = this.media();
 
       if (isFinalRendition) {
         var delay = media ? media.targetDuration / 2 * 1000 : 5 * 1000;
-        this.mediaUpdateTimeout = window_1.setTimeout(function () {
+        this.mediaUpdateTimeout = window.setTimeout(function () {
           return _this4.load();
         }, delay);
         return;
@@ -42084,7 +43528,7 @@
       // Call this asynchronously to match the xhr request behavior below
 
       if (!this.isMaster_) {
-        this.mediaRequest_ = window_1.setTimeout(function () {
+        this.mediaRequest_ = window.setTimeout(function () {
           return _this5.haveMaster_();
         }, 0);
         return;
@@ -42217,13 +43661,14 @@
     _proto.handleMaster_ = function handleMaster_() {
       // clear media request
       this.mediaRequest_ = null;
+      var oldMaster = this.masterPlaylistLoader_.master;
       var newMaster = parseMasterXml({
         masterXml: this.masterPlaylistLoader_.masterXml_,
         srcUrl: this.masterPlaylistLoader_.srcUrl,
         clientOffset: this.masterPlaylistLoader_.clientOffset_,
-        sidxMapping: this.masterPlaylistLoader_.sidxMapping_
-      });
-      var oldMaster = this.masterPlaylistLoader_.master; // if we have an old master to compare the new master against
+        sidxMapping: this.masterPlaylistLoader_.sidxMapping_,
+        previousManifest: oldMaster
+      }); // if we have an old master to compare the new master against
 
       if (oldMaster) {
         newMaster = updateMaster(oldMaster, newMaster, this.masterPlaylistLoader_.sidxMapping_);
@@ -42255,7 +43700,7 @@
 
 
       if (mpl.minimumUpdatePeriodTimeout_) {
-        window_1.clearTimeout(mpl.minimumUpdatePeriodTimeout_);
+        window.clearTimeout(mpl.minimumUpdatePeriodTimeout_);
         mpl.minimumUpdatePeriodTimeout_ = null;
       }
 
@@ -42289,7 +43734,7 @@
 
     _proto.createMUPTimeout_ = function createMUPTimeout_(mup) {
       var mpl = this.masterPlaylistLoader_;
-      mpl.minimumUpdatePeriodTimeout_ = window_1.setTimeout(function () {
+      mpl.minimumUpdatePeriodTimeout_ = window.setTimeout(function () {
         mpl.minimumUpdatePeriodTimeout_ = null;
         mpl.trigger('minimumUpdatePeriod');
         mpl.createMUPTimeout_(mup);
@@ -42359,7 +43804,7 @@
             return;
           }
 
-          _this9.mediaUpdateTimeout = window_1.setTimeout(function () {
+          _this9.mediaUpdateTimeout = window.setTimeout(function () {
             _this9.trigger('mediaupdatetimeout');
 
             createMediaUpdateTimeout();
@@ -42452,7 +43897,7 @@
   var getWorkerString = function getWorkerString(fn) {
     return fn.toString().replace(/^function.+?{/, '').slice(0, -1);
   };
-  /* rollup-plugin-worker-factory start for worker!/Users/bcasey/Projects/videojs-http-streaming/src/transmuxer-worker.js */
+  /* rollup-plugin-worker-factory start for worker!/Users/gsinger/repos/clean/http-streaming/src/transmuxer-worker.js */
 
 
   var workerCode$1 = transform(getWorkerString(function () {
@@ -42607,17 +44052,30 @@
     };
 
     var stream = Stream;
-    /**
-     * mux.js
-     *
-     * Copyright (c) Brightcove
-     * Licensed Apache-2.0 https://github.com/videojs/mux.js/blob/master/LICENSE
-     *
-     * Functions that generate fragmented MP4s suitable for use with Media
-     * Source Extensions.
-     */
+    var MAX_UINT32$1 = Math.pow(2, 32);
 
-    var UINT32_MAX = Math.pow(2, 32) - 1;
+    var getUint64$2 = function getUint64(uint8) {
+      var dv = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
+      var value;
+
+      if (dv.getBigUint64) {
+        value = dv.getBigUint64(0);
+
+        if (value < Number.MAX_SAFE_INTEGER) {
+          return Number(value);
+        }
+
+        return value;
+      }
+
+      return dv.getUint32(0) * MAX_UINT32$1 + dv.getUint32(4);
+    };
+
+    var numbers = {
+      getUint64: getUint64$2,
+      MAX_UINT32: MAX_UINT32$1
+    };
+    var MAX_UINT32 = numbers.MAX_UINT32;
     var box, dinf, esds, ftyp, mdat, mfhd, minf, moof, moov, mvex, mvhd, trak, tkhd, mdia, mdhd, hdlr, sdtp, stbl, stsd, traf, trex, trun$1, types, MAJOR_BRAND, MINOR_VERSION, AVC1_BRAND, VIDEO_HDLR, AUDIO_HDLR, HDLR_TYPES, VMHD, SMHD, DREF, STCO, STSC, STSZ, STTS; // pre-calculate constants
 
     (function () {
@@ -43034,8 +44492,8 @@
       0x00, 0x00, 0x00, 0x00, // default_sample_size
       0x00, 0x00, 0x00, 0x00 // default_sample_flags
       ]));
-      upperWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime / (UINT32_MAX + 1));
-      lowerWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime % (UINT32_MAX + 1));
+      upperWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime / MAX_UINT32);
+      lowerWordBaseMediaDecodeTime = Math.floor(track.baseMediaDecodeTime % MAX_UINT32);
       trackFragmentDecodeTime = box(types.tfdt, new Uint8Array([0x01, // version 1
       0x00, 0x00, 0x00, // flags
       // baseMediaDecodeTime
@@ -44084,7 +45542,9 @@
       ];
 
       if (this.parse708captions_) {
-        this.cc708Stream_ = new Cea708Stream(); // eslint-disable-line no-use-before-define
+        this.cc708Stream_ = new Cea708Stream({
+          captionServices: options.captionServices
+        }); // eslint-disable-line no-use-before-define
       }
 
       this.reset(); // forward data and done events from CCs to this CaptionStream
@@ -44441,11 +45901,16 @@
       }
     };
 
-    var Cea708Service = function Cea708Service(serviceNum) {
+    var Cea708Service = function Cea708Service(serviceNum, encoding, stream) {
       this.serviceNum = serviceNum;
       this.text = '';
       this.currentWindow = new Cea708Window(-1);
       this.windows = [];
+      this.stream = stream; // Try to setup a TextDecoder if an `encoding` value was provided
+
+      if (typeof encoding === 'string') {
+        this.createTextDecoder(encoding);
+      }
     };
     /**
      * Initialize service windows
@@ -44477,10 +45942,45 @@
     Cea708Service.prototype.setCurrentWindow = function (windowNum) {
       this.currentWindow = this.windows[windowNum];
     };
+    /**
+     * Try to create a TextDecoder if it is natively supported
+     */
 
-    var Cea708Stream = function Cea708Stream() {
+
+    Cea708Service.prototype.createTextDecoder = function (encoding) {
+      if (typeof TextDecoder === 'undefined') {
+        this.stream.trigger('log', {
+          level: 'warn',
+          message: 'The `encoding` option is unsupported without TextDecoder support'
+        });
+      } else {
+        try {
+          this.textDecoder_ = new TextDecoder(encoding);
+        } catch (error) {
+          this.stream.trigger('log', {
+            level: 'warn',
+            message: 'TextDecoder could not be created with ' + encoding + ' encoding. ' + error
+          });
+        }
+      }
+    };
+
+    var Cea708Stream = function Cea708Stream(options) {
+      options = options || {};
       Cea708Stream.prototype.init.call(this);
       var self = this;
+      var captionServices = options.captionServices || {};
+      var captionServiceEncodings = {};
+      var serviceProps; // Get service encodings from captionServices option block
+
+      Object.keys(captionServices).forEach(function (serviceName) {
+        serviceProps = captionServices[serviceName];
+
+        if (/^SERVICE/.test(serviceName)) {
+          captionServiceEncodings[serviceName] = serviceProps.encoding;
+        }
+      });
+      this.serviceEncodings = captionServiceEncodings;
       this.current708Packet = null;
       this.services = {};
 
@@ -44592,6 +46092,8 @@
 
         if (within708TextBlock(b)) {
           i = this.handleText(i, service);
+        } else if (b === 0x18) {
+          i = this.multiByteCharacter(i, service);
         } else if (b === 0x10) {
           i = this.extendedCommands(i, service);
         } else if (0x80 <= b && b <= 0x87) {
@@ -44650,7 +46152,9 @@
       var b = packetData[++i];
 
       if (within708TextBlock(b)) {
-        i = this.handleText(i, service, true);
+        i = this.handleText(i, service, {
+          isExtended: true
+        });
       }
 
       return i;
@@ -44676,8 +46180,16 @@
 
 
     Cea708Stream.prototype.initService = function (serviceNum, i) {
+      var serviceName = 'SERVICE' + serviceNum;
       var self = this;
-      this.services[serviceNum] = new Cea708Service(serviceNum);
+      var serviceName;
+      var encoding;
+
+      if (serviceName in this.serviceEncodings) {
+        encoding = this.serviceEncodings[serviceName];
+      }
+
+      this.services[serviceNum] = new Cea708Service(serviceNum, encoding, self);
       this.services[serviceNum].init(this.getPts(i), function (pts) {
         self.flushDisplayed(pts, self.services[serviceNum]);
       });
@@ -44692,14 +46204,31 @@
      */
 
 
-    Cea708Stream.prototype.handleText = function (i, service, isExtended) {
+    Cea708Stream.prototype.handleText = function (i, service, options) {
+      var isExtended = options && options.isExtended;
+      var isMultiByte = options && options.isMultiByte;
       var packetData = this.current708Packet.data;
-      var b = packetData[i];
       var extended = isExtended ? 0x1000 : 0x0000;
-
-      var _char = get708CharFromCode(extended | b);
-
+      var currentByte = packetData[i];
+      var nextByte = packetData[i + 1];
       var win = service.currentWindow;
+
+      var _char;
+
+      var charCodeArray; // Use the TextDecoder if one was created for this service
+
+      if (service.textDecoder_ && !isExtended) {
+        if (isMultiByte) {
+          charCodeArray = [currentByte, nextByte];
+          i++;
+        } else {
+          charCodeArray = [currentByte];
+        }
+
+        _char = service.textDecoder_.decode(new Uint8Array(charCodeArray));
+      } else {
+        _char = get708CharFromCode(extended | currentByte);
+      }
 
       if (win.pendingNewLine && !win.isEmpty()) {
         win.newLine(this.getPts(i));
@@ -44707,6 +46236,28 @@
 
       win.pendingNewLine = false;
       win.addText(_char);
+      return i;
+    };
+    /**
+     * Handle decoding of multibyte character
+     *
+     * @param  {Integer} i        Current index in the 708 packet
+     * @param  {Service} service  The service object to be affected
+     * @return {Integer}          New index after parsing
+     */
+
+
+    Cea708Stream.prototype.multiByteCharacter = function (i, service) {
+      var packetData = this.current708Packet.data;
+      var firstByte = packetData[i + 1];
+      var secondByte = packetData[i + 2];
+
+      if (within708TextBlock(firstByte) && within708TextBlock(secondByte)) {
+        i = this.handleText(++i, service, {
+          isMultiByte: true
+        });
+      }
+
       return i;
     };
     /**
@@ -47845,6 +49396,26 @@
     var ONE_SECOND_IN_TS$1 = clock.ONE_SECOND_IN_TS; // object types
 
     var _VideoSegmentStream, _AudioSegmentStream, _Transmuxer, _CoalesceStream;
+
+    var retriggerForStream = function retriggerForStream(key, event) {
+      event.stream = key;
+      this.trigger('log', event);
+    };
+
+    var addPipelineLogRetriggers = function addPipelineLogRetriggers(transmuxer, pipeline) {
+      var keys = Object.keys(pipeline);
+
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i]; // skip non-stream keys and headOfPipeline
+        // which is just a duplicate
+
+        if (key === 'headOfPipeline' || !pipeline[key].on) {
+          continue;
+        }
+
+        pipeline[key].on('log', retriggerForStream.bind(transmuxer, key));
+      }
+    };
     /**
      * Compare two arrays (even typed) for same-ness
      */
@@ -47901,11 +49472,12 @@
 
     _AudioSegmentStream = function AudioSegmentStream(track, options) {
       var adtsFrames = [],
-          sequenceNumber = 0,
+          sequenceNumber,
           earliestAllowedDts = 0,
           audioAppendStartTs = 0,
           videoBaseMediaDecodeTime = Infinity;
       options = options || {};
+      sequenceNumber = options.firstSequenceNumber || 0;
 
       _AudioSegmentStream.prototype.init.call(this);
 
@@ -48005,12 +49577,13 @@
      */
 
     _VideoSegmentStream = function VideoSegmentStream(track, options) {
-      var sequenceNumber = 0,
+      var sequenceNumber,
           nalUnits = [],
           gopsToAlignWith = [],
           config,
           pps;
       options = options || {};
+      sequenceNumber = options.firstSequenceNumber || 0;
 
       _VideoSegmentStream.prototype.init.call(this);
 
@@ -48674,6 +50247,7 @@
         pipeline.coalesceStream.on('data', this.trigger.bind(this, 'data')); // Let the consumer know we have finished flushing the entire pipeline
 
         pipeline.coalesceStream.on('done', this.trigger.bind(this, 'done'));
+        addPipelineLogRetriggers(this, pipeline);
       };
 
       this.setupTsPipeline = function () {
@@ -48774,6 +50348,7 @@
         pipeline.coalesceStream.on('caption', this.trigger.bind(this, 'caption')); // Let the consumer know we have finished flushing the entire pipeline
 
         pipeline.coalesceStream.on('done', this.trigger.bind(this, 'done'));
+        addPipelineLogRetriggers(this, pipeline);
       }; // hook up the segment streams once track metadata is delivered
 
 
@@ -48848,21 +50423,6 @@
             this.setupAacPipeline();
           } else if (!isAac && this.transmuxPipeline_.type !== 'ts') {
             this.setupTsPipeline();
-          }
-
-          if (this.transmuxPipeline_) {
-            var keys = Object.keys(this.transmuxPipeline_);
-
-            for (var i = 0; i < keys.length; i++) {
-              var key = keys[i]; // skip non-stream keys and headOfPipeline
-              // which is just a duplicate
-
-              if (key === 'headOfPipeline' || !this.transmuxPipeline_[key].on) {
-                continue;
-              }
-
-              this.transmuxPipeline_[key].on('log', this.getLogTrigger_(key));
-            }
           }
 
           hasFlushed = false;
@@ -48980,17 +50540,18 @@
 
     var findBox_1 = findBox;
     var toUnsigned$1 = bin.toUnsigned;
+    var getUint64$1 = numbers.getUint64;
 
     var tfdt = function tfdt(data) {
       var result = {
         version: data[0],
-        flags: new Uint8Array(data.subarray(1, 4)),
-        baseMediaDecodeTime: toUnsigned$1(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7])
+        flags: new Uint8Array(data.subarray(1, 4))
       };
 
       if (result.version === 1) {
-        result.baseMediaDecodeTime *= Math.pow(2, 32);
-        result.baseMediaDecodeTime += toUnsigned$1(data[8] << 24 | data[9] << 16 | data[10] << 8 | data[11]);
+        result.baseMediaDecodeTime = getUint64$1(data.subarray(4));
+      } else {
+        result.baseMediaDecodeTime = toUnsigned$1(data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7]);
       }
 
       return result;
@@ -49166,6 +50727,20 @@
     };
 
     var parseTfhd = tfhd;
+    var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+    var win;
+
+    if (typeof window !== "undefined") {
+      win = window;
+    } else if (typeof commonjsGlobal !== "undefined") {
+      win = commonjsGlobal;
+    } else if (typeof self !== "undefined") {
+      win = self;
+    } else {
+      win = {};
+    }
+
+    var window_1 = win;
     var discardEmulationPreventionBytes = captionPacketParser.discardEmulationPreventionBytes;
     var CaptionStream = captionStream.CaptionStream;
     /**
@@ -49270,7 +50845,7 @@
       * the absolute presentation and decode timestamps of each sample.
       *
       * @param {Array<Uint8Array>} truns - The Trun Run boxes to be parsed
-      * @param {Number} baseMediaDecodeTime - base media decode time from tfdt
+      * @param {Number|BigInt} baseMediaDecodeTime - base media decode time from tfdt
           @see ISO-BMFF-12/2015, Section 8.8.12
       * @param {Object} tfhd - The parsed Track Fragment Header
       *   @see inspect.parseTfhd
@@ -49308,8 +50883,13 @@
             sample.compositionTimeOffset = 0;
           }
 
-          sample.pts = currentDts + sample.compositionTimeOffset;
-          currentDts += sample.duration;
+          if (typeof currentDts === 'bigint') {
+            sample.pts = currentDts + window_1.BigInt(sample.compositionTimeOffset);
+            currentDts += window_1.BigInt(sample.duration);
+          } else {
+            sample.pts = currentDts + sample.compositionTimeOffset;
+            currentDts += sample.duration;
+          }
         });
         allSamples = allSamples.concat(samples);
       });
@@ -49624,6 +51204,7 @@
     var captionParser = CaptionParser;
     var toUnsigned = bin.toUnsigned;
     var toHexString = bin.toHexString;
+    var getUint64 = numbers.getUint64;
     var timescale, startTime, compositionStartTime, getVideoTrackIds, getTracks, getTimescaleFromMediaHeader;
     /**
      * Parses an MP4 initialization segment and extracts the timescale
@@ -49690,38 +51271,47 @@
 
 
     startTime = function startTime(timescale, fragment) {
-      var trafs, baseTimes, result; // we need info from two childrend of each track fragment box
+      var trafs; // we need info from two childrend of each track fragment box
 
       trafs = findBox_1(fragment, ['moof', 'traf']); // determine the start times for each track
 
-      baseTimes = [].concat.apply([], trafs.map(function (traf) {
-        return findBox_1(traf, ['tfhd']).map(function (tfhd) {
-          var id, scale, baseTime; // get the track id from the tfhd
+      var lowestTime = trafs.reduce(function (acc, traf) {
+        var tfhd = findBox_1(traf, ['tfhd'])[0]; // get the track id from the tfhd
 
-          id = toUnsigned(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
+        var id = toUnsigned(tfhd[4] << 24 | tfhd[5] << 16 | tfhd[6] << 8 | tfhd[7]); // assume a 90kHz clock if no timescale was specified
 
-          scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
+        var scale = timescale[id] || 90e3; // get the base media decode time from the tfdt
 
-          baseTime = findBox_1(traf, ['tfdt']).map(function (tfdt) {
-            var version, result;
-            version = tfdt[0];
-            result = toUnsigned(tfdt[4] << 24 | tfdt[5] << 16 | tfdt[6] << 8 | tfdt[7]);
+        var tfdt = findBox_1(traf, ['tfdt'])[0];
+        var dv = new DataView(tfdt.buffer, tfdt.byteOffset, tfdt.byteLength);
+        var baseTime; // version 1 is 64 bit
 
-            if (version === 1) {
-              result *= Math.pow(2, 32);
-              result += toUnsigned(tfdt[8] << 24 | tfdt[9] << 16 | tfdt[10] << 8 | tfdt[11]);
-            }
+        if (tfdt[0] === 1) {
+          baseTime = getUint64(tfdt.subarray(4, 12));
+        } else {
+          baseTime = dv.getUint32(4);
+        } // convert base time to seconds if it is a valid number.
 
-            return result;
-          })[0];
-          baseTime = typeof baseTime === 'number' && !isNaN(baseTime) ? baseTime : Infinity; // convert base time to seconds
 
-          return baseTime / scale;
-        });
-      })); // return the minimum
+        var seconds;
 
-      result = Math.min.apply(null, baseTimes);
-      return isFinite(result) ? result : 0;
+        if (typeof baseTime === 'bigint') {
+          seconds = baseTime / window_1.BigInt(scale);
+        } else if (typeof baseTime === 'number' && !isNaN(baseTime)) {
+          seconds = baseTime / scale;
+        }
+
+        if (seconds < Number.MAX_SAFE_INTEGER) {
+          seconds = Number(seconds);
+        }
+
+        if (seconds < acc) {
+          acc = seconds;
+        }
+
+        return acc;
+      }, Infinity);
+      return typeof lowestTime === 'bigint' || isFinite(lowestTime) ? lowestTime : 0;
     };
     /**
      * Determine the composition start, in seconds, for an MP4
@@ -49781,7 +51371,18 @@
 
       var timescale = timescales[trackId] || 90e3; // return the composition start time, in seconds
 
-      return (baseMediaDecodeTime + compositionTimeOffset) / timescale;
+      if (typeof baseMediaDecodeTime === 'bigint') {
+        compositionTimeOffset = window_1.BigInt(compositionTimeOffset);
+        timescale = window_1.BigInt(timescale);
+      }
+
+      var result = (baseMediaDecodeTime + compositionTimeOffset) / timescale;
+
+      if (typeof result === 'bigint' && result < Number.MAX_SAFE_INTEGER) {
+        result = Number(result);
+      }
+
+      return result;
     };
     /**
       * Find the trackIds of the video tracks in this source.
@@ -49872,7 +51473,7 @@
 
           if (codecBox) {
             // https://tools.ietf.org/html/rfc6381#section-3.3
-            if (/^[a-z]vc[1-9]$/i.test(track.codec)) {
+            if (/^[asm]vc[1-9]$/i.test(track.codec)) {
               // we don't need anything but the "config" parameter of the
               // avc1 codecBox
               codecConfig = codecBox.subarray(78);
@@ -51102,7 +52703,7 @@
     };
   }));
   var TransmuxWorker = factory(workerCode$1);
-  /* rollup-plugin-worker-factory end for worker!/Users/bcasey/Projects/videojs-http-streaming/src/transmuxer-worker.js */
+  /* rollup-plugin-worker-factory end for worker!/Users/gsinger/repos/clean/http-streaming/src/transmuxer-worker.js */
 
   var handleData_ = function handleData_(event, transmuxedData, callback) {
     var _event$data$segment = event.data.segment,
@@ -52626,7 +54227,7 @@
       return '';
     }
 
-    var result = window_1.getComputedStyle(el);
+    var result = window.getComputedStyle(el);
 
     if (!result) {
       return '';
@@ -52675,13 +54276,13 @@
       leftBandwidth = left.attributes.BANDWIDTH;
     }
 
-    leftBandwidth = leftBandwidth || window_1.Number.MAX_VALUE;
+    leftBandwidth = leftBandwidth || window.Number.MAX_VALUE;
 
     if (right.attributes.BANDWIDTH) {
       rightBandwidth = right.attributes.BANDWIDTH;
     }
 
-    rightBandwidth = rightBandwidth || window_1.Number.MAX_VALUE;
+    rightBandwidth = rightBandwidth || window.Number.MAX_VALUE;
     return leftBandwidth - rightBandwidth;
   };
   /**
@@ -52704,13 +54305,13 @@
       leftWidth = left.attributes.RESOLUTION.width;
     }
 
-    leftWidth = leftWidth || window_1.Number.MAX_VALUE;
+    leftWidth = leftWidth || window.Number.MAX_VALUE;
 
     if (right.attributes.RESOLUTION && right.attributes.RESOLUTION.width) {
       rightWidth = right.attributes.RESOLUTION.width;
     }
 
-    rightWidth = rightWidth || window_1.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
+    rightWidth = rightWidth || window.Number.MAX_VALUE; // NOTE - Fallback to bandwidth sort as appropriate in cases where multiple renditions
     // have the same media dimensions/ resolution
 
     if (leftWidth === rightWidth && left.attributes.BANDWIDTH && right.attributes.BANDWIDTH) {
@@ -52767,7 +54368,7 @@
       var width = playlist.attributes && playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.width;
       var height = playlist.attributes && playlist.attributes.RESOLUTION && playlist.attributes.RESOLUTION.height;
       bandwidth = playlist.attributes && playlist.attributes.BANDWIDTH;
-      bandwidth = bandwidth || window_1.Number.MAX_VALUE;
+      bandwidth = bandwidth || window.Number.MAX_VALUE;
       return {
         bandwidth: bandwidth,
         width: width,
@@ -52868,15 +54469,39 @@
       resolutionPlusOneRep = resolutionPlusOneSmallest.filter(function (rep) {
         return rep.bandwidth === highestRemainingBandwidthRep.bandwidth;
       })[0];
+    }
+
+    var leastPixelDiffRep; // If this selector proves to be better than others,
+    // resolutionPlusOneRep and resolutionBestRep and all
+    // the code involving them should be removed.
+
+    if (masterPlaylistController.experimentalLeastPixelDiffSelector) {
+      // find the variant that is closest to the player's pixel size
+      var leastPixelDiffList = haveResolution.map(function (rep) {
+        rep.pixelDiff = Math.abs(rep.width - playerWidth) + Math.abs(rep.height - playerHeight);
+        return rep;
+      }); // get the highest bandwidth, closest resolution playlist
+
+      stableSort(leastPixelDiffList, function (left, right) {
+        // sort by highest bandwidth if pixelDiff is the same
+        if (left.pixelDiff === right.pixelDiff) {
+          return right.bandwidth - left.bandwidth;
+        }
+
+        return left.pixelDiff - right.pixelDiff;
+      });
+      leastPixelDiffRep = leastPixelDiffList[0];
     } // fallback chain of variants
 
 
-    var chosenRep = resolutionPlusOneRep || resolutionBestRep || bandwidthBestRep || enabledPlaylistReps[0] || sortedPlaylistReps[0];
+    var chosenRep = leastPixelDiffRep || resolutionPlusOneRep || resolutionBestRep || bandwidthBestRep || enabledPlaylistReps[0] || sortedPlaylistReps[0];
 
     if (chosenRep && chosenRep.playlist) {
       var _type = 'sortedPlaylistReps';
 
-      if (resolutionPlusOneRep) {
+      if (leastPixelDiffRep) {
+        _type = 'leastPixelDiffRep';
+      } else if (resolutionPlusOneRep) {
         _type = 'resolutionPlusOneRep';
       } else if (resolutionBestRep) {
         _type = 'resolutionBestRep';
@@ -52906,7 +54531,7 @@
 
 
   var lastBandwidthSelector = function lastBandwidthSelector() {
-    var pixelRatio = this.useDevicePixelRatio ? window_1.devicePixelRatio || 1 : 1;
+    var pixelRatio = this.useDevicePixelRatio ? window.devicePixelRatio || 1 : 1;
     return simpleSelector(this.playlists.master, this.systemBandwidth, parseInt(safeGetComputedStyle(this.tech_.el(), 'width'), 10) * pixelRatio, parseInt(safeGetComputedStyle(this.tech_.el(), 'height'), 10) * pixelRatio, this.limitRenditionByPlayerDimensions, this.masterPlaylistController_);
   };
   /**
@@ -52934,7 +54559,7 @@
     }
 
     return function () {
-      var pixelRatio = this.useDevicePixelRatio ? window_1.devicePixelRatio || 1 : 1;
+      var pixelRatio = this.useDevicePixelRatio ? window.devicePixelRatio || 1 : 1;
 
       if (average < 0) {
         average = this.systemBandwidth;
@@ -53183,7 +54808,7 @@
       return;
     }
 
-    var Cue = window_1.WebKitDataCue || window_1.VTTCue;
+    var Cue = window.WebKitDataCue || window.VTTCue;
     captionArray.forEach(function (caption) {
       var track = caption.stream;
       inbandTextTracks[track].addCue(new Cue(caption.startTime + timestampOffset, caption.endTime + timestampOffset, caption.text));
@@ -53243,7 +54868,7 @@
       return;
     }
 
-    var Cue = window_1.WebKitDataCue || window_1.VTTCue;
+    var Cue = window.WebKitDataCue || window.VTTCue;
     var metadataTrack = inbandTextTracks.metadataTrack_;
 
     if (!metadataTrack) {
@@ -53256,7 +54881,7 @@
       // This likely occurs when you have an non-timed ID3 tag like TIT2,
       // which is the "Title/Songname/Content description" frame
 
-      if (typeof time !== 'number' || window_1.isNaN(time) || time < 0 || !(time < Infinity)) {
+      if (typeof time !== 'number' || window.isNaN(time) || time < 0 || !(time < Infinity)) {
         return;
       }
 
@@ -53685,6 +55310,10 @@
       selection = 'getSyncSegmentCandidate (isSyncRequest)';
     }
 
+    if (segmentInfo.independent) {
+      selection += " with independent " + segmentInfo.independent;
+    }
+
     var hasPartIndex = typeof partIndex === 'number';
     var name = segmentInfo.segment.uri ? 'segment' : 'pre-segment';
     var zeroBasedPartCount = hasPartIndex ? getKnownPartCount({
@@ -53923,10 +55552,36 @@
     return false;
   };
 
-  var mediaDuration = function mediaDuration(audioTimingInfo, videoTimingInfo) {
-    var audioDuration = audioTimingInfo && typeof audioTimingInfo.start === 'number' && typeof audioTimingInfo.end === 'number' ? audioTimingInfo.end - audioTimingInfo.start : 0;
-    var videoDuration = videoTimingInfo && typeof videoTimingInfo.start === 'number' && typeof videoTimingInfo.end === 'number' ? videoTimingInfo.end - videoTimingInfo.start : 0;
-    return Math.max(audioDuration, videoDuration);
+  var mediaDuration = function mediaDuration(timingInfos) {
+    var maxDuration = 0;
+    ['video', 'audio'].forEach(function (type) {
+      var typeTimingInfo = timingInfos[type + "TimingInfo"];
+
+      if (!typeTimingInfo) {
+        return;
+      }
+
+      var start = typeTimingInfo.start,
+          end = typeTimingInfo.end;
+      var duration;
+
+      if (typeof start === 'bigint' || typeof end === 'bigint') {
+        duration = window.BigInt(end) - window.BigInt(start);
+      } else if (typeof start === 'number' && typeof end === 'number') {
+        duration = end - start;
+      }
+
+      if (typeof duration !== 'undefined' && duration > maxDuration) {
+        maxDuration = duration;
+      }
+    }); // convert back to a number if it is lower than MAX_SAFE_INTEGER
+    // as we only need BigInt when we are above that.
+
+    if (typeof maxDuration === 'bigint' && maxDuration < Number.MAX_SAFE_INTEGER) {
+      maxDuration = Number(maxDuration);
+    }
+
+    return maxDuration;
   };
 
   var segmentTooLong = function segmentTooLong(_ref3) {
@@ -53959,7 +55614,10 @@
       return null;
     }
 
-    var segmentDuration = mediaDuration(segmentInfo.audioTimingInfo, segmentInfo.videoTimingInfo); // Don't report if we lack information.
+    var segmentDuration = mediaDuration({
+      audioTimingInfo: segmentInfo.audioTimingInfo,
+      videoTimingInfo: segmentInfo.videoTimingInfo
+    }); // Don't report if we lack information.
     //
     // If the segment has a duration of 0 it is either a lack of information or a
     // metadata only segment and shouldn't be reported here.
@@ -54048,7 +55706,9 @@
       _this.state_ = 'INIT';
       _this.timelineChangeController_ = settings.timelineChangeController;
       _this.shouldSaveSegmentTimingInfo_ = true;
-      _this.parse708captions_ = settings.parse708captions; // private instance variables
+      _this.parse708captions_ = settings.parse708captions;
+      _this.captionServices_ = settings.captionServices;
+      _this.experimentalExactManifestTimings = settings.experimentalExactManifestTimings; // private instance variables
 
       _this.checkBufferTimeout_ = null;
       _this.error_ = void 0;
@@ -54171,7 +55831,8 @@
         remux: false,
         alignGopsAtEnd: this.safeAppend_,
         keepOriginalTimestamps: true,
-        parse708captions: this.parse708captions_
+        parse708captions: this.parse708captions_,
+        captionServices: this.captionServices_
       });
     }
     /**
@@ -54209,7 +55870,7 @@
       this.resetStats_();
 
       if (this.checkBufferTimeout_) {
-        window_1.clearTimeout(this.checkBufferTimeout_);
+        window.clearTimeout(this.checkBufferTimeout_);
       }
 
       if (this.syncController_ && this.triggerSyncInfoUpdate_) {
@@ -54276,7 +55937,7 @@
       this.metadataQueue_.caption = [];
       this.timelineChangeController_.clearPendingTimelineChange(this.loaderType_);
       this.waitingOnRemove_ = false;
-      window_1.clearTimeout(this.quotaExceededErrorRetryTimeout_);
+      window.clearTimeout(this.quotaExceededErrorRetryTimeout_);
       this.quotaExceededErrorRetryTimeout_ = null;
     };
 
@@ -54556,9 +56217,19 @@
 
       if (!oldPlaylist || oldPlaylist.uri !== newPlaylist.uri) {
         if (this.mediaIndex !== null) {
-          // we must "resync" the segment loader when we switch renditions and
+          // we must reset/resync the segment loader when we switch renditions and
           // the segment loader is already synced to the previous rendition
-          this.resyncLoader();
+          // on playlist changes we want it to be possible to fetch
+          // at the buffer for vod but not for live. So we use resetLoader
+          // for live and resyncLoader for vod. We want this because
+          // if a playlist uses independent and non-independent segments/parts the
+          // buffer may not accurately reflect the next segment that we should try
+          // downloading.
+          if (!newPlaylist.endList) {
+            this.resetLoader();
+          } else {
+            this.resyncLoader();
+          }
         }
 
         this.currentMediaInfo_ = void 0;
@@ -54634,7 +56305,7 @@
 
     _proto.pause = function pause() {
       if (this.checkBufferTimeout_) {
-        window_1.clearTimeout(this.checkBufferTimeout_);
+        window.clearTimeout(this.checkBufferTimeout_);
         this.checkBufferTimeout_ = null;
       }
     }
@@ -54671,6 +56342,10 @@
       if (this.transmuxer_) {
         this.transmuxer_.postMessage({
           action: 'clearAllMp4Captions'
+        }); // reset the cache in the transmuxer
+
+        this.transmuxer_.postMessage({
+          action: 'reset'
         });
       }
     }
@@ -54803,10 +56478,10 @@
 
     _proto.monitorBuffer_ = function monitorBuffer_() {
       if (this.checkBufferTimeout_) {
-        window_1.clearTimeout(this.checkBufferTimeout_);
+        window.clearTimeout(this.checkBufferTimeout_);
       }
 
-      this.checkBufferTimeout_ = window_1.setTimeout(this.monitorBufferTick_.bind(this), 1);
+      this.checkBufferTimeout_ = window.setTimeout(this.monitorBufferTick_.bind(this), 1);
     }
     /**
      * As long as the SegmentLoader is in the READY state, periodically
@@ -54822,10 +56497,10 @@
       }
 
       if (this.checkBufferTimeout_) {
-        window_1.clearTimeout(this.checkBufferTimeout_);
+        window.clearTimeout(this.checkBufferTimeout_);
       }
 
-      this.checkBufferTimeout_ = window_1.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
+      this.checkBufferTimeout_ = window.setTimeout(this.monitorBufferTick_.bind(this), CHECK_BUFFER_DELAY);
     }
     /**
      * fill the buffer with segements unless the sourceBuffers are
@@ -54909,8 +56584,9 @@
     ;
 
     _proto.chooseNextRequest_ = function chooseNextRequest_() {
-      var bufferedEnd = lastBufferedEnd(this.buffered_()) || 0;
-      var bufferedTime = Math.max(0, bufferedEnd - this.currentTime_());
+      var buffered = this.buffered_();
+      var bufferedEnd = lastBufferedEnd(buffered) || 0;
+      var bufferedTime = timeAheadOf(buffered, this.currentTime_());
       var preloaded = !this.hasPlayed_() && bufferedTime >= 1;
       var haveEnoughBuffer = bufferedTime >= this.goalBufferLength_();
       var segments = this.playlist_.segments; // return no segment if:
@@ -54947,6 +56623,7 @@
       } else {
         // Find the segment containing the end of the buffer or current time.
         var _Playlist$getMediaInf = Playlist.getMediaInfoForTime({
+          experimentalExactManifestTimings: this.experimentalExactManifestTimings,
           playlist: this.playlist_,
           currentTime: this.fetchAtBuffer_ ? bufferedEnd : this.currentTime_(),
           startingPartIndex: this.syncPoint_.partIndex,
@@ -54957,7 +56634,7 @@
             startTime = _Playlist$getMediaInf.startTime,
             _partIndex = _Playlist$getMediaInf.partIndex;
 
-        next.getMediaInfoForTime = this.fetchAtBuffer_ ? 'bufferedEnd' : 'currentTime';
+        next.getMediaInfoForTime = this.fetchAtBuffer_ ? "bufferedEnd " + bufferedEnd : "currentTime " + this.currentTime_();
         next.mediaIndex = segmentIndex;
         next.startOfSegment = startTime;
         next.partIndex = _partIndex;
@@ -54975,6 +56652,27 @@
 
       if (typeof next.partIndex !== 'number' && nextSegment.parts) {
         next.partIndex = 0;
+        nextPart = nextSegment.parts[0];
+      } // if we have no buffered data then we need to make sure
+      // that the next part we append is "independent" if possible.
+      // So we check if the previous part is independent, and request
+      // it if it is.
+
+
+      if (!bufferedTime && nextPart && !nextPart.independent) {
+        if (next.partIndex === 0) {
+          var lastSegment = segments[next.mediaIndex - 1];
+          var lastSegmentLastPart = lastSegment.parts && lastSegment.parts.length && lastSegment.parts[lastSegment.parts.length - 1];
+
+          if (lastSegmentLastPart && lastSegmentLastPart.independent) {
+            next.mediaIndex -= 1;
+            next.partIndex = lastSegment.parts.length - 1;
+            next.independent = 'previous segment';
+          }
+        } else if (nextSegment.parts[next.partIndex - 1].independent) {
+          next.partIndex -= 1;
+          next.independent = 'previous part';
+        }
       }
 
       var ended = this.mediaSource_ && this.mediaSource_.readyState === 'ended'; // do not choose a next segment if all of the following:
@@ -54990,7 +56688,8 @@
     };
 
     _proto.generateSegmentInfo_ = function generateSegmentInfo_(options) {
-      var playlist = options.playlist,
+      var independent = options.independent,
+          playlist = options.playlist,
           mediaIndex = options.mediaIndex,
           startOfSegment = options.startOfSegment,
           isSyncRequest = options.isSyncRequest,
@@ -55029,7 +56728,8 @@
         byteLength: 0,
         transmuxer: this.transmuxer_,
         // type of getMediaInfoForTime that was used to get this segment
-        getMediaInfoForTime: getMediaInfoForTime
+        getMediaInfoForTime: getMediaInfoForTime,
+        independent: independent
       };
       var overrideCheck = typeof forceTimestampOffset !== 'undefined' ? forceTimestampOffset : this.isPendingTimestampOffset_;
       segmentInfo.timestampOffset = this.timestampOffsetForSegment_({
@@ -55492,7 +57192,7 @@
 
       this.setTimeMapping_(segmentInfo.timeline); // for tracking overall stats
 
-      this.updateMediaSecondsLoaded_(segmentInfo.segment); // Note that the state isn't changed from loading to appending. This is because abort
+      this.updateMediaSecondsLoaded_(segmentInfo.part || segmentInfo.segment); // Note that the state isn't changed from loading to appending. This is because abort
       // logic may change behavior depending on the state, and changing state too early may
       // inflate our estimates of bandwidth. In the future this should be re-examined to
       // note more granular states.
@@ -55720,7 +57420,7 @@
         _this3.waitingOnRemove_ = false; // wait the length of time alotted in the back buffer to prevent wasted
         // attempts (since we can't clear less than the minimum)
 
-        _this3.quotaExceededErrorRetryTimeout_ = window_1.setTimeout(function () {
+        _this3.quotaExceededErrorRetryTimeout_ = window.setTimeout(function () {
           _this3.logger_('On QUOTA_EXCEEDED_ERR, re-processing call queue');
 
           _this3.quotaExceededErrorRetryTimeout_ = null;
@@ -56469,12 +58169,16 @@
       // point would mean that this was the perfect segment to fetch
 
       this.trigger('syncinfoupdate');
-      var segment = segmentInfo.segment; // If we previously appended a segment that ends more than 3 targetDurations before
+      var segment = segmentInfo.segment;
+      var part = segmentInfo.part;
+      var badSegmentGuess = segment.end && this.currentTime_() - segment.end > segmentInfo.playlist.targetDuration * 3;
+      var badPartGuess = part && part.end && this.currentTime_() - part.end > segmentInfo.playlist.partTargetDuration * 3; // If we previously appended a segment/part that ends more than 3 part/targetDurations before
       // the currentTime_ that means that our conservative guess was too conservative.
       // In that case, reset the loader state so that we try to use any information gained
       // from the previous request to create a new, more accurate, sync-point.
 
-      if (segment.end && this.currentTime_() - segment.end > segmentInfo.playlist.targetDuration * 3) {
+      if (badSegmentGuess || badPartGuess) {
+        this.logger_("bad " + (badSegmentGuess ? 'segment' : 'part') + " " + segmentInfoString(segmentInfo));
         this.resetEverything();
         return;
       }
@@ -56559,7 +58263,7 @@
       }
 
       removeCuesFromTrack(start, end, this.segmentMetadataTrack_);
-      var Cue = window_1.WebKitDataCue || window_1.VTTCue;
+      var Cue = window.WebKitDataCue || window.VTTCue;
       var value = {
         custom: segment.custom,
         dateTimeObject: segment.dateTimeObject,
@@ -57087,7 +58791,7 @@
       // errors when attempting to use the function. So we report that it
       // does not support removeSourceBuffer. As of Firefox 83 removeSourceBuffer
       // throws errors, so we report that it does not support this as well.
-      return !videojs.browser.IE_VERSION && !videojs.browser.IS_FIREFOX && window_1.MediaSource && window_1.MediaSource.prototype && typeof window_1.MediaSource.prototype.removeSourceBuffer === 'function';
+      return !videojs.browser.IE_VERSION && !videojs.browser.IS_FIREFOX && window.MediaSource && window.MediaSource.prototype && typeof window.MediaSource.prototype.removeSourceBuffer === 'function';
     }
     /**
      * Whether or not the changeType function is supported
@@ -57099,7 +58803,7 @@
     ;
 
     SourceUpdater.canChangeType = function canChangeType() {
-      return window_1.SourceBuffer && window_1.SourceBuffer.prototype && typeof window_1.SourceBuffer.prototype.changeType === 'function';
+      return window.SourceBuffer && window.SourceBuffer.prototype && typeof window.SourceBuffer.prototype.changeType === 'function';
     }
     /**
      * Whether or not the changeType function is supported
@@ -57832,7 +59536,7 @@
 
       segmentInfo.bytes = simpleSegment.bytes; // Make sure that vttjs has loaded, otherwise, wait till it finished loading
 
-      if (typeof window_1.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
+      if (typeof window.WebVTT !== 'function' && this.subtitlesTrack_ && this.subtitlesTrack_.tech_) {
         var loadHandler;
 
         var errorHandler = function errorHandler() {
@@ -57894,7 +59598,7 @@
       // the subtitle track
 
       segmentInfo.cues.forEach(function (cue) {
-        _this3.subtitlesTrack_.addCue(_this3.featuresNativeTextTracks_ ? new window_1.VTTCue(cue.startTime, cue.endTime, cue.text) : cue);
+        _this3.subtitlesTrack_.addCue(_this3.featuresNativeTextTracks_ ? new window.VTTCue(cue.startTime, cue.endTime, cue.text) : cue);
       }); // Remove any duplicate cues from the subtitle track. The WebVTT spec allows
       // cues to have identical time-intervals, but if the text is also identical
       // we can safely assume it is a duplicate that can be removed (ex. when a cue
@@ -57923,14 +59627,14 @@
       var decoder;
       var decodeBytesToString = false;
 
-      if (typeof window_1.TextDecoder === 'function') {
-        decoder = new window_1.TextDecoder('utf8');
+      if (typeof window.TextDecoder === 'function') {
+        decoder = new window.TextDecoder('utf8');
       } else {
-        decoder = window_1.WebVTT.StringDecoder();
+        decoder = window.WebVTT.StringDecoder();
         decodeBytesToString = true;
       }
 
-      var parser = new window_1.WebVTT.Parser(window_1, window_1.vttjs, decoder);
+      var parser = new window.WebVTT.Parser(window, window.vttjs, decoder);
       segmentInfo.cues = [];
       segmentInfo.timestampmap = {
         MPEGTS: 0,
@@ -58093,7 +59797,7 @@
         cue.endTime += segment.duration;
       } else {
         if ('cueOut' in segment) {
-          cue = new window_1.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
+          cue = new window.VTTCue(mediaTime, mediaTime + segment.duration, segment.cueOut);
           cue.adStartTime = mediaTime; // Assumes tag format to be
           // #EXT-X-CUE-OUT:30
 
@@ -58109,7 +59813,7 @@
               adOffset = _segment$cueOutCont$s[0],
               adTotal = _segment$cueOutCont$s[1];
 
-          cue = new window_1.VTTCue(mediaTime, mediaTime + segment.duration, '');
+          cue = new window.VTTCue(mediaTime, mediaTime + segment.duration, '');
           cue.adStartTime = mediaTime - adOffset;
           cue.adEndTime = cue.adStartTime + adTotal;
           track.addCue(cue);
@@ -58118,8 +59822,13 @@
 
       mediaTime += segment.duration;
     }
-  };
+  }; // synchronize expired playlist segments.
+  // the max media sequence diff is 48 hours of live stream
+  // content with two second segments. Anything larger than that
+  // will likely be invalid.
 
+
+  var MAX_MEDIA_SEQUENCE_DIFF_FOR_SYNC = 86400;
   var syncPointStrategies = [// Stategy "VOD": Handle the VOD-case where the sync-point is *always*
   //                the equivalence display-time 0 === segment-index 0
   {
@@ -58157,34 +59866,32 @@
         var segment = partAndSegment.segment;
         var datetimeMapping = syncController.timelineToDatetimeMappings[segment.timeline];
 
-        if (!datetimeMapping) {
+        if (!datetimeMapping || !segment.dateTimeObject) {
           continue;
         }
 
-        if (segment.dateTimeObject) {
-          var segmentTime = segment.dateTimeObject.getTime() / 1000;
-          var start = segmentTime + datetimeMapping; // take part duration into account.
+        var segmentTime = segment.dateTimeObject.getTime() / 1000;
+        var start = segmentTime + datetimeMapping; // take part duration into account.
 
-          if (segment.parts && typeof partAndSegment.partIndex === 'number') {
-            for (var z = 0; z < partAndSegment.partIndex; z++) {
-              start += segment.parts[z].duration;
-            }
+        if (segment.parts && typeof partAndSegment.partIndex === 'number') {
+          for (var z = 0; z < partAndSegment.partIndex; z++) {
+            start += segment.parts[z].duration;
           }
-
-          var distance = Math.abs(currentTime - start); // Once the distance begins to increase, or if distance is 0, we have passed
-          // currentTime and can stop looking for better candidates
-
-          if (lastDistance !== null && (distance === 0 || lastDistance < distance)) {
-            break;
-          }
-
-          lastDistance = distance;
-          syncPoint = {
-            time: start,
-            segmentIndex: partAndSegment.segmentIndex,
-            partIndex: partAndSegment.partIndex
-          };
         }
+
+        var distance = Math.abs(currentTime - start); // Once the distance begins to increase, or if distance is 0, we have passed
+        // currentTime and can stop looking for better candidates
+
+        if (lastDistance !== null && (distance === 0 || lastDistance < distance)) {
+          break;
+        }
+
+        lastDistance = distance;
+        syncPoint = {
+          time: start,
+          segmentIndex: partAndSegment.segmentIndex,
+          partIndex: partAndSegment.partIndex
+        };
       }
 
       return syncPoint;
@@ -58456,8 +60163,14 @@
     ;
 
     _proto.saveExpiredSegmentInfo = function saveExpiredSegmentInfo(oldPlaylist, newPlaylist) {
-      var mediaSequenceDiff = newPlaylist.mediaSequence - oldPlaylist.mediaSequence; // When a segment expires from the playlist and it has a start time
+      var mediaSequenceDiff = newPlaylist.mediaSequence - oldPlaylist.mediaSequence; // Ignore large media sequence gaps
+
+      if (mediaSequenceDiff > MAX_MEDIA_SEQUENCE_DIFF_FOR_SYNC) {
+        videojs.log.warn("Not saving expired segment info. Media sequence gap " + mediaSequenceDiff + " is too large.");
+        return;
+      } // When a segment expires from the playlist and it has a start time
       // save that information as a possible sync-point reference in future
+
 
       for (var i = mediaSequenceDiff - 1; i >= 0; i--) {
         var lastRemovedSegment = oldPlaylist.segments[i];
@@ -58750,7 +60463,7 @@
 
     return TimelineChangeController;
   }(videojs.EventTarget);
-  /* rollup-plugin-worker-factory start for worker!/Users/bcasey/Projects/videojs-http-streaming/src/decrypter-worker.js */
+  /* rollup-plugin-worker-factory start for worker!/Users/gsinger/repos/clean/http-streaming/src/decrypter-worker.js */
 
 
   var workerCode = transform(getWorkerString(function () {
@@ -59430,7 +61143,7 @@
     };
   }));
   var Decrypter = factory(workerCode);
-  /* rollup-plugin-worker-factory end for worker!/Users/bcasey/Projects/videojs-http-streaming/src/decrypter-worker.js */
+  /* rollup-plugin-worker-factory end for worker!/Users/gsinger/repos/clean/http-streaming/src/decrypter-worker.js */
 
   /**
    * Convert the properties of an HLS track into an audioTrackKind.
@@ -60336,8 +62049,9 @@
 
   var shouldSwitchToMedia = function shouldSwitchToMedia(_ref) {
     var currentPlaylist = _ref.currentPlaylist,
+        buffered = _ref.buffered,
+        currentTime = _ref.currentTime,
         nextPlaylist = _ref.nextPlaylist,
-        forwardBuffer = _ref.forwardBuffer,
         bufferLowWaterLine = _ref.bufferLowWaterLine,
         bufferHighWaterLine = _ref.bufferHighWaterLine,
         duration = _ref.duration,
@@ -60349,21 +62063,37 @@
       return false;
     }
 
-    var sharedLogLine = "allowing switch " + (currentPlaylist && currentPlaylist.id || 'null') + " -> " + nextPlaylist.id; // If the playlist is live, then we want to not take low water line into account.
-    // This is because in LIVE, the player plays 3 segments from the end of the
-    // playlist, and if `BUFFER_LOW_WATER_LINE` is greater than the duration availble
-    // in those segments, a viewer will never experience a rendition upswitch.
+    var sharedLogLine = "allowing switch " + (currentPlaylist && currentPlaylist.id || 'null') + " -> " + nextPlaylist.id;
 
-    if (!currentPlaylist || !currentPlaylist.endList) {
-      log(sharedLogLine + " as current playlist " + (!currentPlaylist ? 'is not set' : 'is live'));
+    if (!currentPlaylist) {
+      log(sharedLogLine + " as current playlist is not set");
       return true;
-    } // no need to switch playlist is the same
+    } // no need to switch if playlist is the same
 
 
     if (nextPlaylist.id === currentPlaylist.id) {
       return false;
+    } // determine if current time is in a buffered range.
+
+
+    var isBuffered = Boolean(findRange(buffered, currentTime).length); // If the playlist is live, then we want to not take low water line into account.
+    // This is because in LIVE, the player plays 3 segments from the end of the
+    // playlist, and if `BUFFER_LOW_WATER_LINE` is greater than the duration availble
+    // in those segments, a viewer will never experience a rendition upswitch.
+
+    if (!currentPlaylist.endList) {
+      // For LLHLS live streams, don't switch renditions before playback has started, as it almost
+      // doubles the time to first playback.
+      if (!isBuffered && typeof currentPlaylist.partTargetDuration === 'number') {
+        log("not " + sharedLogLine + " as current playlist is live llhls, but currentTime isn't in buffered.");
+        return false;
+      }
+
+      log(sharedLogLine + " as current playlist is live");
+      return true;
     }
 
+    var forwardBuffer = timeAheadOf(buffered, currentTime);
     var maxBufferLowWaterLine = experimentalBufferBasedABR ? Config.EXPERIMENTAL_MAX_BUFFER_LOW_WATER_LINE : Config.MAX_BUFFER_LOW_WATER_LINE; // For the same reason as LIVE, we ignore the low water line when the VOD
     // duration is below the max potential low water line
 
@@ -60432,7 +62162,9 @@
           enableLowInitialPlaylist = options.enableLowInitialPlaylist,
           sourceType = options.sourceType,
           cacheEncryptionKeys = options.cacheEncryptionKeys,
-          experimentalBufferBasedABR = options.experimentalBufferBasedABR;
+          experimentalBufferBasedABR = options.experimentalBufferBasedABR,
+          experimentalLeastPixelDiffSelector = options.experimentalLeastPixelDiffSelector,
+          captionServices = options.captionServices;
 
       if (!src) {
         throw new Error('A non-empty playlist URL or JSON manifest string is required');
@@ -60446,6 +62178,7 @@
 
       Vhs$1 = externVhs;
       _this.experimentalBufferBasedABR = Boolean(experimentalBufferBasedABR);
+      _this.experimentalLeastPixelDiffSelector = Boolean(experimentalLeastPixelDiffSelector);
       _this.withCredentials = withCredentials;
       _this.tech_ = tech;
       _this.vhs_ = tech.vhs;
@@ -60470,7 +62203,7 @@
       _this.on('error', _this.pauseLoading);
 
       _this.mediaTypes_ = createMediaTypes();
-      _this.mediaSource = new window_1.MediaSource();
+      _this.mediaSource = new window.MediaSource();
       _this.handleDurationChange_ = _this.handleDurationChange_.bind(assertThisInitialized(_this));
       _this.handleSourceOpen_ = _this.handleSourceOpen_.bind(assertThisInitialized(_this));
       _this.handleSourceEnded_ = _this.handleSourceEnded_.bind(assertThisInitialized(_this));
@@ -60498,6 +62231,7 @@
       var segmentLoaderSettings = {
         vhs: _this.vhs_,
         parse708captions: options.parse708captions,
+        captionServices: captionServices,
         mediaSource: _this.mediaSource,
         currentTime: _this.tech_.currentTime.bind(_this.tech_),
         seekable: function seekable() {
@@ -60522,7 +62256,8 @@
         inbandTextTracks: _this.inbandTextTracks_,
         cacheEncryptionKeys: cacheEncryptionKeys,
         sourceUpdater: _this.sourceUpdater_,
-        timelineChangeController: _this.timelineChangeController_
+        timelineChangeController: _this.timelineChangeController_,
+        experimentalExactManifestTimings: options.experimentalExactManifestTimings
       }; // The source type check not only determines whether a special DASH playlist loader
       // should be used, but also covers the case where the provided src is a vhs-json
       // manifest object (instead of a URL). In the case of vhs-json, the default
@@ -60642,7 +62377,7 @@
     _proto.checkABR_ = function checkABR_() {
       var nextPlaylist = this.selectPlaylist();
 
-      if (this.shouldSwitchToMedia_(nextPlaylist)) {
+      if (nextPlaylist && this.shouldSwitchToMedia_(nextPlaylist)) {
         this.switchMedia_(nextPlaylist, 'abr');
       }
     };
@@ -60673,7 +62408,7 @@
       var _this2 = this;
 
       this.stopABRTimer_();
-      this.abrTimer_ = window_1.setInterval(function () {
+      this.abrTimer_ = window.setInterval(function () {
         return _this2.checkABR_();
       }, 250);
     }
@@ -60691,7 +62426,7 @@
         return;
       }
 
-      window_1.clearInterval(this.abrTimer_);
+      window.clearInterval(this.abrTimer_);
       this.abrTimer_ = null;
     }
     /**
@@ -60702,12 +62437,13 @@
     ;
 
     _proto.getAudioTrackPlaylists_ = function getAudioTrackPlaylists_() {
-      var master = this.master(); // if we don't have any audio groups then we can only
+      var master = this.master();
+      var defaultPlaylists = master && master.playlists || []; // if we don't have any audio groups then we can only
       // assume that the audio tracks are contained in masters
       // playlist array, use that or an empty array.
 
       if (!master || !master.mediaGroups || !master.mediaGroups.AUDIO) {
-        return master && master.playlists || [];
+        return defaultPlaylists;
       }
 
       var AUDIO = master.mediaGroups.AUDIO;
@@ -60732,7 +62468,7 @@
 
 
       if (!track) {
-        return [];
+        return defaultPlaylists;
       }
 
       var playlists = []; // get all of the playlists that are possible for the
@@ -60742,12 +62478,27 @@
         if (AUDIO[group][track.label]) {
           var properties = AUDIO[group][track.label];
 
-          if (properties.playlists) {
+          if (properties.playlists && properties.playlists.length) {
             playlists.push.apply(playlists, properties.playlists);
-          } else {
+          } else if (properties.uri) {
             playlists.push(properties);
+          } else if (master.playlists.length) {
+            // if an audio group does not have a uri
+            // see if we have main playlists that use it as a group.
+            // if we do then add those to the playlists list.
+            for (var i = 0; i < master.playlists.length; i++) {
+              var playlist = master.playlists[i];
+
+              if (playlist.attributes && playlist.attributes.AUDIO && playlist.attributes.AUDIO === group) {
+                playlists.push(playlist);
+              }
+            }
           }
         }
+      }
+
+      if (!playlists.length) {
+        return defaultPlaylists;
       }
 
       return playlists;
@@ -61055,15 +62806,16 @@
     };
 
     _proto.shouldSwitchToMedia_ = function shouldSwitchToMedia_(nextPlaylist) {
-      var currentPlaylist = this.masterPlaylistLoader_.media();
-      var buffered = this.tech_.buffered();
-      var forwardBuffer = buffered.length ? buffered.end(buffered.length - 1) - this.tech_.currentTime() : 0;
+      var currentPlaylist = this.masterPlaylistLoader_.media() || this.masterPlaylistLoader_.pendingMedia_;
+      var currentTime = this.tech_.currentTime();
       var bufferLowWaterLine = this.bufferLowWaterLine();
       var bufferHighWaterLine = this.bufferHighWaterLine();
+      var buffered = this.tech_.buffered();
       return shouldSwitchToMedia({
+        buffered: buffered,
+        currentTime: currentTime,
         currentPlaylist: currentPlaylist,
         nextPlaylist: nextPlaylist,
-        forwardBuffer: forwardBuffer,
         bufferLowWaterLine: bufferLowWaterLine,
         bufferHighWaterLine: bufferHighWaterLine,
         duration: this.duration(),
@@ -61784,7 +63536,25 @@
     };
 
     _proto.onSyncInfoUpdate_ = function onSyncInfoUpdate_() {
-      var audioSeekable;
+      var audioSeekable; // TODO check for creation of both source buffers before updating seekable
+      //
+      // A fix was made to this function where a check for
+      // this.sourceUpdater_.hasCreatedSourceBuffers
+      // was added to ensure that both source buffers were created before seekable was
+      // updated. However, it originally had a bug where it was checking for a true and
+      // returning early instead of checking for false. Setting it to check for false to
+      // return early though created other issues. A call to play() would check for seekable
+      // end without verifying that a seekable range was present. In addition, even checking
+      // for that didn't solve some issues, as handleFirstPlay is sometimes worked around
+      // due to a media update calling load on the segment loaders, skipping a seek to live,
+      // thereby starting live streams at the beginning of the stream rather than at the end.
+      //
+      // This conditional should be fixed to wait for the creation of two source buffers at
+      // the same time as the other sections of code are fixed to properly seek to live and
+      // not throw an error due to checking for a seekable end when no seekable range exists.
+      //
+      // For now, fall back to the older behavior, with the understanding that the seekable
+      // range may not be completely correct, leading to a suboptimal initial live point.
 
       if (!this.masterPlaylistLoader_) {
         return;
@@ -62420,52 +64190,8 @@
 
   var timerCancelEvents = ['seeking', 'seeked', 'pause', 'playing', 'error'];
   /**
-   * Returns whether or not the current time should be considered close to buffered content,
-   * taking into consideration whether there's enough buffered content for proper playback.
-   *
-   * @param {Object} options
-   *        Options object
-   * @param {TimeRange} options.buffered
-   *        Current buffer
-   * @param {number} options.targetDuration
-   *        The active playlist's target duration
-   * @param {number} options.currentTime
-   *        The current time of the player
-   * @return {boolean}
-   *         Whether the current time should be considered close to the buffer
-   */
-
-  var closeToBufferedContent = function closeToBufferedContent(_ref) {
-    var buffered = _ref.buffered,
-        targetDuration = _ref.targetDuration,
-        currentTime = _ref.currentTime;
-
-    if (!buffered.length) {
-      return false;
-    } // At least two to three segments worth of content should be buffered before there's a
-    // full enough buffer to consider taking any actions.
-
-
-    if (buffered.end(0) - buffered.start(0) < targetDuration * 2) {
-      return false;
-    } // It's possible that, on seek, a remove hasn't completed and the buffered range is
-    // somewhere past the current time. In that event, don't consider the buffered content
-    // close.
-
-
-    if (currentTime > buffered.start(0)) {
-      return false;
-    } // Since target duration generally represents the max (or close to max) duration of a
-    // segment, if the buffer is within a segment of the current time, the gap probably
-    // won't be closed, and current time should be considered close to buffered content.
-
-
-    return buffered.start(0) - currentTime < targetDuration;
-  };
-  /**
    * @class PlaybackWatcher
    */
-
 
   var PlaybackWatcher = /*#__PURE__*/function () {
     /**
@@ -62506,10 +64232,6 @@
         return _this.cancelTimer_();
       };
 
-      var fixesBadSeeksHandler = function fixesBadSeeksHandler() {
-        return _this.fixesBadSeeks_();
-      };
-
       var mpc = this.masterPlaylistController_;
       var loaderTypes = ['main', 'subtitle', 'audio'];
       var loaderChecks = {};
@@ -62533,7 +64255,41 @@
 
         _this.tech_.on(['seeked', 'seeking'], loaderChecks[type].reset);
       });
-      this.tech_.on('seekablechanged', fixesBadSeeksHandler);
+      /**
+       * We check if a seek was into a gap through the following steps:
+       * 1. We get a seeking event and we do not get a seeked event. This means that
+       *    a seek was attempted but not completed.
+       * 2. We run `fixesBadSeeks_` on segment loader appends. This means that we already
+       *    removed everything from our buffer and appended a segment, and should be ready
+       *    to check for gaps.
+       */
+
+      var setSeekingHandlers = function setSeekingHandlers(fn) {
+        ['main', 'audio'].forEach(function (type) {
+          mpc[type + "SegmentLoader_"][fn]('appended', _this.seekingAppendCheck_);
+        });
+      };
+
+      this.seekingAppendCheck_ = function () {
+        if (_this.fixesBadSeeks_()) {
+          _this.consecutiveUpdates = 0;
+          _this.lastRecordedTime = _this.tech_.currentTime();
+          setSeekingHandlers('off');
+        }
+      };
+
+      this.clearSeekingAppendCheck_ = function () {
+        return setSeekingHandlers('off');
+      };
+
+      this.watchForBadSeeking_ = function () {
+        _this.clearSeekingAppendCheck_();
+
+        setSeekingHandlers('on');
+      };
+
+      this.tech_.on('seeked', this.clearSeekingAppendCheck_);
+      this.tech_.on('seeking', this.watchForBadSeeking_);
       this.tech_.on('waiting', waitingHandler);
       this.tech_.on(timerCancelEvents, cancelTimerHandler);
       this.tech_.on('canplay', canPlayHandler);
@@ -62551,9 +64307,9 @@
       this.tech_.one('play', playHandler); // Define the dispose function to clean up our events
 
       this.dispose = function () {
-        _this.logger_('dispose');
+        _this.clearSeekingAppendCheck_();
 
-        _this.tech_.off('seekablechanged', fixesBadSeeksHandler);
+        _this.logger_('dispose');
 
         _this.tech_.off('waiting', waitingHandler);
 
@@ -62563,6 +64319,10 @@
 
         _this.tech_.off('play', playHandler);
 
+        _this.tech_.off('seeking', _this.watchForBadSeeking_);
+
+        _this.tech_.off('seeked', _this.clearSeekingAppendCheck_);
+
         loaderTypes.forEach(function (type) {
           mpc[type + "SegmentLoader_"].off('appendsdone', loaderChecks[type].updateend);
           mpc[type + "SegmentLoader_"].off('playlistupdate', loaderChecks[type].reset);
@@ -62571,7 +64331,7 @@
         });
 
         if (_this.checkCurrentTimeTimeout_) {
-          window_1.clearTimeout(_this.checkCurrentTimeTimeout_);
+          window.clearTimeout(_this.checkCurrentTimeTimeout_);
         }
 
         _this.cancelTimer_();
@@ -62590,11 +64350,11 @@
       this.checkCurrentTime_();
 
       if (this.checkCurrentTimeTimeout_) {
-        window_1.clearTimeout(this.checkCurrentTimeTimeout_);
+        window.clearTimeout(this.checkCurrentTimeTimeout_);
       } // 42 = 24 fps // 250 is what Webkit uses // FF uses 15
 
 
-      this.checkCurrentTimeTimeout_ = window_1.setTimeout(this.monitorCurrentTime_.bind(this), 250);
+      this.checkCurrentTimeTimeout_ = window.setTimeout(this.monitorCurrentTime_.bind(this), 250);
     }
     /**
      * Reset stalled download stats for a specific type of loader
@@ -62681,12 +64441,6 @@
     ;
 
     _proto.checkCurrentTime_ = function checkCurrentTime_() {
-      if (this.tech_.seeking() && this.fixesBadSeeks_()) {
-        this.consecutiveUpdates = 0;
-        this.lastRecordedTime = this.tech_.currentTime();
-        return;
-      }
-
       if (this.tech_.paused() || this.tech_.seeking()) {
         return;
       }
@@ -62744,7 +64498,11 @@
 
       if (!seeking) {
         return false;
-      }
+      } // TODO: It's possible that these seekable checks should be moved out of this function
+      // and into a function that runs on seekablechange. It's also possible that we only need
+      // afterSeekableWindow as the buffered check at the bottom is good enough to handle before
+      // seekable range.
+
 
       var seekable = this.seekable();
       var currentTime = this.tech_.currentTime();
@@ -62772,20 +64530,43 @@
         return true;
       }
 
+      var sourceUpdater = this.masterPlaylistController_.sourceUpdater_;
       var buffered = this.tech_.buffered();
+      var audioBuffered = sourceUpdater.audioBuffer ? sourceUpdater.audioBuffered() : null;
+      var videoBuffered = sourceUpdater.videoBuffer ? sourceUpdater.videoBuffered() : null;
+      var media = this.media(); // verify that at least two segment durations or one part duration have been
+      // appended before checking for a gap.
 
-      if (closeToBufferedContent({
-        buffered: buffered,
-        targetDuration: this.media().targetDuration,
-        currentTime: currentTime
-      })) {
-        seekTo = buffered.start(0) + SAFE_TIME_DELTA;
-        this.logger_("Buffered region starts (" + buffered.start(0) + ") " + (" just beyond seek point (" + currentTime + "). Seeking to " + seekTo + "."));
-        this.tech_.setCurrentTime(seekTo);
-        return true;
+      var minAppendedDuration = media.partTargetDuration ? media.partTargetDuration : (media.targetDuration - TIME_FUDGE_FACTOR) * 2; // verify that at least two segment durations have been
+      // appended before checking for a gap.
+
+      var bufferedToCheck = [audioBuffered, videoBuffered];
+
+      for (var i = 0; i < bufferedToCheck.length; i++) {
+        // skip null buffered
+        if (!bufferedToCheck[i]) {
+          continue;
+        }
+
+        var timeAhead = timeAheadOf(bufferedToCheck[i], currentTime); // if we are less than two video/audio segment durations or one part
+        // duration behind we haven't appended enough to call this a bad seek.
+
+        if (timeAhead < minAppendedDuration) {
+          return false;
+        }
       }
 
-      return false;
+      var nextRange = findNextRange(buffered, currentTime); // we have appended enough content, but we don't have anything buffered
+      // to seek over the gap
+
+      if (nextRange.length === 0) {
+        return false;
+      }
+
+      seekTo = nextRange.start(0) + SAFE_TIME_DELTA;
+      this.logger_("Buffered region starts (" + nextRange.start(0) + ") " + (" just beyond seek point (" + currentTime + "). Seeking to " + seekTo + "."));
+      this.tech_.setCurrentTime(seekTo);
+      return true;
     }
     /**
      * Handler for situations when we determine the player is waiting.
@@ -62840,11 +64621,6 @@
     _proto.techWaiting_ = function techWaiting_() {
       var seekable = this.seekable();
       var currentTime = this.tech_.currentTime();
-
-      if (this.tech_.seeking() && this.fixesBadSeeks_()) {
-        // Tech is seeking or bad seek fixed, no action needed
-        return true;
-      }
 
       if (this.tech_.seeking() || this.timer_ !== null) {
         // Tech is seeking or already waiting on another action, no action needed
@@ -62942,10 +64718,10 @@
       return false;
     };
 
-    _proto.videoUnderflow_ = function videoUnderflow_(_ref2) {
-      var videoBuffered = _ref2.videoBuffered,
-          audioBuffered = _ref2.audioBuffered,
-          currentTime = _ref2.currentTime; // audio only content will not have video underflow :)
+    _proto.videoUnderflow_ = function videoUnderflow_(_ref) {
+      var videoBuffered = _ref.videoBuffered,
+          audioBuffered = _ref.audioBuffered,
+          currentTime = _ref.currentTime; // audio only content will not have video underflow :)
 
       if (!videoBuffered) {
         return;
@@ -63202,9 +64978,9 @@
     initPlugin(this, options);
   };
 
-  var version$4 = "2.9.2";
-  var version$3 = "5.12.2";
-  var version$2 = "0.17.0";
+  var version$4 = "2.13.1";
+  var version$3 = "6.0.1";
+  var version$2 = "0.21.0";
   var version$1 = "4.7.0";
   var version = "3.1.2";
   var Vhs = {
@@ -63510,11 +65286,11 @@
   };
 
   var getVhsLocalStorage = function getVhsLocalStorage() {
-    if (!window_1.localStorage) {
+    if (!window.localStorage) {
       return null;
     }
 
-    var storedObject = window_1.localStorage.getItem(LOCAL_STORAGE_KEY);
+    var storedObject = window.localStorage.getItem(LOCAL_STORAGE_KEY);
 
     if (!storedObject) {
       return null;
@@ -63529,7 +65305,7 @@
   };
 
   var updateVhsLocalStorage = function updateVhsLocalStorage(options) {
-    if (!window_1.localStorage) {
+    if (!window.localStorage) {
       return false;
     }
 
@@ -63537,7 +65313,7 @@
     objectToStore = objectToStore ? videojs.mergeOptions(objectToStore, options) : options;
 
     try {
-      window_1.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(objectToStore));
+      window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(objectToStore));
     } catch (e) {
       // Throws if storage is full (e.g., always on iOS 5+ Safari private mode, where
       // storage is set to 0).
@@ -63576,11 +65352,11 @@
 
 
   Vhs.supportsNativeHls = function () {
-    if (!document_1 || !document_1.createElement) {
+    if (!document || !document.createElement) {
       return false;
     }
 
-    var video = document_1.createElement('video'); // native HLS is definitely not supported if HTML5 video isn't
+    var video = document.createElement('video'); // native HLS is definitely not supported if HTML5 video isn't
 
     if (!videojs.getTech('Html5').isSupported()) {
       return false;
@@ -63599,11 +65375,11 @@
   }();
 
   Vhs.supportsNativeDash = function () {
-    if (!document_1 || !document_1.createElement || !videojs.getTech('Html5').isSupported()) {
+    if (!document || !document.createElement || !videojs.getTech('Html5').isSupported()) {
       return false;
     }
 
-    return /maybe|probably/i.test(document_1.createElement('video').canPlayType('application/dash+xml'));
+    return /maybe|probably/i.test(document.createElement('video').canPlayType('application/dash+xml'));
   }();
 
   Vhs.supportsTypeNatively = function (type) {
@@ -63722,8 +65498,8 @@
       // can adjust our quality selection quickly
 
 
-      _this.on(document_1, ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'], function (event) {
-        var fullscreenElement = document_1.fullscreenElement || document_1.webkitFullscreenElement || document_1.mozFullScreenElement || document_1.msFullscreenElement;
+      _this.on(document, ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'], function (event) {
+        var fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
 
         if (fullscreenElement && fullscreenElement.contains(_this.tech_.el())) {
           _this.masterPlaylistController_.fastQualityChange_();
@@ -63769,6 +65545,7 @@
       this.options_.useDevicePixelRatio = this.options_.useDevicePixelRatio || false;
       this.options_.smoothQualityChange = this.options_.smoothQualityChange || false;
       this.options_.useBandwidthFromLocalStorage = typeof this.source_.useBandwidthFromLocalStorage !== 'undefined' ? this.source_.useBandwidthFromLocalStorage : this.options_.useBandwidthFromLocalStorage || false;
+      this.options_.useNetworkInformationApi = this.options_.useNetworkInformationApi || false;
       this.options_.customTagParsers = this.options_.customTagParsers || [];
       this.options_.customTagMappers = this.options_.customTagMappers || [];
       this.options_.cacheEncryptionKeys = this.options_.cacheEncryptionKeys || false;
@@ -63817,7 +65594,7 @@
 
       this.options_.enableLowInitialPlaylist = this.options_.enableLowInitialPlaylist && this.options_.bandwidth === Config.INITIAL_BANDWIDTH; // grab options passed to player.src
 
-      ['withCredentials', 'useDevicePixelRatio', 'limitRenditionByPlayerDimensions', 'bandwidth', 'smoothQualityChange', 'customTagParsers', 'customTagMappers', 'handleManifestRedirects', 'cacheEncryptionKeys', 'playlistSelector', 'initialPlaylistSelector', 'experimentalBufferBasedABR', 'liveRangeSafeTimeDelta', 'experimentalLLHLS'].forEach(function (option) {
+      ['withCredentials', 'useDevicePixelRatio', 'limitRenditionByPlayerDimensions', 'bandwidth', 'smoothQualityChange', 'customTagParsers', 'customTagMappers', 'handleManifestRedirects', 'cacheEncryptionKeys', 'playlistSelector', 'initialPlaylistSelector', 'experimentalBufferBasedABR', 'liveRangeSafeTimeDelta', 'experimentalLLHLS', 'useNetworkInformationApi', 'experimentalExactManifestTimings', 'experimentalLeastPixelDiffSelector'].forEach(function (option) {
         if (typeof _this2.source_[option] !== 'undefined') {
           _this2.options_[option] = _this2.source_[option];
         }
@@ -63916,7 +65693,25 @@
         },
         bandwidth: {
           get: function get() {
-            return this.masterPlaylistController_.mainSegmentLoader_.bandwidth;
+            var playerBandwidthEst = this.masterPlaylistController_.mainSegmentLoader_.bandwidth;
+            var networkInformation = window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection;
+            var tenMbpsAsBitsPerSecond = 10e6;
+
+            if (this.options_.useNetworkInformationApi && networkInformation) {
+              // downlink returns Mbps
+              // https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/downlink
+              var networkInfoBandwidthEstBitsPerSec = networkInformation.downlink * 1000 * 1000; // downlink maxes out at 10 Mbps. In the event that both networkInformationApi and the player
+              // estimate a bandwidth greater than 10 Mbps, use the larger of the two estimates to ensure that
+              // high quality streams are not filtered out.
+
+              if (networkInfoBandwidthEstBitsPerSec >= tenMbpsAsBitsPerSecond && playerBandwidthEst >= tenMbpsAsBitsPerSecond) {
+                playerBandwidthEst = Math.max(playerBandwidthEst, networkInfoBandwidthEstBitsPerSec);
+              } else {
+                playerBandwidthEst = networkInfoBandwidthEstBitsPerSec;
+              }
+            }
+
+            return playerBandwidthEst;
           },
           set: function set(bandwidth) {
             this.masterPlaylistController_.mainSegmentLoader_.bandwidth = bandwidth; // setting the bandwidth manually resets the throughput counter
@@ -64140,37 +65935,14 @@
         return;
       }
 
-      this.mediaSourceUrl_ = window_1.URL.createObjectURL(this.masterPlaylistController_.mediaSource);
+      this.mediaSourceUrl_ = window.URL.createObjectURL(this.masterPlaylistController_.mediaSource);
       this.tech_.src(this.mediaSourceUrl_);
-    }
-    /**
-     * If necessary and EME is available, sets up EME options and waits for key session
-     * creation.
-     *
-     * This function also updates the source updater so taht it can be used, as for some
-     * browsers, EME must be configured before content is appended (if appending unencrypted
-     * content before encrypted content).
-     */
-    ;
+    };
 
-    _proto.setupEme_ = function setupEme_() {
+    _proto.createKeySessions_ = function createKeySessions_() {
       var _this4 = this;
 
       var audioPlaylistLoader = this.masterPlaylistController_.mediaTypes_.AUDIO.activePlaylistLoader;
-      var didSetupEmeOptions = setupEmeOptions({
-        player: this.player_,
-        sourceKeySystems: this.source_.keySystems,
-        media: this.playlists.media(),
-        audioMedia: audioPlaylistLoader && audioPlaylistLoader.media()
-      }); // In IE11 this is too early to initialize media keys, and IE11 does not support
-      // promises.
-
-      if (videojs.browser.IE_VERSION === 11 || !didSetupEmeOptions) {
-        // If EME options were not set up, we've done all we could to initialize EME.
-        this.masterPlaylistController_.sourceUpdater_.initializedEme();
-        return;
-      }
-
       this.logger_('waiting for EME key session creation');
       waitForKeySessionCreation({
         player: this.player_,
@@ -64189,6 +65961,60 @@
           code: 3
         });
       });
+    };
+
+    _proto.handleWaitingForKey_ = function handleWaitingForKey_() {
+      // If waitingforkey is fired, it's possible that the data that's necessary to retrieve
+      // the key is in the manifest. While this should've happened on initial source load, it
+      // may happen again in live streams where the keys change, and the manifest info
+      // reflects the update.
+      //
+      // Because videojs-contrib-eme compares the PSSH data we send to that of PSSH data it's
+      // already requested keys for, we don't have to worry about this generating extraneous
+      // requests.
+      this.logger_('waitingforkey fired, attempting to create any new key sessions');
+      this.createKeySessions_();
+    }
+    /**
+     * If necessary and EME is available, sets up EME options and waits for key session
+     * creation.
+     *
+     * This function also updates the source updater so taht it can be used, as for some
+     * browsers, EME must be configured before content is appended (if appending unencrypted
+     * content before encrypted content).
+     */
+    ;
+
+    _proto.setupEme_ = function setupEme_() {
+      var _this5 = this;
+
+      var audioPlaylistLoader = this.masterPlaylistController_.mediaTypes_.AUDIO.activePlaylistLoader;
+      var didSetupEmeOptions = setupEmeOptions({
+        player: this.player_,
+        sourceKeySystems: this.source_.keySystems,
+        media: this.playlists.media(),
+        audioMedia: audioPlaylistLoader && audioPlaylistLoader.media()
+      });
+      this.player_.tech_.on('keystatuschange', function (e) {
+        if (e.status === 'output-restricted') {
+          _this5.masterPlaylistController_.blacklistCurrentPlaylist({
+            playlist: _this5.masterPlaylistController_.media(),
+            message: "DRM keystatus changed to " + e.status + ". Playlist will fail to play. Check for HDCP content.",
+            blacklistDuration: Infinity
+          });
+        }
+      });
+      this.handleWaitingForKey_ = this.handleWaitingForKey_.bind(this);
+      this.player_.tech_.on('waitingforkey', this.handleWaitingForKey_); // In IE11 this is too early to initialize media keys, and IE11 does not support
+      // promises.
+
+      if (videojs.browser.IE_VERSION === 11 || !didSetupEmeOptions) {
+        // If EME options were not set up, we've done all we could to initialize EME.
+        this.masterPlaylistController_.sourceUpdater_.initializedEme();
+        return;
+      }
+
+      this.createKeySessions_();
     }
     /**
      * Initializes the quality levels and sets listeners to update them.
@@ -64199,7 +66025,7 @@
     ;
 
     _proto.setupQualityLevels_ = function setupQualityLevels_() {
-      var _this5 = this;
+      var _this6 = this;
 
       var player = videojs.players[this.tech_.options_.playerId]; // if there isn't a player or there isn't a qualityLevels plugin
       // or qualityLevels_ listeners have already been setup, do nothing.
@@ -64210,10 +66036,10 @@
 
       this.qualityLevels_ = player.qualityLevels();
       this.masterPlaylistController_.on('selectedinitialmedia', function () {
-        handleVhsLoadedMetadata(_this5.qualityLevels_, _this5);
+        handleVhsLoadedMetadata(_this6.qualityLevels_, _this6);
       });
       this.playlists.on('mediachange', function () {
-        handleVhsMediaChange(_this5.qualityLevels_, _this5.playlists);
+        handleVhsMediaChange(_this6.qualityLevels_, _this6.playlists);
       });
     }
     /**
@@ -64307,9 +66133,13 @@
         delete this.tech_.hls;
       }
 
-      if (this.mediaSourceUrl_ && window_1.URL.revokeObjectURL) {
-        window_1.URL.revokeObjectURL(this.mediaSourceUrl_);
+      if (this.mediaSourceUrl_ && window.URL.revokeObjectURL) {
+        window.URL.revokeObjectURL(this.mediaSourceUrl_);
         this.mediaSourceUrl_ = null;
+      }
+
+      if (this.tech_) {
+        this.tech_.off('waitingforkey', this.handleWaitingForKey_);
       }
 
       _Component.prototype.dispose.call(this);
@@ -64394,11 +66224,17 @@
       }
 
       var _videojs$mergeOptions = videojs.mergeOptions(videojs.options, options),
-          _videojs$mergeOptions2 = _videojs$mergeOptions.vhs.overrideNative,
-          overrideNative = _videojs$mergeOptions2 === void 0 ? !videojs.browser.IS_ANY_SAFARI : _videojs$mergeOptions2;
+          _videojs$mergeOptions2 = _videojs$mergeOptions.vhs;
 
+      _videojs$mergeOptions2 = _videojs$mergeOptions2 === void 0 ? {} : _videojs$mergeOptions2;
+      var _videojs$mergeOptions3 = _videojs$mergeOptions2.overrideNative,
+          overrideNative = _videojs$mergeOptions3 === void 0 ? !videojs.browser.IS_ANY_SAFARI : _videojs$mergeOptions3,
+          _videojs$mergeOptions4 = _videojs$mergeOptions.hls;
+      _videojs$mergeOptions4 = _videojs$mergeOptions4 === void 0 ? {} : _videojs$mergeOptions4;
+      var _videojs$mergeOptions5 = _videojs$mergeOptions4.overrideNative,
+          legacyOverrideNative = _videojs$mergeOptions5 === void 0 ? false : _videojs$mergeOptions5;
       var supportedType = simpleTypeFromSourceType(type);
-      var canUseMsePlayback = supportedType && (!Vhs.supportsTypeNatively(supportedType) || overrideNative);
+      var canUseMsePlayback = supportedType && (!Vhs.supportsTypeNatively(supportedType) || legacyOverrideNative || overrideNative);
       return canUseMsePlayback ? 'maybe' : '';
     }
   };
@@ -64451,10 +66287,9 @@
   videojs.options.vhs = videojs.options.vhs || {};
   videojs.options.hls = videojs.options.hls || {};
 
-  if (videojs.registerPlugin) {
-    videojs.registerPlugin('reloadSourceOnError', reloadSourceOnError);
-  } else {
-    videojs.plugin('reloadSourceOnError', reloadSourceOnError);
+  if (!videojs.getPlugin || !videojs.getPlugin('reloadSourceOnError')) {
+    var registerPlugin = videojs.registerPlugin || videojs.plugin;
+    registerPlugin('reloadSourceOnError', reloadSourceOnError);
   }
 
   return videojs;

@@ -6,6 +6,7 @@ monkey.patch_all(thread=True)
 
 import sys
 import logging
+import os
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash
@@ -19,7 +20,20 @@ sys.path.append(cwp)
 #----------------------------------------------------------------------------#
 # Configuration Imports
 #----------------------------------------------------------------------------#
-from conf import config
+try:
+    from conf import config
+
+except:
+    from dotenv import load_dotenv
+
+    class configObj:
+        pass
+
+    load_dotenv()
+    config = configObj()
+    config.ospCoreAPI = os.getenv('OSP_API_HOST')
+    config.secretKey = os.getenv('OSP_RTMP_SECRETKEY')
+    config.debugMode = os.getenv('OSP_RTMP_DEBUG').lower() in ('true', '1', 't')
 
 #----------------------------------------------------------------------------#
 # Global Vars Imports
@@ -59,10 +73,12 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 #----------------------------------------------------------------------------#
 from blueprints.rtmp import rtmp_bp
 from blueprints.root import root_bp
+from blueprints.api import api_v1
 
 # Register all Blueprints
 app.register_blueprint(rtmp_bp)
 app.register_blueprint(root_bp)
+app.register_blueprint(api_v1)
 
 #----------------------------------------------------------------------------#
 # Finalize App Init

@@ -1,6 +1,8 @@
 from flask_security import current_user
-from flask_socketio import emit
+from flask_socketio import emit, join_room
 from sqlalchemy.sql.expression import func
+from sqlalchemy import asc
+import datetime
 
 from classes.shared import db, socketio
 from classes import Channel
@@ -109,4 +111,32 @@ def socketio_xmpp_getBanList(message):
                 bannedUserList.append(newEntry)
 
     emit('returnBanList', {'results': bannedUserList}, broadcast=False)
+    return 'OK'
+
+@socketio.on('deleteMessageRequest')
+def deleteMessageRequest(message):
+    if current_user.is_authenticated:
+        if 'channelLoc' in message and 'messageId' in message:
+            from app import ejabberd
+            messageId = str(message['messageId'])
+            channelLoc = str(message['channelLoc'])
+            timestamp = datetime.datetime.utcnow()
+            channelQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+            if channelQuery is not None:
+                user = Sec.User.query.filter_by(id=current_user.id).first()
+                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
+                if user.uuid in channelAffiliations:
+                    userAffiliation = channelAffiliations[user.uuid]
+                    if userAffiliation == 'owner' or userAffiliation == 'admin':
+                        newBannedMessage = banList.chatBannedMessages(messageId, timestamp, channelLoc)
+                        db.session.add(newBannedMessage)
+                        db.session.commit()
+                        banListOverflowQuery = banList.chatBannedMessages.query.filter_by(channelLoc=channelLoc).count()
+                        if banListOverflowQuery > 20:
+                            banListOverflowMessageQuery = banList.chatBannedMessages.query.filter_by(channelLoc=channelLoc).order_by(banList.chatBannedMessages.timestamp.asc()).first()
+                            if banListOverflowMessageQuery != None:
+                                db.session.delete(banListOverflowMessageQuery)
+                                db.session.commit()
+                        emit('deleteMessage', messageId, broadcast=True)
+    db.session.close()
     return 'OK'

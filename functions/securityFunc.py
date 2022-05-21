@@ -2,21 +2,32 @@ from flask import session
 from flask_security import current_user
 import datetime
 import bleach
+import logging
 
-from classes.shared import db, limiter
+from classes.shared import db, limiter, cache
 from classes import Channel
 from classes import Sec
 from classes import invites
+from classes import views
+from classes import comments
+from classes import apikey
 
 from globals import globalvars
 
-from functions import cache
+from functions import cache as cachefunc, system, channelFunc, notifications, cachedDbCalls
+
+log = logging.getLogger('app.functions.securityFunctions')
 
 @limiter.limit("100/second")
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
+
+        # Allow Admin
+        if current_user.has_role('Admin'):
+            return True
+
         # Verify if a Cached Entry Exists
-        cachedResult = cache.checkInviteCache(channelID)
+        cachedResult = cachefunc.checkInviteCache(channelID)
         if cachedResult is True:
             return True
         else:
@@ -70,6 +81,75 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.commit()
                         db.session.close()
     return False
+
+def flag_delete_user(userID):
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery is not None:
+        userQuery.active = False
+        existingFlag = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        notifications.sendAdminNotification('User ' + userQuery.username + ' has queued their account for deletion.  The account will be deleted in 48 from ' + str(datetime.datetime.now()), '/settings/admin', "/images/" + str(userQuery.pictureLocation))
+        if existingFlag is None:
+            newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
+            db.session.add(newUserFlag)
+            db.session.commit()
+        return True
+    db.session.commit()
+    db.session.close()
+    return False
+
+
+def delete_user(userID):
+    """
+    Deletes Channel Data, Comments, Videos, Clips, and Userdata for a given userID
+    """
+    userQuery = Sec.User.query.filter_by(id=userID).first()
+    if userQuery is not None:
+
+        userFlaggedForDeletionQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        if userFlaggedForDeletionQuery is not None:
+            db.session.delete(userFlaggedForDeletionQuery)
+
+        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
+        username = userQuery.username
+
+        # Delete any existing Invites
+        inviteQuery = invites.invitedViewer.query.filter_by(userID=int(userID)).all()
+        for invite in inviteQuery:
+            db.session.delete(invite)
+        db.session.commit()
+
+        # Delete any existing User Comments
+        commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
+        for comment in commentQuery:
+            db.session.delete(comment)
+        db.session.commit()
+
+        # Delete any existing API Keys
+        apikeyQuery = apikey.apikey.query.filter_by(userID=userID).all()
+        for key in apikeyQuery:
+            db.session.delete(key)
+        db.session.commit()
+
+        # Delete Channels and all Channel Data
+        for channel in channelQuery:
+            channelFunc.delete_channel(channel.id)
+
+        # Clear All Role Entries for a User Prior to Deletion
+        from app import user_datastore
+        roleQuery = Sec.Role.query.all()
+        for role in roleQuery:
+            user_datastore.remove_role_from_user(userQuery, role)
+
+        db.session.delete(userQuery)
+        db.session.commit()
+
+        cache.delete_memoized(cachedDbCalls.getUser, int(userID))
+
+        log.warning({"level": "warning", "message": "User Deleted - " + username})
+        system.newLog(1, "User " + current_user.username + " deleted User " + username)
+        return True
+    else:
+        return False
 
 def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.

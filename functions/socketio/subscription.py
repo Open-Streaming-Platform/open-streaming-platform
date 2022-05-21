@@ -11,13 +11,16 @@ from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
 
+from functions.scheduled_tasks import message_tasks
+
 @socketio.on('toggleChannelSubscription')
 @limiter.limit("10/minute")
 def toggle_chanSub(payload):
     if current_user.is_authenticated:
         sysSettings = cachedDbCalls.getSystemSettings()
         if 'channelID' in payload:
-            channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
+            #channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
+            channelQuery = cachedDbCalls.getChannel(int(payload['channelID']))
             if channelQuery is not None:
                 currentSubscription = subscriptions.channelSubs.query.filter_by(channelID=channelQuery.id, userID=current_user.id).first()
                 subState = False
@@ -43,7 +46,7 @@ def toggle_chanSub(payload):
                     db.session.add(newNotification)
                     db.session.commit()
 
-                    webhookFunc.runWebhook(channelQuery.id, 10, channelname=channelQuery.channelName,
+                    message_tasks.send_webhook.delay(channelQuery.id, 10, channelname=channelQuery.channelName,
                                channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(channelQuery.id)),
                                channeltopic=templateFilters.get_topicName(channelQuery.topic),
                                channelimage=str(channelImage), streamer=templateFilters.get_userName(channelQuery.owningUser),

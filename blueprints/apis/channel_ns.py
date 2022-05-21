@@ -10,11 +10,15 @@ from classes import Channel
 from classes import apikey
 from classes import Sec
 from classes import topics
+from classes import invites
 from classes import views
+from classes import Stream
 from classes.shared import db
 
 from functions import system
 from functions import cachedDbCalls
+from functions import channelFunc
+from functions import templateFilters
 
 from globals import globalvars
 
@@ -32,6 +36,16 @@ channelParserPost.add_argument('topicID', type=int, required=True)
 channelParserPost.add_argument('recordEnabled', type=bool, required=True)
 channelParserPost.add_argument('chatEnabled', type=bool, required=True)
 channelParserPost.add_argument('commentsEnabled', type=bool, required=True)
+
+channelInviteGetInvite = reqparse.RequestParser()
+channelInviteGetInvite.add_argument('userID', type=int)
+
+channelInvitePostInvite = reqparse.RequestParser()
+channelInvitePostInvite.add_argument('userID', type=int, required=True)
+channelInvitePostInvite.add_argument('expirationDays', type=int, required=True)
+
+channelInviteDeleteInvite = reqparse.RequestParser()
+channelInviteDeleteInvite.add_argument('userID', type=int, required=True)
 
 channelSearchPost = reqparse.RequestParser()
 channelSearchPost.add_argument('term', type=str, required=True)
@@ -76,7 +90,7 @@ class api_1_ListChannels(Resource):
         """
         channelList = Channel.Channel.query.all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in channelList]}
+        return {'results': [ob.serialize() for ob in channelList if ob.private is False]}
 
     # Channel - Create Channel
     @api.expect(channelParserPost)
@@ -164,7 +178,12 @@ class api_1_ListChannel(Resource):
                                 possibleTopics = topics.topics.query.filter_by(id=int(args['topicID'])).first()
                                 if possibleTopics is not None:
                                     channelQuery.topic = int(args['topicID'])
+
+                        # Invalidate Channel Cache
+                        cachedDbCalls.invalidateChannelCache(channelQuery.id)
+
                         db.session.commit()
+
                         return {'results': {'message': 'Channel Updated'}}, 200
         return {'results': {'message': 'Request Error'}},400
 
@@ -180,39 +199,56 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
                     if channelQuery is not None:
-                        videoQuery = channelQuery.recordedVideo
-                        channelUpvotes = channelQuery.upvotes
-                        channelStreams = channelQuery.stream
+                        results = channelFunc.delete_channel(channelQuery.id)
 
-                        for video in videoQuery:
-                            video.remove()
-                            for clip in video.clips:
-                                for upvotes in clip:
-                                    db.session.delete(upvotes)
-                                clip.remove()
-                                db.session.delete(clip)
-                            for upvote in video.upvotes:
-                                db.session.delete(upvote)
-                            for comment in video.comments:
-                                db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
-                            for view in vidViews:
-                                db.session.delete(view)
-                            db.session.delete(video)
-                        for entry in channelUpvotes:
-                            db.session.delete(entry)
-                        for entry in channelStreams:
-                            db.session.delete(entry)
-                        db.session.delete(channelQuery)
+                        # Invalidate Channel Cache
+                        cachedDbCalls.invalidateChannelCache(channelQuery.id)
+
                         db.session.commit()
-
-                        videos_root = globalvars.videoRoot + 'videos/'
-                        filePath = videos_root + channelQuery.channelLoc
-                        if filePath != videos_root:
-                            shutil.rmtree(filePath, ignore_errors=True)
 
                         return {'results': {'message': 'Channel Deleted'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
+
+# Invites Endpoint for a Channel
+@api.route('/<string:channelEndpointID>/streams')
+@api.doc(params={'channelEndpointID': 'GUID Channel Location'})
+class api_1_Streams(Resource):
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def get(self, channelEndpointID):
+        """
+        Returns list of active streams on a channel
+        """
+        sysSettings = cachedDbCalls.getSystemSettings()
+        channelIDQuery = cachedDbCalls.getChannelIDFromLocation(channelEndpointID)
+
+        if channelIDQuery is not None:
+            StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelIDQuery, active=True, complete=False)\
+                .with_entities(Stream.Stream.id, Stream.Stream.topic, Stream.Stream.streamName, Stream.Stream.startTimestamp, Stream.Stream.uuid, Stream.Stream.currentViewers,
+                               Stream.Stream.totalViewers).all()
+
+            results = []
+            if sysSettings.adaptiveStreaming is True:
+                streamURL = '/live-adapt/' + channelEndpointID + '.m3u8'
+            else:
+                streamURL = '/live/' + channelEndpointID + '/index.m3u8'
+            for entry in StreamQuery:
+                results.append(
+                    {
+                        'id': entry.id,
+                        'uuid': entry.uuid,
+                        'topic': entry.topic,
+                        'streamName': entry.streamName,
+                        'startTimestamp': str(entry.startTimestamp),
+                        'currentViewers': entry.currentViewers,
+                        'totalViewers': entry.totalViewers,
+                        'streamURL': streamURL
+                    })
+            db.session.commit()
+            return {'results': results}
+
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+
 
 
 # TODO Add Ability to Add/Delete/Change
@@ -229,7 +265,7 @@ class api_1_GetRestreams(Resource):
             requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
             if requestAPIKey is not None:
                 if requestAPIKey.isValid():
-                    channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                    channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).with_entities(Channel.Channel.id).first()
 
         else:
             # Perform RTMP IP Authorization Check
@@ -237,10 +273,11 @@ class api_1_GetRestreams(Resource):
             if authorized[0] is False:
                 return {'results': {'message': "Unauthorized RTMP Server or Missing User API Key - " + authorized[1]}}, 400
 
-            channelData = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+            channelData = cachedDbCalls.getChannelByLoc(channelEndpointID)
 
         if channelData is not None:
-            restreamDestinations = channelData.restreamDestinations
+            restreamDestinationQuery = Channel.restreamDestinations.query.filter_by(channel=channelData.id).all()
+            restreamDestinations = restreamDestinationQuery
             db.session.commit()
             return {'results': [ob.serialize() for ob in restreamDestinations]}
 
@@ -248,6 +285,140 @@ class api_1_GetRestreams(Resource):
             db.session.commit()
             return {'results': {'message': 'Request Error'}}, 400
 
+# Invites Endpoint for a Channel
+@api.route('/<string:channelEndpointID>/invites')
+@api.doc(security='apikey')
+@api.doc(params={'channelEndpointID': 'GUID Channel Location'})
+class api_1_Invites(Resource):
+    @api.expect(channelInviteGetInvite)
+    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    def get(self, channelEndpointID):
+        """
+             Returns channel protection invites for a channel
+        """
+        args = channelInviteGetInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        inviteReturnArray = {'results': []}
+                        invitedUserQuery = []
+                        if 'userID' in args:
+                            invitedUserQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id, userID=int(args['userID'])).all()
+                        else:
+                            invitedUserQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id).all()
+                        for invite in invitedUserQuery:
+                            inviteReturn = {'id': invite.id, 'userID': invite.userId, 'addedDate': str(invite.addedDate), 'expiration': str(invite.expiration), 'inviteCode': invite.inviteCode, 'isValid': invite.isValid()}
+                            inviteReturnArray['results'].append(inviteReturn)
+                        return inviteReturnArray
+                db.session.commit()
+                db.session.close()
+                return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+    def post(self, channelEndpointID):
+        """
+        Creates a new user invite for a channel
+        """
+        args = channelInvitePostInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        if 'userID' in args and 'expirationDays' in args:
+                            userQuery = Sec.User.query.filter_by(id=int(args['userID'])).first()
+                            if userQuery is not None:
+                                newInvite = invites.invitedViewer(userQuery.id, requestedChannel.id, int(args['expirationDays']))
+                                db.session.add(newInvite)
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Success'}}
+                            else:
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Request Error - Invalid User'}}, 400
+                    else:
+                        db.session.commit()
+                        db.session.close()
+                        return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
+    def delete(self, channelEndpointID):
+        """
+        Deletes a user invite from a channel
+        """
+        args = channelInviteDeleteInvite.parse_args()
+        if 'X-API-KEY' in request.headers:
+            requestAPIKey = apikey.apikey.query.filter_by(key=request.headers['X-API-KEY']).first()
+            if requestAPIKey is not None:
+                if requestAPIKey.isValid():
+                    requestedChannel = None
+                    if requestAPIKey.type == 1:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID, owningUser=requestAPIKey.userID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Unauthorized'}}, 401
+                    elif requestAPIKey.type == 2:
+                        requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelEndpointID).first()
+                        if requestedChannel is None:
+                            db.session.commit()
+                            db.session.close()
+                            return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                    if requestedChannel is not None:
+                        if 'userID' in args:
+                            inviteQuery = invites.invitedViewer.query.filter_by(channelID=requestedChannel.id, user=int(args['userID'])).first()
+                            if inviteQuery != None:
+                                db.session.delete(inviteQuery)
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Success'}}
+                            else:
+                                db.session.commit()
+                                db.session.close()
+                                return {'results': {'message': 'Request Error - Invalid User'}}, 400
+                    else:
+                        db.session.commit()
+                        db.session.close()
+                        return {'results': {'message': 'Request Error - No Such Channel'}}, 400
+                else:
+                    db.session.commit()
+                    db.session.close()
+                    return {'results': {'message': 'Request Error - Expired API Key'}}, 401
+        db.session.commit()
+        return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/authed/')
 class api_1_ListChannelAuthed(Resource):

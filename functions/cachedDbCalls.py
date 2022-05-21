@@ -8,6 +8,7 @@ from classes import subscriptions
 from classes import Sec
 from classes import topics
 from classes import comments
+from classes import panel
 
 
 from classes.shared import cache
@@ -27,9 +28,11 @@ def getOAuthProviders():
 @cache.memoize(timeout=60)
 def searchStreams(term):
     if term is not None:
-        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.streamName.like("%" + term + "%"))\
+        StreamNameQuery = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.streamName.like("%" + term + "%"))\
             .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)\
-            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc).all()
+            .with_entities(Stream.Stream.id, Stream.Stream.streamName, Channel.Channel.channelLoc, Stream.Stream.uuid, Stream.Stream.linkedChannel,
+                           Stream.Stream.topic, Stream.Stream.currentViewers, Stream.Stream.totalViewers, Stream.Stream.active, Stream.Stream.rtmpServer).all()
+
         resultsArray = StreamNameQuery
         resultsArray = list(set(resultsArray))
         return resultsArray
@@ -45,7 +48,7 @@ def getAllChannels():
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private).all()
     return channelQuery
 
 @cache.memoize(timeout=60)
@@ -56,7 +59,7 @@ def getChannel(channelID):
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL).filter_by(id=channelID).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey, Channel.Channel.xmppToken).filter_by(id=channelID).first()
     return channelQuery
 
 @cache.memoize(timeout=600)
@@ -67,7 +70,29 @@ def getChannelByLoc(channelLoc):
                       Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
                       Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
                       Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
-                      Channel.Channel.autoPublish, Channel.Channel.vanityURL).filter_by(channelLoc=channelLoc).first()
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey, Channel.Channel.xmppToken, Channel.Channel.chatFormat, Channel.Channel.chatHistory).filter_by(channelLoc=channelLoc).first()
+    return channelQuery
+
+@cache.memoize(timeout=600)
+def getChannelByStreamKey(StreamKey):
+    channelQuery = Channel.Channel.query.\
+        with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
+                      Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                      Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                      Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                      Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey, Channel.Channel.xmppToken).filter_by(streamKey=StreamKey).first()
+    return channelQuery
+
+@cache.memoize(timeout=600)
+def getChannelsByOwnerId(OwnerId):
+    channelQuery = Channel.Channel.query.\
+        with_entities(Channel.Channel.id, Channel.Channel.owningUser, Channel.Channel.channelName, Channel.Channel.channelLoc,
+                      Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                      Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                      Channel.Channel.imageLocation, Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                      Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                      Channel.Channel.autoPublish, Channel.Channel.vanityURL, Channel.Channel.private, Channel.Channel.streamKey, Channel.Channel.xmppToken).filter_by(owningUser=OwnerId).all()
     return channelQuery
 
 @cache.memoize(timeout=60)
@@ -77,7 +102,7 @@ def getChannelSubCount(channelID):
 
 @cache.memoize(timeout=5)
 def isChannelLive(channelID):
-    StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelID).first()
+    StreamQuery = Stream.Stream.query.filter_by(active=True, linkedChannel=channelID).first()
     if StreamQuery is not None:
         return True
     else:
@@ -85,7 +110,12 @@ def isChannelLive(channelID):
 
 @cache.memoize(timeout=10)
 def getChannelVideos(channelID):
-    VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID).all()
+    VideoQuery = RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID)\
+        .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.gifLocation,
+                       RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.videoLocation, RecordedVideo.RecordedVideo.topic,
+                       RecordedVideo.RecordedVideo.videoDate, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.description,
+                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.published,
+                       RecordedVideo.RecordedVideo.channelID, RecordedVideo.RecordedVideo.owningUser).all()
     return VideoQuery
 
 @cache.memoize(timeout=1200)
@@ -96,18 +126,64 @@ def getChannelLocationFromID(channelID):
     else:
         return None
 
+@cache.memoize(timeout=1200)
+def getChannelIDFromLocation(channelLocation):
+    ChannelQuery = Channel.Channel.query.filter_by(channelLoc=channelLocation).with_entities(Channel.Channel.id, Channel.Channel.channelLoc).first()
+    if ChannelQuery is not None:
+        return ChannelQuery.id
+    else:
+        return None
+
 @cache.memoize(timeout=120)
 def searchChannels(term):
     if term is not None:
         ChannelNameQuery = Channel.Channel.query.filter(Channel.Channel.channelName.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
-        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%"))\
-            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc).all()
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                           Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                           Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                           Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                           Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                           Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+        ChannelDescriptionQuery = Channel.Channel.query.filter(Channel.Channel.description.like("%" + term + "%")) \
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                           Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                           Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                           Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                           Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                           Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+        ChannelTagQuery = Channel.channel_tags.query.filter(Channel.channel_tags.name.like("%" + term + "%")) \
+            .with_entities(Channel.channel_tags.id, Channel.channel_tags.name, Channel.channel_tags.channelID).all()
+
+        ChannelTagEntryQuery = []
+        for channel in ChannelTagQuery:
+            ChannelTagEntryQuery = Channel.Channel.query.filter_by(id=channel.channelID) \
+                .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.private, Channel.Channel.imageLocation,
+                               Channel.Channel.owningUser, Channel.Channel.topic, Channel.Channel.views, Channel.Channel.currentViewers, Channel.Channel.record,
+                               Channel.Channel.chatEnabled, Channel.Channel.chatBG, Channel.Channel.chatTextColor, Channel.Channel.chatAnimation,
+                               Channel.Channel.offlineImageLocation, Channel.Channel.description, Channel.Channel.allowComments,
+                               Channel.Channel.protected, Channel.Channel.channelMuted, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.defaultStreamName,
+                               Channel.Channel.autoPublish, Channel.Channel.vanityURL).all()
+
         resultsArray = ChannelNameQuery + ChannelDescriptionQuery
         resultsArray = list(set(resultsArray))
+        for entry in ChannelTagEntryQuery:
+            if entry not in resultsArray:
+                resultsArray.append(entry)
+
         return resultsArray
     else:
         return []
+
+def invalidateChannelCache(channelId):
+    lastCachedKey = getChannel(channelId).streamKey
+    channelLoc = getChannelLocationFromID(channelId)
+
+    cache.delete_memoized(getChannel, channelId)
+    cache.delete_memoized(getChannelByLoc, channelLoc)
+    cache.delete_memoized(getChannelByStreamKey, lastCachedKey)
+
+    return True
+
 
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
@@ -132,6 +208,16 @@ def getVideo(videoID):
                       RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).first()
     return recordedVid
 
+def getAllVideoByOwnerId(ownerId):
+    recordedVid = RecordedVideo.RecordedVideo.query.filter_by(owningUser=ownerId, pending=False, published=True). \
+        with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.videoDate,
+                      RecordedVideo.RecordedVideo.owningUser, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.channelID,
+                      RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                      RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                      RecordedVideo.RecordedVideo.thumbnailLocation, RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending,
+                      RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+    return recordedVid
+
 @cache.memoize(timeout=60)
 def getVideoCommentCount(videoID):
     videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
@@ -141,12 +227,42 @@ def getVideoCommentCount(videoID):
 @cache.memoize(timeout=120)
 def searchVideos(term):
     if term is not None:
+
         VideoNameQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+
         VideoDescriptionQuery = RecordedVideo.RecordedVideo.query.filter(RecordedVideo.RecordedVideo.channelName.like("%" + term + "%"), RecordedVideo.RecordedVideo.published == True)\
-            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid).all()
+            .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+
+        VideoTagQuery = RecordedVideo.video_tags.query.filter(RecordedVideo.video_tags.name.like("%" + term + "%"))\
+            .with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name, RecordedVideo.video_tags.videoID)
+
+        VideoTagEntryQuery = []
+        for vid in VideoTagQuery:
+            VideoTagEntryQuery = RecordedVideo.RecordedVideo.query.filter_by(id=vid.videoID, published=True)\
+                .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.channelName, RecordedVideo.RecordedVideo.uuid, RecordedVideo.RecordedVideo.thumbnailLocation,
+                           RecordedVideo.RecordedVideo.owningUser,  RecordedVideo.RecordedVideo.channelID,
+                           RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.description, RecordedVideo.RecordedVideo.topic,
+                           RecordedVideo.RecordedVideo.views, RecordedVideo.RecordedVideo.length, RecordedVideo.RecordedVideo.videoLocation,
+                           RecordedVideo.RecordedVideo.gifLocation, RecordedVideo.RecordedVideo.pending, RecordedVideo.RecordedVideo.videoDate,
+                           RecordedVideo.RecordedVideo.allowComments, RecordedVideo.RecordedVideo.published, RecordedVideo.RecordedVideo.originalStreamID).all()
+
         resultsArray = VideoNameQuery + VideoDescriptionQuery
         resultsArray = list(set(resultsArray))
+        for entry in VideoTagEntryQuery:
+            if entry not in resultsArray:
+                resultsArray.append(entry)
+
         return resultsArray
     else:
         return []
@@ -156,9 +272,9 @@ def searchVideos(term):
 def getClipChannelID(clipID):
     ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
     if ClipQuery is not None:
-        RecordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=ClipQuery.parentVideo).first()
+        RecordedVideoQuery = getVideo(ClipQuery.parentVideo)
         if RecordedVideo is not None:
-            ChannelQuery = Channel.Channel.query.filter_by(id=RecordedVideoQuery.channelID).first()
+            ChannelQuery = getChannel(RecordedVideoQuery.channelID)
             if ChannelQuery is not None:
                 return ChannelQuery.id
     return None
@@ -172,13 +288,47 @@ def getAllClipsForChannel_View(channelID):
         clipList = clipList + clipQuery
     return clipList
 
+@cache.memoize(timeout=60)
+def getAllClipsForUser(userId):
+    videoQuery = getAllVideoByOwnerId(userId)
+    videoIds = []
+    for video in videoQuery:
+        videoIds.append(video.id)
+
+    clips = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.published == True, RecordedVideo.Clips.parentVideo.in_(videoIds)) \
+        .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+        .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+        .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+        .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid,
+                       RecordedVideo.Clips.thumbnailLocation,
+                       Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                       Channel.Channel.protected, Channel.Channel.channelName,
+                       RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation,
+                       RecordedVideo.Clips.parentVideo, RecordedVideo.Clips.description,
+                       RecordedVideo.Clips.published).all()
+    return clips
+
 @cache.memoize(timeout=120)
 def searchClips(term):
     if term is not None:
         clipNameQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo).all()
+
         clipDescriptionQuery = RecordedVideo.Clips.query.filter(RecordedVideo.Clips.clipName.like("%" + term + "%"), RecordedVideo.Clips.published == True)\
-            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid).all()
+            .join(RecordedVideo.RecordedVideo, RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id) \
+            .join(Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID) \
+            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser) \
+            .with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.clipName, RecordedVideo.Clips.uuid, RecordedVideo.Clips.thumbnailLocation,
+                           Channel.Channel.owningUser, RecordedVideo.Clips.views, RecordedVideo.Clips.length,
+                           Channel.Channel.protected, Channel.Channel.channelName,
+                           RecordedVideo.RecordedVideo.topic, Sec.User.pictureLocation, RecordedVideo.Clips.parentVideo).all()
+
         resultsArray = clipNameQuery + clipDescriptionQuery
         resultsArray = list(set(resultsArray))
         return resultsArray
@@ -191,6 +341,7 @@ def getAllTopics():
     topicQuery = topics.topics.query.all()
     return topicQuery
 
+@cache.memoize(timeout=120)
 def searchTopics(term):
     if term is not None:
         topicNameQuery = topics.topics.query.filter(topics.topics.name.like("%" + term + "%"))\
@@ -230,3 +381,27 @@ def searchUsers(term):
     else:
         return []
 
+@cache.memoize(timeout=30)
+def getGlobalPanel(panelId):
+    panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+    return panelQuery
+
+@cache.memoize(timeout=30)
+def getUserPanel(panelId):
+    panelQuery = panel.userPanel.query.filter_by(id=panelId).first()
+    return panelQuery
+
+@cache.memoize(timeout=30)
+def getChannelPanel(panelId):
+    panelQuery = panel.channelPanel.query.filter_by(id=panelId).first()
+    return panelQuery
+
+@cache.memoize(timeout=1200)
+def getStaticPages():
+    staticPageQuery = settings.static_page.query.all()
+    return staticPageQuery
+
+@cache.memoize(timeout=1200)
+def getStaticPage(pageName):
+    staticPageQuery = settings.static_page.query.filter_by(name=pageName).first()
+    return staticPageQuery

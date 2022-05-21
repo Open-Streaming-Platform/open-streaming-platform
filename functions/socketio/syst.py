@@ -2,25 +2,41 @@ import psutil
 import os
 import time
 import shutil
+import requests
+import logging
 from flask import abort, current_app
 from flask_socketio import emit
 from flask_security import current_user
 from sqlalchemy.sql.expression import func
+from urllib.parse import urlparse
 
-from classes.shared import db, socketio, limiter
+from classes.shared import db, socketio, limiter, cache
 from classes import Sec
 from classes import settings
 from classes import RecordedVideo
 from classes import Channel
 from classes import Stream
 from classes import views
+from classes import apikey
+from classes import panel
+from classes import hub
 
 from functions import system
 from functions import cachedDbCalls
+from functions import topicsFunc
+from functions import videoFunc
+from functions import channelFunc
+from functions.scheduled_tasks import video_tasks
 
 from app import user_datastore
+from app import ejabberd
 
-from globals import globalvars
+try:
+    from conf import config
+except:
+    from app import config
+
+log = logging.getLogger('app.functions.socketio.syst')
 
 @socketio.on('checkUniqueUsername')
 def deleteInvitedUser(message):
@@ -53,56 +69,16 @@ def deleteChannelAdmin(message):
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
     if channelQuery is not None:
         if current_user.has_role('Admin') or channelQuery.owningUser == current_user.id:
-            for vid in channelQuery.recordedVideo:
-                for upvote in vid.upvotes:
-                    db.session.delete(upvote)
-                vidComments = vid.comments
-                for comment in vidComments:
-                    db.session.delete(comment)
-                vidViews = views.views.query.filter_by(viewType=1, itemID=vid.id)
-                for view in vidViews:
-                    db.session.delete(view)
-                for clip in vid.clips:
-                    db.session.delete(clip)
-
-                db.session.delete(vid)
-
-            for upvote in channelQuery.upvotes:
-                db.session.delete(upvote)
-            for inviteCode in channelQuery.inviteCodes:
-                db.session.delete(inviteCode)
-            for viewer in channelQuery.invitedViewers:
-                db.session.delete(viewer)
-            for sub in channelQuery.subscriptions:
-                db.session.delete(sub)
-            for hook in channelQuery.webhooks:
-                db.session.delete(hook)
-            for sticker in channelQuery.chatStickers:
-                db.session.delete(sticker)
-
-            stickerFolder = '/var/www/images/stickers/' + channelQuery.channelLoc + '/'
-            shutil.rmtree(stickerFolder, ignore_errors=True)
-
-            filePath = globalvars.videoRoot + channelQuery.channelLoc
-
-            if filePath != globalvars.videoRoot:
-                shutil.rmtree(filePath, ignore_errors=True)
-
-            from app import ejabberd
-            sysSettings = cachedDbCalls.getSystemSettings()
-            ejabberd.destroy_room(channelQuery.channelLoc, 'conference.' + sysSettings.siteAddress)
-
-            system.newLog(1, "User " + current_user.username + " deleted Channel " + str(channelQuery.id))
-            db.session.delete(channelQuery)
-            db.session.commit()
-    db.session.close()
+            result = channelFunc.delete_channel(channelID)
+            # Invalidate Channel Cache
+            cachedDbCalls.invalidateChannelCache(channelID)
     return 'OK'
 
 @socketio.on('deleteStream')
 def deleteActiveStream(message):
     if current_user.has_role('Admin'):
         streamID = int(message['streamID'])
-        streamQuery = Stream.Stream.query.filter_by(id=streamID).first()
+        streamQuery = Stream.Stream.query.filter_by(active=True, id=streamID).first()
         if streamQuery is not None:
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(pending=True, channelID=streamQuery.linkedChannel).all()
             for pending in pendingVideo:
@@ -119,6 +95,14 @@ def deleteActiveStream(message):
         db.session.commit()
         db.session.close()
         return abort(401)
+
+@socketio.on('deleteTopic')
+def deleteTopic(message):
+    if current_user.has_role('Admin'):
+        topicID = int(message['topicID'])
+        newTopicID = int(message['toTopicID'])
+        topicsFunc.deleteTopic(topicID, newTopicID)
+    return 'OK'
 
 @socketio.on('getServerResources')
 def get_resource_usage(message):
@@ -213,4 +197,383 @@ def disable_2fa(msg):
             db.session.commit()
             system.newLog(1, "User " + current_user.username + " disabled 2FA for " + str(userQuery.username))
     db.session.close()
+    return 'OK'
+
+@socketio.on('admin_get_component_status')
+def get_admin_component_status(msg):
+    if current_user.has_role('Admin'):
+        component = msg['component']
+
+        status = "Failed"
+
+        if component == "osp_core":
+            r = requests.get("http://127.0.0.1/apiv1/server/ping")
+            if r.status_code == 200:
+                response = r.json()
+                if 'results' in response:
+                    if response['results']['message'] == "Pong":
+                        status = "OK"
+                        message = "OSP-Core API Connection Successful"
+        elif component == "osp_rtmp":
+            rtmpServerListingQuery = settings.rtmpServer.query.filter_by(active=True).all()
+            serverLength = len(rtmpServerListingQuery)
+            workingServers = 0
+            for rtmpServer in rtmpServerListingQuery:
+                r = requests.get('http://' + rtmpServer.address + ":5099" + "/api/server/ping")
+                if r.status_code == 200:
+                    response = r.json()
+                    if 'results' in response:
+                        if response['results']['message'] == "pong":
+                            workingServers = workingServers + 1
+            if serverLength == workingServers:
+                status = "OK"
+                message = str(workingServers) + " RTMP Servers Online"
+            elif workingServers > 0:
+                status = "Problem"
+                message = str(workingServers) + "/" + str(serverLength) + "RTMP Servers Online"
+        elif component == "osp_proxy":
+            sysSettings = cachedDbCalls.getSystemSettings()
+            if sysSettings.proxyFQDN != None and sysSettings.proxyFQDN != '':
+                r = requests.get(sysSettings.siteProtocol + sysSettings.proxyFQDN + "/ping")
+                if r.status_code == 200:
+                    response = r.json()
+                    if 'results' in response:
+                        if response['results']['message'] == "pong":
+                            status = "OK"
+                            message = "OSP-Proxy Connection Successful"
+                        else:
+                            status = "Failed"
+                            message = "OSP-Proxy Failed Check"
+            else:
+                status = "Problem"
+                message = "No OSP-Proxy Configured"
+        elif component == "osp_ejabberd_xmlrpc":
+            results = ejabberd.check_password(config.ejabberdAdmin, config.ejabberdHost, config.ejabberdPass)
+            if results['res'] == 0:
+                status = "OK"
+                message = "Ejabberd-XMLRPC Communication Confirmed"
+            else:
+                message = "Ejabberd-XMLRPC Error - Invalid Admin Password"
+        elif component == "osp_ejabberd_chat":
+            sysSettings = cachedDbCalls.getSystemSettings()
+
+            from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
+
+            xmppserver = sysSettings.siteAddress
+            if ejabberdServerHttpBindFQDN != None:
+                xmppserver = ejabberdServerHttpBindFQDN
+            elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
+                xmppserver = ejabberdServer
+
+            r = requests.get(sysSettings.siteProtocol + xmppserver + '/http-bind')
+            if r.status_code == 200:
+                status = "OK"
+                message = "BOSH-HTTP Reachable"
+            else:
+                message = "BOSH-HTTP Unreachable"
+        elif component == "osp_database":
+            try:
+                sysSettings = settings.settings.query.first()
+                if sysSettings != None:
+                    status = "OK"
+                    message = "DB Connection Successful"
+                else:
+                    status = "Problem"
+                    message = "DB Connection Successful, but Settings Table Null"
+            except:
+                message = "DB Connection Failure"
+        elif component == "osp_redis":
+            from app import r
+            try:
+                r.ping()
+                status = "OK"
+                message = "Redis Ping Successful"
+            except:
+                message = "Redis Ping Failed"
+        elif component == "osp_celery":
+            from classes.shared import celery
+            workerStatus = celery.control.ping()
+            if workerStatus == []:
+                message = "No OSP-Celery Instances Connected"
+            else:
+                if len(workerStatus) > 0:
+                    verifiedWorker = 0
+                    for worker in workerStatus:
+                        for workerName in worker:
+                            if 'ok' in worker[workerName]:
+                                if worker[workerName]['ok'] == 'pong':
+                                    verifiedWorker = verifiedWorker + 1
+                    if len(workerStatus) == verifiedWorker:
+                        status = "OK"
+                        message = "All OSP-Celery Instances Online"
+                    else:
+                        status = "Problem"
+                        message = str(verifiedWorker) + "/" + str(len(workerStatus)) + " OSP-Celery Workers Responded " + str(workerStatus)
+
+        emit('admin_osp_component_status_update', {'component': component, 'status': status, 'message': message}, broadcast=False)
+
+@socketio.on('deleteAPIKey')
+def delete_apiKey(message):
+    if current_user.is_authenticated:
+        if 'keyId' in message:
+            apiKeyID = int(message['keyId'])
+            apiKeyQuery = apikey.apikey.query.filter_by(id=apiKeyID, userID=current_user.id).first()
+            if apiKeyQuery != None:
+                db.session.delete(apiKeyQuery)
+                db.session.commit()
+                return 'OK'
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio.on('deletePanel')
+def delete_global_panel(message):
+    if current_user.is_authenticated:
+        panelType = message['type']
+        if panelType == 'channel':
+            panelId = int(message['panelId'])
+            panelQuery = panel.channelPanel.query.filter_by(id=panelId).first()
+            if panelQuery != None:
+                channelQuery = Channel.Channel.query.filter_by(id=panelQuery.channelId, owningUser=current_user.id).first()
+                if channelQuery != None:
+                    db.session.delete(panelQuery)
+                    db.session.commit()
+                else:
+                    db.session.commit()
+                    db.session.close()
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio.on('deleteGlobalPanel')
+def delete_global_panel(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            globalPanelId = int(message['globalPanelId'])
+            panelQuery = panel.globalPanel.query.filter_by(id=globalPanelId).first()
+            if panelQuery is not None:
+                globalPanelMappingQuery = panel.panelMapping.query.filter_by(panelId=panelQuery.id).all()
+                for panelMap in globalPanelMappingQuery:
+                    db.session.delete(panelMap)
+                    db.session.commit()
+                db.session.delete(panelQuery)
+                db.session.commit()
+                return 'OK'
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio.on('save_global_panel_mapping_front_page')
+def save_global_panel_front_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            globalPanelListArray = message['globalPanelArray']
+            existingFrontPageArray = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0).all()
+            for entry in existingFrontPageArray:
+                db.session.delete(entry)
+                db.session.commit()
+            for entry in globalPanelListArray:
+                position = globalPanelListArray.index(entry)
+                panelId = entry.replace('front-panel-mapping-id-', '')
+                newFrontPanelMapping = panel.panelMapping('root.main_page', 0, panelId, position)
+                db.session.add(newFrontPanelMapping)
+                db.session.commit()
+    return 'OK'
+
+@socketio.on('save_panel_mapping_page')
+def save_panel_page(message):
+    if current_user.is_authenticated:
+        if 'channelId' in message:
+            channelId = int(message['channelId'])
+            channelQuery = Channel.Channel.query.filter_by(id=channelId, owningUser=current_user.id).first()
+            if channelQuery != None:
+                PanelListArray = message['panelArray']
+                existingPageArray = panel.panelMapping.query.filter_by(pageName="liveview.view_page", panelLocationId=channelId, panelType=2).all()
+
+                for entry in existingPageArray:
+                    db.session.delete(entry)
+                    db.session.commit()
+
+                for entry in PanelListArray:
+                    position = PanelListArray.index(entry)
+                    panelId = entry.replace('panel-mapping-' + str(channelId) + '-id-', '')
+                    newPanelMapping = panel.panelMapping('liveview.view_page', 2, panelId, position, panelLocationId=channelId)
+                    db.session.add(newPanelMapping)
+                    db.session.commit()
+            else:
+                db.session.commit()
+                db.session.close()
+    return 'OK'
+
+@socketio.on('setGlobalPanelTarget')
+def set_global_panel_target(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            panelId = message['panelId']
+            targetId = message['targetId']
+            panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
+            if panelQuery is not None:
+                panelQuery.target = targetId
+            db.session.commit()
+            db.session.close()
+    return 'OK'
+
+@socketio.on('addSocialNetwork')
+def add_social_network(message):
+    if current_user.is_authenticated:
+
+        socialType = message['socialType']
+        url = message['url']
+
+        parsedURL = urlparse(url).geturl()
+
+        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
+
+        if socialQuery is None:
+            newSocial = Sec.UserSocial(current_user.id, socialType, parsedURL)
+            db.session.add(newSocial)
+            db.session.commit()
+            NewSocialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, socialType=socialType, url=parsedURL).first()
+            if NewSocialQuery is not None:
+                emit('returnSocialNetwork', {'id': str(NewSocialQuery.id), 'socialType': NewSocialQuery.socialType, 'url': NewSocialQuery.url}, broadcast=False)
+        db.session.close()
+    return 'OK'
+
+@socketio.on('removeSocialNetwork')
+def delete_social_network(message):
+    if current_user.is_authenticated:
+        socialQuery = Sec.UserSocial.query.filter_by(userID=current_user.id, id=int(message['id'])).first()
+        if socialQuery is not None:
+            db.session.delete(socialQuery)
+            db.session.commit()
+        db.session.close()
+    return 'OK'
+
+@socketio.on('updateHubURL')
+def update_hub_url(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubURL = message['hubURL']
+            db.session.commit()
+            cache.delete_memoized(cachedDbCalls.getSystemSettings)
+            db.session.close()
+    return 'OK'
+
+@socketio.on('addServerToHub')
+def add_server_to_hub(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubEnabled = True
+            r = requests.post(sysSettings.hubURL + '/api/server/', data={'address': sysSettings.siteAddress,
+                                                                        'protocol': sysSettings.siteProtocol[:-3]
+                                                                        })
+            if r.status_code == 200:
+                results = r.json()
+                hubQuery = hub.hub.query.all()
+                for hubentry in hubQuery:
+                    db.session.delete(hubentry)
+                    db.session.commit()
+                newHub = hub.hub(results['results']['serverUUID'], results['results']['token'])
+                db.session.add(newHub)
+                db.session.commit()
+                db.session.close()
+            else:
+                log.error({"level": "error", "message": "Add Server To Hub Failed with Status Code: " + str(r.status_code)})
+    return 'OK'
+
+@socketio.on('deleteServerFromHub')
+def remove_server_from_hub(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            sysSettings = settings.settings.query.first()
+            sysSettings.hubEnabled = False
+            hubQuery = hub.hub.query.first()
+            if hubQuery != None:
+                r = requests.delete(sysSettings.hubURL + '/api/server/', data={'id': hubQuery.hubUUID, 'token': hubQuery.hubToken})
+                if r.status_code == 200:
+                    db.session.delete(hubQuery)
+                    db.session.commit()
+                else:
+                    log.error({"level": "error", "message": "Remove Server From Hub Failed with Status Code: " + str(r.status_code)})
+            db.session.close()
+    return 'OK'
+
+@socketio.on('addEditStaticPage')
+def add_edit_static_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'type' in message:
+                pageName = message['pageName']
+                pageTitle = message['pageTitle']
+                pageIcon = message['pageIcon']
+                pageContent = message['pageContent']
+                pageTopBar = message['pageTopBar']
+
+                if message['type'] == 'new':
+                    existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
+                    if existingPageCheck is None:
+                        newPage = settings.static_page(pageName, pageIcon, pageTitle)
+                        newPage.content = pageContent
+                        newPage.isTopBar = pageTopBar
+                        db.session.add(newPage)
+                    db.session.commit()
+                    db.session.close()
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
+
+                elif message['type'] == 'edit':
+                    updatingPageCheck = settings.static_page.query.filter_by(id=int(message['pageId'])).first()
+                    oldname = updatingPageCheck.name
+                    if updatingPageCheck is not None:
+                        existingPageName = False
+                        if updatingPageCheck.name != pageName:
+                            existingPageCheck = settings.static_page.query.filter_by(name=pageName).first()
+                            if existingPageCheck != None:
+                                existingPageName = True
+                        if existingPageName == False:
+                            updatingPageCheck.name = pageName
+                            updatingPageCheck.iconClass = pageIcon
+                            updatingPageCheck.content = pageContent
+                            updatingPageCheck.title = pageTitle
+                            updatingPageCheck.isTopBar = pageTopBar
+                    db.session.commit()
+                    db.session.close()
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
+                    cache.delete_memoized(cachedDbCalls.getStaticPage, oldname)
+    return 'OK'
+
+@socketio.on('deleteStaticPage')
+def delete_static_page(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'pageId' in message:
+                pageQuery = settings.static_page.query.filter_by(id=int(message['pageId'])).first()
+                if pageQuery != None:
+                    oldName = pageQuery.name
+                    db.session.delete(pageQuery)
+                    db.session.commit()
+                    cache.delete_memoized(cachedDbCalls.getStaticPages)
+                    cache.delete_memoized(cachedDbCalls.getStaticPage, oldName)
+                db.session.close()
+    return 'OK'
+
+@socketio.on('call_celery_task')
+def call_celery_task(message):
+    if current_user.is_authenticated:
+        if current_user.has_role('Admin'):
+            if 'task' in message:
+                if message['task'] == "process_ingest_folder":
+                    video_tasks.process_ingest_folder.delay()
+                elif message['task'] == "check_video_published_exists":
+                    video_tasks.check_video_published_exists.delay()
+                elif message['task'] == "check_video_retention":
+                    video_tasks.check_video_retention.delay()
+                elif message['task'] == "reprocess_stuck_videos":
+                    video_tasks.reprocess_stuck_videos.delay()
+                elif message['task'] == "check_video_thumbnails":
+                    video_tasks.check_video_thumbnails.delay()
     return 'OK'

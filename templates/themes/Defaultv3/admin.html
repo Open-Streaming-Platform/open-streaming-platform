@@ -1,0 +1,277 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% import "themes/" + sysSettings.systemTheme + "/macros/admin_page.html" as admin with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
+
+{% block head %}
+<title>{{sysSettings.siteName}}</title>
+<meta name="twitter:card" content="app" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{sysSettings.siteName}}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{request.url|normalize_url}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+
+<script type="text/javascript" src="/static/vendor/chartjs/js/Chart.bundle.min.js"></script>
+<script src="/static/vendor/tagify/tagify.js"></script>
+<script src="/static/vendor/tagify/tagify.polyfills.min.js"></script>
+<link href="/static/vendor/tagify/tagify.css" rel="stylesheet" type="text/css" />
+<script src="/static/vendor/sortablejs/js/Sortable.min.js"></script>
+
+{% endblock %}
+
+{% block body %}
+    <div class="admin-nav">
+        <ul class="nav" id="admin-nav-list" role="tablist">
+            {{ admin.nav_item_entry("Dashboard", False) }}
+            {{ admin.nav_item_entry("Settings", False) }}
+            {{ admin.nav_item_entry("OAuth", False) }}
+            {{ admin.nav_item_entry("RTMP", False) }}
+            {{ admin.nav_item_entry("Edge", False) }}
+            {{ admin.nav_item_entry("Webhooks", False) }}
+            {{ admin.nav_item_entry("Stickers", False) }}
+            {{ admin.nav_item_entry("Users", False) }}
+            {{ admin.nav_item_entry("Topics", False) }}
+            {{ admin.nav_item_entry("Channels", False) }}
+            {{ admin.nav_item_entry("Streams", False) }}
+            {{ admin.nav_item_entry("Scheduler", False) }}
+        </ul>
+    </div>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade {% if page == None or page == 'dash' %}show active{% endif %} w-100" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+          <div class="row mt-4 mx-4">
+            <div class="col-12 col-md-auto">
+                {{ admin.osp_info_box(sysSettings.version) }}
+            </div>
+            <div class="col-12 col-md-3">
+                {{ admin.metric_box("osp-live-streams", "Current Live Streams", streamList | count, "green-fill") }}
+            </div>
+            <div class="col-12 col-md-3">
+                {{ admin.metric_box("osp-live-viewers", "Current Viewers", currentViewers, "blue-fill") }}
+            </div>
+          </div>
+          <div class="row mt-4 mx-1">
+            <div class="col-12 col-md-2">
+                {{ admin.system_status_box() }}
+            </div>
+            <div class="col-12 col-md-10">
+                {{ admin.chart_box("viewershipChart", "100%", "215px") }}
+            </div>
+          </div>
+          <div class="row mt-4 mx-1">
+            <div class="col-12">
+                {{ admin.channels_currently_live_box(streamList) }}
+            </div>
+          </div>
+          <div class="row mt-4 mx-1">
+            <div class="col-12">
+                {{ admin.system_log_box(logsList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'settings' %}show active{% endif %} w-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <form id="system-settings" enctype=multipart/form-data method="post" action="/settings/admin">
+              <div class="row mt-2 mx-2">
+                <div class="col-12">
+                    {{ admin.settings_panel(sysSettings) }}
+                </div>
+              </div>
+              <div class="row mt-4 mx-2">
+                <div class="col-12">
+                    {{ admin.appearance_panel(sysSettings) }}
+                </div>
+              </div>
+              <div class="row mt-4 mx-2">
+                <div class="col-12">
+                    {{ admin.channel_settings_panel(sysSettings) }}
+                </div>
+              </div>
+              <div class="row mt-4 mx-2">
+                  <div class="col-12">
+                      {{ admin.panel_settings_panel(globalPanelList) }}
+                  </div>
+              </div>
+              <div class="row mt-4 mx-2">
+                  <div class="col-12">
+                      {{ admin.staticPage_settings_panel(static_pages) }}
+                  </div>
+              </div>
+              <div id="settings-form-submit-group" style="display:none;position:fixed;right: 56px;bottom: 35px;" class="form-submit-buttons">
+                    <button id="settingsReset" type="button" onclick="resetSettings();" class="btn btn-secondary mx-1 boxShadow"><i class="bi bi-x-square-fill"></i> Reset</button>
+                    <button id="settingsSubmit" type="submit" class="btn btn-success mx-1 boxShadow"><i class="bi bi-save-fill"></i> Save</button>
+              </div>
+              <input type="hidden" value="system" id="settingType" name="settingType">
+          </form>
+        </div>
+        <div class="tab-pane fade {% if page == 'oauth' %}show active{% endif %} w-100" id="oauth" role="tabpanel" aria-labelledby="oauth-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.oauth_panel(oAuthProvidersList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'osprtmp' %}show active{% endif %} w-100" id="rtmp" role="tabpanel" aria-labelledby="rtmp-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.rtmp_settings_panel(rtmpServers) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'ospedge' %}show active{% endif %} w-100" id="edge" role="tabpanel" aria-labelledby="edge-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.edge_settings_panel(edgeNodes) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'webhooks' %}show active{% endif %} w-100" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.webhooks_settings_panel(globalHooks) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'stickers' %}show active{% endif %} w-100" id="stickers" role="tabpanel" aria-labelledby="stickers-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.stickers_settings_panel(globalStickers) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'users' %}show active{% endif %} w-100" id="users" role="tabpanel" aria-labelledby="users-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.users_settings_panel(userList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'topics' %}show active{% endif %} w-100" id="topics" role="tabpanel" aria-labelledby="topics-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.topics_settings_panel(topicsList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'channels' %}show active{% endif %} w-100" id="channels" role="tabpanel" aria-labelledby="channels-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.channels_settings_panel(channelList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'streams' %}show active{% endif %} w-100" id="streams" role="tabpanel" aria-labelledby="streams-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.streams_settings_panel(streamList) }}
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade {% if page == 'scheduler' %}show active{% endif %} w-100" id="scheduler" role="tabpanel" aria-labelledby="scheduler-tab">
+          <div class="row mt-2 mx-2">
+            <div class="col-12">
+                {{ admin.scheduler_settings_panel(schedulerList) }}
+            </div>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block modals %}
+    {{ modals.add_oauth_provider() }}
+    {{ modals.delete_oauth_provider() }}
+    {{ modals.new_rtmp_server() }}
+    {{ modals.new_edge_server() }}
+    {{ modals.new_webhook() }}
+    {{ modals.delete_webhook() }}
+    {{ modals.new_sticker("/settings/admin") }}
+    {{ modals.delete_sticker() }}
+    {{ modals.disable_2fa() }}
+    {{ modals.new_user() }}
+    {{ modals.default_roles(defaultRoleDict) }}
+    {{ modals.new_topic() }}
+    {{ modals.delete_topic(topicsList) }}
+    {{ modals.confirm_delete_channel() }}
+    {{ modals.confirm_delete_stream() }}
+    {{ modals.new_panel("/settings/admin") }}
+    {{ modals.delete_global_panel() }}
+    {{ modals.add_global_panel_mapping(globalPanelList) }}
+    {{ modals.global_panel_target_channels(channelList) }}
+    {{ modals.new_static_page_modal() }}
+    {{ modals.delete_static_page_modal() }}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/vendor/datatables/js/jquery.datatables.js"></script>
+<script type="text/javascript" src="/static/vendor/datatables/js/datatables.js"></script>
+<script>
+    var viewerChartDataLive = [
+        {% for entry in statsViewsDay['live'] %}
+            {x:'{{entry['t']}}',y:{{entry['y']}}},
+        {% endfor %}
+    ];
+    var viewerChartDataVideo = [
+        {% for entry in statsViewsDay['recorded'] %}
+            {x:'{{entry['t']}}', y:{{entry['y']}}},
+        {% endfor %}
+    ];
+
+    $(document).ready(function() {
+        $('#logTable').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+        $('#streamHistoryTable').DataTable({
+            "order": [[ 0, "desc" ]],
+            "bLengthChange": false,
+            "bFilter": false,
+        });
+        $('#usersTable').DataTable({
+            'order': [[2, "asc"]],
+            'stateSave': true,
+            'columnDefs': [
+                { 'searchable': false, 'targets': [0, 1, 8, 9] },
+                { 'orderable': false, 'targets': [0, 1, 8, 9] }
+            ]
+        });
+        $('#channelsTable').DataTable({
+            'order': [[2, "asc"]],
+            'columnDefs': [
+                { 'searchable': false, 'targets': [0, 1, 7, 12] },
+                { 'orderable': false, 'targets': [0, 1, 12] }
+            ]
+        });
+        $('#streamsTable').DataTable({
+            'order': [[2, "asc"]],
+            'columnDefs': [
+                { 'searchable': false, 'targets': [1, 2, 3, 4] },
+                { 'orderable': false, 'targets': [1, 2, 3, 4, 5, 6] }
+            ]
+        });
+    });
+</script>
+
+<script>
+var systemSettingsForm = document.getElementById("system-settings");
+
+systemSettingsForm.addEventListener("input", function () {
+    console.log("Form has changed!");
+    $('#settings-form-submit-group').show();
+});
+
+function resetSettings() {
+    document.getElementById("system-settings").reset();
+    $('#settings-form-submit-group').hide();
+    updateSlider('#maxClipLength');
+}
+</script>
+<script>
+// The DOM element you wish to replace with Tagify
+var bannedInput = document.getElementById('bannedChatWords');
+
+// initialize Tagify on the above input node reference
+var tagify = new Tagify(bannedInput, {
+  originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+})
+</script>
+
+<script type="text/javascript" src="/static/js/adminv2.js"></script>
+{% endblock %}

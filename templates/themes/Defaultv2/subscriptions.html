@@ -33,15 +33,15 @@
                 </thead>
                 <tbody>
                 {% for sub in channelSubList %}
-                    <tr id="chanSub-{{sub.channel.id}}">
+                    <tr id="chanSub-{{sub.channelID}}">
                         <td>
-                            {{sub.channel.channelName}}
+                            {{sub.channelID | get_channelName}}
                         </td>
                         <td>
-                            {{sub.channel.owner.username}}
+                            {{sub.channelID | channeltoOwnerID | get_userName}}
                         </td>
                         <td>
-                            {{sub.channel.topic | get_topicName}}
+                            {{sub.channelID | get_channelTopic | get_topicName}}
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger mb-2" onclick='deleteChannelSub("{{sub.channelID}}")'><i class="fas fa-trash-alt"></i></button>

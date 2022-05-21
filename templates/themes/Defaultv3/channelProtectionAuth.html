@@ -1,0 +1,30 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Invite Code</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="login-box" style="width:550px;">
+            <h2 class="title">Protected Channel</h2>
+            <div class="my-2 text-center">
+                <div class="mb-2">The requested channel has protection enabled and requires an invite or invitation code to view.  Please enter your invitation code below.</div>
+            </div>
+            <div class="my-2">
+                <div class="mb-4">
+                    <form action="/settings/user/addInviteCode" method="get">
+                        <div class="user-box mt-4">
+                            <input autocomplete="off" id="inviteCode" name="inviteCode" required="" type="text" value="">
+                            <label><i class="fas fa-shield-alt"></i> Invitation Code</label>
+                        </div>
+                        <input type="hidden" name="redirectURL" value="{{request.url}}">
+                        <div class="d-grid gap-2">
+                            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

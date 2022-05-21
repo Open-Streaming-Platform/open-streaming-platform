@@ -18,7 +18,7 @@ def topic_page():
         topicsList = cachedDbCalls.getAllTopics()
     else:
         topicIDList = []
-        for streamInstance in db.session.query(Stream.Stream.topic).distinct():
+        for streamInstance in db.session.query(Stream.Stream.topic, Stream.Stream.active == True).distinct():
             topicIDList.append(streamInstance.topic)
         for recordedVidInstance in db.session.query(RecordedVideo.RecordedVideo.topic).distinct():
             if recordedVidInstance.topic not in topicIDList:
@@ -39,7 +39,7 @@ def topic_page():
 @topics_bp.route('/<topicID>/')
 def topic_view_page(topicID):
     topicID = int(topicID)
-    streamsQuery = Stream.Stream.query.filter_by(topic=topicID).all()
+    streamsQuery = Stream.Stream.query.filter_by(active=True, topic=topicID).all()
     recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(topic=topicID, pending=False, published=True).all()
 
     # Sort Video to Show Newest First

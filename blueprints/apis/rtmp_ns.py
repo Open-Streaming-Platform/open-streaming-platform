@@ -22,7 +22,8 @@ def checkRTMPAuthIP(requestData):
     else:
         requestIP = requestData.environ['HTTP_X_FORWARDED_FOR']
 
-    authorizedRTMPServers = settings.rtmpServer.query.all()
+    authorizedRTMPServers = settings.rtmpServer.query\
+        .with_entities(settings.rtmpServer.id, settings.rtmpServer.active, settings.rtmpServer.address).all()
 
     receivedIP = requestIP
     ipList = requestIP.split(',')
@@ -207,11 +208,10 @@ class api_1_rtmp_recclose(Resource):
         if 'name' in args and 'path' in args:
             name = args['name']
             path = args['path']
-            results = rtmpFunc.rtmp_rec_Complete_handler(name, path)
-            if results['success'] is True:
-                return {'results': results}, 200
-            else:
-                return {'results': results}, 400
+            results = rtmpFunc.rtmp_rec_Complete_handler.delay(name, path)
+
+            return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': True, 'channelLoc': name, 'type': 'video', 'message': 'Recording Queued for Closing'}}, 200
+
         else:
             return {'results': {'time': str(datetime.datetime.utcnow()), 'request': 'RecordingClose', 'success': False, 'channelLoc': None, 'type': None, 'ipAddress': None, 'message': 'Invalid Request'}}, 400
 
@@ -231,7 +231,8 @@ class api_1_rtmp_playbackauth(Resource):
         if clientIP == "127.0.0.1" or clientIP == "localhost":
             return 'OK'
         else:
-            streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).first()
+            streamQuery = Channel.Channel.query.filter_by(channelLoc=stream).with_entities(Channel.Channel.id, Channel.Channel.channelLoc,
+                                                                                           Channel.Channel.owningUser, Channel.Channel.protected).first()
             if streamQuery is not None:
 
                 if streamQuery.protected is False:

@@ -8,10 +8,11 @@ import xmltodict
 import git
 import re
 import psutil
+import pytz
 
 import requests
 from flask import request, flash, render_template, redirect, url_for, Blueprint, current_app, Response, session, abort
-from flask_security import Security, SQLAlchemyUserDatastore, current_user, login_required, roles_required
+from flask_security import Security, SQLAlchemyUserDatastore, current_user, login_required, roles_required, logout_user
 from flask_security.utils import hash_password
 from flask_mail import Mail
 from sqlalchemy.sql.expression import func
@@ -36,11 +37,14 @@ from classes import webhook
 from classes import logs
 from classes import subscriptions
 from classes import stickers
+from classes import panel
 from classes.shared import cache
 
 from functions import system
 from functions import themes
 from functions import cachedDbCalls
+from functions import securityFunc
+from functions.scheduled_tasks import video_tasks, security_tasks, message_tasks
 
 from globals import globalvars
 
@@ -55,7 +59,9 @@ settings_bp = Blueprint('settings', __name__, url_prefix='/settings')
 def user_page():
     if request.method == 'GET':
         # Checks Total Used Space
-        userChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+        userChannels = Channel.Channel.query.filter_by(owningUser=current_user.id).with_entities(Channel.Channel.channelLoc, Channel.Channel.channelName).all()
+        socialNetworks = Sec.UserSocial.query.filter_by(userID=current_user.id).with_entities(Sec.UserSocial.id, Sec.UserSocial.socialType, Sec.UserSocial.url).all()
+
         totalSpaceUsed = 0
         channelUsage = []
         for chan in userChannels:
@@ -73,12 +79,25 @@ def user_page():
             channelUsage.append({'name': chan.channelName, 'usage': total_size})
             totalSpaceUsed = totalSpaceUsed + total_size
 
-        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage)
+        return render_template(themes.checkOverride('userSettings.html'), totalSpaceUsed=totalSpaceUsed, channelUsage=channelUsage, socialNetworkList=socialNetworks)
 
     elif request.method == 'POST':
 
         biography = request.form['biography']
         current_user.biography = biography
+
+        if 'emailVideo' in request.form:
+            current_user.emailVideo = True
+        else:
+            current_user.emailVideo = False
+        if 'emailStream' in request.form:
+            current_user.emailStream = True
+        else:
+            current_user.emailStream = False
+        if 'emailMessage' in request.form:
+            current_user.emailMessage = True
+        else:
+            current_user.emailMessage = False
 
         if current_user.authType == 0:
             password1 = request.form['password1']
@@ -127,9 +146,27 @@ def user_page():
 @settings_bp.route('/user/subscriptions')
 @login_required
 def subscription_page():
-    channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).all()
+    channelSubList = subscriptions.channelSubs.query.filter_by(userID=current_user.id).with_entities(subscriptions.channelSubs.id, subscriptions.channelSubs.channelID).all()
 
     return render_template(themes.checkOverride('subscriptions.html'), channelSubList=channelSubList)
+
+
+@settings_bp.route('/user/deleteSelf', methods=['POST'])
+@login_required
+def user_delete_own_account():
+    """
+    Endpoint to allow user to delete own account and all associated data.
+    Not to be called directly without confirmation UI
+    """
+    userConfirmation = request.form['usernameDeleteConfirmation']
+
+    if userConfirmation == current_user.username:
+        securityFunc.flag_delete_user(current_user.id)
+        flash('Account and Associated Data Scheduled for Deletion', 'error')
+        logout_user()
+    else:
+        flash('Invalid Deletion Request', 'error')
+    return redirect(url_for("root.main_page"))
 
 
 @settings_bp.route('/user/addInviteCode')
@@ -223,56 +260,13 @@ def admin_page():
 
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
-
                     userQuery = Sec.User.query.filter_by(id=userID).first()
 
                     if userQuery is not None:
 
-                        commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
-                        for comment in commentQuery:
-                            db.session.delete(comment)
-                        db.session.commit()
-
-                        inviteQuery = invites.invitedViewer.query.filter_by(userID=int(userID)).all()
-                        for invite in inviteQuery:
-                            db.session.delete(invite)
-                        db.session.commit()
-
-                        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
-
-                        for chan in channelQuery:
-
-                            for vid in chan.recordedVideo:
-                                for upvote in vid.upvotes:
-                                    db.session.delete(upvote)
-
-                                vidComments = vid.comments
-                                for comment in vidComments:
-                                    db.session.delete(comment)
-
-                                vidViews = views.views.query.filter_by(viewType=1, itemID=vid.id)
-                                for view in vidViews:
-                                    db.session.delete(view)
-
-                                for clip in vid.clips:
-                                    db.session.delete(clip)
-
-                                db.session.delete(vid)
-                            for upvote in chan.upvotes:
-                                db.session.delete(upvote)
-
-                            filePath = videos_root + chan.channelLoc
-
-                            if filePath != videos_root:
-                                shutil.rmtree(filePath, ignore_errors=True)
-
-                            db.session.delete(chan)
+                        securityFunc.delete_user(userQuery.id)
 
                         flash("User " + str(userQuery.username) + " Deleted")
-                        system.newLog(1, "User " + current_user.username + " deleted User " + str(userQuery.username))
-
-                        db.session.delete(userQuery)
-                        db.session.commit()
 
                         return redirect(url_for('.admin_page', page="users"))
 
@@ -322,6 +316,9 @@ def admin_page():
                             flash("User Disabled")
                         else:
                             userQuery.active = True
+                            deletionFlagQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userID).all()
+                            for flag in deletionFlagQuery:
+                                db.session.delete(flag)
                             system.newLog(1, "User " + current_user.username + " Enabled User " + userQuery.username)
                             flash("User Enabled")
                         db.session.commit()
@@ -359,9 +356,18 @@ def admin_page():
         appDBVer = dbVersion.dbVersion.query.first().version
         userList = Sec.User.query.all()
         roleList = Sec.Role.query.all()
-        channelList = Channel.Channel.query.all()
-        streamList = Stream.Stream.query.all()
-        topicsList = topics.topics.query.all()
+        channelList = Channel.Channel.query\
+            .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.imageLocation, Channel.Channel.owningUser,
+                           Channel.Channel.topic, Channel.Channel.channelLoc, Channel.Channel.views, Channel.Channel.chatEnabled,
+                           Channel.Channel.record, Channel.Channel.allowComments, Channel.Channel.protected, Channel.Channel.private,
+                           Channel.Channel.allowGuestNickChange)
+        streamList = Stream.Stream.query.filter_by(active=True)\
+            .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.topic,
+                           Stream.Stream.currentViewers, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp, Stream.Stream.totalViewers).all()
+        streamHistory = Stream.Stream.query.filter_by(active=False)\
+            .with_entities(Stream.Stream.id, Stream.Stream.startTimestamp, Stream.Stream.endTimeStamp,
+                           Stream.Stream.linkedChannel, Stream.Stream.streamName, Stream.Stream.totalViewers).order_by(Stream.Stream.endTimeStamp.desc()).limit(100)
+        topicsList = cachedDbCalls.getAllTopics()
         rtmpServers = settings.rtmpServer.query.all()
         edgeNodes = settings.edgeStreamer.query.all()
 
@@ -432,18 +438,31 @@ def admin_page():
         bannedWordArray = sorted(bannedWordArray)
         bannedWordString = ','.join(bannedWordArray)
 
+        globalPanelList = panel.globalPanel.query.all()
+        mainPagePanelMapping = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0)
+        mainPagePanelMappingSort = sorted(mainPagePanelMapping, key=lambda x: x.panelOrder)
+
         globalStickers = stickers.stickers.query.filter_by(channelID=None).all()
 
         system.newLog(1, "User " + current_user.username + " Accessed Admin Interface")
 
+        from classes.shared import celery
+
+        nodes = celery.control.inspect(['celery@osp'])
+        scheduled = nodes.scheduled()
+        active = nodes.active()
+        claimed = nodes.reserved()
+        schedulerList = {'nodes': nodes, 'scheduled': scheduled, 'active': active, 'claimed': claimed}
+
         return render_template(themes.checkOverride('admin.html'), appDBVer=appDBVer, userList=userList,
-                               roleList=roleList, channelList=channelList, streamList=streamList, topicsList=topicsList,
+                               roleList=roleList, channelList=channelList, streamList=streamList, streamHistory=streamHistory, topicsList=topicsList,
                                repoSHA=repoSHA, repoBranch=branch,
                                remoteSHA=remoteSHA, themeList=themeList, statsViewsDay=statsViewsDay,
                                viewersTotal=viewersTotal, currentViewers=currentViewers, nginxStatData=nginxStatData,
                                globalHooks=globalWebhookQuery, defaultRoleDict=defaultRoles,
                                logsList=logsList, edgeNodes=edgeNodes, rtmpServers=rtmpServers, oAuthProvidersList=oAuthProvidersList,
-                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page)
+                               ejabberdStatus=ejabberd, bannedWords=bannedWordString, globalStickers=globalStickers, page=page, timeZoneOptions=pytz.all_timezones,
+                               schedulerList=schedulerList, globalPanelList=globalPanelList, mainPagePanelMapping=mainPagePanelMappingSort)
     elif request.method == 'POST':
 
         settingType = request.form['settingType']
@@ -455,15 +474,10 @@ def admin_page():
             serverName = request.form['serverName']
             serverProtocol = request.form['siteProtocol']
             serverAddress = request.form['serverAddress']
-            smtpSendAs = request.form['smtpSendAs']
-            smtpAddress = request.form['smtpAddress']
-            smtpPort = request.form['smtpPort']
-            smtpUser = request.form['smtpUser']
-            smtpPassword = request.form['smtpPassword']
             serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
-            mainPageSort = request.form['mainPageSort']
+
             restreamMaxBitrate = request.form['restreamMaxBitrate']
             clipMaxLength = request.form['maxClipLength']
 
@@ -472,8 +486,6 @@ def admin_page():
             adaptiveStreaming = False
             showEmptyTables = False
             allowComments = False
-            smtpTLS = False
-            smtpSSL = False
             buildEdgeOnRestart = False
             protectionEnabled = False
             maintenanceMode = False
@@ -508,12 +520,6 @@ def admin_page():
             if 'allowComments' in request.form:
                 allowComments = True
 
-            if 'smtpTLS' in request.form:
-                smtpTLS = True
-
-            if 'smtpSSL' in request.form:
-                smtpSSL = True
-
             if 'enableProtection' in request.form:
                 protectionEnabled = True
             if 'maintenanceMode' in request.form:
@@ -542,30 +548,37 @@ def admin_page():
                     systemLogo = "/images/" + filename
                     themes.faviconGenerator(globalvars.videoRoot + 'images/' + filename)
 
-            validAddress = system.formatSiteAddress(serverAddress)
-            try:
-                externalIP = socket.gethostbyname(validAddress)
-            except socket.gaierror:
-                flash("Invalid Server Address/IP", "error")
-                return redirect(url_for(".admin_page", page="settings"))
+            #validAddress = system.formatSiteAddress(serverAddress)
+            #try:
+            #    externalIP = socket.gethostbyname(validAddress)
+            #except socket.gaierror:
+            #    flash("Invalid Server Address/IP", "error")
+            #    return redirect(url_for(".admin_page", page="settings"))
 
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
             sysSettings.siteAddress = serverAddress
-            sysSettings.smtpSendAs = smtpSendAs
-            sysSettings.smtpAddress = smtpAddress
-            sysSettings.smtpPort = smtpPort
-            sysSettings.smtpUsername = smtpUser
-            sysSettings.smtpPassword = smtpPassword
-            sysSettings.smtpTLS = smtpTLS
-            sysSettings.smtpSSL = smtpSSL
             sysSettings.allowRecording = recordSelect
             sysSettings.allowUploads = uploadSelect
             sysSettings.adaptiveStreaming = adaptiveStreaming
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
-            sysSettings.sortMainBy = int(mainPageSort)
+            if 'mainPageSort' in request.form:
+                sysSettings.sortMainBy = int(request.form['mainPageSort'])
+            if 'limitMaxChannels' in request.form:
+                sysSettings.limitMaxChannels = int(request.form['limitMaxChannels'])
+            if 'maxVideoRetention' in request.form:
+                sysSettings.maxVideoRetention = int(request.form['maxVideoRetention'])
+            # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
+            if 'enableRTMPRestream' in request.form:
+                sysSettings.allowRestream = True
+            elif 'mainPageSort' not in request.form:
+                sysSettings.allowRestream = False
+            if 'serverTimeZone' in request.form:
+                sysSettings.serverTimeZone = request.form['serverTimeZone']
+            else:
+                sysSettings.serverTimeZone = "UTC"
             sysSettings.serverMessageTitle = serverMessageTitle
             sysSettings.serverMessage = serverMessage
             sysSettings.protectionEnabled = protectionEnabled
@@ -581,33 +594,6 @@ def admin_page():
 
             cache.delete_memoized(cachedDbCalls.getSystemSettings)
             sysSettings = cachedDbCalls.getSystemSettings()
-
-            current_app.config.update(
-                SERVER_NAME=None,
-                SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
-                MAIL_SERVER=sysSettings.smtpAddress,
-                MAIL_PORT=sysSettings.smtpPort,
-                MAIL_USE_SSL=sysSettings.smtpSSL,
-                MAIL_USE_TLS=sysSettings.smtpTLS,
-                MAIL_USERNAME=sysSettings.smtpUsername,
-                MAIL_PASSWORD=sysSettings.smtpPassword,
-                SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
-                SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
-                SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
-                SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                SECURITY_FORGOT_PASSWORD_TEMPLATE='security/forgot_password.html',
-                SECURITY_LOGIN_USER_TEMPLATE='security/login_user.html',
-                SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
-                SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
-                SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
-
-            # ReInitialize Flask-Security
-            #security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
-
-            email = Mail()
-            email.init_app(current_app)
-            email.app = current_app
 
             themeList = []
             themeDirectorySearch = os.listdir("./templates/themes/")
@@ -646,7 +632,7 @@ def admin_page():
 
         elif settingType == "topics":
 
-            if 'topicID' in request.form:
+            if 'topicID' in request.form and request.form['topicID'] != 'None':
                 topicID = int(request.form['topicID'])
                 topicName = request.form['name']
 
@@ -820,7 +806,7 @@ def admin_page():
                     api_base_url=provider.api_base_url,
                     client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                 )
-
+                globalvars.restartRequired = True
                 flash("OAuth Provider Added", "success")
 
             else:
@@ -871,7 +857,7 @@ def admin_page():
                         api_base_url=provider.api_base_url,
                         client_kwargs=json.loads(provider.client_kwargs) if (provider.client_kwargs != '' and provider.client_kwargs is not None) else None,
                     )
-
+                    globalvars.restartRequired = True
                     flash("OAuth Provider Updated","success")
                 else:
                     flash("OAuth Provider Does Not Exist", "error")
@@ -895,6 +881,7 @@ def admin_page():
                     db.session.commit()
                 db.session.delete(oAuthProviderQuery)
                 db.session.commit()
+                globalvars.restartRequired = True
                 flash("OAuth Provider Deleted - " + str(count) + " User(s) Converted to Local Users", "success")
             else:
                 flash("Invalid OAuth Object","error")
@@ -935,7 +922,61 @@ def admin_page():
             db.session.commit()
             return redirect(url_for('.admin_page', page="users"))
 
+        elif settingType == "panel":
+            panelName = request.form['panel-name']
+            panelType = int(request.form['panel-type'])
+            panelHeader = request.form['panel-header']
+            panelContent = request.form['panel-content']
+            globalPanelId = request.form['PanelId']
+
+            panelOrder = 0
+            if panelType != 0:
+                if 'panel-order' in request.form:
+                    panelOrder = int(request.form['panel-order'])
+
+            if globalPanelId == "":
+                newGlobalPanel = panel.globalPanel(panelName, panelType, panelHeader, panelOrder, panelContent)
+                db.session.add(newGlobalPanel)
+                db.session.commit()
+            else:
+                globalPanelId = int(globalPanelId)
+                existingPanel = panel.globalPanel.query.filter_by(id=globalPanelId).first()
+                if existingPanel is not None:
+                    existingPanel.name = panelName
+                    existingPanel.type = panelType
+                    existingPanel.header = panelHeader
+                    existingPanel.order = panelOrder
+                    existingPanel.content = panelContent
+                    cache.delete_memoized(cachedDbCalls.getGlobalPanel, globalPanelId)
+                    db.session.commit()
+            return redirect(url_for('.admin_page', page="settings"))
+
         return redirect(url_for('.admin_page'))
+
+@settings_bp.route('/admin/create_test_task')
+@login_required
+@roles_required('Admin')
+def createtestask():
+    result = system.testCelery.apply_async(countdown=1)
+    return str(result)
+
+@settings_bp.route('/admin/run_task/<task>')
+@login_required
+@roles_required('Admin')
+def run_task(task):
+    if task == 'process_ingest':
+        result = video_tasks.process_ingest_folder.delay()
+    elif task == 'reprocess_stuck_videos':
+        result = video_tasks.reprocess_stuck_videos.delay()
+    elif task == 'check_video_published_exists':
+        result = video_tasks.check_video_published_exists.delay()
+    elif task == 'check_video_retention':
+        result = video_tasks.check_video_retention.delay()
+    elif task == 'check_video_thumbnails':
+        result = video_tasks.check_video_thumbnails.delay()
+    else:
+        result = False
+    return str(result)
 
 @settings_bp.route('/admin/rtmpstat/<node>')
 @login_required
@@ -959,6 +1000,11 @@ def rtmpStat_page(node):
         return data
     return abort(500)
 
+@settings_bp.route('/admin/features')
+@login_required
+@roles_required('Admin')
+def admin_devFeatures():
+    return render_template(themes.checkOverride('devfeatures.html'))
 
 @settings_bp.route('/channels', methods=['POST', 'GET'])
 @login_required
@@ -969,7 +1015,13 @@ def settings_channels_page():
     videos_root = current_app.config['WEB_ROOT'] + 'videos/'
 
     if request.method == 'POST':
-        requestType = request.form['type']
+        requestType = None
+
+        # Workaround check if we are now using a modal originally for Admin/Global
+        if 'type' in request.form:
+            requestType = request.form['type']
+        elif 'settingType' in request.form:
+            requestType = request.form['settingType']
 
         # Process New Stickers
         if requestType == "newSticker":
@@ -997,6 +1049,44 @@ def settings_channels_page():
                 else:
                     flash("Sticker Did Not Define Channel ID", "Error")
             return redirect(url_for('settings.settings_channels_page'))
+        elif requestType == "panel":
+            panelName = request.form['panel-name']
+            panelType = int(request.form['panel-type'])
+            panelHeader = request.form['panel-header']
+            panelContent = request.form['panel-content']
+            PanelId = request.form['PanelId']
+            panelChannelId = int(request.form['PanelLocationId'])
+
+            channelQuery = Channel.Channel.query.filter_by(id=panelChannelId, owningUser=current_user.id).first()
+            if channelQuery is not None:
+
+                panelOrder = 0
+                if panelType != 0:
+                    if 'panel-order' in request.form:
+                        panelOrder = int(request.form['panel-order'])
+
+                if PanelId == "":
+                    newChannellPanel = panel.channelPanel(panelName, channelQuery.id, panelType, panelHeader, panelOrder, panelContent)
+                    db.session.add(newChannellPanel)
+                    db.session.commit()
+                    flash("New Channel Panel Added", "Success")
+                else:
+                    existingPanel = panel.channelPanel.query.filter_by(id=PanelId, channelId=channelQuery.id).first()
+                    if existingPanel is not None:
+                        existingPanel.name = panelName
+                        existingPanel.type = panelType
+                        existingPanel.header = panelHeader
+                        existingPanel.order = panelOrder
+                        existingPanel.content = panelContent
+                        cache.delete_memoized(cachedDbCalls.getChannelPanel, PanelId)
+                        db.session.commit()
+                        flash("Panel Updated", "Success")
+                    else:
+                        flash("Invalid Panel", "Error")
+                return redirect(url_for('settings.settings_channels_page'))
+            else:
+                flash("Invalid Channel", "Error")
+                return redirect(url_for('settings.settings_channels_page'))
 
         channelName = system.strip_html(request.form['channelName'])
         topic = request.form['channeltopic']
@@ -1010,10 +1100,6 @@ def settings_channels_page():
         autoPublish = False
         if 'publishSelect' in request.form:
             autoPublish = True
-
-        #rtmpRestream = False
-        #if 'rtmpSelect' in request.form:
-        #    rtmpRestream = True
 
         chatEnabled = False
 
@@ -1030,12 +1116,29 @@ def settings_channels_page():
         if 'channelProtection' in request.form:
             protection = True
 
+        showHome = False
+
+        if 'showHome' in request.form:
+            showHome = True
+
+        private = False
+
+        if 'private' in request.form:
+            private = True
+
         if requestType == 'new':
+            # Check Maximum Channel Limit
+            if sysSettings.limitMaxChannels != 0 and current_user.has_role('Admin') is False:
+                channelCount = Channel.Channel.query.filter_by(owningUser=current_user.id).count()
+                if channelCount >= sysSettings.limitMaxChannels:
+                    flash("Maximum Number of Channels Allowed Reached - Limit: " + str(sysSettings.limitMaxChannels), "error")
+                    db.session.commit()
+                    return redirect(url_for('settings.settings_channels_page'))
 
             newUUID = str(uuid.uuid4())
 
             newChannel = Channel.Channel(current_user.id, newUUID, channelName, topic, record, chatEnabled,
-                                         allowComments, description)
+                                         allowComments, showHome, description)
 
             if 'photo' in request.files:
                 file = request.files['photo']
@@ -1078,20 +1181,36 @@ def settings_channels_page():
                 requestedChannel.record = record
                 requestedChannel.chatEnabled = chatEnabled
                 requestedChannel.allowComments = allowComments
+                requestedChannel.showHome = showHome
                 requestedChannel.description = description
                 requestedChannel.protected = protection
                 requestedChannel.defaultStreamName = defaultstreamName
                 requestedChannel.autoPublish = autoPublish
-                #requestedChannel.rtmpRestream = rtmpRestream
-                #requestedChannel.rtmpRestreamDestination = rtmpRestreamDestination
+                requestedChannel.private = private
+
+                if 'channelTags' in request.form:
+                    channelTagString = request.form['channelTags']
+                    tagArray = system.parseTags(channelTagString)
+                    existingTagArray = Channel.channel_tags.query.filter_by(channelID=requestedChannel.id).all()
+
+                    for currentTag in existingTagArray:
+                        if currentTag.name not in tagArray:
+                            db.session.delete(currentTag)
+                        else:
+                            tagArray.remove(currentTag.name)
+                    db.session.commit()
+                    for currentTag in tagArray:
+                        newTag = Channel.channel_tags(currentTag, requestedChannel.id, current_user.id)
+                        db.session.add(newTag)
+                        db.session.commit()
 
                 vanityURL = None
                 if 'vanityURL' in request.form:
                     requestedVanityURL = request.form['vanityURL']
                     requestedVanityURL = re.sub('[^A-Za-z0-9]+', '', requestedVanityURL)
                     if requestedVanityURL != '':
-                        existingChannnelQuery = Channel.Channel.query.filter_by(vanityURL=requestedVanityURL).first()
-                        if existingChannnelQuery is None:
+                        existingChannelQuery = Channel.Channel.query.filter_by(vanityURL=requestedVanityURL).first()
+                        if existingChannelQuery is None or existingChannelQuery.id == requestedChannel.id:
                             vanityURL = requestedVanityURL
                         else:
                             flash("Short link not saved. Link with same name exists!", "error")
@@ -1140,14 +1259,23 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
+                # Invalidate Channel Cache
+                cachedDbCalls.invalidateChannelCache(requestedChannel.id)
+
                 flash("Channel Saved")
                 db.session.commit()
             else:
                 flash("Invalid Change Attempt", "Error")
             redirect(url_for('.settings_channels_page'))
 
-    topicList = topics.topics.query.all()
-    user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+    topicList = cachedDbCalls.getAllTopics()
+    #user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
+    user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id)\
+        .with_entities(Channel.Channel.id, Channel.Channel.channelName, Channel.Channel.channelLoc, Channel.Channel.topic, Channel.Channel.views,
+                       Channel.Channel.streamKey, Channel.Channel.protected, Channel.Channel.private, Channel.Channel.showHome, Channel.Channel.xmppToken,
+                       Channel.Channel.chatEnabled, Channel.Channel.autoPublish, Channel.Channel.allowComments, Channel.Channel.record, Channel.Channel.description,
+                       Channel.Channel.offlineImageLocation, Channel.Channel.imageLocation, Channel.Channel.vanityURL, Channel.Channel.defaultStreamName,
+                       Channel.Channel.allowGuestNickChange, Channel.Channel.showChatJoinLeaveNotification, Channel.Channel.chatFormat, Channel.Channel.chatHistory).all()
 
     activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
     activeRTMPList = []
@@ -1212,8 +1340,9 @@ def settings_channels_page():
                 channelModList.append(user['username'] + "@" + user['domain'])
         channelMods[chan.channelLoc] = channelModList
 
-    # Calculate Channel Views by Date based on Video or Live Views
+    # Calculate Channel Views by Date based on Video or Live Views and Generate Chanel Panel Ordering
     user_channels_stats = {}
+    channelPanelOrder = {}
     for channel in user_channels:
 
         # 30 Days Viewer Stats
@@ -1231,7 +1360,9 @@ def settings_channels_page():
         statsViewsRecordedDayDict = {}
         statsViewsRecordedDayArray = []
 
-        for vid in channel.recordedVideo:
+        recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
+
+        for vid in recordedVidsQuery:
             statsViewsRecordedDay = db.session.query(func.date(views.views.date), func.count(views.views.id)).filter(
                 views.views.viewType == 1).filter(views.views.itemID == vid.id).filter(
                 views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).group_by(
@@ -1256,8 +1387,14 @@ def settings_channels_page():
 
         user_channels_stats[channel.id] = statsViewsDay
 
-    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms, channelMods=channelMods,
-                           viewStats=user_channels_stats, rtmpList=activeRTMPList)
+        channelPanelOrderMappingQuery = panel.panelMapping.query.filter_by(panelType=2, panelLocationId=channel.id).all()
+        ChannelPanelOrderArray = []
+        for panelEntry in channelPanelOrderMappingQuery:
+            ChannelPanelOrderArray.append(panelEntry)
+        channelPanelOrder[channel.id] = sorted(ChannelPanelOrderArray, key=lambda x: x.panelOrder)
+
+    return render_template(themes.checkOverride('user_channels.html'), channels=user_channels, topics=topicList, channelRooms=channelRooms,
+                           channelMods=channelMods, viewStats=user_channels_stats, rtmpList=activeRTMPList, channelPanelMapping=channelPanelOrder)
 
 
 @settings_bp.route('/channels/chat', methods=['POST', 'GET'])
@@ -1275,6 +1412,10 @@ def settings_channels_chat_page():
             roomDescr = system.strip_html(request.form['roomDescr'])
             ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "title", roomTitle)
             ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "description", roomDescr)
+
+            channelQuery.chatFormat = request.form['chatFormat']
+
+            channelQuery.chatHistory = request.form['chatHistory']
 
             if 'moderatedSelect' in request.form:
                 ejabberd.change_room_option(channelLoc, 'conference.' + sysSettings.siteAddress, "moderated", "true")
@@ -1294,7 +1435,12 @@ def settings_channels_chat_page():
                 channelQuery.allowGuestNickChange = True
             else:
                 channelQuery.allowGuestNickChange = False
+            if 'showJoinPartMsg' in request.form:
+                channelQuery.showChatJoinLeaveNotification = True
+            else:
+                channelQuery.showChatJoinLeaveNotification = False
             db.session.commit()
+            cachedDbCalls.invalidateChannelCache(channelQuery.id)
 
     return redirect(url_for('settings.settings_channels_page'))
 
@@ -1360,19 +1506,12 @@ def initialSetup():
         serverName = request.form['serverName']
         serverProtocol = str(request.form['siteProtocol'])
         serverAddress = str(request.form['serverAddress'])
-        smtpSendAs = request.form['smtpSendAs']
-        smtpAddress = request.form['smtpAddress']
-        smtpPort = request.form['smtpPort']
-        smtpUser = request.form['smtpUser']
-        smtpPassword = request.form['smtpPassword']
 
         recordSelect = False
         uploadSelect = False
         adaptiveStreaming = False
         showEmptyTables = False
         allowComments = False
-        smtpTLS = False
-        smtpSSL = False
 
         if 'recordSelect' in request.form:
             recordSelect = True
@@ -1388,12 +1527,6 @@ def initialSetup():
 
         if 'allowComments' in request.form:
             allowComments = True
-
-        if 'smtpTLS' in request.form:
-            smtpTLS = True
-
-        if 'smtpSSL' in request.form:
-            smtpSSL = True
 
         # Whereas this code had worked before, it is now causing errors on post
         #validAddress = system.formatSiteAddress(serverAddress)
@@ -1427,8 +1560,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Uploader')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort,
-                                               smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect,
+            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, recordSelect,
                                                uploadSelect, adaptiveStreaming, showEmptyTables, allowComments,
                                                globalvars.version)
             db.session.add(serverSettings)
@@ -1439,14 +1571,6 @@ def initialSetup():
             if settings is not None:
                 current_app.config.update(
                     SERVER_NAME=None,
-                    SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                    MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
-                    MAIL_SERVER=sysSettings.smtpAddress,
-                    MAIL_PORT=sysSettings.smtpPort,
-                    MAIL_USE_TLS=sysSettings.smtpTLS,
-                    MAIL_USE_SSL=sysSettings.smtpSSL,
-                    MAIL_USERNAME=sysSettings.smtpUsername,
-                    MAIL_PASSWORD=sysSettings.smtpPassword,
                     SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
                     SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",

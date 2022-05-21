@@ -293,7 +293,7 @@
                       <img class="rounded" src="/images/{{clip.parentVideo | videotoChannelID | channeltoOwnerID | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                       <div class="metadata">
                         <div class="card-cut-text name ml-2"><b>{{clip.clipName|limit_title}}</b></div>
-                        <div class="card-cut-text topic ml-2">{{clip.parentVideo | videotoChannelID | get_videoTopic |get_topicName}}</div>
+                        <div class="card-cut-text topic ml-2">{{clip.parentVideo | get_videoTopic |get_topicName}}</div>
                         <span class="date" style="display:none;">{{clip.parentVideo | get_videoDate |normalize_date}}</span>
                       </div>
                     </div>
