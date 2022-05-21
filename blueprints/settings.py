@@ -474,11 +474,6 @@ def admin_page():
             serverName = request.form['serverName']
             serverProtocol = request.form['siteProtocol']
             serverAddress = request.form['serverAddress']
-            smtpSendAs = request.form['smtpSendAs']
-            smtpAddress = request.form['smtpAddress']
-            smtpPort = request.form['smtpPort']
-            smtpUser = request.form['smtpUser']
-            smtpPassword = request.form['smtpPassword']
             serverMessageTitle = request.form['serverMessageTitle']
             serverMessage = request.form['serverMessage']
             theme = request.form['theme']
@@ -491,8 +486,6 @@ def admin_page():
             adaptiveStreaming = False
             showEmptyTables = False
             allowComments = False
-            smtpTLS = False
-            smtpSSL = False
             buildEdgeOnRestart = False
             protectionEnabled = False
             maintenanceMode = False
@@ -526,18 +519,6 @@ def admin_page():
 
             if 'allowComments' in request.form:
                 allowComments = True
-
-            if 'smtpTLS' in request.form:
-                smtpTLS = True
-
-            if 'smtpSSL' in request.form:
-                smtpSSL = True
-
-            if 'smtpEncryption' in request.form:
-                if request.form['smtpEncryption'] == 'tls':
-                    smtpTLS = True
-                elif request.form['smtpEncryption'] == 'ssl':
-                    smtpSSL = True
 
             if 'enableProtection' in request.form:
                 protectionEnabled = True
@@ -574,21 +555,9 @@ def admin_page():
             #    flash("Invalid Server Address/IP", "error")
             #    return redirect(url_for(".admin_page", page="settings"))
 
-            if sysSettings.smtpSendAs != smtpSendAs or sysSettings.smtpAddress != smtpAddress or sysSettings.smtpPort != smtpPort\
-                    or sysSettings.smtpUsername != smtpUser or sysSettings.smtpPassword != smtpPassword or sysSettings.smtpTLS != smtpTLS or sysSettings.smtpSSL != smtpSSL:
-
-                globalvars.restartRequired = True
-
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
             sysSettings.siteAddress = serverAddress
-            sysSettings.smtpSendAs = smtpSendAs
-            sysSettings.smtpAddress = smtpAddress
-            sysSettings.smtpPort = smtpPort
-            sysSettings.smtpUsername = smtpUser
-            sysSettings.smtpPassword = smtpPassword
-            sysSettings.smtpTLS = smtpTLS
-            sysSettings.smtpSSL = smtpSSL
             sysSettings.allowRecording = recordSelect
             sysSettings.allowUploads = uploadSelect
             sysSettings.adaptiveStreaming = adaptiveStreaming
@@ -625,33 +594,6 @@ def admin_page():
 
             cache.delete_memoized(cachedDbCalls.getSystemSettings)
             sysSettings = cachedDbCalls.getSystemSettings()
-
-            current_app.config.update(
-                SERVER_NAME=None,
-                SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
-                MAIL_SERVER=sysSettings.smtpAddress,
-                MAIL_PORT=sysSettings.smtpPort,
-                MAIL_USE_SSL=sysSettings.smtpSSL,
-                MAIL_USE_TLS=sysSettings.smtpTLS,
-                MAIL_USERNAME=sysSettings.smtpUsername,
-                MAIL_PASSWORD=sysSettings.smtpPassword,
-                SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
-                SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
-                SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",
-                SECURITY_EMAIL_SUBJECT_CONFIRM=sysSettings.siteName + " - Email Confirmation Request",
-                SECURITY_FORGOT_PASSWORD_TEMPLATE='security/forgot_password.html',
-                SECURITY_LOGIN_USER_TEMPLATE='security/login_user.html',
-                SECURITY_REGISTER_USER_TEMPLATE='security/register_user.html',
-                SECURITY_RESET_PASSWORD_TEMPLATE='security/reset_password.html',
-                SECURITY_SEND_CONFIRMATION_TEMPLATE='security/send_confirmation.html')
-
-            # ReInitialize Flask-Security
-            #security = Security(current_app, user_datastore, register_form=Sec.ExtendedRegisterForm, confirm_register_form=Sec.ExtendedConfirmRegisterForm, login_form=Sec.OSPLoginForm)
-
-            email = Mail()
-            email.init_app(current_app)
-            email.app = current_app
 
             themeList = []
             themeDirectorySearch = os.listdir("./templates/themes/")
@@ -1564,19 +1506,12 @@ def initialSetup():
         serverName = request.form['serverName']
         serverProtocol = str(request.form['siteProtocol'])
         serverAddress = str(request.form['serverAddress'])
-        smtpSendAs = request.form['smtpSendAs']
-        smtpAddress = request.form['smtpAddress']
-        smtpPort = request.form['smtpPort']
-        smtpUser = request.form['smtpUser']
-        smtpPassword = request.form['smtpPassword']
 
         recordSelect = False
         uploadSelect = False
         adaptiveStreaming = False
         showEmptyTables = False
         allowComments = False
-        smtpTLS = False
-        smtpSSL = False
 
         if 'recordSelect' in request.form:
             recordSelect = True
@@ -1592,12 +1527,6 @@ def initialSetup():
 
         if 'allowComments' in request.form:
             allowComments = True
-
-        if 'smtpTLS' in request.form:
-            smtpTLS = True
-
-        if 'smtpSSL' in request.form:
-            smtpSSL = True
 
         # Whereas this code had worked before, it is now causing errors on post
         #validAddress = system.formatSiteAddress(serverAddress)
@@ -1631,8 +1560,7 @@ def initialSetup():
             user_datastore.add_role_to_user(user, 'Uploader')
             user_datastore.add_role_to_user(user, 'User')
 
-            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, smtpAddress, smtpPort,
-                                               smtpTLS, smtpSSL, smtpUser, smtpPassword, smtpSendAs, recordSelect,
+            serverSettings = settings.settings(serverName, serverProtocol, serverAddress, recordSelect,
                                                uploadSelect, adaptiveStreaming, showEmptyTables, allowComments,
                                                globalvars.version)
             db.session.add(serverSettings)
@@ -1643,14 +1571,6 @@ def initialSetup():
             if settings is not None:
                 current_app.config.update(
                     SERVER_NAME=None,
-                    SECURITY_EMAIL_SENDER=sysSettings.smtpSendAs,
-                    MAIL_DEFAULT_SENDER=sysSettings.smtpSendAs,
-                    MAIL_SERVER=sysSettings.smtpAddress,
-                    MAIL_PORT=sysSettings.smtpPort,
-                    MAIL_USE_TLS=sysSettings.smtpTLS,
-                    MAIL_USE_SSL=sysSettings.smtpSSL,
-                    MAIL_USERNAME=sysSettings.smtpUsername,
-                    MAIL_PASSWORD=sysSettings.smtpPassword,
                     SECURITY_EMAIL_SUBJECT_PASSWORD_RESET=sysSettings.siteName + " - Password Reset Request",
                     SECURITY_EMAIL_SUBJECT_REGISTER=sysSettings.siteName + " - Welcome!",
                     SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE=sysSettings.siteName + " - Password Reset Notification",

@@ -8,6 +8,8 @@ import logging, json, requests
 from classes.shared import celery, db, email
 from classes import notifications, Sec, webhook
 
+from app import config
+
 from functions import notifications, webhookFunc, system, cachedDbCalls, templateFilters
 
 log = logging.getLogger('app.functions.scheduler.message_tasks')
@@ -20,7 +22,7 @@ def send_email(self, subject, destination, message):
     sysSettings = cachedDbCalls.getSystemSettings()
     finalMessage = message + "<p>If you would like to unsubscribe, click the link below: <br><a href='" + sysSettings.siteProtocol + sysSettings.siteAddress + "/unsubscribe?email=" + destination + "'>Unsubscribe</a></p></body></html>"
     msg = Message(subject=subject, recipients=[destination])
-    msg.sender = sysSettings.siteName + "<" + sysSettings.smtpSendAs + ">"
+    msg.sender = sysSettings.siteName + "<" + config.smtpSendAs + ">"
     msg.body = finalMessage
     msg.html = finalMessage
     email.send(msg)

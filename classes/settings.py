@@ -6,13 +6,6 @@ class settings(db.Model):
     siteProtocol = db.Column(db.String(24))
     siteAddress = db.Column(db.String(255))
     serverTimeZone = db.Column(db.String(255))
-    smtpAddress = db.Column(db.String(255))
-    smtpPort = db.Column(db.Integer)
-    smtpTLS = db.Column(db.Boolean)
-    smtpSSL = db.Column(db.Boolean)
-    smtpUsername = db.Column(db.String(255))
-    smtpPassword = db.Column(db.String(255))
-    smtpSendAs = db.Column(db.String(255))
     allowRecording = db.Column(db.Boolean)
     allowUploads = db.Column(db.Boolean)
     allowRestream = db.Column(db.Boolean)
@@ -36,21 +29,12 @@ class settings(db.Model):
     hubEnabled = db.Column(db.Boolean)
     hubURL = db.Column(db.String(255))
     maxVideoRetention = db.Column(db.Integer)
-    #terms = db.Column(db.String(4096))
-    #privacy = db.Column(db.String(4096))
 
-    def __init__(self, siteName, siteProtocol, siteAddress, smtpAddress, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSendAs, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
+    def __init__(self, siteName, siteProtocol, siteAddress, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
         self.siteName = siteName
         self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
         self.serverTimeZone = "UTC"
-        self.smtpAddress = smtpAddress
-        self.smtpPort = smtpPort
-        self.smtpTLS = smtpTLS
-        self.smtpSSL = smtpSSL
-        self.smtpUsername = smtpUsername
-        self.smtpPassword = smtpPassword
-        self.smtpSendAs = smtpSendAs
         self.allowRecording = allowRecording
         self.allowUploads = allowUploads
         self.allowRestream = True

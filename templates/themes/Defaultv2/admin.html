@@ -239,22 +239,6 @@
                                   <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="enableProtection" name="enableProtection" autocomplete="new-password" {% if sysSettings.protectionEnabled == True %} checked {% endif %}>
                               </div>
                               <div class="col-sm-12 col-md-6">
-                                  <h4><i class="fas fa-envelope"></i> Email Settings</h4>
-                                  <button type="button" class="btn btn-primary my-2" onclick="testEmail();">Test Email Settings</button>
-                                  <div id="emailsuccess" style="display:none;"><i class="fas fa-check-circle" style="color:springgreen;"></i> Email Test was Successful!</div>
-                                  <div id="emailfailure" style="display:none;"><i class="fas fa-times-circle" style="color:orangered"></i> Email Test Failed!</div>
-                                  <br>
-                                  SMTP Email From: <input type="email" id="smtpSendAs" name="smtpSendAs" class="form-control" value="{{sysSettings.smtpSendAs}}" required autocomplete="new-password">
-                                  SMTP Address: <input type="text" id="smtpAddress" name="smtpAddress" class="form-control" value="{{sysSettings.smtpAddress}}" required autocomplete="new-password">
-                                  SMTP Port: <input type="number" id="smtpPort" name="smtpPort" class="form-control" value={{sysSettings.smtpPort}} required autocomplete="new-password">
-                                  SMTP Username:<input type="text" id="smtpUser" name="smtpUser" class="form-control" value="{{sysSettings.smtpUsername}}" autocomplete="new-password">
-                                  SMTP Password<input type="password" id="smtpPassword" name="smtpPassword" class="form-control" value="{{sysSettings.smtpPassword}}" autocomplete="new-password">
-                                  SMTP SSL:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpSSL" name="smtpSSL" autocomplete="new-password" {% if sysSettings.smtpSSL == True %} checked {% endif %}>
-                                  <br>
-                                  SMTP TLS:<br>
-                                  <input type="checkbox" data-toggle="toggle" data-width="50" data-on=" " data-off=" " id="smtpTLS" name="smtpTLS" autocomplete="new-password" {% if sysSettings.smtpTLS == True %} checked {% endif %}>
-                                  <hr>
                                   <h4><i class="fas fa-stream"></i> Other</h4>
                                   <div class="form-group">
                                     <label for="serverMessageTitle" class="col-form-label">Server Message Title</label><br>

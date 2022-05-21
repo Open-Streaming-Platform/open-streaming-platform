@@ -67,6 +67,12 @@ services:
       - OSP_EJABBERD_PASSWORD=changeme
       - OSP_EJABBERD_RPCHOST=osp_ejabberd
       - OSP_EJABBERD_BOSHDOMAIN=ejabberd.example.com
+      - OSP_SMTP_SENDAS=osp@email.com
+      - OSP_SMTP_SERVERADDRESS=smtp.email.com
+      - OSP_SMTP_SERVERPORT=25
+      - OSP_SMTP_ENCRYPTION=none
+      - OSP_SMTP_USERNAME=
+      - OSP_SMTP_PASSWORD=
       # - TZ=ETC/UTC
     volumes:
       - "/srv/docker/osp-app/data/www:/var/www"
@@ -103,6 +109,12 @@ services:
       - OSP_EJABBERD_PASSWORD=changeme
       - OSP_EJABBERD_RPCHOST=osp_ejabberd
       - OSP_EJABBERD_BOSHDOMAIN=ejabberd.example.com
+      - OSP_SMTP_SENDAS=osp@email.com
+      - OSP_SMTP_SERVERADDRESS=smtp.email.com
+      - OSP_SMTP_SERVERPORT=25
+      - OSP_SMTP_ENCRYPTION=none
+      - OSP_SMTP_USERNAME=
+      - OSP_SMTP_PASSWORD=
       - OSP_CORE_TYPE=celery
       # - TZ=ETC/UTC
     volumes:
@@ -140,6 +152,12 @@ services:
       - OSP_EJABBERD_PASSWORD=changeme
       - OSP_EJABBERD_RPCHOST=osp_ejabberd
       - OSP_EJABBERD_BOSHDOMAIN=ejabberd.example.com
+      - OSP_SMTP_SENDAS=osp@email.com
+      - OSP_SMTP_SERVERADDRESS=smtp.email.com
+      - OSP_SMTP_SERVERPORT=25
+      - OSP_SMTP_ENCRYPTION=none
+      - OSP_SMTP_USERNAME=
+      - OSP_SMTP_PASSWORD=
       - OSP_CORE_TYPE=beat
       # - TZ=ETC/UTC
     volumes:
