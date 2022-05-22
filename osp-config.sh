@@ -1069,12 +1069,14 @@ if [ $# -eq 0 ]
         case $2 in
           osp )
             upgrade_osp
+            upgrade_nginxcore
             upgrade_rtmp
             upgrade_ejabberd
-            upgrade_db
             sudo systemctl restart ejabberd >> $OSPLOG 2>&1
             sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
             sudo systemctl restart osp.target >> $OSPLOG 2>&1
+            upgrade_celery
+            upgrade_celery_beat
             sudo systemctl restart osp-rtmp >> $OSPLOG 2>&1
             ;;
           osp-core )
