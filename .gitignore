@@ -5,7 +5,6 @@ celerybeat-schedule.db
 .vscode/
 /venv/
 TODO
-/migrations/
 /db/
 /docker-build
 .env
