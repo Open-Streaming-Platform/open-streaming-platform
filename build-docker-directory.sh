@@ -32,6 +32,7 @@ cp -R logs $BUILDDIR/osp-core
 cp -R setup $BUILDDIR/osp-core
 cp -R static $BUILDDIR/osp-core
 cp -R templates $BUILDDIR/osp-core
+cp -R migrations $BUILDDIR/osp-core
 
 cp __init__.py $BUILDDIR/osp-core
 cp app.py $BUILDDIR/osp-core

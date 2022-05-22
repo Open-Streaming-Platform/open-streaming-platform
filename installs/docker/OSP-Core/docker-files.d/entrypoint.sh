@@ -25,10 +25,6 @@ echo 'Setting up OSP Configuration'
 echo 'Performing DB Migrations'
 cd /opt/osp
 
-if [[ ! -d /opt/osp/migrations ]]; then
-    python3 manage.py db init
-fi
-python3 manage.py db migrate
 python3 manage.py db upgrade
 cd /
 
