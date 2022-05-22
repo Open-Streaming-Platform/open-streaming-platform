@@ -387,8 +387,9 @@ while OSP_DB_INIT_HANDLER != globalvars.processUUID:
 app.logger.info({"level": "info", "message": "Performing Initial Database Initialization"})
 try:
     database.init(app, user_datastore)
-except:
-    app.logger.warning({"level": "warning", "message": "DB Load Fail due to Upgrade or Issues"})
+except Exception as e:
+    app.logger.error({"level": "error", "message": "DB Load Fail due to Upgrade or Issues: " + str(e)})
+    exit(2)
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
@@ -456,9 +457,12 @@ email.app = app
 
 app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
-topicQuery = topics.topics.query.all()
-for topic in topicQuery:
-    globalvars.topicCache[topic.id] = topic.name
+try:
+    topicQuery = topics.topics.query.all()
+    for topic in topicQuery:
+        globalvars.topicCache[topic.id] = topic.name
+except Exception as e:
+    app.logger.info({"level": "error", "message": "Importing Topic Data into Global Cache Failed: " + str(e)})
 
 # Initialize First Theme Overrides
 app.logger.info({"level": "info", "message": "Initializing OSP Themes"})

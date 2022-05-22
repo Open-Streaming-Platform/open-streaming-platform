@@ -171,10 +171,6 @@ upgrade_db() {
   echo 0 | dialog --title "Upgrading Database" --gauge "Stopping OSP" 10 70 0
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
-  echo 15 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
-  python3 manage.py db init >> $OSPLOG 2>&1
-  echo 25 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
-  python3 manage.py db migrate >> $OSPLOG 2>&1
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
   python3 manage.py db upgrade >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
@@ -636,9 +632,6 @@ upgrade_osp() {
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     python3 manage.py db init >> $UPGRADELOG 2>&1
-     echo 55 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     python3 manage.py db migrate >> $UPGRADELOG 2>&1
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      python3 manage.py db upgrade >> $UPGRADELOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
