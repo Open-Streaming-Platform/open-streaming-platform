@@ -457,9 +457,12 @@ email.app = app
 
 app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
-topicQuery = topics.topics.query.all()
-for topic in topicQuery:
-    globalvars.topicCache[topic.id] = topic.name
+try:
+    topicQuery = topics.topics.query.all()
+    for topic in topicQuery:
+        globalvars.topicCache[topic.id] = topic.name
+except Exception as e:
+    app.logger.info({"level": "error", "message": "Importing Topic Data into Global Cache Failed: " + str(e)})
 
 # Initialize First Theme Overrides
 app.logger.info({"level": "info", "message": "Initializing OSP Themes"})

@@ -305,7 +305,8 @@ def dbFixes():
     return True
 
 def init(app, user_datastore):
-    db.create_all()
+    # Move DB Creation into Flask-Migrate
+    #db.create_all()
 
     log.info({"level": "info", "message": "Checking Flask-Migrate DB Version"})
     # Logic to Check the DB Version
