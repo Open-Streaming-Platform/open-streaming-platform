@@ -55,7 +55,7 @@ services:
     #  - "traefik.http.routers.streamingapp.tls.certresolver=le"
     #  - "traefik.http.services.streamingapp.loadbalancer.server.port=80"
     ports:
-      - '8088:80'
+      - '80'
     environment:
       - OSP_SERVER_ADDRESS=osp.example.com
       - OSP_REDIS_HOST=osp_redis
