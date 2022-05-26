@@ -1,5 +1,5 @@
 version = "0.9.0"
-appDBVersion = 0.80
+appDBVersion = 0.90
 processUUID = None
 
 RedisURL = None
