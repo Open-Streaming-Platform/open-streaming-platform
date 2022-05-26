@@ -743,6 +743,20 @@
  </div>
 {% endmacro %}
 
+{% macro live_stream_embed(channel, videoDivId='', muted=False, autoplay=True) %}
+ <div id="videoContainer">
+     <video id="video{{ videoDivID }}" class="shadow videoStream video-js vjs-big-play-centered" poster="/stream-thumb/{{channel.channelLoc}}.png" {% if autoplay == True %}autoplay{% endif %} controls playsinline preload="auto" {% if muted == True %} muted {% endif %} data-setup='{"fluid": true, "liveui": true}'>
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that
+          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+        </p>
+     </video>
+ </div>
+ <div id="offlineImage" style="display:none;">
+    <img class="videoStream shadow" {% if channel.offlineImageLocation != None %} src="/images/{{channel.offlineImageLocation}}" {% else %} src="/static/img/video-placeholder.jpg" {% endif %} onerror="this.onerror=null;this.src='/static/img/video-placeholder.jpg';">
+ </div>
+{% endmacro %}
+
 {% macro stream_control_panel(channel, current_user) %}
 <div id="vidControls" class="video-control-panel">
     <!--Start Stream Viewer Controls-->
