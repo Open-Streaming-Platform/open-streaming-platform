@@ -53,7 +53,8 @@ services:
     #  - "traefik.http.routers.streamingapp.rule=Host(`osp.example.com`)"
     #  - "traefik.http.routers.streamingapp.tls.domains[0].main=osp.example.com"
     #  - "traefik.http.routers.streamingapp.tls.certresolver=le"
-    #  - "traefik.http.services.streamingapp.loadbalancer.server.port=80"
+    #  - "traefik.http.services.streamingapp.loadBalancer.sticky.cookie.name=server_id"
+    #  - "traefik.http.services.streamingapp.loadBalancer.sticky.cookie.httpOnly=true"
     ports:
       - '80'
     environment:
