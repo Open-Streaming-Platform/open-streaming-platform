@@ -61,6 +61,21 @@ steps:
     status:
       - success
       - failure
+- name: publish-nightly
+  image: appleboy/drone-ssh
+  settings:
+    host:
+      from_secret: docker_server
+    port: 22
+    username:
+      from_secret: username
+    password:
+      from_secret: password
+    script:
+      - cd /compose-files/open-streaming-platform-docker && sudo /bin/bash ./update.sh
+  when:
+    event:
+      - push
 ---
 kind: pipeline
 name: prod-build
