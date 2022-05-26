@@ -190,7 +190,7 @@ services:
     ports:
       - '1935:1935'
     environment:
-      - OSP_API_HOST=http://osp.example.com
+      - OSP_API_HOST=http://osp_core
       - OSP_RTMP_SECRETKEY=changeme
     volumes:
       - "/srv/docker/osp-app/data/www:/var/www"
@@ -199,7 +199,6 @@ services:
       - "/srv/docker/osp-app/data/tmpfs/stream-thumb:/var/www/stream-thumb"
     networks:
       - osp
-      - web
     depends_on:
       - osp_core
 
