@@ -3,7 +3,8 @@ echo 'Placing Configuration Files'
 cp -u -p /opt/osp/installs/nginx-core/nginx.conf /usr/local/nginx/conf/
 cp -u -p /opt/osp/installs/nginx-core/mime.types /usr/local/nginx/conf/
 cp -u -p /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations
-cp -u -p /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream
+cp -u -p /opt/osp/setup/nginx/upstream/osp-docker.conf /usr/local/nginx/conf/upstream
+cp -u -p /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream
 
 echo 'Setting up Directories'
 mkdir -p /var/www && \
