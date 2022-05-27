@@ -301,6 +301,15 @@ def dbFixes():
                 db.session.add(newPanelMapping)
                 db.session.commit()
 
+    # Insert Initial RTMP Server from Env Variable OSP_RTMP_SERVER
+    rtmpServerAddress = os.getenv('OSP_RTMP_SERVER')
+    if rtmpServerAddress != None:
+        rtmpServerQuery = settings.rtmpServer.query.filter_by(address=rtmpServerAddress).first()
+        if rtmpServerQuery is None:
+            newRTMPServer = settings.rtmpServer(rtmpServerAddress)
+            newRTMPServer.hide = True
+            db.session.add(newRTMPServer)
+            db.session.commit()
 
     return True
 
