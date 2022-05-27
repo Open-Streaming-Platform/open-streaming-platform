@@ -17,4 +17,4 @@ sudo bash setup-ospEdge.sh
 sudo systemctl reload nginx-osp
 ```
 
-For more detailed and up-to-date information, see https://wiki.openstreamingplatform.com/OSPEdge/Overview
+For more detailed and up-to-date information, see https://open-streaming-platform.readthedocs.io/en/latest/services/edge.html
