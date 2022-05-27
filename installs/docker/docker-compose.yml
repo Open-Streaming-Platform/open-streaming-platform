@@ -76,6 +76,7 @@ services:
       - OSP_SMTP_ENCRYPTION=none
       - OSP_SMTP_USERNAME=
       - OSP_SMTP_PASSWORD=
+      - OSP_RTMP_SERVER=osp_rtmp
       # - TZ=ETC/UTC
     volumes:
       - "/srv/docker/osp-app/data/www:/var/www"

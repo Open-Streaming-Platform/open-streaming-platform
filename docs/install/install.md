@@ -497,47 +497,56 @@ Coming Soon
 A Dockerfile has been provided for running OSP in a container. However due to the way NginX, Gunicorn, Flask, and Docker work, for OSP to work properly, the Frontend must be exposed using Port 80 or 443 and the RTSP port from OBS or other streaming software must be exposed on Port 1935.
 This accomplished easily by using a reverse proxy in Docker such as Traefik. However, Port 1935 will not be proxied and must be mapped to the same port on the host.
 An external Redis server/container is required to handling asynchronous communications between the internal Gunicorn worker instances.
-Dockerhub URL: https://hub.docker.com/r/deamos/openstreamingplatform
-```
-docker pull deamos/openstreamingplatform
-```
-#### Environment Variables
-DB_URL: Sets the SQLAlchemy URL String for the used DB.
-Default: "sqlite:///db/database.db"
-See https://docs.sqlalchemy.org/en/13/core/engines.html
-FLASK_SECRET: Flask Secret Key
-Format: "CHANGEME"
-FLASK_SALT: Flask User Salt Value
-Format: "CHANGEME"
-OSP_ALLOWREGISTRATION: Sets OSP to allow users to create accounts
-Default: True
-OSP_REQUIREVERIFICATION: Sets New OSP user accounts to verify their email addresses
-Default: True
-REDIS_HOST: Sets the Redis Instance IP/Hostname (REQUIRED)
-REDIS_PORT: Sets the Redis Instance Port
-Default: 6379
-REDIS_PASSWORD: Sets the Redis Instance Password, if needed
 
-#### Added in Beta 5a
-Beta 5a will add additional Environment Variable to pre-configure OSP without needing to run the "First Run" Configuration
-- OSP_ADMIN_USER
-- OSP_ADMIN_EMAIL
-- OSP_ADMIN_PASSWORD
-- OSP_SERVER_NAME
-- OSP_SERVER_PROTOCOL
-- OSP_SERVER_ADDRESS
-- OSP_SMTP_SEND_AS
-- OSP_SMTP_SERVER
-- OSP_SMTP_PORT
-- OSP_SMTP_USER
-- OSP_SMTP_PASSWORD
-- OSP_SMTP_TLS
-- OSP_SMTP_SSL
-- OSP_ALLOW_RECORDING
-- OSP_ALLOW_UPLOAD
-- OSP_ADAPTIVE_STREAMING
-- OSP_ALLOW_COMMENT
-- OSP_DISPLAY_EMPTY
+#### Docker-Compose
+The recommended method for OSP Deployment in Docker is to use the provided docker-compose.yml file.  This file can be found at https://gitlab.com/osp-group/open-streaming-platform-docker/-/blob/master/docker-compose.yml
+
+#### Docker Hub URLs
+- ```OSP-Core``` https://hub.docker.com/r/deamos/osp-core
+- ```OSP-RTMP``` https://hub.docker.com/r/deamos/osp-rtmp
+- ```OSP-Ejabberd``` https://hub.docker.com/r/deamos/osp-ejabberd
+
+
+#### Environment Variables
+
+##### OSP-Core
+  - ```OSP_SERVER_ADDRESS``` FQDN of the OSP Domain
+  - ```OSP_REDIS_HOST``` Domain/IP of Redis Server
+  - ```OSP_REDIS_PORT``` Redis Server Port
+  - ```OSP_REDIS_PASSWORD``` Redis Password, if used
+  - ```OSP_CORE_DB``` Database Connection string 
+    - ex: mysql+pymysql://\<DB User\>:\<DB Password>@\<DB Server>/osp
+  - ```OSP_CORE_SECRETKEY``` Flask Secret Key (Should be Random Value)
+  - ```OSP_CORE_PASSWORD_SALT``` User DB Salt Value (Should be Random Value)
+  - ```OSP_CORE_ALLOWREGISTRATION``` Allow Users to Register (Bool)
+  - ```OSP_CORE_REQUIREEMAILREGISTRATION``` Require Email Validation (Bool)
+  - ```OSP_EJABBERD_PASSWORD``` EJabberd Admin Password
+  - ```OSP_EJABBERD_RPCHOST``` Ejabberd XML-RPC FQDN/IP (OSP-Core -> Ejabberd)
+  - ```OSP_EJABBERD_BOSHDOMAIN``` Ejabberd BOSH-HTTP FQDN/IP (Users -> Ejabberd)
+  - ```OSP_SMTP_SENDAS``` SMTP Emails Send As Email Address
+    - ex: noreply@email.com
+  - ```OSP_SMTP_SERVERADDRESS``` SMTP Server Address
+  - ```OSP_SMTP_SERVERPORT``` SMTP Server Port
+  - ```OSP_SMTP_ENCRYPTION``` SMTP Encryption Type [none | ssl | tls]
+  - ```OSP_SMTP_USERNAME``` SMTP Authentication Username
+  - ```OSP_SMTP_PASSWORD``` SMTP Authentication Password
+  - ```OSP_RTMP_SERVER``` Initial OSP-RTMP Server FQDN
+    - Adds an RTMP Server to the OSP Configuration
+  - ```OSP_CORE_TYPE``` Sets the type of OSP-Core Deployment [core | celery | beat]
+    - If not defined, defaults to core
+
+##### OSP-RTMP
+  - ```OSP_API_HOST``` Protocol and Domain for OSP API
+    - ex: http://osp.example.com
+  - ```OSP_RTMP_SECRETKEY``` Flask Secret Key (Should be Random Value)
+
+##### OSP-Ejabberd
+  - ```EJABBERD_XMLRPC_ALLOWIP``` XML-RPC Allowed IP Addresses
+  - ```EJABBERD_PASSWORD``` Ejabberd Admin Password
+  - ```EJABBERD_DOMAIN``` OSP Instance Wide Domain.  This should be the same as your OSP Instance Public FQDN
+  - ```OSP_API_PROTOCOL``` Protocol for accessing the OSP API [http | https]
+  - ```OSP_API_DOMAIN``` Public FQDN for Accessing the OSP API.  This should be the same as your OSP Public FQDN
+  
 
 #### Recommended Volumes/Mount Points
 - /var/www - Storage of Images, Streams, and Stored Video Files
