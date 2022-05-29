@@ -9,7 +9,7 @@
 <div align="center">
     Open-Source Video Streaming for Everyone
     <br />
-    <a href="https://wiki.openstreamingplatform.com"><strong>Explore the docs »</strong></a>
+    <a href="https://open-streaming-platform.readthedocs.io/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://demo.openstreamingplatform.com">View Demo</a>
@@ -57,7 +57,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Ability to Customize the UI as a Theme for your own personal look [![N|Solid](https://imgur.com/PldclhG.jpg)](https://imgur.com/PldclhG.jpg)
  - Modular Services - Scale your Instance of OSP to support a growing audience.
 
-Installation Instructions may be found at the [OSP Wiki Page](https://wiki.openstreamingplatform.com)
+Installation Instructions may be found at the [OSP Wiki Page](https://open-streaming-platform.readthedocs.io/)
 
 Docker
 ----
@@ -69,7 +69,7 @@ Docker Images can be found at the following locations:
 
 Attribution
 ----
-See our [Attribution Page](https://wiki.openstreamingplatform.com/en/Attribution)
+See our [Attribution Page](https://open-streaming-platform.readthedocs.io/en/latest/overview/attribution.html)
 
 Thanks
 ----
