@@ -1,6 +1,8 @@
 0.9.0
 ==============================================
 ** BREAKING CHANGE **: OSP-Core SMTP Settings have been removed from the DB and added to the config.py.  Check /opt/osp/conf/config.py.dist for SMTP Variables
+** Important Note **: Custom Themes Developed for versions 0.8.x and lower will most likely be broken. Recommended to review any changes under the new Defaultv3 and adjust before upgrade
+OSP General: The OSP Wiki has been moved to https://open-streaming-platform.readthedocs.io/
 OSP-Core: Adds Celery Task Queue and Celery Beat Task Scheduler
 OSP-Core: Adds New Theme Default Theme - Defaultv3
 OSP-Core: Adds Ability to Create Admin Level Custom Panels on Front Page

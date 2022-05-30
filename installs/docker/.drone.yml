@@ -61,3 +61,85 @@ steps:
     status:
       - success
       - failure
+- name: publish-nightly
+  image: appleboy/drone-ssh
+  settings:
+    host:
+      from_secret: docker_server
+    port: 22
+    username:
+      from_secret: username
+    password:
+      from_secret: password
+    script:
+      - cd /compose-files/open-streaming-platform-docker && sudo /bin/bash ./update.sh
+  when:
+    event:
+      - push
+---
+kind: pipeline
+name: prod-build
+
+trigger:
+  branch:
+    - master
+  event:
+    - push
+steps:
+- name: send-tags-to-tags-file
+  image: node
+  when:
+    event:
+      - push
+  commands:
+    - echo -n "$(cat version), latest" > .tags
+- name: build-core
+  image: plugins/docker
+  settings:
+    context: ./osp-core/
+    dockerfile: ./osp-core/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-core
+  when:
+    event:
+      - push
+- name: build-rtmp
+  image: plugins/docker
+  settings:
+    context: ./osp-rtmp/
+    dockerfile: ./osp-rtmp/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-rtmp
+  when:
+    event:
+      - push
+- name: build-ejabberd
+  image: plugins/docker
+  settings:
+    context: ./osp-ejabberd/
+    dockerfile: ./osp-ejabberd/Dockerfile
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: deamos/osp-ejabberd
+  when:
+    event:
+      - push
+- name: discord notification
+  image: appleboy/drone-discord
+  settings:
+    webhook_id:
+      from_secret: discord_webhook_id
+    webhook_token:
+      from_secret: discord_webhook_token
+  when:
+    status:
+      - success
+      - failure

@@ -53,9 +53,10 @@ services:
     #  - "traefik.http.routers.streamingapp.rule=Host(`osp.example.com`)"
     #  - "traefik.http.routers.streamingapp.tls.domains[0].main=osp.example.com"
     #  - "traefik.http.routers.streamingapp.tls.certresolver=le"
-    #  - "traefik.http.services.streamingapp.loadbalancer.server.port=80"
+    #  - "traefik.http.services.streamingapp.loadBalancer.sticky.cookie.name=server_id"
+    #  - "traefik.http.services.streamingapp.loadBalancer.sticky.cookie.httpOnly=true"
     ports:
-      - '8088:80'
+      - '80'
     environment:
       - OSP_SERVER_ADDRESS=osp.example.com
       - OSP_REDIS_HOST=osp_redis
@@ -75,6 +76,7 @@ services:
       - OSP_SMTP_ENCRYPTION=none
       - OSP_SMTP_USERNAME=
       - OSP_SMTP_PASSWORD=
+      - OSP_RTMP_SERVER=osp_rtmp
       # - TZ=ETC/UTC
     volumes:
       - "/srv/docker/osp-app/data/www:/var/www"
@@ -189,7 +191,7 @@ services:
     ports:
       - '1935:1935'
     environment:
-      - OSP_API_HOST=http://osp.example.com
+      - OSP_API_HOST=http://osp_core
       - OSP_RTMP_SECRETKEY=changeme
     volumes:
       - "/srv/docker/osp-app/data/www:/var/www"
@@ -198,7 +200,6 @@ services:
       - "/srv/docker/osp-app/data/tmpfs/stream-thumb:/var/www/stream-thumb"
     networks:
       - osp
-      - web
     depends_on:
       - osp_core
 

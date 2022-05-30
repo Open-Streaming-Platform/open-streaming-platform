@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 echo 'Placing Configuration Files'
-cp -u /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/nginx/servers/* /usr/local/nginx/conf/servers
-cp -p /repo/flask-nginx-rtmp-manager/installs/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
+cp -u -p /opt/osp-rtmp/installs/osp-rtmp/setup/nginx/servers/* /usr/local/nginx/conf/servers
+cp -u -p /opt/osp-rtmp/installs/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
 
 echo 'Setting up Directories'
   mkdir -p /var/www && \

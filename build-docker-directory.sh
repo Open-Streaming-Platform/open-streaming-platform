@@ -8,6 +8,9 @@ mkdir -p $BUILDDIR/osp-proxy
 mkdir -p $BUILDDIR/osp-edge
 mkdir -p $BUILDDIR/osp-ejabberd
 
+# Copy Version File
+cp -R version $BUILDDIR
+
 # Copy docker-compose
 cp -R installs/docker/docker-compose.yml $BUILDDIR/
 

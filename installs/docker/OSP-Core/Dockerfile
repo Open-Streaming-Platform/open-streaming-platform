@@ -144,7 +144,8 @@ RUN mkdir /usr/local/nginx/conf/custom
 RUN cp /opt/osp/installs/nginx-core/nginx.conf /usr/local/nginx/conf/
 RUN cp /opt/osp/installs/nginx-core/mime.types /usr/local/nginx/conf/
 RUN cp /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations
-RUN cp /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream
+RUN cp /opt/osp/setup/nginx/upstream/osp-docker.conf /usr/local/nginx/conf/upstream
+RUN cp /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream
 RUN cp /opt/osp/installs/nginx-core/osp-custom-*.conf /usr/local/nginx/conf/custom
 
 

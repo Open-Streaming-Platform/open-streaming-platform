@@ -520,7 +520,8 @@ install_osp() {
   fi
 
   sudo cp $DIR/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
-  sudo cp $DIR/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+  sudo cp $DIR/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+  sudo cp $DIR/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
 
   # Create HLS directory
   echo 60 | dialog --title "Installing OSP" --gauge "Creating OSP Video Directories" 10 70 0
@@ -630,7 +631,8 @@ upgrade_osp() {
      sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
      echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
-     sudo cp -rf /opt/osp/setup/nginx/upstream/* /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp -rf /opt/osp/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      python3 manage.py db upgrade >> $UPGRADELOG 2>&1
@@ -1069,12 +1071,14 @@ if [ $# -eq 0 ]
         case $2 in
           osp )
             upgrade_osp
+            upgrade_nginxcore
             upgrade_rtmp
             upgrade_ejabberd
-            upgrade_db
             sudo systemctl restart ejabberd >> $OSPLOG 2>&1
             sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
             sudo systemctl restart osp.target >> $OSPLOG 2>&1
+            upgrade_celery
+            upgrade_celery_beat
             sudo systemctl restart osp-rtmp >> $OSPLOG 2>&1
             ;;
           osp-core )

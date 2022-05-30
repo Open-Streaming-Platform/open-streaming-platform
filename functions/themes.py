@@ -14,7 +14,7 @@ from classes import panel
 
 log = logging.getLogger('app.functions.database')
 
-# Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
+# Checks Theme Override Data and if does not exist in override, use Defaultv3's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode).first()
 
@@ -25,12 +25,12 @@ def checkOverride(themeHTMLFile):
                 if "maintenance.html" in globalvars.themeData.get('Override', []):
                     return "themes/" + sysSettings.systemTheme + "/maintenance.html"
                 else:
-                    return "themes/Defaultv2/maintenance.html"
+                    return "themes/Defaultv3/maintenance.html"
         else:
             if "maintenance.html" in globalvars.themeData.get('Override', []):
                 return "themes/" + sysSettings.systemTheme + "/maintenance.html"
             else:
-                return "themes/Defaultv2/maintenance.html"
+                return "themes/Defaultv3/maintenance.html"
 
     # Check if normal theme override exists
     try:
@@ -38,9 +38,9 @@ def checkOverride(themeHTMLFile):
 
             return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
         else:
-            return "themes/Defaultv2/" + themeHTMLFile
+            return "themes/Defaultv3/" + themeHTMLFile
     except:
-        return "themes/Defaultv2/" + themeHTMLFile
+        return "themes/Defaultv3/" + themeHTMLFile
 
 # Code Modified from https://github.com/Hecsall/favicon-generator
 def faviconGenerator(imageLocation):

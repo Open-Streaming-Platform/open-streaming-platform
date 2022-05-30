@@ -389,7 +389,6 @@ try:
     database.init(app, user_datastore)
 except Exception as e:
     app.logger.error({"level": "error", "message": "DB Load Fail due to Upgrade or Issues: " + str(e)})
-    exit(2)
 # Clear Process from OSP DB Init
 r.delete('OSP_DB_INIT_HANDLER')
 
