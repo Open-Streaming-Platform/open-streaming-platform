@@ -27,7 +27,9 @@
         </div>
         <small class="hint d-flex justify-content-around">
             <a href="/reset">Forgot Password?</a>
+            {% if allowRegistration == True %}
             <a href="/register">Register</a>
+            {% endif %}
         </small>
         <div class="d-grid gap-2">
             <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Login">
