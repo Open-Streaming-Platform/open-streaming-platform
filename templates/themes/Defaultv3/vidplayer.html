@@ -7,13 +7,19 @@
 
 <!--Start Header Block-->
 {% block head %}
-<title>{{sysSettings.siteName}} - {{ title }}</title>
-<meta name="twitter:card" content="app" />
+<title>{{sysSettings.siteName}} - {{video.channelName}}</title>
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
-<meta property="og:title" content="{{sysSettings.siteName}}" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="{{request.url|normalize_url}}" />
-<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+<meta property="og:title" content="{{video.channelName}}" />
+<meta property="og:type" content="video.other" />
+<meta property="og:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/{{video.id}}" />
+<meta property="og:image" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/videos/{{video.thumbnailLocation}}" />
+<meta property="og:description" content="{{video.description}}" />
+<meta property="description" content="{{video.description}}" />
+<meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
+<meta property="og:video:type" content="video/mp4" />
+<meta name="twitter:title" content="{{video.channelName}}" />
+<meta name="twitter:card" content="player"/>
+<meta name="twitter:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/{{video.id}}" />
 <script src="/static/vendor/tagify/tagify.js"></script>
 <script src="/static/vendor/tagify/tagify.polyfills.min.js"></script>
 <link href="/static/vendor/tagify/tagify.css" rel="stylesheet" type="text/css" />

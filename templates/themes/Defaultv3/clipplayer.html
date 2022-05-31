@@ -7,13 +7,14 @@
 
 <!--Start Header Block-->
 {% block head %}
-<title>{{sysSettings.siteName}} - {{ title }}</title>
-<meta name="twitter:card" content="app" />
+<title>{{sysSettings.siteName}} - {{clip.clipName}}</title>
+<meta name="twitter:card" content="player" />
 <meta property="og:site_name" content="{{sysSettings.siteName}}" />
-<meta property="og:title" content="{{sysSettings.siteName}}" />
-<meta property="og:type" content="website" />
+<meta property="og:title" content="{{clip.clipName}}" />
+<meta property="og:type" content="video.other" />
 <meta property="og:url" content="{{request.url|normalize_url}}" />
-<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+<meta property="og:image" content="{{request.url_root|normalize_urlroot}}/videos/{{clip.thumbnailLocation}}" />
+<meta property="og:description" content="{{clip.description}}" />
 <script src="/static/vendor/tagify/tagify.js"></script>
 <script src="/static/vendor/tagify/tagify.polyfills.min.js"></script>
 <link href="/static/vendor/tagify/tagify.css" rel="stylesheet" type="text/css" />
