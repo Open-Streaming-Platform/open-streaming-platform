@@ -1,10 +1,10 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 MAINTAINER David Lockwood
 
 ARG OSP_VERSION=0.9.0
 ARG OSP_GIT_BRANCH=build/0.9.x
 
-ARG NGINX_VERSION=1.17.3
+ARG NGINX_VERSION=1.22.0
 ARG NGINX_RTMP_VERSION=1.2.1
 
 ARG DEFAULT_DB_URL=mysql+pymysql://osp:password@db/osp?charset=utf8mb4

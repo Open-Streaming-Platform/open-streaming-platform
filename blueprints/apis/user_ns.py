@@ -1,4 +1,4 @@
-from flask_restplus import Api, Resource, reqparse, Namespace
+from flask_restx import Api, Resource, reqparse, Namespace
 from flask_security.utils import hash_password
 from flask import request
 import datetime
