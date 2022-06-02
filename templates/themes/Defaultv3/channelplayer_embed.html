@@ -1,5 +1,3 @@
-{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
-
 {% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
 
 <!--Start Header Block-->
@@ -49,13 +47,6 @@
     <script>
         var streamURL = '{{ streamURL }}';
         var channelLocation = '{{ channel.channelLoc }}';
-        var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
-        var bannedMessages = '{{bannedMessages|tojson}}';
-        var chatHistory = '{{channel.chatHistory}}';
-        var topicJSList = [];
-        {% for x in topics -%}
-        topicJSList["{{x.id}}"] =  "{{x.name}}";
-        {% endfor %}
     </script>
 
     <script>
@@ -76,7 +67,6 @@
         };
 
         // Settings and Event Hooks for XMPP
-        var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
         var username = "{{current_user.username}}";
         var userUUID = "{{current_user.uuid}}";

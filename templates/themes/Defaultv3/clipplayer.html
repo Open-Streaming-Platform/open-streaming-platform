@@ -15,6 +15,7 @@
 <meta property="og:url" content="{{request.url|normalize_url}}" />
 <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/videos/{{clip.thumbnailLocation}}" />
 <meta property="og:description" content="{{clip.description}}" />
+<meta name="keywords" content="{% for tag in clip.id | get_clipTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
 <script src="/static/vendor/tagify/tagify.js"></script>
 <script src="/static/vendor/tagify/tagify.polyfills.min.js"></script>
 <link href="/static/vendor/tagify/tagify.css" rel="stylesheet" type="text/css" />

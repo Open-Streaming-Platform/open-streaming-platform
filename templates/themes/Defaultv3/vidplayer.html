@@ -20,6 +20,7 @@
 <meta name="twitter:title" content="{{video.channelName}}" />
 <meta name="twitter:card" content="player"/>
 <meta name="twitter:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/play/{{video.id}}" />
+<meta name="keywords" content="{% for tag in video.id | get_videoTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
 <script src="/static/vendor/tagify/tagify.js"></script>
 <script src="/static/vendor/tagify/tagify.polyfills.min.js"></script>
 <link href="/static/vendor/tagify/tagify.css" rel="stylesheet" type="text/css" />

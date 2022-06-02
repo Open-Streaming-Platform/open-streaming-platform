@@ -6,6 +6,7 @@ ARG OSP_GIT_BRANCH=build/0.9.x
 
 ARG NGINX_VERSION=1.22.0
 ARG NGINX_RTMP_VERSION=1.2.1
+ARG NGINX_ZLIB_VERSION=1.2.12
 
 ARG DEFAULT_API=http://127.0.0.1:5010
 ARG DEFAULT_FLASK_SECRET=CHANGEME
@@ -80,8 +81,8 @@ RUN cd /tmp && \
   tar xxf master.tar.gz
 
 RUN cd /tmp && \
-    wget -q "http://www.zlib.net/zlib-1.2.12.tar.gz" && \
-    tar xfz zlib-1.2.12.tar.gz
+    wget -q "http://www.zlib.net/zlib-${NGINX_ZLIB_VERSION}.tar.gz" && \
+    tar xfz zlib-${NGINX_ZLIB_VERSION}.tar.gz
 
 # Compile NGINX with the NGINX-RTMP Module
 RUN cd /tmp/nginx-${NGINX_VERSION} && \
@@ -93,7 +94,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
   --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} \
   --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 \
-  --with-zlib=../zlib-1.2.12 && \
+  --with-zlib=../zlib-${NGINX_ZLIB_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
 RUN rm -rf /tmp/nginx-${NGINX_VERSION}

@@ -13,6 +13,9 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{request.url|normalize_url}}" />
 <meta property="og:image" content="{{request.url_root|normalize_urlroot}}/{{sysSettings.systemLogo}}" />
+{% if channelData is defined %}
+    <meta name="keywords" content="{% for tag in channelData.id | get_channelTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
+{% endif %}
 {% endblock %}
 
 {% block body %}
