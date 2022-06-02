@@ -271,6 +271,8 @@
             {% endif %}
             checkWindow = true;
             setTimeout(function () { popinChat('chatWindow'); }, 1000);
+            connection.flush();
+            connection.disconnect();
             document.getElementById("sidePanel").style.display = "none";
             document.getElementById("mainContentPanel").style.setProperty('width', '100%');
             if ( $('#videoContainer').hasClass('theater-mode')) {
