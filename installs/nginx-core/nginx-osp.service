@@ -9,6 +9,7 @@ ExecStart=/usr/local/nginx/sbin/nginx
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/usr/local/nginx/sbin/nginx -s stop
 PrivateTmp=true
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
