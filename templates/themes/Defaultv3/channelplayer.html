@@ -17,6 +17,7 @@
 <meta property="og:description" content="{{channel.description}}" />
 <meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
 <meta property="og:video:type" content="application/x-mpegURL" />
+<meta name="keywords" content="{% for tag in channel.id | get_channelTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 
