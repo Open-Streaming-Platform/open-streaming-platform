@@ -4,6 +4,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
+NGINX_BUILD_VERSION=1.22.0
+NGINX_ZLIB_VERSION=1.2.12
+
 DIALOG_CANCEL=1
 DIALOG_ESC=255
 HEIGHT=0
@@ -225,17 +228,17 @@ install_nginx_core() {
   if cd /tmp
   then
           echo 5 | dialog --title "Installing Nginx-Core" --gauge "Downloading Nginx Source" 10 70 0
-          sudo wget -q "http://nginx.org/download/nginx-1.17.3.tar.gz" >> $OSPLOG 2>&1
+          sudo wget -q "http://nginx.org/download/nginx-$NGINX_BUILD_VERSION.tar.gz" >> $OSPLOG 2>&1
           echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip" >> $OSPLOG 2>&1
           echo 20 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
-          sudo wget -q "http://www.zlib.net/zlib-1.2.12.tar.gz" >> $OSPLOG 2>&1
+          sudo wget -q "http://www.zlib.net/zlib-$NGINX_ZLIB_VERSION.tar.gz" >> $OSPLOG 2>&1
           echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" >> $OSPLOG 2>&1
           echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
-          sudo tar xfz nginx-1.17.3.tar.gz >> $OSPLOG 2>&1
+          sudo tar xfz nginx-$NGINX_BUILD_VERSION.tar.gz >> $OSPLOG 2>&1
           sudo unzip -qq -o v1.2.1.zip >> $OSPLOG 2>&1
-          sudo tar xfz zlib-1.2.12.tar.gz >> $OSPLOG 2>&1
+          sudo tar xfz zlib-$NGINX_ZLIB_VERSION.tar.gz >> $OSPLOG 2>&1
           sudo tar xfz master.tar.gz >> $OSPLOG 2>&1
 
           # Apply Any Precompile Nginx-RTMP Patches
@@ -251,9 +254,9 @@ install_nginx_core() {
           fi
 
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
-          if cd nginx-1.17.3
+          if cd nginx-$NGINX_BUILD_VERSION
           then
-                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-1.2.12 --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
+                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-$NGINX_ZLIB_VERSION --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
                   echo 50 | dialog --title "Installing Nginx-Core" --gauge "Installing Nginx" 10 70 0
                   sudo make install >> $OSPLOG 2>&1
           else

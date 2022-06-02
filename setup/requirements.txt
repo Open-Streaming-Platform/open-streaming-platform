@@ -19,7 +19,7 @@ gevent==20.9.0
 gevent-websocket==0.10.1
 gitdb2==2.0.5
 GitPython==2.1.11
-greenlet==0.4.17
+greenlet==1.1.2
 itsdangerous==1.1.0
 Jinja2==2.11.3
 Mako==1.0.13
