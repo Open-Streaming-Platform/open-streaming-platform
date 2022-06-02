@@ -9,7 +9,7 @@ Open Streaming Platform uses a number of open source projects to work properly:
 - Flask Security-Too - Handle User Accounts, Login, and Registration
 - Flask Uploads - Manage User Uploads, such as Pictures
 - Dropzone.js - Handing Upload Chunking for Videos
-- Flask-RestPlus - Handling and Documentation of the OSP API
+- Flask-RestX - Handling and Documentation of the OSP API
 - Flask-Markdown - Displaying Markdown in Jinja2 Templates
 - Easy-MDE - Markdown Interface for TextAreas
 - Bootstrap - For Building responsive, mobile-first projects on the web

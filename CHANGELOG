@@ -57,6 +57,10 @@ OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
 OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
 OSP-RTMP: Moves all Live Stream Playback to use HLS Encryption and Moves Channel Protection to use Key Authorization Validation
 OSP-Proxy: Updates to use HLS Key Encryption via Proxy
+Nginx-OSP: Upgrades New and Reinstalls to 1.22.0
+OSP-General: Upgrades Gevent to 21.12.0
+OSP-General: Upgrades Greenlet to 1.1.2
+OSP-General: Migrates Flask-RestPlus to Flask-RestX 0.5.1
 
 0.8.17
 ==============================================
