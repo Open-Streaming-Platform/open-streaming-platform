@@ -203,7 +203,7 @@ install_ffmpeg() {
 install_mysql(){
   SQLPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   echo 10 | dialog --title "Installing MySQL" --gauge "Installing MySQL Server" 10 70 0
-  sudo apt-get install mysql-server -y >> $OSPLOG 2>&1
+  sudo apt-get install mariadb-server -y >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing MySQL" --gauge "Copying MySQL Configuration" 10 70 0
   sudo cp $DIR/setup/mysql/mysqld.cnf /etc/mysql/my.cnf >> $OSPLOG 2>&1
   echo 50 | dialog --title "Installing MySQL" --gauge "Restarting MySQL Server" 10 70 0
