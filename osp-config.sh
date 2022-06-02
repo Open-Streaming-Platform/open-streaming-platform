@@ -5,7 +5,9 @@ OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
 NGINX_BUILD_VERSION=1.22.0
+NGINX_RTMP_VERSION=1.2.1
 NGINX_ZLIB_VERSION=1.2.12
+EJABBERD_VERSION=20.12
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
@@ -133,10 +135,10 @@ reset_ejabberd() {
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-20.12-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.12/ejabberd-20.12-linux-x64.run" >> $OSPLOG 2>&1
-  sudo chmod +x /tmp/ejabberd-20.12-linux-x64.run >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
-  sudo /tmp/ejabberd-20.12-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
   echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
@@ -230,22 +232,22 @@ install_nginx_core() {
           echo 5 | dialog --title "Installing Nginx-Core" --gauge "Downloading Nginx Source" 10 70 0
           sudo wget -q "http://nginx.org/download/nginx-$NGINX_BUILD_VERSION.tar.gz" >> $OSPLOG 2>&1
           echo 15 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
-          sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v1.2.1.zip" >> $OSPLOG 2>&1
+          sudo wget -q "https://github.com/arut/nginx-rtmp-module/archive/v$NGINX_RTMP_VERSION.zip" >> $OSPLOG 2>&1
           echo 20 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "http://www.zlib.net/zlib-$NGINX_ZLIB_VERSION.tar.gz" >> $OSPLOG 2>&1
           echo 25 | dialog --title "Installing Nginx-Core" --gauge "Downloading Required Modules" 10 70 0
           sudo wget -q "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" >> $OSPLOG 2>&1
           echo 30 | dialog --title "Installing Nginx-Core" --gauge "Decompressing Nginx Source and Modules" 10 70 0
           sudo tar xfz nginx-$NGINX_BUILD_VERSION.tar.gz >> $OSPLOG 2>&1
-          sudo unzip -qq -o v1.2.1.zip >> $OSPLOG 2>&1
+          sudo unzip -qq -o v$NGINX_RTMP_VERSION.zip >> $OSPLOG 2>&1
           sudo tar xfz zlib-$NGINX_ZLIB_VERSION.tar.gz >> $OSPLOG 2>&1
           sudo tar xfz master.tar.gz >> $OSPLOG 2>&1
 
           # Apply Any Precompile Nginx-RTMP Patches
           echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
-          if cd nginx-rtmp-module-1.2.1
+          if cd nginx-rtmp-module-$NGINX_RTMP_VERSION
           then
-            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-1.2.1/1158.patch >> $OSPLOG 2>&1
+            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
             sudo patch -s -p 1 < 1158.patch
             cd ..
           else
@@ -256,7 +258,7 @@ install_nginx_core() {
           echo 35 | dialog --title "Installing Nginx-Core" --gauge "Building Nginx from Source" 10 70 0
           if cd nginx-$NGINX_BUILD_VERSION
           then
-                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-1.2.1 --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-$NGINX_ZLIB_VERSION --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
+                  ./configure --with-http_ssl_module --with-http_v2_module --with-http_auth_request_module --with-http_stub_status_module --add-module=../nginx-rtmp-module-$NGINX_RTMP_VERSION --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 --with-zlib=../zlib-$NGINX_ZLIB_VERSION --with-cc-opt="-Wimplicit-fallthrough=0" >> $OSPLOG 2>&1
                   echo 50 | dialog --title "Installing Nginx-Core" --gauge "Installing Nginx" 10 70 0
                   sudo make install >> $OSPLOG 2>&1
           else
@@ -457,10 +459,10 @@ install_ejabberd() {
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-20.12-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/20.12/ejabberd-20.12-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
-  sudo chmod +x /tmp/ejabberd-20.12-linux-x64.run >> $OSPLOG 2>&1
-  /tmp/ejabberd-20.12-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
+  /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
