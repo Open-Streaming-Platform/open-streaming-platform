@@ -33,6 +33,7 @@
 
 <!--Start Script Block-->
 {% block scripts %}
+    <script src="/static/vendor/jquery/js/jquery-3.6.0.min.js"></script>
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
@@ -43,6 +44,14 @@
     <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
     <script src='/static/js/chatv2.js' type="text/javascript"></script>
+
+    <script>
+        // Establish SocketIO Connection
+        var conn_options = {
+          'sync disconnect on unload': true
+        };
+        var socket = io();
+    </script>
 
     <script>
         var streamURL = '{{ streamURL }}';
