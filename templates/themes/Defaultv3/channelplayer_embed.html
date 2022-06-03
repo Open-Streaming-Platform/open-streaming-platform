@@ -34,7 +34,6 @@
 <!--Start Script Block-->
 {% block scripts %}
     <script src="/static/vendor/jquery/js/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
@@ -44,15 +43,7 @@
     <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
-    <script src='/static/js/chatv2.js' type="text/javascript"></script>
-
-    <script>
-        // Establish SocketIO Connection
-        var conn_options = {
-          'sync disconnect on unload': true
-        };
-        var socket = io();
-    </script>
+    <script src='/static/js/channelembed.js' type="text/javascript"></script>
 
     <script>
         var streamURL = '{{ streamURL }}';
@@ -122,53 +113,9 @@
               connection.flush();
               connection.disconnect();
              // Disconnect from SocketIO
-              socket.emit('removeViewer', {data: channelLocation});
-              socket.close();
         });
     </script>
 
-    <script type="text/javascript" charset="utf-8">
-        var conn_options = {
-            'sync disconnect on unload': true
-        };
-
-        var socket = io("/", { reconnection: true, forceNew: false });
-    </script>
-
-    <script>
-        setInterval(function () {
-            socket.emit('getViewerTotal', { data: "{{channel.channelLoc}}" });
-        }, 5000);
-    </script>
-
-    <script>
-        socket.on('connect', function () {
-            socket.emit('newViewer', { data: '{{channel.channelLoc}}' });
-            socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
-        });
-    </script>
-
-    <script>
-        socket.on('disconnect', function () {
-            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
-        });
-    </script>
-
-
-    <script>
-        window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
-            return null;
-        });
-    </script>
-
-    <script type="text/javascript" charset="utf-8">
-        socket.on('viewerTotalResponse', function (msg) {
-            document.getElementById("currentViewers").innerHTML = msg['data'];
-        });
-    </script>
-
-    <script src="/static/js/liveplayerhandler.js"></script>
     <script>
         // Initialize Stream Player
         var player = videojs('video', {
