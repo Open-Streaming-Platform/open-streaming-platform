@@ -47,7 +47,6 @@ function onConnect(status) {
     // set presence
     connection.send($pres());
     // set handlers
-    connection.addHandler(onMessage, null, 'message', null, null, null);
     connection.addHandler(onSubscriptionRequest, null, "presence", "subscribe");
     connection.addHandler(onPresence, null, "presence");
     connection.disco.addFeature(Strophe.NS.PING);
