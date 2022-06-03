@@ -93,9 +93,9 @@ function enterRoom(room) {
   console.log('Connecting to: ' + room);
   connection.muc.init(connection);
   if (CHANNELPROTECTED) {
-      connection.muc.join(room, username, room_msg_handler, room_pres_handler, room_roster_handler, CHANNELTOKEN);
+      connection.muc.join(room, username, null, null, null, CHANNELTOKEN);
   } else {
-      connection.muc.join(room, username, room_msg_handler, room_pres_handler, room_roster_handler);
+      connection.muc.join(room, username, null, null, null);
   }
   connection.muc.setStatus(room, username + '@' + server, 'subscribed', 'chat');
   console.log('Connected to: ' + room);
