@@ -224,6 +224,11 @@
             {% endif %}
         {% endif %}
       {% endif %}
+      {% if sysSettings.maintenanceMode == True %}
+        <div class="alert alert-danger text-center" role="alert">
+          <b>Maintenance Mode is Active!!</b>
+        </div>
+      {% endif %}
       {% block body %}
       {% endblock %}
     </div>
