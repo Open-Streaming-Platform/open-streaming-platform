@@ -17,7 +17,7 @@ def update_channel_counts(self):
     """
     Task to check live channels counts
     """
-    streamQuery = Stream.Stream.query.filter_by(active=True).with_elements(Stream.Stream.id, Stream.Stream.linkedChannel).all()
+    streamQuery = Stream.Stream.query.filter_by(active=True).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
     liveStreamCount = 0
     for stream in streamQuery:
         liveStreamCount = liveStreamCount + 1
