@@ -273,25 +273,6 @@ else:
     app.config["SESSION_REDIS"] = r
 r.flushdb()
 
-# Initialize Celery
-app.logger.info({"level": "info", "message": "Initializing Celery"})
-from classes.shared import celery
-
-celery.conf.broker_url = app.config['broker_url']
-celery.conf.result_backend = app.config['result_backend']
-celery.conf.update(app.config)
-
-class ContextTask(celery.Task):
-    """Make celery tasks work with Flask app context"""
-    def __call__(self, *args, **kwargs):
-        with app.app_context():
-            return self.run(*args, **kwargs)
-
-celery.Task = ContextTask
-
-# Import Celery Beat Scheduled Tasks
-from functions.scheduled_tasks import scheduler
-
 # Initialize Flask-SocketIO
 app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
 from classes.shared import socketio
@@ -469,6 +450,25 @@ try:
     system.initializeThemes()
 except:
     app.logger.error({"level": "error", "message": "Unable to Set Override Themes"})
+
+# Initialize Celery
+app.logger.info({"level": "info", "message": "Initializing Celery"})
+from classes.shared import celery
+
+celery.conf.broker_url = app.config['broker_url']
+celery.conf.result_backend = app.config['result_backend']
+celery.conf.update(app.config)
+
+class ContextTask(celery.Task):
+    """Make celery tasks work with Flask app context"""
+    def __call__(self, *args, **kwargs):
+        with app.app_context():
+            return self.run(*args, **kwargs)
+
+celery.Task = ContextTask
+
+# Import Celery Beat Scheduled Tasks
+from functions.scheduled_tasks import scheduler
 
 app.logger.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 #----------------------------------------------------------------------------#
