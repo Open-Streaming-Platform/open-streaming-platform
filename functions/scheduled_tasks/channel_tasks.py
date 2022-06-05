@@ -31,4 +31,4 @@ def update_channel_count(self, streamId, channelId):
         count = xmpp.getChannelCounts(channelQuery.channelLoc)
         channelUpdate = Channel.Channel.query.filter_by(id=channelQuery.id).update(dict(currentViewers=count))
         streamUpdate = Stream.Stream.query.filter_by(id=streamId).update(dict(currentViewers=count))
-        log.info("Update Channel/Stream Live Counts: " + str(channelQuery.channelLoc) + ":" + streamId + " to " + str(count))
+        log.info("Update Channel/Stream Live Counts: " + str(channelQuery.channelLoc) + ":" + str(streamId) + " to " + str(count))
