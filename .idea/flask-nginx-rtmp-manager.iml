@@ -17,4 +17,8 @@
     <orderEntry type="jdk" jdkName="3.8 @ Ubuntu" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PyDocumentationSettings">
+    <option name="format" value="PLAIN" />
+    <option name="myDocStringFormat" value="Plain" />
+  </component>
 </module>

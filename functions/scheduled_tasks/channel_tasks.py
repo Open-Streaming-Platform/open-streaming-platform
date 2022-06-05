@@ -21,8 +21,7 @@ def update_channel_counts(self):
     liveStreamCount = 0
     for stream in streamQuery:
         liveStreamCount = liveStreamCount + 1
-        results = subtask('functions.scheduled_tasks.channel_tasks.update_channel_counts',
-                          args=(stream.id, stream.linkedChannel)).apply_async()
+        results = subtask('functions.scheduled_tasks.channel_tasks.update_channel_counts', args=(stream.id, stream.linkedChannel)).apply_async()
     log.info("Scheduled Channel Update Performed on " + str(liveStreamCount) + " channels.")
 
 @celery.task(bind=True)

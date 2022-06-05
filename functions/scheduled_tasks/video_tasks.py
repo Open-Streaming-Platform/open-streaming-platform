@@ -93,7 +93,7 @@ def check_video_retention(self):
                     .with_entities(RecordedVideo.RecordedVideo.id, RecordedVideo.RecordedVideo.videoDate).all()
                 for video in VideoQuery:
                     if currentTime - datetime.timedelta(days=setRetention) > video.videoDate:
-                        results = subtask('functions.scheduled_tasks.video_tasks.delete_video', args=(video.id, )).apply_async()
+                        results = subtask('functions.scheduled_tasks.video_tasks.delete_video', args=(video.id)).apply_async()
                         videoCount = videoCount + 1
     log.info({"level": "info", "taskID": self.request.id.__str__(), "message": "Video Retention Check Performed.  Removed: " + str(videoCount)})
     return "Removed Videos " + str(videoCount)
