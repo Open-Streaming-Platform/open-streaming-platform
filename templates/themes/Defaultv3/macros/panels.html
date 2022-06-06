@@ -970,8 +970,8 @@
 </div>
 {% endmacro %}
 
-{% macro core_chat_footer(stickerSelectorList) %}
-<div class="chatFooter flex-end pl-1 mb-1">
+{% macro core_chat_footer(stickerSelectorList, hideBar) %}
+<div class="chatFooter flex-end pl-1 mb-1 {% if hideBar == True %}d-none{% endif %}">
   <div class="chatFooterTop"></div>
   <div class="chatFooterInput mx-2">
       <div class="input-group">
@@ -1006,9 +1006,7 @@
     {{ core_chat_members_view() }}
     <div id="chat" class="chatSection"></div>
   </div>
-    {% if hideBar == True %}
-  {{ core_chat_footer(stickerSelectorList) }}
-    {% endif %}
+  {{ core_chat_footer(stickerSelectorList, hideBar) }}
 </div>
 {% endmacro %}
 
