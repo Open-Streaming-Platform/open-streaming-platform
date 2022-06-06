@@ -998,7 +998,7 @@
 </div>
 {% endmacro %}
 
-{% macro core_popoutchat(stickerSelectorList) %}
+{% macro core_popoutchat(stickerSelectorList, hideBar) %}
 <div id="chatPanel" class="chatPanel h-100">
   {{ core_popoutchatchat_header() }}
   <div id="chatContentWindow" class="chatContent h-100">
@@ -1006,7 +1006,9 @@
     {{ core_chat_members_view() }}
     <div id="chat" class="chatSection"></div>
   </div>
+    {% if hideBar == True %}
   {{ core_chat_footer(stickerSelectorList) }}
+    {% endif %}
 </div>
 {% endmacro %}
 

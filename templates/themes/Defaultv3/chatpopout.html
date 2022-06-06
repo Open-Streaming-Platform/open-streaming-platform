@@ -34,7 +34,7 @@
             {{ panels.chat_loader() }}
             {{ panels.chat_guest_username_input() }}
             {{ panels.chat_unavailable_info() }}
-            {{ panels.core_popoutchat(stickerSelectorList) }}
+            {{ panels.core_popoutchat(stickerSelectorList, hideBar) }}
             <!--Chat Templates-->
             {% if channel.chatFormat == 'irc' %}
                 {{ panels.core_chat_message_template_irc() }}
