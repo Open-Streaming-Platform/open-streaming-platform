@@ -1,4 +1,4 @@
-from flask_restplus import Api, Resource, reqparse, Namespace
+from flask_restx import Api, Resource, reqparse, Namespace
 from flask import request
 from os import path, remove
 
@@ -7,7 +7,8 @@ from classes import apikey
 from classes import upvotes
 from classes.shared import db
 
-from functions import cachedDbCalls
+from functions import cachedDbCalls, videoFunc, templateFilters
+from functions.scheduled_tasks import video_tasks
 
 from globals import globalvars
 
@@ -28,7 +29,7 @@ class api_1_ListClips(Resource):
         """
         clipsList = RecordedVideo.Clips.query.filter_by(published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in clipsList]}
+        return {'results': [ob.serialize() for ob in clipsList if ob.recordedVideo.channel.private is False]}
 
 
 @api.route('/<int:clipID>')
@@ -40,7 +41,7 @@ class api_1_ListClip(Resource):
         """
         clipList = RecordedVideo.Clips.query.filter_by(id=clipID, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in clipList]}
+        return {'results': [ob.serialize() for ob in clipList if ob.recordedVideo.channel.private is False]}
 
     @api.expect(clipParserPut)
     @api.doc(security='apikey')
@@ -79,20 +80,9 @@ class api_1_ListClip(Resource):
                 if requestAPIKey.isValid():
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
                     if clipQuery is not None:
-                        if clipQuery.owningUser == requestAPIKey.userID:
-                            videos_root = globalvars.videoRoot + 'videos/'
-                            thumbnailPath = videos_root + clipQuery.thumbnailLocation
-
-                            if thumbnailPath != videos_root:
-                                if path.exists(thumbnailPath) and clipQuery.thumbnailLocation is not None and clipQuery.thumbnailLocation != "":
-                                    remove(thumbnailPath)
-                            upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
-                            for vote in upvoteQuery:
-                                db.session.delete(vote)
-
-                            db.session.delete(clipQuery)
-                            db.session.commit()
-                            return {'results': {'message': 'Clip Deleted'}}, 200
+                        if clipQuery.recordedVideo.owningUser == requestAPIKey.userID:
+                            results = video_tasks.delete_video_clip.delay(clipQuery.id)
+                            return {'results': {'message': 'Clip Scheduled for Deletion'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/search')

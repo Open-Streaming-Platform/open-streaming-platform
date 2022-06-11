@@ -7,47 +7,46 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card my-5 shadow text-left">
-                    <h5 class="card-header text-white bg-dark mb-3">
-                        Login
-                    </h5>
-                    <div class="card-body text-left">
-                        <div>
-
-                            {{fields_errors(login_user_form.email,login_user_form.password)}}
-
-                            <form class="form" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-                              {{ login_user_form.hidden_tag() }}
-                                {% for provider in SystemOAuthProviders %}
-                                <div class="my-2">
-                                    <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block shadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
-                                        {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
-                                        {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
-                                        {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
-                                        Login With {{provider.friendlyName}}
-                                    </a>
-                                </div>
-                                {% endfor %}
-                                {% if SystemOAuthProviders != [] %}
-                                <hr>
-                                {% endif %}
-                                <b><i class="far fa-envelope"></i></i> Email Address</b><br>
-                              {{ render_field(login_user_form.email, class_="form-control", autocomplete="off") }}
-                                <b><i class="fas fa-key"></i> Password</b><br>
-                              {{ render_field(login_user_form.password, class_="form-control", autocomplete="off") }}
-                                <div><a href="/reset"><b>Forgot Password</b></a></div><br>
-                                <div style="float:left;padding-right:10px;"><b><i class="far fa-save"></i> Remember Me  </b></div>
-                                {{ render_field(login_user_form.remember, class_="form-check-label") }}
-                              {{ render_field(login_user_form.submit, class_="form-control") }}
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{fields_errors(login_user_form.email,login_user_form.password)}}
+<div class="login-box">
+    <div class="branding d-flex justify-content-center">
+        <div class="circular_image">
+            <img src="{{sysSettings.systemLogo}}">
         </div>
     </div>
-
+    <h2 class="title">Login</h2>
+    <form class="form" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+    {{ login_user_form.hidden_tag() }}
+        <div class="user-box">
+            <input autocomplete="off" id="email" name="email" required="" type="email" value="">
+            <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        </div>
+        <div class="user-box">
+            <input autocomplete="off" id="password" name="password" required="" type="password" value="">
+            <label><i class="fas fa-key"></i> Password</label>
+        </div>
+        <small class="hint d-flex justify-content-around">
+            <a href="/reset">Forgot Password?</a>
+            {% if allowRegistration == True %}
+            <a href="/register">Register</a>
+            {% endif %}
+        </small>
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Login">
+        </div>
+    </form>
+    {% if SystemOAuthProviders != [] %}
+        <hr>
+        {% for provider in SystemOAuthProviders %}
+            <div class="my-2 d-grid gap-2">
+                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block boxShadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                    {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
+                    {{provider.friendlyName}}
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
 {% endblock %}

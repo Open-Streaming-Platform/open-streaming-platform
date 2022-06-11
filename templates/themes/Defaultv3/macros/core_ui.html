@@ -1,0 +1,60 @@
+{% macro ui_sidebar_item(name, url, icon) %}
+<div class="sideIcon"><a href="{{ url }}" title="{{ name }}"><i class="textShadow {{ icon }}"></i></a></div>
+{% endmacro %}
+
+{% macro live_badge() %}
+<span class="live-badge boxShadow textShadow"><b>Live</b></span>
+{% endmacro %}
+
+{% macro offline_badge() %}
+<span class="osp-badge offline-badge boxShadow textShadow"><b>Offline</b></span>
+{% endmacro %}
+
+{% macro protected_badge() %}
+<span class="osp-badge protected-badge boxShadow textShadow"><i class="fas fa-user-shield"></i> <b>Protected</b></span>
+{% endmacro %}
+
+{% macro private_badge() %}
+<span class="osp-badge private-badge boxShadow textShadow"><b>Private</b></span>
+{% endmacro %}
+
+{% macro live_views_badge(viewAmount) %}
+<span class="live-viewers-badge boxShadow textShadow ms-1"><i class="bi bi-eye-fill pe-1"></i> <b class="justify-content-end">{{ viewAmount }}</b></span>
+{% endmacro %}
+
+{% macro views_badge(viewAmount) %}
+<span class="views-badge boxShadow textShadow ms-1"><i class="bi bi-people-fill"></i> <b class="justify-content-end">{{ viewAmount }}</b></span>
+{% endmacro %}
+
+{% macro length_badge(timestamp) %}
+<span class="length-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ timestamp | hms_format }}</b></span>
+{% endmacro %}
+
+{% macro date_badge(videoDate) %}
+<span class="date-badge boxShadow textShadow ms-1"><i class="far fa-clock"></i> <b class="justify-content-end">{{ videoDate | normalize_date }}</b></span>
+{% endmacro %}
+
+{% macro toast_box(messages) %}
+<div style="position: absolute; top: 65px; right: 70px;z-index:9999999;" id="toastDiv">
+    {%- with messages = get_flashed_messages(with_categories=true) -%}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="30000" style="width:250px;">
+                  <div class="toast-header">
+                    <strong class="mr-auto">
+                      <span class="toast-box {% if category == 'message' %}gray {% elif category == 'error'%}red {% elif category == 'success' %}green {% endif %}"> </span>
+                      <span style="margin-left:5px;">{{category|upper}}</span>
+                    </strong>
+                    <div class="float-end">
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                     </div>
+                  </div>
+                  <div class="toast-body">
+                    {{message}}
+                  </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {%- endwith %}
+</div>
+{% endmacro %}

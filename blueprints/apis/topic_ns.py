@@ -1,4 +1,4 @@
-from flask_restplus import Api, Resource, reqparse, Namespace
+from flask_restx import Api, Resource, reqparse, Namespace
 
 from classes import topics
 from classes.shared import db

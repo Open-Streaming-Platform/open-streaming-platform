@@ -19,6 +19,10 @@ rdis = redis.StrictRedis()
 #----------------------------------------------------------------------------#
 # Routes
 #----------------------------------------------------------------------------#
+@app.route('/ping')
+def ping():
+    return {'results': {"message": "pong"}}
+
 @app.route('/<endpoint>/<channelLocation>.m3u8')
 def adaptive(endpoint,channelLocation):
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
@@ -50,6 +54,21 @@ def adaptive(endpoint,channelLocation):
 @app.route('/<endpoint>/<channelLocation>/<file>')
 def home(endpoint,channelLocation,file):
     channelParsed = channelLocation.split('_')[0]
+
+    # Perform Auth Check for Encryption Keys
+    fileExt = file[-3:]
+    if fileExt == "key":
+        if 'X-Token-Session' in request.headers:
+            inboundHlsToken = request.headers.get('X-Token-Session')
+            hlsToken = inboundHlsToken.split('_')
+            clientIp = request.remote_addr
+            authCheck = requests.post(config.ospCoreAPI + '/apiv1/rtmp/playbackauth', data={"username": hlsToken[0], "addr": clientIp, "name": channelLocation, "hash": hlsToken[1]})
+            returnDataJson = authCheck.json()
+
+            if returnDataJson['results'] is False or returnDataJson['results'] == 'False' or returnDataJson['results'] == 'false':
+                abort(403)
+        else:
+            abort(403)
 
     # Check if Force Destination Exists and Redirect to it, instead of querying OSP API
     if hasattr(config, 'forceDestination'):

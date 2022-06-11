@@ -26,7 +26,7 @@ def streamers_page():
             if channel.owningUser not in streamerIDs:
                 streamerIDs.append(channel.owningUser)
     else:
-        openStreams = Stream.Stream.query.all()
+        openStreams = Stream.Stream.query.filter_by(active=True).all()
         for stream in openStreams:
             if stream.channel.owningUser not in streamerIDs:
                 streamerIDs.append(stream.channel.owningUser)
@@ -49,24 +49,22 @@ def streamers_view_page(userID):
     streamerQuery = Sec.User.query.filter_by(id=userID).first()
     if streamerQuery is not None:
         if streamerQuery.has_role('Streamer'):
-            userChannels = Channel.Channel.query.filter_by(owningUser=userID).all()
-
-            streams = []
-
+            userChannels = cachedDbCalls.getChannelsByOwnerId(userID)
+            channelIds = []
             for channel in userChannels:
-                for stream in channel.stream:
-                    streams.append(stream)
+                channelIds.append(channel.id)
 
-            recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userID, pending=False, published=True).all()
+            streams = Stream.Stream.query.filter(Stream.Stream.active == True, Stream.Stream.linkedChannel.in_(channelIds))\
+                .with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.currentViewers, Stream.Stream.topic,
+                               Stream.Stream.streamName, Stream.Stream.totalViewers, Stream.Stream.startTimestamp,
+                               Stream.Stream.uuid, Stream.Stream.active).all()
+
+            recordedVideoQuery = cachedDbCalls.getAllVideoByOwnerId(userID)
 
             # Sort Video to Show Newest First
             recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-            clipsList = []
-            for vid in recordedVideoQuery:
-                for clip in vid.clips:
-                    if clip.published is True:
-                        clipsList.append(clip)
+            clipsList = cachedDbCalls.getAllClipsForUser(userID)
 
             clipsList.sort(key=lambda x: x.views, reverse=True)
 

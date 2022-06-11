@@ -31,6 +31,19 @@ function showOccupants() {
     }
 }
 
+function getBanList() {
+    console.log("Requesting Ban List");
+    socket.emit('getBanList', {channelLoc: channelLocation});
+}
+
+function clearBan(username) {
+    unban(username);
+    setTimeout(function(){
+        getBanList();
+    }, 2000);
+    return true;
+}
+
 function openModDisplay() {
     var chatOccupantsDiv = document.getElementById('chatMembers');
     var chatElementsDiv = document.getElementById('chat');
@@ -227,7 +240,6 @@ function sendMessage() {
     return true;
 }
 
-
 function room_msg_handler(a, b, c) {
     if (debug == true) {
         console.log(a);
@@ -362,7 +374,8 @@ function process_stickers(msg) {
   var result = msg.match(stickerRegex);
   if (result !== null) {
       for (var i = 0; i < result.length; i++) {
-          var stickerName = result[i].replaceAll(':', '');
+          //var stickerName = result[i].replaceAll(':', ''); - Changed due to incompatibility w/ OBS to below
+          var stickerName = result[i].replace(/:/g, '');
           var stickerData = stickerList.filter(d => d.name === stickerName);
           if (stickerData.length !== 0) {
               var stickerFilename = stickerData[0]['file'];
@@ -512,7 +525,8 @@ function parseOccupants(resp) {
       var username = elements[user]['nick'];
       var affiliation = elements[user]['affiliation'];
       var role = elements[user]['role'];
-      addUser(username, affiliation, role);
+      var jid = elements[user]['jid']
+      addUser(username, affiliation, role, jid);
   }
   // Handle User Count
   var userCount = OccupantsArray.length;
@@ -560,13 +574,13 @@ function userExists(username) {
   });
 }
 
-function addUser(username, affiliation, role) {
+function addUser(username, affiliation, role, jid) {
   if (userExists(username)) {
     return false;
   } else if (role == null) {
       return false;
   } else {
-      OccupantsArray.push({ username: username, affiliation: affiliation, role: role });
+      OccupantsArray.push({ username: username, affiliation: affiliation, role: role, jid: jid });
   }
 
   return true;
@@ -832,3 +846,24 @@ function searchSticker() {
       $(".chatsticker-emoji-picker-emoji").show();
     }
 };
+
+socket.on('returnBanList', function(msg) {
+    console.log("Receiving Ban List");
+
+    document.getElementById('modDisplay').style.display = 'block';
+    document.getElementById('chatMembers').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+
+    banList = document.getElementById('OutcastList');
+    banList.innerHTML = "";
+    for (let i = 0; i < msg['results'].length; i++){
+        var iDiv = document.createElement('div');
+        iDiv.className = 'bannedUser';
+        var username = msg["results"][i]["username"];
+        var useruuid = msg["results"][i]["useruuid"];
+        var onclickCmd = "clearBan('" + useruuid + "');"
+        iDiv.innerHTML = '<span class="my-2" id="bannedUser-' + username + '">' + username + '<button class="btn btn-sm btn-danger mx-2" onclick=' + onclickCmd + '><i class="fas fa-trash"></i></button></span>';
+        banList.appendChild(iDiv);
+    }
+    console.log(msg);
+});

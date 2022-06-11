@@ -1,4 +1,4 @@
-from flask_restplus import Api, Resource, reqparse, Namespace
+from flask_restx import Api, Resource, reqparse, Namespace
 from flask_security.utils import hash_password
 from flask import request
 import datetime
@@ -13,7 +13,7 @@ from classes.shared import db
 
 from app import user_datastore
 
-from functions import apiFunc, cachedDbCalls
+from functions import apiFunc, cachedDbCalls, securityFunc
 
 api = Namespace('user', description='User Related Queries and Functions')
 
@@ -128,28 +128,8 @@ class api_1_AdminUser(Resource):
                 if 'username' in args:
                     username = args['username']
                     userQuery = Sec.User.query.filter_by(username=username).first()
-                    if userQuery != None:
-                        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
-                        for channel in channelQuery:
-                            videoQuery = channel.recordedVideo
-                            for video in videoQuery:
-                                video.remove()
-                                for clip in video.clips:
-                                    for upvotes in clip:
-                                        db.session.delete(upvotes)
-                                    clip.remove()
-                                    db.session.delete(clip)
-                                for upvote in video.upvotes:
-                                    db.session.delete(upvote)
-                                for comment in video.comments:
-                                    db.session.delete(comment)
-                                vidViews = views.views.query.filter_by(viewType=1, itemID=video.id).all()
-                                for view in vidViews:
-                                    db.session.delete(view)
-                                db.session.delete(video)
-                            db.session.delete(channel)
-                        db.session.delete(userQuery)
-                        db.session.commit()
+                    if userQuery is not None:
+                        securityFunc.delete_user(userQuery.id)
                         return {'results': {'message': 'User ' + username +' deleted'}}
                     else:
                         db.session.commit()

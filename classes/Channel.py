@@ -24,6 +24,7 @@ class Channel(db.Model):
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
     channelMuted = db.Column(db.Boolean)
+    private = db.Column(db.Boolean)
     showChatJoinLeaveNotification = db.Column(db.Boolean)
     defaultStreamName = db.Column(db.String(255))
     autoPublish = db.Column(db.Boolean)
@@ -32,6 +33,8 @@ class Channel(db.Model):
     xmppToken = db.Column(db.String(64))
     vanityURL = db.Column(db.String(1024))
     allowGuestNickChange = db.Column(db.Boolean)
+    showHome = db.Column(db.Boolean)
+    maxVideoRetention = db.Column(db.Integer)
     stream = db.relationship('Stream', backref='channel', cascade="all, delete-orphan", lazy="joined")
     recordedVideo = db.relationship('RecordedVideo', backref='channel', cascade="all, delete-orphan", lazy="joined")
     upvotes = db.relationship('channelUpvotes', backref='stream', cascade="all, delete-orphan", lazy="joined")
@@ -41,8 +44,12 @@ class Channel(db.Model):
     webhooks = db.relationship('webhook', backref='channel', cascade="all, delete-orphan", lazy="joined")
     restreamDestinations = db.relationship('restreamDestinations', backref='channelData', cascade="all, delete-orphan", lazy="joined")
     chatStickers = db.relationship('stickers', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    panels = db.relationship('channelPanel', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    tags = db.relationship('channel_tags', backref='channel', cascade="all, delete-orphan", lazy="joined")
+    chatFormat = db.Column(db.String(16))
+    chatHistory = db.Column(db.Integer)
 
-    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, description):
+    def __init__(self, owningUser, streamKey, channelName, topic, record, chatEnabled, allowComments, showHome, description):
         self.owningUser = owningUser
         self.streamKey = streamKey
         self.channelName = channelName
@@ -67,6 +74,11 @@ class Channel(db.Model):
         self.xmppToken = str(os.urandom(32).hex())
         self.vanityURL = None
         self.allowGuestNickChange = True
+        self.showHome = showHome 
+        self.maxVideoRetention = 0
+        self.private = False
+        self.chatFormat = "messenger"
+        self.chatHistory = 2
 
     def __repr__(self):
         return '<id %r>' % self.id
@@ -89,12 +101,15 @@ class Channel(db.Model):
             'currentViews': self.currentViewers,
             'recordingEnabled': self.record,
             'chatEnabled': self.chatEnabled,
-            'stream': [obj.id for obj in self.stream],
+            'stream': [obj.id for obj in self.stream if obj.active == True],
             'recordedVideoIDs': [obj.id for obj in self.recordedVideo],
             'upvotes': self.get_upvotes(),
             'protected': self.protected,
             'allowGuestNickChange': self.allowGuestNickChange,
-            'vanityURL': self.vanityURL
+            'vanityURL': self.vanityURL,
+            'showHome': self.showHome,
+            'maxVideoRetention': self.maxVideoRetention,
+            'tags': [obj.id for obj in self.tags]
         }
 
     def authed_serialize(self):
@@ -118,8 +133,26 @@ class Channel(db.Model):
             'xmppToken': self.xmppToken,
             'streamKey': self.streamKey,
             'allowGuestNickChange': self.allowGuestNickChange,
-            'vanityURL': self.vanityURL
+            'vanityURL': self.vanityURL,
+            'showHome': self.showHome,
+            'maxVideoRetention': self.maxVideoRetention,
+            'tags': [obj.id for obj in self.tags]
         }
+
+class channel_tags(db.Model):
+    __tablename__ = "channel_tags"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    taggedByUser = db.Column(db.Integer)
+
+    def __init__(self, tagName, channelID, userID):
+        self.name = tagName
+        self.channelID = channelID
+        self.taggedByUser = userID
+
+    def __repr__(self):
+        return '<id %r>' % self.id
 
 class restreamDestinations(db.Model):
     __tablename__ = "restreamDestinations"

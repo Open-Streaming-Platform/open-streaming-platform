@@ -4,12 +4,15 @@ import subprocess
 import os
 import datetime
 import smtplib
-from flask import flash
+from flask import flash, current_app
 from html.parser import HTMLParser
 import ipaddress
 import json
 import secrets
 import logging
+import time
+import shutil
+from pathlib import Path
 
 from globals import globalvars
 
@@ -20,6 +23,8 @@ from classes import RecordedVideo
 from classes import Sec
 
 from functions import cachedDbCalls
+
+from classes.shared import celery
 
 log = logging.getLogger('app.functions.system')
 
@@ -84,6 +89,10 @@ def table2Dict(table):
     for tbl in exportedTableList:
         dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
     return dataList
+
+def parseTags(tagString):
+    tagString = tagString.split(',')
+    return tagString
 
 def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
     try:
@@ -164,6 +173,13 @@ def systemFixes(app):
         user.fs_uniquifier = str(secrets.token_hex(nbytes=16))
         db.session.commit()
 
+    log.info({"level": "info", "message": "Checking Pre 0.9.x Favicon Location"})
+    path = Path(globalvars.videoRoot + '/images/favicon.ico')
+    if not path.is_file():
+        transferFiles = ['android-chrome-192x192.png', 'android-chrome-512x512.png', 'apple-touch-icon.png', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png']
+        for file in transferFiles:
+            shutil.copy('/opt/osp/static/' + file, globalvars.videoRoot + '/images/', follow_symlinks=True)
+
     return True
 
 def initializeThemes():
@@ -188,4 +204,10 @@ def checkOSPEdgeConf():
             return False
     else:
         log.info({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
+    return True
+
+@celery.task()
+def testCelery():
+    print("testing celery")
+    time.sleep(60)
     return True

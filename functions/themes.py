@@ -4,14 +4,17 @@ from PIL import Image
 from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
 from flask_security import current_user
 
+from functions import cachedDbCalls
+
 from globals import globalvars
 
 from classes.shared import db
 from classes import settings
+from classes import panel
 
 log = logging.getLogger('app.functions.database')
 
-# Checks Theme Override Data and if does not exist in override, use Defaultv2's HTML with theme's layout.html
+# Checks Theme Override Data and if does not exist in override, use Defaultv3's HTML with theme's layout.html
 def checkOverride(themeHTMLFile):
     sysSettings = db.session.query(settings.settings).with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode).first()
 
@@ -22,12 +25,12 @@ def checkOverride(themeHTMLFile):
                 if "maintenance.html" in globalvars.themeData.get('Override', []):
                     return "themes/" + sysSettings.systemTheme + "/maintenance.html"
                 else:
-                    return "themes/Defaultv2/maintenance.html"
+                    return "themes/Defaultv3/maintenance.html"
         else:
             if "maintenance.html" in globalvars.themeData.get('Override', []):
                 return "themes/" + sysSettings.systemTheme + "/maintenance.html"
             else:
-                return "themes/Defaultv2/maintenance.html"
+                return "themes/Defaultv3/maintenance.html"
 
     # Check if normal theme override exists
     try:
@@ -35,14 +38,14 @@ def checkOverride(themeHTMLFile):
 
             return "themes/" + sysSettings.systemTheme + "/" + themeHTMLFile
         else:
-            return "themes/Defaultv2/" + themeHTMLFile
+            return "themes/Defaultv3/" + themeHTMLFile
     except:
-        return "themes/Defaultv2/" + themeHTMLFile
+        return "themes/Defaultv3/" + themeHTMLFile
 
 # Code Modified from https://github.com/Hecsall/favicon-generator
 def faviconGenerator(imageLocation):
     originalImage = imageLocation
-    directory = '/opt/osp/static'
+    directory = globalvars.videoRoot + 'images'
 
     index = 0
 
@@ -74,3 +77,9 @@ def faviconGenerator(imageLocation):
     processor.save(directory + "/favicon.ico")
     return 'OK'
 
+def getPagePanels(blueprintPageName, type=0, userID=0):
+    panelQuerySorted = None
+    if type == 0:
+        panelQuery = panel.panelMapping.query.filter_by(pageName=blueprintPageName, panelType=type).all()
+        panelQuerySorted = sorted(panelQuery, key=lambda x: x.panelOrder)
+    return panelQuerySorted

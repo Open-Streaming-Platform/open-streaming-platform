@@ -1,5 +1,6 @@
-from flask_restplus import Api, Resource, reqparse, Namespace
+from flask_restx import Api, Resource, reqparse, Namespace
 from flask import request
+import werkzeug
 from os import path, remove
 
 from classes import RecordedVideo
@@ -9,6 +10,7 @@ from classes import views
 from classes.shared import db
 
 from functions import cachedDbCalls
+from functions.scheduled_tasks import video_tasks
 
 api = Namespace('video', description='Video Related Queries and Functions')
 
@@ -28,8 +30,7 @@ class api_1_ListVideos(Resource):
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in videoList]}
-
+        return {'results': [ob.serialize() for ob in videoList if ob.channel.private is False]}
 
 @api.route('/<int:videoID>')
 @api.doc(params={'videoID': 'ID Number for the Video'})
@@ -40,7 +41,7 @@ class api_1_ListVideo(Resource):
         """
         videoList = RecordedVideo.RecordedVideo.query.filter_by(id=videoID, published=True).all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in videoList]}
+        return {'results': [ob.serialize() for ob in videoList if ob.channel.private is False]}
 
     @api.expect(videoParserPut)
     @api.doc(security='apikey')
@@ -85,22 +86,8 @@ class api_1_ListVideo(Resource):
                     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
                     if videoQuery is not None:
                         if videoQuery.owningUser == requestAPIKey.userID:
-                            videoQuery.remove()
-                            for clip in videoQuery.clips:
-                                for upvotes in clip:
-                                    db.session.delete(upvotes)
-                                clip.remove()
-                                db.session.delete(clip)
-                            for upvote in videoQuery.upvotes:
-                                db.session.delete(upvote)
-                            for comment in videoQuery.comments:
-                                db.session.delete(comment)
-                            vidViews = views.views.query.filter_by(viewType=1, itemID=videoQuery.id).all()
-                            for view in vidViews:
-                                db.session.delete(view)
-                            db.session.delete(videoQuery)
-                            db.session.commit()
-                            return {'results': {'message': 'Video Deleted'}}, 200
+                            results = video_tasks.delete_video.delay(videoQuery.id)
+                            return {'results': {'message': 'Video Queued for Deletion'}}, 200
         return {'results': {'message': 'Request Error'}}, 400
 
 @api.route('/search')
@@ -115,7 +102,11 @@ class api_1_SearchVideos(Resource):
         args = videoSearchPost.parse_args()
         returnArray = []
         if 'term' in args:
+            finalArray = []
             returnArray = cachedDbCalls.searchVideos(args['term'])
-            return {'results': returnArray}
+            for vid in returnArray:
+                newVidObj = [vid.id, vid.channelName, vid.uuid, vid.thumbnailLocation]
+                finalArray.append(newVidObj)
+            return {'results': finalArray}
         else:
             return {'results': {'message': 'Request Error'}}, 400

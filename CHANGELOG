@@ -1,3 +1,67 @@
+0.9.0
+==============================================
+** BREAKING CHANGE **: OSP-Core SMTP Settings have been removed from the DB and added to the config.py.  Check /opt/osp/conf/config.py.dist for SMTP Variables
+** Important Note **: Custom Themes Developed for versions 0.8.x and lower will most likely be broken. Recommended to review any changes under the new Defaultv3 and adjust before upgrade
+OSP General: The OSP Wiki has been moved to https://open-streaming-platform.readthedocs.io/
+OSP-Core: Adds Celery Task Queue and Celery Beat Task Scheduler
+OSP-Core: Adds New Theme Default Theme - Defaultv3
+OSP-Core: Adds Ability to Create Admin Level Custom Panels on Front Page
+OSP-Core: Adds Ability to Create User Level Custom Panels on the Channel Live Page
+OSP-Core: Adds Channel Level and Video Level "Tags"
+OSP-Core: Offloads Recording Completion, Video Delete, Clip Delete, Clip Creation, Video Upload, Webhook Functions to Task Queue for Responsiveness
+OSP-Core: Adds Ability to Set Video Retention at a Global and Channel Level by number of days. Lowest value will be used.
+OSP-Core: Adds Setting to Enable/Disable Global RTMP Restreams
+OSP-Core: Removes Unused Database Columns
+OSP-Core: Adds User to User Messaging System
+OSP-Core: Adds allowRestream and hubUUID to Server API Settings Return
+OSP-Core: Adds Periodic Checks to Check if a Video Contains a Thumbnail
+OSP-Core: Adds Periodic Checks to Check if a Video exists in a correct state (Not Pending and Video Exists)
+OSP-Core: Fixed an Issue where Embedded Video Clips were returning Error 500 - #440
+OSP-Core: Fixed an Issue when OSP will attempt to keep adding the default Topic "Other", even after deletion - #407
+OSP-Core: Fixed an issue where Webhook tests would fail if no Video Recording Existed on a server - #442
+OSP-Core: Updates Pillow to 9.0. to fix various CVEs
+OSP-Core: Added Message Moderation / Deleting of Chat Messages
+OSP-Core: Added well known keyboard shortcuts for videoJS player to play/pause, seek and adjust volume
+OSP-Core: Adds User to User Messaging/Mail
+OSP-Core: Removes APScheduler Assignment
+OSP-Core: Added Channel Invites API Endpoint for getting/adding/removing user invites to a channel
+OSP-Core: New Security UI for Login, Registration, Password Reset, TOTP Configuration
+OSP-Core: Corrects a security issue where video metadata could be edited by a non-owning user
+OSP-Core: Corrects an issue where TOTP + "Remember Me" Setting on Login would result in a 500 error
+OSP-Core: Fix for editing a channel which contains a shortcode that causes the short code to be cleared due to a invalid check
+OSP-Core: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
+OSP-Core: Adds Server Admin Access to View Protected Channels
+OSP-Core: Theater Mode Added to Streams, Videos, & Clips
+OSP-Core: API Endpoints to Add/Remove RTMP Servers Added to apiv1/server/rtmp
+OSP-Core: Adds Option for Admin to Restrict Total Number of User Owned Channels - #294
+OSP-Core: Disables Email Subscriptions from Being Sent When Maintenance Mode is Enabled - #444
+OSP-Core: Adds Option to Set a Channel as Private
+OSP-Core: Created new Endpoint - /apiv1/channels/<channelUUID>/streams
+OSP-Core: Optimized Video JS Monitor Function to Use New Stream API Endpoint and Reduce Load
+OSP-Core: Added Social Network Links for User Bios - #357
+OSP-Core: Added Checks for Channel Protection to a Channel's List View Page
+OSP-Core: Adds ability for admins to edit video and clip metadata and thumbnails #243
+OSP-Core: Adds user settings for e-mail notifications for streams, new videos and messages #261
+OSP-Core: Adds channel option to toggle part/join messages #384
+OSP-Core: Adds channel option for 'messenger' or 'IRC' style chat message format
+OSP-Core: Added ability for a user to flag their account for deletion after 48 hours
+OSP-Core: Upgrades VideoJS to 7.18.1
+OSP-Core: Upgrades JQuery to 3.6.0
+OSP-Core: Upgrades to Bootstrap 5.1.3
+OSP-Core: Upgrades Zlib to 1.2.12 / Fixes Invalid Download URL on Install
+OSP-Core: Adds Playback Speed Rates to Video Playback (.25x, .5x, 1x, 1.5x, 2x)
+OSP-Core: Adds startTime Argument to Clip Player playback, similar to how Video Playback works
+OSP-Core: Additional Database Query Optimization and Caching
+OSP-Core: Added Scheduled Folder Video Ingest under /var/www/ingest/<Channel Location UUID>
+OSP-RTMP: Changes to Support allowRestream setting in OSP-Core
+OSP-RTMP: Fix for RTMP/Edge handling when Adaptive Streams are Enabled - #459
+OSP-RTMP: Moves all Live Stream Playback to use HLS Encryption and Moves Channel Protection to use Key Authorization Validation
+OSP-Proxy: Updates to use HLS Key Encryption via Proxy
+Nginx-OSP: Upgrades New and Reinstalls to 1.22.0
+OSP-General: Upgrades Gevent to 21.12.0
+OSP-General: Upgrades Greenlet to 1.1.2
+OSP-General: Migrates Flask-RestPlus to Flask-RestX 0.5.1
+
 0.8.17
 ==============================================
 OSP-Core: Fixes clipplayer.html caching issues

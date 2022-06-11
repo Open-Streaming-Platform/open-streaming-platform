@@ -19,7 +19,7 @@ from time import time
 from app import user_datastore
 from functions.oauth import fetch_token, discord_processLogin, reddit_processLogin, facebook_processLogin
 from functions.system import newLog
-from functions.webhookFunc import runWebhook
+from functions.scheduled_tasks import message_tasks
 from functions.themes import checkOverride
 from functions import cachedDbCalls
 
@@ -143,7 +143,7 @@ def oAuthAuthorize(provider):
 
                 log.info({"level": "info", "message": "New User Registered - " + str(user.username) + " - " + str(user.current_login_ip)})
 
-                runWebhook("ZZZ", 20, user=user.username)
+                message_tasks.send_webhook.delay("ZZZ", 20, user=user.username)
                 newLog(1, "A New User has Registered - Username:" + str(user.username))
                 if hasEmail is True:
                     return redirect(url_for('root.main_page'))
