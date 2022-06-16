@@ -28,7 +28,7 @@ def view_clip_page(clipID):
 
     if clipQuery is not None:
 
-        recordedVid = cachedDbCalls.getVideo(clipQuery.recordedVideo.id)
+        recordedVid = cachedDbCalls.getVideo(clipQuery.parentVideo)
 
         associatedChannel = cachedDbCalls.getChannel(recordedVid.channelID)
 
