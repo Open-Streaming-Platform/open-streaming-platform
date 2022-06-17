@@ -700,3 +700,7 @@ function call_celery_task(taskname) {
     socket.emit('execute_celery_task',{task: taskname});
     createNewBSAlert('Task Request Sent', 'success');
 }
+
+function deleteOAuthProvider(providerID) {
+    document.getElementById('DeleteOAuthProviderID').value = providerID;
+}
