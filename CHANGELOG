@@ -1,6 +1,7 @@
 0.9.1
 ==============================================
 OSP-Core: Fix Invalid Links for Topics
+OSP-Core: Fixes bug when deleting OAuth Providers
 
 0.9.0
 ==============================================
