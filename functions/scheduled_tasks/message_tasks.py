@@ -79,13 +79,13 @@ def send_webhook(self, channelID, triggerType, **kwargs):
                 requestType = hook.requestType
                 try:
                     if requestType == 0:
-                        r = requests.post(url, headers=header, json=json.dumps(payload))
+                        r = requests.post(url, headers=header, data=payload)
                     elif requestType == 1:
-                        r = requests.get(url, headers=header, json=json.dumps(payload))
+                        r = requests.get(url, headers=header, data=payload)
                     elif requestType == 2:
-                        r = requests.put(url, headers=header, json=json.dumps(payload))
+                        r = requests.put(url, headers=header, data=payload)
                     elif requestType == 3:
-                        r = requests.delete(url, headers=header, json=json.dumps(payload))
+                        r = requests.delete(url, headers=header, data=payload)
                 except:
                     pass
                 system.newLog(8, "Processing Webhook for ID #" + str(hook.id) + " - Destination:" + str(url))
