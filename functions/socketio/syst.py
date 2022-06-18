@@ -566,6 +566,7 @@ def call_celery_task(message):
     if current_user.is_authenticated:
         if current_user.has_role('Admin'):
             if 'task' in message:
+                system.newLog(0, "Scheduled Task Manually Triggered: " + message['task'])
                 if message['task'] == "process_ingest_folder":
                     video_tasks.process_ingest_folder.delay()
                 elif message['task'] == "check_video_published_exists":
