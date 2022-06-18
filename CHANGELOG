@@ -2,6 +2,7 @@
 ==============================================
 OSP-Core: Fix Invalid Links for Topics
 OSP-Core: Fixes bug when deleting OAuth Providers
+OSP-Core: Fixes a bug in Admin -> Webhooks where edits are not immediately reflected on edit
 
 0.9.0
 ==============================================
