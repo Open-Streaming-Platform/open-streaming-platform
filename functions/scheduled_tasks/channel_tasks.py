@@ -10,7 +10,8 @@ from functions import xmpp, cachedDbCalls
 log = logging.getLogger('app.functions.scheduler.channel_tasks')
 
 def setup_channel_tasks(sender, **kwargs):
-    sender.add_periodic_task(120, update_channel_counts.s(), name='Check Live Channel Counts')
+    #sender.add_periodic_task(120, update_channel_counts.s(), name='Check Live Channel Counts')
+    pass
 
 @celery.task(bind=True)
 def update_channel_counts(self):

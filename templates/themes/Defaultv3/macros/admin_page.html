@@ -76,7 +76,7 @@
                             <td>{{ stream.linkedChannel | channeltoOwnerID | get_userName }}</td>
                             <td>{{ stream.topic | get_topicName }}</td>
                             <td>{{ stream.currentViewers }}</td>
-                            <td>{{ stream.startTimestamp }}</td> <!--TODO TimeDelta and Update-->
+                            <td>{{ stream.startTimestamp | localize_time }}</td> <!--TODO TimeDelta and Update-->
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -936,8 +936,8 @@
                 <tbody>
                     {% for stream in streamHistory %}
                     <tr id="streamCard-{{stream.id}}">
-                        <td>{{stream.startTimestamp | normalize_date}}</td>
-                        <td>{{stream.endTimeStamp | normalize_date}}</td>
+                        <td>{{stream.startTimestamp | localize_time | normalize_date}}</td>
+                        <td>{{stream.endTimeStamp | localize_time | normalize_date}}</td>
                         <td><a href="/view/{{stream.linkedChannel | get_channelLocationFromID }}/">{{stream.streamName}}</a></td>
                         <td><a href="/channel/{{stream.linkedChannel}}">{{stream.linkedChannel | get_channelName}}</a></td>
                         <td><a href="/profile/{{stream.linkedChannel | channeltoOwnerID |get_userName}}">{{stream.linkedChannel | channeltoOwnerID |get_userName}}</a></td>
