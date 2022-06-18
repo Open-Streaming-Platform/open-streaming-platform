@@ -330,40 +330,40 @@ function submitWebhook() {
     if (webhookInputID !== null) {
 
         switch(webhookTrigger) {
-          case 0:
+          case '0':
             webhookTrigger = 'Stream Start';
             break;
-          case 1:
+          case '1':
             webhookTrigger = 'Stream End';
             break;
-          case 2:
+          case '2':
             webhookTrigger = 'Stream Viewer Join';
             break;
-          case 3:
+          case '3':
             webhookTrigger = 'Stream Viewer Upvote';
             break;
-          case 4:
+          case '4':
             webhookTrigger = 'Stream Name Change';
             break;
-          case 5:
+          case '5':
             webhookTrigger = 'Chat Message';
             break;
-          case 6:
+          case '6':
             webhookTrigger = 'New Video';
             break;
-          case 7:
+          case '7':
             webhookTrigger = 'Video Comment';
             break;
-          case 8:
+          case '8':
             webhookTrigger = 'Video Upvote';
             break;
-          case 9:
+          case '9':
             webhookTrigger = 'Video Name Change';
             break;
-          case 10:
+          case '10':
             webhookTrigger = 'Channel Subscription';
             break;
-          case 20:
+          case '20':
             webhookTrigger = 'New User';
             break;
         }
