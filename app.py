@@ -107,6 +107,7 @@ if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
         import sentry_sdk
         from sentry_sdk.integrations.flask import FlaskIntegration
         from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+        from sentry_sdk.integrations.celery import CeleryIntegration
 
         sentryEnv = "Not Specified"
         if hasattr(config, 'sentryIO_Environment'):
@@ -114,7 +115,7 @@ if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
 
         sentry_sdk.init(
             dsn=config.sentryIO_DSN,
-            integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+            integrations=[FlaskIntegration(), SqlalchemyIntegration(), CeleryIntegration()],
 
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
