@@ -463,13 +463,6 @@ celery.conf.result_backend = app.config['result_backend']
 celery.conf.update(app.config)
 
 class ContextTask(celery.Task):
-
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
-        # exc (Exception) - The exception raised by the task.
-        # args (Tuple) - Original arguments for the task that failed.
-        # kwargs (Dict) - Original keyword arguments for the task that failed.
-        celeryFunc.on_failure(self, exc, task_id, args, kwargs, einfo)
-
     """Make celery tasks work with Flask app context"""
     def __call__(self, *args, **kwargs):
         with app.app_context():
