@@ -4,6 +4,7 @@ OSP-Core: Fix Invalid Links for Topics
 OSP-Core: Fixes bug when deleting OAuth Providers
 OSP-Core: Fixes a bug in Admin -> Webhooks where edits are not immediately reflected on edit
 OSP-Core: Fixes bug where manually calling a scheduled task would not work
+OSP-Core: Removed a call which was causing DB Session Rollback issue in Celery
 
 0.9.0
 ==============================================
