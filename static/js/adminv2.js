@@ -745,7 +745,7 @@ function deleteStaticPage() {
 }
 
 function call_celery_task(taskname) {
-    socket.emit('execute_celery_task',{task: taskname});
+    socket.emit('call_celery_task',{task: taskname});
     createNewBSAlert('Task Request Sent', 'success');
 }
 
