@@ -80,6 +80,10 @@ def deleteVideo(videoID):
                 if os.path.exists(gifPath):
                     os.remove(gifPath)
 
+        cache.delete_memoized(cachedDbCalls.getChannelVideos, recordedVid.channelID)
+        cache.delete_memoized(cachedDbCalls.getAllVideo_View, recordedVid.channelID)
+        cache.delete_memoized(cachedDbCalls.getVideo, recordedVid.id)
+
         db.session.delete(recordedVid)
 
         db.session.commit()
@@ -227,6 +231,9 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             newClipQuery.published = True
             system.newLog(6, "New Clip Created - ID #" + str(redirectID))
 
+            cache.delete_memoized(cachedDbCalls.getAllClipsForChannel_View, recordedVidQuery.channelID)
+            cache.delete_memoized(cachedDbCalls.getAllClipsForUser, recordedVidQuery.owningUser)
+
             subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
@@ -304,6 +311,10 @@ def deleteClip(clipID):
         upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
         for vote in upvoteQuery:
             db.session.delete(vote)
+        owningChannelQuery = cachedDbCalls.getClipChannelID(clipQuery.id)
+        channelQuery = cachedDbCalls.getChannel(owningChannelQuery)
+        cache.delete_memoized(cachedDbCalls.getAllClipsForChannel_View, channelQuery.id)
+        cache.delete_memoized(cachedDbCalls.getAllClipsForUser, channelQuery.owningUser)
 
         db.session.delete(clipQuery)
 

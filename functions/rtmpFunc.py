@@ -314,6 +314,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             requestedChannel = cachedDbCalls.getChannelByLoc(requestedChannel.channelLoc)
 
             cache.delete_memoized(cachedDbCalls.getChannelVideos, requestedChannel.id)
+            cache.delete_memoized(cachedDbCalls.getAllVideo_View, requestedChannel.id)
 
             pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(channelID=requestedChannel.id, videoLocation=pendingPath, pending=True).first()
 

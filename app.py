@@ -107,6 +107,8 @@ if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
         import sentry_sdk
         from sentry_sdk.integrations.flask import FlaskIntegration
         from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+        from sentry_sdk.integrations.celery import CeleryIntegration
+        from sentry_sdk.integrations.redis import RedisIntegration
 
         sentryEnv = "Not Specified"
         if hasattr(config, 'sentryIO_Environment'):
@@ -114,7 +116,7 @@ if hasattr(config, 'sentryIO_Enabled') and hasattr(config, 'sentryIO_DSN'):
 
         sentry_sdk.init(
             dsn=config.sentryIO_DSN,
-            integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+            integrations=[FlaskIntegration(), SqlalchemyIntegration(), CeleryIntegration(), RedisIntegration()],
 
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
@@ -461,13 +463,6 @@ celery.conf.result_backend = app.config['result_backend']
 celery.conf.update(app.config)
 
 class ContextTask(celery.Task):
-
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
-        # exc (Exception) - The exception raised by the task.
-        # args (Tuple) - Original arguments for the task that failed.
-        # kwargs (Dict) - Original keyword arguments for the task that failed.
-        celeryFunc.on_failure(self, exc, task_id, args, kwargs, einfo)
-
     """Make celery tasks work with Flask app context"""
     def __call__(self, *args, **kwargs):
         with app.app_context():

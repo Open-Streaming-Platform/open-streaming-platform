@@ -72,5 +72,8 @@ def testWebhook(webhookType, webhookID, **kwargs):
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
         replacementValue = ("%" + key + "%")
+        if value is None or value == "":
+            value = "NA"
         payload = payload.replace(replacementValue, str(value))
+
     return payload
