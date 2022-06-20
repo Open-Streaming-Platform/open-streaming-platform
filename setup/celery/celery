@@ -12,7 +12,7 @@ CELERY_APP="app.celery"
 CELERYD_CHDIR="/opt/osp/"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="--time-limit=3600 --concurrency=4"
+CELERYD_OPTS="--time-limit=3600 --concurrency=4 -P gevent"
 
 # %n will be replaced with the first part of the nodename.
 CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
