@@ -21,6 +21,7 @@ from classes import RecordedVideo
 from classes import Channel
 from classes import invites
 from classes import webhook
+from classes import stickers
 
 from functions import votes
 from functions import cachedDbCalls
@@ -95,6 +96,7 @@ def init(context):
     context.jinja_env.filters['get_channelClips'] = get_channelClips
     context.jinja_env.filters['get_flaggedForDeletion'] = get_flaggedForDeletion
     context.jinja_env.filters['get_channelData'] = get_channelData
+    context.jinja_env.filters['get_channelStickers'] = get_channelStickers
 
 #----------------------------------------------------------------------------#
 # Template Filters
@@ -693,3 +695,7 @@ def get_flaggedForDeletion(userID):
 def get_channelData(channelID):
     channelQuery = cachedDbCalls.getChannel(int(channelID))
     return channelQuery
+
+def get_channelStickers(channelID):
+    stickerQuery = stickers.stickers.query.filter_by(channelID=channelID).with_entities(stickers.stickers.id, stickers.stickers.filename, stickers.stickers.name, stickers.stickers.channelID).all()
+    return stickerQuery
