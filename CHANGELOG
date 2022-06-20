@@ -1,3 +1,7 @@
+0.9.2
+==============================================
+OSP-Core: Fix an issue on User Channels where uploaded stickers are not shown in the UI
+
 0.9.1
 ==============================================
 OSP-Core: Fix Invalid Links for Topics
