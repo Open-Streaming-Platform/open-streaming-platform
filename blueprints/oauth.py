@@ -33,8 +33,12 @@ def oAuthLogin(provider):
     if sysSettings is not None:
 
         oAuthClient = oauth.create_client(provider)
-        redirect_url = sysSettings.siteProtocol + sysSettings.siteAddress + '/oauth/authorize/' + provider
-        return oAuthClient.authorize_redirect(redirect_url)
+        if oAuthClient != None:
+            redirect_url = sysSettings.siteProtocol + sysSettings.siteAddress + '/oauth/authorize/' + provider
+            return oAuthClient.authorize_redirect(redirect_url)
+        else:
+            flash("Invalid or Not Activated OAuth Provider","error")
+            redirect(url_for('root.main_page'))
     else:
         redirect(url_for('root.main_page'))
 
@@ -155,6 +159,9 @@ def oAuthAuthorize(provider):
                 else:
                     flash("An existing OAuth User exists under this email address with another provider", "error")
                     return redirect('/')
+    else:
+        flash("Invalid or Not Activated OAuth Provider", "error")
+        redirect(url_for('root.main_page'))
 
 @oauth_bp.route('/convert/<provider>',  methods=['POST'])
 def oAuthConvert(provider):
