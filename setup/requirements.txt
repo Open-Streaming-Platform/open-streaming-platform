@@ -25,7 +25,7 @@ Flask-Reuploaded==1.2.0
 Flask-Script==2.0.6
 Flask-Security-Too==4.1.2
 flask-session==0.3.2
-Flask-SocketIO==5.1.1
+Flask-SocketIO==5.2.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.1
 gevent==21.12.0
