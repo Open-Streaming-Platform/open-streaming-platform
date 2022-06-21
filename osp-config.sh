@@ -321,6 +321,7 @@ install_osp_rtmp() {
   echo 10 | dialog --title "Installing OSP-RTMP" --gauge "Intalling Prereqs" 10 70 0
   install_prereq
   echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
+  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
 
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
@@ -504,6 +505,7 @@ install_osp() {
   echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   install_prereq
+  sudo pip3 uninstall -r $DIR/setup/remove_requirements.txt >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
 
   # Setup OSP Directory
