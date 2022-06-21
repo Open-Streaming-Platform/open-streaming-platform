@@ -18,10 +18,11 @@ import random
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash, current_app, session
+from flask.wrappers import Request
 from flask_session import Session
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, current_user, roles_required, uia_email_mapper
 from flask_security.signals import user_registered
-from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from flask_migrate import Migrate, upgrade, init, migrate
 from flaskext.markdown import Markdown
 from flask_debugtoolbar import DebugToolbarExtension
@@ -182,6 +183,17 @@ app.config['VIDEO_UPLOAD_TEMPFOLDER'] = app.config['WEB_ROOT'] + 'videos/temp'
 app.config["VIDEO_UPLOAD_EXTENSIONS"] = ["PNG", "MP4"]
 app.config['broker_url'] = RedisURL
 app.config['result_backend'] = RedisURL
+app.config['MAX_CONTENT_LENGTH'] = 4000000000
+
+#----------------------------------------------------------------------------#
+# Monkey Fix Flask-Restx issue (https://github.com/pallets/flask/issues/4552#issuecomment-1109785314)
+#----------------------------------------------------------------------------#
+class AnyJsonRequest(Request):
+    def on_json_loading_failed(self, e):
+        if e is not None:
+            return super().on_json_loading_failed(e)
+
+app.request_class = AnyJsonRequest
 
 #----------------------------------------------------------------------------#
 # Set Logging Configuration
@@ -336,7 +348,6 @@ app.logger.info({"level": "info", "message": "Initializing Flask-Uploads"})
 photos = UploadSet('photos', IMAGES)
 stickerUploads = UploadSet('stickers', IMAGES)
 configure_uploads(app, (photos, stickerUploads))
-patch_request_class(app)
 
 # Initialize Flask-Markdown
 app.logger.info({"level": "info", "message": "Initializing Flask-Markdown"})
