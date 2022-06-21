@@ -177,7 +177,7 @@ upgrade_db() {
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
-  python3 manage.py db upgrade >> $OSPLOG 2>&1
+  flask db upgrade >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
@@ -643,7 +643,7 @@ upgrade_osp() {
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     python3 manage.py db upgrade >> $UPGRADELOG 2>&1
+     flask db upgrade >> $UPGRADELOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
      sudo systemctl start osp.target >> $UPGRADELOG 2>&1
      echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
