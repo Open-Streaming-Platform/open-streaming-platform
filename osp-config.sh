@@ -635,6 +635,7 @@ upgrade_osp() {
      echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
      sudo systemctl stop nginx-osp >> $UPGRADELOG 2>&1
      echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
+     sudo pip3 uninstall -r /opt/osp/setup/remove_requirements.txt >> $UPGRADELOG 2>&1
      sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
      echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
@@ -664,6 +665,7 @@ upgrade_proxy() {
 
 upgrade_rtmp() {
   sudo git pull >> $OSPLOG 2>&1
+  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
