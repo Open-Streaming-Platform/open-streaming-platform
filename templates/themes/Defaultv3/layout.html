@@ -265,8 +265,11 @@
 
     <script type="text/javascript" src="/static/js/core.js"></script>
     <script type="text/javascript" src="/static/js/ui.js"></script>
+    {% if current_user.is_authenticated %}
+        {% if current_user.has_role('Uploader') %}
     <script type="text/javascript" src="/static/js/osp-uploads.js"></script>
-
+        {% endif %}
+    {% endif %}
     {% block scripts %}
     {% endblock %}
 
