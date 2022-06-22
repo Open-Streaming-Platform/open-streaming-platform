@@ -237,7 +237,11 @@
     {{ modals.osp_systeminfo_modal(sysSettings.version) }}
 
     <!--Upload Video Modal-->
-    {{ modals.osp_videoupload_modal(uploadTopics, ownedChannels) }}
+    {% if current_user.is_authenticated %}
+        {% if current_user.has_role('Uploader') %}
+            {{ modals.osp_videoupload_modal(uploadTopics, ownedChannels) }}
+        {% endif %}
+    {% endif %}
 
     {% block modals %}
     {% endblock %}
