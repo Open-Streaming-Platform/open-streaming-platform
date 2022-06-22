@@ -78,7 +78,7 @@
 
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled != 1 %} style="display: none;" {% endif %}>
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled == False %} style="display: none;" {% endif %}>
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}
