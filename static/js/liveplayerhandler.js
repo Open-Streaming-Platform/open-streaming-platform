@@ -137,15 +137,15 @@ setInterval(function() {
 
 
 
-const video = document.querySelector('video');
-video.addEventListener('play', (event) => {
+const videoElm = document.querySelector('video');
+videoElm.addEventListener('play', (event) => {
 var cookieVolume = getCookie('ospvolume');
 if (!(cookieVolume == null)) {
   player.volume(cookieVolume);
 }
 });
 
-video.addEventListener('volumechange', (event) => {
+videoElm.addEventListener('volumechange', (event) => {
 var currentVolume = player.volume();
 setCookie('ospvolume',currentVolume, 365);
 });
