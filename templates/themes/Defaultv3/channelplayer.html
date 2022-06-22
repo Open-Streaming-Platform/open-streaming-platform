@@ -29,7 +29,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != 1 %} style="width: 100%;" {% endif %}>
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != True %} style="width: 100%;" {% endif %}>
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 <div class="row gx-0 mb-2">
@@ -265,6 +265,7 @@
              // Disconnect from SocketIO
              socket.emit('removeViewer', {data: channelLocation});
              socket.close();
+             socket.disconnect();
         });
     </script>
 
