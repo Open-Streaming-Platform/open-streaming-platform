@@ -309,14 +309,6 @@
         }
     </script>
 
-    <script type="text/javascript" charset="utf-8">
-        var conn_options = {
-            'sync disconnect on unload': true
-        };
-
-        var socket = io("/", { reconnection: true, forceNew: false });
-    </script>
-
     <script>
         setInterval(function () {
             socket.emit('getViewerTotal', { data: "{{channel.channelLoc}}" });
