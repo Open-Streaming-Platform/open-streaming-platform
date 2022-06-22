@@ -78,7 +78,7 @@ $(document).ready( function () {
 });
 
 // Set the monitor video script to execute every 10s
-setInterval(function() {
+var monitorInterval = setInterval(function() {
     monitor_vid(player);
 }, 10000);
 
