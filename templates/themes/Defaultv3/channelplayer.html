@@ -336,14 +336,6 @@
         });
     </script>
     
-    
-    <script>
-        window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
-            return null;
-        });
-    </script>
-    
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
