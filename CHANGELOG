@@ -9,6 +9,8 @@ OSP-Core: Upgrades aiohttp to 3.8.1
 OSP-Core: Upgrades pytz to 2022.1
 OSP-Core: Applies Fix to /etc/default/celery which sets Pool Type to gevent
 OSP-Core: Added Catch for Invalid Forwarded IP Address for Guests which may cause the DB to get stuck
+OSP-Core: Cleans up browser console error for when user is not logged in and uploads
+OSP-Core: Fixes Channel Chat when Channel Chat is Disabled
 
 0.9.1
 ==============================================
