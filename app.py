@@ -669,9 +669,14 @@ def do_before_request():
                         GuestQuery.UUID = session['guestUUID']
                         db.session.commit()
                     else:
-                        NewGuest = Sec.Guest(session['guestUUID'], requestIP)
-                        db.session.add(NewGuest)
-                        db.session.commit()
+                        if len(requestIP) <= 100:
+                            NewGuest = Sec.Guest(session['guestUUID'], requestIP)
+                            db.session.add(NewGuest)
+                            db.session.commit()
+                        else:
+                            NewGuest = Sec.Guest(session['guestUUID'], requestIP[0:100])
+                            db.session.add(NewGuest)
+                            db.session.commit()
         except:
             pass
 
