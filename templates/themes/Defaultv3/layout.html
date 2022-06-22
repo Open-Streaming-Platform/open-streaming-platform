@@ -260,7 +260,7 @@
         var conn_options = {
           'sync disconnect on unload': true
         };
-        var socket = io();
+        var socket = io("/", { reconnection: true, forceNew: false });
     </script>
 
     <script type="text/javascript" src="/static/js/core.js"></script>
