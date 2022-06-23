@@ -184,6 +184,13 @@ def invalidateChannelCache(channelId):
 
     return True
 
+@cache.memoize(timeout=5)
+def getChanneActiveStreams(channelID):
+    StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelID, active=True, complete=False) \
+        .with_entities(Stream.Stream.id, Stream.Stream.topic, Stream.Stream.streamName, Stream.Stream.startTimestamp,
+                       Stream.Stream.uuid, Stream.Stream.currentViewers,
+                       Stream.Stream.totalViewers).all()
+    return StreamQuery
 
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
