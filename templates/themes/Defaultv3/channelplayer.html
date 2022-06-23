@@ -248,12 +248,6 @@
 
         // Page Leaving Process
         $(window).bind('beforeunload', function(){
-              // Clear All Intervals
-              for (var i = 1; i < 99999; i++)
-                window.clearInterval(i);
-              // Terminate Video Player to Speed up Page Load
-              player.pause();
-              player.reset();
               // Leave Room First
               if (connection !== null) {
                   exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
@@ -264,8 +258,6 @@
               }
              // Disconnect from SocketIO
              socket.emit('removeViewer', {data: channelLocation});
-             socket.close();
-             socket.disconnect();
         });
     </script>
 
