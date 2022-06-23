@@ -292,8 +292,8 @@
 
     <script>
         function popinChat(win) {
-            if (checkWindow == true) {
-                if (win == 'chatWindow') {
+            if (checkWindow === true) {
+                if (win === 'chatWindow') {
                     if (popoutWindow.closed) {
                         document.getElementById("sidePanel").style.display = "block";
                         //document.getElementById("mainContentPanel").style.setProperty('width', 'calc(100% - var(--side-panel-width))');
@@ -422,20 +422,6 @@
         })
     </script>
 
-    <script>
-        const video = document.querySelector('video');
-        video.addEventListener('play', (event) => {
-            var cookieVolume = getCookie('ospvolume');
-            if (!(cookieVolume == null)) {
-                player.volume(cookieVolume);
-            }
-        });
-
-        video.addEventListener('volumechange', (event) => {
-            var currentVolume = player.volume();
-            setCookie('ospvolume', currentVolume, 365);
-        });
-    </script>
 
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>

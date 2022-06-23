@@ -80,7 +80,7 @@ function monitor_vid(vidplayer){
 // Set the monitor video script to execute every 10s
 var monitorInterval = setInterval(function() {
     monitor_vid(player);
-}, 10000);
+}, 20000);
 
 function changeUpvote() {
     socket.emit('changeUpvote', {loc: channelLocation, vidType: 'stream'});
@@ -133,19 +133,18 @@ setInterval(function() {
 
 setInterval(function() {
   socket.emit('getViewerTotal', {data: channelLocation} );
-},5000 );
-
+},10000 );
 
 
 const videoElm = document.querySelector('video');
 videoElm.addEventListener('play', (event) => {
-var cookieVolume = getCookie('ospvolume');
-if (!(cookieVolume == null)) {
-  player.volume(cookieVolume);
-}
+    var cookieVolume = getCookie('ospvolume');
+    if (!(cookieVolume == null)) {
+      player.volume(cookieVolume);
+    }
 });
 
 videoElm.addEventListener('volumechange', (event) => {
-var currentVolume = player.volume();
-setCookie('ospvolume',currentVolume, 365);
+    var currentVolume = player.volume();
+    setCookie('ospvolume',currentVolume, 365);
 });
