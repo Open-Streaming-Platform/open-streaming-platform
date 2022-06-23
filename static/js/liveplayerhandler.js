@@ -80,7 +80,7 @@ function monitor_vid(vidplayer){
 // Set the monitor video script to execute every 10s
 var monitorInterval = setInterval(function() {
     monitor_vid(player);
-}, 20000);
+}, 10000);
 
 function changeUpvote() {
     socket.emit('changeUpvote', {loc: channelLocation, vidType: 'stream'});
