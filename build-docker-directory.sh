@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BUILDDIR="docker-build"
 
 # Create Docker Build Directory

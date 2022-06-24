@@ -39,5 +39,3 @@ repos:
         name: build-docker-files
         entry: ./build-docker-directory.sh
         language: script
-        types: [text, python, javascript, html, shell, yaml, css, image]
-        pass_filenames: false
