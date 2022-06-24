@@ -160,14 +160,17 @@ def handle_add_usercount(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
     streamData = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
-    ).first()
+    ).with_elements(Stream.Stream.id, Stream.Stream.totalViewers).first()
 
     ChannelUpdateStatement = Channel.Channel.query.filter_by(
         channelLoc=channelLoc
     ).update(dict(views=requestedChannel.views + 1))
 
     if streamData is not None:
-        streamData.totalViewers = streamData.totalViewers + 1
+        StreamUpdateStatement = Channel.Channel.query.filter_by(
+            active=True, streamKey=requestedChannel.streamKey
+        ).update(dict(totalViewers=streamData.totalViewers + 1))
+
     db.session.commit()
 
     newView = views.views(0, requestedChannel.id)
@@ -185,29 +188,36 @@ def handle_leaving_viewer(streamData):
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
     stream = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
-    ).first()
+    ).with_entities(Stream.Stream.id).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
-
-    ChannelUpdateStatement = Channel.Channel.query.filter_by(
-        channelLoc=channelLoc
-    ).update(dict(currentViewers=currentViewers))
 
     if currentViewers < 0:
         ChannelUpdateStatement = Channel.Channel.query.filter_by(
             channelLoc=channelLoc
         ).update(dict(currentViewers=0))
+    else:
+        ChannelUpdateStatement = Channel.Channel.query.filter_by(
+            channelLoc=channelLoc
+        ).update(dict(currentViewers=currentViewers))
 
     if stream is not None:
-        stream.currentViewers = currentViewers
-        if stream.currentViewers < 0:
-            stream.currentViewers = 0
-        db.session.commit()
+
+        if currentViewers < 0:
+            StreamUpdateStatement = Channel.Channel.query.filter_by(
+                active=True, streamKey=requestedChannel.streamKey
+            ).update(dict(currentViewers=0))
+
+        else:
+            StreamUpdateStatement = Channel.Channel.query.filter_by(
+                active=True, streamKey=requestedChannel.streamKey
+            ).update(dict(currentViewers=currentViewers))
+    db.session.commit()
+
     leave_room(streamData["data"])
 
     handle_viewer_total_request(streamData, room=streamData["data"])
 
-    db.session.commit()
     db.session.close()
     return "OK"
 
