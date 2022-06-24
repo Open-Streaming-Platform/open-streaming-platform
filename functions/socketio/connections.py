@@ -27,9 +27,11 @@ def handle_new_viewer(streamData):
     sysSettings = cachedDbCalls.getSystemSettings()
 
     requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
-    stream = Stream.Stream.query.filter_by(
-        active=True, streamKey=requestedChannel.streamKey
-    ).with_entities(Stream.Stream.id).first()
+    stream = (
+        Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey)
+        .with_entities(Stream.Stream.id)
+        .first()
+    )
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 

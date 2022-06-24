@@ -3,10 +3,13 @@ from flask_socketio import emit
 
 from classes.shared import db, socketio, limiter
 from classes import Channel
+from classes import Stream
 from classes import upvotes
 from classes import notifications
 from classes import RecordedVideo
 from classes import comments
+
+from functions import cachedDbCalls
 
 
 @socketio.on("getUpvoteTotal")
@@ -22,15 +25,15 @@ def handle_upvote_total_request(streamData):
 
     if vidType == "stream":
         loc = str(loc)
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
-        if channelQuery.stream:
-            stream = channelQuery.stream[0]
+        channelQuery = cachedDbCalls.getChannelByLoc(loc)
+        streamQuery = Stream.Stream.query.filter_by(linkedChannel=channelQuery.id).with_entities(Stream.Stream.id).first()
+        if streamQuery != None:
             totalQuery = upvotes.streamUpvotes.query.filter_by(
-                streamID=stream.id
+                streamID=streamQuery.id
             ).count()
             try:
                 myVoteQuery = upvotes.streamUpvotes.query.filter_by(
-                    userID=current_user.id, streamID=stream.id
+                    userID=current_user.id, streamID=streamQuery.id
                 ).first()
             except:
                 pass
