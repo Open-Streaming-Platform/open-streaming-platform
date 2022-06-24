@@ -19,6 +19,9 @@ OSP-Core: Added Catch for Invalid Forwarded IP Address for Guests which may caus
 OSP-Core: Cleans up browser console error for when user is not logged in and uploads
 OSP-Core: Fixes Channel Chat when Channel Chat is Disabled
 OSP-Core: Fixes User Search not returning values
+OSP-Core: Removes manage.py Database Upgrade Script.  Manual DB Upgrades can now be performed via 'flask db <command>'
+OSP-Config: ** Changes to Upgrade Process ** Git Pull has been removed from the osp-config.sh script.  Pulls are expected to be done by user manually now.
+
 
 0.9.1
 ==============================================
