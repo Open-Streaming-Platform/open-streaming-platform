@@ -224,7 +224,11 @@ class api_1_SearchUsers(Resource):
         args = userSearchPost.parse_args()
         returnArray = []
         if 'term' in args:
+            finalArray = []
             returnArray = cachedDbCalls.searchUsers(args['term'])
-            return {'results': returnArray}
+            for user in returnArray:
+                newVidObj = [user.id, user.username, user.uuid, user.pictureLocation]
+                finalArray.append(newVidObj)
+            return {'results': finalArray}
         else:
             return {'results': {'message': 'Request Error'}}, 400
