@@ -39,9 +39,7 @@ cp -R static $BUILDDIR/osp-core
 cp -R templates $BUILDDIR/osp-core
 cp -R migrations $BUILDDIR/osp-core
 
-cp __init__.py $BUILDDIR/osp-core
 cp app.py $BUILDDIR/osp-core
-cp manage.py $BUILDDIR/osp-core
 cp installs/docker/OSP-Core/Dockerfile $BUILDDIR/osp-core
 cp -R installs/docker/OSP-Core/docker-files.d $BUILDDIR/osp-core
 
