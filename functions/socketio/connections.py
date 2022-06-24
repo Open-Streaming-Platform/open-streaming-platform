@@ -1,22 +1,17 @@
-from flask import request
 from flask_security import current_user
 from flask_socketio import join_room, leave_room, emit
 
 from classes.shared import db, socketio
-from classes import settings
 from classes import Channel
 from classes import Stream
 from classes import views
 
-from functions import webhookFunc
 from functions import templateFilters
 from functions import xmpp
 from functions import cachedDbCalls
 from functions.scheduled_tasks import message_tasks
 
 from functions.socketio.stream import handle_viewer_total_request
-
-from app import r
 
 
 @socketio.on("disconnect")
@@ -31,7 +26,7 @@ def handle_new_viewer(streamData):
 
     sysSettings = cachedDbCalls.getSystemSettings()
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
     stream = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
     ).first()
@@ -162,8 +157,6 @@ def handle_new_viewer(streamData):
 def handle_add_usercount(streamData):
     channelLoc = str(streamData["data"])
 
-    sysSettings = cachedDbCalls.getSystemSettings()
-
     requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     streamData = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
@@ -187,9 +180,7 @@ def handle_add_usercount(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData["data"])
 
-    sysSettings = cachedDbCalls.getSystemSettings()
-
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
     stream = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
     ).first()
