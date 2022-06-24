@@ -7,6 +7,13 @@ OSP-Core: Upgrades Celery to 5.2.7
 OSP-Core: Upgrades Click to 8.1.3
 OSP-Core: Upgrades aiohttp to 3.8.1
 OSP-Core: Upgrades pytz to 2022.1
+OSP-Core: Upgrades Flask to 2.1.2
+OSP-Core: Upgrades Flask-SqlAlchemy to 2.5.1
+OSP-Core: Upgrades SQLAlchemy to 1.4.37
+OSP-Core: Upgrades Redis-Py to 4.3.3
+OSP-Core: Upgrades ItsDangerous to 2.1.2
+OSP-Core: Upgrades Jinja2 to 3.1.2
+OSP-Core: Upgrades Werkzeug to 2.1.2
 OSP-Core: Applies Fix to /etc/default/celery which sets Pool Type to gevent
 OSP-Core: Added Catch for Invalid Forwarded IP Address for Guests which may cause the DB to get stuck
 OSP-Core: Cleans up browser console error for when user is not logged in and uploads
