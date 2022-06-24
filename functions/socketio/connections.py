@@ -29,19 +29,22 @@ def handle_new_viewer(streamData):
     requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
     stream = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
-    ).first()
+    ).with_entities(Stream.Stream.id).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
     streamName = ""
     streamTopic = 0
 
-    requestedChannel.currentViewers = currentViewers
-    db.session.commit()
+    ChannelUpdateStatement = Channel.Channel.query.filter_by(
+        channelLoc=channelLoc
+    ).update(dict(currentViewers=currentViewers))
 
     if stream is not None:
-        stream.currentViewers = currentViewers
-        db.session.commit()
+        StreamUpdateStatement = Channel.Channel.query.filter_by(
+            active=True, streamKey=requestedChannel.streamKey
+        ).update(dict(currentViewers=currentViewers))
+
         streamName = stream.streamName
         streamTopic = stream.topic
 
@@ -157,10 +160,18 @@ def handle_new_viewer(streamData):
 def handle_add_usercount(streamData):
     channelLoc = str(streamData["data"])
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
-    streamData = Stream.Stream.query.filter_by(
-        active=True, streamKey=requestedChannel.streamKey
-    ).with_elements(Stream.Stream.id, Stream.Stream.totalViewers).first()
+    requestedChannel = (
+        Channel.Channel.query.filter_by(channelLoc=channelLoc)
+        .with_entities(
+            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views
+        )
+        .first()
+    )
+    streamData = (
+        Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey)
+        .with_elements(Stream.Stream.id, Stream.Stream.totalViewers)
+        .first()
+    )
 
     ChannelUpdateStatement = Channel.Channel.query.filter_by(
         channelLoc=channelLoc
@@ -185,10 +196,18 @@ def handle_add_usercount(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData["data"])
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
-    stream = Stream.Stream.query.filter_by(
-        active=True, streamKey=requestedChannel.streamKey
-    ).with_entities(Stream.Stream.id).first()
+    requestedChannel = (
+        Channel.Channel.query.filter_by(channelLoc=channelLoc)
+        .with_entities(
+            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views
+        )
+        .first()
+    )
+    stream = (
+        Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey)
+        .with_entities(Stream.Stream.id)
+        .first()
+    )
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
