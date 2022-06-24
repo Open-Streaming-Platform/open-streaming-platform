@@ -1,2 +1,0 @@
-Flask-BabelEx
-Flask-Uploads

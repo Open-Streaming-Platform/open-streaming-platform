@@ -1,6 +1,0 @@
-[Unit]
-Description=OSP Service
-Requires=osp-worker@5000.service osp-worker@5001.service osp-worker@5002.service osp-worker@5003.service osp-worker@5004.service osp-worker@5005.service osp-worker@5006.service osp-worker@5007.service osp-worker@5008.service osp-worker@5009.service osp-worker@5010.service
-
-[Install]
-WantedBy=multi-user.target
