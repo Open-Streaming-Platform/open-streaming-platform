@@ -159,7 +159,7 @@ end class <locator-error>;
 
 define function locator-error
     (format-string :: <string>, #rest format-arguments)
-  error(make(<locator-error>, 
+  error(make(<locator-error>,
              format-string:    format-string,
              format-arguments: format-arguments))
 end function locator-error;
@@ -218,7 +218,7 @@ define method simplify-locator
   let relative? = locator.locator-relative?;
   let resolve-parent? = ~locator.locator-might-have-links?;
   let simplified-path
-    = simplify-path(path, 
+    = simplify-path(path,
                     resolve-parent?: resolve-parent?,
                     relative?: relative?);
   if (path ~= simplified-path)
@@ -350,7 +350,7 @@ define method merge-locators
     (locator :: <file-locator>, from-locator :: <directory-locator>)
  => (merged-locator :: <file-locator>)
   let directory = locator.locator-directory;
-  let merged-directory 
+  let merged-directory
     = if (directory)
         merge-locators(directory, from-locator)
       else

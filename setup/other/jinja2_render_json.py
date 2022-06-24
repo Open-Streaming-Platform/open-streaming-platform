@@ -6,6 +6,7 @@ Fork of jinja2-render (https://github.com/pklaus/jinja2-render)
 Tool for Rendering Jinja2 from JSON Input
 """
 
+
 def main():
     import argparse, sys, os, subprocess, json
 
@@ -20,9 +21,17 @@ def main():
         default="{}",
         help="JSON Dict containing values",
     )
-    parser.add_argument("-f", default="Dockerfile.jinja2", dest="template", help="The Jinja2 template to use.")
     parser.add_argument(
-        "-o", default="Dockerfile", dest="output", help="The output file to write to.",
+        "-f",
+        default="Dockerfile.jinja2",
+        dest="template",
+        help="The Jinja2 template to use.",
+    )
+    parser.add_argument(
+        "-o",
+        default="Dockerfile",
+        dest="output",
+        help="The output file to write to.",
     )
 
     try:
@@ -51,5 +60,7 @@ def main():
 
     with open(args.output, "wt") as f:
         f.write(template.render(**CONTEXTS))
+
+
 if __name__ == "__main__":
     main()

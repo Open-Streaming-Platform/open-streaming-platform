@@ -78,14 +78,14 @@
             var CHANNELTOKEN = null;
             {% endif %}
             var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
-            
+
             var username = username.replace(/ /g,"_");
             var ChatContentWindow = document.getElementById("chatContentWindow");
             var ChatInputBar = document.getElementById('chatinput');
             ChatInputBar.placeholder = "Send Message As " + username + "...";
-            
+
             var stickerList = {{ stickerList | safe }}
-            
+
             $('#chatinput').on('keyup', function(e) {
             if (e.keyCode === 13) {
             sendMessage();
@@ -130,26 +130,26 @@
             socket.close();
             });
         </script>
-        
+
         <script>
             function popinChat() {
                 window.close();
             }
         </script>
-                
+
         <script>
             socket.on('connect', function () {
                 socket.emit('newViewer', { data: '{{channel.channelLoc}}' });
                 socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
             });
         </script>
-        
+
         <script>
             socket.on('disconnect', function () {
                 socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
             });
         </script>
-        
+
         <script>
             window.addEventListener("beforeunload", function (e) {
                 socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });

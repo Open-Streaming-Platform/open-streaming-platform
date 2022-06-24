@@ -143,7 +143,7 @@
                 </div>
             </div>
           </div>
-      
+
           <div class="chatEntryContainer" data-type="chatmessagetemplate" style="display:none;">
               <div class="chatEntry flexbox">
                 <span class="chatInfo">
@@ -152,7 +152,7 @@
                   </span>
               </div>
           </div>
-      
+
           <div id="profileBox" class="rounded profileBox shadow m-2" data-type="profileBoxTemplate" style="display:none;">
             <div class="profileBoxHeader">
               <button type="button" class="close mr-2" data-dismiss="" aria-label="Close" onclick="closeProfileBox();">
@@ -189,21 +189,21 @@
                     <!--<button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button>-->
                     <button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button>
                     <button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button>
-      
+
                 </div>
               </div>
             </div>
           </div>
       </div>
-      
+
       <script type="text/javascript" charset="utf-8">
           var conn_options = {
               'sync disconnect on unload':true
           };
-      
+
           var socket = io("/", {reconnection: true, forceNew: false});
       </script>
-      
+
       <script>
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
@@ -281,13 +281,13 @@
               socket.close();
         });
     </script>
-      
+
       <script>
           function getBanList() {
               console.log("Requesting Ban List");
               socket.emit('getBanList', {channelLoc: '{{channel.channelLoc}}'});
           }
-      
+
           function clearBan(username, affiliation) {
               setAffiliation(username, affiliation);
               setTimeout(function(){
@@ -295,14 +295,14 @@
               }, 2000);
               return true;
           }
-      
+
           socket.on('returnBanList', function(msg) {
               console.log("Receiving Ban List");
-      
+
               document.getElementById('bannedUsers').style.display = 'block';
               document.getElementById('chatMembers').style.display = 'none';
               document.getElementById('chat').style.display = 'none';
-      
+
               banList = document.getElementById('OutcastList');
               banList.innerHTML = "";
               for (let i = 0; i < msg['results'].length; i++){

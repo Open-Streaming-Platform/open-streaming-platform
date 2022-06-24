@@ -26,15 +26,24 @@ try:
 except:
     from app import config
 
-log = logging.getLogger('app.functions.database')
+log = logging.getLogger("app.functions.database")
+
 
 def checkDefaults(user_datastore):
     # Setup Default User Roles
-    user_datastore.find_or_create_role(name='Admin', description='Administrator', default=False)
-    user_datastore.find_or_create_role(name='User', description='User', default=True)
-    user_datastore.find_or_create_role(name='Streamer', description='Streamer', default=False)
-    user_datastore.find_or_create_role(name='Recorder', description='Recorder', default=False)
-    user_datastore.find_or_create_role(name='Uploader', description='Uploader', default=False)
+    user_datastore.find_or_create_role(
+        name="Admin", description="Administrator", default=False
+    )
+    user_datastore.find_or_create_role(name="User", description="User", default=True)
+    user_datastore.find_or_create_role(
+        name="Streamer", description="Streamer", default=False
+    )
+    user_datastore.find_or_create_role(
+        name="Recorder", description="Recorder", default=False
+    )
+    user_datastore.find_or_create_role(
+        name="Uploader", description="Uploader", default=False
+    )
 
     log.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]
@@ -46,6 +55,7 @@ def checkDefaults(user_datastore):
                 db.session.add(newTopic)
         db.session.commit()
     return True
+
 
 def dbFixes():
     sysSettings = settings.settings.query.first()
@@ -122,7 +132,9 @@ def dbFixes():
     for chan in channelQuery:
         chan.channelMuted = False
         db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(showChatJoinLeaveNotification=None).all()
+    channelQuery = Channel.Channel.query.filter_by(
+        showChatJoinLeaveNotification=None
+    ).all()
     for chan in channelQuery:
         chan.showChatJoinLeaveNotification = True
         db.session.commit()
@@ -259,7 +271,9 @@ def dbFixes():
         channel.allowGuestNickChange = True
         db.session.commit()
 
-    ChannelQuery = Channel.Channel.query.filter_by(private=None).update(dict(private=False))
+    ChannelQuery = Channel.Channel.query.filter_by(private=None).update(
+        dict(private=False)
+    )
     db.session.commit()
 
     # Check Existing Channels without chatHistory
@@ -278,33 +292,69 @@ def dbFixes():
     GlobalPanelQuery = panel.globalPanel.query.all()
     if GlobalPanelQuery == []:
         defaultPanelList = [
-            {"name": "Topics", "type": 4, "header": "Topics", "order": 0, "content": ""},
-            {"name": "Streams", "type": 1, "header": "Currently Live", "order": 0, "content": ""},
-            {"name": "Videos", "type": 2, "header": "Videos", "order": 0, "content": ""},
+            {
+                "name": "Topics",
+                "type": 4,
+                "header": "Topics",
+                "order": 0,
+                "content": "",
+            },
+            {
+                "name": "Streams",
+                "type": 1,
+                "header": "Currently Live",
+                "order": 0,
+                "content": "",
+            },
+            {
+                "name": "Videos",
+                "type": 2,
+                "header": "Videos",
+                "order": 0,
+                "content": "",
+            },
             {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
-            {"name": "Channels", "type": 5, "header": "Channels", "order": 0, "content": ""},
+            {
+                "name": "Channels",
+                "type": 5,
+                "header": "Channels",
+                "order": 0,
+                "content": "",
+            },
         ]
         for entry in defaultPanelList:
-            newPanel = panel.globalPanel(entry['name'], entry['type'], entry['header'], entry['order'], entry['content'])
+            newPanel = panel.globalPanel(
+                entry["name"],
+                entry["type"],
+                entry["header"],
+                entry["order"],
+                entry["content"],
+            )
             db.session.add(newPanel)
             db.session.commit()
 
     # Establish Initial Main Page Panel Layout
-    mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(pageName="root.main_page", panelType=0).all()
+    mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(
+        pageName="root.main_page", panelType=0
+    ).all()
     if mainPagePanelMappingQuery == []:
         defaultMapping = ["Streams", "Topics", "Videos", "Clips"]
         for entry in defaultMapping:
             mappingIndex = defaultMapping.index(entry)
             globalPanelQuery = panel.globalPanel.query.filter_by(name=entry).first()
             if globalPanelQuery is not None:
-                newPanelMapping = panel.panelMapping('root.main_page', 0, globalPanelQuery.id, mappingIndex)
+                newPanelMapping = panel.panelMapping(
+                    "root.main_page", 0, globalPanelQuery.id, mappingIndex
+                )
                 db.session.add(newPanelMapping)
                 db.session.commit()
 
     # Insert Initial RTMP Server from Env Variable OSP_RTMP_SERVER
-    rtmpServerAddress = os.getenv('OSP_RTMP_SERVER')
+    rtmpServerAddress = os.getenv("OSP_RTMP_SERVER")
     if rtmpServerAddress != None:
-        rtmpServerQuery = settings.rtmpServer.query.filter_by(address=rtmpServerAddress).first()
+        rtmpServerQuery = settings.rtmpServer.query.filter_by(
+            address=rtmpServerAddress
+        ).first()
         if rtmpServerQuery is None:
             newRTMPServer = settings.rtmpServer(rtmpServerAddress)
             newRTMPServer.hide = True
@@ -313,9 +363,10 @@ def dbFixes():
 
     return True
 
+
 def init(app, user_datastore):
     # Move DB Creation into Flask-Migrate
-    #db.create_all()
+    # db.create_all()
 
     log.info({"level": "info", "message": "Checking Flask-Migrate DB Version"})
     # Logic to Check the DB Version
@@ -353,30 +404,42 @@ def init(app, user_datastore):
         log.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
 
-        app.config['SERVER_NAME'] = None
-        app.config['SECURITY_EMAIL_SENDER'] = config.smtpSendAs
-        app.config['MAIL_DEFAULT_SENDER'] = config.smtpSendAs
-        app.config['MAIL_SERVER'] = config.smtpServerAddress
-        app.config['MAIL_PORT'] = int(config.smtpServerPort)
+        app.config["SERVER_NAME"] = None
+        app.config["SECURITY_EMAIL_SENDER"] = config.smtpSendAs
+        app.config["MAIL_DEFAULT_SENDER"] = config.smtpSendAs
+        app.config["MAIL_SERVER"] = config.smtpServerAddress
+        app.config["MAIL_PORT"] = int(config.smtpServerPort)
         if config.smtpEncryption == "ssl":
-            app.config['MAIL_USE_SSL'] = True
+            app.config["MAIL_USE_SSL"] = True
         else:
-            app.config['MAIL_USE_SSL'] = False
+            app.config["MAIL_USE_SSL"] = False
         if config.smtpEncryption == "tls":
-            app.config['MAIL_USE_TLS'] = True
+            app.config["MAIL_USE_TLS"] = True
         else:
-            app.config['MAIL_USE_TLS'] = False
-        app.config['MAIL_USERNAME'] = config.smtpUsername
-        app.config['MAIL_PASSWORD'] = config.smtpPassword
-        app.config['SECURITY_FORGOT_PASSWORD_TEMPLATE'] = 'security/forgot_password.html'
-        app.config['SECURITY_LOGIN_USER_TEMPLATE'] = 'security/login_user.html'
-        app.config['SECURITY_REGISTER_USER_TEMPLATE'] = 'security/register_user.html'
-        app.config['SECURITY_SEND_CONFIRMATION_TEMPLATE'] = 'security/send_confirmation.html'
-        app.config['SECURITY_RESET_PASSWORD_TEMPLATE'] = 'security/reset_password.html'
-        app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_RESET'] = sysSettings.siteName + " - Password Reset Request"
-        app.config['SECURITY_EMAIL_SUBJECT_REGISTER'] = sysSettings.siteName + " - Welcome!"
-        app.config['SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE'] = sysSettings.siteName + " - Password Reset Notification"
-        app.config['SECURITY_EMAIL_SUBJECT_CONFIRM'] = sysSettings.siteName + " - Email Confirmation Request"
+            app.config["MAIL_USE_TLS"] = False
+        app.config["MAIL_USERNAME"] = config.smtpUsername
+        app.config["MAIL_PASSWORD"] = config.smtpPassword
+        app.config[
+            "SECURITY_FORGOT_PASSWORD_TEMPLATE"
+        ] = "security/forgot_password.html"
+        app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
+        app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
+        app.config[
+            "SECURITY_SEND_CONFIRMATION_TEMPLATE"
+        ] = "security/send_confirmation.html"
+        app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
+        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
+            sysSettings.siteName + " - Password Reset Request"
+        )
+        app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
+            sysSettings.siteName + " - Welcome!"
+        )
+        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
+            sysSettings.siteName + " - Password Reset Notification"
+        )
+        app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
+            sysSettings.siteName + " - Email Confirmation Request"
+        )
 
         log.info({"level": "info", "message": "Database Initialization Completed"})
 

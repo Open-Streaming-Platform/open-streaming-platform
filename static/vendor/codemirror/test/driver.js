@@ -14,7 +14,7 @@ function test(name, run, expectedFail) {
   // Force unique names
   if (nameCounts[name] == undefined){
     nameCounts[name] = 2;
-  } else { 
+  } else {
     // Append number if not first test with this name.
     name = name + '_' + (nameCounts[name]++);
   }

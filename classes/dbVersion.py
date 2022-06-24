@@ -1,5 +1,6 @@
 from .shared import db
 
+
 class dbVersion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.Float)
@@ -8,4 +9,4 @@ class dbVersion(db.Model):
         self.version = version
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id

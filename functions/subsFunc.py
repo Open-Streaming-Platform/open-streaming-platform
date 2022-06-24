@@ -13,15 +13,20 @@ from functions.scheduled_tasks import message_tasks
 
 from classes.shared import db
 
-log = logging.getLogger('app.functions.subsFunc')
+log = logging.getLogger("app.functions.subsFunc")
+
 
 def processSubscriptions(channelID, subject, message, type):
-    subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=channelID).all()
+    subscriptionQuery = subscriptions.channelSubs.query.filter_by(
+        channelID=channelID
+    ).all()
 
     sysSettings = cachedDbCalls.getSystemSettings()
     if sysSettings.maintenanceMode == False:
         if subscriptionQuery:
-            system.newLog(2, "Sending Subscription Emails for Channel ID: " + str(channelID))
+            system.newLog(
+                2, "Sending Subscription Emails for Channel ID: " + str(channelID)
+            )
 
             subCount = 0
             for sub in subscriptionQuery:
@@ -34,8 +39,18 @@ def processSubscriptions(channelID, subject, message, type):
                         send = True
 
                     if send == True:
-                        result = message_tasks.send_email.delay(subject, userQuery.email, message)
+                        result = message_tasks.send_email.delay(
+                            subject, userQuery.email, message
+                        )
                         subCount = subCount + 1
-            system.newLog(2, "Processed " + str(subCount) + " out of " + str(len(subscriptionQuery)) + " Email Subscriptions for Channel ID: " + str(channelID) )
+            system.newLog(
+                2,
+                "Processed "
+                + str(subCount)
+                + " out of "
+                + str(len(subscriptionQuery))
+                + " Email Subscriptions for Channel ID: "
+                + str(channelID),
+            )
     db.session.commit()
     return True

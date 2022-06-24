@@ -1,4 +1,4 @@
-self.addEventListener("fetch", event => console.log(`[ServiceWorker] Fetch ${event.request.url}`)) 
+self.addEventListener("fetch", event => console.log(`[ServiceWorker] Fetch ${event.request.url}`))
 
 const offlineHTML = `
 
@@ -23,11 +23,11 @@ const offlineHTML = `
       background-color: #ffffff;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cpolygon fill='%23DCEFFA' fill-opacity='0.48' points='100 0 0 100 100 100 100 200 200 100 200 0'/%3E%3C/svg%3E");
     }
-    
+
 	.message {
 	  align-self: flex-end;
 	}
-	
+
     h1 {
       color: #3488db;
       text-align: center;
@@ -49,7 +49,7 @@ const offlineHTML = `
       display:block;
       margin:auto;
     }
-    
+
     .btn {
       height: 50px;
       display: block;
@@ -71,10 +71,10 @@ const offlineHTML = `
   <body>
 
   	<div class="message">
-    
+
 	 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-	 
+
 	 <svg
 	    xmlns:dc="http://purl.org/dc/elements/1.1/"
 	    xmlns:cc="http://creativecommons.org/ns#"
@@ -157,9 +157,9 @@ const offlineHTML = `
 	 </svg>
      <h1>You are offline</h1>
      </div>
- 
+
     <button class="btn" onClick="window.location.reload();">Retry</button>
-    
+
   </body>
 
   </html>

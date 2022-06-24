@@ -40,10 +40,10 @@ FUNCTION mean_and_stddev,array
       ave = ave + array[i]
       count = count + 1
   endfor
-  
+
   ave = ave/count
 
-  std = stddev(array)  
+  std = stddev(array)
 
   return, {average:ave,std:std}
 

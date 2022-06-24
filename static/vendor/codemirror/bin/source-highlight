@@ -4,7 +4,7 @@
 // spits html to stdout. For example:
 //
 //   echo 'function foo(a) { return a; }' | bin/source-highlight -s javascript
-//   bin/source-highlight -s 
+//   bin/source-highlight -s
 
 var fs = require("fs");
 
