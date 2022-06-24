@@ -222,9 +222,7 @@ class api_1_Streams(Resource):
         channelIDQuery = cachedDbCalls.getChannelIDFromLocation(channelEndpointID)
 
         if channelIDQuery is not None:
-            StreamQuery = Stream.Stream.query.filter_by(linkedChannel=channelIDQuery, active=True, complete=False)\
-                .with_entities(Stream.Stream.id, Stream.Stream.topic, Stream.Stream.streamName, Stream.Stream.startTimestamp, Stream.Stream.uuid, Stream.Stream.currentViewers,
-                               Stream.Stream.totalViewers).all()
+            StreamQuery = cachedDbCalls.getChanneActiveStreams(channelIDQuery)
 
             results = []
             if sysSettings.adaptiveStreaming is True:

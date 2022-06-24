@@ -176,14 +176,6 @@
         {% endif %}
         var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
 
-        // Initialize Stream Player
-        videojs.Vhs.xhr.beforeRequest = (options) => {
-            options.headers = {
-                "X-Token-Session": hls_token
-            };
-            return options;
-        };
-
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
@@ -327,8 +319,17 @@
         });
     </script>
 
+
     <script src="/static/js/liveplayerhandler.js"></script>
     <script>
+        // Initialize Stream Player HLS Tokens
+        videojs.Vhs.xhr.beforeRequest = (options) => {
+            options.headers = {
+                "X-Token-Session": hls_token
+            };
+            return options;
+        };
+
         // Initialize Stream Player
         var player = videojs('video', {
             autoplay: true,
