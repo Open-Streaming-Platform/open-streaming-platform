@@ -157,12 +157,15 @@ def handle_new_viewer(streamData):
 def handle_add_usercount(streamData):
     channelLoc = str(streamData["data"])
 
-    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
+    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
     streamData = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
     ).first()
 
-    requestedChannel.views = requestedChannel.views + 1
+    ChannelUpdateStatement = Channel.Channel.query.filter_by(
+        channelLoc=channelLoc
+    ).update(dict(views=requestedChannel.views + 1))
+
     if streamData is not None:
         streamData.totalViewers = streamData.totalViewers + 1
     db.session.commit()
@@ -171,7 +174,6 @@ def handle_add_usercount(streamData):
     db.session.add(newView)
     db.session.commit()
 
-    db.session.commit()
     db.session.close()
     return "OK"
 
@@ -180,17 +182,21 @@ def handle_add_usercount(streamData):
 def handle_leaving_viewer(streamData):
     channelLoc = str(streamData["data"])
 
-    requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
+    requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).with_entities(Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views).first()
     stream = Stream.Stream.query.filter_by(
         active=True, streamKey=requestedChannel.streamKey
     ).first()
 
     currentViewers = xmpp.getChannelCounts(requestedChannel.channelLoc)
 
-    requestedChannel.currentViewers = currentViewers
-    if requestedChannel.currentViewers < 0:
-        requestedChannel.currentViewers = 0
-    db.session.commit()
+    ChannelUpdateStatement = Channel.Channel.query.filter_by(
+        channelLoc=channelLoc
+    ).update(dict(currentViewers=currentViewers))
+
+    if currentViewers < 0:
+        ChannelUpdateStatement = Channel.Channel.query.filter_by(
+            channelLoc=channelLoc
+        ).update(dict(currentViewers=0))
 
     if stream is not None:
         stream.currentViewers = currentViewers

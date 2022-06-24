@@ -108,8 +108,8 @@ def updateStreamData(message):
                     + ".png"
                 ),
             )
-            db.session.commit()
-            db.session.close()
+            #db.session.commit()
+            #db.session.close()
     db.session.commit()
     db.session.close()
     return "OK"
