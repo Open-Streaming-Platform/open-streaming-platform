@@ -1,10 +1,7 @@
 import os
-import json
-import subprocess
 import uuid
 import logging
 
-from flask import flash
 import flask_migrate
 
 from globals import globalvars
@@ -18,7 +15,6 @@ from classes import RecordedVideo
 from classes import Sec
 from classes import panel
 
-from functions import system
 from functions import cachedDbCalls
 
 try:
@@ -54,6 +50,81 @@ def checkDefaults(user_datastore):
                 newTopic = topics.topics(topic[0], topic[1])
                 db.session.add(newTopic)
         db.session.commit()
+
+    log.info({"level": "info", "message": "Setting Default Global Panels"})
+    # Query Existing Global Panels - If Panels are Empty, Generate Default
+    GlobalPanelQuery = panel.globalPanel.query.all()
+    if GlobalPanelQuery == []:
+        defaultPanelList = [
+            {
+                "name": "Topics",
+                "type": 4,
+                "header": "Topics",
+                "order": 0,
+                "content": "",
+            },
+            {
+                "name": "Streams",
+                "type": 1,
+                "header": "Currently Live",
+                "order": 0,
+                "content": "",
+            },
+            {
+                "name": "Videos",
+                "type": 2,
+                "header": "Videos",
+                "order": 0,
+                "content": "",
+            },
+            {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
+            {
+                "name": "Channels",
+                "type": 5,
+                "header": "Channels",
+                "order": 0,
+                "content": "",
+            },
+        ]
+        for entry in defaultPanelList:
+            newPanel = panel.globalPanel(
+                entry["name"],
+                entry["type"],
+                entry["header"],
+                entry["order"],
+                entry["content"],
+            )
+            db.session.add(newPanel)
+            db.session.commit()
+
+    # Establish Initial Main Page Panel Layout
+    mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(
+        pageName="root.main_page", panelType=0
+    ).all()
+    if mainPagePanelMappingQuery == []:
+        defaultMapping = ["Streams", "Topics", "Videos", "Clips"]
+        for entry in defaultMapping:
+            mappingIndex = defaultMapping.index(entry)
+            globalPanelQuery = panel.globalPanel.query.filter_by(name=entry).first()
+            if globalPanelQuery is not None:
+                newPanelMapping = panel.panelMapping(
+                    "root.main_page", 0, globalPanelQuery.id, mappingIndex
+                )
+                db.session.add(newPanelMapping)
+                db.session.commit()
+
+    # Insert Initial RTMP Server from Env Variable OSP_RTMP_SERVER
+    log.info({"level": "info", "message": "Setting Default RTMP Servers"})
+    rtmpServerAddress = os.getenv("OSP_RTMP_SERVER")
+    if rtmpServerAddress != None:
+        rtmpServerQuery = settings.rtmpServer.query.filter_by(
+            address=rtmpServerAddress
+        ).first()
+        if rtmpServerQuery is None:
+            newRTMPServer = settings.rtmpServer(rtmpServerAddress)
+            newRTMPServer.hide = True
+            db.session.add(newRTMPServer)
+            db.session.commit()
     return True
 
 
@@ -287,79 +358,6 @@ def dbFixes():
     for channel in ChannelQuery:
         channel.showHome = True
         db.session.commit()
-
-    # Query Existing Global Panels - If Panels are Empty, Generate Default
-    GlobalPanelQuery = panel.globalPanel.query.all()
-    if GlobalPanelQuery == []:
-        defaultPanelList = [
-            {
-                "name": "Topics",
-                "type": 4,
-                "header": "Topics",
-                "order": 0,
-                "content": "",
-            },
-            {
-                "name": "Streams",
-                "type": 1,
-                "header": "Currently Live",
-                "order": 0,
-                "content": "",
-            },
-            {
-                "name": "Videos",
-                "type": 2,
-                "header": "Videos",
-                "order": 0,
-                "content": "",
-            },
-            {"name": "Clips", "type": 3, "header": "Clips", "order": 0, "content": ""},
-            {
-                "name": "Channels",
-                "type": 5,
-                "header": "Channels",
-                "order": 0,
-                "content": "",
-            },
-        ]
-        for entry in defaultPanelList:
-            newPanel = panel.globalPanel(
-                entry["name"],
-                entry["type"],
-                entry["header"],
-                entry["order"],
-                entry["content"],
-            )
-            db.session.add(newPanel)
-            db.session.commit()
-
-    # Establish Initial Main Page Panel Layout
-    mainPagePanelMappingQuery = panel.panelMapping.query.filter_by(
-        pageName="root.main_page", panelType=0
-    ).all()
-    if mainPagePanelMappingQuery == []:
-        defaultMapping = ["Streams", "Topics", "Videos", "Clips"]
-        for entry in defaultMapping:
-            mappingIndex = defaultMapping.index(entry)
-            globalPanelQuery = panel.globalPanel.query.filter_by(name=entry).first()
-            if globalPanelQuery is not None:
-                newPanelMapping = panel.panelMapping(
-                    "root.main_page", 0, globalPanelQuery.id, mappingIndex
-                )
-                db.session.add(newPanelMapping)
-                db.session.commit()
-
-    # Insert Initial RTMP Server from Env Variable OSP_RTMP_SERVER
-    rtmpServerAddress = os.getenv("OSP_RTMP_SERVER")
-    if rtmpServerAddress != None:
-        rtmpServerQuery = settings.rtmpServer.query.filter_by(
-            address=rtmpServerAddress
-        ).first()
-        if rtmpServerQuery is None:
-            newRTMPServer = settings.rtmpServer(rtmpServerAddress)
-            newRTMPServer.hide = True
-            db.session.add(newRTMPServer)
-            db.session.commit()
 
     return True
 
