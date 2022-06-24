@@ -1,0 +1,109 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% from "security/custom_macros.html" import fields_errors %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Register</title>
+
+<script type="text/javascript" src="/static/vendor/socketio/js/socket.io.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="login-box">
+    <div class="branding d-flex justify-content-center">
+        <div class="circular_image">
+            <img src="{{sysSettings.systemLogo}}">
+        </div>
+    </div>
+    <h2 class="title">Register</h2>
+    {{fields_errors(register_user_form.username,register_user_form.email,register_user_form.password)}}
+    <form action="{{ url_for_security('register') }}" onsubmit="return validateForm();" method="POST" name="register_user_form">
+    {{ register_user_form.hidden_tag() }}
+        <div class="user-box">
+            <input autocomplete="off" id="username" name="username" required="" type="text" value="">
+            <label for="username"><i class="fas fa-user-circle"></i> Username</label>
+        </div>
+        <div class="user-box">
+            <input autocomplete="off" id="email" name="email" required="" type="email" value="">
+            <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+        </div>
+        <div class="user-box">
+            <input autocomplete="off" id="password" name="password" required="" type="password" value="">
+            <label><i class="fas fa-key"></i> Password</label>
+        </div>
+        {% if register_user_form.password_confirm %}
+        <div class="user-box">
+            <input autocomplete="off" id="password_confirm" name="password_confirm" required="" type="password" value="">
+            <label><i class="fas fa-key"></i> Confirm Password</label>
+        </div>
+        {% endif %}
+        {% if recaptchaEnabled %}
+            {% for error in register_user_form.recaptcha.errors %}
+                {{ error }}
+            {% endfor %}
+            {{ register_user_form.recaptcha }}
+        {% endif %}<br>
+        <small class="hint d-flex justify-content-around">
+            <a href="/login">Login</a>
+        </small>
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Register">
+        </div>
+    </form>
+    {% if SystemOAuthProviders != [] %}
+        <hr>
+        {% for provider in SystemOAuthProviders %}
+            <div class="my-2 d-grid gap-2">
+                <a href="/oauth/login/{{provider.name}}" class="btn btn-lg btn-block boxShadow" style="background-color:{{provider.displayColor}};border-color:{{provider.displayColor}};color:white;">
+                    {% if provider.preset_auth_type =="Discord" %}<img class="float-left" src="/static/img/Discord-Logo-White.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Reddit" %}<img class="float-left" src="/static/img/Reddit_logo.png" style="width:32px;height:32px;">{% endif %}
+                    {% if provider.preset_auth_type =="Facebook" %}<img class="float-left" src="/static/img/facebook.png" style="width:32px;height:32px;">{% endif %}
+                    {{provider.friendlyName}}
+                </a>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript" charset="utf-8">
+    var conn_options = {
+        'sync disconnect on unload':true
+    };
+
+    var socket = io();
+</script>
+
+<script>
+
+    document.getElementById('username').addEventListener('change', function() {
+        document.getElementById('username').setCustomValidity('');
+    });
+    document.getElementById('email').addEventListener('change', function() {
+        document.getElementById('email').setCustomValidity('');
+    });
+
+    function validateForm() {
+        var validForm = true;
+
+        // Check for Spaces in Username
+        var usernameDiv = document.getElementById('username');
+        usernameRegEx = new RegExp("[\\w]+$");
+        if (usernameRegEx.test(usernameDiv.value) === false) {
+            usernameDiv.setCustomValidity('Username Cannot Contain Special Characters');
+            validForm = false;
+        }
+
+        var emailDiv = document.getElementById('email');
+        emailRegEx = new RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$');
+        if (emailRegEx.test(emailDiv.value) === false) {
+            emailDiv.setCustomValidity('Must be a valid email');
+            validForm = false;
+        }
+
+        return validForm;
+    }
+</script>
+{% endblock %}

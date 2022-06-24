@@ -1,0 +1,44 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Local Authentication to oAuth</title>
+{% endblock %}
+
+{% block body %}
+<div class="login-box w-50">
+    <h2 class="title">Open Streaming Platform</h2>
+    <h4 class="title">Local Authentication / oAuth Conversion</h4>
+    <form class="form" action="/oauth/convert/{{provider.name}}" method="POST">
+      <div id="convertBox">
+        <p>A Local User Already Exists with the same email address. <br><br> To Convert from Local Authentication to {{provider.friendlyName}}, enter your Password Below:</p>
+        <div class="row">
+            <div class="col-12">
+              <div class="d-flex justify-content-center my-2">
+                <img class="boxShadow rounded" src="/images/{{existingUser.pictureLocation}}" style="width:64px;height:64px;">
+              </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+          <div class="row">
+            <div class="col-12 text-center">
+              <b>{{existingUser.username}}</b>
+            </div>
+
+          </div>
+        </div>
+        <div class="user-box">
+          <input autocomplete="off" id="password" name="password" required type="password" value="">
+          <label for="password"><i class="fas fa-key"></i> Password</label>
+        </div>
+        <input type="hidden" name="oAuthUsername" value="{{oAuthData[provider.username_value]}}">
+        <input type="hidden" name="oAuthID" value="{{oAuthData['id']}}">
+        <input type="hidden" name="existingUserID" value="{{existingUser.id}}">
+        <div class="d-flex justify-content-end">
+          <a href="/login" class="btn btn-secondary boxShadow me-2">Cancel</a>
+          <input type="submit" class="btn btn-success boxShadow" value="Convert">
+        </div>
+      </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% block head %}
+<title>{{sysSettings.siteName}} - Notifications</title>
+
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-5 mx-auto">
+            <div class="card my-5">
+                <h5 class="card-header text-white bg-dark mb-3">
+                    Notifications <a href="javascript:void(0);" class="float-right text-light" onclick="clearAllListNotifications(); return false;">Mark all as read</a>
+                </h5>
+                <div class="card-body">
+                    <ul class="notificationCardList">
+                        <div class="notificationBodyFull">
+                            {% if notificationList != [] %}
+                              {% for entry in notificationList %}
+                              <li class="notification-box my-2" id="notificationList-{{entry.notificationID}}">
+                                <div class="row">
+                                  <div class="col-lg-1 col-sm-1 col-1 {% if entry.read == False %}unreadItemIndicator{% endif %}">
+                                    <img width="35" height="35" class="userPhoto rounded notificationImg" src="{{entry.image}}" onerror="this.src='/static/img/user2.png';">
+                                  </div>
+                                  <div class="col-lg-11 col-sm-11 col-11">
+                                    <span class="float-right"><a href="javascript:void(0);" onclick="clearListNotification('{{entry.notificationID}}'); return false;"><i class="fas fa-times"></i></a></span>
+                                    <a href="{{entry.link}}"><div>{{entry.message}}</div></a>
+                                    <small class="">{{entry.timestamp|normalize_date}}</small>
+                                  </div>
+                                </div>
+                              </li>
+                              {% endfor %}
+                            {% endif %}
+                            <li class="notification-box" id="notificationList-empty" {% if notificationList != [] %} style="display:none;" {% endif %}>
+                                <div class="row">
+                                  <div class="col-lg-12 col-sm-12 col-12">
+                                    <div>No Notifications</div>
+                                  </div>
+                                </div>
+                            </li>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    var emptyNotificationList = document.getElementById('notificationList-empty');
+
+    function clearListNotification(notificationID) {
+        var listEntry = document.getElementById('notificationList-' + notificationID);
+        listEntry.parentNode.removeChild(listEntry);
+        clearNotification(notificationID);
+        if (notificationCount <= 0) {
+            emptyNotificationList.style.display = "block";
+        }
+    }
+
+    function clearAllListNotifications() {
+      var ids = $('.notificationBodyFull .notification-box').map(function(){
+        return $(this).attr('id');
+        }).get();
+      ids.forEach(function (item, index) {
+        if (item != 'notificationList-empty') {
+          item = item.replace('notificationList-','');
+          clearNotification(item);
+        }
+      });
+      if (notificationCount <= 0) {
+        emptyNotificationList.style.display = "block";
+      }
+    }
+
+  </script>
+{% endblock %}

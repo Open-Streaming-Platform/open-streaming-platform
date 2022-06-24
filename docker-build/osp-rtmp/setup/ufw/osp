@@ -1,0 +1,10 @@
+# Open Streaming Platform
+# This usually runs on the default http, https and rtmp ports
+#
+# 1. Put this into `/etc/ufw/applications.d/`
+# 2. activate with `ufw allow osp`
+# 3. reload your ufw `ufw reload`
+[osp]
+title=Open Streaming Platform
+description=Live Video Streaming Platform using RTMP and HLS
+ports=80,443,1935/tcp

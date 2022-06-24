@@ -1,0 +1,70 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Channels</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-2" id="index-channels-container">
+    <div class="row mx-2">
+        <div id="channelList" class="col-lg col-xs-12 col-sm-12">
+            <div class="row">
+                <div class="col-12 col-md-10 col-lg-11">
+                    <div class="index-live-title"><b>Channels</b></div>
+                </div>
+                <div class="col-12 col-md-2 col-lg-1">
+                    <span class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-sort"></i> Sort
+                        </button>
+                        <div class="dropdown-menu shadow" aria-labelledby="dropdownMenuButton">
+                            <span class="sort dropdown-item" data-sort="name">Sort by Name</span>
+                            <span class="sort dropdown-item" data-sort="subs">Sort by Subscriptions</span>
+                            <span class="sort dropdown-item" data-sort="views">Sort by Views</span>
+                            <span class="sort dropdown-item" data-sort="topic">Sort by Topic</span>
+                        </div>
+                    </span>
+                </div>
+            </div>
+            <ul class="itemList list d-flex flex-wrap justify-content-around">
+                {% for channel in channelList %}
+                <li class="channel-card bg-dark mx-4" style="max-width: 20rem;">
+                    <div class="channel-card-header">
+                        <a href="/channel/{{channel.id}}/">
+                            <img class="shadow lazy" height="180" width="320" src="/images/{{channel.imageLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';"></a>
+                    </div>
+                    <div class="channel-card-body">
+                        <i class="fas fa-podcast mr-2"></i><a href="/channel/{{channel.id}}/"><span class="video-title name"><b> {{channel.channelName}}</b></span></a>
+                        <span class="float-right">
+                            {% if channel.id | get_channelLiveStatus %}
+                            <span class="badge badge-danger">Live</span>
+                            {% else %}
+                            <span class="badge badge-secondary">Offline</span>
+                            {% endif %}
+                        </span><br />
+                        <i class="fas fa-user mr-2"></i><a href="/streamer/{{channel.owningUser}}"> {{channel.owningUser|get_userName}}</a>
+                        {% if channel.protected and sysSettings.protectionEnabled %}<span class="float-right"><span class="badge badge-info"><i class="fas fa-user-lock"></i> Protected</span>{% endif %}</span><br />
+                        <i class="fas fa-hashtag mr-2"></i> <a href="/topic/{{channel.topic}}/"><span class="topic">{{channel.topic|get_topicName}}</span></a>
+                        <span class="float-right">
+                            <i class="fas fa-users mr-2"></i> <span class="views">{{channel.views}}</span>
+                            <i class="fas fa-star mx-2"></i> <span class="subs">{{channel.id|get_channelSubCount}}</span>
+                        </span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    channelListOptions = {
+        valueNames: ['name', 'username', 'subs', "views", "topic"]
+    };
+
+    var channelList = new List('channelList', channelListOptions);
+</script>
+{% endblock %}

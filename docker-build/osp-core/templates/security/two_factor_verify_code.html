@@ -1,0 +1,28 @@
+
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block head %}
+<title>{{sysSettings.siteName}} - Two-Factor Authentication</title>
+{% endblock %}
+
+{% block body %}
+<div class="login-box">
+    <div class="branding d-flex justify-content-center">
+        <div class="circular_image">
+            <img src="{{sysSettings.systemLogo}}">
+        </div>
+    </div>
+    <h2 class="title">{{ _fsdomain("Two-factor Authentication") }}</h2>
+    <form method="POST" action="{{ url_for_security('two_factor_token_validation') }}" name="two_factor_verify_code_form">
+    {{ two_factor_verify_code_form.hidden_tag() }}
+        <div class="user-box mt-4">
+            <input autocomplete="off" id="code" name="code" required="" type="text" value="">
+            <label><i class="fas fa-shield-alt"></i> Authentication Code</label>
+        </div>
+        <div class="d-grid gap-2">
+            <input class="btn btn-primary boxShadow" id="submit" name="submit" type="submit" value="Submit">
+        </div>
+    </form>
+</div>
+{% endblock %}

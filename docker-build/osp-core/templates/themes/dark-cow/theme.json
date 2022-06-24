@@ -1,0 +1,22 @@
+{
+  "Name": "dark-cow",
+  "Maintainer": "m00lean",
+  "Version": "0.1",
+  "Description": "A dark theme",
+  "Override": [
+    "channelplayer.html",
+    "channelProtectionAuth.html",
+    "channels.html",
+    "chatpopout.html",
+    "index.html",
+    "streamers.html",
+    "topics.html",
+    "userSettings.html",
+    "videoListView.html",
+    "vidplayer.html",
+    "clipplayer.html",
+    "search.html",
+    "subscriptions.html",
+    "notifications.html"
+  ]
+}

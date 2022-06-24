@@ -1,0 +1,477 @@
+{% extends "themes/" + sysSettings.systemTheme + "/layout.html" %}
+
+{% import "themes/" + sysSettings.systemTheme + "/macros/core_ui.html" as core_ui with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/cards.html" as cards with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/panels.html" as panels with context %}
+{% import "themes/" + sysSettings.systemTheme + "/macros/modals.html" as modals with context %}
+
+<!--Start Header Block-->
+{% block head %}
+<title>{{sysSettings.siteName}} - {{channel.channelName}}</title>
+<meta name="twitter:card" content="player" />
+<meta property="og:site_name" content="{{sysSettings.siteName}}" />
+<meta property="og:title" content="{{channel.channelName}}" />
+<meta property="og:type" content="video.other" />
+<meta property="og:url" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/view/{{channel.channelLoc}}" />
+<meta property="og:image" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/images/{{channel.imageLocation}}" />
+<meta property="og:description" content="{{channel.description}}" />
+<meta property="og:video" content="{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}{{streamURL}}" />
+<meta property="og:video:type" content="application/x-mpegURL" />
+<meta name="keywords" content="{% for tag in channel.id | get_channelTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+
+<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+<link href="/static/css/Defaultv3/chat.css" rel="stylesheet">
+{% endblock %}
+
+<!--Start Body Block-->
+{% block body %}
+    <div class="row gx-0">
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != True %} style="width: 100%;" {% endif %}>
+            <div class="stream-panel">
+                {{ panels.live_stream(channel) }}
+                <div class="row gx-0 mb-2">
+                    <div class="col-xl-8 col-lg-8 col-md-12 box2-fill">
+                        {{ panels.stream_metadata_panel(channel, stream) }}
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 box2-fill">
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_control_panel(channel, current_user) }}
+                            </div>
+                        </div>
+                        <div class="row gx-0">
+                            <div class="col">
+                                {{ panels.stream_views_panel(channel, stream) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% for panel in channelPanelList %}
+                    {% set panelItem = getPanel(panel.panelId, 2) %}
+                    {% if panelItem.type == 0 %}
+                        {{ panels.text_panel(panelItem.header, panelItem.content) }}
+                    {% elif panelItem.type == 1  %}
+                        {% set panelStreamList = getPanelStreamList(panelItem.order, 16) %}
+                        {% if panelStreamList != [] %}
+                            {{ panels.live_streams_panel(panelStreamList, title=panelItem.header) }}
+                        {% endif %}
+                    {% elif panelItem.type == 2  %}
+                        {% set panelVideoList = getPanelVideoList(panelItem.order, 16) %}
+                        {% if panelVideoList != [] %}
+                            {{ panels.videos_panel(panelVideoList, title=panelItem.header, order=panelItem.order) }}
+                        {% endif %}
+                    {% elif panelItem.type == 3  %}
+                        {% set panelClipList = getPanelClipList(panelItem.order, 16) %}
+                        {% if panelClipList != [] %}
+                            {{ panels.clips_panel(panelClipList, title=panelItem.header) }}
+                        {% endif %}
+                    {% elif panelItem.type == 4  %}
+                        {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
+                    {% elif panelItem.type == 5  %}
+                        {{ panels.channels_panel(channelList, title=panelItem.header) }}
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled == False %} style="display: none;" {% endif %}>
+            <div class="side-chat-pane h-100">
+                <div class="side-chat-panel-container h-100">
+                    {{ panels.chat_loader() }}
+                    {{ panels.chat_guest_username_input() }}
+                    {{ panels.chat_unavailable_info() }}
+                    {{ panels.core_chat(stickerSelectorList) }}
+                    <!--Chat Templates-->
+                    {% if channel.chatFormat == 'irc' %}
+                        {{ panels.core_chat_message_template_irc() }}
+                    {% else  %}
+                        {{ panels.core_chat_message_template_messenger() }}
+                    {% endif %}
+                    {{ panels.core_chat_profile_template() }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!--Start Modal Block-->
+{% block modals %}
+    {{ modals.stream_share(request, stream, rtmpURI) }}
+    {{ modals.edit_stream(stream, topics) }}
+{% endblock %}
+
+<!--Start Script Block-->
+{% block scripts %}
+    <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
+    <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
+    <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
+    <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.muc.min.js" type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
+    <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
+    <script src='/static/js/chatv2.js' type="text/javascript"></script>
+
+
+    <script>
+        function submitStreamChanges() {
+            var newStreamNameDiv = document.getElementById("editStreamNameInput");
+            var newStreamTopicDiv = document.getElementById("editChannelTopicInput");
+            socket.emit('updateStreamData', { name: newStreamNameDiv.value, topic: newStreamTopicDiv.value, channel: "{{channel.channelLoc}}" });
+        }
+    </script>
+
+    <script>
+        var streamURL = '{{ streamURL }}';
+        var channelLocation = '{{ channel.channelLoc }}';
+        var showpartjoin = '{{channel.showChatJoinLeaveNotification}}';
+        var bannedMessages = '{{bannedMessages|tojson}}';
+        var chatHistory = '{{channel.chatHistory}}';
+        var topicJSList = [];
+        {% for x in topics -%}
+        topicJSList["{{x.id}}"] =  "{{x.name}}";
+        {% endfor %}
+    </script>
+
+    <script>
+        // Handing of Stream Timer
+        function convertToHMS(timestamp) {
+            var sec_num = parseInt(timestamp, 10); // don't forget the second param
+            var hours = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (hours < 10) { hours = "0" + hours; }
+            if (minutes < 10) { minutes = "0" + minutes; }
+            if (seconds < 10) { seconds = "0" + seconds; }
+            return hours + ':' + minutes + ':' + seconds;
+        }
+
+        var streamTimeStamp = new Date('{{ stream.startTimestamp }} UTC');
+
+        var timer = setInterval(updateTimer, 1000);
+        function updateTimer() {
+            if (isNaN(streamTimeStamp.getTime())) {
+                document.getElementById('streamTime').innerHTML = '--:--:--';
+            } else {
+                var currentTimestamp = new Date()
+                var timerDif = Math.floor((currentTimestamp.getTime() - streamTimeStamp.getTime()) / 1000);
+                var timerDifParsed = convertToHMS(timerDif);
+                document.getElementById('streamTime').innerHTML = timerDifParsed;
+            }
+        }
+    </script>
+
+    <script>
+        // Generate HLS Tokens
+        {% if current_user.is_authenticated %}
+            var hls_user = "{{ current_user.username }}"
+        {% else %}
+            var hls_user = "Guest"
+        {% endif %}
+        var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
+
+        // Settings and Event Hooks for XMPP
+        var bannedWords = {{bannedWords|safe}};
+        {% if current_user.is_authenticated %}
+        var username = "{{current_user.username}}";
+        var userUUID = "{{current_user.uuid}}";
+        var xmppPassword = "{{current_user.xmppToken}}";
+        {% else %}
+        var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+        var userUUID = "{{session['guestUUID']}}";
+        var xmppPassword = "fakepw";
+        {% endif %}
+        var serverproto = '{{sysSettings.siteProtocol}}';
+        var server = '{{sysSettings.siteAddress}}';
+        var BOSH_SERVICE = serverproto + '{{xmppserver}}' + '/http-bind/';
+        var ROOM_SERVICE = 'conference.' + server;
+        var ROOMNAME = '{{channel.channelLoc}}';
+        var CHANNELPROTECTED = {{channel.protected|lower}};
+        {% if channel.protected %}
+        var CHANNELTOKEN = '{{channel.xmppToken}}';
+        {% else %}
+        var CHANNELTOKEN = null;
+        {% endif %}
+        var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
+
+        var username = username.replace(/ /g,"_");
+        var ChatContentWindow = document.getElementById("chatContentWindow");
+        var ChatInputBar = document.getElementById('chatinput');
+        ChatInputBar.placeholder = "Send Message As " + username + "...";
+
+        var stickerList = {{ stickerList | safe }}
+
+        $('#chatinput').on('keyup', function(e) {
+            if (e.keyCode === 13) {
+                sendMessage();
+            }
+        });
+
+        // Hide Profile Box on Click Outside
+        $(document).mouseup(function(e)
+        {
+          var container = $("#newProfileBox");
+            if (!container.is(e.target) && container.has(e.target).length === 0)
+            {
+                container.remove();
+            }
+        });
+
+        // Start Connection on Load
+        {%  if current_user.is_authenticated or channel.allowGuestNickChange == False %}
+        $(window).bind('load', function() {
+            var url = BOSH_SERVICE;
+            connection = new Strophe.Connection(url);
+            connection.rawInput = rawInput;
+            connection.rawOutput = rawOutput;
+            connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
+        });
+        {% else %}
+        $(window).bind('load', function() {
+            showLoginWindow()
+        });
+        {%  endif %}
+
+        // Page Leaving Process
+        $(window).bind('beforeunload', function(){
+              // Leave Room First
+              if (connection !== null) {
+                  exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+                  // Execute XMPP Disconnection Process
+                  //connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+                  connection.flush();
+                  connection.disconnect();
+              }
+             // Disconnect from SocketIO
+             socket.emit('removeViewer', {data: channelLocation});
+        });
+    </script>
+
+    <script>
+        function popoutChat() {
+            {% if current_user.is_authenticated %}
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True','myWindow', 'width=500,height=900');
+            {% else %}
+            popoutWindow=window.open('/view/{{channel.channelLoc}}/?chatOnly=True&guestUser=' + username,'myWindow', 'width=500,height=900');
+            {% endif %}
+            checkWindow = true;
+            setTimeout(function () { popinChat('chatWindow'); }, 1000);
+            if (connection !== null) {
+                connection.flush();
+                connection.disconnect();
+            }
+            document.getElementById("sidePanel").style.display = "none";
+            document.getElementById("mainContentPanel").style.setProperty('width', '100%');
+            if ( $('#videoContainer').hasClass('theater-mode')) {
+                document.getElementById("videoContainer").style.setProperty('width', '100%');
+            }
+        }
+    </script>
+
+    <script>
+        function popinChat(win) {
+            if (checkWindow === true) {
+                if (win === 'chatWindow') {
+                    if (popoutWindow.closed) {
+                        document.getElementById("sidePanel").style.display = "block";
+                        //document.getElementById("mainContentPanel").style.setProperty('width', 'calc(100% - var(--side-panel-width))');
+                        document.getElementById('mainContentPanel').style.removeProperty('width');
+                        if ($('#videoContainer').hasClass('theater-mode')) {
+                            document.getElementById("videoContainer").style.removeProperty('width');
+                        }
+                        connectChat();
+                    } else {
+                        setTimeout(function () { popinChat('chatWindow'); }, 1000);
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        setInterval(function () {
+            socket.emit('getViewerTotal', { data: "{{channel.channelLoc}}" });
+        }, 5000);
+    </script>
+
+    <script>
+        socket.on('connect', function () {
+            socket.emit('newViewer', { data: '{{channel.channelLoc}}' });
+            socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
+        });
+    </script>
+
+    <script>
+        socket.on('disconnect', function () {
+            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
+        });
+    </script>
+
+    <script type="text/javascript" charset="utf-8">
+        socket.on('viewerTotalResponse', function (msg) {
+            document.getElementById("currentViewers").innerHTML = msg['data'];
+        });
+    </script>
+
+
+    <script src="/static/js/liveplayerhandler.js"></script>
+    <script>
+        // Initialize Stream Player HLS Tokens
+        videojs.Vhs.xhr.beforeRequest = (options) => {
+            options.headers = {
+                "X-Token-Session": hls_token
+            };
+            return options;
+        };
+
+        // Initialize Stream Player
+        var player = videojs('video', {
+            autoplay: true,
+            errorDisplay: false,
+            liveui: true,
+            liveTracker: {
+                trackingThreshold: 5,
+                liveTolerance: 15
+            },
+            html5:
+                {
+                    nativeAudioTracks: false,
+                    nativeVideoTracks:false,
+                    vhs:
+                        {
+                            overrideNative: true
+                        }
+                },
+            plugins : {
+                httpSourceSelector: {
+                    default: 'auto'
+                }
+            }
+        });
+
+        qualityLevels = player.qualityLevels();
+        httpSelector = player.httpSourceSelector();
+
+        player.ready(function() {
+               this.src({
+                       src: streamURL,
+                       type: 'application/x-mpegURL'
+               });
+       });
+       player.play();
+    </script>
+
+    <script>
+        function togglePlayPause() {
+            if (player.paused()) {
+                player.play();
+            } else {
+                player.pause();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (player.isFullscreen()) {
+                player.exitFullscreen();
+            } else  {
+                player.requestFullscreen();
+            }
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
+                switch (e.keyCode) {
+                    case 37: // left arrow
+                        player.currentTime(player.currentTime() - 5);
+                        break;
+                    case 39: // right arrow
+                        player.currentTime(player.currentTime() + 5);
+                        break;
+                    case 38: // up arrow
+                        e.preventDefault();
+                        player.volume(player.volume() + 0.1);
+                        break;
+                    case 40: // down arrow
+                        e.preventDefault();
+                        player.volume(player.volume() - 0.1);
+                        break;
+                    case 0: case 32: // spacebar
+                        e.preventDefault();
+                        togglePlayPause();
+                        break;
+                    case 70: // F
+                        toggleFullscreen();
+                        break;
+                    default:
+                        return;
+                }
+            }
+        })
+    </script>
+
+
+    <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
+    <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
+    <script>
+        player.theaterMode({ elementToToggle: 'videoContainer', className: 'theater-mode' });
+
+        // get default maxHeight
+        var videoMaxHeight = document.getElementById("video").style.maxHeight;
+
+        function enableTheaterMode() {
+            document.getElementById("nav").style.display = 'none';
+            document.getElementById("leftnav").style.display = 'none';
+            document.getElementById("vidControls").style.display = 'none';
+            document.getElementById("video").style.maxHeight = '100vh';
+            document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
+            document.getElementById("sidePanel").style.maxHeight = '100vh';
+            document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
+            document.getElementById("sidePanel").style.position = 'fixed';
+            document.getElementById("sidePanel").style.top = '0';
+            document.getElementById("sidePanel").style.right = '0';
+            if ( $('#sidePanel').is(':hidden')) {
+                document.getElementById("videoContainer").style.setProperty('width', '100%');
+            }
+        }
+
+        function disableTheaterMode() {
+            document.getElementById("nav").style.display = 'block';
+            document.getElementById("leftnav").style.removeProperty('display');
+            document.getElementById("vidControls").style.display = 'block';
+            document.getElementById("video").style.maxHeight = videoMaxHeight;
+            document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
+            document.getElementById("video_html5_api").style.removeProperty('height');
+            document.getElementById("sidePanel").style.removeProperty('maxHeight');
+            document.getElementById("sidePanel").style.removeProperty('height');
+            document.getElementById("sidePanel").style.removeProperty('position');
+            document.getElementById("sidePanel").style.removeProperty('top');
+            document.getElementById("sidePanel").style.removeProperty('right');
+            document.getElementById("videoContainer").classList.remove('theater-mode');
+        }
+
+        player.on('theaterMode', function (elm, data) {
+            if (data.theaterModeIsOn) {
+                enableTheaterMode();
+            } else {
+                disableTheaterMode();
+            }
+        });
+
+        player.on('fullscreenchange', function (elm, data) {
+            if (player.isFullscreen()) {
+                document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            } else if ($("#videoContainer").hasClass("theater-mode")) {
+                document.getElementById("video_html5_api").style.maxHeight = '100vh';
+            } else {
+                document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
+            }
+        });
+    </script>
+{% endblock %}

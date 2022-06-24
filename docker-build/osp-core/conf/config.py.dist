@@ -1,0 +1,51 @@
+# Set Database Location and Type
+# For MySQL Connections add ?charset=utf8mb4 for full Unicode Support
+dbLocation = 'mysql+pymysql://osp:sqlpass@localhost/osp?charset=utf8mb4'
+
+# Redis Configuration
+redisHost="localhost" # Default localhost
+redisPort=6379 # Default 6379
+redisPassword='' # Default ''
+
+# Flask Secret Key
+secretKey="CHANGEME"
+
+# Password Salt Value
+passwordSalt="CHANGEME"
+
+# Email Settings
+smtpSendAs="sendAs@email.com"
+smtpServerAddress="smtp.email.com"
+smtpServerPort=25
+smtpUsername=""
+smtpPassword=""
+# SMTP Encryption Options are ['none', 'tls', 'ssl']
+smtpEncryption="none"
+
+# Allow Users to Register with the OSP Server
+allowRegistration=True
+
+# Require Users to Confirm their Email Addresses
+requireEmailRegistration=True
+
+# Enables Debug Mode
+debugMode = False
+
+# Set Log Level (Default: warning, Options: debug, info, warning, error, critical)
+log_level = 'warning'
+
+# EJabberD Configuration
+ejabberdAdmin = "admin"
+ejabberdPass = "CHANGE_EJABBERD_PASS"
+ejabberdHost = "localhost"
+# ejabberdServer ="127.0.0.1"
+
+# ReCaptcha Configuration
+# RECAPTCHA_ENABLED = False
+# RECAPTCHA_SITE_KEY = "SomeKey"
+# RECAPTCHA_SECRET_KEY = "SomeOtherKey"
+
+# Sentry.io Debug Logging and Tracing
+# sentryIO_Enabled = False
+# sentryIO_DSN = "https://subdomain.ingest.sentry.io/0"
+# sentryIO_Environment = "Dev"
