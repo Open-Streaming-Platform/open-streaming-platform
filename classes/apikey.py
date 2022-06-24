@@ -3,14 +3,16 @@ from binascii import hexlify
 import os
 import datetime
 
+
 def generateKey(length):
     key = hexlify(os.urandom(length))
     return key.decode()
 
+
 class apikey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(255))
-    userID = db.Column(db.Integer,db.ForeignKey('user.id'))
+    userID = db.Column(db.Integer, db.ForeignKey("user.id"))
     key = db.Column(db.String(255))
     type = db.Column(db.Integer)
     createdOn = db.Column(db.DateTime)
@@ -26,10 +28,12 @@ class apikey(db.Model):
         if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(days=int(expirationDays))
+            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(
+                days=int(expirationDays)
+            )
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def isValid(self):
         now = datetime.datetime.utcnow()

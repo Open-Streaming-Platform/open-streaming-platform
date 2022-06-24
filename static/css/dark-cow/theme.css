@@ -13,7 +13,7 @@ a:hover {
 }
 a:active {
   color: #3488db;
-} 
+}
 a.btn, a.dropdown-item{
   color: #fff !important;
 }
@@ -47,7 +47,7 @@ table {
 .navbar{
 	border: 0px !important;
 	border-bottom: 1px solid #3488db !important;
-}	
+}
 .navbar .nav-link {
 	padding: 0.6rem 1rem;
 }
@@ -144,7 +144,7 @@ input, textarea, select{
 }
 .btn-outline-success{
     color: #3488db !important;
-} 
+}
 .btn-success{
 	background-image: linear-gradient(#3488dbc7, #3488db 60%, #3488dbb0) !important;
 	color: #fff !important;
@@ -417,13 +417,13 @@ hr {
         display: none;
         padding: 30px;
     }
-    
+
     .chatloader .chatloader-view {
         margin: 0 auto;
         width: 100%;
         text-align:center;
     }
-    
+
     .chatPanel {
       display: none;
       scrollbar-color: #1b1e22 #272b30;
@@ -435,16 +435,16 @@ hr {
       width:100%;
       flex: 0 1 auto;
     }
-    
+
     .chatPanel .chatContent {
       flex: 1 1 500px;
       overflow-x:auto;
     }
-    
+
     .chatPanel .chatContent .chatEntryContainer {
       z-index: 100;
     }
-    
+
     .chatPanel .chatContent .chatEntryContainer .chatEntry {
       background-color: #272b30;
       border-radius: 10px;
@@ -460,54 +460,54 @@ hr {
     }
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo {
     }
-    
+
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatTimestamp {
       color: grey;
       font-size: 0.7em;
     }
-    
+
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatUsername {
       font-weight: bold;
     }
-    
+
     .chatPanel .chatContent .chatEntryContainer .chatEntry .chatInfo .chatMessage {
       font-family: Arial, Helvetica, sans-serif;
       overflow: hidden;
       word-wrap: break-word;
     }
-    
+
     .chatPanel .chatFooter {
       flex: 0 1 75px;
     }
-    
+
     .chatPanel .chatFooter input {
       background-color: #272b30;
       border: 0px solid black;
     }
-    
+
     .chatPanel .chatFooter .chatFooterTop {
       height: 30px;
     }
-    
+
     .chatMembersOverlay {
         display:none;
     }
     .modDisplayOverlay {
         display:none;
     }
-    
+
     #chatside {
         border-left: 1px solid #32383e;
         width:400px;
     }
-    
+
     .chatbox-popout {
         height:100%;
         width:100%;
         margin-top: 10px;
         margin-bottom: 50px;
     }
-    
+
     .chat-popout-bottom {
         height:100px;
         position: fixed;
@@ -516,14 +516,14 @@ hr {
         width:100%;
         padding-right:35px;
     }
-    
+
     .profileBox {
       background-color: #32383e;
       width: 300px;
       height:115px;
       border: 1px solid black;
     }
-    
+
     .profileBoxHeader {
       background-color: #272b30;
       border-radius: 5px 5px 0px 0px;
@@ -531,18 +531,18 @@ hr {
       height:60px;
       width:100%;
     }
-    
+
     .profileBoxHeader .close {
       color:white;
     }
-    
+
     .profileBoxPic {
       width:40px;
       height:40px;
       background-color: green;
       text-align: center;
     }
-    
+
     #iconBar-owner {
       color: gold;
     }
@@ -1097,7 +1097,7 @@ hr {
         font-size:1em;
         top: initial;
     }
-    
+
     .streamerCard {
         width: 100%;
         height: initial;

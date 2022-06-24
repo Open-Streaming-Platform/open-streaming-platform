@@ -4,7 +4,8 @@ from classes import Sec
 from classes import apikey
 from classes.shared import db
 
-log = logging.getLogger('app.functions.apiFunc')
+log = logging.getLogger("app.functions.apiFunc")
+
 
 def isValidAdminKey(requestedAPIKey):
     validKey = False

@@ -7,17 +7,22 @@ from classes import webhook
 
 from functions import system
 
-log = logging.getLogger('app.functions.database')
+log = logging.getLogger("app.functions.database")
+
 
 @system.asynch
 def runWebhook(channelID, triggerType, **kwargs):
     webhookQueue = []
     if channelID != "ZZZ":
 
-        webhookQuery = webhook.webhook.query.filter_by(channelID=channelID, requestTrigger=triggerType).all()
+        webhookQuery = webhook.webhook.query.filter_by(
+            channelID=channelID, requestTrigger=triggerType
+        ).all()
         webhookQueue.append(webhookQuery)
 
-    globalWebhookQuery = webhook.globalWebhook.query.filter_by(requestTrigger=triggerType).all()
+    globalWebhookQuery = webhook.globalWebhook.query.filter_by(
+        requestTrigger=triggerType
+    ).all()
     webhookQueue.append(globalWebhookQuery)
 
     for queue in webhookQueue:
@@ -38,14 +43,23 @@ def runWebhook(channelID, triggerType, **kwargs):
                         r = requests.delete(url, headers=header, data=payload)
                 except:
                     pass
-                system.newLog(8, "Processing Webhook for ID #" + str(hook.id) + " - Destination:" + str(url))
+                system.newLog(
+                    8,
+                    "Processing Webhook for ID #"
+                    + str(hook.id)
+                    + " - Destination:"
+                    + str(url),
+                )
     db.session.commit()
     db.session.close()
     return True
 
+
 @system.asynch
 def testWebhook(webhookType, webhookID, **kwargs):
-    system.newLog(8, "Testing Webhook for ID #" + str(webhookID) +", Type: " + webhookType)
+    system.newLog(
+        8, "Testing Webhook for ID #" + str(webhookID) + ", Type: " + webhookType
+    )
     webhookQuery = None
     if webhookType == "channel":
         webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
@@ -66,12 +80,19 @@ def testWebhook(webhookType, webhookID, **kwargs):
             elif requestType == 3:
                 r = requests.delete(url, headers=header, data=payload)
         except Exception as e:
-            print("Webhook Error-" + str(e) )
-        system.newLog(8, "Completed Webhook Test for ID #" + str(webhookQuery.id) + " - Destination:" + str(url))
+            print("Webhook Error-" + str(e))
+        system.newLog(
+            8,
+            "Completed Webhook Test for ID #"
+            + str(webhookQuery.id)
+            + " - Destination:"
+            + str(url),
+        )
+
 
 def processWebhookVariables(payload, **kwargs):
     for key, value in kwargs.items():
-        replacementValue = ("%" + key + "%")
+        replacementValue = "%" + key + "%"
         if value is None or value == "":
             value = "NA"
         payload = payload.replace(replacementValue, str(value))

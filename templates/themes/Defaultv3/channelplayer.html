@@ -137,7 +137,7 @@
         topicJSList["{{x.id}}"] =  "{{x.name}}";
         {% endfor %}
     </script>
-    
+
     <script>
         // Handing of Stream Timer
         function convertToHMS(timestamp) {
@@ -306,13 +306,13 @@
             socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
         });
     </script>
-    
+
     <script>
         socket.on('disconnect', function () {
             socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
         });
     </script>
-    
+
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
@@ -383,7 +383,7 @@
                 player.requestFullscreen();
             }
         }
-        
+
         document.addEventListener("keydown", (e) => {
             if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
                 switch (e.keyCode) {

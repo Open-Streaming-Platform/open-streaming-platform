@@ -14,16 +14,23 @@ from classes import apikey
 
 from globals import globalvars
 
-from functions import cache as cachefunc, system, channelFunc, notifications, cachedDbCalls
+from functions import (
+    cache as cachefunc,
+    system,
+    channelFunc,
+    notifications,
+    cachedDbCalls,
+)
 
-log = logging.getLogger('app.functions.securityFunctions')
+log = logging.getLogger("app.functions.securityFunctions")
+
 
 @limiter.limit("100/second")
 def check_isValidChannelViewer(channelID):
     if current_user.is_authenticated:
 
         # Allow Admin
-        if current_user.has_role('Admin'):
+        if current_user.has_role("Admin"):
             return True
 
         # Verify if a Cached Entry Exists
@@ -31,47 +38,68 @@ def check_isValidChannelViewer(channelID):
         if cachedResult is True:
             return True
         else:
-            channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
+            channelQuery = (
+                Channel.Channel.query.filter_by(id=channelID)
+                .with_entities(Channel.Channel.owningUser)
+                .first()
+            )
             if channelQuery.owningUser is current_user.id:
                 if channelID not in globalvars.inviteCache:
                     globalvars.inviteCache[channelID] = {}
-                globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.utcnow()}
+                globalvars.inviteCache[channelID][current_user.id] = {
+                    "invited": True,
+                    "timestamp": datetime.datetime.utcnow(),
+                }
                 return True
             else:
-                inviteQuery = invites.invitedViewer.query.filter_by(userID=current_user.id, channelID=channelID).all()
+                inviteQuery = invites.invitedViewer.query.filter_by(
+                    userID=current_user.id, channelID=channelID
+                ).all()
                 for invite in inviteQuery:
                     if invite.isValid():
                         if channelID not in globalvars.inviteCache:
                             globalvars.inviteCache[channelID] = {}
-                        globalvars.inviteCache[channelID][current_user.id] = {"invited": True, "timestamp": datetime.datetime.utcnow()}
+                        globalvars.inviteCache[channelID][current_user.id] = {
+                            "invited": True,
+                            "timestamp": datetime.datetime.utcnow(),
+                        }
                         return True
                     else:
                         db.session.delete(invite)
                         db.session.commit()
     else:
-        if 'inviteCodes' in session:
-            inviteCodeQuery = invites.inviteCode.query.filter_by(channelID=channelID).all()
+        if "inviteCodes" in session:
+            inviteCodeQuery = invites.inviteCode.query.filter_by(
+                channelID=channelID
+            ).all()
             for code in inviteCodeQuery:
-                if code.code in session['inviteCodes']:
+                if code.code in session["inviteCodes"]:
                     if code.isValid():
                         return True
                     else:
-                        session['inviteCodes'].remove(code.code)
+                        session["inviteCodes"].remove(code.code)
         else:
-            session['inviteCodes'] = []
+            session["inviteCodes"] = []
     return False
 
+
 @limiter.limit("100/second")
-def check_isUserValidRTMPViewer(userID,channelID):
+def check_isUserValidRTMPViewer(userID, channelID):
     userQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id).first()
     if userQuery is not None:
-        channelQuery = Channel.Channel.query.filter_by(id=channelID).with_entities(Channel.Channel.owningUser).first()
+        channelQuery = (
+            Channel.Channel.query.filter_by(id=channelID)
+            .with_entities(Channel.Channel.owningUser)
+            .first()
+        )
         if channelQuery is not None:
             if channelQuery.owningUser is userQuery.id:
-                #db.session.close()
+                # db.session.close()
                 return True
             else:
-                inviteQuery = invites.invitedViewer.query.filter_by(userID=userQuery.id, channelID=channelID).all()
+                inviteQuery = invites.invitedViewer.query.filter_by(
+                    userID=userQuery.id, channelID=channelID
+                ).all()
                 for invite in inviteQuery:
                     if invite.isValid():
                         db.session.close()
@@ -82,12 +110,22 @@ def check_isUserValidRTMPViewer(userID,channelID):
                         db.session.close()
     return False
 
+
 def flag_delete_user(userID):
     userQuery = Sec.User.query.filter_by(id=userID).first()
     if userQuery is not None:
         userQuery.active = False
-        existingFlag = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
-        notifications.sendAdminNotification('User ' + userQuery.username + ' has queued their account for deletion.  The account will be deleted in 48 from ' + str(datetime.datetime.now()), '/settings/admin', "/images/" + str(userQuery.pictureLocation))
+        existingFlag = Sec.UsersFlaggedForDeletion.query.filter_by(
+            userID=userQuery.id
+        ).first()
+        notifications.sendAdminNotification(
+            "User "
+            + userQuery.username
+            + " has queued their account for deletion.  The account will be deleted in 48 from "
+            + str(datetime.datetime.now()),
+            "/settings/admin",
+            "/images/" + str(userQuery.pictureLocation),
+        )
         if existingFlag is None:
             newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
             db.session.add(newUserFlag)
@@ -105,7 +143,9 @@ def delete_user(userID):
     userQuery = Sec.User.query.filter_by(id=userID).first()
     if userQuery is not None:
 
-        userFlaggedForDeletionQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=userQuery.id).first()
+        userFlaggedForDeletionQuery = Sec.UsersFlaggedForDeletion.query.filter_by(
+            userID=userQuery.id
+        ).first()
         if userFlaggedForDeletionQuery is not None:
             db.session.delete(userFlaggedForDeletionQuery)
 
@@ -136,6 +176,7 @@ def delete_user(userID):
 
         # Clear All Role Entries for a User Prior to Deletion
         from app import user_datastore
+
         roleQuery = Sec.Role.query.all()
         for role in roleQuery:
             user_datastore.remove_role_from_user(userQuery, role)
@@ -150,6 +191,7 @@ def delete_user(userID):
         return True
     else:
         return False
+
 
 def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.

@@ -23,12 +23,12 @@
   <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
   <script src="/static/vendor/lazyload/js/lazyload.min.js"></script>
   <script src="/static/vendor/easymde/js/easymde.min.js"></script>
-  
-  
+
+
   {% block head %}
-  
+
   {% endblock %}
-  
+
 </head>
 
 <body>
@@ -40,7 +40,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
         <form class="form-inline my-2 my-lg-0 mr-auto" style="height:14px;" action="/search" method="post">
@@ -106,7 +106,7 @@
                 </div>
               </li>
             </div>
-            
+
             <li class="footer bg-dark text-center">
               <a href="/notifications" class="text-light">View All</a>
             </li>
@@ -140,7 +140,7 @@
       </ul>
     </div>
   </nav>
-  
+
   <div style="position: absolute; top: 65px; right: 70px;z-index:9999999;" id="toastDiv">
     {%- with messages = get_flashed_messages(with_categories=true) -%}
     {% if messages %}
@@ -163,7 +163,7 @@
     {% endif %}
     {%- endwith %}
   </div>
-  
+
   <!-- Modal -->
   <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -247,7 +247,7 @@
                 {% endfor %}
               </select>
             </div>
-            
+
             <span>Thumbnail <span id="thumbnailuploadstatus"></span></span>
             <!-- hidden dropzone -->
             <div class="dropzone" id="thumbnaildropper" enctype="multipart/form-data"></div>
@@ -260,11 +260,11 @@
                 <input type="hidden" class="form-control pl-2 form-control" id="thumbnailFilename" name="thumbnailFilename" placeholder="Filename" />
               </div>
             </div>
-            
+
             <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="thumbnailuploadprogress" class="progress-bar progress-bar-success bg-info" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
-            
+
             <span>Video file <span id="videouploadstatus"></span></span>
             <!-- hidden dropzone -->
             <div class="dropzone" id="videodropper" enctype="multipart/form-data"></div>
@@ -277,16 +277,16 @@
                 <input type="hidden" class="form-control pl-2 form-control" id="videoFilename" name="videoFilename" placeholder="Filename" />
               </div>
             </div>
-            
+
             <div class="progress progress-striped active mb-2" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <div id="videouploadprogress" class="progress-bar progress-bar-success bg-info" style="color: white; width:0%;" data-dz-uploadprogress></div>
             </div>
-            
+
             <div class="form-group">
               <label for="videoDescription">Video description</label>
               <textarea class="form-control" id="videoDescription" name="videoDescription" rows="3"></textarea>
             </div>
-            
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="canceluploads()">Cancel</button>
@@ -301,11 +301,11 @@
     Server is in Maintenance Mode!
   </div>
   {% endif %}
-  
+
   {% block body %}
-  
+
   {% endblock %}
-  
+
   <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
   <script src="/static/vendor/popper/js/popper.min.js"></script>
   <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -313,10 +313,10 @@
   <script src="/static/vendor/dropzone/js/dropzone.min.js"></script>
   <script src="/static/vendor/listjs/js/list.min.js"></script>
   <script type="text/javascript">
-    Dropzone.autoDiscover = false;     
+    Dropzone.autoDiscover = false;
   </script>
   {% block scripts %}
-  
+
   {% endblock %}
     <script>
 
@@ -368,28 +368,28 @@
     }
 
     </script>
-  
+
   <scripts>
     <script>
       var uploadmde = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("videoDescription") });
     </script>
   </scripts>
-  
+
   <script type="application/javascript">
     function s4() {
       return Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1);
     }
-    
+
     videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    
+
     function videouploadsocket() {
       var conn_options = {
         'sync disconnect on unload': true
       };
       var socket = io();
-      
+
       socket.on('disconnect', function () {
         socket.emit('cancelUpload', { data: videofilename });
       });
@@ -398,7 +398,7 @@
         return null;
       });
     }
-    
+
     var thumbnaildropper = new Dropzone(
     '#thumbnaildropper', {
       acceptedFiles: 'image/png',
@@ -425,18 +425,18 @@
       document.getElementById('thumbnailFilename').value = videofilename + '.png';
       document.getElementById('thumbnailFilenameDisplay').value = file.name;
       videouploadsocket();
-      
+
     });
     thumbnaildropper.on("success", function (file) {
       document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-check">';
         document.getElementById('thumbnailuploadprogress').innerHTML = document.getElementById('thumbnailuploadprogress').innerHTML = 'Upload complete';
-        
+
       });
       thumbnaildropper.on('error', function (file, response) {
         document.getElementById('thumbnailuploadstatus').innerHTML = document.getElementById('thumbnailuploadstatus').innerHTML = ' <i class="fas fa-exclamation-triangle"></i>';
         document.getElementById('thumbnailFilenameDisplay').value = 'Error: ' + response;
       });
-      
+
       var videodropper = new Dropzone(
       '#videodropper', {
         acceptedFiles: 'video/mp4',
@@ -475,14 +475,14 @@
           document.getElementById('videoFilenameDisplay').value = 'Error: ' + response
         });
       </script>
-      
+
       <script>
         $(document).ready(function () {
           $('.toast').toast('show');
           document.getElementById("uploadform").reset();
         });
       </script>
-      
+
       <script>
         var lazyLoadInstance = new LazyLoad({
           elements_selector: ".lazy"
@@ -505,7 +505,7 @@
                   });
           });
       </script>
-      
+
       <script>
         function canceluploads() {
           videodropper.removeAllFiles(true);
@@ -524,39 +524,39 @@
         $('.notificationDropdownMenu').click(function(e) {
           e.stopPropagation();
         });
-        
+
         var notificationCountMobile = document.getElementById("notificationCountMobile");
         var notificationCountNav = document.getElementById("notificationCountNav");
         var notificationCountMenu = document.getElementById("notificationCountMenu");
         var notificationCount = {{notifications|count}};
-        
+
         function clearNotification(notificationID) {
           var conn_options = {
             'sync disconnect on unload': true
           };
           var socket = io();
-          
+
           var notification = document.getElementById('notification-' + notificationID);
           notification.parentNode.removeChild(notification);
-          
+
           var newCount = notificationCount - 1;
           if (newCount <= 0) {
             var emptyNotificationBar = document.getElementById("notification-empty");
-            
+
             notificationCountMobile.style.display = "none";
             notificationCountNav.style.display = "none";
             emptyNotificationBar.style.display = "block";
             newCount = 0;
           }
-          
+
           notificationCountMobile.innerText = newCount;
           notificationCountNav.innerText = newCount;
           notificationCountMenu.innerText = newCount;
           notificationCount = notificationCount - 1;
-          
+
           socket.emit('markNotificationAsRead', { data: notificationID });
         }
-        
+
         function clearAllNotifications() {
           var ids = $('.notificationBody .notification-box').map(function(){
             return $(this).attr('id');
@@ -568,7 +568,7 @@
             }
           });
         }
-        
+
       </script>
 
 <!-- Removed Due to breaking seeking
@@ -594,8 +594,8 @@
     .catch(e => console.log(`${e}`));
   </script>
 -->
-      
+
     </body>
-    
-    
+
+
     </html>

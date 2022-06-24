@@ -442,4 +442,3 @@ $("#systemSearchInput").on('change keydown paste input', function(e){
         ul.innerHTML = '';
     }
 });
-

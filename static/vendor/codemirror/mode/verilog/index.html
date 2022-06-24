@@ -49,7 +49,7 @@ module block(
   input  [`BUS_WIDTH-1:0] data_in,
   output [`BUS_WIDTH-1:0] data_out
 );
-  
+
   always @(posedge clk or negedge rst_n) begin
 
     if (~rst_n) begin
@@ -57,12 +57,12 @@ module block(
     end else begin
       data_out <= data_in;
     end
-    
+
     if (~rst_n)
       data_out <= 8'b0;
     else
       data_out <= data_in;
-    
+
     if (~rst_n)
       begin
         data_out <= 8'b0;
@@ -73,7 +73,7 @@ module block(
       end
 
   end
-  
+
 endmodule
 
 // Class definition
@@ -88,11 +88,11 @@ class test;
     $display(msg);
     return result;
   endfunction
-  
+
   task delay(int num_cycles);
     repeat(num_cycles) #1;
   endtask
-  
+
 endclass
 
 </textarea></div>

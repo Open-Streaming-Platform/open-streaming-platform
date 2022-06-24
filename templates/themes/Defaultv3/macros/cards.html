@@ -46,7 +46,7 @@
 
 {% macro video_card(video) %}
 <li class="streamCard item">
-  
+
   <div class="streamCard-thumbnail-container zoom {% if video.gifLocation != None %}gifhover{% endif %}">
       <div class="d-none list-videoName">{{ video.channelName }}</div>
       <div class="d-none list-videoViews">{{ video.views }}</div>
@@ -97,7 +97,7 @@
 
 {% macro clip_card(clip) %}
 <li class="streamCard item">
-  
+
     <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
         <div class="d-none list-clipName">{{ clip.clipName }}</div>
         <div class="d-none list-clipViews">{{ clip.views }}</div>
@@ -150,7 +150,7 @@
     </a>
       <div class="topicName mt-2"><a href="/topic/{{topic.id}}/" data-toggle="tooltip" title="{{topic.name}}"><b>{{ topic.name | limit_title20 }}</b></a></div>
   </li>
-    
+
 {% endmacro %}
 
 {% macro streamer_card(streamerInfo) %}

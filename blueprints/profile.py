@@ -1,5 +1,6 @@
 import sys
 from os import path, remove
+
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Blueprint, request, url_for, render_template, redirect, flash
@@ -13,9 +14,10 @@ from classes import Sec
 
 from functions import themes
 
-profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
+profile_bp = Blueprint("profile", __name__, url_prefix="/profile")
 
-@profile_bp.route('/<username>')
+
+@profile_bp.route("/<username>")
 def profile_view_page(username):
 
     userQuery = Sec.User.query.filter_by(username=username).first()
@@ -29,7 +31,9 @@ def profile_view_page(username):
                 if stream.active is True:
                     streams.append(stream)
 
-        recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(owningUser=userQuery.id, pending=False, published=True).all()
+        recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(
+            owningUser=userQuery.id, pending=False, published=True
+        ).all()
 
         # Sort Video to Show Newest First
         recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
@@ -42,6 +46,14 @@ def profile_view_page(username):
 
         clipsList.sort(key=lambda x: x.views, reverse=True)
 
-        return render_template(themes.checkOverride('videoListView.html'), openStreams=streams, recordedVids=recordedVideoQuery, userChannels=userChannels, clipsList=clipsList, title=userQuery.username, streamerData=userQuery)
-    flash('Invalid User','error')
+        return render_template(
+            themes.checkOverride("videoListView.html"),
+            openStreams=streams,
+            recordedVids=recordedVideoQuery,
+            userChannels=userChannels,
+            clipsList=clipsList,
+            title=userQuery.username,
+            streamerData=userQuery,
+        )
+    flash("Invalid User", "error")
     return redirect(url_for("root.main_page"))

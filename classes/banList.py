@@ -1,16 +1,18 @@
 from .shared import db
 
-class banList(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    channelLoc = db.Column(db.String(255))
-    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self,channelLoc,userID):
+class banList(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    channelLoc = db.Column(db.String(255))
+    userID = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    def __init__(self, channelLoc, userID):
         self.channelLoc = channelLoc
         self.userID = userID
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class ipList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,7 +24,8 @@ class ipList(db.Model):
         self.reason = reason
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class channelBanList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,12 +39,13 @@ class channelBanList(db.Model):
         self.userUUID = userUUID
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class messageBanList(db.Model):
     __tablename__ = "messageBanList"
     id = db.Column(db.Integer, primary_key=True)
-    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    userID = db.Column(db.Integer, db.ForeignKey("user.id"))
     messageFrom = db.Column(db.Integer)
 
     def __init__(self, userID, messageFrom):
@@ -49,7 +53,8 @@ class messageBanList(db.Model):
         self.messageFrom = messageFrom
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class chatBannedWords(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,7 +64,8 @@ class chatBannedWords(db.Model):
         self.word = word
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class chatBannedMessages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,4 +79,4 @@ class chatBannedMessages(db.Model):
         self.channelLoc = channelLoc
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id

@@ -2,11 +2,17 @@ import logging
 from celery.schedules import crontab
 from classes.shared import celery
 
-from functions.scheduled_tasks import video_tasks, message_tasks, security_tasks, channel_tasks
+from functions.scheduled_tasks import (
+    video_tasks,
+    message_tasks,
+    security_tasks,
+    channel_tasks,
+)
 
 from datetime import timedelta
 
-log = logging.getLogger('app.functions.scheduler')
+log = logging.getLogger("app.functions.scheduler")
+
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
@@ -17,7 +23,3 @@ def setup_periodic_tasks(sender, **kwargs):
     message_tasks.setup_message_tasks(sender, **kwargs)
     security_tasks.setup_security_tasks(sender, **kwargs)
     channel_tasks.setup_channel_tasks(sender, **kwargs)
-
-
-
-

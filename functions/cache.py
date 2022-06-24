@@ -5,7 +5,7 @@ import logging
 from globals import globalvars
 from classes.shared import db
 
-log = logging.getLogger('app.functions.database')
+log = logging.getLogger("app.functions.database")
 
 # Handles the Invite Cache to cut down on SQL Calls
 def checkInviteCache(channelID):
@@ -14,7 +14,9 @@ def checkInviteCache(channelID):
         if channelID in globalvars.inviteCache:
             if current_user.id in globalvars.inviteCache[channelID]:
                 if globalvars.inviteCache[channelID][current_user.id]["invited"]:
-                    if datetime.datetime.utcnow() < globalvars.inviteCache[channelID][current_user.id]["timestamp"] + datetime.timedelta(minutes=10):
+                    if datetime.datetime.utcnow() < globalvars.inviteCache[channelID][
+                        current_user.id
+                    ]["timestamp"] + datetime.timedelta(minutes=10):
                         db.session.close()
                         return True
                     else:

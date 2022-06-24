@@ -33288,10 +33288,10 @@
     /**
      * Returns the indexth item in the collection. If index is greater than or equal to the number of nodes in the list, this returns null.
      * @standard level1
-     * @param index  unsigned long 
+     * @param index  unsigned long
      *   Index into the collection.
      * @return Node
-     * 	The node at the indexth position in the NodeList, or null if that is not a valid index. 
+     * 	The node at the indexth position in the NodeList, or null if that is not a valid index.
      */
     item: function item(index) {
       return this[index] || null;
@@ -33342,7 +33342,7 @@
    * but this is simply to allow convenient enumeration of the contents of a NamedNodeMap,
    * and does not imply that the DOM specifies an order to these Nodes.
    * NamedNodeMap objects in the DOM are live.
-   * used for attributes or DocumentType entities 
+   * used for attributes or DocumentType entities
    */
 
 
@@ -33612,11 +33612,11 @@
     localName: null,
     // Modified in DOM Level 2:
     insertBefore: function insertBefore(newChild, refChild) {
-      //raises 
+      //raises
       return _insertBefore(this, newChild, refChild);
     },
     replaceChild: function replaceChild(newChild, oldChild) {
-      //raises 
+      //raises
       this.insertBefore(newChild, oldChild);
 
       if (oldChild) {
@@ -33790,7 +33790,7 @@
   /**
    * attributes;
    * children;
-   * 
+   *
    * writeable properties:
    * nodeValue,Attr:value,CharacterData:data
    * prefix
@@ -34484,7 +34484,7 @@
           }
 
           serializeToString(attr, buf, isHTML, nodeFilter, visibleNamespaces);
-        } // add namespace for current node		
+        } // add namespace for current node
 
 
         if (nodeName === prefixedNodeName && needNamespaceDefine(node, isHTML, visibleNamespaces)) {
@@ -35097,7 +35097,7 @@
 
   var S_TAG = 0; //tag name offerring
 
-  var S_ATTR = 1; //attr name offerring 
+  var S_ATTR = 1; //attr name offerring
 
   var S_ATTR_SPACE = 2; //attr name end and space offer
 
@@ -35606,7 +35606,7 @@
       } //can not set prefix,because prefix !== ''
 
 
-      a.localName = localName; //prefix == null for no ns prefix attribute 
+      a.localName = localName; //prefix == null for no ns prefix attribute
 
       if (nsPrefix !== false) {
         //hack!!
@@ -35713,7 +35713,7 @@
       closeMap[tagName] = pos;
     }
 
-    return pos < elStartEnd; //} 
+    return pos < elStartEnd; //}
   }
 
   function _copy(source, target) {
@@ -35751,7 +35751,7 @@
           domBuilder.endCDATA();
           return end + 3;
         } //<!DOCTYPE
-        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId) 
+        //startDTD(java.lang.String name, java.lang.String publicId, java.lang.String systemId)
 
 
         var matchs = split(source, start);
@@ -35842,7 +35842,7 @@
       return this[i].value;
     } //	,getIndex:function(uri, localName)){
     //		if(localName){
-    //			
+    //
     //		}else{
     //			var qName = uri
     //		}
