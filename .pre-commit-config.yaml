@@ -33,3 +33,11 @@ repos:
     rev: 1.7.4
     hooks:
       - id: bandit
+-   repo: local
+    hooks:
+      - id: custom-script-file
+        name: build-docker-files
+        entry: ./build-docker-directory.sh
+        language: script
+        types: [text, python, javascript, html, shell, yaml, css, image]
+        pass_filenames: false
