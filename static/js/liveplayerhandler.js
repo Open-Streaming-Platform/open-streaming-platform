@@ -73,9 +73,9 @@ function monitor_vid(vidplayer){
 }
 
 // Execute the Video Monitor Script on Page Load
-//$(document).ready( function () {
-//    monitor_vid(player);
-//});
+$(document).ready( function () {
+    monitor_vid(player);
+});
 
 // Set the monitor video script to execute every 10s
 var monitorInterval = setInterval(function() {
